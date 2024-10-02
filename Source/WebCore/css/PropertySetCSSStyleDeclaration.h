@@ -50,6 +50,9 @@ public:
         : m_propertySet(&propertySet)
     { }
 
+    void ref() const override;
+    void deref() const override;
+
     StyleSheetContents* contextStyleSheet() const;
 
 protected:
@@ -61,9 +64,6 @@ protected:
     HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
 
 private:
-    void ref() override;
-    void deref() override;
-
     CSSRule* parentRule() const override { return nullptr; }
     // FIXME: To implement.
     CSSRule* cssRules() const override { return nullptr; }
@@ -93,6 +93,8 @@ private:
 class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration, public RefCounted<StyleRuleCSSStyleDeclaration> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(StyleRuleCSSStyleDeclaration);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
     {
         return adoptRef(*new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
@@ -100,9 +102,6 @@ public:
     virtual ~StyleRuleCSSStyleDeclaration();
 
     void clearParentRule() { m_parentRule = nullptr; }
-
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
 
     void reattach(MutableStyleProperties&);
 

@@ -202,7 +202,9 @@ namespace JSC {
     macro(sentinelString) \
     macro(createRemoteFunction) \
     macro(isRemoteFunction) \
-    macro(arrayFromFast) \
+    macro(arrayFromFastFillWithUndefined) \
+    macro(arrayFromFastFillWithEmpty) \
+    macro(arraySpeciesWatchpointIsValid) \
     macro(arraySort) \
     macro(jsonParse) \
     macro(jsonStringify) \

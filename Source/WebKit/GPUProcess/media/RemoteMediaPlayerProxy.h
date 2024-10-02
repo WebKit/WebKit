@@ -112,9 +112,7 @@ class RemoteMediaPlayerProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaPlayerProxy);
 public:
-    using WebCore::MediaPlayerClient::WeakPtrImplType;
-    using WebCore::MediaPlayerClient::WeakValueType;
-    using WebCore::MediaPlayerClient::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(WebCore::MediaPlayerClient);
 
     static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();
@@ -384,12 +382,21 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
-    const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
+    Ref<const Logger> protectedMediaPlayerLogger() const { return m_logger; }
+    uint64_t mediaPlayerLogIdentifier() { return m_configuration.logIdentifier; }
     const Logger& logger() { return mediaPlayerLogger(); }
-    const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
+    uint64_t logIdentifier() { return mediaPlayerLogIdentifier(); }
     ASCIILiteral logClassName() const { return "RemoteMediaPlayerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
+
+    RefPtr<WebCore::MediaPlayer> protectedPlayer() const { return m_player; }
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<RemoteMediaSourceProxy> protectedMediaSourceProxy() const { return m_mediaSourceProxy; }
+#endif
+
+    Ref<IPC::Connection> protectedConnection() const { return m_webProcessConnection; }
+    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap() const;
 
     Vector<Ref<RemoteAudioTrackProxy>> m_audioTracks;
     Vector<Ref<RemoteVideoTrackProxy>> m_videoTracks;

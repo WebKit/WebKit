@@ -386,7 +386,12 @@ TEST(PrivateClickMeasurement, Basic)
     });
 }
 
+// rdar://136703173
+#if PLATFORM(MAC)
+TEST(PrivateClickMeasurement, DISABLED_EphemeralWithAttributedBundleIdentifier)
+#else
 TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
+#endif
 {
     auto configuration = configurationWithoutUsingDaemon();
     configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";

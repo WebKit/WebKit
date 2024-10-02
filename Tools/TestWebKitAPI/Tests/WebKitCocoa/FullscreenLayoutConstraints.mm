@@ -69,7 +69,7 @@ TEST(Fullscreen, LayoutConstraints)
     
     NSArray* originalConstraints = [[window contentView] constraints];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"FullscreenLayoutConstraints" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"FullscreenLayoutConstraints" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&receivedLoadedMessage);
 

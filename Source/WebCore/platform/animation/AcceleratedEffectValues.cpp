@@ -93,11 +93,11 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
 
 static LengthPoint nonCalculatedLengthPoint(LengthPoint lengthPoint, const IntSize& borderBoxSize)
 {
-    if (!lengthPoint.x().isCalculated() && !lengthPoint.y().isCalculated())
+    if (!lengthPoint.x.isCalculated() && !lengthPoint.y.isCalculated())
         return lengthPoint;
     return {
-        { floatValueForLength(lengthPoint.x(), borderBoxSize.width()), LengthType::Fixed },
-        { floatValueForLength(lengthPoint.y(), borderBoxSize.height()), LengthType::Fixed }
+        { floatValueForLength(lengthPoint.x, borderBoxSize.width()), LengthType::Fixed },
+        { floatValueForLength(lengthPoint.y, borderBoxSize.height()), LengthType::Fixed }
     };
 }
 
@@ -128,7 +128,7 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     offsetDistance = style.offsetDistance();
     if (offsetDistance.isCalculated() && offsetPath) {
         auto anchor = borderBoxRect.location() + floatPointForLengthPoint(transformOrigin, borderBoxSize);
-        if (!offsetAnchor.x().isAuto())
+        if (!offsetAnchor.x.isAuto())
             anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size()) + borderBoxRect.location();
 
         auto path = offsetPath->getPath(TransformOperationData(FloatRect(borderBoxRect)));

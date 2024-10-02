@@ -30,14 +30,15 @@
 #include "PushClientConnectionMessages.h"
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
+#include <WebCore/NotificationData.h>
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/PushSubscriptionData.h>
 
 namespace API {
 
-WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceName, const WTF::String& partition, const WTF::String& bundleIdentifier)
+WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    : m_connection(makeUniqueRef<WebKit::WebPushD::Connection>(machServiceName.utf8(), WebKit::WebPushD::WebPushDaemonConnectionConfiguration { { }, bundleIdentifier, partition, { } }))
+    : m_connection(makeUniqueRef<WebKit::WebPushD::Connection>(machServiceName.utf8(), WTFMove(configuration)))
 #endif
 {
 }

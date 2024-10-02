@@ -69,7 +69,7 @@ float SizesAttributeParser::computeLength(double value, CSSUnitType type, const 
 SizesAttributeParser::SizesAttributeParser(const String& attribute, const Document& document)
     : m_document(document)
 {
-    m_isValid = parse(CSSTokenizer(attribute).tokenRange());
+    m_isValid = parse(CSSTokenizer(attribute).tokenRange(), CSSParserContext(document));
 }
 
 float SizesAttributeParser::length()
@@ -79,28 +79,25 @@ float SizesAttributeParser::length()
     return effectiveSizeDefaultValue();
 }
 
-bool SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range, float& result)
+std::optional<float> SizesAttributeParser::calculateLengthInPixels(CSSParserTokenRange range)
 {
     const CSSParserToken& startToken = range.peek();
     CSSParserTokenType type = startToken.type();
     if (type == DimensionToken) {
         if (!CSSPrimitiveValue::isLength(startToken.unitType()))
-            return false;
-        result = computeLength(startToken.numericValue(), startToken.unitType(), protectedDocument());
+            return std::nullopt;
+        float result = computeLength(startToken.numericValue(), startToken.unitType(), protectedDocument());
         if (result >= 0)
-            return true;
+            return result;
     } else if (type == FunctionToken) {
         SizesCalcParser calcParser(range, protectedDocument());
         if (!calcParser.isValid())
-            return false;
-        result = calcParser.result();
-        return true;
-    } else if (type == NumberToken && !startToken.numericValue()) {
-        result = 0;
-        return true;
-    }
+            return std::nullopt;
+        return calcParser.result();
+    } else if (type == NumberToken && !startToken.numericValue())
+        return 0;
 
-    return false;
+    return std::nullopt;
 }
 
 bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCondition)
@@ -114,7 +111,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MQ::MediaQuery& mediaCond
     return MQ::MediaQueryEvaluator { screenAtom(), document, &style }.evaluate(mediaCondition);
 }
 
-bool SizesAttributeParser::parse(CSSParserTokenRange range)
+bool SizesAttributeParser::parse(CSSParserTokenRange range, const CSSParserContext& context)
 {
     // Split on a comma token and parse the result tokens as (media-condition, length) pairs
     while (!range.atEnd()) {
@@ -130,10 +127,10 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
         }
         range.consume();
 
-        float length;
-        if (!calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd), length))
+        auto length = calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd));
+        if (!length)
             continue;
-        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(protectedDocument()));
+        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(context));
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
@@ -142,7 +139,7 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range)
             m_dynamicMediaQueryResults.append({ MQ::MediaQueryList { *mediaCondition }, matches });
         if (!matches)
             continue;
-        m_length = length;
+        m_length = *length;
         m_lengthWasSet = true;
         return true;
     }

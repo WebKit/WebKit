@@ -64,7 +64,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     String userAgent;
 
     bool itemStatesWereRestoredByAPIRequest;
-    Vector<WebKit::BackForwardListItemState> itemStates;
+    Vector<Ref<WebKit::FrameState>> itemStates;
 
     WebKit::VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
@@ -247,8 +247,9 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
     std::optional<WebKit::RemotePageParameters> remotePageParameters;
-    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     WebCore::FrameIdentifier mainFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier;
+    WebCore::SandboxFlags initialSandboxFlags;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;

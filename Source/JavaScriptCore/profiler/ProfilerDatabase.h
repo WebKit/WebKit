@@ -39,14 +39,17 @@
 
 namespace JSC { namespace Profiler {
 
+struct DatabaseIDType;
+using DatabaseID = AtomicObjectIdentifier<DatabaseIDType>;
+
 class Database {
     WTF_MAKE_TZONE_ALLOCATED(Database);
     WTF_MAKE_NONCOPYABLE(Database);
 public:
     JS_EXPORT_PRIVATE Database(VM&);
     JS_EXPORT_PRIVATE ~Database();
-    
-    int databaseID() const { return m_databaseID; }
+
+    DatabaseID databaseID() const { return m_databaseID; }
     
     Bytecodes* ensureBytecodesFor(CodeBlock*);
     void notifyDestruction(CodeBlock*);
@@ -73,7 +76,7 @@ private:
     static Database* removeFirstAtExitDatabase();
     static void atExitCallback();
     
-    int m_databaseID;
+    DatabaseID m_databaseID;
     VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
     HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;

@@ -77,7 +77,7 @@ Ref<WebProcessProxy> AudioSessionRoutingArbitratorProxy::protectedProcess()
 
 Logger& AudioSessionRoutingArbitratorProxy::logger()
 {
-    return m_process->logger();
+    return protectedProcess()->logger();
 }
 
 WTFLogChannel& AudioSessionRoutingArbitratorProxy::logChannel() const

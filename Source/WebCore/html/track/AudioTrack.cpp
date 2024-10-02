@@ -41,8 +41,11 @@
 #include "CommonAtomStrings.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioTrack);
 
 const AtomString& AudioTrack::descriptionKeyword()
 {
@@ -226,7 +229,7 @@ void AudioTrack::updateConfigurationFromPrivate()
 }
 
 #if !RELEASE_LOG_DISABLED
-void AudioTrack::setLogger(const Logger& logger, const void* logIdentifier)
+void AudioTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     TrackBase::setLogger(logger, logIdentifier);
     m_private->setLogger(logger, this->logIdentifier());

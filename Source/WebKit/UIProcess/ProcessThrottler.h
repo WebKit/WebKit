@@ -124,8 +124,8 @@ public:
     using Activity = ProcessThrottlerActivity;
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
 
     using ForegroundActivity = Activity;
     UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
@@ -145,7 +145,7 @@ public:
     void setAllowsActivities(bool);
     void setShouldDropNearSuspendedAssertionAfterDelay(bool);
     void setShouldTakeNearSuspendedAssertion(bool);
-    bool isSuspended() const;
+    bool isSuspended() const { return m_isConnectedToProcess && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
 
@@ -156,7 +156,7 @@ private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
 
     ProcessThrottleState expectedThrottleState();
-    void updateThrottleStateIfNeeded();
+    void updateThrottleStateIfNeeded(ASCIILiteral);
     void updateThrottleStateNow();
     void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);

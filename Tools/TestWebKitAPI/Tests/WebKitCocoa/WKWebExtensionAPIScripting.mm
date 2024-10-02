@@ -29,6 +29,7 @@
 
 #import "HTTPServer.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKUserContentControllerPrivate.h>
 
 namespace TestWebKitAPI {
 
@@ -1224,6 +1225,120 @@ TEST(WKWebExtensionAPIScripting, IsolatedWorld)
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIScripting, RemoveAllUserScriptsDoesNotRemoveWebExtensionScripts)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Remove Scripts and Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove Scripts and Load Tab");
+
+    [manager.get().defaultTab.webView.configuration.userContentController removeAllUserScripts];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIScripting, RemoveAllUserStyleSheetsDoesNotRemoveWebExtensionStyleSheets)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<div id='test'>Test</div>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_scripts": @[ @{
+            @"matches": @[ @"*://localhost/*" ],
+            @"css": @[ @"content.css" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Remove StyleSheets and Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"const testElement = document.getElementById('test')",
+        @"const style = window.getComputedStyle(testElement)",
+        @"browser.test.assertEq(style.color, 'rgb(255, 0, 0)', 'CSS should still apply after removing user stylesheets')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.css": @"#test { color: red; }",
+        @"content.js": contentScript
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove StyleSheets and Load Tab");
+
+    [manager.get().defaultTab.webView.configuration.userContentController _removeAllUserStyleSheets];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

@@ -36,8 +36,7 @@ class CSSRuleList {
 public:
     virtual ~CSSRuleList();
 
-    virtual void ref() = 0;
-    virtual void deref() = 0;
+    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual unsigned length() const = 0;
     virtual CSSRule* item(unsigned index) const = 0;
@@ -51,10 +50,9 @@ protected:
 
 class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
 public:
-    static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
+    DEFINE_VIRTUAL_REFCOUNTED;
 
-    void ref() final { RefCounted::ref(); }
-    void deref() final { RefCounted::deref(); }
+    static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
     Vector<RefPtr<CSSRule>>& rules() { return m_rules; }
     
@@ -80,8 +78,8 @@ public:
     {
     }
     
-    void ref() final { m_rule.ref(); }
-    void deref() final { m_rule.deref(); }
+    void ref() const final { m_rule.ref(); }
+    void deref() const final { m_rule.deref(); }
 
 private:
     unsigned length() const final { return m_rule.length(); }

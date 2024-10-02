@@ -30,12 +30,14 @@
 #include "ScrollAnimator.h"
 
 #include "IntPoint.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PlatformTouchEvent;
 
 class ScrollAnimatorIOS : public ScrollAnimator {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimatorIOS);
 public:
     ScrollAnimatorIOS(ScrollableArea&);
     virtual ~ScrollAnimatorIOS();

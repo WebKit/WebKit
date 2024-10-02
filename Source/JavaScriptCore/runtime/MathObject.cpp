@@ -21,10 +21,12 @@
 #include "config.h"
 #include "MathObject.h"
 
+#include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "MathCommon.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PreciseSum.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -64,6 +66,7 @@ static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTanh);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTrunc);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncIMul);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncF16Round);
+static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncSumPrecise);
 
 const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
 
@@ -123,6 +126,9 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "trunc"_s), 1, mathProtoFuncTrunc, ImplementationVisibility::Public, TruncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "imul"_s), 2, mathProtoFuncIMul, ImplementationVisibility::Public, IMulIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "f16round"_s), 1, mathProtoFuncF16Round, ImplementationVisibility::Public, F16RoundIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+
+    if (Options::useMathSumPreciseMethod())
+        putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "sumPrecise"_s), 1, mathProtoFuncSumPrecise, ImplementationVisibility::Public, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 // ------------------------------ Functions --------------------------------
@@ -395,6 +401,31 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncTrunc, (JSGlobalObject* globalObject, Call
 JSC_DEFINE_HOST_FUNCTION(mathProtoFuncF16Round, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(jsDoubleNumber(Float16 { callFrame->argument(0).toNumber(globalObject) }));
+}
+
+JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSumPrecise, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue iterable = callFrame->argument(0);
+    if (iterable.isUndefinedOrNull())
+        return throwVMTypeError(globalObject, scope, "Math.sumPrecise requires first argument not be null or undefined"_s);
+
+    PreciseSum sum;
+
+    scope.release();
+    forEachInIterable(globalObject, iterable, [&sum](VM& vm, JSGlobalObject* globalObject, JSValue value) {
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        if (!value.isNumber()) {
+            throwTypeError(globalObject, scope, "Math.sumPrecise was passed a non-number"_s);
+            return;
+        }
+
+        sum.add(value.asNumber());
+    });
+
+    return JSValue::encode(jsNumber(sum.compute()));
 }
 
 } // namespace JSC

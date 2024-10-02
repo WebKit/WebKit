@@ -43,16 +43,6 @@
 @protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
 
-namespace WebKit {
-class NavigationState;
-class WebPageLoadTiming;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NavigationState> : std::true_type { };
-}
-
 namespace API {
 class Navigation;
 }
@@ -64,12 +54,16 @@ class SecurityOriginData;
 namespace WebKit {
 
 struct WebNavigationDataStore;
+class WebPageLoadTiming;
 
 class NavigationState final : public PageLoadState::Observer {
     WTF_MAKE_TZONE_ALLOCATED(NavigationState);
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
+
+    void ref() const final;
+    void deref() const final;
 
     static NavigationState* fromWebPage(WebPageProxy&);
 
@@ -105,6 +99,7 @@ public:
 
 private:
     class NavigationClient final : public API::NavigationClient {
+        WTF_MAKE_TZONE_ALLOCATED(NavigationClient);
     public:
         explicit NavigationClient(NavigationState&);
         ~NavigationClient();
@@ -171,6 +166,7 @@ private:
     };
     
     class HistoryClient final : public API::HistoryClient {
+        WTF_MAKE_TZONE_ALLOCATED(HistoryClient);
     public:
         explicit HistoryClient(NavigationState&);
         ~HistoryClient();

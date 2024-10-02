@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT scroll: scroll() should work on a push navigation Test timed out
+PASS scroll: scroll() should work on a push navigation
 

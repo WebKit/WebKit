@@ -67,21 +67,22 @@ enum class AXPropertyFlag : uint32_t {
     IsEnabled                                     = 1 << 7,
     IsExposedTableCell                            = 1 << 8,
     IsGrabbed                                     = 1 << 9,
-    IsInlineText                                  = 1 << 10,
-    IsKeyboardFocusable                           = 1 << 11,
-    IsLink                                        = 1 << 12,
-    IsList                                        = 1 << 13,
-    IsNonLayerSVGObject                           = 1 << 14,
-    IsTableColumn                                 = 1 << 15,
-    IsTableRow                                    = 1 << 16,
-    SupportsCheckedState                          = 1 << 17,
-    SupportsDragging                              = 1 << 18,
-    SupportsExpanded                              = 1 << 19,
-    SupportsPath                                  = 1 << 20,
-    SupportsPosInSet                              = 1 << 21,
-    SupportsPressAction                           = 1 << 22,
-    SupportsRequiredAttribute                     = 1 << 23,
-    SupportsSetSize                               = 1 << 24
+    IsIgnored                                     = 1 << 10,
+    IsInlineText                                  = 1 << 11,
+    IsKeyboardFocusable                           = 1 << 12,
+    IsLink                                        = 1 << 13,
+    IsList                                        = 1 << 14,
+    IsNonLayerSVGObject                           = 1 << 15,
+    IsTableColumn                                 = 1 << 16,
+    IsTableRow                                    = 1 << 17,
+    SupportsCheckedState                          = 1 << 18,
+    SupportsDragging                              = 1 << 19,
+    SupportsExpanded                              = 1 << 20,
+    SupportsPath                                  = 1 << 21,
+    SupportsPosInSet                              = 1 << 22,
+    SupportsPressAction                           = 1 << 23,
+    SupportsRequiredAttribute                     = 1 << 24,
+    SupportsSetSize                               = 1 << 25
 };
 
 enum class AXPropertyName : uint16_t {
@@ -162,6 +163,7 @@ enum class AXPropertyName : uint16_t {
     IsExposedTableCell,
     IsFieldset,
     IsFileUploadButton,
+    IsIgnored,
     IsIndeterminate,
     IsInlineText,
     IsRadioInput,
@@ -356,6 +358,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
+    RefPtr<AXIsolatedObject> rootWebArea();
     AXID focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
@@ -380,6 +383,7 @@ public:
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
+    bool isUnconnectedNode(AXID axID) const { return m_unconnectedNodes.contains(axID); }
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
     void removeNode(const AccessibilityObject&);
     // Removes the given node and all its descendants from m_nodeMap.
@@ -446,15 +450,14 @@ private:
     };
 
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
-    void collectNodeChangesForSubtree(AXCoreObject&);
+    void collectNodeChangesForSubtree(AccessibilityObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
+    void queueRemovalsAndUnresolvedChanges();
     Vector<NodeChange> resolveAppends();
     void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
-    void protectFromDeletion(AXID);
 
     const ProcessID m_processID { presentingApplicationPID() };
     unsigned m_maxTreeDepth { 0 };
@@ -486,14 +489,16 @@ private:
     // The value is whether the wrapper should be attached on the main thread or the AX thread.
     HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
     // Only accessed on the main thread.
+    // While performing tree updates, we append nodes to this list that are no longer connected
+    // in the tree and should be removed. This list turns into m_pendingSubtreeRemovals when
+    // handed off to the secondary thread.
+    Vector<AXID> m_subtreesToRemove;
+    // Only accessed on the main thread.
     // This is used when updating the isolated tree in response to dynamic children changes.
     // It is required to protect objects from being incorrectly deleted when they are re-parented,
     // as the original parent will want to queue it for removal, but we need to keep the object around
     // for the new parent.
     HashSet<AXID> m_protectedFromDeletionIDs;
-    // True if m_protectedFromDeletionIDs has changed, and m_pendingProtectedFromDeletionIDs needs to be updated as a result.
-    // Only accessed on the main-thread.
-    bool m_protectedFromDeletionIDsIsDirty { false };
     // Only accessed on the main thread.
     // Objects whose parent has changed, and said change needs to be synced to the secondary thread.
     HashSet<AXID> m_needsParentUpdate;

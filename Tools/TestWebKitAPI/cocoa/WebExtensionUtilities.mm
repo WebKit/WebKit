@@ -562,9 +562,9 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         self->_selected = selected;
 
         if (selected)
-            [self->_extensionController didSelectTabs:[NSSet setWithObject:self]];
+            [self->_extensionController didSelectTabs:@[ self ]];
         else
-            [self->_extensionController didDeselectTabs:[NSSet setWithObject:self]];
+            [self->_extensionController didDeselectTabs:@[ self ]];
 
         completionHandler(nil);
     });

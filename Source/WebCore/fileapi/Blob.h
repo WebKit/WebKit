@@ -68,6 +68,8 @@ using BlobPartVariant = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::A
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob>, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Blob, WEBCORE_EXPORT);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<Blob> create(ScriptExecutionContext* context)
     {
         auto blob = adoptRef(*new Blob(context));
@@ -114,10 +116,6 @@ public:
     static bool isNormalizedContentType(const CString&);
 #endif
 
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
-
     // URLRegistrable
     URLRegistry& registry() const override;
 
@@ -151,7 +149,7 @@ protected:
     Blob(ScriptExecutionContext*, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& contentType);
 
 private:
-    void loadBlob(FileReaderLoader::ReadType, CompletionHandler<void(BlobLoader&)>&&);
+    void loadBlob(FileReaderLoader::ReadType, Function<void(BlobLoader&)>&&);
 
     String m_type;
     mutable std::optional<unsigned long long> m_size;

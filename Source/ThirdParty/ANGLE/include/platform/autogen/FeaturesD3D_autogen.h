@@ -48,13 +48,6 @@ struct FeaturesD3D : FeatureSetBase
         &members,
     };
 
-    FeatureInfo useInstancedPointSpriteEmulation = {
-        "useInstancedPointSpriteEmulation",
-        FeatureCategory::D3DWorkarounds,
-        "Some D3D11 renderers do not support geometry shaders for pointsprite emulation",
-        &members,
-    };
-
     FeatureInfo depthStencilBlitExtraCopy = {
         "depthStencilBlitExtraCopy",
         FeatureCategory::D3DWorkarounds,

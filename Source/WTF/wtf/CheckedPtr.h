@@ -214,6 +214,7 @@ inline bool is(const CheckedPtr<ArgType, ArgPtrTraits>& source)
 
 template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<CheckedPtr<P>> {
     static P* emptyValue() { return nullptr; }
+    static bool isEmptyValue(const CheckedPtr<P>& value) { return !value; }
 
     typedef P* PeekType;
     static PeekType peek(const CheckedPtr<P>& value) { return value.get(); }

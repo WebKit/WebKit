@@ -35,9 +35,9 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeCounterSet(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers

@@ -661,6 +661,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
             processInitializationSegment({ });
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::ParsingError);
         }
+        m_lastInitializationSegment = segment;
         return client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment));
     })->whenSettled(m_dispatcher, [this, weakThis = ThreadSafeWeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto result) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -1404,6 +1405,30 @@ void SourceBufferPrivate::ensureOnDispatcher(Function<void()>&& function) const
         return;
     }
     m_dispatcher->dispatch(WTFMove(function));
+}
+
+void SourceBufferPrivate::attach()
+{
+    ensureOnDispatcher([protectedThis = Ref { *this }, this] {
+        if (!m_lastInitializationSegment)
+            return;
+        RefPtr client = this->client();
+        if (!client)
+            return;
+        auto segment = *m_lastInitializationSegment;
+        client->sourceBufferPrivateDidAttach(WTFMove(segment))
+        ->whenSettled(m_dispatcher, [this, weakThis = ThreadSafeWeakPtr { *this }, segment = *m_lastInitializationSegment] (auto&& result) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !result)
+                return;
+
+            processInitializationSegment(WTFMove(segment));
+
+            // When a MediaSource is re-attached part of the loading the media resources algorithm (https://html.spec.whatwg.org/multipage/media.html#loading-the-media-resourceas)
+            // the playback position is to be set back to 0.
+            seekToTime(MediaTime::zeroTime());
+        });
+    });
 }
 
 } // namespace WebCore

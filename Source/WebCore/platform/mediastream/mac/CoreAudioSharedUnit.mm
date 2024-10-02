@@ -38,16 +38,108 @@
 #include <CoreAudio/AudioHardware.h>
 #endif
 
-namespace WebCore {
+#include <pal/cocoa/AVFAudioSoftLink.h>
 
-#if PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
-static void speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const AudioObjectPropertyAddress*, void*)
-{
-    ASSERT(isMainRunLoop());
-    CoreAudioSharedUnit::processVoiceActivityEvent(deviceID);
+#if HAVE(AVAUDIOAPPLICATION)
+
+OBJC_CLASS WebCoreAudioInputMuteChangeListener;
+
+namespace WebCore {
+void registerAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener*);
+void unregisterAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener*);
 }
 
-static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
+@interface WebCoreAudioInputMuteChangeListener : NSObject {
+}
+
+- (void)start;
+- (void)stop;
+- (void)handleMuteStatusChangedNotification:(NSNotification*)notification;
+@end
+
+@implementation WebCoreAudioInputMuteChangeListener
+- (void)start
+{
+    WebCore::registerAudioInputMuteChangeListener(self);
+}
+
+- (void)stop
+{
+    WebCore::unregisterAudioInputMuteChangeListener(self);
+}
+
+- (void)handleMuteStatusChangedNotification:(NSNotification*)notification
+{
+    NSNumber* newMuteState = [notification.userInfo valueForKey:AVAudioApplicationMuteStateKey];
+    WebCore::CoreAudioSharedUnit::singleton().handleMuteStatusChangedNotification(newMuteState.boolValue);
+}
+
+@end
+#endif // HAVE(AVAUDIOAPPLICATION)
+
+namespace WebCore {
+
+#if HAVE(AVAUDIOAPPLICATION)
+static AVAudioApplication *getSharedAVAudioApplication()
+{
+    return PAL::isAVFAudioFrameworkAvailable() ? (AVAudioApplication *)[PAL::getAVAudioApplicationClass() sharedInstance] : nil;
+}
+
+#if PLATFORM(MAC)
+static void setNoopInputMuteStateChangeHandler(AVAudioApplication *audioApplication, bool shouldAddHandler)
+{
+    @try {
+        NSError *error = nil;
+        if (shouldAddHandler) {
+            // We set the handler to enable receiving AVAudioApplicationInputMuteStateChangeNotification notifications.
+            [audioApplication setInputMuteStateChangeHandler:^(BOOL) {
+                return YES;
+            } error:&error];
+        } else
+            [audioApplication setInputMuteStateChangeHandler:nil error:&error];
+        RELEASE_LOG_ERROR_IF(error, WebRTC, "WebCoreAudioInputMuteChangeListener failed to set mute state change handler due to error: %@, shouldAddHandler: %d.", error.localizedDescription, shouldAddHandler);
+    } @catch (NSException *exception) {
+        RELEASE_LOG_ERROR(WebRTC, "WebCoreAudioInputMuteChangeListener failed to set mute state change handler due to exception: %@, shouldAddHandler: %d.", exception, shouldAddHandler);
+    }
+}
+#endif
+
+void registerAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener *listener)
+{
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
+        return;
+
+#if PLATFORM(MAC)
+    setNoopInputMuteStateChangeHandler(audioApplication, true);
+#endif
+
+    [[NSNotificationCenter defaultCenter] addObserver:listener selector:@selector(handleMuteStatusChangedNotification:) name:AVAudioApplicationInputMuteStateChangeNotification object:audioApplication];
+
+}
+
+void unregisterAudioInputMuteChangeListener(WebCoreAudioInputMuteChangeListener *listener)
+{
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
+        return;
+
+#if PLATFORM(MAC)
+    setNoopInputMuteStateChangeHandler(audioApplication, false);
+#endif
+
+    [[NSNotificationCenter defaultCenter] removeObserver:listener];
+}
+#endif // HAVE(AVAUDIOAPPLICATION)
+
+#if PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
+static int speechActivityListenerCallback(AudioObjectID deviceID, UInt32, const AudioObjectPropertyAddress*, void*)
+{
+    CoreAudioSharedUnit::processVoiceActivityEvent(deviceID);
+    return 0;
+}
+
+static bool manageSpeechActivityListener(uint32_t deviceID, bool enable)
 {
     const AudioObjectPropertyAddress kVoiceActivityDetectionEnable {
         kAudioDevicePropertyVoiceActivityDetectionEnable,
@@ -56,7 +148,10 @@ static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
     };
     UInt32 shouldEnable = enable;
     auto error = AudioObjectSetPropertyData(deviceID, &kVoiceActivityDetectionEnable, 0, NULL, sizeof(UInt32), &shouldEnable);
-    RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable, error %d (%.4s)", (int)error, (char*)&error);
+    if (error) {
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable, error %d (%.4s)", (int)error, (char*)&error);
+        return false;
+    }
 
     const AudioObjectPropertyAddress kVoiceActivityDetectionState {
         kAudioDevicePropertyVoiceActivityDetectionState,
@@ -67,11 +162,12 @@ static void manageSpeechActivityListener(uint32_t deviceID, bool enable)
     if (!enable) {
         error = AudioObjectRemovePropertyListener(deviceID, &kVoiceActivityDetectionState, (AudioObjectPropertyListenerProc)speechActivityListenerCallback, NULL);
         RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to remove kVoiceActivityDetectionEnable listener, error %d (%.4s)", (int)error, (char*)&error);
-        return;
+        return !error;
     }
 
     error = AudioObjectAddPropertyListener(deviceID, &kVoiceActivityDetectionState, (AudioObjectPropertyListenerProc)speechActivityListenerCallback, NULL);
     RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit manageSpeechActivityListener unable to set kVoiceActivityDetectionEnable listener, error %d (%.4s)", (int)error, (char*)&error);
+    return !error;
 }
 
 void CoreAudioSharedUnit::processVoiceActivityEvent(AudioObjectID deviceID)
@@ -91,55 +187,75 @@ void CoreAudioSharedUnit::processVoiceActivityEvent(AudioObjectID deviceID)
     if (voiceDetected != 1)
         return;
 
-    CoreAudioSharedUnit::unit().voiceActivityDetected();
+    callOnMainRunLoop([] {
+        CoreAudioSharedUnit::singleton().voiceActivityDetected();
+    });
 }
 #endif // PLATFORM(MAC) && HAVE(VOICEACTIVITYDETECTION)
 
-void CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
+bool CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
 {
 #if HAVE(VOICEACTIVITYDETECTION)
 #if PLATFORM(MAC)
-    auto deviceID = CoreAudioSharedUnit::unit().captureDeviceID();
+    auto deviceID = CoreAudioSharedUnit::singleton().captureDeviceID();
     if (!deviceID) {
         if (auto err = defaultInputDevice(&deviceID))
-            return;
+            return false;
     }
-    manageSpeechActivityListener(deviceID, shouldEnable);
+    return manageSpeechActivityListener(deviceID, shouldEnable);
 #else
     const UInt32 outputBus = 0;
     AUVoiceIOMutedSpeechActivityEventListener listener = ^(AUVoiceIOSpeechActivityEvent event) {
-        if (event == kAUVoiceIOSpeechActivityHasStarted)
-            CoreAudioSharedUnit::unit().voiceActivityDetected();
+        if (event == kAUVoiceIOSpeechActivityHasStarted) {
+            callOnMainThread([] {
+                CoreAudioSharedUnit::singleton().voiceActivityDetected();
+            });
+        }
     };
 
-    set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, sizeof(AUVoiceIOMutedSpeechActivityEventListener));
+    auto err = set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, sizeof(AUVoiceIOMutedSpeechActivityEventListener));
+    RELEASE_LOG_ERROR_IF(err, WebRTC, "@@@@@ CoreAudioSharedInternalUnit::setVoiceActivityDetection failed activation, error %d (%.4s)", (int)err, (char*)&err);
+    return !err;
 #endif
 #else
     UNUSED_PARAM(shouldEnable);
+    return false;
 #endif // HAVE(VOICEACTIVITYDETECTION)
 }
 
-void CoreAudioSharedUnit::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
+void CoreAudioSharedUnit::setMuteStatusChangedCallback(Function<void(bool)>&& callback)
 {
-    setVoiceActivityListenerCallback(WTFMove(callback));
+    if (!m_muteStatusChangedCallback && !callback)
+        return;
 
-    if (!m_ioUnit) {
-        m_shouldSetVoiceActivityListener = true;
+    ASSERT(!!m_muteStatusChangedCallback != !!callback);
+    m_muteStatusChangedCallback = WTFMove(callback);
+
+#if HAVE(AVAUDIOAPPLICATION)
+    if (!m_muteStatusChangedCallback) {
+        [m_inputMuteChangeListener stop];
+        m_inputMuteChangeListener = nullptr;
         return;
     }
 
-    m_ioUnit->setVoiceActivityDetection(true);
+    m_inputMuteChangeListener = adoptNS([[WebCoreAudioInputMuteChangeListener alloc] init]);
+    [m_inputMuteChangeListener start];
+#endif
 }
 
-void CoreAudioSharedUnit::disableMutedSpeechActivityEventListener()
+void CoreAudioSharedUnit::setMutedState(bool isMuted)
 {
-    setVoiceActivityListenerCallback({ });
-    if (!m_ioUnit) {
-        m_shouldSetVoiceActivityListener = false;
+#if HAVE(AVAUDIOAPPLICATION)
+    auto *audioApplication = getSharedAVAudioApplication();
+    if (!audioApplication)
         return;
-    }
 
-    m_ioUnit->setVoiceActivityDetection(false);
+    NSError *error = nil;
+    [audioApplication setInputMuted:isMuted error:&error];
+    RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit::setMutedState failed due to error: %@.", error.localizedDescription);
+#else
+    UNUSED_PARAM(isMuted);
+#endif
 }
 
 } // namespace WebCore

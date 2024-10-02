@@ -73,3 +73,4 @@ enum class WebKit::PrivateRelayed : bool
 enum class WebKit::ContentAsStringIncludesChildFrames : bool
 enum class WebKit::CallDownloadDidStart : bool
 enum class WebKit::AllowOverwrite : bool
+enum class WebKit::UseDownloadPlaceholder : bool

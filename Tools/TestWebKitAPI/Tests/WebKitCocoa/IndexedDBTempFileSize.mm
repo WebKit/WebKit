@@ -82,7 +82,7 @@ TEST(IndexedDB, IndexedDBTempFileSize)
 
     // Do some IndexedDB operations to generate WAL file.
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    RetainPtr request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBTempFileSize-1" withExtension:@"html"]];
     [webView loadRequest:request.get()];
 
     TestWebKitAPI::Util::waitForConditionWithLogging([&] {
@@ -99,7 +99,7 @@ TEST(IndexedDB, IndexedDBTempFileSize)
 
     // Open the same database again.
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBTempFileSize-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBTempFileSize-2" withExtension:@"html"]];
 
     receivedScriptMessage = false;
     [webView loadRequest:request.get()];

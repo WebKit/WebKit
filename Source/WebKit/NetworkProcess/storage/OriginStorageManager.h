@@ -57,7 +57,7 @@ class StorageAreaRegistry;
 enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
-class OriginStorageManager final : public CanMakeWeakPtr<OriginStorageManager>, public CanMakeCheckedPtr<OriginStorageManager> {
+class OriginStorageManager final : public CanMakeWeakPtr<OriginStorageManager>, public CanMakeThreadSafeCheckedPtr<OriginStorageManager> {
     WTF_MAKE_TZONE_ALLOCATED(OriginStorageManager);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OriginStorageManager);
 public:

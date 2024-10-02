@@ -1797,8 +1797,10 @@ void GStreamerMediaEndpoint::gatherStatsForLogging()
             return;
 
         auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
-        auto stats = holder->endPoint->preprocessStats(nullptr, reply);
-        holder->endPoint->onStatsDelivered(WTFMove(stats));
+        callOnMainThreadAndWait([holder, reply] {
+            auto stats = holder->endPoint->preprocessStats(nullptr, reply);
+            holder->endPoint->onStatsDelivered(WTFMove(stats));
+        });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
 }
 
@@ -1816,10 +1818,11 @@ private:
 
 GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<GstPad>& pad, const GstStructure* stats)
 {
+    ASSERT(isMainThread());
     GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
     auto mergeStructureInAdditionalStats = [&](const GstStructure* stats) {
         gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto* resultStructure = static_cast<GstStructure*>(userData);
+            auto resultStructure = GST_STRUCTURE_CAST(userData);
             gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
             return TRUE;
         }, additionalStats.get());
@@ -1896,6 +1899,13 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
         default:
             break;
         };
+
+        auto timestamp = gstStructureGet<double>(structure.get(), "timestamp"_s);
+        if (LIKELY(timestamp)) {
+            auto newTimestamp = StatsTimestampConverter::singleton().convertFromMonotonicTime(Seconds::fromMilliseconds(*timestamp));
+            gst_structure_set(structure.get(), "timestamp", G_TYPE_DOUBLE, newTimestamp.microseconds(), nullptr);
+        }
+
         gst_value_set_structure(value, structure.get());
         return TRUE;
     }, additionalStats.get());

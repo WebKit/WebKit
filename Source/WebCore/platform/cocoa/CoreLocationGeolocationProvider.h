@@ -39,7 +39,7 @@ class GeolocationPositionData;
 class RegistrableDomain;
 
 class WEBCORE_EXPORT CoreLocationGeolocationProvider {
-    WTF_MAKE_TZONE_ALLOCATED(CoreLocationGeolocationProvider);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(CoreLocationGeolocationProvider, WEBCORE_EXPORT);
 public:
     class Client {
     public:

@@ -238,7 +238,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMathMLElem
     if (!isMathRoot())
         return std::nullopt;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (!children.size())
         return std::nullopt;
 
@@ -252,7 +252,7 @@ AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
     if (!isMathRoot() || isMathSquareRoot())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size() < 2)
         return nullptr;
 
@@ -264,7 +264,7 @@ AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
     if (!isMathFraction())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size() != 2)
         return nullptr;
 
@@ -276,7 +276,7 @@ AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
     if (!isMathFraction())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size() != 2)
         return nullptr;
 
@@ -288,7 +288,7 @@ AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
     if (!isMathUnderOver() || !node())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size() < 2)
         return nullptr;
 
@@ -303,7 +303,7 @@ AXCoreObject* AccessibilityMathMLElement::mathOverObject()
     if (!isMathUnderOver() || !node())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
 
     if (children.size() >= 2 && node()->hasTagName(MathMLNames::moverTag))
         return children[1].get();
@@ -319,7 +319,7 @@ AXCoreObject* AccessibilityMathMLElement::mathBaseObject()
     if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     // The base object in question is always the first child.
     if (children.size() > 0)
         return children[0].get();
@@ -332,7 +332,7 @@ AXCoreObject* AccessibilityMathMLElement::mathSubscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     if (children.size() < 2)
         return nullptr;
 
@@ -347,7 +347,7 @@ AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
 
-    const auto& children = this->children();
+    const auto& children = this->unignoredChildren();
     unsigned count = children.size();
 
     if (count >= 2 && node()->hasTagName(MathMLNames::msupTag))

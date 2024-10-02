@@ -72,6 +72,92 @@ ALWAYS_INLINE bool JSString::equalInline(JSGlobalObject* globalObject, JSString*
     return WTF::equal(str1, str2, length);
 }
 
+JSString* JSString::tryReplaceOneCharImpl(JSGlobalObject* globalObject, UChar search, JSString* replacement, uint8_t* stackLimit, bool& found)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+        return nullptr; // Stack overflow
+
+    if (this->isNonSubstringRope()) {
+        JSRopeString* rope = static_cast<JSRopeString*>(this);
+        JSString* oldFiber0 = rope->fiber0();
+        JSString* oldFiber1 = rope->fiber1();
+        JSString* oldFiber2 = rope->fiber2();
+
+        ASSERT(oldFiber0);
+        JSString* newFiber0 = oldFiber0->tryReplaceOneCharImpl(globalObject, search, replacement, stackLimit, found);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (UNLIKELY(!newFiber0))
+            return nullptr;
+        if (found)
+            RELEASE_AND_RETURN(scope, jsString(globalObject, newFiber0, oldFiber1, oldFiber2));
+
+        if (oldFiber1) {
+            JSString* newFiber1 = oldFiber1->tryReplaceOneCharImpl(globalObject, search, replacement, stackLimit, found);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (UNLIKELY(!newFiber1))
+                return nullptr;
+            if (found)
+                RELEASE_AND_RETURN(scope, jsString(globalObject, oldFiber0, newFiber1, oldFiber2));
+        }
+
+        if (oldFiber2) {
+            JSString* newFiber2 = oldFiber2->tryReplaceOneCharImpl(globalObject, search, replacement, stackLimit, found);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (UNLIKELY(!newFiber2))
+                return nullptr;
+            if (found)
+                RELEASE_AND_RETURN(scope, jsString(globalObject, oldFiber0, oldFiber1, newFiber2));
+        }
+
+        return this; // Not found.
+    }
+
+    auto thisView = this->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    size_t index = thisView->find(search);
+    if (index == WTF::notFound)
+        return this; // Not found.
+    found = true;
+
+    // Case 1: The matched character is the only character in the string.
+    unsigned length = thisView->length();
+    if (length == 1)
+        return replacement;
+
+    // Case 2: The matched character is the last character in the string.
+    JSString* left = nullptr;
+    if (index) {
+        left = jsSubstring(globalObject, this, 0, index);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        // There is a match at this point, then length must be larger than zero.
+        if (index == length - 1)
+            RELEASE_AND_RETURN(scope, jsString(globalObject, left, replacement));
+    }
+
+    // Case 3: The matched character is the first character in the string.
+    size_t rightStart = index + 1; // At this point, the index must be less than length - 1.
+    JSString* right = jsSubstring(globalObject, this, rightStart, length - rightStart);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!index)
+        RELEASE_AND_RETURN(scope, jsString(globalObject, replacement, right));
+
+    // Case 4: The matched character is in the middle of the string.
+    RELEASE_AND_RETURN(scope, jsString(globalObject, left, replacement, right));
+}
+
+JSString* JSString::tryReplaceOneChar(JSGlobalObject* globalObject, UChar search, JSString* replacement)
+{
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(globalObject->vm().softStackLimit());
+    bool found = false;
+    if (JSString* result = tryReplaceOneCharImpl(globalObject, search, replacement, stackLimit, found); result && found)
+        return result;
+    return nullptr;
+}
+
 template<typename StringType>
 inline JSValue jsMakeNontrivialString(VM& vm, StringType&& string)
 {

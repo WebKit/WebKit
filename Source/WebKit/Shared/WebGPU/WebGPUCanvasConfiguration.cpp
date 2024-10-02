@@ -38,10 +38,8 @@ namespace WebKit::WebGPU {
 std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
     auto device = convertToBacking(canvasConfiguration.device);
-    if (!device)
-        return std::nullopt;
 
-    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
+    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.toneMappingMode, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
 }
 
 std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
@@ -50,7 +48,7 @@ std::optional<WebCore::WebGPU::CanvasConfiguration> ConvertFromBackingContext::c
     if (!device)
         return std::nullopt;
 
-    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
+    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.toneMappingMode, canvasConfiguration.compositingAlphaMode, canvasConfiguration.reportValidationErrors } };
 }
 
 } // namespace WebKit

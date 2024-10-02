@@ -64,13 +64,21 @@ using namespace PAL;
 
 namespace WebCore {
 
-class DummyServiceWorkerThreadProxy : public WorkerObjectProxy {
+class DummyServiceWorkerThreadProxy final : public WorkerObjectProxy, public CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DummyServiceWorkerThreadProxy);
 public:
     static DummyServiceWorkerThreadProxy& shared()
     {
         static NeverDestroyed<DummyServiceWorkerThreadProxy> proxy;
         return proxy;
     }
+
+    // CanMakeCheckedPtr.
+    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::incrementPtrCount(); }
+    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::decrementPtrCount(); }
 
 private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };

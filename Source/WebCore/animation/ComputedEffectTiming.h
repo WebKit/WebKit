@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationEffectPhase.h"
+#include "CSSNumericValue.h"
 #include "EffectTiming.h"
 #include "TimingFunction.h"
 #include "WebAnimationTypes.h"
@@ -34,12 +35,12 @@ namespace WebCore {
 
 struct ComputedEffectTiming : EffectTiming {
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    MarkableDouble localTime;
+    std::optional<CSSNumberishTime> localTime;
     MarkableDouble simpleIterationProgress;
     MarkableDouble progress;
     MarkableDouble currentIteration;
-    double endTime;
-    double activeDuration;
+    CSSNumberishTime endTime;
+    CSSNumberishTime activeDuration;
     TimingFunction::Before before { TimingFunction::Before::No };
 };
 

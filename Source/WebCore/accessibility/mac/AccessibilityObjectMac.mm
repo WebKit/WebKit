@@ -214,7 +214,7 @@ static bool isEmptyGroup(AccessibilityObject& object)
         return false;
 
     return [object.rolePlatformString() isEqual:NSAccessibilityGroupRole]
-        && object.children().isEmpty()
+        && object.unignoredChildren().isEmpty()
         && ![renderWidgetChildren(object) count];
 }
 

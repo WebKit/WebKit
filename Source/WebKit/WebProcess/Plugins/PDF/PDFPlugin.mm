@@ -32,9 +32,10 @@
 #import "FrameInfoData.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
-#import "PDFAnnotationTextWidgetDetails.h"
+#import "PDFAnnotationTypeHelpers.h"
 #import "PDFContextMenu.h"
 #import "PDFIncrementalLoader.h"
+#import "PDFKitSPI.h"
 #import "PDFLayerControllerSPI.h"
 #import "PDFPluginAnnotation.h"
 #import "PDFPluginPasswordField.h"
@@ -505,6 +506,7 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
+using namespace WebKit::PDFAnnotationTypeHelpers;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFPlugin);
 
@@ -1208,12 +1210,10 @@ void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotat
             m_activeAnnotation->commit();
 
         if (annotation) {
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+            if (annotationIsWidgetOfType(annotation.get(), WidgetType::Text) && [annotation isReadOnly]) {
                 m_activeAnnotation = nullptr;
                 return;
             }
-            ALLOW_DEPRECATED_DECLARATIONS_END
 
             auto activeAnnotation = PDFPluginAnnotation::create(annotation.get(), this);
             m_activeAnnotation = activeAnnotation.get();

@@ -184,9 +184,18 @@ public:
 
     FixedVector<OptimizingCallLinkInfo>& callLinkInfos() { return m_callLinkInfos; }
 
+    UpperTierExecutionCounter& tierUpCounter() { return m_tierUpCounter; }
+    const UpperTierExecutionCounter& tierUpCounter() const { return m_tierUpCounter; }
+
+    uint8_t neverExecutedEntry() const { return m_neverExecutedEntry; }
+
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(JITData, m_globalObject); }
     static constexpr ptrdiff_t offsetOfStackOffset() { return OBJECT_OFFSETOF(JITData, m_stackOffset); }
     static constexpr ptrdiff_t offsetOfDummyArrayProfile() { return OBJECT_OFFSETOF(JITData, m_dummyArrayProfile); }
+    static constexpr ptrdiff_t offsetOfTierUpCounter() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_counter); }
+    static constexpr ptrdiff_t offsetOfTierUpActiveThreshold() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_activeThreshold); }
+    static constexpr ptrdiff_t offsetOfTierUpTotalCount() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_totalCount); }
+    static constexpr ptrdiff_t offsetOfNeverExecutedEntry() { return OBJECT_OFFSETOF(JITData, m_neverExecutedEntry); }
 
     explicit JITData(unsigned stubInfoSize, unsigned poolSize, const JITCode&, ExitVector&&);
 
@@ -202,10 +211,12 @@ private:
     JSGlobalObject* m_globalObject { nullptr }; // This is not marked since owner CodeBlock will mark JSGlobalObject.
     intptr_t m_stackOffset { 0 };
     ArrayProfile m_dummyArrayProfile { };
+    UpperTierExecutionCounter m_tierUpCounter;
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     ExitVector m_exits;
     uint8_t m_isInvalidated { 0 };
+    uint8_t m_neverExecutedEntry { 1 };
 };
 
 class JITCode final : public DirectJITCode {
@@ -285,10 +296,6 @@ public:
     LinkerIR m_linkerIR;
 
 #if ENABLE(FTL_JIT)
-    uint8_t neverExecutedEntry { 1 };
-
-    UpperTierExecutionCounter tierUpCounter;
-
     // For osrEntryPoint that are in inner loop, this maps their bytecode to the bytecode
     // of the outerloop entry points in order (from innermost to outermost).
     //

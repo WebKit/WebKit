@@ -63,7 +63,7 @@ public:
 
     void writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
-    MemoryBackingStoreTransaction* writeTransaction() { return m_writeTransaction; }
+    MemoryBackingStoreTransaction* writeTransaction();
 
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
     IDBError deleteIndex(MemoryBackingStoreTransaction&, uint64_t indexIdentifier);
@@ -119,7 +119,7 @@ private:
 
     IDBObjectStoreInfo m_info;
 
-    MemoryBackingStoreTransaction* m_writeTransaction { nullptr };
+    CheckedPtr<MemoryBackingStoreTransaction> m_writeTransaction;
     uint64_t m_keyGeneratorValue { 1 };
 
     std::unique_ptr<KeyValueMap> m_keyValueStore;

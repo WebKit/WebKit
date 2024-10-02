@@ -38,6 +38,9 @@ public:
     {
     }
 
+    void ref() const final;
+    void deref() const final;
+
     void clearObject()
     {
         m_object = nil;

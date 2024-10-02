@@ -44,7 +44,10 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
 {
     process().markProcessAsRecentlyUsed();
-    process().send(Messages::WebPage::CreateProvisionalFrame({ frame.layerHostingContextIdentifier() }, frame.frameID()), frame.page()->webPageIDInProcess(process()));
+    process().send(Messages::WebPage::CreateProvisionalFrame(ProvisionalFrameCreationParameters {
+        frame.layerHostingContextIdentifier(),
+        frame.effectiveSandboxFlags()
+    }, frame.frameID()), frame.page()->webPageIDInProcess(process()));
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()

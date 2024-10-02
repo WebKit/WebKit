@@ -65,12 +65,11 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     : ActiveDOMObject(&context)
     , m_state(state)
     , m_descriptor(descriptor)
+    , m_mainThreadPermissionObserverIdentifier(MainThreadPermissionObserverIdentifier::generate())
 {
     RefPtr origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     ClientOrigin clientOrigin { context.topOrigin().data(), WTFMove(originData) };
-
-    m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generate();
 
     ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
         auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));
@@ -80,9 +79,6 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
 
 PermissionStatus::~PermissionStatus()
 {
-    if (!m_mainThreadPermissionObserverIdentifier)
-        return;
-
     callOnMainThread([identifier = m_mainThreadPermissionObserverIdentifier] {
         allMainThreadPermissionObservers().remove(identifier);
     });

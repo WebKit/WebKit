@@ -44,7 +44,7 @@ class ResourceResponse;
 
 class WorkerScriptLoaderClient : public CanMakeWeakPtr<WorkerScriptLoaderClient> {
 public:
-    virtual void didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse&) = 0;
+    virtual void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) = 0;
     virtual void notifyFinished(ScriptExecutionContextIdentifier) = 0;
 
 protected:

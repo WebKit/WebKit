@@ -805,12 +805,6 @@ namespace JSC {
 
         int jumpTarget(const JSInstruction*, int target);
 
-#if ENABLE(DFG_JIT)
-        void emitEnterOptimizationCheck();
-#else
-        void emitEnterOptimizationCheck() { }
-#endif
-
 #ifndef NDEBUG
         void printBytecodeOperandTypes(VirtualRegister src1, VirtualRegister src2);
 #endif

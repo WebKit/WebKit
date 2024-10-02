@@ -185,8 +185,15 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
 
 void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle.lineClamp().isNone())
+    auto shouldClearLineClamp = [&] {
+        auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+        if (!oldStyle || oldStyle->lineClamp().isNone())
+            return false;
+        if (newStyle.lineClamp().isNone())
+            return true;
+        return newStyle.boxOrient() == BoxOrient::Horizontal;
+    };
+    if (shouldClearLineClamp())
         clearLineClamp();
     RenderBlock::styleWillChange(diff, newStyle);
 }
@@ -724,7 +731,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             if (child->isOutOfFlowPositioned()) {
                 child->containingBlock()->insertPositionedObject(*child);
                 RenderLayer* childLayer = child->layer();
-                childLayer->setStaticInlinePosition(borderStart() + paddingStart()); // FIXME: Not right for regions.
+                childLayer->setStaticInlinePosition(borderAndPaddingStart()); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != height()) {
                     childLayer->setStaticBlockPosition(height());
                     if (child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))

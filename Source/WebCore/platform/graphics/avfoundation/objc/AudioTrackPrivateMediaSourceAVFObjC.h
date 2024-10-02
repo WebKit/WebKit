@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AudioTrackPrivateAVF.h"
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -37,6 +38,7 @@ class AVTrackPrivateAVFObjCImpl;
 class SourceBufferPrivateAVFObjC;
 
 class AudioTrackPrivateMediaSourceAVFObjC final : public AudioTrackPrivateAVF {
+    WTF_MAKE_TZONE_ALLOCATED(AudioTrackPrivateMediaSourceAVFObjC);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaSourceAVFObjC)
 public:
     static Ref<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack *track)

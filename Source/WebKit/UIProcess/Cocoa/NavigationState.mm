@@ -122,6 +122,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateHistoryClient, NavigationState::HistoryClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateNavigationClient, NavigationState::NavigationClient);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)
@@ -148,6 +150,16 @@ NavigationState::~NavigationState()
         navigationStates().remove(*page);
         page->pageLoadState().removeObserver(*this);
     }
+}
+
+void NavigationState::ref() const
+{
+    [m_webView.get() retain];
+}
+
+void NavigationState::deref() const
+{
+    [m_webView.get() release];
 }
 
 NavigationState* NavigationState::fromWebPage(WebPageProxy& webPageProxy)

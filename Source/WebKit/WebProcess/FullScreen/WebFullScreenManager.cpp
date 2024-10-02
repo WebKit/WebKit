@@ -144,7 +144,7 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
         return;
 
 #if !RELEASE_LOG_DISABLED
-    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : nullptr; };
+    auto logIdentifierForElement = [] (auto* element) { return element ? element->logIdentifier() : 0; };
 #endif
     ALWAYS_LOG(LOGIDENTIFIER, "old element ", logIdentifierForElement(m_pipStandbyElement.get()), ", new element ", logIdentifierForElement(pipStandbyElement));
 
@@ -156,11 +156,6 @@ void WebFullScreenManager::setPIPStandbyElement(WebCore::HTMLVideoElement* pipSt
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(true);
 #endif
-}
-
-void WebFullScreenManager::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    didReceiveWebFullScreenManagerMessage(connection, decoder);
 }
 
 bool WebFullScreenManager::supportsFullScreenForElement(const WebCore::Element& element, bool withKeyboard)

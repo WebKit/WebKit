@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Navigation aborted
 
-FAIL scroll: scroll() should throw after preventDefault assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS scroll: scroll() should throw after preventDefault
 

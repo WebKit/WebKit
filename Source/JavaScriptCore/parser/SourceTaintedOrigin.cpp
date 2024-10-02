@@ -45,21 +45,27 @@ String sourceTaintedOriginToString(SourceTaintedOrigin taintedness)
     return { };
 }
 
-SourceTaintedOrigin sourceTaintedOriginFromStack(VM& vm, CallFrame* callFrame)
+std::pair<SourceTaintedOrigin, URL> sourceTaintedOriginFromStack(VM& vm, CallFrame* callFrame)
 {
     if (!vm.mightBeExecutingTaintedCode())
-        return SourceTaintedOrigin::Untainted;
+        return { SourceTaintedOrigin::Untainted, { } };
     SourceTaintedOrigin result = SourceTaintedOrigin::IndirectlyTaintedByHistory;
 
+    URL sourceURL;
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) -> IterationStatus {
         if (!visitor->codeBlock() || !visitor->codeBlock()->couldBeTainted())
             return IterationStatus::Continue;
 
-        result = std::max(result, visitor->codeBlock()->source().provider()->sourceTaintedOrigin());
-        return result == SourceTaintedOrigin::KnownTainted ? IterationStatus::Done : IterationStatus::Continue;
+        auto* sourceProvider = visitor->codeBlock()->source().provider();
+        result = std::max(result, sourceProvider->sourceTaintedOrigin());
+        if (result != SourceTaintedOrigin::KnownTainted)
+            return IterationStatus::Continue;
+
+        sourceURL = sourceProvider->sourceOrigin().url();
+        return IterationStatus::Done;
     });
 
-    return result;
+    return { result, WTFMove(sourceURL) };
 }
 
 SourceTaintedOrigin computeNewSourceTaintedOriginFromStack(VM& vm, CallFrame* callFrame)

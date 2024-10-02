@@ -38,10 +38,6 @@
 #include "unix/BreakpadExceptionHandler.h"
 #endif
 
-#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX) && (!PLATFORM(PLAYSTATION) || USE(WPE_BACKEND_PLAYSTATION))
-#include "ProcessProviderLibWPE.h"
-#endif
-
 namespace WebKit {
 
 AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
@@ -54,26 +50,18 @@ AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
 // The command line is constructed in ProcessLauncher::launchProcess.
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {
-#if USE(GLIB) && OS(LINUX)
-    int minimumNumArgs = 4;
-#else
-    int minimumNumArgs = 3;
-#endif
+    int argIndex = 1; // Start from argv[1], since argv[0] is the program name.
 
-#if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX) && (!PLATFORM(PLAYSTATION) || USE(WPE_BACKEND_PLAYSTATION))
-    if (ProcessProviderLibWPE::singleton().isEnabled())
-        minimumNumArgs = 3;
-#endif
-
-    if (argc < minimumNumArgs)
+    // Ensure we have enough arguments for processIdentifier and connectionIdentifier
+    if (argc < argIndex + 2)
         return false;
 
-    if (auto processIdentifier = parseInteger<uint64_t>(span(argv[1])))
+    if (auto processIdentifier = parseInteger<uint64_t>(span(argv[argIndex++])))
         m_parameters.processIdentifier = LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
     else
         return false;
 
-    if (auto connectionIdentifier = parseInteger<int>(span(argv[2])))
+    if (auto connectionIdentifier = parseInteger<int>(span(argv[argIndex++])))
         m_parameters.connectionIdentifier = IPC::Connection::Identifier { *connectionIdentifier };
     else
         return false;
@@ -82,19 +70,24 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
         return false;
 
 #if USE(GLIB) && OS(LINUX)
-    if (minimumNumArgs == 4) {
-        auto pidSocket = parseInteger<int>(span(argv[3]));
-        if (!pidSocket || *pidSocket < 0)
+    // Parse pidSocket if available
+    if (argc > argIndex) {
+        auto pidSocket = parseInteger<int>(span(argv[argIndex]));
+        if (pidSocket && *pidSocket >= 0) {
+            IPC::sendPIDToPeer(*pidSocket);
+            RELEASE_ASSERT(!close(*pidSocket));
+            ++argIndex;
+        } else
             return false;
-
-        IPC::sendPIDToPeer(*pidSocket);
-        RELEASE_ASSERT(!close(*pidSocket));
     }
 #endif
 
 #if ENABLE(DEVELOPER_MODE)
-    if (argc > minimumNumArgs && argv[minimumNumArgs] && !strcmp(argv[minimumNumArgs], "--configure-jsc-for-testing"))
-        JSC::Config::configureForTesting();
+    // Check last remaining options for JSC testing
+    for (; argIndex < argc; ++argIndex) {
+        if (argv[argIndex] && !strcmp(argv[argIndex], "--configure-jsc-for-testing"))
+            JSC::Config::configureForTesting();
+    }
 #endif
 
     return true;

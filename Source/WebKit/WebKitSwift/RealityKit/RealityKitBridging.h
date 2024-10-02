@@ -39,14 +39,25 @@ typedef struct {
     simd_float3 translation;
 } WKEntityTransform;
 
+@protocol WKSRKEntityDelegate <NSObject>
+@optional
+- (void)entityAnimationPlaybackStateDidUpdate:(id)entity;
+@end
+
 @interface WKSRKEntity : NSObject
+@property (nonatomic, weak) id <WKSRKEntityDelegate> delegate;
 @property (nonatomic, readonly) simd_float3 boundingBoxExtents;
 @property (nonatomic, readonly) simd_float3 boundingBoxCenter;
 @property (nonatomic) WKEntityTransform transform;
 @property (nonatomic) float opacity;
+@property (nonatomic, readonly) NSTimeInterval duration;
+@property (nonatomic) bool loop;
+@property (nonatomic) float playbackRate;
+@property (nonatomic) bool paused;
+@property (nonatomic) NSTimeInterval currentTime;
 
 - (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;
-- (void)startAnimating;
+- (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
 @end
 
 NS_ASSUME_NONNULL_END

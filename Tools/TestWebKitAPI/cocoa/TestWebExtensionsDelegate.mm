@@ -140,6 +140,30 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"action.showPopup() not implemented" }]);
 }
 
+- (void)_webExtensionController:(WKWebExtensionController *)controller presentSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_presentSidebar) {
+        _presentSidebar(sidebar);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"sidebarAction.open() / sidePanel.open() not implemented" }]);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller closeSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_closeSidebar) {
+        _closeSidebar(sidebar);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"sidebarAction.close() not implemented" }]);
+}
+
+- (void)_webExtensionController:(WKWebExtensionController *)controller didUpdateSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context
+{
+    if (_didUpdateSidebar)
+        _didUpdateSidebar(sidebar);
+}
+
 @end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

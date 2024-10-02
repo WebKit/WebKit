@@ -26,6 +26,7 @@
 #include "CSSPropertyParserConsumer+Primitives.h"
 
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserOptions.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {

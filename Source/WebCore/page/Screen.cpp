@@ -55,9 +55,17 @@ Screen::Screen(LocalDOMWindow& window)
 
 Screen::~Screen() = default;
 
-static bool fingerprintingProtectionsEnabled(const LocalFrame& frame)
+static bool shouldApplyScreenFingerprintingProtections(const LocalFrame& frame)
 {
-    return frame.mainFrame().advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
+    RefPtr page = frame.protectedPage();
+    if (!page)
+        return false;
+
+    RefPtr document = frame.document();
+    if (!document)
+        return false;
+
+    return page->shouldApplyScreenFingerprintingProtections(*document);
 }
 
 static bool shouldFlipScreenDimensions(const LocalFrame& frame)
@@ -113,7 +121,7 @@ int Screen::availLeft() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::AvailLeft);
 
-    if (fingerprintingProtectionsEnabled(*frame))
+    if (shouldApplyScreenFingerprintingProtections(*frame))
         return 0;
 
     return static_cast<int>(screenAvailableRect(frame->protectedView().get()).x());
@@ -128,7 +136,7 @@ int Screen::availTop() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::AvailTop);
 
-    if (fingerprintingProtectionsEnabled(*frame))
+    if (shouldApplyScreenFingerprintingProtections(*frame))
         return 0;
 
     return static_cast<int>(screenAvailableRect(frame->protectedView().get()).y());
@@ -143,7 +151,7 @@ int Screen::availHeight() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::AvailHeight);
 
-    if (fingerprintingProtectionsEnabled(*frame))
+    if (shouldApplyScreenFingerprintingProtections(*frame))
         return static_cast<int>(frame->screenSize().height());
 
     return static_cast<int>(screenAvailableRect(frame->protectedView().get()).height());
@@ -158,7 +166,7 @@ int Screen::availWidth() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->protectedDocument(), ScreenAPIsAccessed::AvailWidth);
 
-    if (fingerprintingProtectionsEnabled(*frame))
+    if (shouldApplyScreenFingerprintingProtections(*frame))
         return static_cast<int>(frame->screenSize().width());
 
     return static_cast<int>(screenAvailableRect(frame->protectedView().get()).width());

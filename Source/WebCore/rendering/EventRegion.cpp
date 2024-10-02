@@ -150,9 +150,9 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
         }
 
         if (interactionRegion->type == InteractionRegion::Type::Guard) {
-            if (m_elementGuardRects.contains(rectForTracking))
+            if (m_guardRects.contains(rectForTracking))
                 return;
-            m_elementGuardRects.add(rectForTracking);
+            m_guardRects.set(rectForTracking, Inflated::No);
 
             m_interactionRegions.append(*interactionRegion);
             return;
@@ -184,11 +184,14 @@ void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const F
 
         auto guardRect = guardRectForRegionBounds(*interactionRegion);
         if (guardRect) {
-            m_interactionRegions.append({
-                InteractionRegion::Type::Guard,
-                interactionRegion->elementIdentifier,
-                guardRect.value()
-            });
+            auto result = m_guardRects.add(enclosingIntRect(guardRect.value()), Inflated::Yes);
+            if (result.isNewEntry) {
+                m_interactionRegions.append({
+                    InteractionRegion::Type::Guard,
+                    interactionRegion->elementIdentifier,
+                    guardRect.value()
+                });
+            }
         }
 
         m_interactionRegions.append(*interactionRegion);
@@ -266,14 +269,12 @@ void EventRegionContext::convertGuardContainersToInterationIfNeeded(float minimu
         if (region.type != InteractionRegion::Type::Guard)
             continue;
 
-        // FIXME: This seems like it could be structured so it doesn't need four hash lookups in the worst case.
         if (!m_discoveredRegionsByElement.contains(region.elementIdentifier)) {
             auto rectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
-            if (!m_interactionRectsAndContentHints.contains(rectForTracking)) {
+            auto result = m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
+            if (result.isNewEntry) {
                 region.type = InteractionRegion::Type::Interaction;
                 region.cornerRadius = minimumCornerRadius;
-
-                m_interactionRectsAndContentHints.add(rectForTracking, region.contentHint);
                 m_discoveredRegionsByElement.add(region.elementIdentifier, Vector<InteractionRegion>({ region }));
             }
         }
@@ -352,7 +353,8 @@ void EventRegionContext::removeSuperfluousInteractionRegions()
             return m_containersToRemove.contains(region.elementIdentifier);
 
         auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
-        if (m_elementGuardRects.contains(guardRect))
+        auto guardIterator = m_guardRects.find(guardRect);
+        if (guardIterator != m_guardRects.end() && guardIterator->value == Inflated::No)
             return false;
         for (const auto& interactionRect : m_interactionRectsAndContentHints.keys()) {
             auto intersection = interactionRect;

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2012-2024 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 import lldb
 import string
 import struct
+import re
 
 
 def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enumerator_value_to_name_map, flags_mask=None):
@@ -57,6 +58,7 @@ def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enume
 
 def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('command script add -f lldb_webkit.btjs btjs')
+    debugger.HandleCommand('command script add -f lldb_webkit.llintLocate llintLocate')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFString_SummaryProvider WTF::String')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringImpl_SummaryProvider WTF::StringImpl')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringView_SummaryProvider WTF::StringView')
@@ -306,8 +308,9 @@ def btjs(debugger, command, result, internal_dict):
     addressFormat = '#0{width}x'.format(width=target.GetAddressByteSize() * 2 + 2)
     process = target.GetProcess()
     thread = process.GetSelectedThread()
+    jscModule = target.module["JavaScriptCore"]
 
-    if target.FindFunctions("JSC::CallFrame::describeFrame").GetSize() or target.FindFunctions("_ZN3JSC9CallFrame13describeFrameEv").GetSize():
+    if jscModule.FindSymbol("JSC::CallFrame::describeFrame").GetSize() or jscModule.FindSymbol("_ZN3JSC9CallFrame13describeFrameEv").GetSize():
         annotateJSFrames = True
     else:
         annotateJSFrames = False
@@ -327,15 +330,16 @@ def btjs(debugger, command, result, internal_dict):
     # FIXME: GetStopDescription needs to be pass a stupidly large length because lldb has weird utf-8 encoding errors if it's too small. See: rdar://problem/57980599
     print(threadFormat.format(num=thread.GetIndexID(), tid=thread.GetThreadID(), pcAddr=thread.GetFrameAtIndex(0).GetPC(), queueName=thread.GetQueueName(), stopReason=thread.GetStopDescription(300)))
 
+    llintStart = jscModule.FindSymbol("jsc_llint_begin").addr.GetLoadAddress(target)
+    llintEnd = jscModule.FindSymbol("jsc_llint_end").addr.GetLoadAddress(target)
+
     for frame in thread:
         if backtraceDepth < 1:
             break
 
         backtraceDepth = backtraceDepth - 1
 
-        function = frame.GetFunction()
-
-        if annotateJSFrames and not frame or not frame.GetSymbol() or frame.GetSymbol().GetName() == "llint_entry":
+        if annotateJSFrames and (not frame.GetSymbol() or (llintStart < frame.pc and frame.pc < llintEnd)):
             callFrame = frame.GetSP()
             JSFrameDescription = frame.EvaluateExpression("((JSC::CallFrame*)0x%x)->describeFrame()" % frame.GetFP()).GetSummary()
             if not JSFrameDescription:
@@ -346,6 +350,49 @@ def btjs(debugger, command, result, internal_dict):
                 print(frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription))
                 continue
         print('    %s' % frame)
+
+
+# FIXME: We should just use the builtin bisect_right but at the time of writing the latest clang ships with Python 3.9.6 and key was added in 3.10.0
+def bisect_right(a, x, key=lambda x: x):
+    lo = 0
+    hi = len(a)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if x < key(a[mid]):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+
+# FIXME: This seems like we should be able to do this with a formatter https://lldb.llvm.org/use/formatting.html
+# If we did we could also add info about what JIT location we're at.
+# FIXME: Once rdar://133349487 is resolved we hopefully shouldn't need this anymore.
+def llintLocate(debugger, commond, result, internal_dict):
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    jscModule = target.module["JavaScriptCore"]
+
+    frame = thread.GetFrameAtIndex(0)
+    pc = frame.GetPC()
+
+    if frame.GetSymbol() and frame.GetSymbol().GetName() == "jsc_llint_begin":
+        llintRegex = re.compile("^op_|^llint_|^jsc_|^wasm|^ipint_")
+        llintSymbols = jscModule.symbol[llintRegex]
+
+        index = bisect_right(llintSymbols, pc, key=lambda symbol: symbol.addr.GetLoadAddress(target))
+
+        closestSymbol = llintSymbols[index]
+        # if we're exactly on a symbol then bisect_right will return the next symbol. In that case we want the "previous" symbol.
+        if not closestSymbol or closestSymbol.addr.GetLoadAddress(target) > pc:
+            closestSymbol = llintSymbols[index - 1]
+        if closestSymbol:
+            print("{name} at {pcStart}".format(name=closestSymbol.name, pcStart=closestSymbol.addr))
+            return
+
+    print("not in llint")
+
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):

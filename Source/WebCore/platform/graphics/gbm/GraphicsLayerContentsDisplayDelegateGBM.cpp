@@ -31,12 +31,12 @@
 #include "DMABufBuffer.h"
 #include "GLFence.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 
 GraphicsLayerContentsDisplayDelegateGBM::GraphicsLayerContentsDisplayDelegateGBM(bool isOpaque)
-    : GraphicsLayerContentsDisplayDelegateTextureMapper(TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::WebGL))
+    : GraphicsLayerContentsDisplayDelegateTextureMapper(TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::WebGL))
     , m_isOpaque(isOpaque)
 {
     m_proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
@@ -47,9 +47,7 @@ GraphicsLayerContentsDisplayDelegateGBM::GraphicsLayerContentsDisplayDelegateGBM
         if (!m_isOpaque)
             flags.add(TextureMapperFlags::ShouldBlend);
 
-        Locker locker { proxy.lock() };
-        auto layerBuffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_buffer }, flags, WTFMove(m_fence));
-        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+        proxy.pushNextBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_buffer }, flags, WTFMove(m_fence)));
     });
 }
 

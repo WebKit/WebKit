@@ -26,6 +26,7 @@
 #pragma once
 
 #include <span>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
@@ -40,9 +41,9 @@ struct WebTransportBidirectionalStreamConstructionParameters;
 
 class WEBCORE_EXPORT WebTransportSession {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual ~WebTransportSession();
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&) = 0;
     virtual void createOutgoingUnidirectionalStream(CompletionHandler<void(RefPtr<WritableStreamSink>&&)>&&) = 0;

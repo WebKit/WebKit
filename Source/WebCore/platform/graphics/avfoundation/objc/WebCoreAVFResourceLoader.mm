@@ -332,7 +332,7 @@ void WebCoreAVFResourceLoader::startLoading()
             return;
     }
 
-    m_platformMediaLoader = PlatformResourceMediaLoader::create(*this, parent->player()->createResourceLoader(), WTFMove(request));
+    m_platformMediaLoader = PlatformResourceMediaLoader::create(*this, parent->player()->mediaResourceLoader(), WTFMove(request));
     if (m_platformMediaLoader)
         return;
 

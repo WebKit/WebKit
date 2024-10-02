@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -124,7 +124,7 @@ DEAD_CODE_STRIPPING = YES;
 DEAD_CODE_STRIPPING[config=Debug] = NO;
 
 DEBUG_DEFINES = NDEBUG;
-DEBUG_DEFINES[config=Debug] = ;
+DEBUG_DEFINES[config=Debug] = $(WK_ENABLE_CONJECTURE_ASSERT_YES);
 
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL = 3;
 WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
@@ -161,10 +161,7 @@ WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
 JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework BrowserEngineCore;
 JSC_SEC_LD_FLAGS[sdk=macosx*] = -weak_framework BrowserEngineCore;
 JSC_SEC_LD_FLAGS[sdk=macosx13*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14.0*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14.1*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14.2*] = ;
-JSC_SEC_LD_FLAGS[sdk=macosx14.3*] = ;
+JSC_SEC_LD_FLAGS[sdk=macosx14*] = ;
 JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
 JSC_SEC_LD_FLAGS[sdk=watch*] = ;
 JSC_SEC_LD_FLAGS[sdk=xr*] = ;

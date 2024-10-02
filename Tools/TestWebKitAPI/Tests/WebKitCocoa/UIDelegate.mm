@@ -94,7 +94,7 @@ TEST(WebKit, WKWebViewIsPlayingAudio)
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
 {
-    if ([navigationAction.request.URL.absoluteString isEqualToString:[[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] absoluteString]])
+    if ([navigationAction.request.URL.absoluteString isEqualToString:[[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"] absoluteString]])
         done = true;
     decisionHandler(WKNavigationActionPolicyAllow);
 }
@@ -107,7 +107,7 @@ TEST(WebKit, WindowOpenWithoutUIDelegate)
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[NoUIDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadHTMLString:@"<script>window.open('simple2.html');window.location='simple.html'</script>" baseURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadHTMLString:@"<script>window.open('simple2.html');window.location='simple.html'</script>" baseURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]];
     TestWebKitAPI::Util::run(&done);
 }
 
@@ -1085,7 +1085,7 @@ TEST(WebKit, MouseMoveOverElementWithClosedWebView)
         gEventMonitorHandler([NSEvent mouseEventWithType:NSEventTypeMouseMoved location:linkLocation modifierFlags:0 timestamp:0 windowNumber:[[webView hostWindow] windowNumber] context:nil eventNumber:0 clickCount:0 pressure:0]);
         [webView removeFromSuperview];
 
-        [webView _removeFlagsChangedEventMonitorForTesting];
+        EXPECT_FALSE([webView _hasFlagsChangedEventMonitorForTesting]);
     }
 
     TestWebKitAPI::Util::runFor(10_ms);
@@ -1399,7 +1399,7 @@ TEST(WebKit, TabDoesNotTakeFocusFromEditableWebView)
 
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
 {
-    NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
     EXPECT_TRUE([data isEqualToData:[NSData dataWithContentsOfURL:pdfURL]]);
     EXPECT_STREQ([suggestedFilename UTF8String], "test.pdf");
     EXPECT_STREQ([mimeType UTF8String], "application/pdf");
@@ -1422,7 +1422,7 @@ TEST(WebKit, SaveDataToFile)
     auto delegate = adoptNS([[SaveDataToFileDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView setNavigationDelegate:delegate.get()];
-    NSURL *pdfURL = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
     [webView loadRequest:[NSURLRequest requestWithURL:pdfURL]];
     TestWebKitAPI::Util::run(&done);
 }

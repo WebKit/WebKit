@@ -89,7 +89,7 @@ public:
     OptionSet<DragDestinationAction> dragDestinationActionMask() const { return m_dragDestinationActionMask; }
     OptionSet<DragSourceAction> delegateDragSourceAction(const IntPoint& rootViewPoint);
 
-    Element* draggableElement(const LocalFrame*, Element* start, const IntPoint&, DragState&) const;
+    RefPtr<Element> draggableElement(const LocalFrame*, Element* start, const IntPoint&, DragState&) const;
     WEBCORE_EXPORT void dragEnded();
 
     WEBCORE_EXPORT void placeDragCaret(const IntPoint&);

@@ -168,8 +168,8 @@ void RunLoop::TimerBase::timerFired()
     fired();
 }
 
-RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
-    : m_runLoop(runLoop)
+RunLoop::TimerBase::TimerBase(Ref<RunLoop>&& runLoop)
+    : m_runLoop(WTFMove(runLoop))
 {
 }
 

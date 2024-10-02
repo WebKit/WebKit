@@ -27,42 +27,43 @@
 #include "CSSPropertyParserConsumer+IntegerDefinitions.h"
 
 #include "CSSCalcSymbolTable.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename IntType, IntegerValueRange integerRange>
-static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range)
+template<typename IntType, CSS::IntegerValueRange integerRange>
+static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return CSSPrimitiveValueResolver<IntegerRaw<IntType, integerRange>>::consumeAndResolve(range, { }, { }, { });
+    return CSSPrimitiveValueResolver<CSS::Integer<IntType, integerRange>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, IntegerValueRange::All>(range);
+    return consumeIntegerType<int, CSS::IntegerValueRange::All>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, IntegerValueRange::NonNegative>(range);
+    return consumeIntegerType<int, CSS::IntegerValueRange::NonNegative>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<unsigned, IntegerValueRange::Positive>(range);
+    return consumeIntegerType<unsigned, CSS::IntegerValueRange::Positive>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, IntegerValueRange valueRange)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context, CSS::IntegerValueRange valueRange)
 {
     switch (valueRange) {
-    case IntegerValueRange::All:
-        return consumeInteger(range);
-    case IntegerValueRange::Positive:
-        return consumePositiveInteger(range);
-    case IntegerValueRange::NonNegative:
-        return consumeNonNegativeInteger(range);
+    case CSS::IntegerValueRange::All:
+        return consumeInteger(range, context);
+    case CSS::IntegerValueRange::Positive:
+        return consumePositiveInteger(range, context);
+    case CSS::IntegerValueRange::NonNegative:
+        return consumeNonNegativeInteger(range, context);
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -45,6 +45,15 @@
 
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded] attribute DOMMatrixReadOnly entityTransform;
 
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute boolean autoplay;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute boolean loop;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double playbackRate;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute double duration;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute boolean paused;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> play();
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> pause();
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double currentTime;
+
     undefined enterFullscreen();
 
     [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<HTMLModelElementCamera> getCamera();

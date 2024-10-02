@@ -86,7 +86,7 @@ WK_SWIFT_UI_ACTOR NS_SWIFT_NAME(WKWebExtension.MessagePort)
 - (void)sendMessage:(nullable id)message completionHandler:(void (^ _Nullable)(NSError * _Nullable error))completionHandler NS_SWIFT_NAME(sendMessage(_:completionHandler:));
 
 /*! @abstract Disconnects the port, terminating all further messages. */
-- (void)disconnect NS_SWIFT_UNAVAILABLE("Use throwing version with nil");
+- (void)disconnect;
 
 /*!
  @abstract Disconnects the port, terminating all further messages with an optional error.

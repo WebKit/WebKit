@@ -55,6 +55,11 @@ GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage
 
 GeolocationPermissionRequestManager::~GeolocationPermissionRequestManager() = default;
 
+Ref<WebPage> GeolocationPermissionRequestManager::protectedPage() const
+{
+    return m_page.get();
+}
+
 void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
     auto* frame = geolocation.frame();
@@ -73,12 +78,12 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
     auto webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    m_page.send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
+    protectedPage()->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->info()));
 }
 
 void GeolocationPermissionRequestManager::revokeAuthorizationToken(const String& authorizationToken)
 {
-    m_page.send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
+    protectedPage()->send(Messages::WebPageProxy::RevokeGeolocationAuthorizationToken(authorizationToken));
 }
 
 void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation& geolocation)
@@ -95,6 +100,16 @@ void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecisio
     m_geolocationToIDMap.remove(geolocation.get());
 
     geolocation->setIsAllowed(!authorizationToken.isNull(), authorizationToken);
+}
+
+void GeolocationPermissionRequestManager::ref() const
+{
+    m_page->ref();
+}
+
+void GeolocationPermissionRequestManager::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit

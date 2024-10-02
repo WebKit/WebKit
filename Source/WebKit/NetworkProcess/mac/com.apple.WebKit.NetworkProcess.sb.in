@@ -71,7 +71,7 @@
 
 (allow socket-ioctl)
 
-(allow socket-option-set (with telemetry) (with report))
+(allow socket-option-set (with report))
 (allow socket-option-get (with telemetry) (with report))
 
 (allow socket-option-set
@@ -79,6 +79,8 @@
         (socket-option-level SOL_SOCKET)
         (socket-option-name
             0 ;; Replace with 131072 when 32 bit size is supported
+            65536
+            131072
             SO_DELEGATED
             SO_DELEGATED_UUID
             SO_FLOW_DIVERT_TOKEN

@@ -175,20 +175,46 @@ private:
                 if (node->op() == ArrayifyToStructure) {
                     set = node->structure();
                     ASSERT(!isCopyOnWrite(node->structure()->indexingMode()));
-                }
-                else {
+                } else {
                     set = node->structureSet();
                     if ((SpecCellCheck & SpecEmpty) && node->child1().useKind() == CellUse && m_state.forNode(node->child1()).m_type & SpecEmpty) {
                         m_insertionSet.insertNode(
                             indexInBlock, SpecNone, AssertNotEmpty, node->origin, Edge(node->child1().node(), UntypedUse));
                     }
                 }
+
                 if (value.m_structure.isSubsetOf(set)) {
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
+
+                if (node->op() == CheckStructure) {
+                    Edge incoming = node->child1();
+                    if (set.onlyStructure().get() == m_graph.m_vm.stringStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), StringUse));
+                        eliminated = true;
+                        break;
+                    }
+                    if (set.onlyStructure().get() == m_graph.m_vm.symbolStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), SymbolUse));
+                        eliminated = true;
+                        break;
+                    }
+                    if (set.onlyStructure().get() == m_graph.m_vm.bigIntStructure.get()) {
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        m_insertionSet.insertCheck(indexInBlock + 1, node->origin, Edge(incoming.node(), HeapBigIntUse));
+                        eliminated = true;
+                        break;
+                    }
+                }
+
                 break;
             }
 

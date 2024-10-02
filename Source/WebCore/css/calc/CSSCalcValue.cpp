@@ -42,28 +42,24 @@
 #include "CSSCalcTree+Simplification.h"
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParserOptions.h"
 #include "CalculationCategory.h"
 #include "CalculationValue.h"
 #include "Logging.h"
+#include "StylePrimitiveNumericTypes.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
-{
-    return CSSCalc::isCalcFunction(functionId);
-}
-
-RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTokenRange& tokens, Calculation::Category category, ValueRange range, CSSCalcSymbolsAllowed symbolsAllowed)
+RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSParserTokenRange& tokens, const CSSParserContext& context, Calculation::Category category, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions propertyOptions)
 {
     auto parserOptions = CSSCalc::ParserOptions {
         .category = category,
         .allowedSymbols = WTFMove(symbolsAllowed),
-        .range = range
+        .propertyOptions = propertyOptions
     };
-
     auto simplificationOptions = CSSCalc::SimplificationOptions {
         .category = category,
         .conversionData = std::nullopt,
@@ -73,7 +69,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::parse(CSSValueID function, const CSSParserTok
         .allowNonMatchingUnits = false
     };
 
-    auto tree = CSSCalc::parseAndSimplify(tokens, function, parserOptions, simplificationOptions);
+    auto tree = CSSCalc::parseAndSimplify(tokens, context, parserOptions, simplificationOptions);
     if (!tree)
         return nullptr;
 
@@ -117,11 +113,6 @@ CSSCalcValue::CSSCalcValue(CSSCalc::Tree&& tree)
 
 CSSCalcValue::~CSSCalcValue() = default;
 
-Calculation::Category CSSCalcValue::category() const
-{
-    return m_tree.category;
-}
-
 CSSUnitType CSSCalcValue::primitiveType() const
 {
     // This returns the CSSUnitType associated with the value returned by doubleValue, or, if CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH, that a call to createCalculationValue() is needed.
@@ -131,7 +122,7 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_INTEGER;
     case Calculation::Category::Number:
         return CSSUnitType::CSS_NUMBER;
-    case Calculation::Category::Percent:
+    case Calculation::Category::Percentage:
         return CSSUnitType::CSS_PERCENTAGE;
     case Calculation::Category::Length:
         return CSSUnitType::CSS_PX;
@@ -145,12 +136,18 @@ CSSUnitType CSSCalcValue::primitiveType() const
         return CSSUnitType::CSS_DPPX;
     case Calculation::Category::Flex:
         return CSSUnitType::CSS_FR;
-    case Calculation::Category::PercentLength:
+    case Calculation::Category::LengthPercentage:
         if (!m_tree.type.percentHint)
             return CSSUnitType::CSS_PX;
-        if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
+        if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
             return CSSUnitType::CSS_PERCENTAGE;
         return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH;
+    case Calculation::Category::AnglePercentage:
+        if (!m_tree.type.percentHint)
+            return CSSUnitType::CSS_DEG;
+        if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+            return CSSUnitType::CSS_PERCENTAGE;
+        return CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE;
     }
 
     ASSERT_NOT_REACHED();
@@ -251,98 +248,144 @@ Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConv
     return CSSCalc::toCalculationValue(m_tree, options);
 }
 
-NumberRaw CSSCalcValue::numberValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+Style::Number CSSCalcValue::numberValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Number);
-    return { doubleValueNoConversionDataRequired(symbolTable) };
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-NumberRaw CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Number CSSCalcValue::numberValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Number);
-    return { doubleValue(conversionData, symbolTable) };
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
 }
 
-PercentRaw CSSCalcValue::percentValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+Style::Percentage CSSCalcValue::percentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::Percent);
-    return { doubleValueNoConversionDataRequired(symbolTable) };
+    ASSERT(m_tree.category == Calculation::Category::Percentage);
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-PercentRaw CSSCalcValue::percentValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Percentage CSSCalcValue::percentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::Percent);
-    return { doubleValue(conversionData, symbolTable) };
+    ASSERT(m_tree.category == Calculation::Category::Percentage);
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
 }
 
-AngleRaw CSSCalcValue::angleValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Angle);
-    return { CSSUnitType::CSS_DEG, doubleValueNoConversionDataRequired(symbolTable) };
-}
-
-AngleRaw CSSCalcValue::angleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Angle CSSCalcValue::angleValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Angle);
-    return { CSSUnitType::CSS_DEG, doubleValue(conversionData, symbolTable) };
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-LengthRaw CSSCalcValue::lengthValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+Style::Angle CSSCalcValue::angleValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::Angle);
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
+}
+
+Style::Length CSSCalcValue::lengthValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Length);
-    return { CSSUnitType::CSS_PX, doubleValueNoConversionDataRequired(symbolTable) };
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-LengthRaw CSSCalcValue::lengthValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Length CSSCalcValue::lengthValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Length);
-    return { CSSUnitType::CSS_PX, doubleValue(conversionData, symbolTable) };
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
 }
 
-ResolutionRaw CSSCalcValue::resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Resolution);
-    return { CSSUnitType::CSS_DPPX, doubleValueNoConversionDataRequired(symbolTable) };
-}
-
-ResolutionRaw CSSCalcValue::resolutionValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
-{
-    ASSERT(m_tree.category == Calculation::Category::Resolution);
-    return { CSSUnitType::CSS_DPPX, doubleValue(conversionData, symbolTable) };
-}
-
-TimeRaw CSSCalcValue::timeValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+Style::Time CSSCalcValue::timeValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Time);
-    return { CSSUnitType::CSS_S, doubleValueNoConversionDataRequired(symbolTable) };
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-TimeRaw CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Time CSSCalcValue::timeValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
     ASSERT(m_tree.category == Calculation::Category::Time);
-    return { CSSUnitType::CSS_S, doubleValue(conversionData, symbolTable) };
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
 }
 
-Length CSSCalcValue::lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+Style::Frequency CSSCalcValue::frequencyValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::PercentLength);
-
-    if (!m_tree.type.percentHint)
-        return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Fixed };
-    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
-        return Length { doubleValueNoConversionDataRequired(symbolTable), LengthType::Percent };
-    return Length { createCalculationValueNoConversionDataRequired(symbolTable) };
+    ASSERT(m_tree.category == Calculation::Category::Frequency);
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
 }
 
-Length CSSCalcValue::lengthPercentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+Style::Frequency CSSCalcValue::frequencyValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
 {
-    ASSERT(m_tree.category == Calculation::Category::PercentLength);
+    ASSERT(m_tree.category == Calculation::Category::Frequency);
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
+}
+
+Style::Resolution CSSCalcValue::resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::Resolution);
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
+}
+
+Style::Resolution CSSCalcValue::resolutionValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::Resolution);
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
+}
+
+Style::Flex CSSCalcValue::flexValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::Flex);
+    return { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) };
+}
+
+Style::Flex CSSCalcValue::flexValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::Flex);
+    return { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) };
+}
+
+Style::LengthPercentage CSSCalcValue::lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::LengthPercentage);
 
     if (!m_tree.type.percentHint)
-        return Length { doubleValue(conversionData, symbolTable), LengthType::Fixed };
-    if (std::holds_alternative<CSSCalc::Percent>(m_tree.root))
-        return Length { doubleValue(conversionData, symbolTable), LengthType::Percent };
-    return Length { createCalculationValue(conversionData, symbolTable) };
+        return { Style::Length { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) } };
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+        return { Style::Percentage { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) } };
+    return { createCalculationValueNoConversionDataRequired(symbolTable) };
+}
+
+Style::LengthPercentage CSSCalcValue::lengthPercentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::LengthPercentage);
+
+    if (!m_tree.type.percentHint)
+        return { Style::Length { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) } };
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+        return { Style::Percentage { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) } };
+    return { createCalculationValue(conversionData, symbolTable) };
+}
+
+Style::AnglePercentage CSSCalcValue::anglePercentageValueNoConversionDataRequired(const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::AnglePercentage);
+
+    if (!m_tree.type.percentHint)
+        return { Style::Angle { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) } };
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+        return { Style::Percentage { narrowPrecisionToFloat(doubleValueNoConversionDataRequired(symbolTable)) } };
+    return { createCalculationValueNoConversionDataRequired(symbolTable) };
+}
+
+Style::AnglePercentage CSSCalcValue::anglePercentageValue(const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) const
+{
+    ASSERT(m_tree.category == Calculation::Category::AnglePercentage);
+
+    if (!m_tree.type.percentHint)
+        return { Style::Angle { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) } };
+    if (std::holds_alternative<CSSCalc::Percentage>(m_tree.root))
+        return { Style::Percentage { narrowPrecisionToFloat(doubleValue(conversionData, symbolTable)) } };
+    return { createCalculationValue(conversionData, symbolTable) };
 }
 
 void CSSCalcValue::dump(TextStream& ts) const

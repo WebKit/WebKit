@@ -1119,9 +1119,6 @@ void TreeResolver::resolveComposedTree()
 
         auto anchorPositionedElementAction = updateAnchorPositioningState(element, style);
 
-        if (queryContainerAction == QueryContainerAction::Resolve)
-            m_canFindAnchorsForNextAnchorPositionedElement = false;
-
         bool shouldIterateChildren = [&] {
             // display::none, no need to resolve descendants.
             if (!style)
@@ -1206,9 +1203,7 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
 std::unique_ptr<Update> TreeResolver::resolve()
 {
     m_hasUnresolvedQueryContainers = false;
-
     m_hasUnresolvedAnchorPositionedElements = false;
-    m_canFindAnchorsForNextAnchorPositionedElement = true;
 
     Element* documentElement = m_document->documentElement();
     if (!documentElement) {
@@ -1218,6 +1213,11 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return WTFMove(m_update);
+
+    for (auto elementAndState : m_document->styleScope().anchorPositionedStates()) {
+        if (elementAndState.value->stage == AnchorPositionResolutionStage::Resolved)
+            elementAndState.value->stage = AnchorPositionResolutionStage::Positioned;
+    }
 
     m_didSeePendingStylesheet = m_document->styleScope().hasPendingSheetsBeforeBody();
 
@@ -1336,8 +1336,7 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
 
     bool isAnchor = generatesBox(*style) && !style->anchorNames().isEmpty();
     auto* anchorPositionedState = m_document->styleScope().anchorPositionedStates().get(element);
-    bool isAnchorPositioned = !!anchorPositionedState;
-    if (!isAnchor && !isAnchorPositioned)
+    if (!isAnchor && !anchorPositionedState)
         return AnchorPositionedElementAction::None;
 
     // Mark anchor as eligible target for anchor-positioned elements
@@ -1347,16 +1346,11 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
                 m_document->styleScope().anchorsForAnchorName().ensure(anchorName, [&] {
                     return Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> { };
                 }).iterator->value.append(element);
-
-                // We do not have up-to-date RenderTree information for this anchor.
-                // This means we cannot check if this is an acceptable anchor for an
-                // anchor-positioned element (we need containing block information).
-                m_canFindAnchorsForNextAnchorPositionedElement = false;
             }
         }
     }
 
-    if (!isAnchorPositioned || anchorPositionedState->stage == AnchorPositionResolutionStage::Resolved)
+    if (!anchorPositionedState || anchorPositionedState->stage == AnchorPositionResolutionStage::Resolved)
         return AnchorPositionedElementAction::None;
 
     m_hasUnresolvedAnchorPositionedElements = true;
@@ -1373,10 +1367,8 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     // Now we should have render tree information. Let's find the
     // appropriate anchors for this anchor-positioned element.
     ASSERT(element.renderer());
-    if (m_canFindAnchorsForNextAnchorPositionedElement && anchorPositionedState->stage == AnchorPositionResolutionStage::FinishedCollectingAnchorNames) {
+    if (anchorPositionedState->stage == AnchorPositionResolutionStage::FinishedCollectingAnchorNames)
         AnchorPositionEvaluator::findAnchorsForAnchorPositionedElement(element);
-        m_canFindAnchorsForNextAnchorPositionedElement = false;
-    }
 
     return AnchorPositionedElementAction::SkipDescendants;
 }

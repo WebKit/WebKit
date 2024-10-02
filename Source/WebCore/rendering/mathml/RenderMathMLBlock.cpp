@@ -40,10 +40,6 @@
 #include "RenderView.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if ENABLE(DEBUG_MATH_LAYOUT)
-#include "PaintInfo.h"
-#endif
-
 namespace WebCore {
 
 using namespace MathMLNames;
@@ -105,41 +101,6 @@ LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool f
     return firstLineBaseline().value_or(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
 }
 
-#if ENABLE(DEBUG_MATH_LAYOUT)
-void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
-{
-    RenderBlock::paint(info, paintOffset);
-
-    if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground)
-        return;
-
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
-
-    GraphicsContextStateSaver stateSaver(info.context());
-
-    info.context().setStrokeThickness(1.0f);
-    info.context().setStrokeStyle(StrokeStyle::SolidStroke);
-    info.context().setStrokeColor(Color::blue);
-
-    info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-    info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + pixelSnappedOffsetHeight()));
-
-    int topStart = paddingTop();
-
-    info.context().setStrokeColor(Color::green);
-
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + topStart), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + topStart));
-
-    int baseline = roundToInt(baselinePosition(AlphabeticBaseline, true, HorizontalLine));
-
-    info.context().setStrokeColor(Color::red);
-
-    info.context().drawLine(IntPoint(adjustedPaintOffset.x(), adjustedPaintOffset.y() + baseline), IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y() + baseline));
-}
-#endif // ENABLE(DEBUG_MATH_LAYOUT)
-
 LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
     switch (length.type) {
@@ -187,11 +148,11 @@ std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 
 void RenderMathMLBlock::layoutItems(bool relayoutChildren)
 {
-    LayoutUnit verticalOffset = borderBefore() + paddingBefore();
-    LayoutUnit horizontalOffset = borderStart() + paddingStart();
+    LayoutUnit verticalOffset = borderAndPaddingBefore();
+    LayoutUnit horizontalOffset = borderAndPaddingStart();
 
     LayoutUnit preferredHorizontalExtent;
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         LayoutUnit childHorizontalExtent = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
         LayoutUnit childHorizontalMarginBoxExtent = child->horizontalBorderAndPaddingExtent() + childHorizontalExtent;
         childHorizontalMarginBoxExtent += child->horizontalMarginExtent();
@@ -200,7 +161,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
     }
 
     LayoutUnit currentHorizontalExtent = contentLogicalWidth();
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto everHadLayout = child->everHadLayout();
         LayoutUnit childSize = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
 
@@ -218,7 +179,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
         LayoutUnit childVerticalMarginBoxExtent;
         childVerticalMarginBoxExtent = child->height() + child->verticalMarginExtent();
 
-        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAfter() + paddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
+        setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAndPaddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
 
         horizontalOffset += child->marginStart();
 
@@ -237,8 +198,12 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
+
+    layoutFloatingChildren();
 
     LayoutRepainter repainter(*this);
 
@@ -262,7 +227,7 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderMathMLBlock::computeAndSetBlockDirectionMarginsOfChildren()
 {
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->computeAndSetBlockDirectionMargins(*this);
 }
 
@@ -273,6 +238,28 @@ void RenderMathMLBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
     // MathML displaystyle changes can affect layout.
     if (oldStyle && style().mathStyle() != oldStyle->mathStyle())
         setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+void RenderMathMLBlock::insertPositionedChildrenIntoContainingBlock()
+{
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            child->containingBlock()->insertPositionedObject(*child);
+    }
+}
+
+void RenderMathMLBlock::layoutFloatingChildren()
+{
+    // According to the spec, https://w3c.github.io/mathml-core/#css-styling:
+    // > The float property does not create floating of elements whose parent's computed display value is block math or inline math,
+    // > and does not take them out-of-flow.
+    // However, WebKit does not currently do this since `display: math` is unimplemented. See webkit.org/b/278533.
+    // Since this leaves floats as neither positioned nor in-flow, perform dummy layout for floating children.
+    // FIXME: Per the spec, there should be no floating children inside MathML renderers.
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isFloating())
+            child->layoutIfNeeded();
+    }
 }
 
 }

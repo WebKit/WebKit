@@ -588,7 +588,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
                         continue;
                     auto* effectAnimation = effect->animation();
                     auto* cssTransition = dynamicDowncast<CSSTransition>(effectAnimation);
-                    bool shouldUseTimelineTimeAtCreation = cssTransition && (!effectAnimation->startTime() || *effectAnimation->startTime() == document.timeline().currentTime());
+                    ASSERT(document.timeline().currentTime());
+                    bool shouldUseTimelineTimeAtCreation = cssTransition && (!effectAnimation->startTime() || effectAnimation->startTime() == document.timeline().currentTime());
                     effectAnimation->resolve(style, { nullptr }, shouldUseTimelineTimeAtCreation ? cssTransition->timelineTimeAtCreation() : std::nullopt);
                 }
             }

@@ -50,6 +50,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/atspi/AccessibilityRootAtspi.h
 
     platform/glib/ApplicationGLib.h
+    platform/glib/SystemSettings.h
 
     platform/graphics/egl/PlatformDisplayDefault.h
     platform/graphics/egl/PlatformDisplaySurfaceless.h
@@ -119,12 +120,15 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebCore_LIBRARIES Libseccomp::Libseccomp)
 endif ()
 
-if (ENABLE_SPEECH_SYNTHESIS)
+if (USE_SPIEL)
+    list(APPEND WebCore_SOURCES
+        platform/spiel/PlatformSpeechSynthesizerSpiel.cpp
+    )
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${Flite_INCLUDE_DIRS}
+        ${SPIEL_INCLUDE_DIRS}
     )
     list(APPEND WebCore_LIBRARIES
-        ${Flite_LIBRARIES}
+        LibSpiel::LibSpiel
     )
 endif ()
 

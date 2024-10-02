@@ -1,0 +1,15 @@
+Tests that a Select text operation returns the text for the provided marker ranges.
+
+PASS: operationResult.length === 1
+PASS: operationResult[0] === 'fox'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: The quick brown fox jumps over the lazy dog.'
+PASS: operationResult.length === 3
+PASS: operationResult[0] === 'lazy'
+PASS: operationResult[1] === 'fox'
+PASS: operationResult[2] === 'The'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: The quick brown fox jumps over the lazy dog.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

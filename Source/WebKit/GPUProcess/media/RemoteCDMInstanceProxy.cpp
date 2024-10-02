@@ -57,12 +57,12 @@ RemoteCDMInstanceProxy::RemoteCDMInstanceProxy(RemoteCDMProxy& cdm, Ref<CDMInsta
     , m_logIdentifier(cdm.logIdentifier())
 #endif
 {
-    m_instance->setClient(*this);
+    protectedInstance()->setClient(*this);
 }
 
 RemoteCDMInstanceProxy::~RemoteCDMInstanceProxy()
 {
-    m_instance->clearClient();
+    protectedInstance()->clearClient();
 }
 
 void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
@@ -70,7 +70,7 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!m_cdm)
         return;
 
-    auto* factory = m_cdm->factory();
+    RefPtr factory = m_cdm->factory();
     if (!factory)
         return;
 
@@ -78,17 +78,17 @@ void RemoteCDMInstanceProxy::unrequestedInitializationDataReceived(const String&
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstance::UnrequestedInitializationDataReceived(type, WTFMove(initData)), m_identifier);
 }
 
 void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers allowDistinctiveIdentifiers, AllowPersistentState allowPersistentState, CompletionHandler<void(SuccessValue)>&& completion)
 {
-    m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
+    protectedInstance()->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
 }
 
 void RemoteCDMInstanceProxy::setServerCertificate(Ref<SharedBuffer>&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
 {
-    m_instance->setServerCertificate(WTFMove(certificate), WTFMove(completion));
+    protectedInstance()->setServerCertificate(WTFMove(certificate), WTFMove(completion));
 }
 
 void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
@@ -96,7 +96,7 @@ void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
     if (!m_cdm)
         return;
 
-    auto* factory = m_cdm->factory();
+    RefPtr factory = m_cdm->factory();
     if (!factory)
         return;
 
@@ -105,12 +105,12 @@ void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
         return;
 
     if (directory.startsWith(mediaKeysStorageDirectory))
-        m_instance->setStorageDirectory(directory);
+        protectedInstance()->setStorageDirectory(directory);
 }
 
 void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&& completion)
 {
-    auto privSession = m_instance->createSession();
+    auto privSession = protectedInstance()->createSession();
     if (!privSession || !m_cdm || !m_cdm->factory()) {
         completion({ });
         return;
@@ -122,8 +122,23 @@ void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHan
 
     auto identifier = RemoteCDMInstanceSessionIdentifier::generate();
     auto session = RemoteCDMInstanceSessionProxy::create(m_cdm.get(), privSession.releaseNonNull(), logIdentifier, identifier);
-    m_cdm->factory()->addSession(identifier, WTFMove(session));
+    protectedCdm()->protectedFactory()->addSession(identifier, WTFMove(session));
     completion(identifier);
+}
+
+Ref<WebCore::CDMInstance> RemoteCDMInstanceProxy::protectedInstance() const
+{
+    return m_instance;
+}
+
+const SharedPreferencesForWebProcess& RemoteCDMInstanceProxy::sharedPreferencesForWebProcess() const
+{
+    return protectedCdm()->sharedPreferencesForWebProcess();
+}
+
+RefPtr<RemoteCDMProxy> RemoteCDMInstanceProxy::protectedCdm() const
+{
+    return m_cdm.get();
 }
 
 }

@@ -34,6 +34,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedWorkerContextManager.h>
 #include <WebCore/SharedWorkerIdentifier.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 struct ClientOrigin;
@@ -48,6 +49,7 @@ class WebUserContentController;
 struct RemoteWorkerInitializationData;
 
 class WebSharedWorkerContextManagerConnection final : public WebCore::SharedWorkerContextManager::Connection, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerContextManagerConnection);
 public:
     WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
     ~WebSharedWorkerContextManagerConnection();

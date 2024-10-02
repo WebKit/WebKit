@@ -156,6 +156,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
     case TypeKind::Sub:
     case TypeKind::Subfinal:
     case TypeKind::Rec:
+    case TypeKind::Exn:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
     case TypeKind::Nullref:

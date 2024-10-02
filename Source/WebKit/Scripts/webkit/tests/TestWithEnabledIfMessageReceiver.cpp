@@ -47,7 +47,7 @@ void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         if (connection.ignoreInvalidMessageForTesting())
             return;
 #endif // ENABLE(IPC_TESTING_API)
-        ASSERT_NOT_REACHED_WITH_MESSAGE("Message received by a disabled message receiver TestWithEnabledIf");
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver TestWithEnabledIf", IPC::description(decoder.messageName()).characters());
         return;
     }
     Ref protectedThis { *this };

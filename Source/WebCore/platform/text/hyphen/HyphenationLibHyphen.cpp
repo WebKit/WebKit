@@ -173,8 +173,9 @@ static HashMap<AtomString, Vector<String>>& availableLocales()
 
 bool canHyphenate(const AtomString& localeIdentifier)
 {
-    AtomString lowercaseLocaleIdentifier = localeIdentifier.isNull() ? AtomString(defaultLanguage()).convertToASCIILowercase() : localeIdentifier.convertToASCIILowercase();
-    return availableLocales().contains(lowercaseLocaleIdentifier);
+    if (localeIdentifier.isNull())
+        return false;
+    return availableLocales().contains(localeIdentifier.convertToASCIILowercase());
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -287,7 +288,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    AtomString lowercaseLocaleIdentifier = localeIdentifier.isNull() ? AtomString(defaultLanguage()).convertToASCIILowercase() : localeIdentifier.convertToASCIILowercase();
+    AtomString lowercaseLocaleIdentifier = localeIdentifier.convertToASCIILowercase();
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))

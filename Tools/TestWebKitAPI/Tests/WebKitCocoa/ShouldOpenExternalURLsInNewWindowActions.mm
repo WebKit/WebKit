@@ -217,7 +217,7 @@ TEST(WebKit, RestoreShouldOpenExternalURLsPolicyAfterCrash)
     [webView setUIDelegate:controller.get()];
 
     finishedNavigation = false;
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"should-open-external-schemes" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"should-open-external-schemes" withExtension:@"html"]];
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&finishedNavigation);
     finishedNavigation = false;

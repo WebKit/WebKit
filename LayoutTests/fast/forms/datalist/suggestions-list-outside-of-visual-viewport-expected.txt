@@ -1,0 +1,4 @@
+
+Is showing suggestions? false
+
+This test verifies that datalist suggestions UI is not shown when the input is outside of the visual viewport.

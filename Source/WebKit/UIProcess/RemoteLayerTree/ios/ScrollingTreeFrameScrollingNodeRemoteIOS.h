@@ -30,12 +30,14 @@
 OBJC_CLASS WKBaseScrollView;
 
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 
 class ScrollingTreeScrollingNodeDelegateIOS;
 
 class ScrollingTreeFrameScrollingNodeRemoteIOS : public WebCore::ScrollingTreeFrameScrollingNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeFrameScrollingNodeRemoteIOS);
 public:
     static Ref<ScrollingTreeFrameScrollingNodeRemoteIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteIOS();

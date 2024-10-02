@@ -151,7 +151,7 @@ bool ProcessThrottler::addActivity(Activity& activity)
         m_foregroundActivities.add(activity);
     else
         m_backgroundActivities.add(activity);
-    updateThrottleStateIfNeeded();
+    updateThrottleStateIfNeeded(activity.name());
     return true;
 }
 
@@ -173,7 +173,7 @@ void ProcessThrottler::removeActivity(Activity& activity)
     if (!wasRemoved)
         return;
 
-    updateThrottleStateIfNeeded();
+    updateThrottleStateIfNeeded({ });
 }
 
 void ProcessThrottler::invalidateAllActivities()
@@ -296,29 +296,32 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     protectedProcess()->didChangeThrottleState(newState);
 }
 
-void ProcessThrottler::ref()
+void ProcessThrottler::ref() const
 {
     // Forward ref-counting to our owner.
     m_process->ref();
 }
 
-void ProcessThrottler::deref()
+void ProcessThrottler::deref() const
 {
     // Forward ref-counting to our owner.
     m_process->deref();
 }
 
-void ProcessThrottler::updateThrottleStateIfNeeded()
+void ProcessThrottler::updateThrottleStateIfNeeded(ASCIILiteral lastAddedActivity)
 {
     if (!m_isConnectedToProcess)
         return;
 
     if (shouldBeRunnable()) {
         if (m_state == ProcessThrottleState::Suspended || m_pendingRequestToSuspendID) {
+#if !RELEASE_LOG_DISABLED
+            const char* probableWakeupReason = !lastAddedActivity.isNull() ? lastAddedActivity.characters() : "unknown";
             if (m_state == ProcessThrottleState::Suspended)
-                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended");
+                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the process was suspended (probable wakeup reason: %" PUBLIC_LOG_STRING ")", probableWakeupReason);
             else
-                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
+                PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64 " (probable wakeup reason: %" PUBLIC_LOG_STRING ")", *m_pendingRequestToSuspendID, probableWakeupReason);
+#endif
             protectedProcess()->sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? AuxiliaryProcessProxy::ResumeReason::ForegroundActivity : AuxiliaryProcessProxy::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
@@ -525,11 +528,6 @@ Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
     return m_process.get();
 }
 
-bool ProcessThrottler::isSuspended() const
-{
-    return m_isConnectedToProcess && !m_assertion;
-}
-
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
@@ -610,12 +608,10 @@ static void logActivityNames(WTF::TextStream& ts, ASCIILiteral description, cons
 
     bool isFirstItem = true;
     for (const auto& activity : activities) {
-        if (!activity.isQuietActivity()) {
-            if (!isFirstItem)
-                ts << ", "_s;
-            ts << activity.name();
-            isFirstItem = false;
-        }
+        if (!isFirstItem)
+            ts << ", "_s;
+        ts << activity.name();
+        isFirstItem = false;
     }
 }
 

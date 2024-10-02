@@ -27,6 +27,7 @@
 #include "B3LowerInt64.h"
 
 #if USE(JSVALUE32_64) && ENABLE(B3_JIT)
+#include "AirCCallingConvention.h"
 #include "B3BasicBlock.h"
 #include "B3BlockInsertionSet.h"
 #include "B3Const32Value.h"
@@ -385,21 +386,40 @@ private:
             if (!hasInt64Arg())
                 return;
             Vector<Value*> args;
+            size_t gprCount = 0;
             for (size_t index = 1; index < m_value->numChildren(); ++index) {
                 Value* child = m_value->child(index);
-                if (child->type() != Int64)
+                if (child->type() == Int32 || child->type() == Int64) {
+                    if (gprCount < GPRInfo::numberOfArgumentRegisters
+                        && Air::cCallArgumentEvenRegisterAlignment(child->type())
+                        && (gprCount % 2)) {
+                        args.append(insert<Const32Value>(m_index, m_origin, 0));
+                        ++gprCount;
+                    }
+                    if (child->type() == Int32)
+                        args.append(child);
+                    else {
+                        auto childParts = getMapping(child);
+
+                        args.append(childParts.second);
+                        args.append(childParts.first);
+                    }
+                    gprCount += Air::cCallArgumentRegisterCount(child->type());
+                } else {
                     args.append(child);
-                else {
-                    auto childParts = getMapping(child);
-                    args.append(valueHiLo(childParts.first, childParts.second));
                 }
             }
-            CCallValue* cCall = insert<CCallValue>(m_index, m_value->type(), m_origin, m_value->child(0));
+            Type returnType = m_value->type();
+            if (returnType == Int64)
+                returnType = m_proc.addTuple({ Int32, Int32 });
+            CCallValue* cCall = insert<CCallValue>(m_index, returnType, m_origin, m_value->child(0));
             RELEASE_ASSERT(cCall->numChildren() == 1);
             cCall->effects = m_value->effects();
             cCall->appendArgs(args);
             if (m_value->type() == Int64) {
-                setMapping(m_value, valueHi(cCall, m_index + 1), valueLo(cCall, m_index + 1));
+                ASSERT(isARM_THUMB2());
+                // Result registers are allocated lo->hi on ARMv7, so undo that here.
+                setMapping(m_value, valueLo(cCall, m_index + 1), valueHi(cCall, m_index + 1));
                 valueReplaced();
             } else
                 m_value->replaceWithIdentity(cCall);

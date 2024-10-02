@@ -127,7 +127,7 @@ private:
     OSStatus defaultOutputDevice(uint32_t*) final;
     void delaySamples(Seconds) final;
     Seconds verifyCaptureInterval(bool) const final { return 1_s; }
-    void setVoiceActivityDetection(bool);
+    bool setVoiceActivityDetection(bool) final;
 
     int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
@@ -263,14 +263,15 @@ void MockAudioSharedInternalUnit::delaySamples(Seconds delta)
     m_timer.startOneShot(delta);
 }
 
-void MockAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
+bool MockAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
 {
     m_voiceActivityDetectionEnabled = shouldEnable;
-    if (!m_voiceActivityDetectionEnabled || !m_isOutputMuted) {
+    if (!m_voiceActivityDetectionEnabled || !m_isOutputMuted)
         m_voiceDetectionTimer.stop();
-        return;
-    }
-    m_voiceDetectionTimer.startRepeating(100_ms);
+    else
+        m_voiceDetectionTimer.startRepeating(100_ms);
+
+    return true;
 }
 
 void MockAudioSharedInternalUnit::voiceDetected()

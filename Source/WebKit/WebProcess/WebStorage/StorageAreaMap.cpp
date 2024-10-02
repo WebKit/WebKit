@@ -246,7 +246,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageArea
 {
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
-    RefPtr webPage = WebProcess::singleton().webPage(m_namespace.sessionStoragePageID());
+    RefPtr webPage = WebProcess::singleton().webPage(m_namespace->sessionStoragePageID());
     if (!webPage)
         return;
 
@@ -271,7 +271,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaIm
 StorageType StorageAreaMap::computeStorageType() const
 {
     auto type = m_type;
-    if ((type == StorageType::Local || type == StorageType::TransientLocal) && m_namespace.topLevelOrigin())
+    if ((type == StorageType::Local || type == StorageType::TransientLocal) && m_namespace->topLevelOrigin())
         type = StorageType::TransientLocal;
 
     return type;
@@ -280,7 +280,7 @@ StorageType StorageAreaMap::computeStorageType() const
 WebCore::ClientOrigin StorageAreaMap::clientOrigin() const
 {
     auto originData = m_securityOrigin->data();
-    auto topOriginData = m_namespace.topLevelOrigin() ? m_namespace.topLevelOrigin()->data() : originData;
+    auto topOriginData = m_namespace->topLevelOrigin() ? m_namespace->topLevelOrigin()->data() : originData;
     return WebCore::ClientOrigin { topOriginData, originData };
 }
 
@@ -288,13 +288,17 @@ void StorageAreaMap::sendConnectMessage(SendMode mode)
 {
     m_isWaitingForConnectReply = true;
     Ref ipcConnection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    auto namespaceIdentifier = m_namespace.storageNamespaceID();
+    auto namespaceIdentifier = m_namespace->storageNamespaceID();
     auto origin = clientOrigin();
     auto type = computeStorageType();
 
     if (mode == SendMode::Sync) {
         auto sendResult = ipcConnection->sendSync(Messages::NetworkStorageManager::ConnectToStorageAreaSync(type, identifier(), namespaceIdentifier, origin), 0);
-        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReplyOr(StorageAreaIdentifier { }, HashMap<String, String> { }, 0);
+        if (!sendResult.succeeded()) {
+            didConnect(std::nullopt, { }, 0);
+            return;
+        }
+        auto [remoteAreaIdentifier, items, messageIdentifier] = sendResult.takeReply();
         didConnect(remoteAreaIdentifier, WTFMove(items), messageIdentifier);
         return;
     }
@@ -323,17 +327,17 @@ void StorageAreaMap::connect()
     sendConnectMessage(SendMode::Async);
 }
 
-void StorageAreaMap::didConnect(StorageAreaIdentifier remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
+void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
 {
     m_isWaitingForConnectReply = false;
     if (messageIdentifier < m_lastHandledMessageIdentifier)
         return;
 
     m_lastHandledMessageIdentifier = messageIdentifier;
-    if (!remoteAreaIdentifier.isValid())
+    if (!remoteAreaIdentifier)
         return;
 
-    m_remoteAreaIdentifier = remoteAreaIdentifier;
+    m_remoteAreaIdentifier = *remoteAreaIdentifier;
     m_map = makeUnique<StorageMap>(m_quotaInBytes);
     m_map->importItems(WTFMove(items));
 }
@@ -343,7 +347,7 @@ void StorageAreaMap::disconnect()
     if (!m_remoteAreaIdentifier) {
         RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
         if (m_isWaitingForConnectReply && networkProcessConnection)
-            networkProcessConnection->protectedConnection()->send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace.storageNamespaceID(), clientOrigin()), 0);
+            networkProcessConnection->protectedConnection()->send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace->storageNamespaceID(), clientOrigin()), 0);
 
         return;
     }
@@ -363,7 +367,12 @@ void StorageAreaMap::incrementUseCount()
 void StorageAreaMap::decrementUseCount()
 {
     if (!--m_useCount)
-        m_namespace.destroyStorageAreaMap(*this);
+        protectedNamespace()->destroyStorageAreaMap(*this);
+}
+
+Ref<StorageNamespaceImpl> StorageAreaMap::protectedNamespace() const
+{
+    return m_namespace.get();
 }
 
 void StorageAreaMap::syncOneItem(const String& key, const String& value)

@@ -110,7 +110,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::WebRemoteObjectRegistry>(self, page.get());
+    _remoteObjectRegistry = makeUnique<WebKit::WebRemoteObjectRegistry>(self, Ref { page.get() });
 
     return self;
 }
@@ -120,7 +120,7 @@ struct PendingReply {
     if (!(self = [super init]))
         return nil;
 
-    _remoteObjectRegistry = makeUnique<WebKit::UIRemoteObjectRegistry>(self, page.get());
+    _remoteObjectRegistry = makeUnique<WebKit::UIRemoteObjectRegistry>(self, Ref { page.get() });
 
     return self;
 }

@@ -87,12 +87,14 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
         && !allFrames().contains(frameID);
 }
 
-WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, IsMainFrame isMainFrame)
+WebFrameProxy::WebFrameProxy(WebPageProxy& page, FrameProcess& process, FrameIdentifier frameID, SandboxFlags effectiveSandboxFlags, WebFrameProxy* opener, IsMainFrame isMainFrame)
     : m_page(page)
     , m_frameProcess(process)
+    , m_opener(opener)
+    , m_frameLoadState(isMainFrame)
     , m_frameID(frameID)
     , m_layerHostingContextIdentifier(LayerHostingContextIdentifier::generate())
-    , m_isMainFrame(isMainFrame)
+    , m_effectiveSandboxFlags(effectiveSandboxFlags)
 {
     ASSERT(!allFrames().contains(frameID));
     allFrames().set(frameID, *this);
@@ -153,11 +155,6 @@ void WebFrameProxy::webProcessWillShutDown()
 
     if (m_navigateCallback)
         m_navigateCallback({ }, { });
-}
-
-bool WebFrameProxy::isMainFrame() const
-{
-    return m_isMainFrame == IsMainFrame::Yes;
 }
 
 WebProcessProxy& WebFrameProxy::process() const
@@ -401,7 +398,7 @@ void WebFrameProxy::disconnect()
         parentFrame->m_childFrames.remove(*this);
 }
 
-void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName)
+void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const String& frameName, SandboxFlags effectiveSandboxFlags)
 {
     // The DecidePolicyForNavigationActionSync IPC is synchronous and may therefore get processed before the DidCreateSubframe one.
     // When this happens, decidePolicyForNavigationActionSync() calls didCreateSubframe() and we need to ignore the DidCreateSubframe
@@ -414,10 +411,10 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, const St
     MESSAGE_CHECK(WebFrameProxy::canCreateFrame(frameID));
     MESSAGE_CHECK(frameID.processIdentifier() == process().coreProcessIdentifier());
 
-    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, WebFrameProxy::IsMainFrame::No);
+    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, effectiveSandboxFlags, nullptr, IsMainFrame::No);
     child->m_parentFrame = *this;
     child->m_frameName = frameName;
-    page->createRemoteSubframesInOtherProcesses(child, frameName);
+    page->observeAndCreateRemoteSubframesInOtherProcesses(child, frameName);
     m_childFrames.add(WTFMove(child));
 }
 
@@ -672,6 +669,11 @@ WebFrameProxy& WebFrameProxy::rootFrame()
     while (rootFrame->m_parentFrame && rootFrame->m_parentFrame->process().coreProcessIdentifier() == process().coreProcessIdentifier())
         rootFrame = *rootFrame->m_parentFrame;
     return rootFrame;
+}
+
+bool WebFrameProxy::isMainFrame() const
+{
+    return m_frameLoadState.isMainFrame() == IsMainFrame::Yes;
 }
 
 } // namespace WebKit

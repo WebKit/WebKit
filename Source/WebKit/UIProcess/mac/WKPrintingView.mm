@@ -212,18 +212,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return lastPage;
 }
 
-- (IPC::Connection::AsyncReplyID)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
+- (std::optional<IPC::Connection::AsyncReplyID>)_expectedPreviewCallbackForRect:(const WebCore::IntRect&)rect
 {
     for (auto iter = _expectedPreviewCallbacks.begin(); iter != _expectedPreviewCallbacks.end(); ++iter) {
         if (iter->value  == rect)
             return iter->key;
     }
-    return { };
+    return std::nullopt;
 }
 
 struct IPCCallbackContext {
     RetainPtr<WKPrintingView> view;
-    IPC::Connection::AsyncReplyID callbackID;
+    Markable<IPC::Connection::AsyncReplyID> callbackID;
 };
 
 static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle, IPCCallbackContext* context)
@@ -234,7 +234,7 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
 
     // If the user has already changed print setup, then this response is obsolete. And if this callback is not in response to the latest request,
     // then the user has already moved to another page - we'll cache the response, but won't draw it.
-    auto iter = view->_expectedPreviewCallbacks.find(context->callbackID);
+    auto iter = view->_expectedPreviewCallbacks.find(*context->callbackID);
     if (iter != view->_expectedPreviewCallbacks.end()) {
         ASSERT([view _isPrintingPreview]);
 
@@ -245,10 +245,10 @@ static void pageDidDrawToImage(std::optional<WebCore::ShareableBitmap::Handle>&&
                 view->_pagePreviews.add(iter->value, image);
         }
 
-        view->_expectedPreviewCallbacks.remove(context->callbackID);
+        view->_expectedPreviewCallbacks.remove(*context->callbackID);
         bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
         if (receivedResponseToLatestRequest) {
-            view->_latestExpectedPreviewCallback = { };
+            view->_latestExpectedPreviewCallback = std::nullopt;
             [view _updatePreview];
         }
     }
@@ -318,7 +318,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         ASSERT(!view->_latestExpectedPreviewCallback);
         ASSERT(!view->_expectedPrintCallback);
         ASSERT(view->_pagePreviews.isEmpty());
-        view->_expectedComputedPagesCallback = { };
+        view->_expectedComputedPagesCallback = std::nullopt;
 
         view->_printingPageRects = pageRects;
         view->_totalScaleFactorForPrinting = totalScaleFactorForPrinting;
@@ -531,7 +531,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (auto existingCallback = [self _expectedPreviewCallbackForRect:scaledPrintingRect]) {
                 // We've already asked for a preview of this page, and are waiting for response.
                 // There is no need to ask again.
-                _latestExpectedPreviewCallback = existingCallback;
+                _latestExpectedPreviewCallback = *existingCallback;
             } else {
                 if (!_printOperation)
                     return;
@@ -546,7 +546,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                     pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
                 _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(*_webFrame, WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
-                _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
+                _expectedPreviewCallbacks.add(*_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
                 context->callbackID = _latestExpectedPreviewCallback;
@@ -765,10 +765,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pagePreviews.clear();
     _printedPagesData.clear();
     _printedPagesPDFDocument = nullptr;
-    _expectedComputedPagesCallback = { };
+    _expectedComputedPagesCallback = std::nullopt;
     _expectedPreviewCallbacks.clear();
-    _latestExpectedPreviewCallback = { };
-    _expectedPrintCallback = { };
+    _latestExpectedPreviewCallback = std::nullopt;
+    _expectedPrintCallback = std::nullopt;
 
     [self _delayedResumeAutodisplay];
     

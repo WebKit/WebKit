@@ -118,7 +118,7 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
     case Wasm::ExternalKind::Function: {
         typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-        Wasm::TypeIndex typeIndex = module->moduleInformation().typeIndexFromFunctionIndexSpace(impOrExp.kindIndex);
+        Wasm::TypeIndex typeIndex = module->moduleInformation().typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex(impOrExp.kindIndex));
         const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
 
         JSArray* functionParametersTypes = constructEmptyArray(globalObject, nullptr);

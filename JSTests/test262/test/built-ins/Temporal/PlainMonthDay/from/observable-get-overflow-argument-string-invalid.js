@@ -3,19 +3,13 @@
 
 /*---
 esid: sec-temporal.plainmonthday.from
-description: overflow property is extracted with ISO-invalid string argument.
+description: overflow property is not extracted with ISO-invalid string argument.
 includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
-
-const expected = [
-  "get options.overflow",
-  "get options.overflow.toString",
-  "call options.overflow.toString",
-];
 
 let actual = [];
 const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constrain" }, "options");
 
 assert.throws(RangeError, () => Temporal.PlainMonthDay.from("13-34", options));
-assert.compareArray(actual, expected);
+assert.compareArray(actual, [], "options read after string parsing");

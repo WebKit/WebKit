@@ -39,10 +39,10 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteXRSubImageProxy);
 
-RemoteXRSubImageProxy::RemoteXRSubImageProxy(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteXRSubImageProxy::RemoteXRSubImageProxy(Ref<RemoteGPUProxy>&& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_parent(parent)
+    , m_parent(WTFMove(parent))
 {
 }
 
@@ -62,7 +62,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::colorTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    m_currentTexture = RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
+    m_currentTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
     return m_currentTexture;
 }
 
@@ -76,7 +76,7 @@ RefPtr<WebCore::WebGPU::Texture> RemoteXRSubImageProxy::depthStencilTexture()
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    m_currentDepthTexture = RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
+    m_currentDepthTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
     return m_currentDepthTexture;
 }
 

@@ -278,8 +278,6 @@ WK_SWIFT_UI_ACTOR
 
 #endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION) || (defined(TARGET_OS_TV) && TARGET_OS_TV)
 
-#if !TARGET_OS_IPHONE
-
 /*! @abstract Displays a file upload panel.
  @param webView The web view invoking the delegate method.
  @param parameters Parameters describing the file upload control.
@@ -288,9 +286,7 @@ WK_SWIFT_UI_ACTOR
 
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
-- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12));
-
-#endif
+- (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSArray<NSURL *> * _Nullable URLs))completionHandler WK_API_AVAILABLE(macos(10.12), ios(WK_IOS_TBA));
 
 @end
 

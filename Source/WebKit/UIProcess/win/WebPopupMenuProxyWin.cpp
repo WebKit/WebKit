@@ -180,6 +180,9 @@ WebPopupMenuProxyWin::~WebPopupMenuProxyWin()
         m_scrollbar->setParent(0);
 }
 
+// FIXME: Fix the warnings
+IGNORE_CLANG_WARNINGS_BEGIN("sign-compare")
+
 void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
 {
     m_items = items;
@@ -943,6 +946,8 @@ bool WebPopupMenuProxyWin::setFocusedIndex(int i, bool hotTracking)
 
     return true;
 }
+
+IGNORE_CLANG_WARNINGS_END
 
 int WebPopupMenuProxyWin::visibleItems() const
 {

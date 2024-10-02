@@ -38,12 +38,14 @@ class Exception;
 namespace WebKit {
 
 class WebPageProxy;
+struct SharedPreferencesForWebProcess;
 
 class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebScreenOrientationManagerProxy);
 public:
     WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
     ~WebScreenOrientationManagerProxy();
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -61,6 +63,8 @@ private:
     void lock(WebCore::ScreenOrientationLockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void unlock();
     void setShouldSendChangeNotification(bool);
+
+    Ref<WebPageProxy> protectedPage() const;
 
     WeakRef<WebPageProxy> m_page;
     WebCore::ScreenOrientationType m_currentOrientation;

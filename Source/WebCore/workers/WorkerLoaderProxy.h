@@ -56,6 +56,12 @@ public:
 
     // Posts a task to the thread which runs the loading code (normally, the main thread).
     virtual void postTaskToLoader(ScriptExecutionContext::Task&&) = 0;
+
+    // CanMakeCheckedPtr.
+    virtual uint32_t ptrCount() const = 0;
+    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
+    virtual void incrementPtrCount() const = 0;
+    virtual void decrementPtrCount() const = 0;
 };
 
 } // namespace WebCore

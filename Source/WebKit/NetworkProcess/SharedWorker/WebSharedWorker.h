@@ -95,7 +95,7 @@ public:
 
     struct SharedWorkerObjectState {
         bool isSuspended { false };
-        WebCore::TransferredMessagePort port;
+        std::optional<WebCore::TransferredMessagePort> port;
     };
 
     struct Object {

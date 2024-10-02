@@ -119,13 +119,13 @@ TEST(WebKit, NSAttributedStringWithReadOnlyPaths)
 
     auto [readableDirectoryURL, unreadableDirectoryURL] = readableAndUnreadableDirectories();
 
-    NSURL *iconImagePath = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *iconImagePath = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
     NSURL *readableFileURL = [readableDirectoryURL URLByAppendingPathComponent:@"readable.png"];
     NSError *error;
     if (![NSFileManager.defaultManager copyItemAtURL:iconImagePath toURL:readableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);
 
-    NSURL *redImagePath = [[NSBundle mainBundle] URLForResource:@"large-red-square" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *redImagePath = [NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"];
     NSURL *unreadableFileURL = [unreadableDirectoryURL URLByAppendingPathComponent:@"unreadable.png"];
     if (![NSFileManager.defaultManager copyItemAtURL:redImagePath toURL:unreadableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);
@@ -170,13 +170,13 @@ TEST(WebKit, NSAttributedStringWithAndWithoutReadOnlyPaths)
 
     auto [readableDirectoryURL, unreadableDirectoryURL] = readableAndUnreadableDirectories();
 
-    NSURL *iconImagePath = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *iconImagePath = [NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"];
     NSURL *readableFileURL = [readableDirectoryURL URLByAppendingPathComponent:@"readable.png"];
     NSError *error;
     if (![NSFileManager.defaultManager copyItemAtURL:iconImagePath toURL:readableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);
 
-    NSURL *redImagePath = [[NSBundle mainBundle] URLForResource:@"large-red-square" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *redImagePath = [NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"];
     NSURL *unreadableFileURL = [unreadableDirectoryURL URLByAppendingPathComponent:@"unreadable.png"];
     if (![NSFileManager.defaultManager copyItemAtURL:redImagePath toURL:unreadableFileURL error:&error])
         EXPECT_TRUE(error.code == NSFileWriteFileExistsError);

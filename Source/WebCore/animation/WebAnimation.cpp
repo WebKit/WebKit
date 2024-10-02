@@ -306,45 +306,15 @@ void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& p
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
-ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(const std::optional<CSSNumberish>& optionalCSSNumberish) const
+ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberishTime>& startTime)
 {
-    // https://drafts.csswg.org/web-animations/#validating-a-css-numberish-time
-    // FIXME: Revisit this when we know how to deal with a progress-based (ie. scroll) timeline.
-
-    if (!optionalCSSNumberish)
-        return { std::nullopt };
-
-    if (std::holds_alternative<double>(*optionalCSSNumberish))
-        return { Seconds::fromMilliseconds(std::get<double>(*optionalCSSNumberish)) };
-
-    auto numericValue = std::get<RefPtr<CSSNumericValue>>(*optionalCSSNumberish);
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER)
-            return { Seconds::fromMilliseconds(unitValue->value()) };
-        if (auto milliseconds = unitValue->convertTo(CSSUnitType::CSS_MS))
-            return { Seconds::fromMilliseconds(milliseconds->value()) };
-    }
-
-    return Exception { ExceptionCode::TypeError };
-}
-
-std::optional<double> WebAnimation::bindingsStartTime() const
-{
-    if (!m_startTime)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(*m_startTime);
-}
-
-ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberish>& startTime)
-{
-    auto validStartTimeOrException = validateCSSNumberishValue(startTime);
-    if (validStartTimeOrException.hasException())
-        return validStartTimeOrException.releaseException();
-    setStartTime(validStartTimeOrException.releaseReturnValue());
+    if (startTime && !startTime->isValid())
+        return Exception { ExceptionCode::TypeError };
+    setStartTime(startTime);
     return { };
 }
 
-void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
+void WebAnimation::setStartTime(std::optional<CSSNumberishTime> newStartTime)
 {
     // 3.4.6 The procedure to set the start time of animation, animation, to new start time, is as follows:
     // https://drafts.csswg.org/web-animations/#setting-the-start-time-of-an-animation
@@ -392,28 +362,19 @@ void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
     invalidateEffect();
 }
 
-std::optional<double> WebAnimation::bindingsCurrentTime() const
+ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberishTime>& currentTime)
 {
-    auto time = currentTime();
-    if (!time)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(time.value());
+    if (currentTime && !currentTime->isValid())
+        return Exception { ExceptionCode::TypeError };
+    return setCurrentTime(currentTime);
 }
 
-ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberish>& currentTime)
-{
-    auto validCurrentTimeOrException = validateCSSNumberishValue(currentTime);
-    if (validCurrentTimeOrException.hasException())
-        return validCurrentTimeOrException.releaseException();
-    return setCurrentTime(validCurrentTimeOrException.releaseReturnValue());
-}
-
-std::optional<Seconds> WebAnimation::currentTime(std::optional<Seconds> startTime) const
+std::optional<CSSNumberishTime> WebAnimation::currentTime(std::optional<CSSNumberishTime> startTime) const
 {
     return currentTime(RespectHoldTime::Yes, startTime);
 }
 
-std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<Seconds> startTime) const
+std::optional<CSSNumberishTime> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<CSSNumberishTime> startTime) const
 {
     // 3.4.4. The current time of an animation
     // https://drafts.csswg.org/web-animations-1/#the-current-time-of-an-animation
@@ -436,7 +397,7 @@ std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime
     return (*m_timeline->currentTime() - startTime.value_or(*m_startTime)) * m_playbackRate;
 }
 
-ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<CSSNumberishTime> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " silentlySetCurrentTime " << seekTime);
 
@@ -476,7 +437,7 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> se
     return { };
 }
 
-ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<CSSNumberishTime> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " setCurrentTime " << seekTime);
 
@@ -923,7 +884,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
     // 1. Let the unconstrained current time be the result of calculating the current time substituting an unresolved time value
     // for the hold time if did seek is false. If did seek is true, the unconstrained current time is equal to the current time.
     auto unconstrainedCurrentTime = currentTime(didSeek == DidSeek::Yes ? RespectHoldTime::Yes : RespectHoldTime::No);
-    auto endTime = effectEndTime();
+    CSSNumberishTime endTime { effectEndTime() };
 
     // 2. If all three of the following conditions are true,
     //    - the unconstrained current time is resolved, and
@@ -950,7 +911,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             else if (!m_previousCurrentTime)
                 m_holdTime = 0_s;
             else
-                m_holdTime = std::min(m_previousCurrentTime.value(), 0_s);
+                m_holdTime = std::min(m_previousCurrentTime.value(), CSSNumberishTime { 0_s });
         } else if (m_playbackRate && m_timeline && m_timeline->currentTime()) {
             // If animation playback rate ≠ 0, and animation is associated with an active timeline,
             // Perform the following steps:
@@ -1062,7 +1023,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     bool hasPendingReadyPromise = false;
 
     // 3. Let seek time be a time value that is initially unresolved.
-    Markable<Seconds, Seconds::MarkableTraits> seekTime;
+    std::optional<CSSNumberishTime> seekTime;
 
     // 4. If the auto-rewind flag is true, perform the steps corresponding to the first matching condition from the following, if any:
     if (autoRewind == AutoRewind::Yes) {

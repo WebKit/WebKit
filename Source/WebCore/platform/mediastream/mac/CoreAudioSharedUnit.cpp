@@ -115,7 +115,7 @@ Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioShared
 {
 #if PLATFORM(MAC)
     if (shouldUseVPIO) {
-        if (auto ioUnit = CoreAudioSharedUnit::unit().takeStoredVPIOUnit()) {
+        if (auto ioUnit = CoreAudioSharedUnit::singleton().takeStoredVPIOUnit()) {
             RELEASE_LOG(WebRTC, "Creating a CoreAudioSharedInternalUnit with a stored VPIO unit");
             UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(WTFMove(ioUnit), shouldUseVPIO);
             return result;
@@ -142,7 +142,7 @@ CoreAudioSharedInternalUnit::~CoreAudioSharedInternalUnit()
 {
 #if PLATFORM(MAC)
     if (m_shouldUseVPIO)
-        CoreAudioSharedUnit::unit().setStoredVPIOUnit(std::exchange(m_audioUnit, { }));
+        CoreAudioSharedUnit::singleton().setStoredVPIOUnit(std::exchange(m_audioUnit, { }));
 #endif
 }
 
@@ -213,7 +213,7 @@ OSStatus CoreAudioSharedInternalUnit::defaultOutputDevice(uint32_t* deviceID)
     return -1;
 }
 
-CoreAudioSharedUnit& CoreAudioSharedUnit::unit()
+CoreAudioSharedUnit& CoreAudioSharedUnit::singleton()
 {
     static NeverDestroyed<Ref<CoreAudioSharedUnit>> singleton(adoptRef(*new CoreAudioSharedUnit));
     return singleton.get();
@@ -230,6 +230,8 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 
 CoreAudioSharedUnit::~CoreAudioSharedUnit()
 {
+    updateVoiceActiveDetection();
+    setMuteStatusChangedCallback({ });
 }
 
 #if PLATFORM(MAC)
@@ -563,6 +565,7 @@ void CoreAudioSharedUnit::cleanupAudioUnit()
         m_ioUnitInitialized = false;
     }
 
+    updateVoiceActiveDetection();
     m_ioUnit = nullptr;
 
     m_microphoneSampleBuffer = nullptr;
@@ -579,6 +582,12 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
     ASSERT(isMainThread());
     if (!hasAudioUnit())
         return 0;
+
+    if (!hasClients()) {
+        RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit(%p) stopping since there are no clients", this);
+        stopRunning();
+        return 0;
+    }
 
     m_isReconfiguring = true;
     auto scope = makeScopeExit([this] { m_isReconfiguring = false; });
@@ -642,10 +651,7 @@ OSStatus CoreAudioSharedUnit::startInternal()
     m_microphoneProcsCalled = 0;
     m_microphoneProcsCalledLastTime = 0;
 
-    if (m_shouldSetVoiceActivityListener) {
-        m_ioUnit->setVoiceActivityDetection(true);
-        m_shouldSetVoiceActivityListener = false;
-    }
+    updateVoiceActiveDetection();
 
     return noErr;
 }
@@ -656,7 +662,10 @@ void CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged()
         UInt32 muteUplinkOutput = !isProducingMicrophoneSamples();
         auto error = m_ioUnit->set(kAUVoiceIOProperty_MuteOutput, kAudioUnitScope_Global, outputBus, &muteUplinkOutput, sizeof(muteUplinkOutput));
         RELEASE_LOG_ERROR_IF(error, WebRTC, "CoreAudioSharedUnit::isProducingMicrophoneSamplesChanged(%p) unable to set kAUVoiceIOProperty_MuteOutput, error %d (%.4s)", this, (int)error, (char*)&error);
+
+        setMutedState(muteUplinkOutput);
     }
+    updateVoiceActiveDetection();
 
     if (!isProducingData())
         return;
@@ -764,6 +773,7 @@ void CoreAudioSharedUnit::stopInternal()
 #if PLATFORM(IOS_FAMILY)
     setIsInBackground(false);
 #endif
+    updateVoiceActiveDetection();
 }
 
 void CoreAudioSharedUnit::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
@@ -797,6 +807,52 @@ void CoreAudioSharedUnit::unregisterSpeakerSamplesProducer(CoreAudioSpeakerSampl
     }
 
     setIsRenderingAudio(false);
+}
+
+bool CoreAudioSharedUnit::shouldEnableVoiceActivityDetection() const
+{
+    return hasVoiceActivityListenerCallback()
+#if PLATFORM(IOS_FAMILY)
+        && !isProducingMicrophoneSamples()
+#endif
+        && m_ioUnitStarted;
+}
+
+void CoreAudioSharedUnit::updateVoiceActiveDetection()
+{
+    if (!m_ioUnit)
+        return;
+
+    if (m_voiceActivityDetectionEnabled) {
+        if (shouldEnableVoiceActivityDetection())
+            return;
+        if (m_ioUnit->setVoiceActivityDetection(false))
+            m_voiceActivityDetectionEnabled = false;
+        return;
+    }
+
+    if (!shouldEnableVoiceActivityDetection())
+        return;
+    if (m_ioUnit->setVoiceActivityDetection(true))
+        m_voiceActivityDetectionEnabled = true;
+}
+
+void CoreAudioSharedUnit::enableMutedSpeechActivityEventListener(Function<void()>&& callback)
+{
+    setVoiceActivityListenerCallback(WTFMove(callback));
+    updateVoiceActiveDetection();
+}
+
+void CoreAudioSharedUnit::disableMutedSpeechActivityEventListener()
+{
+    setVoiceActivityListenerCallback({ });
+    updateVoiceActiveDetection();
+}
+
+void CoreAudioSharedUnit::handleMuteStatusChangedNotification(bool isMuting)
+{
+    if (m_muteStatusChangedCallback && isMuting == isProducingMicrophoneSamples())
+        m_muteStatusChangedCallback(isMuting);
 }
 
 #if PLATFORM(IOS_FAMILY)

@@ -105,12 +105,12 @@ static String makeTemporaryDatabasePath()
     return FileSystem::createTemporaryFile("PushDatabase"_s, ".db"_s);
 }
 
-static std::unique_ptr<PushDatabase> createDatabaseSync(const String& path)
+static RefPtr<PushDatabase> createDatabaseSync(const String& path)
 {
-    std::unique_ptr<PushDatabase> result;
+    RefPtr<PushDatabase> result;
     bool done = false;
 
-    PushDatabase::create(path, [&done, &result](std::unique_ptr<PushDatabase>&& database) {
+    PushDatabase::create(path, [&done, &result](RefPtr<PushDatabase>&& database) {
         result = WTFMove(database);
         done = true;
     });
@@ -206,7 +206,7 @@ static PushTopics getTopicsSync(PushDatabase& database)
 
 class PushDatabaseTest : public testing::Test {
 public:
-    std::unique_ptr<PushDatabase> db;
+    RefPtr<PushDatabase> db;
 
     IGNORE_CLANG_WARNINGS_BEGIN("missing-designated-field-initializers")
     PushRecord record1 {

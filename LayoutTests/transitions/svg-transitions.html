@@ -103,11 +103,9 @@
   }
 
   #text1 {
-      kerning: 0;
       baseline-shift: 0;
   }
   .animating #text1 {
-      kerning: 10px;
       baseline-shift: 10px;
   }
 
@@ -146,7 +144,6 @@
   [1, "stop1", "stop-color", [127, 127, 0], 20], // rgb(255,0,0) -> rgb(0, 255, 0)
   [1, "stop1", "stop-opacity", 0.75, 0.1], // 1 -> 0.5
   [1, "polyline1", "stroke-miterlimit", 11, 0.5], // 12 -> 10 (this is an abrupt change in rendering even though the property animation is smooth)
-  [1, "text1", "kerning", 5, 1], // 0 -> 10px
   [1, "text1", "baseline-shift", 5, 1], // 0 -> 10px
   [1, "flood1", "flood-opacity", 0.5, 0.1], // 1 -> 0
   [1, "flood1", "flood-color", [127, 127, 0], 20], // rgb(0, 255, 0) -> rgb(255, 0, 0)

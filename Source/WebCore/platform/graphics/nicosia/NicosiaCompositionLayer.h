@@ -29,6 +29,7 @@
 #pragma once
 
 #include "Color.h"
+#include "CoordinatedImageBackingStore.h"
 #include "Damage.h"
 #include "FilterOperations.h"
 #include "FloatPoint.h"
@@ -38,7 +39,6 @@
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
 #include "NicosiaBackingStore.h"
-#include "NicosiaImageBacking.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
 #include "TextureMapperLayer.h"
@@ -144,7 +144,10 @@ public:
 
         RefPtr<WebCore::TextureMapperPlatformLayerProxy> contentLayer;
         RefPtr<BackingStore> backingStore;
-        RefPtr<ImageBacking> imageBacking;
+        struct {
+            RefPtr<WebCore::CoordinatedImageBackingStore> store;
+            bool isVisible { false };
+        } imageBacking;
         RefPtr<AnimatedBackingStoreClient> animatedBackingStoreClient;
 
         struct RepaintCounter {

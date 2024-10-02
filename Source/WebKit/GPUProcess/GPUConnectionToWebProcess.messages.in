@@ -54,7 +54,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     ReleaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier) AllowedWhenWaitingForSyncReply
 #endif
 #if ENABLE(MEDIA_SOURCE)
-    EnableMockMediaSource();
+    [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled] EnableMockMediaSource();
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

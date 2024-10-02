@@ -54,8 +54,10 @@ bool elementHasAutoTextDirectionState(const Element&);
 std::optional<TextDirection> computeAutoDirectionality(const Element&);
 std::optional<TextDirection> computeTextDirectionIfDirIsAuto(const Element&);
 
+void textDirectionStateChanged(Element&, TextDirectionState);
+
 void updateEffectiveTextDirectionState(Element&, TextDirectionState, Element* initiator = nullptr);
 void updateEffectiveTextDirectionOfDescendants(Element&, std::optional<TextDirection>, Element* initiator = nullptr);
-void updateEffectiveTextDirectionOfAncestors(Element&, Element* initiator = nullptr);
+void updateEffectiveTextDirectionOfAncestors(Element&, Element* initiator);
 
 } // namespace WebCore

@@ -1,8 +1,0 @@
-furo
-sphinx
-sphinx-autobuild
-sphinx-copybutton
-sphinx-inline-tabs
-sphinxcontrib-spelling
-sphinxcontrib-trio
-sphinxext-opengraph

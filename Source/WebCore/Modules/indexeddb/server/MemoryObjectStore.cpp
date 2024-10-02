@@ -80,6 +80,11 @@ void MemoryObjectStore::writeTransactionFinished(MemoryBackingStoreTransaction& 
     m_writeTransaction = nullptr;
 }
 
+MemoryBackingStoreTransaction* MemoryObjectStore::writeTransaction()
+{
+    return m_writeTransaction.get();
+}
+
 IDBError MemoryObjectStore::createIndex(MemoryBackingStoreTransaction& transaction, const IDBIndexInfo& info)
 {
     LOG(IndexedDB, "MemoryObjectStore::createIndex");

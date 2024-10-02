@@ -154,6 +154,21 @@ bool BorderShape::innerShapeContains(const LayoutRect& rect) const
     return innerEdgeRoundedRect().contains(rect);
 }
 
+bool BorderShape::outerShapeContains(const LayoutRect& rect) const
+{
+    return m_borderRect.contains(rect);
+}
+
+void BorderShape::move(LayoutSize offset)
+{
+    m_borderRect.move(offset);
+}
+
+void BorderShape::inflate(LayoutUnit amount)
+{
+    m_borderRect.inflateWithRadii(amount);
+}
+
 static void addRoundedRectToPath(const FloatRoundedRect& roundedRect, Path& path)
 {
     if (roundedRect.isRounded())
@@ -212,9 +227,24 @@ void BorderShape::clipToInnerShape(GraphicsContext& context, float deviceScaleFa
         context.clip(pixelSnappedRect.rect());
 }
 
+void BorderShape::clipOutOuterShape(GraphicsContext& context, float deviceScaleFactor)
+{
+    auto pixelSnappedRect = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (pixelSnappedRect.isEmpty())
+        return;
+
+    if (pixelSnappedRect.isRounded())
+        context.clipOutRoundedRect(pixelSnappedRect);
+    else
+        context.clipOut(pixelSnappedRect.rect());
+}
+
 void BorderShape::clipOutInnerShape(GraphicsContext& context, float deviceScaleFactor)
 {
     auto pixelSnappedRect = innerEdgeRoundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (pixelSnappedRect.isEmpty())
+        return;
+
     if (pixelSnappedRect.isRounded())
         context.clipOutRoundedRect(pixelSnappedRect);
     else

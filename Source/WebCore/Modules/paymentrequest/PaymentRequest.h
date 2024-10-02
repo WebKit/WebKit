@@ -55,6 +55,8 @@ template<typename IDLType> class DOMPromiseDeferred;
 class PaymentRequest final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentRequest> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PaymentRequest);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
     using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
@@ -103,10 +105,6 @@ public:
     void cancel();
 
     using MethodIdentifier = std::variant<String, URL>;
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     struct Method {

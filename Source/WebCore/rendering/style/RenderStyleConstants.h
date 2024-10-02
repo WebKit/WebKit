@@ -1031,7 +1031,8 @@ enum class LineAlign : bool {
 enum class RubyPosition : uint8_t {
     Over,
     Under,
-    InterCharacter
+    InterCharacter,
+    LegacyInterCharacter
 };
 
 enum class RubyAlign : uint8_t {

@@ -163,7 +163,7 @@ void WebSharedWorker::resumeIfNeeded()
 void WebSharedWorker::forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>& apply) const
 {
     for (auto& object : m_sharedWorkerObjects)
-        apply(object.identifier, object.state.port);
+        apply(object.identifier, *object.state.port);
 }
 
 std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObjectProcess() const

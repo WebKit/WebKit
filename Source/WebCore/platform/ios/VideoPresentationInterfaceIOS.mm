@@ -910,7 +910,7 @@ void VideoPresentationInterfaceIOS::clearMode(HTMLMediaElementEnums::VideoFullsc
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* VideoPresentationInterfaceIOS::logIdentifier() const
+uint64_t VideoPresentationInterfaceIOS::logIdentifier() const
 {
     return m_playbackSessionInterface->logIdentifier();
 }

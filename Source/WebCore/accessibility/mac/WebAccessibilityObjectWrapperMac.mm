@@ -392,6 +392,11 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #define NSAccessibilityTextOperationReplace @"TextOperationReplace"
 #endif
 
+#ifndef NSAccessibilityTextOperationReplacePreserveCase
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationReplacePreserveCase @"TextOperationReplacePreserveCase"
+#endif
+
 #ifndef NSAccessibilityTextOperationCapitalize
 // Value for TextOperationType.
 #define NSAccessibilityTextOperationCapitalize @"Capitalize"
@@ -410,6 +415,17 @@ static id parameterizedAttributeValueForTesting(const RefPtr<AXCoreObject>&, NSS
 #ifndef NSAccessibilityTextOperationReplacementString
 // Replacement text for operation replace.
 #define NSAccessibilityTextOperationReplacementString @"AXTextOperationReplacementString"
+#endif
+
+#ifndef NSAccessibilityTextOperationIndividualReplacementStrings
+// Array of replacement text for operation replace. The array should contain
+// the same number of items as the number of text operation ranges.
+#define NSAccessibilityTextOperationIndividualReplacementStrings @"AXTextOperationIndividualReplacementStrings"
+#endif
+
+#ifndef NSAccessibilityTextOperationSmartReplace
+// Boolean specifying whether a smart replacement should be performed.
+#define NSAccessibilityTextOperationSmartReplace @"AXTextOperationSmartReplace"
 #endif
 
 // Math attributes
@@ -663,7 +679,7 @@ static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> ac
     }
 
     if ([replacementStringParameter isKindOfClass:[NSString class]])
-        operation.replacementText = replacementStringParameter;
+        operation.replacementStrings = { String(replacementStringParameter) };
 
     if ([searchStringsParameter isKindOfClass:[NSArray class]])
         criteria.searchStrings = makeVector<String>(searchStringsParameter);
@@ -707,7 +723,9 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
 
     NSArray *markerRanges = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges];
     NSString *operationType = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationType];
+    NSArray *individualReplacementStrings = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationIndividualReplacementStrings];
     NSString *replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
+    NSNumber *smartReplace = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationSmartReplace];
 
     if ([markerRanges isKindOfClass:[NSArray class]]) {
         operation.textRanges = makeVector(markerRanges, [&axObjectCache] (id markerRange) {
@@ -719,6 +737,8 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
     if ([operationType isKindOfClass:[NSString class]]) {
         if ([operationType isEqualToString:NSAccessibilityTextOperationReplace])
             operation.type = AccessibilityTextOperationType::Replace;
+        else if ([operationType isEqualToString:NSAccessibilityTextOperationReplacePreserveCase])
+            operation.type = AccessibilityTextOperationType::ReplacePreserveCase;
         else if ([operationType isEqualToString:NSAccessibilityTextOperationCapitalize])
             operation.type = AccessibilityTextOperationType::Capitalize;
         else if ([operationType isEqualToString:NSAccessibilityTextOperationLowercase])
@@ -727,8 +747,13 @@ static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttr
             operation.type = AccessibilityTextOperationType::Uppercase;
     }
 
-    if ([replacementString isKindOfClass:[NSString class]])
-        operation.replacementText = replacementString;
+    if ([individualReplacementStrings isKindOfClass:[NSArray class]]) {
+        operation.replacementStrings = makeVector<String>(individualReplacementStrings);
+    } else if ([replacementString isKindOfClass:[NSString class]])
+        operation.replacementStrings = { String(replacementString) };
+
+    if ([smartReplace isKindOfClass:[NSNumber class]])
+        operation.smartReplace = [smartReplace boolValue] ? AccessibilityTextOperationSmartReplace::Yes : AccessibilityTextOperationSmartReplace::No;
 
     return operation;
 }
@@ -1436,7 +1461,8 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
-static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject)
+// `unignoredChildren` must be the children of `backingObject`.
+static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const Vector<RefPtr<AXCoreObject>>& unignoredChildren)
 {
 #if ENABLE(MODEL_ELEMENT)
     if (backingObject.isModel()) {
@@ -1449,8 +1475,7 @@ static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject)
     }
 #endif
 
-    const auto& children = backingObject.children();
-    if (!children.size()) {
+    if (!unignoredChildren.size()) {
         if (NSArray *widgetChildren = renderWidgetChildren(backingObject))
             return widgetChildren;
     }
@@ -1460,7 +1485,8 @@ static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject)
 
 static NSArray *children(AXCoreObject& backingObject)
 {
-    NSArray *specialChildren = transformSpecialChildrenCases(backingObject);
+    const auto& unignoredChildren = backingObject.unignoredChildren();
+    NSArray *specialChildren = transformSpecialChildrenCases(backingObject, unignoredChildren);
     if (specialChildren.count)
         return specialChildren;
 
@@ -1473,7 +1499,7 @@ static NSArray *children(AXCoreObject& backingObject)
     if (backingObject.isTreeItem())
         return makeNSArray(backingObject.ariaTreeItemContent());
 
-    return makeNSArray(backingObject.children());
+    return makeNSArray(backingObject.unignoredChildren());
 }
 
 static NSString *roleString(AXCoreObject& backingObject)
@@ -1863,7 +1889,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         // rows attribute for a column is the list of all the elements in that column at each row
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]
             || [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute])
-            return makeNSArray(backingObject->children());
+            return makeNSArray(backingObject->unignoredChildren());
 
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
             auto* header = backingObject->columnHeader();
@@ -3840,7 +3866,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (backingObject->isTree())
         return [super accessibilityIndexOfChild:targetChild];
 
-    const auto& children = backingObject->children();
+    const auto& children = backingObject->unignoredChildren();
     if (!children.size()) {
         if (NSArray *widgetChildren = renderWidgetChildren(*backingObject))
             return [widgetChildren indexOfObject:targetChild];
@@ -3880,7 +3906,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return children(*backingObject).count;
 
         // FIXME: this is duplicating the logic in children(AXCoreObject&) so it should be reworked.
-        auto childrenSize = backingObject->children().size();
+        size_t childrenSize = backingObject->unignoredChildren().size();
         if (!childrenSize) {
 #if ENABLE(MODEL_ELEMENT)
             if (backingObject->isModel())
@@ -3912,8 +3938,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
-        if (backingObject->children().isEmpty()) {
-            NSArray *children = transformSpecialChildrenCases(*backingObject);
+        const auto& unignoredChildren = backingObject->unignoredChildren();
+        if (unignoredChildren.isEmpty()) {
+            NSArray *children = transformSpecialChildrenCases(*backingObject, unignoredChildren);
             if (!children)
                 return nil;
 
@@ -3931,7 +3958,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
         }
 
-        auto children = makeNSArray(backingObject->children());
+        auto children = makeNSArray(unignoredChildren);
         unsigned childCount = [children count];
         if (index >= childCount)
             return nil;

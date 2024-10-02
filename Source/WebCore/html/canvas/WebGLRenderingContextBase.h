@@ -171,9 +171,7 @@ class VideoFrame;
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
-    using GPUBasedCanvasRenderingContext::weakPtrFactory;
-    using GPUBasedCanvasRenderingContext::WeakValueType;
-    using GPUBasedCanvasRenderingContext::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(GPUBasedCanvasRenderingContext);
 
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes, WebGLVersion);
     virtual ~WebGLRenderingContextBase();

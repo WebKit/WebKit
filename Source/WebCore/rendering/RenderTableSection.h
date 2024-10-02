@@ -97,9 +97,6 @@ public:
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
-    const RenderTableCell* firstRowCellAdjoiningTableStart() const;
-    const RenderTableCell* firstRowCellAdjoiningTableEnd() const;
-
     CellStruct& cellAt(unsigned row,  unsigned col);
     const CellStruct& cellAt(unsigned row, unsigned col) const;
     RenderTableCell* primaryCellAt(unsigned row, unsigned col);

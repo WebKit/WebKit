@@ -37,7 +37,7 @@
 
 @implementation WKApplicationStateTrackingView {
     WeakObjCPtr<WKWebView> _webViewToTrack;
-    std::unique_ptr<WebKit::ApplicationStateTracker> _applicationStateTracker;
+    RefPtr<WebKit::ApplicationStateTracker> _applicationStateTracker;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -46,7 +46,7 @@
         return nil;
 
     _webViewToTrack = webView;
-    _applicationStateTracker = makeUnique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
+    _applicationStateTracker = WebKit::ApplicationStateTracker::create(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground), @selector(_willBeginSnapshotSequence), @selector(_didCompleteSnapshotSequence));
     return self;
 }
 

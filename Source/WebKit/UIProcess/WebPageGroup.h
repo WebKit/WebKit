@@ -51,10 +51,11 @@ public:
     const WebPageGroupData& data() const { return m_data; }
 
     WebPreferences& preferences() const;
+    Ref<WebPreferences> protectedPreferences() const;
 
 private:
     WebPageGroupData m_data;
-    RefPtr<WebPreferences> m_preferences;
+    Ref<WebPreferences> m_preferences;
 };
 
 } // namespace WebKit

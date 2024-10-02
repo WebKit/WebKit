@@ -26,10 +26,10 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 
-#include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcSymbolsAllowed.h"
 #include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CalculationCategory.h"
@@ -37,19 +37,19 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<NumberRaw> validatedRange(NumberRaw value, CSSPropertyParserOptions options)
+std::optional<CSS::NumberRaw> validatedRange(CSS::NumberRaw value, CSSPropertyParserOptions options)
 {
     if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
     return value;
 }
 
-std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::UnevaluatedCalc<CSS::NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::Number, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Number, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -57,11 +57,11 @@ std::optional<UnevaluatedCalc<NumberRaw>> NumberKnownTokenTypeFunctionConsumer::
     return std::nullopt;
 }
 
-std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
-    if (auto validatedValue = validatedRange(NumberRaw { range.peek().numericValue() }, options)) {
+    if (auto validatedValue = validatedRange(CSS::NumberRaw { range.peek().numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
@@ -70,12 +70,13 @@ std::optional<NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTo
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, ValueRange valueRange)
+RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
 {
     const auto options = CSSPropertyParserOptions {
+        .parserMode = context.mode,
         .valueRange = valueRange
     };
-    return CSSPrimitiveValueResolver<NumberRaw>::consumeAndResolve(range, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Number>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

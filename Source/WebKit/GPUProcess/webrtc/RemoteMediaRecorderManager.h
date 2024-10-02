@@ -49,6 +49,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteMediaRecorder;
+struct SharedPreferencesForWebProcess;
 
 class RemoteMediaRecorderManager : private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaRecorderManager);
@@ -60,6 +61,7 @@ public:
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
     bool allowsExitUnderMemoryPressure() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     // IPC::MessageReceiver

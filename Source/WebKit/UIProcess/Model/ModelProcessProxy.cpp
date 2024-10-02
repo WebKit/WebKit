@@ -99,8 +99,11 @@ ModelProcessProxy::~ModelProcessProxy() = default;
 
 void ModelProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 {
-    if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
+    if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier)) {
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcess().modelElementEnabled);
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcess().modelProcessEnabled);
         process->requestTermination(ProcessTerminationReason::RequestedByModelProcess);
+    }
 }
 
 void ModelProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -130,6 +133,11 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
             return;
         stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTFMove(sharedPreferencesForWebProcess) }, WTFMove(completionHandler));
 }
 
 void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)
@@ -288,6 +296,10 @@ void ModelProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIde
         RELEASE_LOG(Process, "ModelProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
         return;
     }
+
+    MESSAGE_CHECK(page->preferences().modelElementEnabled());
+    MESSAGE_CHECK(page->preferences().modelProcessEnabled());
+
     if (page->webPageIDInMainFrameProcess() == pageID) {
         page->didCreateContextInModelProcessForVisibilityPropagation(contextID);
         return;

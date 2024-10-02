@@ -460,8 +460,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (isDomain("flipkart.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "trailers.apple.com"_s)
-            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (isDomain("soundcloud.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "naver.com"_s)
@@ -535,22 +533,6 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
         return element->classList().contains("sceneLayer"_s);
 
     return false;
-}
-
-// maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
-std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
-{
-    if (!shouldDispatchSimulatedMouseEvents(target))
-        return { };
-
-    // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
-    if (isGoogleMaps()) {
-        if (RefPtr element = dynamicDowncast<Element>(target); element && element->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon"_s)
-            return Event::IsCancelable::Yes;
-        return { };
-    }
-
-    return Event::IsCancelable::Yes;
 }
 
 // sites.google.com rdar://58653069
@@ -670,6 +652,18 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #else
     return false;
 #endif
+}
+
+// youtube.com rdar://135886305
+bool Quirks::needsYouTubeDarkModeQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsYouTubeDarkModeQuirk)
+        m_needsYouTubeDarkModeQuirk = isDomain("youtube.com"_s);
+
+    return *m_needsYouTubeDarkModeQuirk;
 }
 
 // gizmodo.com rdar://102227302
@@ -1079,23 +1073,6 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
     return url.host() == "teams.microsoft.com"_s && url.query().contains("Retried+3+times+without+success"_s);
 }
 
-static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
-{
-    if (element.hasClassName(className))
-        return true;
-
-    unsigned currentDistance = 0;
-    RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
-    while (ancestor && currentDistance < distance) {
-        ++currentDistance;
-        if (ancestor->hasClassName(className))
-            return true;
-
-        ancestor = dynamicDowncast<Element>(ancestor->parentNode());
-    }
-    return false;
-}
-
 static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
 {
     // Microsoft Teams login case.
@@ -1114,10 +1091,6 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
         || element.classNames().contains("web-toolbar__signin-button-label"_s)
         || element.classNames().contains("sb-signin-button"_s));
     }
-
-    // Gizmodo login case: rdar://106782128.
-    if (url.host() == "gizmodo.com"_s)
-        return elementHasClassInClosestAncestors(element, "js_user-button"_s, 6);
 
     return false;
 }
@@ -1205,15 +1178,9 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
     static NeverDestroyed<HashSet<RegistrableDomain>> kinjaQuirks = [] {
         HashSet<RegistrableDomain> set;
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("avclub.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("deadspin.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jalopnik.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jezebel.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kotaku.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("lifehacker.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theroot.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("thetakeout.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theonion.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("theinventory.com"_s));
         return set;
     }();
@@ -1374,15 +1341,14 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // This quirk disables the "webkitendfullscreen" event when a video enters picture-in-picture
     // from fullscreen for the sites which cannot handle the event properly in that case.
-    // We should remove the quirk once <rdar://problem/73261957> and <rdar://problem/90393832> have been fixed.
+    // We should remove once the quirks have been fixed.
+    // <rdar://90393832> vimeo.com
     if (!needsQuirks())
         return false;
 
     if (!m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk) {
-        auto host = m_document->topDocument().url().host();
         auto domain = RegistrableDomain(m_document->topDocument().url());
-
-        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = host == "trailers.apple.com"_s || domain == "espn.com"_s || domain == "vimeo.com"_s;
+        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = domain == "espn.com"_s || domain == "vimeo.com"_s;
     }
 
     return *m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
@@ -1647,19 +1613,6 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
     }();
     return *m_needsDisableDOMPasteAccessQuirk;
-}
-
-// oracle.com rdar://117673533
-bool Quirks::shouldDisableNavigatorStandaloneQuirk() const
-{
-#if PLATFORM(MAC)
-    if (!needsQuirks())
-        return false;
-
-    if (isDomain("oracle.com"_s))
-        return true;
-#endif
-    return false;
 }
 
 bool Quirks::shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const

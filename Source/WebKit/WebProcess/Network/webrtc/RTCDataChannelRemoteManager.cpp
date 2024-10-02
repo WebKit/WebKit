@@ -64,15 +64,15 @@ void RTCDataChannelRemoteManager::initialize()
 
 bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
-    ASSERT(WebCore::Process::identifier() == localIdentifier.processIdentifier);
-    if (WebCore::Process::identifier() != localIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == localIdentifier.processIdentifier());
+    if (WebCore::Process::identifier() != localIdentifier.processIdentifier())
         return false;
 
-    auto handler = WebCore::RTCDataChannel::handlerFromIdentifier(localIdentifier.channelIdentifier);
+    auto handler = WebCore::RTCDataChannel::handlerFromIdentifier(localIdentifier.object());
     if (!handler)
         return false;
 
-    auto iterator = m_sources.add(remoteIdentifier.channelIdentifier, makeUniqueRef<WebCore::RTCDataChannelRemoteSource>(remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(handler)), remoteSourceConnection()));
+    auto iterator = m_sources.add(remoteIdentifier.object(), makeUniqueRef<WebCore::RTCDataChannelRemoteSource>(remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(handler)), remoteSourceConnection()));
     return iterator.isNewEntry;
 }
 
@@ -92,11 +92,11 @@ WebCore::RTCDataChannelRemoteSourceConnection& RTCDataChannelRemoteManager::remo
 
 void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdentifier handlerIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&& function)
 {
-    ASSERT(WebCore::Process::identifier() == handlerIdentifier.processIdentifier);
-    if (WebCore::Process::identifier() != handlerIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == handlerIdentifier.processIdentifier());
+    if (WebCore::Process::identifier() != handlerIdentifier.processIdentifier())
         return;
 
-    auto iterator = m_handlers.find(handlerIdentifier.channelIdentifier);
+    auto iterator = m_handlers.find(handlerIdentifier.object());
     if (iterator == m_handlers.end())
         return;
     auto& remoteHandler = iterator->value;
@@ -109,11 +109,11 @@ void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdent
 
 WebCore::RTCDataChannelRemoteSource* RTCDataChannelRemoteManager::sourceFromIdentifier(WebCore::RTCDataChannelIdentifier sourceIdentifier)
 {
-    ASSERT(WebCore::Process::identifier() == sourceIdentifier.processIdentifier);
-    if (WebCore::Process::identifier() != sourceIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == sourceIdentifier.processIdentifier());
+    if (WebCore::Process::identifier() != sourceIdentifier.processIdentifier())
         return nullptr;
 
-    return m_sources.get(sourceIdentifier.channelIdentifier);
+    return m_sources.get(sourceIdentifier.object());
 }
 
 void RTCDataChannelRemoteManager::sendData(WebCore::RTCDataChannelIdentifier sourceIdentifier, bool isRaw, std::span<const uint8_t> data)
@@ -184,7 +184,7 @@ RTCDataChannelRemoteManager::RemoteHandlerConnection::RemoteHandlerConnection(Re
 void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCore::RTCDataChannelRemoteHandler& handler, WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
     m_queue->dispatch([handler = WeakPtr { handler }, contextIdentifier, localIdentifier]() mutable {
-        RTCDataChannelRemoteManager::sharedManager().m_handlers.add(localIdentifier.channelIdentifier, RemoteHandler { WTFMove(handler), contextIdentifier });
+        RTCDataChannelRemoteManager::sharedManager().m_handlers.add(localIdentifier.object(), RemoteHandler { WTFMove(handler), contextIdentifier });
     });
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ConnectToRTCDataChannelRemoteSource { localIdentifier, remoteIdentifier }, [localIdentifier](auto&& result) {
         RTCDataChannelRemoteManager::sharedManager().postTaskToHandler(localIdentifier, [result](auto& handler) {

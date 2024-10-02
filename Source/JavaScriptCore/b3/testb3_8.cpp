@@ -1456,4 +1456,143 @@ void testNarrowLoadUpper()
     CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x2000000030000000ULL);
 }
 
+void testConstDoubleMove()
+{
+    // FMOV
+    {
+        auto encode = [](uint64_t value) -> double {
+            constexpr unsigned E = 11;
+            constexpr unsigned F = 64 - E - 1;
+            uint64_t sign = (value & 0b10000000U) ? 1 : 0;
+            uint64_t upper = (value & 0b01000000U) ? 0b01111111100U : 0b10000000000U;
+            uint64_t exp = upper | ((value & 0b00110000U) >> 4);
+            uint64_t frac = (value & 0b1111U) << (F - 4);
+            return bitwise_cast<double>((sign << 63) | (exp << F) | frac);
+        };
+
+        for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstDoubleValue>(proc, Origin(), encode(i)));
+            CHECK_EQ(compileAndRun<double>(proc), encode(i));
+        }
+    }
+
+    // MOVI
+    {
+        auto encode = [](uint64_t value) -> uint64_t {
+            auto bits = [](bool flag) -> uint64_t {
+                return (flag) ? 0b11111111ULL : 0b00000000ULL;
+            };
+
+            return (bits(value & (1U << 7)) << 56)
+                | (bits(value & (1U << 6)) << 48)
+                | (bits(value & (1U << 5)) << 40)
+                | (bits(value & (1U << 4)) << 32)
+                | (bits(value & (1U << 3)) << 24)
+                | (bits(value & (1U << 2)) << 16)
+                | (bits(value & (1U << 1)) << 8)
+                | (bits(value & (1U << 0)) << 0);
+        };
+
+        for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstDoubleValue>(proc, Origin(), bitwise_cast<double>(encode(i))));
+            CHECK_EQ(bitwise_cast<uint64_t>(compileAndRun<double>(proc)), encode(i));
+        }
+    }
+}
+
+void testConstFloatMove()
+{
+    // FMOV
+    auto encode = [](uint64_t value) -> float {
+        constexpr unsigned E = 8;
+        constexpr unsigned F = 32 - E - 1;
+        uint32_t sign = (value & 0b10000000U) ? 1 : 0;
+        uint32_t upper = (value & 0b01000000U) ? 0b01111100U : 0b10000000U;
+        uint32_t exp = upper | ((value & 0b00110000U) >> 4);
+        uint32_t frac = (value & 0b1111U) << (F - 4);
+        return bitwise_cast<float>((sign << 31) | (exp << F) | frac);
+    };
+
+    for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        root->appendNewControlValue(proc, Return, Origin(), root->appendNew<ConstFloatValue>(proc, Origin(), encode(i)));
+        CHECK_EQ(compileAndRun<float>(proc), encode(i));
+    }
+}
+
+void testSShrCompare32(int32_t constantValue)
+{
+    auto compile = [&](B3::Opcode opcode, uint32_t shiftAmount, uint32_t constantValue) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto* value = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), value, root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
+        auto* constant = root->appendNew<Const32Value>(proc, Origin(), constantValue);
+        auto* comparison = root->appendNew<Value>(proc, opcode, Origin(), shifted, constant);
+        root->appendNewControlValue(proc, Return, Origin(), comparison);
+        return compileProc(proc);
+    };
+
+    auto testWithOpcode = [&](B3::Opcode opcode, auto compare) {
+        for (uint32_t shiftAmount = 0; shiftAmount < 32; ++shiftAmount) {
+            auto code = compile(opcode, shiftAmount, constantValue);
+            for (auto input : int32OperandsMore()) {
+                for (uint32_t step = 0; step < 1000; ++step) {
+                    int32_t before = static_cast<uint32_t>(input.value) - step;
+                    int32_t middle = static_cast<uint32_t>(input.value);
+                    int32_t after = static_cast<uint32_t>(input.value) + step;
+                    CHECK_EQ(invoke<bool>(*code, before), compare(shiftAmount, constantValue, before));
+                    CHECK_EQ(invoke<bool>(*code, middle), compare(shiftAmount, constantValue, middle));
+                    CHECK_EQ(invoke<bool>(*code, after), compare(shiftAmount, constantValue, after));
+                }
+            }
+        }
+    };
+
+    testWithOpcode(Above, [](uint32_t shiftAmount, uint32_t constantValue, int32_t value) { return static_cast<uint32_t>(value >> shiftAmount) > constantValue; });
+    testWithOpcode(AboveEqual, [](uint32_t shiftAmount, uint32_t constantValue, int32_t value) { return static_cast<uint32_t>(value >> shiftAmount) >= constantValue; });
+    testWithOpcode(Below, [](uint32_t shiftAmount, uint32_t constantValue, int32_t value) { return static_cast<uint32_t>(value >> shiftAmount) < constantValue; });
+    testWithOpcode(BelowEqual, [](uint32_t shiftAmount, uint32_t constantValue, int32_t value) { return static_cast<uint32_t>(value >> shiftAmount) <= constantValue; });
+}
+
+void testSShrCompare64(int64_t constantValue)
+{
+    auto compile = [&](B3::Opcode opcode, uint64_t shiftAmount, uint64_t constantValue) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), value, root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
+        auto* constant = root->appendNew<Const64Value>(proc, Origin(), constantValue);
+        auto* comparison = root->appendNew<Value>(proc, opcode, Origin(), shifted, constant);
+        root->appendNewControlValue(proc, Return, Origin(), comparison);
+        return compileProc(proc);
+    };
+
+    auto testWithOpcode = [&](B3::Opcode opcode, auto compare) {
+        for (uint64_t shiftAmount = 0; shiftAmount < 64; ++shiftAmount) {
+            auto code = compile(opcode, shiftAmount, constantValue);
+            for (auto input : int64OperandsMore()) {
+                for (uint64_t step = 0; step < 1000; ++step) {
+                    int64_t before = static_cast<uint64_t>(input.value) - step;
+                    int64_t middle = static_cast<uint64_t>(input.value);
+                    int64_t after = static_cast<uint64_t>(input.value) + step;
+                    CHECK_EQ(invoke<bool>(*code, before), compare(shiftAmount, constantValue, before));
+                    CHECK_EQ(invoke<bool>(*code, middle), compare(shiftAmount, constantValue, middle));
+                    CHECK_EQ(invoke<bool>(*code, after), compare(shiftAmount, constantValue, after));
+                }
+            }
+        }
+    };
+
+    testWithOpcode(Above, [](uint64_t shiftAmount, uint64_t constantValue, int64_t value) { return static_cast<uint64_t>(value >> shiftAmount) > constantValue; });
+    testWithOpcode(AboveEqual, [](uint64_t shiftAmount, uint64_t constantValue, int64_t value) { return static_cast<uint64_t>(value >> shiftAmount) >= constantValue; });
+    testWithOpcode(Below, [](uint64_t shiftAmount, uint64_t constantValue, int64_t value) { return static_cast<uint64_t>(value >> shiftAmount) < constantValue; });
+    testWithOpcode(BelowEqual, [](uint64_t shiftAmount, uint64_t constantValue, int64_t value) { return static_cast<uint64_t>(value >> shiftAmount) <= constantValue; });
+}
+
 #endif // ENABLE(B3_JIT)

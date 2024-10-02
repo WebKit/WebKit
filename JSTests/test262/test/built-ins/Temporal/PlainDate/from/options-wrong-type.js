@@ -19,4 +19,12 @@ const badOptions = [
 for (const value of badOptions) {
   assert.throws(TypeError, () => Temporal.PlainDate.from({ year: 1976, month: 11, day: 18 }, value),
     `TypeError on wrong options type ${typeof value}`);
+  assert.throws(TypeError, () => Temporal.PlainDate.from(new Temporal.PlainDate(1976, 11, 18), value),
+    "TypeError thrown before cloning PlainDate instance");
+  assert.throws(TypeError, () => Temporal.PlainDate.from(new Temporal.ZonedDateTime(0n, "UTC"), value),
+    "TypeError thrown before converting ZonedDateTime instance");
+  assert.throws(TypeError, () => Temporal.PlainDate.from(new Temporal.PlainDateTime(1976, 11, 18), value),
+    "TypeError thrown before converting PlainDateTime instance");
+  assert.throws(RangeError, () => Temporal.PlainDate.from("1976-11-18Z", value),
+    "Invalid string processed before throwing TypeError");
 };

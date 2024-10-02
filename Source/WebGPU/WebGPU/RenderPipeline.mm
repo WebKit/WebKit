@@ -584,13 +584,18 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         for (size_t i = 0; i < buffer.attributeCount; ++i) {
             auto& attribute = buffer.attributes[i];
             auto formatSize = vertexFormatSize(attribute.format);
-            lastStride = std::max<uint64_t>(lastStride, attribute.offset + formatSize);
+            auto offsetPlusFormatSize = checkedSum<uint64_t>(attribute.offset, formatSize);
+            if (offsetPlusFormatSize.hasOverflowed()) {
+                *error = @"attribute.offset + formatSize > uint64::max()";
+                return nil;
+            }
+            lastStride = std::max<uint64_t>(lastStride, offsetPlusFormatSize.value());
             if (!buffer.arrayStride) {
-                if (attribute.offset + formatSize > limits.maxVertexBufferArrayStride) {
+                if (offsetPlusFormatSize.value() > limits.maxVertexBufferArrayStride) {
                     *error = @"attribute.offset + formatSize > limits.maxVertexBufferArrayStride";
                     return nil;
                 }
-            } else if (attribute.offset + formatSize > buffer.arrayStride) {
+            } else if (offsetPlusFormatSize.value() > buffer.arrayStride) {
                 *error = @"attribute.offset + formatSize > buffer.arrayStride";
                 return nil;
             }
@@ -1727,7 +1732,11 @@ bool RenderPipeline::colorDepthStencilTargetsMatch(const WGPURenderPassDescripto
         auto& texture = *depthStencilView.get();
         if (texture.format() != m_descriptor.depthStencil->format)
             return false;
-        if (texture.texture().pixelFormat == MTLPixelFormatX32_Stencil8 && m_descriptor.depthStencil->format == WGPUTextureFormat_Stencil8)
+        auto mtlPixelFormat = texture.texture().pixelFormat;
+        auto descriptorFormat = m_descriptor.depthStencil->format;
+        if (mtlPixelFormat == MTLPixelFormatX32_Stencil8 && descriptorFormat == WGPUTextureFormat_Stencil8)
+            return false;
+        if (mtlPixelFormat == MTLPixelFormatDepth32Float_Stencil8 && (descriptorFormat == WGPUTextureFormat_Depth32Float || descriptorFormat == WGPUTextureFormat_Depth24Plus))
             return false;
         if (texture.sampleCount() != m_descriptor.multisample.count)
             return false;

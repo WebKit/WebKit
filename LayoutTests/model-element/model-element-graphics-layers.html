@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
 <html>
 <body>
 <model id="model">
@@ -12,21 +12,14 @@
     const layers = document.getElementById("layers");
     const model = document.getElementById("model");
 
-    const modelDidLoad = () => {
+    model.ready.then((resolve) => {
         layers.innerText = window.internals?.layerTreeAsText(document) ?? "This test requires testRunner.";
         model.remove();
         window.testRunner?.notifyDone();
-    }
-
-    if (model.complete)
-        modelDidLoad();
-    else {
-        model.addEventListener("load", modelDidLoad);
-        model.addEventListener("error", event => {
-            layers.textContent = `Failed. Model did not load.`;
-            window.testRunner?.notifyDone();
-        });
-    }
+    }, (reason) => {
+        layers.textContent = `Failed. Model did not load.`;
+        window.testRunner?.notifyDone();
+    });
 </script>
 </body>
 </html>

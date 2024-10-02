@@ -86,10 +86,6 @@ class VersionNameMap(object):
             'linux': {},
         }
 
-        # wincairo uses the same versions as Windows
-        self.mapping[PUBLIC_TABLE]['wincairo'] = self.mapping[PUBLIC_TABLE]['win']
-
-
     @classmethod
     def _automap_to_major_version(cls, prefix, minimum=Version(1), maximum=Version(1)):
         result = {}

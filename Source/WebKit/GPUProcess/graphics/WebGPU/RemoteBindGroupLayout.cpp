@@ -45,24 +45,29 @@ RemoteBindGroupLayout::RemoteBindGroupLayout(WebCore::WebGPU::BindGroupLayout& b
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteBindGroupLayout::~RemoteBindGroupLayout() = default;
 
 void RemoteBindGroupLayout::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteBindGroupLayout::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteBindGroupLayout::messageReceiverName(), m_identifier.toUInt64());
 }
 
 void RemoteBindGroupLayout::setLabel(String&& label)
 {
-    m_backing->setLabel(WTFMove(label));
+    Ref { m_backing }->setLabel(WTFMove(label));
+}
+
+Ref<IPC::StreamServerConnection> RemoteBindGroupLayout::protectedStreamConnection() const
+{
+    return m_streamConnection;
 }
 
 } // namespace WebKit

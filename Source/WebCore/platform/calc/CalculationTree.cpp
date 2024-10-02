@@ -41,7 +41,7 @@ static auto operator<<(TextStream&, const None&) -> TextStream&;
 static auto operator<<(TextStream&, const ChildOrNone&) -> TextStream&;
 static auto operator<<(TextStream&, const Child&) -> TextStream&;
 static auto operator<<(TextStream&, const Number&) -> TextStream&;
-static auto operator<<(TextStream&, const Percent&) -> TextStream&;
+static auto operator<<(TextStream&, const Percentage&) -> TextStream&;
 static auto operator<<(TextStream&, const Dimension&) -> TextStream&;
 static auto operator<<(TextStream&, const IndirectNode<Sum>&) -> TextStream&;
 static auto operator<<(TextStream&, const IndirectNode<Product>&) -> TextStream&;
@@ -102,7 +102,7 @@ TextStream& operator<<(TextStream& ts, const Number& root)
     return ts << TextStream::FormatNumberRespectingIntegers(root.value);
 }
 
-TextStream& operator<<(TextStream& ts, const Percent& root)
+TextStream& operator<<(TextStream& ts, const Percentage& root)
 {
     return ts << TextStream::FormatNumberRespectingIntegers(root.value) << "%";
 }

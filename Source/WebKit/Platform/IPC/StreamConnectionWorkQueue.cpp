@@ -113,11 +113,6 @@ void StreamConnectionWorkQueue::wakeUp()
     m_wakeUpSemaphore.signal();
 }
 
-IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
-{
-    return m_wakeUpSemaphore;
-}
-
 void StreamConnectionWorkQueue::startProcessingThread()
 {
     auto task = [this]() mutable {

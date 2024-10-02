@@ -1,0 +1,5 @@
+
+PASS <model> with empty source gets the expected animation values
+PASS <model> source with no animation gets the expected animation values
+PASS <model> source with animation gets the expected animation values
+

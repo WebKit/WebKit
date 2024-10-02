@@ -72,6 +72,7 @@ private:
     CMBufferQueueTriggerToken m_triggerToken;
 
     bool m_isEncoding { false };
+    bool m_needsKeyframe { true };
     float m_maxKeyFrameIntervalDuration { 2.0 };
     unsigned m_expectedFrameRate { 30 };
     std::optional<unsigned> m_outputBitRate;

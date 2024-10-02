@@ -25,10 +25,10 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include <WebCore/CoordinatedBackingStore.h>
+#include <WebCore/CoordinatedPlatformLayerBuffer.h>
 #include <WebCore/NicosiaBackingStore.h>
 #include <WebCore/NicosiaBuffer.h>
 #include <WebCore/NicosiaCompositionLayer.h>
-#include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
@@ -121,38 +121,6 @@ void updateBackingStore(TextureMapperLayer& layer,
         backingStore.updateTile(tile.tileID, tile.updateRect, tile.tileRect, tile.buffer.copyRef(), { });
 }
 
-void updateImageBacking(TextureMapperLayer& layer,
-    Nicosia::ImageBacking::CompositionState& compositionState,
-    Nicosia::ImageBacking::Update& update)
-{
-    if (!update.isVisible) {
-        layer.setContentsLayer(nullptr);
-        return;
-    }
-
-    if (!update.imageBackingStore)
-        return;
-
-    compositionState.imageBackingStore = update.imageBackingStore;
-
-    auto& imageBackingStore = *compositionState.imageBackingStore;
-    auto& backingStore = imageBackingStore.compositionState().backingStoreContainer->backingStore;
-    if (!backingStore) {
-        backingStore = CoordinatedBackingStore::create();
-
-        auto buffer = WTFMove(imageBackingStore.backingStoreState().buffer);
-        if (buffer) {
-            backingStore->createTile(1, 1.0);
-            WebCore::IntRect rect { { }, buffer->size() };
-            ASSERT(2000 >= std::max(rect.width(), rect.height()));
-            backingStore->setSize(rect.size());
-            backingStore->updateTile(1, rect, rect, WTFMove(buffer), rect.location());
-        }
-    }
-
-    layer.setContentsLayer(backingStore.get());
-}
-
 void removeLayer(Nicosia::CompositionLayer& layer)
 {
     layer.accessCommitted(
@@ -203,8 +171,8 @@ void CoordinatedGraphicsScene::updateSceneState()
 
         struct ImageBacking {
             std::reference_wrapper<TextureMapperLayer> layer;
-            std::reference_wrapper<Nicosia::ImageBacking> imageBacking;
-            Nicosia::ImageBacking::Update update;
+            RefPtr<CoordinatedImageBackingStore> store;
+            bool isVisible { false };
         };
         Vector<ImageBacking> imageBacking;
     } layersByBacking;
@@ -345,9 +313,9 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layersByBacking.contentLayer.append(
                                 { std::ref(layer), std::ref(*layerState.contentLayer), layerState.delta.contentLayerChanged });
                             replacedProxiesToInvalidate.remove(Ref { *layerState.contentLayer });
-                        } else if (layerState.imageBacking) {
+                        } else if (layerState.imageBacking.store) {
                             layersByBacking.imageBacking.append(
-                                { std::ref(layer), std::ref(*layerState.imageBacking), layerState.imageBacking->takeUpdate() });
+                                { std::ref(layer), layerState.imageBacking.store, layerState.imageBacking.isVisible });
                         } else
                             layer.setContentsLayer(nullptr);
 
@@ -404,17 +372,11 @@ void CoordinatedGraphicsScene::updateSceneState()
 
     {
         for (auto& entry : layersByBacking.imageBacking) {
-            auto& compositionState = entry.imageBacking.get().compositionState();
-            updateImageBacking(entry.layer.get(), compositionState, entry.update);
-
-            if (compositionState.imageBackingStore) {
-                auto& container = compositionState.imageBackingStore->compositionState().backingStoreContainer;
-                m_imageBackingStoreContainers.add(container);
-
-                auto& backingStore = container->backingStore;
-                if (backingStore)
-                    backingStoresWithPendingBuffers.add(*backingStore);
-            }
+            auto& layer = entry.layer.get();
+            if (!entry.isVisible)
+                layer.setContentsLayer(nullptr);
+            else if (entry.store)
+                layer.setContentsLayer(entry.store->buffer());
         }
 
         layersByBacking.imageBacking = { };
@@ -425,12 +387,6 @@ void CoordinatedGraphicsScene::updateSceneState()
 
     for (auto& proxy : proxiesForSwapping)
         proxy->swapBuffer();
-
-    // Eject any backing store container whose only reference is held in this scene's HashSet cache.
-    m_imageBackingStoreContainers.removeIf(
-        [](auto& container) {
-            return container->hasOneRef();
-        });
 }
 
 void CoordinatedGraphicsScene::ensureRootLayer()
@@ -463,8 +419,6 @@ void CoordinatedGraphicsScene::purgeGLResources()
             });
         m_nicosia.scene = nullptr;
     }
-
-    m_imageBackingStoreContainers = { };
 
     m_rootLayer->dismissDamageVisitor();
     m_rootLayer = nullptr;

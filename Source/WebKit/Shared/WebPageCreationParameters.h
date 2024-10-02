@@ -84,9 +84,9 @@
 #include <WebCore/ShouldRequireExplicitConsentForGamepadAccess.h>
 #endif
 
-namespace IPC {
-class Decoder;
-class Encoder;
+namespace WebCore {
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
 }
 
 namespace WebKit {
@@ -137,9 +137,9 @@ struct WebPageCreationParameters {
     String userAgent { };
 
     bool itemStatesWereRestoredByAPIRequest { false };
-    Vector<BackForwardListItemState> itemStates { };
+    Vector<Ref<FrameState>> itemStates { };
 
-    VisitedLinkTableIdentifier visitedLinkTableID { };
+    VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel { false };
     bool canRunModal { false };
 
@@ -323,8 +323,9 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<RemotePageParameters> remotePageParameters { };
-    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier { };
     WebCore::FrameIdentifier mainFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
+    WebCore::SandboxFlags initialSandboxFlags;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData { };

@@ -195,7 +195,6 @@ var propertiesToTest = {
     "hanging-punctuation": true,
     "height": true,
     "image-rendering": true,
-    "kerning": true,
     "left": true,
     "letter-spacing": true,
     "lighting-color": true,

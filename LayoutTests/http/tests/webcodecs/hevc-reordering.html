@@ -47,7 +47,15 @@ promise_test(async () => {
 
     chunks = frames.map((frame, i) => new EncodedVideoChunk({type: i == 0 ? 'key' : 'delta', timestamp: frame[0], duration: 1, data: new Uint8Array(buffer, frame[1], frame[2])}));
 
-    chunks.forEach(chunk => decoder.decode(chunk));
+    for (let i = 0; i < chunks.length; ++i) {
+        decoder.decode(chunks[i]);
+        if (window.internals && i === 2) {
+             let counter = 0;
+             while (++counter < 100 && internals.hasPendingActivity(decoder))
+                 await new Promise(resolve => setTimeout(resolve, 50));
+             assert_less_than(counter, 100);
+        }
+    }
     await decoder.flush();
 
     assert_array_equals(frameTimestamps, frames.map(frame => frame[0]).sort((a,b) => a - b), "timestamps are ordered");

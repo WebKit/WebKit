@@ -71,7 +71,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 + (instancetype)defaultStore
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::defaultStore());
+    return wrapper(API::ContentRuleListStore::defaultStoreSingleton());
 #else
     return nil;
 #endif
@@ -191,7 +191,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 + (instancetype)defaultStoreWithLegacyFilename
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::defaultStore());
+    return wrapper(API::ContentRuleListStore::defaultStoreSingleton());
 #else
     return nil;
 #endif

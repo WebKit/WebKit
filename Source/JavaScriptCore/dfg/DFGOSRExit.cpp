@@ -376,7 +376,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     value = exit.m_jsValueSource.payloadGPR();
 
                 jit.load32(AssemblyHelpers::Address(value, JSCell::structureIDOffset()), scratch1);
-                jit.store32(scratch1, arrayProfile->addressOfLastSeenStructureID());
+                jit.store32(scratch1, arrayProfile->addressOfSpeculationFailureStructureID());
 
                 jit.load8(AssemblyHelpers::Address(value, JSCell::typeInfoTypeOffset()), scratch2);
                 jit.sub32(AssemblyHelpers::TrustedImm32(FirstTypedArrayType), scratch2);
@@ -884,7 +884,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
     dataLog(" @ exit #", debugInfo->exitIndex, " (", debugInfo->bytecodeIndex, ", ", debugInfo->kind, ") with ");
     if (alternative) {
         dataLog(
-            "executeCounter = ", alternative->jitExecuteCounter(),
+            "executeCounter = ", alternative->baselineExecuteCounter(),
             ", reoptimizationRetryCounter = ", alternative->reoptimizationRetryCounter(),
             ", optimizationDelayCounter = ", alternative->optimizationDelayCounter());
     } else

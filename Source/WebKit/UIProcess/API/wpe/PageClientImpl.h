@@ -27,6 +27,7 @@
 
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 struct wpe_view_backend;
 typedef struct _AtkObject AtkObject;
@@ -53,6 +54,10 @@ class PageClientImpl final : public PageClient
     , public WebFullScreenManagerProxyClient
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(PageClientImpl);
+#if ENABLE(FULLSCREEN_API)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageClientImpl);
+#endif
 public:
     PageClientImpl(WKWPE::View&);
     virtual ~PageClientImpl();

@@ -36,6 +36,9 @@ messages -> GPUProcessProxy {
 #endif
 #if ENABLE(MEDIA_STREAM)
     VoiceActivityDetected()
+    StartMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId);
+    StopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId)
+    MicrophoneMuteStatusChanged(bool isMuting)
 #if PLATFORM(IOS_FAMILY)
     StatusBarWasTapped() -> () Async
 #endif

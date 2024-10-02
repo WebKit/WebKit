@@ -82,7 +82,7 @@ public:
     Error send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
     using AsyncReplyID = Connection::AsyncReplyID;
     template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
 
     template<typename T>
     using SendSyncResult = Connection::SendSyncResult<T>;
@@ -171,7 +171,7 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W,
 }
 
 template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
+std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     auto signpostIdentifier = Connection::generateSignpostIdentifier();
@@ -182,15 +182,15 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     Timeout timeout = defaultTimeout();
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
-        return { }; // FIXME: Propagate errors.
+        return std::nullopt; // FIXME: Propagate errors.
 
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return { }; // FIXME: Propagate errors.
+        return std::nullopt; // FIXME: Propagate errors.
 
     Ref connection = m_connection;
     auto handler = Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
-    auto replyID = handler.replyID;
+    auto replyID = *handler.replyID;
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     handler.completionHandler = CompletionHandler<void(Decoder*)>([signpostIdentifier, handler = WTFMove(handler.completionHandler)](Decoder* decoder) mutable {
         WTFEndSignpost(signpostIdentifier, StreamClientConnection);
@@ -219,7 +219,7 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
             completionHandler(nullptr);
         });
     }
-    return { };
+    return std::nullopt;
 }
 
 template<typename T, typename... AdditionalData>
@@ -305,7 +305,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
 
             auto decoder = makeUniqueRef<Decoder>(*replySpan, m_currentDestinationID);
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
-                ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
+                ASSERT(decoder->messageName() == MessageName::SyncMessageReply || decoder->messageName() == MessageName::CancelSyncMessageReply);
                 return decoder;
             }
         } else
@@ -318,15 +318,16 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!decoderResult)
         return std::nullopt;
 
-    if (decoderResult->has_value()) {
-        std::optional<typename T::ReplyArguments> replyArguments;
-        auto& decoder = decoderResult->value();
-        *decoder >> replyArguments;
-        if (replyArguments)
-            return { { WTFMove(decoderResult->value()), WTFMove(*replyArguments) } };
+    if (!decoderResult->has_value())
+        return { decoderResult->error() };
+    UniqueRef decoder = WTFMove(decoderResult->value());
+    if (decoder->messageName() == MessageName::CancelSyncMessageReply)
+        return { Error::SyncMessageCancelled };
+    std::optional<typename T::ReplyArguments> replyArguments;
+    *decoder >> replyArguments;
+    if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-    }
-    return { decoderResult->error() };
+    return { { WTFMove(decoder), WTFMove(*replyArguments) } };
 }
 
 inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)

@@ -1797,7 +1797,7 @@ Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::cont
 
 #if !RELEASE_LOG_DISABLED
 
-const void* CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogIdentifier() const
+uint64_t CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceLogIdentifier() const
 {
     return logIdentifier();
 }

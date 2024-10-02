@@ -55,7 +55,7 @@
 #include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleProperties.h"
-#include "StyleResolveForFontRaw.h"
+#include "StyleResolveForFont.h"
 #include "StyleTreeResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"

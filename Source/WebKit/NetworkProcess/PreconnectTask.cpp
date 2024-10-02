@@ -40,14 +40,14 @@ namespace WebKit {
 using namespace WebCore;
 
 PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const WebCore::NetworkLoadMetrics&)>&& completionHandler)
-    : m_completionHandler(WTFMove(completionHandler))
+    : m_networkLoad(NetworkLoad::create(*this, WTFMove(parameters), networkSession))
+    , m_completionHandler(WTFMove(completionHandler))
     , m_timeout(60_s)
     , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }, { }); })
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
-    ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession);
+    ASSERT(m_networkLoad->parameters().shouldPreconnectOnly == PreconnectOnly::Yes);
 }
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)

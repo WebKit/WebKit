@@ -56,8 +56,11 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ColorInputType);
 
 using namespace HTMLNames;
 

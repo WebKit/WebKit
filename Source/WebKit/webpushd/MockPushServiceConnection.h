@@ -31,7 +31,11 @@ namespace WebPushD {
 
 class MockPushServiceConnection final : public PushServiceConnection {
 public:
-    MockPushServiceConnection();
+    static Ref<MockPushServiceConnection> create()
+    {
+        return adoptRef(*new MockPushServiceConnection());
+    }
+
     ~MockPushServiceConnection();
 
     WebCore::PushCrypto::ClientKeys generateClientKeys() final;
@@ -54,6 +58,8 @@ public:
     void setPublicTokenForTesting(Vector<uint8_t>&&) override;
 
 private:
+    MockPushServiceConnection();
+
     Vector<String> m_enabledTopics;
     Vector<String> m_ignoredTopics;
     Vector<String> m_opportunisticTopics;

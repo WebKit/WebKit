@@ -254,7 +254,7 @@ void MessagePort::dispatchMessages()
 
         LOG(MessagePorts, "MessagePort %s (%p) dispatching %zu messages", m_identifier.logString().utf8().data(), this, messages.size());
 
-        RefPtrAllowingPartiallyDestroyed<ScriptExecutionContext> context = scriptExecutionContext();
+        RefPtr<ScriptExecutionContext> context = scriptExecutionContext();
         if (!context || !context->globalObject())
             return;
 

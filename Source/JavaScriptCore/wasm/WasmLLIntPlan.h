@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,9 +72,9 @@ public:
 
     void work(CompilationEffort) final;
 
-    bool didReceiveFunctionData(unsigned, const FunctionData&) final;
+    bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
 
-    void compileFunction(uint32_t functionIndex) final;
+    void compileFunction(FunctionCodeIndex functionIndex) final;
 
     void completeInStreaming();
     void didCompileFunctionInStreaming();
@@ -87,7 +87,7 @@ private:
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
 
-    bool ensureEntrypoint(LLIntCallee&, unsigned functionIndex);
+    bool ensureEntrypoint(LLIntCallee&, FunctionCodeIndex functionIndex);
 
     Vector<std::unique_ptr<FunctionCodeBlockGenerator>> m_wasmInternalFunctions;
     const Ref<LLIntCallee>* m_callees { nullptr };

@@ -397,8 +397,8 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
-    if (m_connection)
-        m_connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
+    if (RefPtr connection = m_connection)
+        connection->send(Messages::RemoteSharedResourceCache::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit

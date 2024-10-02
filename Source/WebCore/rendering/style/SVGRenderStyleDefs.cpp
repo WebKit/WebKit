@@ -151,29 +151,6 @@ bool StyleStopData::operator==(const StyleStopData& other) const
         && color == other.color;
 }
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTextData);
-
-StyleTextData::StyleTextData()
-    : kerning(SVGRenderStyle::initialKerning())
-{
-}
-
-inline StyleTextData::StyleTextData(const StyleTextData& other)
-    : RefCounted<StyleTextData>()
-    , kerning(other.kerning)
-{
-}
-
-Ref<StyleTextData> StyleTextData::copy() const
-{
-    return adoptRef(*new StyleTextData(*this));
-}
-
-bool StyleTextData::operator==(const StyleTextData& other) const
-{
-    return kerning == other.kerning;
-}
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleMiscData);
 
 StyleMiscData::StyleMiscData()
@@ -475,12 +452,6 @@ TextStream& operator<<(TextStream& ts, const StyleStopData& data)
 {
     ts.dumpProperty("opacity", data.opacity);
     ts.dumpProperty("color", data.color);
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const StyleTextData& data)
-{
-    ts.dumpProperty("kerning", data.kerning);
     return ts;
 }
 

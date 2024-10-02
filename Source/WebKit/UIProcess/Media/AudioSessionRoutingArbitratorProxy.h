@@ -78,7 +78,7 @@ public:
 
 protected:
     Logger& logger();
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "AudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
 
@@ -96,7 +96,7 @@ private:
     WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
     ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
     WallTime m_arbitrationUpdateTime;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 
 #if HAVE(AVAUDIO_ROUTING_ARBITER)
     UniqueRef<WebCore::SharedRoutingArbitratorToken> m_token;

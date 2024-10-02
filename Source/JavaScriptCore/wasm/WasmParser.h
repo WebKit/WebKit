@@ -36,6 +36,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "Width.h"
 #include <type_traits>
 #include <wtf/Expected.h>

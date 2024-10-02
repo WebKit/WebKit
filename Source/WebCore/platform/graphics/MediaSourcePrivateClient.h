@@ -43,11 +43,13 @@ public:
     virtual ~MediaSourcePrivateClient() = default;
 
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
+    virtual void reOpen() = 0;
     virtual Ref<MediaTimePromise> waitForTarget(const SeekTarget&) = 0;
     virtual Ref<MediaPromise> seekToTime(const MediaTime&) = 0;
+    virtual RefPtr<MediaSourcePrivate> mediaSourcePrivate() const = 0;
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) = 0;
+    virtual void setLogIdentifier(uint64_t) = 0;
     virtual const Logger* logger() const { return nullptr; }
 #endif
 

@@ -20,7 +20,7 @@ for (let ctor of ctors) {
   function WriteData() {
     // Write some data into the array.
     for (let i = 0; i < wholeArrayView.length; ++i) {
-      WriteToTypedArray(wholeArrayView, i, 2 * i);
+      wholeArrayView[i] = MayNeedBigInt(wholeArrayView, 2 * i);
     }
   }
   WriteData();

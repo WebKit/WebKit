@@ -25,20 +25,24 @@
 #include "config.h"
 #include "CSSCalcTree+Evaluation.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
 #include "CalculationExecutor.h"
+#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 namespace CSSCalc {
 
-static auto evaluate(const NoneRaw&, const EvaluationOptions&) -> std::optional<Calculation::None>;
+static auto evaluate(const CSS::NoneRaw&, const EvaluationOptions&) -> std::optional<Calculation::None>;
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> std::optional<std::variant<double, Calculation::None>>;
 static auto evaluate(const std::optional<Child>&, const EvaluationOptions&) -> std::optional<std::optional<double>>;
 static auto evaluate(const Child&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Number&, const EvaluationOptions&) -> std::optional<double>;
-static auto evaluate(const Percent&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const Percentage&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const CanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const NonCanonicalDimension&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const Symbol&, const EvaluationOptions&) -> std::optional<double>;
@@ -47,6 +51,7 @@ static auto evaluate(const IndirectNode<Product>&, const EvaluationOptions&) -> 
 static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Max>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Hypot>&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const IndirectNode<Anchor>&, const EvaluationOptions&) -> std::optional<double>;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, const EvaluationOptions&) -> std::optional<double>;
 
@@ -76,7 +81,7 @@ template<typename Op> static std::optional<double> executeVariadicMathOperationA
     return result;
 }
 
-std::optional<Calculation::None> evaluate(const NoneRaw&, const EvaluationOptions&)
+std::optional<Calculation::None> evaluate(const CSS::NoneRaw&, const EvaluationOptions&)
 {
     return Calculation::None { };
 }
@@ -109,9 +114,9 @@ std::optional<double> evaluate(const Number& number, const EvaluationOptions&)
     return number.value;
 }
 
-std::optional<double> evaluate(const Percent& percent, const EvaluationOptions&)
+std::optional<double> evaluate(const Percentage& percentage, const EvaluationOptions&)
 {
-    return percent.value;
+    return percentage.value;
 }
 
 std::optional<double> evaluate(const CanonicalDimension& root, const EvaluationOptions&)
@@ -165,6 +170,26 @@ std::optional<double> evaluate(const IndirectNode<Hypot>& root, const Evaluation
     return executeVariadicMathOperationAfterUnwrapping(root, options);
 }
 
+std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const EvaluationOptions& options)
+{
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
+        return { };
+
+    auto result = evaluateWithoutFallback(*anchor, options);
+
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+    // "If any of these conditions are false, the anchor() function resolves to its specified fallback value.
+    // If no fallback value is specified, it makes the declaration referencing it invalid at computed-value time."
+    if (!result && anchor->fallback)
+        result = evaluate(*anchor->fallback, options);
+
+    if (!result)
+        options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+
+    return result;
+
+}
+
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)
 {
     return WTF::apply([&](const auto& ...x) { return executeMathOperationAfterUnwrapping<Op>(evaluate(x, options)...); } , *root);
@@ -173,6 +198,21 @@ template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& roo
 std::optional<double> evaluateDouble(const Tree& tree, const EvaluationOptions& options)
 {
     return evaluate(tree.root, options);
+}
+
+std::optional<double> evaluateWithoutFallback(const Anchor& anchor, const EvaluationOptions& options)
+{
+    auto& builderState = *options.conversionData->styleBuilderState();
+
+    auto side = WTF::switchOn(anchor.side,
+        [&](const Child& percentage) -> Style::AnchorPositionEvaluator::Side {
+            return evaluate(percentage, options).value_or(0) / 100;
+        }, [&](CSSValueID sideID) -> Style::AnchorPositionEvaluator::Side {
+            return sideID;
+        }
+    );
+
+    return Style::AnchorPositionEvaluator::evaluate(builderState, anchor.elementName, side);
 }
 
 } // namespace CSSCalc

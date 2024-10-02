@@ -63,8 +63,13 @@ void BaseAudioSharedUnit::removeClient(CoreAudioCaptureSource& client)
 {
     ASSERT(isMainThread());
     m_clients.remove(client);
-    Locker locker { m_audioThreadClientsLock };
-    m_audioThreadClients = m_clients.weakValues();
+    {
+        Locker locker { m_audioThreadClientsLock };
+        m_audioThreadClients = m_clients.weakValues();
+    }
+
+    if (!shouldContinueRunning())
+        stopRunning();
 }
 
 void BaseAudioSharedUnit::clearClients()
@@ -186,11 +191,6 @@ void BaseAudioSharedUnit::devicesChanged()
         return;
     }
 
-    if (!m_producingCount) {
-        RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - returning early as not capturing");
-        return;
-    }
-
     if (devices.size() && m_isCapturingWithDefaultMicrophone && migrateToNewDefaultDevice(devices[0])) {
         RELEASE_LOG_ERROR(WebRTC, "BaseAudioSharedUnit::devicesChanged - migrating to new default device");
         return;
@@ -211,8 +211,7 @@ void BaseAudioSharedUnit::captureFailed()
 
     clearClients();
 
-    stopInternal();
-    cleanupAudioUnit();
+    stopRunning();
 }
 
 void BaseAudioSharedUnit::stopProducingData()
@@ -223,17 +222,12 @@ void BaseAudioSharedUnit::stopProducingData()
     if (m_producingCount && --m_producingCount)
         return;
 
-    if (m_isRenderingAudio || isListeningToVoiceActivity()) {
+    if (shouldContinueRunning()) {
         setIsProducingMicrophoneSamples(false);
         return;
     }
 
-    stopInternal();
-    cleanupAudioUnit();
-
-    auto callbacks = std::exchange(m_whenNotRunningCallbacks, { });
-    for (auto& callback : callbacks)
-        callback();
+    stopRunning();
 }
 
 void BaseAudioSharedUnit::setIsProducingMicrophoneSamples(bool value)
@@ -245,11 +239,18 @@ void BaseAudioSharedUnit::setIsProducingMicrophoneSamples(bool value)
 void BaseAudioSharedUnit::setIsRenderingAudio(bool value)
 {
     m_isRenderingAudio = value;
-    if (m_isRenderingAudio || m_producingCount)
-        return;
+    if (!shouldContinueRunning())
+        stopRunning();
+}
 
+void BaseAudioSharedUnit::stopRunning()
+{
     stopInternal();
     cleanupAudioUnit();
+
+    auto callbacks = std::exchange(m_whenNotRunningCallbacks, { });
+    for (auto& callback : callbacks)
+        callback();
 }
 
 void BaseAudioSharedUnit::reconfigure()

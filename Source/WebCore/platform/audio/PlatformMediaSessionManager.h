@@ -216,7 +216,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return nullptr; }
+    uint64_t logIdentifier() const final { return 0; }
     ASCIILiteral logClassName() const override { return "PlatformMediaSessionManager"_s; }
     WTFLogChannel& logChannel() const final;
 #endif

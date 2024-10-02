@@ -173,13 +173,6 @@ void forEachInIteratorProtocol(JSGlobalObject* globalObject, JSValue iterable, c
     auto& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray) {
-        auto* array = jsCast<JSArray*>(iterable);
-        forEachInFastArray(globalObject, iterable, array, callback);
-        RETURN_IF_EXCEPTION(scope, void());
-        return;
-    }
-
     IterationRecord iterationRecord = iteratorDirect(globalObject, iterable);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();

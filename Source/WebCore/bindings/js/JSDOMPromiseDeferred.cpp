@@ -276,6 +276,7 @@ void fulfillPromiseWithJSON(Ref<DeferredPromise>&& promise, const String& data)
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&& promise, ArrayBuffer* arrayBuffer)
 {
     if (!arrayBuffer) {
+        JSLockHolder lock(promise->globalObject()->vm());
         promise->reject<IDLAny>(createOutOfMemoryError(promise->globalObject()));
         return;
     }
@@ -290,6 +291,7 @@ void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&& promise, std::
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&& promise, Uint8Array* bytes)
 {
     if (!bytes) {
+        JSLockHolder lock(promise->globalObject()->vm());
         promise->reject<IDLAny>(createOutOfMemoryError(promise->globalObject()));
         return;
     }

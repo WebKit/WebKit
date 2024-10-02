@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -197,15 +197,6 @@ Ref<const SVGTransformList> SVGPatternElement::protectedPatternTransform() const
 AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
 {
     return protectedPatternTransform()->concatenate();
-}
-
-void SVGPatternElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::patternTransformAttr) {
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTransform, value);
-        return;
-    }
-    SVGElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

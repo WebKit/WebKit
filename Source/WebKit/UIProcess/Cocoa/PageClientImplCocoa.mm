@@ -299,9 +299,9 @@ void PageClientImplCocoa::writingToolsActiveDidChange()
     [m_webView didChangeValueForKey:writingToolsActiveKey];
 }
 
-void PageClientImplCocoa::didEndPartialIntelligenceTextPonderingAnimation()
+void PageClientImplCocoa::didEndPartialIntelligenceTextAnimation()
 {
-    [m_webView _didEndPartialIntelligenceTextPonderingAnimation];
+    [m_webView _didEndPartialIntelligenceTextAnimation];
 }
 
 bool PageClientImplCocoa::writingToolsTextReplacementsFinished()
@@ -357,6 +357,12 @@ void PageClientImplCocoa::videoControlsManagerDidChange()
 CocoaWindow *PageClientImplCocoa::platformWindow() const
 {
     return [m_webView window];
+}
+
+void PageClientImplCocoa::processDidUpdateThrottleState()
+{
+    [m_webView willChangeValueForKey:@"_webProcessState"];
+    [m_webView didChangeValueForKey:@"_webProcessState"];
 }
 
 } // namespace WebKit

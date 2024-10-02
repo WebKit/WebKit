@@ -299,12 +299,17 @@ bool WebPushXPCConnectionMessageSender::performSendWithAsyncReplyWithoutUsingIPC
     return true;
 }
 
+static audit_token_t getSelfAuditToken()
+{
+    audit_token_t auditToken { };
+    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
+    task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&auditToken), &auditTokenCount);
+    return auditToken;
+}
+
 static WebKit::WebPushD::WebPushDaemonConnectionConfiguration defaultWebPushDaemonConfiguration()
 {
-    audit_token_t token = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
-    task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
-
+    auto token = getSelfAuditToken();
     Vector<uint8_t> auditToken(sizeof(token));
     memcpy(auditToken.data(), &token, sizeof(token));
 
@@ -2391,6 +2396,7 @@ TEST(WebPushD, WKWebPushDaemonConnectionRequestPushPermission)
 
     auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
     configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
     auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
     auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org"]);
 
@@ -2424,7 +2430,8 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
     auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
     configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
     // Bundle identifier is required for making push subscription.
-    configuration.get().bundleIdentifier = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().bundleIdentifierOverrideForTesting = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
     auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
     auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
     RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];

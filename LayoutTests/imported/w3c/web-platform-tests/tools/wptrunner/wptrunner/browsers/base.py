@@ -110,10 +110,6 @@ class Browser:
         """Used for browser-specific setup that happens at the start of a test run"""
         pass
 
-    def restart_on_test_type_change(self, new_test_type: str, old_test_type: str) -> bool:
-        """Determines if a restart is needed when there is a test type switch."""
-        return True
-
     def settings(self, test: Test) -> BrowserSettings:
         """Dictionary of metadata that is constant for a specific launch of a browser.
 
@@ -359,7 +355,7 @@ class WebDriverBrowser(Browser):
             env=self.env,
             storeOutput=False)
 
-        self.logger.info("Starting WebDriver: %s" % ' '.join(cmd))
+        self.logger.debug("Starting WebDriver: %s" % ' '.join(cmd))
         try:
             self._proc.run()
         except OSError as e:
@@ -378,12 +374,13 @@ class WebDriverBrowser(Browser):
                 server_process=self._proc,
             )
         except Exception:
-            self.logger.error(f"WebDriver was not accessible within {self.init_timeout} seconds.")
-            self.logger.error(traceback.format_exc())
+            self.logger.error(
+                "WebDriver was not accessible "
+                f"within the timeout:\n{traceback.format_exc()}")
             raise
         finally:
             self._output_handler.start(group_metadata=group_metadata, **kwargs)
-        self.logger.info("Webdriver started successfully.")
+        self.logger.debug("_run complete")
 
     def stop(self, force: bool = False) -> bool:
         self.logger.debug("Stopping WebDriver")

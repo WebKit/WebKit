@@ -13,36 +13,39 @@
     <canvas id="canvas4"></canvas>
     <div></div>
     <script>
+        function drawImageToCanvas(image, canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
         if (window.internals && window.testRunner) {
             internals.clearMemoryCache();
             internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
             testRunner.waitUntilDone();
         }
 
-        var image = new Image;
-        var parent = document.querySelector("div");
-        parent.appendChild(image);
+        (async () => {
+            let image = new Image;
+            let parent = document.querySelector("div");
+            parent.appendChild(image);
 
-        function drawImageInCanvas(image, canvasId) {
-            var canvas = document.querySelector(canvasId);
-            var context = canvas.getContext("2d");
-            context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        }
+            image.src = "resources/animated-red-green-blue-repeat-2.gif";
 
-        image.onload = (() => {
-            drawImageInCanvas(image, "#canvas1");
-            image.decode().then(() => {
-                drawImageInCanvas(image, "#canvas2");
-                return image.decode();
-            }).then(() => {
-                drawImageInCanvas(image, "#canvas3");
-                return image.decode();
-            }).then(() => {
-                drawImageInCanvas(image, "#canvas4");
-                parent.remove();
+            await image.decode();
+            drawImageToCanvas(image, canvas1);
+
+            await image.decode();
+            drawImageToCanvas(image, canvas2);
+
+            await image.decode();
+            drawImageToCanvas(image, canvas3);
+
+            await image.decode();
+            drawImageToCanvas(image, canvas4);
+
+            parent.remove();
+            if (window.testRunner)
                 testRunner.notifyDone();
-            });
-        });
-        image.src = "resources/animated-red-green-blue-repeat-2.gif";
+        })();
     </script>
 </body>

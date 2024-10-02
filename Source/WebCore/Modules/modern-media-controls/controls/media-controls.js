@@ -234,4 +234,10 @@ class MediaControls extends LayoutNode
         this.element.removeEventListener("focusin", this);
         window.removeEventListener("dragstart", this, true);
     }
+
+    reenable()
+    {
+        this.element.addEventListener("focusin", this);
+        window.addEventListener("dragstart", this, true);
+    }
 }

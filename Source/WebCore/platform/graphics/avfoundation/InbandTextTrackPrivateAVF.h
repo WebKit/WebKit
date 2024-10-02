@@ -30,6 +30,7 @@
 
 #include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateClient.h"
+#include <wtf/TZoneMalloc.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
@@ -47,6 +48,7 @@ public:
 };
 
 class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED(InbandTextTrackPrivateAVF);
 public:
     virtual ~InbandTextTrackPrivateAVF();
 

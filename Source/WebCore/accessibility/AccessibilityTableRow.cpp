@@ -129,7 +129,7 @@ void AccessibilityTableRow::setRowIndex(unsigned rowIndex)
 
 AXCoreObject* AccessibilityTableRow::rowHeader()
 {
-    const auto& rowChildren = children();
+    const auto& rowChildren = unignoredChildren();
     if (rowChildren.isEmpty())
         return nullptr;
     
@@ -169,7 +169,7 @@ void AccessibilityTableRow::addChildren()
         return;
 
     unsigned index = 0;
-    for (const auto& cell : children()) {
+    for (const auto& cell : unignoredChildren()) {
         if (auto* tableCell = dynamicDowncast<AccessibilityTableCell>(cell.get()))
             tableCell->setAXColIndexFromRow(colIndex + index);
         index++;

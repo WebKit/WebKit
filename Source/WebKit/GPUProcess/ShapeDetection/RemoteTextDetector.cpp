@@ -53,15 +53,15 @@ RemoteTextDetector::~RemoteTextDetector() = default;
 
 const SharedPreferencesForWebProcess& RemoteTextDetector::sharedPreferencesForWebProcess() const
 {
-    return m_backend->sharedPreferencesForWebProcess();
+    return protectedBackend()->sharedPreferencesForWebProcess();
 }
 
-Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking()
+Ref<WebCore::ShapeDetection::TextDetector> RemoteTextDetector::protectedBacking() const
 {
     return backing();
 }
 
-Ref<RemoteRenderingBackend> RemoteTextDetector::protectedBackend()
+Ref<RemoteRenderingBackend> RemoteTextDetector::protectedBackend() const
 {
     return m_backend.get();
 }

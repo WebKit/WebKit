@@ -293,6 +293,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (&candidateElement == m_document->activeModalDialog() || &element == m_document->activeModalDialog())
         return false;
 
+    if (!m_document->styleScope().anchorPositionedStates().isEmptyIgnoringNullReferences())
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
     if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
         return false;

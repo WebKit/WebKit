@@ -36,12 +36,10 @@ struct MultiCacheQueryOptions;
 
 class DOMCacheStorage : public RefCounted<DOMCacheStorage>, public ActiveDOMObject {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<DOMCacheStorage> create(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
     ~DOMCacheStorage();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
 

@@ -41,7 +41,7 @@ Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     , m_numInlinedPutByIds(0)
     , m_numInlinedCalls(0)
     , m_jettisonReason(NotJettisoned)
-    , m_uid(UID::create())
+    , m_uid(UID::generate())
 {
 }
 
@@ -153,7 +153,7 @@ Ref<JSON::Value> Compilation::toJSON(Dumper& dumper) const
     if (!m_additionalJettisonReason.isNull())
         result->setString(dumper.keys().m_additionalJettisonReason, String::fromUTF8(m_additionalJettisonReason.span()));
 
-    result->setValue(dumper.keys().m_uid, m_uid.toJSON(dumper));
+    result->setString(dumper.keys().m_uid, makeString(m_uid));
 
     return result;
 }

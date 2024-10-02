@@ -41,6 +41,9 @@
  */
 @property (nonatomic, readonly, copy) NSString *_userVisibleShortcut;
 
+/*! @abstract Represents whether or not this command is the action command for the extension. */
+@property (nonatomic, readonly) BOOL _isActionCommand;
+
 #if TARGET_OS_OSX
 /*!
  @abstract Determines whether an event matches the command's activation key and modifier flags.

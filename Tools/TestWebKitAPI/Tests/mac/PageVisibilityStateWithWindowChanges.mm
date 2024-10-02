@@ -69,7 +69,7 @@ public:
     template <typename View> void runTest(View);
 
     // WebKitAgnosticTest
-    NSURL *url() const override { return [[NSBundle mainBundle] URLForResource:@"PageVisibilityStateWithWindowChanges" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+    NSURL *url() const override { return [NSBundle.test_resourcesBundle URLForResource:@"PageVisibilityStateWithWindowChanges" withExtension:@"html"]; }
     void didLoadURL(WebView *webView) override { runTest(webView); }
     void didLoadURL(WKWebView *wkView) override { runTest(wkView); }
 

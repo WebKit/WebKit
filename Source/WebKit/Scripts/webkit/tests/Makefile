@@ -1,21 +1,26 @@
 
 TESTS = \
-    TestWithSuperclass \
+    TestWithCVPixelBuffer \
+    TestWithWantsDispatch \
+    TestWithWantsDispatchNoSyncMessages \
+    TestWithWantsAsyncDispatch \
+    TestWithEnabledBy \
+    TestWithEnabledByAndConjunction \
+    TestWithEnabledByOrConjunction \
+    TestWithEnabledIf \
+    TestWithIfMessage \
+    TestWithImageData \
     TestWithLegacyReceiver \
     TestWithoutAttributes \
     TestWithoutUsingIPCConnection \
-    TestWithIfMessage \
     TestWithSemaphore \
-    TestWithImageData \
     TestWithStream \
     TestWithStreamBatched \
     TestWithStreamBuffer \
-    TestWithCVPixelBuffer \
     TestWithStreamServerConnectionHandle \
-    TestWithEnabledBy \
-    TestWithEnabledIf \
-    TestWithEnabledByAndConjunction \
-    TestWithEnabledByOrConjunction \
+    TestWithSuperclass \
+    TestWithSuperclassAndWantsAsyncDispatch \
+    TestWithSuperclassAndWantsDispatch \
 #
 
 all:

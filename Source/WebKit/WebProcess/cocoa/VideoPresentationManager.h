@@ -133,9 +133,7 @@ class VideoPresentationManager
     , public CanMakeWeakPtr<VideoPresentationManager>
     , private IPC::MessageReceiver {
 public:
-    using CanMakeWeakPtr<VideoPresentationManager>::WeakPtrImplType;
-    using CanMakeWeakPtr<VideoPresentationManager>::WeakValueType;
-    using CanMakeWeakPtr<VideoPresentationManager>::weakPtrFactory;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<VideoPresentationManager>);
 
     static Ref<VideoPresentationManager> create(WebPage&, PlaybackSessionManager&);
     virtual ~VideoPresentationManager();
@@ -211,7 +209,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     ASCIILiteral logClassName() const;
     WTFLogChannel& logChannel() const;
 #endif

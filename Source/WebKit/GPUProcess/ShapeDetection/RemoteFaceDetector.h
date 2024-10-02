@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
+#include "RemoteRenderingBackend.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
 #include <WebCore/ProcessIdentifier.h>
@@ -73,6 +74,7 @@ private:
     RemoteFaceDetector& operator=(RemoteFaceDetector&&) = delete;
 
     WebCore::ShapeDetection::FaceDetector& backing() { return m_backing; }
+    Ref<RemoteRenderingBackend> protectedBackend() const { return m_backend.get(); }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 

@@ -717,6 +717,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSwitchStringAndGetIndex, unsigned, (J
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
+    unsigned length = string->length();
+    if (length < unlinkedTable->minLength() || length > unlinkedTable->maxLength())
+        return std::numeric_limits<unsigned>::max();
+
     auto str = string->value(globalObject);
 
     RETURN_IF_EXCEPTION(throwScope, 0);

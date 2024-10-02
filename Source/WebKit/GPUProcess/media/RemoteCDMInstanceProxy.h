@@ -52,15 +52,15 @@ class RemoteCDMInstanceSessionProxy;
 
 class RemoteCDMInstanceProxy : public WebCore::CDMInstanceClient, private IPC::MessageReceiver  {
 public:
-    using WebCore::CDMInstanceClient::weakPtrFactory;
-    using WebCore::CDMInstanceClient::WeakValueType;
-    using WebCore::CDMInstanceClient::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(WebCore::CDMInstanceClient);
 
     static std::unique_ptr<RemoteCDMInstanceProxy> create(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, RemoteCDMInstanceIdentifier);
     ~RemoteCDMInstanceProxy();
 
     const RemoteCDMInstanceConfiguration& configuration() const { return m_configuration.get(); }
     WebCore::CDMInstance& instance() { return m_instance; }
+    Ref<WebCore::CDMInstance> protectedInstance() const;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
 
 private:
     friend class RemoteCDMFactoryProxy;
@@ -70,7 +70,7 @@ private:
     void unrequestedInitializationDataReceived(const String&, Ref<WebCore::SharedBuffer>&&) final;
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
 #endif
 
     // IPC::MessageReceiver
@@ -87,6 +87,8 @@ private:
     void setStorageDirectory(const String&);
     void createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&&);
 
+    RefPtr<RemoteCDMProxy> protectedCdm() const;
+
     WeakPtr<RemoteCDMProxy> m_cdm;
     Ref<WebCore::CDMInstance> m_instance;
     UniqueRef<RemoteCDMInstanceConfiguration> m_configuration;
@@ -95,7 +97,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

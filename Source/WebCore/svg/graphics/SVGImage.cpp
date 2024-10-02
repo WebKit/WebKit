@@ -254,15 +254,12 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
 
     RefPtr buffer = context.createImageBuffer(expandedIntSize(imageBufferSize.size()));
-    if (!buffer) // Failed to allocate buffer.
+    if (!buffer)
         return;
+
     drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
-
-    RefPtr image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
-    if (!image)
-        return;
 
     // Adjust the source rect and transform due to the image buffer's scaling.
     FloatRect scaledSrcRect = srcRect;
@@ -271,7 +268,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     context.setDrawLuminanceMask(false);
-    context.drawPattern(*image, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
+    context.drawPattern(*buffer, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, options);
 }
 
 ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
@@ -490,7 +487,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         localMainFrame->setView(LocalFrameView::create(*localMainFrame));
         localMainFrame->init();
         CheckedRef loader = localMainFrame->loader();
-        loader->forceSandboxFlags(SandboxFlags::all());
+        ASSERT(localMainFrame->effectiveSandboxFlags() == SandboxFlags::all());
 
         RefPtr frameView = localMainFrame->view();
         frameView->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.

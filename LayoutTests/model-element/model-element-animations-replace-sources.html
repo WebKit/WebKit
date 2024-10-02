@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations with sources replaced</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    assert_true(model.paused, "model.paused should be true initially");
+    assert_approx_equals(model.duration, 60, 0.1, "duration is around 60s");
+    await model.play();
+    model.currentTime = 5.0;
+    assert_false(model.paused, "model.paused should be false after playing");
+
+    source.src = "resources/stopwatch-30s.usdz";
+    await model.ready;
+
+    assert_true(model.paused, "model.paused should be true after new model loads");
+    assert_equals(model.currentTime, 0, "model.currentTime should be reset after new model loads");
+}, `Animating <model> should reset playback state after source changed`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+    model.autoplay = true;
+    model.loop = true;
+    source.src = "resources/stopwatch-60s.usdz";
+    await model.ready;
+
+    assert_false(model.paused, "model.paused should be false since autoplay is true");
+    assert_approx_equals(model.duration, 60, 0.1, "duration is around 60s");
+    await model.pause();
+    assert_true(model.paused, "model.paused should be true after pausing");
+
+    source.src = "resources/stopwatch-30s.usdz";
+    await model.ready;
+
+    assert_false(model.paused, "model.paused should be false after new model loads since autoplay is true");
+    assert_true(model.autoplay, "model.autoplay should remain the same after new model loads")
+    assert_true(model.loop, "model.loop should remain the same after new model loads")
+}, `Animating <model> should respect previously set attributes that affect playback after source changed`);
+
+</script>
+</body>

@@ -117,7 +117,7 @@ private:
 
     void notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier&);
 
-    void setPushService(std::unique_ptr<PushService>&&);
+    void setPushService(RefPtr<PushService>&&);
     void runAfterStartingPushService(Function<void()>&&);
 
     void handleIncomingPushImpl(const WebCore::PushSubscriptionSetIdentifier&, WebKit::WebPushMessage&&);
@@ -138,7 +138,7 @@ private:
     HashSet<xpc_connection_t> m_pendingConnectionSet;
     HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
 
-    std::unique_ptr<PushService> m_pushService;
+    RefPtr<PushService> m_pushService;
     bool m_usingMockPushService { false };
     bool m_pushServiceStarted { false };
     Deque<Function<void()>> m_pendingPushServiceFunctions;

@@ -231,32 +231,32 @@ macro doVMEntry(makeCall)
 .copyHeaderLoop:
     # Copy the CodeBlock/Callee/ArgumentCountIncludingThis/|this| from protoCallFrame into the callee frame.
     if ARM64 or ARM64E
-        loadpairq (8 * 0)[protoCallFrame], extraTempReg, t3
-        storepairq extraTempReg, t3, CodeBlock + (8 * 0)[sp]
-        loadpairq (8 * 2)[protoCallFrame], extraTempReg, t3
-        storepairq extraTempReg, t3, CodeBlock + (8 * 2)[sp]
+        loadpairq (8 * 0)[protoCallFrame], t5, t3
+        storepairq t5, t3, CodeBlock + (8 * 0)[sp]
+        loadpairq (8 * 2)[protoCallFrame], t5, t3
+        storepairq t5, t3, CodeBlock + (8 * 2)[sp]
     else
-        loadq (8 * 0)[protoCallFrame], extraTempReg
-        storeq extraTempReg, CodeBlock + (8 * 0)[sp]
-        loadq (8 * 1)[protoCallFrame], extraTempReg
-        storeq extraTempReg, CodeBlock + (8 * 1)[sp]
-        loadq (8 * 2)[protoCallFrame], extraTempReg
-        storeq extraTempReg, CodeBlock + (8 * 2)[sp]
-        loadq (8 * 3)[protoCallFrame], extraTempReg
-        storeq extraTempReg, CodeBlock + (8 * 3)[sp]
+        loadq (8 * 0)[protoCallFrame], t5
+        storeq t5, CodeBlock + (8 * 0)[sp]
+        loadq (8 * 1)[protoCallFrame], t5
+        storeq t5, CodeBlock + (8 * 1)[sp]
+        loadq (8 * 2)[protoCallFrame], t5
+        storeq t5, CodeBlock + (8 * 2)[sp]
+        loadq (8 * 3)[protoCallFrame], t5
+        storeq t5, CodeBlock + (8 * 3)[sp]
     end
 
     loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
     subi 1, t4
-    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], extraTempReg
-    subi 1, extraTempReg
+    loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t5
+    subi 1, t5
 
-    bieq t4, extraTempReg, .copyArgs
+    bieq t4, t5, .copyArgs
     move ValueUndefined, t3
 .fillExtraArgsLoop:
-    subi 1, extraTempReg
-    storeq t3, ThisArgumentOffset + 8[sp, extraTempReg, 8]
-    bineq t4, extraTempReg, .fillExtraArgsLoop
+    subi 1, t5
+    storeq t3, ThisArgumentOffset + 8[sp, t5, 8]
+    bineq t4, t5, .fillExtraArgsLoop
 
 .copyArgs:
     loadp ProtoCallFrame::args[protoCallFrame], t3
@@ -264,8 +264,8 @@ macro doVMEntry(makeCall)
 .copyArgsLoop:
     btiz t4, .copyArgsDone
     subi 1, t4
-    loadq [t3, t4, 8], extraTempReg
-    storeq extraTempReg, ThisArgumentOffset + 8[sp, t4, 8]
+    loadq [t3, t4, 8], t5
+    storeq t5, ThisArgumentOffset + 8[sp, t4, 8]
     jmp .copyArgsLoop
 
 .copyArgsDone:
@@ -282,7 +282,7 @@ macro doVMEntry(makeCall)
         storep cfr, VM::topEntryFrame[vm]
     end
 
-    checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
+    checkStackPointerAlignment(t5, 0xbad0dc02)
 
     makeCall(entry, protoCallFrame, t3, t4)
 
@@ -323,10 +323,10 @@ _llint_throw_stack_overflow_error_from_vm_entry:
     vmEntryRecord(cfr, t4)
 
     loadp VMEntryRecord::m_vm[t4], vm
-    loadp VMEntryRecord::m_prevTopCallFrame[t4], extraTempReg
-    storep extraTempReg, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t4], extraTempReg
-    storep extraTempReg, VM::topEntryFrame[vm]
+    loadp VMEntryRecord::m_prevTopCallFrame[t4], t5
+    storep t5, VM::topCallFrame[vm]
+    loadp VMEntryRecord::m_prevTopEntryFrame[t4], t5
+    storep t5, VM::topEntryFrame[vm]
 
     move ValueUndefined, r0
 
@@ -381,10 +381,10 @@ op(llint_handle_uncaught_exception, macro ()
     vmEntryRecord(cfr, t2)
 
     loadp VMEntryRecord::m_vm[t2], t3
-    loadp VMEntryRecord::m_prevTopCallFrame[t2], extraTempReg
-    storep extraTempReg, VM::topCallFrame[t3]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t2], extraTempReg
-    storep extraTempReg, VM::topEntryFrame[t3]
+    loadp VMEntryRecord::m_prevTopCallFrame[t2], t5
+    storep t5, VM::topCallFrame[t3]
+    loadp VMEntryRecord::m_prevTopEntryFrame[t2], t5
+    storep t5, VM::topEntryFrame[t3]
 
     move ValueUndefined, r0
 
@@ -3229,6 +3229,76 @@ llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatc
     return(t0)
 end)
 
+llintOpWithMetadata(op_instanceof, OpInstanceof, macro (size, get, dispatch, metadata, return)
+
+    macro getAndLoadConstantOrVariable(fieldName, index, value)
+        get(fieldName, index)
+        loadConstantOrVariable(size, index, value)
+    end
+
+    macro isObject(field, falseLabel)
+        getAndLoadConstantOrVariable(field, t1, t0)
+        btqnz t0, notCellMask, falseLabel
+        bbb JSCell::m_type[t0], ObjectType, falseLabel
+    end
+
+    macro overridesHasInstance(hasInstanceField, constructorField, trueLabel)
+        getAndLoadConstantOrVariable(hasInstanceField, t1, t0)
+        loadp CodeBlock[cfr], t2
+        loadp CodeBlock::m_globalObject[t2], t2
+        loadp JSGlobalObject::m_functionProtoHasInstanceSymbolFunction[t2], t2
+        bqneq t0, t2, trueLabel
+
+        getAndLoadConstantOrVariable(constructorField, t1, t0)
+        btbz JSCell::m_flags[t0], ImplementsDefaultHasInstance, trueLabel
+    end
+
+    macro storeDst(result)
+        move result, t0
+        storeVariable(get, m_dst, t0, t1)
+    end
+
+    macro getByID(fieldName, modeMetadata, valueProfile, slowPath, return)
+        getAndLoadConstantOrVariable(fieldName, t0, t3)
+        metadata(t2, t0)
+        performGetByIDHelper(OpInstanceof, modeMetadata, valueProfile, .getSlow, size, return)
+    
+    .getSlow:
+        callSlowPath(slowPath)
+        branchIfException(_llint_throw_from_slow_path_trampoline)
+    end
+
+.getHasInstance:
+    isObject(m_constructor, .throwStaticError)
+    getByID(m_constructor, m_hasInstanceModeMetadata, m_hasInstanceValueProfile, _llint_slow_path_get_hasInstance_from_instanceof, macro (result)
+        storeDst(result)
+        jmp .getPrototype
+    end)
+
+.getPrototype:
+    overridesHasInstance(m_dst, m_constructor, .instanceofCustom)
+    isObject(m_value, .false)
+    getByID(m_constructor, m_prototypeModeMetadata, m_prototypeValueProfile, _llint_slow_path_get_prototype_from_instanceof, macro (result)
+        storeDst(result)
+        jmp .instanceof
+    end)
+
+.instanceof:
+    callSlowPath(_llint_slow_path_instanceof_from_instanceof)
+    dispatch()
+
+.throwStaticError:
+    callSlowPath(_slow_path_throw_static_error_from_instanceof)
+    dispatch()
+
+.instanceofCustom:
+    callSlowPath(_slow_path_instanceof_custom_from_instanceof)
+    dispatch()
+
+.false:
+    storeDst(ValueFalse)
+    dispatch()
+end)
 
 llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch, metadata, return)
     macro fastNarrow()

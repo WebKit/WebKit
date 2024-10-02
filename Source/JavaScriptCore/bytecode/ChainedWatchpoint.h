@@ -56,10 +56,8 @@ inline void ChainedWatchpoint::install(InlineWatchpointSet& fromWatchpoint, VM&)
 
 inline void ChainedWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    if (!m_owner->isLive())
-        return;
-
-    m_watchpointSet.fireAll(vm, StringFireDetail("chained watchpoint is fired."));
+    if (!m_owner->isPendingDestruction())
+        m_watchpointSet.fireAll(vm, StringFireDetail("chained watchpoint is fired."));
 }
 
 } // namespace JSC

@@ -170,7 +170,7 @@ TEST(PasteHTML, KeepsHTTPURLs)
 
 TEST(PasteHTML, PreservesMSOList)
 {
-    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
@@ -222,7 +222,7 @@ TEST(PasteHTML, PreservesMSOList)
 
 TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
 {
-    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list-compat-mode" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list-compat-mode" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
@@ -258,7 +258,7 @@ TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
 
 TEST(PasteHTML, PreservesMSOListOnH4)
 {
-    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list-on-h4" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"]
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list-on-h4" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
@@ -294,7 +294,7 @@ TEST(PasteHTML, PreservesMSOListOnH4)
 
 TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
 {
-    auto *markup = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mso-list" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL];
+    auto *markup = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
 
     writeHTMLToPasteboard([markup substringFromIndex:[markup rangeOfString:@">"].location + 1]);
 
@@ -341,7 +341,7 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
 
 TEST(PasteHTML, StripsSystemFontNames)
 {
-    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cocoa-writer-markup-with-system-fonts" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL]);
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"cocoa-writer-markup-with-system-fonts" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL]);
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -371,7 +371,7 @@ TEST(PasteHTML, StripsSystemFontNames)
 
 TEST(PasteHTML, DoesNotAddStandardFontFamily)
 {
-    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cocoa-writer-markup-with-lists" ofType:@"html" inDirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:NULL]);
+    writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"cocoa-writer-markup-with-lists" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL]);
 
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];

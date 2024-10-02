@@ -93,7 +93,12 @@ WebPageGroup::~WebPageGroup()
 
 WebPreferences& WebPageGroup::preferences() const
 {
-    return *m_preferences;
+    return m_preferences;
+}
+
+Ref<WebPreferences> WebPageGroup::protectedPreferences() const
+{
+    return m_preferences;
 }
 
 } // namespace WebKit

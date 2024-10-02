@@ -61,7 +61,7 @@ IOSurfacePool::~IOSurfacePool()
     });
 }
 
-IOSurfacePool& IOSurfacePool::sharedPool()
+IOSurfacePool& IOSurfacePool::sharedPoolSingleton()
 {
     static LazyNeverDestroyed<IOSurfacePool> pool;
     static std::once_flag s_onceFlag;

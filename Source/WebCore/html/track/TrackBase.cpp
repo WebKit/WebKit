@@ -33,6 +33,7 @@
 #include "TrackPrivateBase.h"
 #include "TrackPrivateBaseClient.h"
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -40,6 +41,9 @@
 #if ENABLE(VIDEO)
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrackBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaTrackBase);
 
 static int s_uniqueId = 0;
 
@@ -181,7 +185,7 @@ void TrackBase::setLanguage(const AtomString& language)
 }
 
 #if !RELEASE_LOG_DISABLED
-void TrackBase::setLogger(const Logger& logger, const void* logIdentifier)
+void TrackBase::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = childLogIdentifier(logIdentifier, m_uniqueId);

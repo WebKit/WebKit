@@ -35,6 +35,7 @@
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ class FileList;
 class Icon;
 
 class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient, public CanMakeWeakPtr<FileInputType> {
+    WTF_MAKE_TZONE_ALLOCATED(FileInputType);
 public:
     static Ref<FileInputType> create(HTMLInputElement& element)
     {

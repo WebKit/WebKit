@@ -47,7 +47,7 @@ public:
     void setTrajectoryVector(const FloatPoint&);
     void createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect);
 
-    float contentsScale() { return m_contentsScale; }
+    float contentsScale() const { return m_contentsScale; }
 
     Vector<std::reference_wrapper<Tile>> dirtyTiles();
 

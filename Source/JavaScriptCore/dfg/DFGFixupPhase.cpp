@@ -986,11 +986,13 @@ private:
                 node->clearFlags(NodeMustGenerate);
                 break;
             }
-            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
-                fixEdge<StringIdentUse>(node->child1());
-                fixEdge<StringIdentUse>(node->child2());
-                node->clearFlags(NodeMustGenerate);
-                break;
+            if (!m_graph.hasExitSite(node->origin.semantic, BadStringType)) {
+                if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
+                    fixEdge<StringIdentUse>(node->child1());
+                    fixEdge<StringIdentUse>(node->child2());
+                    node->clearFlags(NodeMustGenerate);
+                    break;
+                }
             }
             if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
                 fixEdge<StringUse>(node->child1());
@@ -1604,10 +1606,10 @@ private:
             break;
         }
 
-        case ArraySpliceExtract: {
-            fixEdge<ArrayUse>(node->child1());
-            fixEdge<Int32Use>(node->child2());
-            fixEdge<Int32Use>(node->child3());
+        case ArraySplice: {
+            fixEdge<ArrayUse>(m_graph.child(node, 0));
+            fixEdge<Int32Use>(m_graph.child(node, 1));
+            fixEdge<Int32Use>(m_graph.child(node, 2));
             break;
         }
 
@@ -1645,8 +1647,10 @@ private:
                 node->setOp(StringReplaceString);
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
-                if (node->child3()->shouldSpeculateString())
+                if (node->child3()->shouldSpeculateString()) {
                     fixEdge<StringUse>(node->child3());
+                    node->clearFlags(NodeMustGenerate);
+                }
                 break;
             }
 
@@ -1678,8 +1682,10 @@ private:
         case StringReplaceString: {
             fixEdge<StringUse>(node->child1());
             fixEdge<StringUse>(node->child2());
-            if (node->child3()->shouldSpeculateString())
+            if (node->child3()->shouldSpeculateString()) {
                 fixEdge<StringUse>(node->child3());
+                node->clearFlags(NodeMustGenerate);
+            }
             break;
         }
             
@@ -1723,7 +1729,7 @@ private:
                     fixEdge<StringUse>(node->child1());
                 break;
             case SwitchString:
-                if (node->child1()->shouldSpeculateStringIdent())
+                if (!m_graph.hasExitSite(node->origin.semantic, BadStringType) && node->child1()->shouldSpeculateStringIdent())
                     fixEdge<StringIdentUse>(node->child1());
                 else if (node->child1()->shouldSpeculateString())
                     fixEdge<StringUse>(node->child1());
@@ -2933,7 +2939,7 @@ private:
             Edge& propertyEdge = m_graph.varArgChild(node, 1);
             if (propertyEdge->shouldSpeculateSymbol())
                 fixEdge<SymbolUse>(propertyEdge);
-            else if (propertyEdge->shouldSpeculateStringIdent())
+            else if (!m_graph.hasExitSite(node->origin.semantic, BadStringType) && propertyEdge->shouldSpeculateStringIdent())
                 fixEdge<StringIdentUse>(propertyEdge);
             else if (propertyEdge->shouldSpeculateString())
                 fixEdge<StringUse>(propertyEdge);
@@ -2990,7 +2996,7 @@ private:
             Edge& propertyEdge = m_graph.varArgChild(node, 1);
             if (propertyEdge->shouldSpeculateSymbol())
                 fixEdge<SymbolUse>(propertyEdge);
-            else if (propertyEdge->shouldSpeculateStringIdent())
+            else if (!m_graph.hasExitSite(node->origin.semantic, BadStringType) && propertyEdge->shouldSpeculateStringIdent())
                 fixEdge<StringIdentUse>(propertyEdge);
             else if (propertyEdge->shouldSpeculateString())
                 fixEdge<StringUse>(propertyEdge);
@@ -3611,10 +3617,12 @@ private:
                 return;
             }
 
-            if (node->child1()->shouldSpeculateStringIdent()) {
-                fixEdge<StringIdentUse>(node->child1());
-                node->convertToIdentity();
-                return;
+            if (!m_graph.hasExitSite(node->origin.semantic, BadStringType)) {
+                if (node->child1()->shouldSpeculateStringIdent()) {
+                    fixEdge<StringIdentUse>(node->child1());
+                    node->convertToIdentity();
+                    return;
+                }
             }
 
             if (node->child1()->shouldSpeculateString()) {
@@ -4995,11 +5003,13 @@ private:
             return;
         }
 #endif
-        if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
-            fixEdge<StringIdentUse>(node->child1());
-            fixEdge<StringIdentUse>(node->child2());
-            node->setOpAndDefaultFlags(CompareStrictEq);
-            return;
+        if (!m_graph.hasExitSite(node->origin.semantic, BadStringType)) {
+            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateStringIdent()) {
+                fixEdge<StringIdentUse>(node->child1());
+                fixEdge<StringIdentUse>(node->child2());
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return;
+            }
         }
         if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 7) || m_graph.m_plan.isFTL())) {
             fixEdge<StringUse>(node->child1());
@@ -5077,20 +5087,23 @@ private:
             return;
         }
 
-        if (node->child1()->shouldSpeculateStringIdent()
-            && node->child2()->shouldSpeculateNotStringVar()) {
-            fixEdge<StringIdentUse>(node->child1());
-            fixEdge<NotStringVarUse>(node->child2());
-            node->setOpAndDefaultFlags(CompareStrictEq);
-            return;
+        if (!m_graph.hasExitSite(node->origin.semantic, BadStringType)) {
+            if (node->child1()->shouldSpeculateStringIdent() && node->child2()->shouldSpeculateNotStringVar()) {
+                fixEdge<StringIdentUse>(node->child1());
+                fixEdge<NotStringVarUse>(node->child2());
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return;
+            }
+
+            if (node->child2()->shouldSpeculateStringIdent()
+                && node->child1()->shouldSpeculateNotStringVar()) {
+                fixEdge<StringIdentUse>(node->child2());
+                fixEdge<NotStringVarUse>(node->child1());
+                node->setOpAndDefaultFlags(CompareStrictEq);
+                return;
+            }
         }
-        if (node->child2()->shouldSpeculateStringIdent()
-            && node->child1()->shouldSpeculateNotStringVar()) {
-            fixEdge<StringIdentUse>(node->child2());
-            fixEdge<NotStringVarUse>(node->child1());
-            node->setOpAndDefaultFlags(CompareStrictEq);
-            return;
-        }
+
         if (node->child1()->shouldSpeculateString() && ((GPRInfo::numberOfRegisters >= 8) || m_graph.m_plan.isFTL())) {
             fixEdge<StringUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);

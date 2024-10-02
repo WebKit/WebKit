@@ -96,7 +96,7 @@ void WebBackForwardListProxy::addItem(FrameIdentifier targetFrameID, Ref<History
 
     LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().toString().utf8().data(), item->urlString().utf8().data());
     clearCachedListCounts();
-    m_page->send(Messages::WebPageProxy::BackForwardAddItem(targetFrameID, toBackForwardListItemState(item.get())));
+    m_page->send(Messages::WebPageProxy::BackForwardAddItem(targetFrameID, toFrameState(item.get())));
 }
 
 void WebBackForwardListProxy::goToItem(HistoryItem& item)

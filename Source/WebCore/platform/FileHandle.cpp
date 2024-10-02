@@ -132,7 +132,7 @@ bool FileHandle::printf(const char* format, ...)
 
     va_end(args);
 
-    return write({ reinterpret_cast<const uint8_t*>(buffer.data()), stringLength }) >= 0;
+    return write({ byteCast<uint8_t>(buffer.data()), stringLength }) >= 0;
 }
 
 void FileHandle::close()

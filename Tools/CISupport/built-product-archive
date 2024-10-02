@@ -234,7 +234,7 @@ ALWAYS_EXCLUDED_PATTERNS = ('*.a',)
 MINIFIED_EXCLUDED_PATTERNS = (*ALWAYS_EXCLUDED_PATTERNS, '*.dSYM', 'DerivedSources')
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
-    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wpe')
     global _configurationBuildDirectory
 
     print("Archiving built product from directory: %s" % _configurationBuildDirectory)
@@ -256,7 +256,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
             return createZip(_configurationBuildDirectory, 'minified-' + configuration, excludePatterns=MINIFIED_EXCLUDED_PATTERNS, embedParentDirectoryNameOnDarwin=True)
         else:
             return createZip(_configurationBuildDirectory, configuration, excludePatterns=ALWAYS_EXCLUDED_PATTERNS, embedParentDirectoryNameOnDarwin=True)
-    elif platform in ('win', 'wincairo'):
+    elif platform == 'win':
         binDirectory = os.path.join(_configurationBuildDirectory, 'bin')
         thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
         thinBinDirectory = os.path.join(thinDirectory, 'bin')
@@ -345,7 +345,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wincairo', 'wpe')
+    assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wpe')
 
     archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
@@ -354,13 +354,13 @@ def extractBuiltProduct(configuration, platform):
 
     if platform in ('mac', 'ios', 'visionos', 'tvos', 'watchos'):
         return unzipArchive(_topLevelBuildDirectory, configuration)
-    elif platform in ('gtk', 'jsc-only', 'win', 'wincairo', 'wpe'):
+    elif platform in ('gtk', 'jsc-only', 'win', 'wpe'):
         print('Extracting: {}'.format(_configurationBuildDirectory))
         if unzipArchive(_configurationBuildDirectory, configuration):
             return 1
 
         # Restore WebKitRequirements version for test bot use
-        if platform in ('win', 'wincairo'):
+        if platform == 'win':
             libDirectory = os.getenv('WEBKIT_LIBRARIES') or os.path.join(webkitTopAbsPath, 'WebKitLibraries', 'win')
             os.makedirs(libDirectory, exist_ok=True)
             shutil.copy(os.path.join(_configurationBuildDirectory, 'WebKitRequirementsWin64.zip.config'), libDirectory)

@@ -28,6 +28,8 @@
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
+#import "PDFAnnotationTypeHelpers.h"
+#import "PDFKitSPI.h"
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>
@@ -44,6 +46,7 @@ using namespace HTMLNames;
 
 Ref<PDFPluginChoiceAnnotation> PDFPluginChoiceAnnotation::create(PDFAnnotation *annotation, PDFPluginBase* plugin)
 {
+    ASSERT(PDFAnnotationTypeHelpers::annotationIsWidgetOfType(annotation, WidgetType::Choice));
     return adoptRef(*new PDFPluginChoiceAnnotation(annotation, plugin));
 }
 
@@ -52,12 +55,12 @@ void PDFPluginChoiceAnnotation::updateGeometry()
     PDFPluginAnnotation::updateGeometry();
 
     RefPtr styledElement = downcast<StyledElement>(element());
-    styledElement->setInlineStyleProperty(CSSPropertyFontSize, choiceAnnotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
+    styledElement->setInlineStyleProperty(CSSPropertyFontSize, annotation().font.pointSize * plugin()->contentScaleFactor(), CSSUnitType::CSS_PX);
 }
 
 void PDFPluginChoiceAnnotation::commit()
 {
-    choiceAnnotation().stringValue = downcast<HTMLSelectElement>(element())->value();
+    annotation().widgetStringValue = downcast<HTMLSelectElement>(element())->value();
 
     PDFPluginAnnotation::commit();
 }
@@ -65,18 +68,16 @@ void PDFPluginChoiceAnnotation::commit()
 Ref<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 {
     Ref document = parent()->document();
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    PDFAnnotationChoiceWidget *choiceAnnotation = this->choiceAnnotation();
-ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr choiceAnnotation = annotation();
 
     Ref element = downcast<StyledElement>(document->createElement(selectTag, false));
 
     // FIXME: Match font weight and style as well?
-    element->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor(choiceAnnotation.fontColor)));
-    element->setInlineStyleProperty(CSSPropertyFontFamily, choiceAnnotation.font.familyName);
+    element->setInlineStyleProperty(CSSPropertyColor, serializationForHTML(colorFromCocoaColor([choiceAnnotation fontColor])));
+    element->setInlineStyleProperty(CSSPropertyFontFamily, [[choiceAnnotation font] familyName]);
 
-    NSArray *choices = choiceAnnotation.choices;
-    NSString *selectedChoice = choiceAnnotation.stringValue;
+    NSArray *choices = [choiceAnnotation choices];
+    NSString *selectedChoice = [choiceAnnotation widgetStringValue];
 
     for (NSString *choice in choices) {
         auto choiceOption = document->createElement(optionTag, false);

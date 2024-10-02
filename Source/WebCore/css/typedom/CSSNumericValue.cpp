@@ -43,6 +43,7 @@
 #include "CSSNumericArray.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericType.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
@@ -161,7 +162,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::reifyMathExpression(const CSS
 {
     return WTF::switchOn(root,
         [](const CSSCalc::Child& child) -> ExceptionOr<Ref<CSSNumericValue>> { return CSSNumericValue::reifyMathExpression(child); },
-        [](const NoneRaw&) -> ExceptionOr<Ref<CSSNumericValue>> { return Exception { ExceptionCode::UnknownError }; }
+        [](const CSS::NoneRaw&) -> ExceptionOr<Ref<CSSNumericValue>> { return Exception { ExceptionCode::UnknownError }; }
     );
 }
 
@@ -428,7 +429,7 @@ ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 }
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, String&& cssText)
 {
     CSSTokenizer tokenizer(cssText);
     auto range = tokenizer.tokenRange();
@@ -456,23 +457,24 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     case CSSParserTokenType::FunctionToken: {
         auto functionID = componentValueRange.peek().functionId();
         if (functionID == CSSValueCalc || functionID == CSSValueMin || functionID == CSSValueMax || functionID == CSSValueClamp) {
-            // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::PercentLength`, as it is the most permissive.
+            // FIXME: The spec is unclear on what context to use when parsing in CSSNumericValue so for the time-being, we use `Category::LengthPercentage`, as it is the most permissive.
             // See https://github.com/w3c/csswg-drafts/issues/10753
 
+            auto parserContext = CSSParserContext { document };
             auto parserOptions = CSSCalc::ParserOptions {
-                .category = Calculation::Category::PercentLength,
+                .category = Calculation::Category::LengthPercentage,
                 .allowedSymbols = { },
-                .range = ValueRange::All
+                .propertyOptions = { },
             };
             auto simplificationOptions = CSSCalc::SimplificationOptions {
-                .category = Calculation::Category::PercentLength,
+                .category = Calculation::Category::LengthPercentage,
                 .conversionData = std::nullopt,
                 .symbolTable = { },
                 .allowZeroValueLengthRemovalFromSum = false,
                 .allowUnresolvedUnits = false,
                 .allowNonMatchingUnits = false
             };
-            auto tree = CSSCalc::parseAndSimplify(CSSPropertyParserHelpers::consumeFunction(componentValueRange), functionID, parserOptions, simplificationOptions);
+            auto tree = CSSCalc::parseAndSimplify(componentValueRange, parserContext, parserOptions, simplificationOptions);
             if (!tree)
                 return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
 

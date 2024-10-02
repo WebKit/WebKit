@@ -25,7 +25,7 @@
 
 #import <Metal/Metal.h>
 
-#if USE(INTERNAL_APPLE_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 #import <Metal/MTLCommandBuffer_Private.h>
 #import <Metal/MTLDevice_Private.h>
 #import <Metal/MTLResource_Private.h>

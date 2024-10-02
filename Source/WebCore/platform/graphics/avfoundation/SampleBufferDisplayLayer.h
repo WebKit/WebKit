@@ -45,10 +45,10 @@ using LayerHostingContextID = uint32_t;
 
 class SampleBufferDisplayLayerClient : public CanMakeWeakPtr<SampleBufferDisplayLayerClient> {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual ~SampleBufferDisplayLayerClient() = default;
     virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
-    virtual void ref() = 0;
-    virtual void deref() = 0;
 #if PLATFORM(IOS_FAMILY)
     virtual bool canShowWhileLocked() const = 0;
 #endif

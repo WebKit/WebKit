@@ -29,6 +29,7 @@
 
 #include "RemoteLayerTreeEventDispatcher.h"
 #include "RemoteScrollingCoordinatorProxy.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class RemoteScrollingCoordinatorProxyMac;
@@ -46,6 +47,7 @@ class RemoteLayerTreeEventDispatcher;
 #endif
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyMac);
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyMac();

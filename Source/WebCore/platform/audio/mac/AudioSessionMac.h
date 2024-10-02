@@ -84,7 +84,7 @@ private:
     void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
 
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
 
     std::optional<bool> m_lastMutedState;
     mutable WeakHashSet<AudioSessionConfigurationChangeObserver> m_configurationChangeObservers;

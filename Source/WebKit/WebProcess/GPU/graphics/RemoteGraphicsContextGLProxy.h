@@ -83,8 +83,7 @@ public:
 #endif
     GCGLErrorCodeSet getErrors() final;
 #if ENABLE(VIDEO)
-    bool copyTextureFromMedia(WebCore::MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
-    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject /* texture */, GCGLenum /* target */, GCGLint /* level */, GCGLenum /* internalFormat */, GCGLenum /* format */, GCGLenum /* type */, bool /* premultiplyAlpha */, bool /* flipY */) final;
+    bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
     RefPtr<WebCore::Image> videoFrameToImage(WebCore::VideoFrame&) final;
 #endif
 

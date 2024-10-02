@@ -23,6 +23,7 @@
 #pragma once
 
 #include "CSSCustomPropertySyntax.h"
+#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "StyleRuleType.h"

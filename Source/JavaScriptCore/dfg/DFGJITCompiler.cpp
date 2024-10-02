@@ -173,7 +173,7 @@ void JITCompiler::compileEntryExecutionFlag()
 {
 #if ENABLE(FTL_JIT)
     if (m_graph.m_plan.canTierUpAndOSREnter())
-        store8(TrustedImm32(0), &m_jitCode->neverExecutedEntry);
+        store8(TrustedImm32(0), Address(GPRInfo::jitDataRegister, JITData::offsetOfNeverExecutedEntry()));
 #endif // ENABLE(FTL_JIT)
 }
 

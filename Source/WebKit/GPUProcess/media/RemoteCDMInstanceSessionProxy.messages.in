@@ -25,6 +25,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
+[EnabledBy=EncryptedMediaAPIEnabled]
 messages -> RemoteCDMInstanceSessionProxy NotRefCounted {
     SetLogIdentifier(uint64_t logIdentifier)
     RequestLicense(WebCore::CDMInstanceSession::LicenseType type, enum:bool WebCore::CDMKeyGroupingStrategy keyGroupingStrategy, AtomString initDataType, RefPtr<WebCore::SharedBuffer> initData) -> (RefPtr<WebCore::SharedBuffer> message, String sessionId, bool needsIndividualization, bool succeeded)

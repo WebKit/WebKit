@@ -277,18 +277,18 @@ public:
     TransactionActivator(IDBTransaction* transaction)
         : m_transaction(transaction)
     {
-        if (m_transaction)
-            m_transaction->activate();
+        if (transaction)
+            transaction->activate();
     }
 
     ~TransactionActivator()
     {
-        if (m_transaction)
-            m_transaction->deactivate();
+        if (RefPtr transaction = m_transaction)
+            transaction->deactivate();
     }
 
 private:
-    IDBTransaction* m_transaction;
+    RefPtr<IDBTransaction> m_transaction;
 };
 
 } // namespace WebCore

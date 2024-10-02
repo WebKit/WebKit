@@ -561,7 +561,7 @@
 #endif
 
 #if !defined(ENABLE_WEBXR_LAYERS)
-#define ENABLE_WEBXR_LAYERS (PLATFORM(COCOA) && ENABLE_WEBXR)
+#define ENABLE_WEBXR_LAYERS (PLATFORM(VISION) && __VISION_OS_VERSION_MAX_ALLOWED >= 20200)
 #endif
 
 #if !defined(ENABLE_WHEEL_EVENT_LATCHING)
@@ -688,7 +688,7 @@
 #if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
 
 /* Enable the DFG JIT on X86 and X86_64. */
-#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HURD) || OS(WINDOWS))
+#if CPU(X86_64) && (OS(DARWIN) || OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(HURD) || OS(WINDOWS))
 #define ENABLE_DFG_JIT 1
 #endif
 
@@ -718,20 +718,14 @@
 #define ENABLE_FAST_TLS_JIT 1
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the baseline jit is not available, then disable upper tiers as well. */
-#if !ENABLE(JIT)
-#undef ENABLE_DFG_JIT
-#undef ENABLE_FTL_JIT
-#define ENABLE_DFG_JIT 0
-#define ENABLE_FTL_JIT 0
+/* Ensure that upper tiers are disabled if baseline JIT is not available */
+#if !ENABLE(JIT) && (ENABLE(DFG_JIT) || ENABLE(FTL_JIT))
+#error "DFG and FTL JIT require baseline JIT to be enabled"
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* If the DFG jit is not available, then disable upper tiers as well: */
-#if !ENABLE(DFG_JIT)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
+/* Ensure that FTL JIT is disabled if DFG JIT is not available */
+#if !ENABLE(DFG_JIT) && ENABLE(FTL_JIT)
+#error "FTL JIT requires DFG JIT to be enabled"
 #endif
 
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */

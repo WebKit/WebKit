@@ -234,7 +234,7 @@ private:
     bool m_preventsSystemHTTPProxyAuthentication { false };
 
     class BlobDataTaskClient;
-    HashMap<DataTaskIdentifier, UniqueRef<BlobDataTaskClient>> m_blobDataTasksForAPI;
+    HashMap<DataTaskIdentifier, Ref<BlobDataTaskClient>> m_blobDataTasksForAPI;
     HashMap<DataTaskIdentifier, RetainPtr<NSURLSessionDataTask>> m_dataTasksForAPI;
 };
 

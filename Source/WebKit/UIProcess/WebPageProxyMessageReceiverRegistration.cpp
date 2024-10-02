@@ -46,19 +46,24 @@ void WebPageProxyMessageReceiverRegistration::startReceivingMessages(WebProcessP
 void WebPageProxyMessageReceiverRegistration::stopReceivingMessages()
 {
     if (auto data = std::exchange(m_data, std::nullopt))
-        data->process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
 }
 
 void WebPageProxyMessageReceiverRegistration::transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration& oldRegistration, IPC::MessageReceiver& newReceiver)
 {
     ASSERT(!m_data);
     if (auto data = std::exchange(oldRegistration.m_data, std::nullopt)) {
-        data->process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
+        data->protectedProcess()->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), data->webPageID);
         startReceivingMessages(data->process, data->webPageID, newReceiver);
     } else {
         stopReceivingMessages();
         ASSERT_NOT_REACHED();
     }
+}
+
+Ref<WebProcessProxy> WebPageProxyMessageReceiverRegistration::Data::protectedProcess()
+{
+    return process;
 }
 
 } // namespace WebKit

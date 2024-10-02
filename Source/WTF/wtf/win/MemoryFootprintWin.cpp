@@ -63,7 +63,7 @@ size_t memoryFootprint()
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms684946(v=vs.85).aspx
     constexpr const size_t minNumberOfEntries = 16;
     constexpr const size_t sizeOfBufferOnStack = sizeof(PSAPI_WORKING_SET_INFORMATION) + minNumberOfEntries * sizeof(PSAPI_WORKING_SET_BLOCK);
-    std::aligned_storage<sizeOfBufferOnStack, alignof(PSAPI_WORKING_SET_INFORMATION)>::type bufferOnStack;
+    alignas(PSAPI_WORKING_SET_INFORMATION) std::byte bufferOnStack[sizeOfBufferOnStack];
     auto* workingSetsOnStack = reinterpret_cast<PSAPI_WORKING_SET_INFORMATION*>(&bufferOnStack);
     if (QueryWorkingSet(process.get(), workingSetsOnStack, sizeOfBufferOnStack))
         return countSizeOfPrivateWorkingSet(*workingSetsOnStack);

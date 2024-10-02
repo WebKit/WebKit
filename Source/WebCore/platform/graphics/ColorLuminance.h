@@ -66,6 +66,7 @@ template<typename ColorTypeA, typename ColorTypeB> inline double contrastRatio(c
     return contrastRatio(relativeLuminance(colorA), relativeLuminance(colorB));
 }
 
+double relativeLuminance(const Color&);
 double contrastRatio(const Color&, const Color&);
 
 }

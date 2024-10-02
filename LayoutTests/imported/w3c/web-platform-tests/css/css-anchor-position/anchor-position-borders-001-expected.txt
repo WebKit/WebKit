@@ -3,21 +3,11 @@ PASS .target 1
 PASS .target 2
 PASS .target 3
 PASS .target 4
-FAIL .target 5 assert_equals:
-<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
-width expected 31 but got 769
-FAIL .target 6 assert_equals:
-<div class="target" data-offset-x="58" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
-width expected 31 but got 769
-FAIL .target 7 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="14" data-expected-width="31" data-expected-height="31"></div>
-width expected 31 but got 769
-FAIL .target 8 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="45" data-expected-height="43"></div>
-width expected 45 but got 769
-FAIL .target 9 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="9" data-expected-width="45" data-expected-height="43"></div>
-width expected 45 but got 769
+PASS .target 5
+PASS .target 6
+PASS .target 7
+PASS .target 8
+PASS .target 9
 PASS .target 10
 PASS .target 11
 PASS .target 12

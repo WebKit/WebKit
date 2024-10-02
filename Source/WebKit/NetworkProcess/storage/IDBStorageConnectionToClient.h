@@ -34,6 +34,7 @@ namespace WebKit {
 
 class IDBStorageConnectionToClient final : public WebCore::IDBServer::IDBConnectionToClientDelegate {
     WTF_MAKE_TZONE_ALLOCATED(IDBStorageConnectionToClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(IDBStorageConnectionToClient);
 public:
     IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
     ~IDBStorageConnectionToClient();

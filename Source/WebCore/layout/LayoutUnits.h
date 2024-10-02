@@ -202,7 +202,8 @@ struct SlotPositionHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 template<> struct HashTraits<WebCore::Layout::SlotPosition> : GenericHashTraits<WebCore::Layout::SlotPosition> {
-    static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(0, std::numeric_limits<size_t>::max()); }
+    static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(std::numeric_limits<size_t>::max() - 1, std::numeric_limits<size_t>::max() - 1); }
+    static bool isEmptyValue(const WebCore::Layout::SlotPosition& value) { return value.column == (std::numeric_limits<size_t>::max() - 1); }
 
     static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot.column = std::numeric_limits<size_t>::max(); }
     static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot.column == std::numeric_limits<size_t>::max(); }

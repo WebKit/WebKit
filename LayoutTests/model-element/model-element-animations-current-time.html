@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t);
+
+    assert_equals(model.currentTime, 0);
+    model.currentTime = 30;
+    assert_equals(model.currentTime, 0);
+}, `Setting duration greater than zero is ignored on a model with empty source`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/cube.usdz");
+    await model.ready;
+
+    assert_equals(model.currentTime, 0);
+    model.currentTime = 30;
+    assert_equals(model.currentTime, 0);
+
+}, `Setting duration greater than zero is ignored on a model that has no animation`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    assert_equals(model.currentTime, 0);
+    model.currentTime = 30;
+    assert_approx_equals(model.currentTime, 30, 0.1, "model.currentTime should be around 30s");
+
+    model.currentTime = -5;
+    assert_equals(model.currentTime, 0, "model.currentTime should be clamped");
+
+    model.currentTime = 90;
+    assert_approx_equals(model.currentTime, 60, 0.1, "model.currentTime should be clamped to duration or less");
+}, `Checking <model> source's currentTime value after updating`);
+
+</script>
+</body>

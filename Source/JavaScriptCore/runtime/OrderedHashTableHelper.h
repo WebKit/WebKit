@@ -392,11 +392,15 @@ public:
         TableSize usedCapacity = Helper::aliveEntryCount(base) + deletedEntryCount;
 
         bool isSmallCapacity = capacity < LargeCapacity;
-        float expandThreshold = isSmallCapacity ? 0.5 : 0.75;
         TableSize expandFactor = isSmallCapacity ? 2 : 1;
 
-        if (usedCapacity < capacity * expandThreshold)
-            return &base;
+        if (isSmallCapacity) {
+            if (usedCapacity < (capacity >> 1))
+                return &base;
+        } else {
+            if (usedCapacity < ((capacity >> 2) * 3))
+                return &base;
+        }
 
         TableSize newCapacity = Checked<TableSize>(capacity) << expandFactor;
         if (deletedEntryCount >= (capacity >> 1))
@@ -461,12 +465,12 @@ public:
         });
     }
 
-    ALWAYS_INLINE static void shrinkIfNeed(JSGlobalObject* globalObject, HashTable* owner, Storage& base)
+    ALWAYS_INLINE static void shrinkIfNeeded(JSGlobalObject* globalObject, HashTable* owner, Storage& base)
     {
         ASSERT(!isObsolete(base));
         TableSize capacity = Helper::capacity(base);
         TableSize aliveEntryCount = Helper::aliveEntryCount(base);
-        if (aliveEntryCount >= (capacity >> 2))
+        if (aliveEntryCount >= (capacity >> 3))
             return;
         if (capacity == InitialCapacity)
             return;
@@ -491,8 +495,9 @@ public:
         incrementDeletedEntryCount(storage);
         decrementAliveEntryCount(storage);
 
-        shrinkIfNeed(globalObject, owner, storage);
-        RELEASE_AND_RETURN(scope, true);
+        scope.release();
+        shrinkIfNeeded(globalObject, owner, storage);
+        return true;
     }
     ALWAYS_INLINE static bool remove(JSGlobalObject* globalObject, HashTable* owner, Storage& storage, JSValue key)
     {

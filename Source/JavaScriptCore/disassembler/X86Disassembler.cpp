@@ -57,7 +57,7 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
             out.printf("%s%#16llx: %s", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
         else
             out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
-        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)))))
+        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(bitwise_cast<uintptr_t>(data + offset))))
             out.printf("; %s\n", str->ascii().data());
         else
             out.printf("\n");

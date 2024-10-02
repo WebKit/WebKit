@@ -6,12 +6,12 @@
 
 macro saveIPIntRegisters()
     subp IPIntCalleeSaveSpaceStackAligned, sp
-    store2ia PM, PB, -8[cfr]
+    store2ia MC, PC, -8[cfr]
     storep wasmInstance, -16[cfr]
 end
 
 macro restoreIPIntRegisters()
-    load2ia -8[cfr], PM, PB
+    load2ia -8[cfr], MC, PC
     loadp -16[cfr], wasmInstance
     addp IPIntCalleeSaveSpaceStackAligned, sp
 end
@@ -25,7 +25,7 @@ macro nextIPIntInstruction()
     # bpeq t0, 0, .fine
     # break
 # .fine:
-    loadb [PB, PC, 1], t0
+    loadb [PC], t0
 if ARMv7
     lshiftp 8, t0
     leap (_ipint_unreachable + 1), t1
@@ -132,7 +132,7 @@ macro ipintEntry()
     move sp, t6
     subp t7, sp
     move sp, t7
-    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], PM
+    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], MC
 
     push csr1, t4, t5
 
@@ -143,8 +143,8 @@ macro ipintEntry()
 end
 
 macro argumINTDispatch()
-    loadb [PM], csr1
-    addp 1, PM
+    loadb [MC], csr1
+    addp 1, MC
     lshiftp 6, csr1
     leap (_argumINT_begin + 1), t7
     addp csr1, t7
@@ -179,8 +179,8 @@ reservedOpcode(0xa)
 
 
 macro uintDispatch()
-    loadb [PM], t6
-    addp 1, PM
+    loadb [MC], t6
+    addp 1, MC
     bilt t6, 5, .safe
     break
 .safe:
@@ -193,14 +193,13 @@ end
 
 instructionLabel(_end)
     #loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-    loadi Wasm::IPIntCallee::m_bytecodeLength[ws0], t0
-    subp 1, t0
+    loadi Wasm::IPIntCallee::m_bytecodeEnd[ws0], t0
     bpeq PC, t0, .ipint_end_ret
     advancePC(1)
     nextIPIntInstruction()
 .ipint_end_ret:
+    loadp Wasm::IPIntCallee::m_uINTBytecodePointer[ws0], MC
     ipintEpilogueOSR(10)
-    addp MC, PM
     uintDispatch()
 
 unimplementedInstruction(_br)
@@ -994,6 +993,18 @@ mintAlign(_fa2)
 mintAlign(_fa3)
     break
 
+mintAlign(_fa4)
+    break
+
+mintAlign(_fa5)
+    break
+
+mintAlign(_fa6)
+    break
+
+mintAlign(_fa7)
+    break
+
 mintAlign(_stackzero)
     break
 
@@ -1043,6 +1054,18 @@ mintAlign(_fr2)
 mintAlign(_fr3)
     break
 
+mintAlign(_fr4)
+    break
+
+mintAlign(_fr5)
+    break
+
+mintAlign(_fr6)
+    break
+
+mintAlign(_fr7)
+    break
+
 mintAlign(_stack)
     break
 
@@ -1056,7 +1079,46 @@ _uint_begin:
 uintAlign(_r1)
     break
 
+uintAlign(_r2)
+    break
+
+uintAlign(_r3)
+    break
+
+uintAlign(_r4)
+    break
+
+uintAlign(_r5)
+    break
+
+uintAlign(_r6)
+    break
+
+uintAlign(_r7)
+    break
+
+uintAlign(_fr0)
+    break
+
 uintAlign(_fr1)
+    break
+
+uintAlign(_fr2)
+    break
+
+uintAlign(_fr3)
+    break
+
+uintAlign(_fr4)
+    break
+
+uintAlign(_fr5)
+    break
+
+uintAlign(_fr6)
+    break
+
+uintAlign(_fr7)
     break
 
 uintAlign(_stack)
@@ -1110,6 +1172,18 @@ argumINTAlign(_fa2)
     break
 
 argumINTAlign(_fa3)
+    break
+
+argumINTAlign(_fa4)
+    break
+
+argumINTAlign(_fa5)
+    break
+
+argumINTAlign(_fa6)
+    break
+
+argumINTAlign(_fa7)
     break
 
 argumINTAlign(_stack)

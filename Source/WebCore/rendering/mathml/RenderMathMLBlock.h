@@ -61,10 +61,6 @@ public:
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
-#if ENABLE(DEBUG_MATH_LAYOUT)
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-#endif
-
 protected:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -78,6 +74,8 @@ protected:
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computeAndSetBlockDirectionMarginsOfChildren();
+    void insertPositionedChildrenIntoContainingBlock();
+    void layoutFloatingChildren();
 
 private:
     bool isRenderMathMLBlock() const final { return true; }

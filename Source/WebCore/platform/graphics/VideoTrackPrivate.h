@@ -31,12 +31,14 @@
 #include "TrackPrivateBase.h"
 #include "VideoTrackPrivateClient.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 struct VideoInfo;
 
 class VideoTrackPrivate : public TrackPrivateBase {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(VideoTrackPrivate);
 public:
     virtual void setSelected(bool selected)
     {

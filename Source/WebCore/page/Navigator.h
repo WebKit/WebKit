@@ -49,6 +49,10 @@ class Navigator final
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Navigator);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Navigator);
 public:
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    DEFINE_VIRTUAL_REFCOUNTED;
+#endif
+
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();
 
@@ -87,8 +91,6 @@ public:
     void clearClientBadge(Ref<DeferredPromise>&&);
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
     PushManager& pushManager();
 #endif
 

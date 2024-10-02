@@ -45,8 +45,8 @@ template<typename BankInfo>
 void marshallCCallArgumentImpl(Vector<Arg>& result, unsigned& argumentCount, unsigned& stackOffset, Type childType)
 {
     const auto registerCount = cCallArgumentRegisterCount(childType);
-    if (is32Bit() && childType == Int64)
-        argumentCount = WTF::roundUpToMultipleOf<2>(argumentCount);
+    if constexpr (is32Bit())
+        ASSERT(childType != Int64);
 
     if (argumentCount < BankInfo::numberOfArgumentRegisters) {
         for (unsigned i = 0; i < registerCount; i++)
@@ -132,6 +132,16 @@ size_t cCallResultCount(Code& code, CCallValue* value)
         return 1;
 
     }
+}
+// Do register arguments of this type need to be even-aligned? (e.g. r0/r1 would
+// be even aligned, r1/r2 wouldn't).
+bool cCallArgumentEvenRegisterAlignment(Type type)
+{
+    if (!is32Bit())
+        return false;
+    if (type == Int64)
+        return true;
+    return false;
 }
 
 size_t cCallArgumentRegisterCount(Type type)
@@ -265,8 +275,8 @@ Value* ArgumentValueList::makeCCallValue(B3::BasicBlock* block, size_t idx) cons
     case Int64:
         RELEASE_ASSERT(argCount == sizeof(uint64_t) / sizeof(uintptr_t));
 #if CPU(ARM_THUMB2)
-            return makeStitch(block, makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg + 1]),
-                makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]));
+            return makeStitch(block, makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg + 1]),
+                makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg]));
 #else
         return makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]);
 #endif

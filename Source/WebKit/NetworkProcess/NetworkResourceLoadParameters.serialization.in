@@ -57,7 +57,7 @@ class WebKit::NetworkLoadParameters {
 }
 
 class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
-    WebCore::ResourceLoaderIdentifier identifier;
+    Markable<WebCore::ResourceLoaderIdentifier> identifier;
     
     RefPtr<WebCore::FormData> request.httpBody();
     std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensionsIfHttpBody();

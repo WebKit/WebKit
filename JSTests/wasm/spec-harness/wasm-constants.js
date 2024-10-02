@@ -11,6 +11,8 @@ function hostref(s) {
   return hostrefs[s];
 }
 
+registry['spectest']['hostref'] = hostref;
+
 function bytes() {
   var buffer = new ArrayBuffer(arguments.length);
   var view = new Uint8Array(buffer);

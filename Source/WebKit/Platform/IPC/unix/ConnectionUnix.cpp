@@ -604,8 +604,18 @@ void sendPIDToPeer(int socket)
     message.msg_iov = &iov;
     message.msg_iovlen = 1;
 
-    if (sendmsg(socket, &message, 0) == -1)
+    int ret;
+    do {
+        ret = sendmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1) {
+        // Don't crash if the parent process merely closed its pid socket.
+        // That's equivalent to canceling the process launch.
+        if (errno == EPIPE)
+            exit(1);
         g_error("sendPIDToPeer: Failed to send pid: %s", g_strerror(errno));
+    }
 }
 
 // The goal here is to receive the pid of the sandboxed child in the parent process's pid namespace.
@@ -629,7 +639,12 @@ pid_t readPIDFromPeer(int socket)
     message.msg_control = controlMessage.buffer;
     message.msg_controllen = controlLength;
 
-    if (recvmsg(socket, &message, 0) == -1)
+    int ret;
+    do {
+        ret = recvmsg(socket, &message, 0);
+    } while (ret == -1 && errno == EINTR);
+
+    if (ret == -1)
         g_error("readPIDFromPeer: Failed to read pid from PID socket: %s", g_strerror(errno));
 
     if (message.msg_controllen <= 0)

@@ -588,6 +588,11 @@ AtomString TextUtil::ellipsisTextInInlineDirection(bool isHorizontal)
     return verticalEllipsisStr;
 }
 
+InlineLayoutUnit TextUtil::hyphenWidth(const RenderStyle& style)
+{
+    return std::max(0.f, style.fontCascade().width(TextRun { StringView { style.hyphenString() } }));
+}
+
 bool TextUtil::hasHangablePunctuationStart(const InlineTextItem& inlineTextItem, const RenderStyle& style)
 {
     if (!inlineTextItem.length() || !style.hangingPunctuation().contains(HangingPunctuation::First))

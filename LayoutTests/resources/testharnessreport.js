@@ -61,6 +61,7 @@ if (self.testRunner) {
 
     // window.opener is a configurable property, so store it before we run anything.
     const orig_opener = window.opener;
+    const isRunInCrossOriginFrame = new URLSearchParams(window.location.search).has("runInCrossOriginFrame", "true");
 
     /*  Using a callback function, test results will be added to the page in a
     *   manner that allows dumpAsText to produce readable test results
@@ -69,7 +70,7 @@ if (self.testRunner) {
         // Only pay attention to results at the top-level window.
         // Ideally testharness.js would allow us to only attach a completion handler in this case:
         // https://github.com/web-platform-tests/rfcs/pull/168
-        if (window !== window.top || (orig_opener !== null && orig_opener !== window)) {
+        if (!isRunInCrossOriginFrame && (window !== window.top || (orig_opener !== null && orig_opener !== window))) {
             return;
         }
 

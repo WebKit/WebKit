@@ -33,8 +33,12 @@
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
 #include "ScrollingTreePluginScrollingNodeIOS.h"
 #include <WebCore/ScrollingTreeFixedNodeCocoa.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingTreeIOS);
+
 using namespace WebCore;
 
 Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorProxy& scrollingCoordinator)

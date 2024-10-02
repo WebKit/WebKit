@@ -67,6 +67,8 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUColorWrite.idl
@@ -216,6 +218,8 @@ $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferMapState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasAlphaMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasConfiguration.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMapping.idl
+$(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUCanvasToneMappingMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorDict.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorTargetState.idl
 $(PROJECT_DIR)/Modules/WebGPU/WebExposedAPI/GPUColorWrite.idl
@@ -568,6 +572,7 @@ $(PROJECT_DIR)/Modules/mediasource/ManagedMediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedSourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/MediaSourceHandle.idl
+$(PROJECT_DIR)/Modules/mediasource/MediaSourceInit.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBuffer.idl
 $(PROJECT_DIR)/Modules/mediasource/SourceBufferList.idl
 $(PROJECT_DIR)/Modules/mediasource/TextTrack+MediaSource.idl
@@ -1186,6 +1191,7 @@ $(PROJECT_DIR)/animation/PlaybackDirection.idl
 $(PROJECT_DIR)/animation/ScrollAxis.idl
 $(PROJECT_DIR)/animation/ScrollTimeline.idl
 $(PROJECT_DIR)/animation/ScrollTimelineOptions.idl
+$(PROJECT_DIR)/animation/TimelineRangeOffset.idl
 $(PROJECT_DIR)/animation/TransitionEvent.idl
 $(PROJECT_DIR)/animation/ViewTimeline.idl
 $(PROJECT_DIR)/animation/ViewTimelineOptions.idl

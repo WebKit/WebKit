@@ -72,7 +72,7 @@ static WKRetainPtr<WKDataRef> createSessionStateData()
     auto delegate = adoptNS([SessionStateDelegate new]);
     auto view = adoptNS([WKWebView new]);
     [view setNavigationDelegate:delegate.get()];
-    [view loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [view loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     Util::run(&didFinishNavigationForSessionState);
     didFinishNavigationForSessionState = false;
 
@@ -98,7 +98,7 @@ TEST(WebKit, RestoreSessionStateWithoutNavigation)
     auto currentItem = WKBackForwardListGetCurrentItem(backForwardList);
     auto currentItemURL = adoptWK(WKBackForwardListItemCopyURL(currentItem));
     
-    auto expectedURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]));
+    auto expectedURL = adoptWK(WKURLCreateWithCFURL((__bridge CFURLRef)[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]));
     EXPECT_NOT_NULL(expectedURL);
     EXPECT_TRUE(WKURLIsEqual(currentItemURL.get(), expectedURL.get()));
 }

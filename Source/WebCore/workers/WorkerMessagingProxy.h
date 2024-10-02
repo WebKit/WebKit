@@ -30,6 +30,7 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -40,11 +41,17 @@ class DedicatedWorkerThread;
 class WorkerInspectorProxy;
 class WorkerUserGestureForwarder;
 
-class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy {
+class WorkerMessagingProxy final : public ThreadSafeRefCounted<WorkerMessagingProxy>, public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy, public WorkerBadgeProxy, public CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerMessagingProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerMessagingProxy);
 public:
     explicit WorkerMessagingProxy(Worker&);
     virtual ~WorkerMessagingProxy();
+
+    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::incrementPtrCount(); }
+    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::decrementPtrCount(); }
 
 private:
     // Implementations of WorkerGlobalScopeProxy.

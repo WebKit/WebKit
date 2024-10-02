@@ -278,7 +278,7 @@ bool doesGC(Graph& graph, Node* node)
 #if ASSERT_ENABLED
     case ArrayPush:
     case ArrayPop:
-    case ArraySpliceExtract:
+    case ArraySplice:
     case PushWithScope:
     case CreateActivation:
     case CreateDirectArguments:

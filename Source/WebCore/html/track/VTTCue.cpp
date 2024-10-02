@@ -1464,7 +1464,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* VTTCue::logIdentifier() const
+uint64_t VTTCue::logIdentifier() const
 {
     if (!m_logIdentifier && track())
         m_logIdentifier = childLogIdentifier(track()->logIdentifier(), cryptographicallyRandomNumber<uint64_t>());

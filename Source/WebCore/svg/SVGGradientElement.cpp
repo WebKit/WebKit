@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -119,15 +119,6 @@ GradientColorStops SVGGradientElement::buildStops()
         stops.addColorStop({ monotonicallyIncreasingOffset, stop.stopColorIncludingOpacity() });
     }
     return stops;
-}
-
-void SVGGradientElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
-{
-    if (name == SVGNames::gradientTransformAttr) {
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTransform, value);
-        return;
-    }
-    SVGElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

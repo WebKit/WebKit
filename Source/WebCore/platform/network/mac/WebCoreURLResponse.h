@@ -36,7 +36,7 @@ namespace WebCore {
 WEBCORE_EXPORT NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentRequest, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
 #endif
 
-enum class IsMainResourceLoad : bool { No, Yes };
+enum class IsMainResourceLoad : bool;
 enum class IsNoSniffSet : bool { No, Yes };
 
 WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef, IsMainResourceLoad, IsNoSniffSet);

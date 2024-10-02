@@ -59,6 +59,8 @@ struct FontEventClient : public CanMakeWeakPtr<FontEventClient> {
 
 class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFaceClient {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<CSSFontFaceSet> create(CSSFontSelector* owningFontSelector = nullptr)
     {
         return adoptRef(*new CSSFontFaceSet(owningFontSelector));
@@ -97,9 +99,6 @@ public:
 
     ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(const String& font, const String& text);
 
-    // CSSFontFaceClient needs to be able to be held in a RefPtr.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
     // FIXME: Should this be implemented?
     void updateStyleIfNeeded(CSSFontFace&) final { }
 

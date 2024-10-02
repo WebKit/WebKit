@@ -1,1 +1,0 @@
-from websockets.typing import *

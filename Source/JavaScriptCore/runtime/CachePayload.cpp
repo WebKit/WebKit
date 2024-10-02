@@ -64,31 +64,18 @@ CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<Ma
 
 CachePayload::~CachePayload() {
     if (m_destructor)
-        m_destructor(data());
+        m_destructor(span().data());
 }
 
-const uint8_t* CachePayload::data() const
+std::span<const uint8_t> CachePayload::span() const
 {
     return WTF::switchOn(m_data,
         [](const FileSystem::MappedFileData& data) {
-            return data.span().data();
-        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> const uint8_t* {
-            return data.first.get();
-        }, [](const std::span<uint8_t>& data) -> const uint8_t* {
-            return data.data();
-        }
-    );
-}
-
-size_t CachePayload::size() const
-{
-    return WTF::switchOn(m_data,
-        [](const FileSystem::MappedFileData& data) -> size_t {
-            return data.size();
-        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) -> size_t {
-            return data.second;
-        }, [](const std::span<uint8_t>& data) -> size_t {
-            return data.size();
+            return data.span();
+        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
+            return std::span<const uint8_t> { data.first.get(), data.second };
+        }, [](const std::span<uint8_t>& data) -> std::span<const uint8_t> { 
+            return data;
         }
     );
 }

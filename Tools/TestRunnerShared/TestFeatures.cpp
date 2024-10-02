@@ -222,7 +222,7 @@ static std::vector<std::string> parseStringTestHeaderValueAsStringVector(const s
     return result;
 }
 
-bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string value, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+static bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string value, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     auto keyType = [&keyTypeMap](auto& key) {
         auto it = keyTypeMap.find(key);
@@ -274,7 +274,7 @@ bool parseTestHeaderFeature(TestFeatures& features, std::string key, std::string
     return false;
 }
 
-static TestFeatures parseTestHeaderString(const std::string& pairString, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+static std::optional<TestFeatures> parseTestHeaderString(const std::string& pairString, std::filesystem::path path, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     TestFeatures features;
 
@@ -331,7 +331,7 @@ static TestFeatures parseTestHeader(std::filesystem::path path, const std::unord
         return { };
     }
     std::string pairString = options.substr(beginLocation + beginString.size(), endLocation - (beginLocation + beginString.size()));
-    return parseTestHeaderString(pairString, path, keyTypeMap);
+    return parseTestHeaderString(pairString, path, keyTypeMap).value_or(TestFeatures { });
 }
 
 TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
@@ -343,14 +343,19 @@ TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand& command,
 {
     if (command.selfComparisonHeader.empty())
         return { };
-    return parseTestHeaderString(command.selfComparisonHeader, command.absolutePath, keyTypeMap);
+    return parseTestHeaderString(command.selfComparisonHeader, command.absolutePath, keyTypeMap).value_or(TestFeatures { });
 }
 
 TestFeatures featureFromAdditionalHeaderOption(const TestCommand& command, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
 {
     if (command.additionalHeader.empty())
         return { };
-    return parseTestHeaderString(command.additionalHeader, std::filesystem::path(), keyTypeMap);
+    return parseTestHeaderString(command.additionalHeader, std::filesystem::path(), keyTypeMap).value_or(TestFeatures { });
+}
+
+std::optional<TestFeatures> parseAdditionalHeaderString(const std::string& additionalHeader, const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMap)
+{
+    return parseTestHeaderString(additionalHeader, std::filesystem::path(), keyTypeMap);
 }
 
 } // namespace WTF

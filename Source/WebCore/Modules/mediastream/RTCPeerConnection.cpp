@@ -105,7 +105,8 @@ ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document
                 WTFLogLevel level = LogWebRTC.level;
                 if (level != WTFLogLevel::Debug && document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
                     level = WTFLogLevel::Info;
-                page->webRTCProvider().setLoggingLevel(level);
+                if (document.settings().webCodecsVideoEnabled() || document.settings().peerConnectionEnabled())
+                    page->webRTCProvider().setLoggingLevel(level);
             }
 #endif
         }
@@ -185,9 +186,49 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
     return { };
 }
 
-ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransceiverTrackOrKind&& withTrack, const RTCRtpTransceiverInit& init)
+static bool isAudioTransceiver(const RTCPeerConnection::AddTransceiverTrackOrKind& withTrack)
+{
+    return switchOn(withTrack, [] (const String& type) -> bool {
+        return type == "audio"_s;
+    }, [] (const RefPtr<MediaStreamTrack>& track) -> bool {
+        return track->isAudio();
+    });
+}
+
+// https://w3c.github.io/webrtc-pc/#dfn-addtransceiver-sendencodings-validation-steps
+static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParameters>& encodings, bool isAudio)
+{
+    size_t encodingIndex = 0;
+    bool hasAnyScaleResolutionDownBy = !isAudio && WTF::anyOf(encodings, [] (auto& encoding){ return !!encoding.scaleResolutionDownBy; });
+    for (auto& encoding: encodings) {
+        // FIXME: Validate rid and codec
+        if (isAudio) {
+            encoding.scaleResolutionDownBy = { };
+            encoding.maxFramerate = { };
+            continue;
+        }
+        if (encoding.scaleResolutionDownBy && *encoding.scaleResolutionDownBy < 1)
+            return Exception { ExceptionCode::RangeError, "scaleResolutionDownBy is below 1"_s };
+
+        if (encoding.maxFramerate && *encoding.maxFramerate <= 0)
+            return Exception { ExceptionCode::RangeError, "maxFrameRate is below or equal 0"_s };
+
+        if (hasAnyScaleResolutionDownBy) {
+            if (!encoding.scaleResolutionDownBy)
+                encoding.scaleResolutionDownBy = 1;
+        } else
+            encoding.scaleResolutionDownBy = 1 << (encodings.size() - ++encodingIndex);
+    }
+
+    return { };
+}
+
+ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransceiverTrackOrKind&& withTrack, RTCRtpTransceiverInit&& init)
 {
     INFO_LOG(LOGIDENTIFIER);
+
+    if (auto exception = validateSendEncodings(init.sendEncodings, isAudioTransceiver(withTrack)))
+        return WTFMove(*exception);
 
     if (std::holds_alternative<String>(withTrack)) {
         const String& kind = std::get<String>(withTrack);
@@ -499,7 +540,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
                         if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
                             return Exception { ExceptionCode::TypeError, "TURN/TURNS username and/or credential are too long"_s };
                     }
-                } else if (!serverURL.protocolIs("stun"_s))
+                } else if (!serverURL.protocolIs("stun"_s) && !serverURL.protocolIs("stuns"_s))
                     return Exception { ExceptionCode::SyntaxError, "ICE server protocol not supported"_s };
             }
             if (serverURLs.size())

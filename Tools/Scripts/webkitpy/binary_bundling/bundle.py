@@ -49,6 +49,9 @@ class BinaryBundler:
     def set_use_sys_lib_directory(self, should_use_sys_lib_directory):
         self._should_use_sys_lib_directory = should_use_sys_lib_directory
 
+    def copy(self, orig_file):
+        shutil.copy(orig_file, self._destination_dir)
+
     def copy_and_maybe_strip_patchelf(self, orig_file, type='bin', strip=True, patchelf_removerpath=True, patchelf_nodefaultlib=False, patchelf_setinterpreter_relativepath=None, object_final_destination_dir=None):
         """ This does the following:
             1. Copies the binary/lib (object)

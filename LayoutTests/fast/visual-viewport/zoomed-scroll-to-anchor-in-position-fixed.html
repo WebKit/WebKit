@@ -20,10 +20,10 @@
 
     window.jsTestIsAsync = true;
 
-    function runTest()
+    async function runTest()
     {
-        if (window.eventSender)
-            eventSender.scalePageBy(2);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(2, 0, 0);
 
         window.scrollTo(300, 800);
 

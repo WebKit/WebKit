@@ -24,7 +24,7 @@ for (let ctor of ctors) {
   // Write some data into the array.
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
 
   // Orig. array: [0, 1, 2, 3]
@@ -41,7 +41,7 @@ for (let ctor of ctors) {
     3
   ]);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
   ArrayCopyWithinHelper(fixedLengthWithOffset, 0, 1);
   assert.compareArray(ToNumbers(fixedLengthWithOffset), [
@@ -49,7 +49,7 @@ for (let ctor of ctors) {
     3
   ]);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
   ArrayCopyWithinHelper(lengthTracking, 0, 2);
   assert.compareArray(ToNumbers(lengthTracking), [
@@ -67,7 +67,7 @@ for (let ctor of ctors) {
   // Shrink so that fixed length TAs go out of bounds.
   rab.resize(3 * ctor.BYTES_PER_ELEMENT);
   for (let i = 0; i < 3; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
 
   // Orig. array: [0, 1, 2]
@@ -99,7 +99,7 @@ for (let ctor of ctors) {
 
   // Shrink so that the TAs with offset go out of bounds.
   rab.resize(1 * ctor.BYTES_PER_ELEMENT);
-  WriteToTypedArray(taWrite, 0, 0);
+  taWrite[0] = MayNeedBigInt(taWrite, 0);
   ArrayCopyWithinHelper(fixedLength, 0, 1, 1);
   ArrayCopyWithinHelper(fixedLengthWithOffset, 0, 1, 1);
   ArrayCopyWithinHelper(lengthTrackingWithOffset, 0, 1, 1);
@@ -121,7 +121,7 @@ for (let ctor of ctors) {
   // Grow so that all TAs are back in-bounds.
   rab.resize(6 * ctor.BYTES_PER_ELEMENT);
   for (let i = 0; i < 6; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
 
   // Orig. array: [0, 1, 2, 3, 4, 5]
@@ -138,7 +138,7 @@ for (let ctor of ctors) {
     3
   ]);
   for (let i = 0; i < 6; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
   ArrayCopyWithinHelper(fixedLengthWithOffset, 0, 1);
   assert.compareArray(ToNumbers(fixedLengthWithOffset), [
@@ -146,7 +146,7 @@ for (let ctor of ctors) {
     3
   ]);
   for (let i = 0; i < 6; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
 
   //              [0, 1, 2, 3, 4, 5, ...] << lengthTracking
@@ -161,7 +161,7 @@ for (let ctor of ctors) {
     5
   ]);
   for (let i = 0; i < 6; ++i) {
-    WriteToTypedArray(taWrite, i, i);
+    taWrite[i] = MayNeedBigInt(taWrite, i);
   }
 
   //                    [2, 3, 4, 5, ...] << lengthTrackingWithOffset

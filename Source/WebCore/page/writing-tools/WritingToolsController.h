@@ -102,6 +102,10 @@ private:
         Vector<Ref<WritingToolsCompositionCommand>> reappliedCommands;
         WritingTools::Session session;
         OptionSet<ClearStateDeferralReason> clearStateDeferralReasons;
+
+        bool shouldCommitAfterReplacement { false };
+        std::optional<CharacterRange> replacedRange;
+        std::optional<CharacterRange> pendingReplacedRange;
     };
 
     struct ProofreadingState : CanMakeCheckedPtr<ProofreadingState> {
@@ -176,6 +180,8 @@ private:
 
     template<WritingTools::Session::Type Type>
     void didEndWritingToolsSession(bool accepted);
+
+    void commitComposition(CompositionState&, Document&);
 
     RefPtr<Document> document() const;
 

@@ -29,6 +29,7 @@
 #include <WebCore/ScreenOrientationManager.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -53,7 +54,9 @@ private:
     void addObserver(WebCore::ScreenOrientationManagerObserver&) final;
     void removeObserver(WebCore::ScreenOrientationManagerObserver&) final;
 
-    WebPage& m_page;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_page;
     WeakHashSet<WebCore::ScreenOrientationManagerObserver> m_observers;
     mutable std::optional<WebCore::ScreenOrientationType> m_currentOrientation;
 };

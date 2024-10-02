@@ -190,6 +190,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         descriptor.viewFormats.size() ? &descriptor.viewFormats[0] : &effectiveFormat,
     };
     m_colorSpace = descriptor.colorSpace;
+    m_toneMappingMode = descriptor.toneMappingMode;
     m_alphaMode = descriptor.compositeAlphaMode;
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(effectiveFormat) width:width height:height mipmapped:NO];
     textureDescriptor.usage = Texture::usage(descriptor.usage, effectiveFormat);

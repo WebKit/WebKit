@@ -212,6 +212,9 @@ void Connection::platformOpen()
     protectedConnectionQueue()->dispatch([strongRef = Ref { *this }, this] {
         dispatch_resume(m_receiveSource.get());
     });
+
+    // Cache the audit token in case the XPC connection will be closed.
+    getAuditToken();
 }
 
 bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
@@ -583,11 +586,15 @@ IPC::Connection::Identifier Connection::identifier() const
 
 std::optional<audit_token_t> Connection::getAuditToken()
 {
+    if (m_auditToken)
+        return m_auditToken;
+
     if (!m_xpcConnection)
         return std::nullopt;
 
     audit_token_t auditToken;
     xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
+    m_auditToken = auditToken;
     return WTFMove(auditToken);
 }
 

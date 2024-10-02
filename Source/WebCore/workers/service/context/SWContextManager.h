@@ -52,6 +52,8 @@ public:
 
     class Connection {
     public:
+        DECLARE_VIRTUAL_REFCOUNTED;
+
         virtual ~Connection() { }
 
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;
@@ -83,8 +85,6 @@ public:
         virtual bool isThrottleable() const = 0;
         virtual PageIdentifier pageIdentifier() const = 0;
 
-        virtual void ref() const = 0;
-        virtual void deref() const = 0;
         virtual void stop() = 0;
 
         virtual void reportConsoleMessage(ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) = 0;

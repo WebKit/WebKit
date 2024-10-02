@@ -41,4 +41,8 @@ RefPtr<ModelPlayer> DummyModelPlayerProvider::createModelPlayer(ModelPlayerClien
     return DummyModelPlayer::create(client);
 }
 
+void DummyModelPlayerProvider::deleteModelPlayer(ModelPlayer&)
+{
+}
+
 }

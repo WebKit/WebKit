@@ -88,6 +88,10 @@ class NetworkResourceLoader final
 #endif
     , public WebCore::ReportingClient {
 public:
+#if ENABLE(CONTENT_FILTERING)
+    DEFINE_VIRTUAL_REFCOUNTED;
+#endif
+
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse, Vector<uint8_t>&&)>&& reply = nullptr)
     {
         return adoptRef(*new NetworkResourceLoader(WTFMove(parameters), connection, WTFMove(reply)));
@@ -104,7 +108,7 @@ public:
     void transferToNewWebProcess(NetworkConnectionToWebProcess&, const NetworkResourceLoadParameters&);
 
     // Message handlers.
-    void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
 
@@ -114,7 +118,7 @@ public:
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
     Ref<NetworkConnectionToWebProcess> protectedConnectionToWebProcess() const;
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
-    WebCore::ResourceLoaderIdentifier coreIdentifier() const { return m_parameters.identifier; }
+    WebCore::ResourceLoaderIdentifier coreIdentifier() const { return *m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return *m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return *m_parameters.webPageID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
@@ -171,8 +175,6 @@ public:
     bool isAppInitiated();
 
 #if ENABLE(CONTENT_FILTERING)
-    void ref() const final { RefCounted<NetworkResourceLoader>::ref(); }
-    void deref() const final { RefCounted<NetworkResourceLoader>::deref(); }
     bool continueAfterServiceWorkerReceivedData(const WebCore::SharedBuffer&, uint64_t encodedDataLength);
     bool continueAfterServiceWorkerReceivedResponse(const WebCore::ResourceResponse&);
     void serviceWorkerDidFinish();
@@ -190,7 +192,7 @@ private:
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier.toUInt64(); }
+    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier->toUInt64(); }
 
 #if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
@@ -284,7 +286,7 @@ private:
 
     Ref<NetworkConnectionToWebProcess> m_connection;
 
-    std::unique_ptr<NetworkLoad> m_networkLoad;
+    RefPtr<NetworkLoad> m_networkLoad;
 
     WebCore::ResourceResponse m_response;
 
@@ -309,7 +311,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryForMaxAgeCapValidation;
     bool m_isWaitingContinueWillSendRequestForCachedRedirect { false };
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
-    std::unique_ptr<NetworkLoadChecker> m_networkLoadChecker;
+    RefPtr<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
     ResponseCompletionHandler m_responseCompletionHandler;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };

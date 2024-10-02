@@ -128,13 +128,15 @@ protected:
     virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
 
     void setVoiceActivityListenerCallback(Function<void()>&& callback) { m_voiceActivityCallback = WTFMove(callback); }
+    bool hasVoiceActivityListenerCallback() const { return !!m_voiceActivityCallback; }
     void voiceActivityDetected();
-    bool isListeningToVoiceActivity() const { return !!m_voiceActivityCallback; }
 
     void disableVoiceActivityThrottleTimerForTesting() { m_voiceActivityThrottleTimer.stop(); }
+    void stopRunning();
 
 private:
     OSStatus startUnit();
+    bool shouldContinueRunning() const { return m_producingCount || m_isRenderingAudio || hasClients(); }
 
     // RealtimeMediaSourceCenterObserver
     void devicesChanged() final;

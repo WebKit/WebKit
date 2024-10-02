@@ -92,6 +92,7 @@ public:
 #endif
 #if ENABLE(VIDEO)
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy();
+    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy();
     RemoteMediaPlayerManager& mediaPlayerManager();
 #endif
 
@@ -123,10 +124,10 @@ public:
 
     class Client {
     public:
+        DECLARE_VIRTUAL_REFCOUNTED;
+
         virtual ~Client() = default;
 
-        virtual void ref() const = 0;
-        virtual void deref() const = 0;
         virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
 
         virtual void gpuProcessConnectionDidClose(GPUProcessConnection&) { }

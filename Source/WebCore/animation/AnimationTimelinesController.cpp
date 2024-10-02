@@ -74,8 +74,8 @@ void AnimationTimelinesController::detachFromDocument()
     m_currentTimeClearingTaskCancellationGroup.cancel();
 
     while (!m_timelines.isEmptyIgnoringNullReferences()) {
-        auto& timeline = *m_timelines.begin();
-        timeline.detachFromDocument();
+        Ref timeline = *m_timelines.begin();
+        timeline->detachFromDocument();
     }
 }
 

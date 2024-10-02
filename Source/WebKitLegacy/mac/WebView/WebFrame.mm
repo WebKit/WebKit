@@ -309,9 +309,14 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(&page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
+
+    auto effectiveSandboxFlags = ownerElement.sandboxFlags();
+    if (RefPtr parentLocalFrame = ownerElement.document().frame())
+        effectiveSandboxFlags.add(parentLocalFrame->effectiveSandboxFlags());
+
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, [frame] (auto&) {
         return makeUniqueRef<WebFrameLoaderClient>(frame.get());
-    }, WebCore::FrameIdentifier::generate(), ownerElement);
+    }, WebCore::FrameIdentifier::generate(), effectiveSandboxFlags, ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setSpecifiedName(name);

@@ -75,11 +75,11 @@ struct PresentationContextDescriptor;
 
 class GPU {
 public:
+    DECLARE_VIRTUAL_REFCOUNTED;
+
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 

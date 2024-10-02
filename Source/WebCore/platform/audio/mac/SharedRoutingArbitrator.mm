@@ -46,7 +46,7 @@ UniqueRef<SharedRoutingArbitratorToken> SharedRoutingArbitratorToken::create()
     return makeUniqueRef<SharedRoutingArbitratorToken>();
 }
 
-const void* SharedRoutingArbitratorToken::logIdentifier() const
+uint64_t SharedRoutingArbitratorToken::logIdentifier() const
 {
     if (!m_logIdentifier)
         m_logIdentifier = LoggerHelper::uniqueLogIdentifier();

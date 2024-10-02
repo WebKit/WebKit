@@ -1,4 +1,5 @@
 
+PASS MessageEvent constructor called as normal function
 PASS Default event values
 PASS MessageEventInit dictionary
 PASS Passing null for ports member

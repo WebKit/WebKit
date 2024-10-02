@@ -61,8 +61,8 @@ AuxiliaryProcess::AuxiliaryProcess()
 
 AuxiliaryProcess::~AuxiliaryProcess()
 {
-    if (m_connection)
-        m_connection->invalidate();
+    if (RefPtr connection = m_connection)
+        connection->invalidate();
 }
 
 void AuxiliaryProcess::didClose(IPC::Connection&)
@@ -105,9 +105,10 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
-    initializeConnection(m_connection.get());
-    m_connection->open(*this);
+    Ref connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
+    m_connection = connection.ptr();
+    initializeConnection(connection.ptr());
+    connection->open(*this);
 }
 
 void AuxiliaryProcess::setProcessSuppressionEnabled(bool enabled)
@@ -128,6 +129,25 @@ void AuxiliaryProcess::initializeProcessName(const AuxiliaryProcessInitializatio
 
 void AuxiliaryProcess::initializeConnection(IPC::Connection*)
 {
+}
+
+bool AuxiliaryProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (m_messageReceiverMap.dispatchMessage(connection, decoder))
+        return true;
+    // Note: because WebProcess receives messages to non-existing IDs, we have to filter the messages there to avoid asserts.
+    // Once these stop, this should be removed.
+    return filterUnhandledMessage(connection, decoder);
+}
+
+bool AuxiliaryProcess::filterUnhandledMessage(IPC::Connection&, IPC::Decoder&)
+{
+    return false;
+}
+
+bool AuxiliaryProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+{
+    return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
 void AuxiliaryProcess::addMessageReceiver(IPC::ReceiverName messageReceiverName, IPC::MessageReceiver& messageReceiver)
@@ -201,7 +221,7 @@ void AuxiliaryProcess::platformStopRunLoop()
 
 void AuxiliaryProcess::terminate()
 {
-    m_connection->invalidate();
+    protectedParentProcessConnection()->invalidate();
 
     stopRunLoop();
 }

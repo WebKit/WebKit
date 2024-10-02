@@ -157,7 +157,7 @@ public:
         }
 
         if (parserName) {
-            auto parserFactory = adoptGRef(gst_element_factory_find(parserName));
+            auto parserFactory = adoptGRef(gst_element_factory_find(parserName.characters()));
             if (!parserFactory) {
                 GST_WARNING("Parser %s is required for encoder %s. Skipping registration", parserName.characters(), name.characters());
                 return;
@@ -251,7 +251,7 @@ static void videoEncoderGetProperty(GObject* object, guint propertyId, GValue* v
     case PROP_KEYFRAME_INTERVAL:
         if (priv->encoder) {
             auto encoder = Encoders::definition(priv->encoderId);
-            g_object_get_property(G_OBJECT(priv->encoder.get()), encoder->keyframeIntervalPropertyName, value);
+            g_object_get_property(G_OBJECT(priv->encoder.get()), encoder->keyframeIntervalPropertyName.characters(), value);
         }
         break;
     case PROP_BITRATE_MODE:
@@ -565,7 +565,7 @@ static void videoEncoderSetProperty(GObject* object, guint propertyId, const GVa
     case PROP_KEYFRAME_INTERVAL:
         if (priv->encoder) {
             auto encoder = Encoders::definition(priv->encoderId);
-            g_object_set(priv->encoder.get(), encoder->keyframeIntervalPropertyName, g_value_get_uint(value), nullptr);
+            g_object_set(priv->encoder.get(), encoder->keyframeIntervalPropertyName.characters(), g_value_get_uint(value), nullptr);
         }
         break;
     case PROP_BITRATE_MODE:
@@ -594,13 +594,13 @@ static void videoEncoderSetProperty(GObject* object, guint propertyId, const GVa
 static void setBitrateKbitPerSec(GObject* encoder, ASCIILiteral propertyName, int bitrate)
 {
     GST_INFO_OBJECT(encoder, "Setting bitrate to %d Kbits/sec", bitrate);
-    g_object_set(encoder, propertyName, bitrate, nullptr);
+    g_object_set(encoder, propertyName.characters(), bitrate, nullptr);
 }
 
 static void setBitrateBitPerSec(GObject* encoder, ASCIILiteral propertyName, int bitrate)
 {
     GST_INFO_OBJECT(encoder, "Setting bitrate to %d bits/sec", bitrate);
-    g_object_set(encoder, propertyName, bitrate * KBIT_TO_BIT, nullptr);
+    g_object_set(encoder, propertyName.characters(), bitrate * KBIT_TO_BIT, nullptr);
 }
 
 static GRefPtr<GstCaps> createSrcPadTemplateCaps()
@@ -922,7 +922,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 g_object_set_property(G_OBJECT(encoder), "temporal-scalability-layer-sync-flags", &layerSyncFlagsValue);
                 g_value_unset(&layerSyncFlagsValue);
                 g_value_unset(&boolValue);
-                gst_util_set_object_arg(G_OBJECT(encoder), "temporal-scalability-layer-flags", layerFlags);
+                gst_util_set_object_arg(G_OBJECT(encoder), "temporal-scalability-layer-flags", layerFlags.characters());
             }
 
             ALLOW_DEPRECATED_DECLARATIONS_END;

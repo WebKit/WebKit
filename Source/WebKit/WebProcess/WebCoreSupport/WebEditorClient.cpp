@@ -607,10 +607,6 @@ void WebEditorClient::didChangeSelectionForAccessibility()
     m_page->didChangeSelectionForAccessibility();
 }
 
-void WebEditorClient::willSetInputMethodState()
-{
-}
-
 void WebEditorClient::setInputMethodState(Element* element)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)

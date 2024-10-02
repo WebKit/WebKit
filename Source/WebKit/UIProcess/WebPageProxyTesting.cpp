@@ -80,7 +80,7 @@ void WebPageProxyTesting::setDefersLoading(bool defersLoading)
 
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
-    RunLoop::current().dispatch([protectedPage = protectedPage()] {
+    RunLoop::protectedCurrent()->dispatch([protectedPage = protectedPage()] {
         protectedPage->updateActivityState();
         protectedPage->dispatchActivityStateChange();
     });
@@ -208,14 +208,6 @@ void WebPageProxyTesting::setTopContentInset(float contentInset, CompletionHandl
 Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
 {
     return m_page.get();
-}
-
-void WebPageProxyTesting::setPageScaleFactor(float scaleFactor, IntPoint point, CompletionHandler<void()>&& completionHandler)
-{
-    Ref callback = CallbackAggregator::create(WTFMove(completionHandler));
-    protectedPage()->forEachWebContentProcess([&](auto& process, auto pageID) {
-        process.sendWithAsyncReply(Messages::WebPageTesting::SetPageScaleFactor(scaleFactor, point), [callback] { }, pageID);
-    });
 }
 
 } // namespace WebKit

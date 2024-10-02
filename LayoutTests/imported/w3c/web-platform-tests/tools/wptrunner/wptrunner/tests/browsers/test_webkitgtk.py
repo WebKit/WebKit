@@ -1,7 +1,6 @@
 # mypy: allow-untyped-defs, allow-untyped-calls
 
 import logging
-import sys
 from os.path import join, dirname
 
 import pytest
@@ -64,7 +63,7 @@ def test_webkitgtk_certificate_domain_list(product):
         executor_args = product_data.get_executor_kwargs(None,
                                                          None,
                                                          MockEnvironment(env_config),
-                                                         {"os": sys.platform},
+                                                         {},
                                                          **kwargs)
         assert 'capabilities' in executor_args
         assert 'webkitgtk:browserOptions' in executor_args['capabilities']

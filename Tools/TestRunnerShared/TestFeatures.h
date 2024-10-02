@@ -73,5 +73,6 @@ enum class TestHeaderKeyType : uint8_t {
 TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 TestFeatures featureFromAdditionalHeaderOption(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
+std::optional<TestFeatures> parseAdditionalHeaderString(const std::string&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 
 }

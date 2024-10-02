@@ -75,7 +75,7 @@ bool MediaSourceInterfaceMainThread::isStreamingContent() const
     if (RefPtr managedMediasource = dynamicDowncast<ManagedMediaSource>(m_mediaSource))
         return managedMediasource && managedMediasource->streamingAllowed() && managedMediasource->streaming();
     // We can assume that if we have active source buffers, later networking activity (such as stream or XHR requests) will be media related.
-    return m_mediaSource->activeSourceBuffers() && m_mediaSource->activeSourceBuffers()->length();
+    return m_mediaSource->activeSourceBuffers()->length();
 }
 
 bool MediaSourceInterfaceMainThread::attachToElement(WeakPtr<HTMLMediaElement>&& element)
@@ -106,6 +106,11 @@ void MediaSourceInterfaceMainThread::setAsSrcObject(bool set)
 void MediaSourceInterfaceMainThread::memoryPressure()
 {
     m_mediaSource->memoryPressure();
+}
+
+bool MediaSourceInterfaceMainThread::detachable() const
+{
+    return m_mediaSource->detachable();
 }
 
 } // namespace WebCore

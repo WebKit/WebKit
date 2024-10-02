@@ -38,21 +38,19 @@
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/NicosiaBackingStore.h>
-#include <WebCore/NicosiaImageBacking.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/MemoryPressureHandler.h>
-#include <wtf/NumberOfCores.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(CAIRO)
 #include <WebCore/NicosiaPaintingEngine.h>
 #elif USE(SKIA)
+#include <WebCore/BitmapTexturePool.h>
 #include <WebCore/ProcessCapabilities.h>
-#include <WebCore/SkiaAcceleratedBufferPool.h>
+#include <WebCore/SkiaThreadedPaintingPool.h>
 #endif
 
 #if USE(GLIB_EVENT_LOOP)
@@ -61,26 +59,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-#if USE(SKIA)
-static unsigned skiaNumberOfCpuPaintingThreads()
-{
-    static std::optional<unsigned> numberOfCpuPaintingThreads;
-    if (!numberOfCpuPaintingThreads.has_value()) {
-        numberOfCpuPaintingThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2));
-
-        if (const char* numThreadsEnv = getenv("WEBKIT_SKIA_CPU_PAINTING_THREADS")) {
-            auto newValue = parseInteger<unsigned>(StringView::fromLatin1(numThreadsEnv));
-            if (newValue && *newValue <= 8)
-                numberOfCpuPaintingThreads = *newValue;
-            else
-                WTFLogAlways("The number of Skia/CPU painting threads is not between 0 and 8. Using the default value %u\n", numberOfCpuPaintingThreads.value());
-        }
-    }
-
-    return numberOfCpuPaintingThreads.value();
-}
-#endif
 
 CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordinator::Client& client)
     : m_page(page)
@@ -91,9 +69,9 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
 {
 #if USE(SKIA)
     if (ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext())
-        m_skiaAcceleratedBufferPool = makeUnique<SkiaAcceleratedBufferPool>();
-    else if (auto numberOfThreads = skiaNumberOfCpuPaintingThreads(); numberOfThreads > 0)
-        m_skiaUnacceleratedThreadedRenderingPool = WorkerPool::create("SkiaPaintingThread"_s, numberOfThreads);
+        m_skiaAcceleratedBitmapTexturePool = makeUnique<BitmapTexturePool>();
+    else
+        m_skiaThreadedPaintingPool = SkiaThreadedPaintingPool::create();
 #endif
 
     m_nicosia.scene = Nicosia::Scene::create();
@@ -104,7 +82,7 @@ CompositingCoordinator::CompositingCoordinator(WebPage& page, CompositingCoordin
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("CompositingCoordinator root layer"));
 #endif
     m_rootLayer->setDrawsContent(false);
-    m_rootLayer->setSize(m_page.size());
+    m_rootLayer->setSize(m_page->size());
 }
 
 CompositingCoordinator::~CompositingCoordinator()
@@ -123,8 +101,8 @@ void CompositingCoordinator::invalidate()
     purgeBackingStores();
 
 #if USE(SKIA)
-    m_skiaAcceleratedBufferPool = nullptr;
-    m_skiaUnacceleratedThreadedRenderingPool = nullptr;
+    m_skiaAcceleratedBitmapTexturePool = nullptr;
+    m_skiaThreadedPaintingPool = nullptr;
 #endif
 }
 
@@ -161,13 +139,16 @@ void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 
 bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
-    TraceScope traceScope(BackingStoreFlushStart, BackingStoreFlushEnd);
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    TraceScope traceScope(FlushPendingLayerChangesStart, FlushPendingLayerChangesEnd);
+#endif
     SetForScope protector(m_isFlushingLayerChanges, true);
 
     bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();
 
-    m_page.updateRendering();
-    m_page.flushPendingEditorStateUpdate();
+    Ref page = m_page.get();
+    page->updateRendering();
+    page->flushPendingEditorStateUpdate();
 
     WTFBeginSignpost(this, FlushRootCompositingLayer);
     m_rootLayer->flushCompositingStateForThisLayerOnly();
@@ -177,7 +158,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
     if (m_overlayCompositingLayer)
         m_overlayCompositingLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
-    m_page.finalizeRenderingUpdate(flags);
+    page->finalizeRenderingUpdate(flags);
 
     WTFBeginSignpost(this, FinalizeCompositingStateFlush);
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
@@ -196,9 +177,6 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                     compositionLayer->flushState([] (const Nicosia::CompositionLayer::LayerState& state) {
                         if (state.backingStore)
                             state.backingStore->flushUpdate();
-
-                        if (state.imageBacking)
-                            state.imageBacking->flushUpdate();
                     });
                 }
 
@@ -217,7 +195,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
         m_client.commitSceneState(nullptr);
 #endif
 
-    m_page.didUpdateRendering();
+    page->didUpdateRendering();
 
     // Eject any backing stores whose only reference is held in the HashMap cache.
     m_imageBackingStores.removeIf(
@@ -230,7 +208,7 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
 double CompositingCoordinator::timestamp() const
 {
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame());
     auto* document = localMainFrame ? localMainFrame->document() : nullptr;
     if (!document)
         return 0;
@@ -239,7 +217,7 @@ double CompositingCoordinator::timestamp() const
 
 void CompositingCoordinator::syncDisplayState()
 {
-    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame()))
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame()))
         localMainFrame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
@@ -283,7 +261,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
             registeredLayer->setNeedsVisibleRectAdjustment();
     }
 
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page->corePage()->mainFrame());
     auto* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
@@ -333,15 +311,13 @@ Nicosia::PaintingEngine& CompositingCoordinator::paintingEngine()
 }
 #endif
 
-RefPtr<Nicosia::ImageBackingStore> CompositingCoordinator::imageBackingStore(uint64_t nativeImageID, Function<RefPtr<Nicosia::Buffer>()> createBuffer)
+Ref<CoordinatedImageBackingStore> CompositingCoordinator::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {
-    auto addResult = m_imageBackingStores.ensure(nativeImageID,
-        [&] {
-            auto store = adoptRef(*new Nicosia::ImageBackingStore);
-            store->backingStoreState().buffer = createBuffer();
-            return store;
-        });
-    return addResult.iterator->value.copyRef();
+    auto nativeImageID = CoordinatedImageBackingStore::uniqueIDForNativeImage(nativeImage.get());
+    auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
+        return CoordinatedImageBackingStore::create(WTFMove(nativeImage));
+    });
+    return addResult.iterator->value;
 }
 
 void CompositingCoordinator::requestUpdate()

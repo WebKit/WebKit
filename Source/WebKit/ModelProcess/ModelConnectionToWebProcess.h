@@ -32,6 +32,7 @@
 #include "MessageReceiverMap.h"
 #include "ModelConnectionToWebProcessMessages.h"
 #include "ScopedActiveMessageReceiveQueue.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -73,9 +74,10 @@ public:
     static Ref<ModelConnectionToWebProcess> create(ModelProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&);
     virtual ~ModelConnectionToWebProcess();
 
-    using CanMakeWeakPtr<ModelConnectionToWebProcess>::weakPtrFactory;
-    using CanMakeWeakPtr<ModelConnectionToWebProcess>::WeakValueType;
-    using CanMakeWeakPtr<ModelConnectionToWebProcess>::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<ModelConnectionToWebProcess>);
+
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(const SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
 
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
@@ -118,7 +120,7 @@ private:
 
     static uint64_t gObjectCountForTesting;
 
-    UniqueRef<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
+    Ref<ModelProcessModelPlayerManagerProxy> m_modelProcessModelPlayerManagerProxy;
 
     RefPtr<Logger> m_logger;
 
@@ -139,6 +141,8 @@ private:
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
+
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 } // namespace WebKit

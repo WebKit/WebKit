@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKOpenPanelParametersPrivate.h"
-
-#if PLATFORM(MAC)
-
 #import "APIOpenPanelParameters.h"
 #import "WKObject.h"
+#import "WKOpenPanelParametersPrivate.h"
 
 namespace WebKit {
 
@@ -43,5 +40,3 @@ template<> struct WrapperTraits<API::OpenPanelParameters> {
     API::ObjectStorage<API::OpenPanelParameters> _openPanelParameters;
 }
 @end
-
-#endif

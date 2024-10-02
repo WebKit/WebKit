@@ -39,5 +39,5 @@
 ⫿
 
 
-FAIL Test that non-stretchy largeops are bigger in display mode. assert_greater_than: width of largeop '⫼' expected a number greater than 13.28125 but got 13.265625
+FAIL Test that non-stretchy largeops are bigger in display mode. assert_greater_than: width of largeop '⨇' expected a number greater than 6.640625 but got 2.640625
 

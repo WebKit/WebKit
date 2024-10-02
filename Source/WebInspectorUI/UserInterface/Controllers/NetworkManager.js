@@ -1579,9 +1579,6 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this._sourceMapURLMap.set(sourceMapURL, sourceMap);
 
-        for (let source of sourceMap.sources())
-            sourceMap.addResource(new WI.SourceMapResource(source, sourceMap));
-
         // Associate the SourceMap with the originalSourceCode.
         sourceMap.originalSourceCode.addSourceMap(sourceMap);
 

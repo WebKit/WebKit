@@ -2,12 +2,12 @@
 FAIL Appending and removing children to maction assert_approx_equals: block position (child 0) expected -43 +/- 1 but got -63
 PASS Appending and removing children to menclose
 PASS Appending and removing children to merror
-FAIL Appending and removing children to mfrac assert_approx_equals: block size expected 26.84375 +/- 1 but got 20
+PASS Appending and removing children to mfrac
 PASS Appending and removing children to mi
-FAIL Appending and removing children to mmultiscripts assert_approx_equals: inline size expected 40 +/- 1 but got 42.5
+PASS Appending and removing children to mmultiscripts
 PASS Appending and removing children to mn
 PASS Appending and removing children to mo
-FAIL Appending and removing children to mover assert_approx_equals: block size expected 23.875 +/- 1 but got 20
+PASS Appending and removing children to mover
 PASS Appending and removing children to mpadded
 PASS Appending and removing children to mphantom
 PASS Appending and removing children to mroot
@@ -16,23 +16,15 @@ PASS Appending and removing children to ms
 PASS Appending and removing children to mspace
 FAIL Appending and removing children to msqrt assert_approx_equals: inline size expected 12.703125 +/- 1 but got 16.640625
 PASS Appending and removing children to mstyle
-FAIL Appending and removing children to msub assert_approx_equals: block size expected 14.125 +/- 1 but got 20
-FAIL Appending and removing children to msubsup assert_approx_equals: block size expected 20 +/- 1 but got 22.390625
-FAIL Appending and removing children to msup assert_approx_equals: block size expected 25.75 +/- 1 but got 20
+PASS Appending and removing children to msub
+PASS Appending and removing children to msubsup
+PASS Appending and removing children to msup
 PASS Appending and removing children to mtable
 PASS Appending and removing children to mtext
-FAIL Appending and removing children to munder assert_approx_equals: block size expected 23.875 +/- 1 but got 20
-FAIL Appending and removing children to munderover assert_approx_equals: block size expected 20 +/- 1 but got 27.5
-FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -10146936 +/- 1 but got -10146956
+PASS Appending and removing children to munder
+PASS Appending and removing children to munderover
+FAIL Appending and removing children to semantics assert_approx_equals: block position (child 0) expected -377.890625 +/- 1 but got -397.890625
 maction:
-mfrac:
-mmultiscripts:
-mover:
 msqrt:
-msub:
-msubsup:
-msup:
-munder:
-munderover:
 semantics:
 

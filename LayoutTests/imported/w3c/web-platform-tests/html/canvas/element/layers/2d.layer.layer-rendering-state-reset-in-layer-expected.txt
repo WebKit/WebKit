@@ -1,0 +1,6 @@
+2d.layer.layer-rendering-state-reset-in-layer
+Tests that rendering states are reset in layers and restored after.
+Actual output:
+
+FAIL Tests that rendering states are reset in layers and restored after. assert_equals: ctx.shadowColor === 'rgba(0, 0, 0, 0)' (got #000000[string], expected rgba(0, 0, 0, 0)[string]) expected "rgba(0, 0, 0, 0)" but got "#000000"
+

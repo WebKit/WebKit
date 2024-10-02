@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal.duration.compare
-description: TypeError thrown when options argument is a primitive
+description: TypeError thrown when options argument is a primitive, before early return
 features: [BigInt, Symbol, Temporal]
 ---*/
 
@@ -17,6 +17,6 @@ const badOptions = [
 ];
 
 for (const value of badOptions) {
-  assert.throws(TypeError, () => Temporal.Duration.compare({ hours: 1 }, { minutes: 60 }, value),
+  assert.throws(TypeError, () => Temporal.Duration.compare({ hours: 1 }, { hours: 1 }, value),
     `TypeError on wrong options type ${typeof value}`);
 };

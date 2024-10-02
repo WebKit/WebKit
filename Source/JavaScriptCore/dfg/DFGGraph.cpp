@@ -1557,7 +1557,7 @@ void Graph::visitChildren(SlotVisitor& visitor) { visitChildrenImpl(visitor); }
 
 FrozenValue* Graph::freeze(JSValue value)
 {
-    RELEASE_ASSERT(!m_frozenValuesAreFinalized);
+    RELEASE_ASSERT(!m_plan.isInSafepoint());
     if (UNLIKELY(!value))
         return FrozenValue::emptySingleton();
 

@@ -45,14 +45,13 @@
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+Percent.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Position.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+String.h"
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParserConsumer+URL.h"
-#include "CSSPropertyParserConsumer+UnevaluatedCalc.h"
 #include "CSSPropertyParsing.h"
 
 #include "CSSBackgroundRepeatValue.h"
@@ -61,6 +60,7 @@
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcTree+Parser.h"
 #include "CSSCalcValue.h"
 #include "CSSCounterValue.h"
 #include "CSSCursorImageValue.h"
@@ -76,6 +76,7 @@
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
+#include "CSSShadowValue.h"
 #include "CSSShapeSegmentValue.h"
 #include "CSSTransformListValue.h"
 #include "CSSValueKeywords.h"
@@ -139,23 +140,23 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
             // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
             return nullptr;
         }
-        horizontalOffset = consumeLength(range, context.mode);
+        horizontalOffset = consumeLength(range, context);
         if (!horizontalOffset)
             return nullptr;
-        verticalOffset = consumeLength(range, context.mode);
+        verticalOffset = consumeLength(range, context);
         if (!verticalOffset)
             return nullptr;
 
         const CSSParserToken& token = range.peek();
         // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
-        if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
-            blurRadius = consumeLength(range, context.mode, ValueRange::NonNegative);
+        if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalc::isCalcFunction(token.functionId(), context))) {
+            blurRadius = consumeLength(range, context, ValueRange::NonNegative);
             if (!blurRadius)
                 return nullptr;
         }
 
         if (blurRadius && allowSpread)
-            spreadDistance = consumeLength(range, context.mode);
+            spreadDistance = consumeLength(range, context);
     }
 
     // In order for this to be a valid <shadow>, at least these lengths must be present.
@@ -164,7 +165,7 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
     return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color), isWebkitBoxShadow);
 }
 
-RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range, const CSSParserContext&)
 {
     switch (range.peek().id()) {
     case CSSValueNone:
@@ -179,15 +180,15 @@ RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
     }
 }
 
-static RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange& range)
+static RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto leftValue = consumeNumber(range, ValueRange::NonNegative);
+    auto leftValue = consumeNumber(range, context, ValueRange::NonNegative);
     if (!leftValue)
         return nullptr;
 
     bool slashSeen = consumeSlashIncludingWhitespace(range);
     auto rightValue = slashSeen
-        ? consumeNumber(range, ValueRange::NonNegative)
+        ? consumeNumber(range, context, ValueRange::NonNegative)
         : CSSPrimitiveValue::create(1);
     if (!rightValue)
         return nullptr;
@@ -195,14 +196,14 @@ static RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange& range)
     return CSSValueList::createSlashSeparated(leftValue.releaseNonNull(), rightValue.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     RefPtr<CSSPrimitiveValue> autoValue;
     if (range.peek().type() == IdentToken)
         autoValue = consumeIdent<CSSValueAuto>(range);
     if (range.atEnd())
         return autoValue;
-    auto ratioList = consumeAspectRatioValue(range);
+    auto ratioList = consumeAspectRatioValue(range, context);
     if (!ratioList)
         return nullptr;
     if (!autoValue) {
@@ -214,7 +215,7 @@ RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange& range)
 }
 
 // Keep in sync with the single keyword value fast path of CSSParserFastPaths's parseDisplay.
-RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // Parse single keyword values
     auto singleKeyword = consumeIdent<
@@ -246,7 +247,7 @@ RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range, CSSParserMode mode)
 
     auto allowsValue = [&](CSSValueID value) {
         bool isRuby = value == CSSValueRubyBase || value == CSSValueRubyText || value == CSSValueBlockRuby || value == CSSValueRuby;
-        return !isRuby || isUASheetBehavior(mode);
+        return !isRuby || isUASheetBehavior(context.mode);
     };
 
     if (singleKeyword) {
@@ -385,7 +386,7 @@ RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, const CSSParserCo
     return CSSValueList::createCommaSeparated(WTFMove(values));
 }
 
-RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto id = range.peek().id();
     if (id == CSSValueNone || id == CSSValueAuto)
@@ -402,13 +403,13 @@ RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (consumeIdentRaw<CSSValueAuto>(range))
         return CSSPrimitiveValue::create(CSSValueAuto);
 
-    if (auto width = consumeLength(range, mode, ValueRange::NonNegative)) {
-        auto height = consumeLength(range, mode, ValueRange::NonNegative);
+    if (auto width = consumeLength(range, context, ValueRange::NonNegative)) {
+        auto height = consumeLength(range, context, ValueRange::NonNegative);
         if (!height)
             return width;
         return CSSValuePair::create(width.releaseNonNull(), height.releaseNonNull());
@@ -427,7 +428,7 @@ RefPtr<CSSValue> consumeSize(CSSParserTokenRange& range, CSSParserMode mode)
     return CSSValuePair::create(pageSize.releaseNonNull(), orientation.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (consumeIdentRaw<CSSValueNone>(range))
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -485,7 +486,7 @@ RefPtr<CSSValue> consumeTextTransform(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // [ <length> | <percentage> ] && hanging? && each-line?
     RefPtr<CSSValue> lengthPercentage;
@@ -493,7 +494,7 @@ RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode mod
     bool hanging = false;
     do {
         if (!lengthPercentage) {
-            if (auto textIndent = consumeLengthPercentage(range, mode, ValueRange::All, UnitlessQuirk::Allow)) {
+            if (auto textIndent = consumeLengthPercentage(range, context, ValueRange::All, UnitlessQuirk::Allow)) {
                 lengthPercentage = textIndent;
                 continue;
             }
@@ -546,20 +547,20 @@ RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange& range, const 
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeAutoOrLengthPercentage(CSSParserTokenRange& range, CSSParserMode mode, UnitlessQuirk unitless, AnchorPolicy anchorPolicy = AnchorPolicy::Forbid)
+static RefPtr<CSSValue> consumeAutoOrLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, AnchorPolicy anchorPolicy = AnchorPolicy::Forbid)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeLengthPercentage(range, mode, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, NegativePercentagePolicy::Forbid, anchorPolicy);
+    return consumeLengthPercentage(range, context, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, NegativePercentagePolicy::Forbid, anchorPolicy);
 }
 
-RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, CSSPropertyID currentShorthand, CSSParserMode mode)
+RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
-    return consumeAutoOrLengthPercentage(range, mode, unitless);
+    return consumeAutoOrLengthPercentage(range, context, unitless);
 }
 
-RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto firstValue = range.peek().id();
     if (firstValue == CSSValueBlock || firstValue == CSSValueInline || firstValue == CSSValueNone)
@@ -583,27 +584,27 @@ RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeSide(CSSParserTokenRange& range, CSSPropertyID currentShorthand, const CSSParserContext& context)
+RefPtr<CSSValue> consumeSide(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
     AnchorPolicy anchorPolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorPolicy::Allow : AnchorPolicy::Forbid;
-    return consumeAutoOrLengthPercentage(range, context.mode, unitless, anchorPolicy);
+    return consumeAutoOrLengthPercentage(range, context, unitless, anchorPolicy);
 }
 
 RefPtr<CSSValue> consumeInsetLogicalStartEnd(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     AnchorPolicy anchorPolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorPolicy::Allow : AnchorPolicy::Forbid;
-    return consumeAutoOrLengthPercentage(range, context.mode, UnitlessQuirk::Forbid, anchorPolicy);
+    return consumeAutoOrLengthPercentage(range, context, UnitlessQuirk::Forbid, anchorPolicy);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeClipComponent(CSSParserTokenRange& range, CSSParserMode mode)
+static RefPtr<CSSPrimitiveValue> consumeClipComponent(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeLength(range, mode, ValueRange::All, UnitlessQuirk::Allow);
+    return consumeLength(range, context, ValueRange::All, UnitlessQuirk::Allow);
 }
 
-RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
@@ -613,24 +614,24 @@ RefPtr<CSSValue> consumeClip(CSSParserTokenRange& range, CSSParserMode mode)
 
     CSSParserTokenRange args = consumeFunction(range);
     // rect(t, r, b, l) || rect(t r b l)
-    auto top = consumeClipComponent(args, mode);
+    auto top = consumeClipComponent(args, context);
     if (!top)
         return nullptr;
     bool needsComma = consumeCommaIncludingWhitespace(args);
-    auto right = consumeClipComponent(args, mode);
+    auto right = consumeClipComponent(args, context);
     if (!right || (needsComma && !consumeCommaIncludingWhitespace(args)))
         return nullptr;
-    auto bottom = consumeClipComponent(args, mode);
+    auto bottom = consumeClipComponent(args, context);
     if (!bottom || (needsComma && !consumeCommaIncludingWhitespace(args)))
         return nullptr;
-    auto left = consumeClipComponent(args, mode);
+    auto left = consumeClipComponent(args, context);
     if (!left || !args.atEnd())
         return nullptr;
 
     return CSSRectValue::create({ top.releaseNonNull(), right.releaseNonNull(), bottom.releaseNonNull(), left.releaseNonNull() });
 }
 
-RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (auto ident = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueManipulation>(range))
         return ident;
@@ -704,7 +705,7 @@ static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange
     return consumeCustomIdent(range);
 }
 
-RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // This variant of consumeSingleTransitionProperty is used for the slightly different
     // parse rules used for the 'transition' shorthand which allows 'none':
@@ -761,7 +762,7 @@ RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange& range, const CSSPar
     return consumeShadow(range, context, true, true);
 }
 
-RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range, const CSSParserContext&)
 {
     CSSValueID id = range.peek().id();
     if (id == CSSValueNone)
@@ -784,7 +785,7 @@ RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(builder));
 }
 
-RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range, const CSSParserContext&)
 {
     CSSValueID id = range.peek().id();
     if (id == CSSValueNone)
@@ -802,7 +803,7 @@ RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range)
     return fill ? fill : shape;
 }
 
-RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange& range, CSSPropertyID currentShorthand, const CSSParserContext& context)
+RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     CSSValueID id = range.peek().id();
     if (id == CSSValueThin || id == CSSValueMedium || id == CSSValueThick)
@@ -810,10 +811,10 @@ RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange& range, CSSPropertyID cu
 
     bool allowQuirkyLengths = (context.mode == HTMLQuirksMode) && (currentShorthand == CSSPropertyInvalid || currentShorthand == CSSPropertyBorderWidth);
     UnitlessQuirk unitless = allowQuirkyLengths ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
-    return consumeLength(range, context.mode, ValueRange::NonNegative, unitless);
+    return consumeLength(range, context, ValueRange::NonNegative, unitless);
 }
 
-RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange& range, CSSPropertyID currentShorthand, const CSSParserContext& context)
+RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     bool acceptQuirkyColors = (context.mode == HTMLQuirksMode) && (currentShorthand == CSSPropertyInvalid || currentShorthand == CSSPropertyBorderColor);
     return consumeColor(range, context, { .acceptQuirkyColors = acceptQuirkyColors });
@@ -837,7 +838,7 @@ RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, const CSSParserC
     return consumeColor(range, context);
 }
 
-RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
@@ -888,17 +889,16 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(paintOrderList));
 }
 
-
-RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     CSSValueID id = range.peek().id();
     if (id == CSSValueNone)
         return consumeIdent(range);
     CSSValueListBuilder dashes;
     do {
-        RefPtr<CSSPrimitiveValue> dash = consumeLengthPercentage(range, HTMLStandardMode, ValueRange::NonNegative, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+        RefPtr<CSSPrimitiveValue> dash = consumeLengthPercentage(range, context, HTMLStandardMode, ValueRange::NonNegative, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
         if (!dash)
-            dash = consumeNumber(range, ValueRange::NonNegative);
+            dash = consumeNumber(range, context, ValueRange::NonNegative);
         if (!dash || (consumeCommaIncludingWhitespace(range) && range.atEnd()))
             return nullptr;
         dashes.append(dash.releaseNonNull());
@@ -906,15 +906,15 @@ RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
     return CSSValueList::createCommaSeparated(WTFMove(dashes));
 }
 
-RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context, bool inQuirksMode)
+RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-ui/#propdef-cursor
 
     CSSValueListBuilder list;
     while (auto image = consumeImage(range, context, { AllowedImageType::URLFunction, AllowedImageType::ImageSet })) {
         RefPtr<CSSValuePair> hotSpot;
-        if (auto x = consumeNumber(range)) {
-            auto y = consumeNumber(range);
+        if (auto x = consumeNumber(range, context)) {
+            auto y = consumeNumber(range, context);
             if (!y)
                 return nullptr;
             hotSpot = CSSValuePair::createNoncoalescing(x.releaseNonNull(), y.releaseNonNull());
@@ -927,7 +927,7 @@ RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParserContex
     CSSValueID id = range.peek().id();
     RefPtr<CSSValue> cursorType;
     if (id == CSSValueHand) {
-        if (!inQuirksMode) // Non-standard behavior
+        if (context.mode != HTMLQuirksMode) // Non-standard behavior
             return nullptr;
         cursorType = CSSPrimitiveValue::create(CSSValuePointer);
         range.consumeIncludingWhitespace();
@@ -961,7 +961,7 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
     return CSSPrimitiveValue::createAttr(WTFMove(attrName));
 }
 
-static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters, const CSSParserContext& context)
+static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, const CSSParserContext& context, bool counters)
 {
     AtomString identifier { consumeCustomIdentRaw(args) };
     if (identifier.isNull())
@@ -1011,9 +1011,9 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
                 // FIXME: Alt-text should support counters.
                 else if (type == ContentListType::VisibleContent) {
                     if (range.peek().functionId() == CSSValueCounter)
-                        parsedValue = consumeCounterContent(consumeFunction(range), false, context);
+                        parsedValue = consumeCounterContent(consumeFunction(range), context, false);
                     else if (range.peek().functionId() == CSSValueCounters)
-                        parsedValue = consumeCounterContent(consumeFunction(range), true, context);
+                        parsedValue = consumeCounterContent(consumeFunction(range), context, true);
                 }
                 if (!parsedValue)
                     return false;
@@ -1049,7 +1049,7 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
     return CSSValueList::createSpaceSeparated(WTFMove(visibleContent));
 }
 
-RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range);
     if (!firstValue)
@@ -1066,7 +1066,7 @@ RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto firstValue = consumeIdent<CSSValueNone, CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
     if (!firstValue)
@@ -1094,7 +1094,7 @@ RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, const CSSPars
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (auto ident = consumeIdent<CSSValueAuto>(range))
         return CSSPrimitiveValue::create(CSSValueAuto);
@@ -1114,20 +1114,19 @@ RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeTextEdge(CSSPropertyID property, CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
 {
-    if (property == CSSPropertyTextBoxEdge && range.peek().id() == CSSValueAuto)
-        return consumeIdent(range);
-
-    if (property == CSSPropertyLineFitEdge && range.peek().id() == CSSValueLeading)
-        return consumeIdent(range);
+    // <text-edge> = [ text | cap | ex | ideographic | ideographic-ink ]
+    //               [ text | alphabetic | ideographic | ideographic-ink ]?
+    // https://drafts.csswg.org/css-inline-3/#typedef-text-edge
 
     auto firstValue = consumeIdent<CSSValueText, CSSValueCap, CSSValueEx, CSSValueIdeographic, CSSValueIdeographicInk>(range);
     if (!firstValue)
         return nullptr;
 
     auto secondValue = consumeIdent<CSSValueText, CSSValueAlphabetic, CSSValueIdeographic, CSSValueIdeographicInk>(range);
-    // https://www.w3.org/TR/css-inline-3/#text-edges
+
+    // https://drafts.csswg.org/css-inline-3/#text-edges
     // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
     auto shouldSerializeSecondValue = [&]() {
         if (!secondValue)
@@ -1142,33 +1141,62 @@ RefPtr<CSSValue> consumeTextEdge(CSSPropertyID property, CSSParserTokenRange& ra
     return CSSValuePair::create(firstValue.releaseNonNull(), secondValue.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeLineFitEdge(CSSParserTokenRange& range, const CSSParserContext&)
 {
-    auto parsedValue1 = consumeLengthPercentage(range, mode, ValueRange::NonNegative);
+    // <'line-fit-edge'> = leading | <text-edge>
+    // https://drafts.csswg.org/css-inline-3/#propdef-line-fit-edge
+
+    if (range.peek().id() == CSSValueLeading)
+        return consumeIdent(range);
+    return consumeTextEdge(range);
+}
+
+RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    // <'text-box-edge'> = auto | <text-edge>
+    // https://drafts.csswg.org/css-inline-3/#propdef-text-box-edge
+
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
+    return consumeTextEdge(range);
+}
+
+RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    if (range.peek().id() == CSSValueInterCharacter) {
+        consumeIdent(range);
+        return CSSPrimitiveValue::create(CSSValueLegacyInterCharacter);
+    }
+    return consumeIdent(range);
+}
+
+RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto parsedValue1 = consumeLengthPercentage(range, context, ValueRange::NonNegative);
     if (!parsedValue1)
         return nullptr;
-    auto parsedValue2 = consumeLengthPercentage(range, mode, ValueRange::NonNegative);
+    auto parsedValue2 = consumeLengthPercentage(range, context, ValueRange::NonNegative);
     if (!parsedValue2)
         parsedValue2 = parsedValue1;
     return CSSValuePair::create(parsedValue1.releaseNonNull(), parsedValue2.releaseNonNull());
 }
 
-static RefPtr<CSSPrimitiveValue> consumeShapeRadius(CSSParserTokenRange& args, CSSParserMode mode)
+static RefPtr<CSSPrimitiveValue> consumeShapeRadius(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     if (identMatches<CSSValueClosestSide, CSSValueFarthestSide, CSSValueClosestCorner, CSSValueFarthestCorner>(args.peek().id()))
         return consumeIdent(args);
 
-    return consumeLengthPercentage(args, mode, ValueRange::NonNegative);
+    return consumeLengthPercentage(args, context, ValueRange::NonNegative);
 }
 
 static RefPtr<CSSCircleValue> consumeBasicShapeCircle(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     // spec: https://drafts.csswg.org/css-shapes/#supported-basic-shapes
     // circle( [<shape-radius>]? [at <position>]? )
-    auto radius = consumeShapeRadius(args, context.mode);
+    auto radius = consumeShapeRadius(args, context);
     std::optional<PositionCoordinates> center;
     if (consumeIdent<CSSValueAt>(args)) {
-        center = consumePositionCoordinates(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+        center = consumePositionCoordinates(args, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
         if (!center)
             return nullptr;
     }
@@ -1181,16 +1209,16 @@ static RefPtr<CSSEllipseValue> consumeBasicShapeEllipse(CSSParserTokenRange& arg
 {
     // spec: https://drafts.csswg.org/css-shapes/#supported-basic-shapes
     // ellipse( [<shape-radius>{2}]? [at <position>]? )
-    auto radiusX = consumeShapeRadius(args, context.mode);
+    auto radiusX = consumeShapeRadius(args, context);
     RefPtr<CSSValue> radiusY;
     if (radiusX) {
-        radiusY = consumeShapeRadius(args, context.mode);
+        radiusY = consumeShapeRadius(args, context);
         if (!radiusY)
             return nullptr;
     }
     std::optional<PositionCoordinates> center;
     if (consumeIdent<CSSValueAt>(args)) {
-        center = consumePositionCoordinates(args, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+        center = consumePositionCoordinates(args, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
         if (!center)
             return nullptr;
     }
@@ -1211,10 +1239,10 @@ static RefPtr<CSSPolygonValue> consumeBasicShapePolygon(CSSParserTokenRange& arg
 
     CSSValueListBuilder points;
     do {
-        auto xLength = consumeLengthPercentage(args, context.mode);
+        auto xLength = consumeLengthPercentage(args, context);
         if (!xLength)
             return nullptr;
-        auto yLength = consumeLengthPercentage(args, context.mode);
+        auto yLength = consumeLengthPercentage(args, context);
         if (!yLength)
             return nullptr;
         points.append(xLength.releaseNonNull());
@@ -1248,11 +1276,11 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args, Opt
 
 static RefPtr<CSSValuePair> consumeCoordinatePair(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto xDimension = consumeLengthPercentage(range, context.mode);
+    auto xDimension = consumeLengthPercentage(range, context);
     if (!xDimension)
         return nullptr;
 
-    auto yDimension = consumeLengthPercentage(range, context.mode);
+    auto yDimension = consumeLengthPercentage(range, context);
     if (!yDimension)
         return nullptr;
 
@@ -1315,7 +1343,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto length = consumeLengthPercentage(range, context.mode);
+        auto length = consumeLengthPercentage(range, context);
         if (!length)
             return nullptr;
 
@@ -1380,9 +1408,9 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!consumeIdent<CSSValueOf>(range))
             return nullptr;
 
-        auto radiusX = consumeLengthPercentage(range, context.mode);
+        auto radiusX = consumeLengthPercentage(range, context);
         auto radiusY = radiusX;
-        if (auto value = consumeLengthPercentage(range, context.mode))
+        if (auto value = consumeLengthPercentage(range, context))
             radiusY = value;
 
         std::optional<CSSValueID> sweep;
@@ -1410,7 +1438,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
             case CSSValueRotate:
                 if (angle)
                     return nullptr;
-                angle = consumeAngle(range, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
+                angle = consumeAngle(range, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
                 break;
             default:
                 break;
@@ -1478,11 +1506,11 @@ template<typename ElementType> static void complete4Sides(std::array<ElementType
         sides[3] = sides[1];
 }
 
-bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange& range, CSSParserMode mode, bool useLegacyParsing)
+bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange& range, const CSSParserContext& context, bool useLegacyParsing)
 {
     unsigned i = 0;
     for (; i < 4 && !range.atEnd() && range.peek().type() != DelimiterToken; ++i) {
-        horizontalRadii[i] = consumeLengthPercentage(range, mode, ValueRange::NonNegative);
+        horizontalRadii[i] = consumeLengthPercentage(range, context, ValueRange::NonNegative);
         if (!horizontalRadii[i])
             return false;
     }
@@ -1503,7 +1531,7 @@ bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<R
         if (!consumeSlashIncludingWhitespace(range))
             return false;
         for (i = 0; i < 4 && !range.atEnd(); ++i) {
-            verticalRadii[i] = consumeLengthPercentage(range, mode, ValueRange::NonNegative);
+            verticalRadii[i] = consumeLengthPercentage(range, context, ValueRange::NonNegative);
             if (!verticalRadii[i])
                 return false;
         }
@@ -1520,7 +1548,7 @@ static bool consumeShapeBorderRadius(CSSParserTokenRange& args, const CSSParserC
     if (consumeIdentRaw<CSSValueRound>(args)) {
         std::array<RefPtr<CSSValue>, 4> horizontalRadii;
         std::array<RefPtr<CSSValue>, 4> verticalRadii;
-        if (!consumeRadii(horizontalRadii, verticalRadii, args, context.mode, false))
+        if (!consumeRadii(horizontalRadii, verticalRadii, args, context, false))
             return false;
         for (unsigned i = 0; i < 4; ++i)
             radii[i] = CSSValuePair::create(horizontalRadii[i].releaseNonNull(), verticalRadii[i].releaseNonNull());
@@ -1532,7 +1560,7 @@ static RefPtr<CSSRectShapeValue> consumeBasicShapeRect(CSSParserTokenRange& args
 {
     std::array<RefPtr<CSSValue>, 4> offsets;
     for (auto& offset : offsets) {
-        offset = consumeAutoOrLengthPercentage(args, context.mode, UnitlessQuirk::Forbid);
+        offset = consumeAutoOrLengthPercentage(args, context, UnitlessQuirk::Forbid);
 
         if (!offset)
             return nullptr;
@@ -1548,14 +1576,14 @@ static RefPtr<CSSXywhValue> consumeBasicShapeXywh(CSSParserTokenRange& args, con
 {
     std::array<RefPtr<CSSValue>, 2> insets;
     for (auto& inset : insets) {
-        inset = consumeLengthPercentage(args, context.mode);
+        inset = consumeLengthPercentage(args, context);
         if (!inset)
             return nullptr;
     }
 
     std::array<RefPtr<CSSValue>, 2> dimensions;
     for (auto& dimension : dimensions) {
-        dimension = consumeLengthPercentage(args, context.mode, ValueRange::NonNegative);
+        dimension = consumeLengthPercentage(args, context, ValueRange::NonNegative);
         if (!dimension)
             return nullptr;
     }
@@ -1570,7 +1598,7 @@ static RefPtr<CSSInsetShapeValue> consumeBasicShapeInset(CSSParserTokenRange& ar
 {
     std::array<RefPtr<CSSValue>, 4> sides;
     for (unsigned i = 0; i < 4; ++i) {
-        sides[i] = consumeLengthPercentage(args, context.mode);
+        sides[i] = consumeLengthPercentage(args, context);
         if (!sides[i])
             break;
     }
@@ -1631,7 +1659,7 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     bool isContaining = false;
     std::optional<PositionCoordinates> position;
     while (!args.atEnd()) {
-        if (!angle && (angle = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid)))
+        if (!angle && (angle = consumeAngle(args, context, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid)))
             continue;
         if (!size && (size = consumeIdentRaw<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueSides>(args)))
             continue;
@@ -1639,7 +1667,7 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
             continue;
         auto consumeAtPosition = [&](CSSParserTokenRange& subrange) -> std::optional<PositionCoordinates> {
             if (consumeIdentRaw<CSSValueAt>(subrange))
-                return consumePositionCoordinates(subrange, context.mode, UnitlessQuirk::Forbid, PositionSyntax::Position);
+                return consumePositionCoordinates(subrange, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
             return std::nullopt;
         };
         if (!position && (position = consumeAtPosition(args)))
@@ -1747,7 +1775,7 @@ static RefPtr<CSSPrimitiveValue> consumeBorderImageRepeatKeyword(CSSParserTokenR
     return consumeIdent<CSSValueStretch, CSSValueRepeat, CSSValueSpace, CSSValueRound>(range);
 }
 
-RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange& range, const CSSParserContext&)
 {
     auto horizontal = consumeBorderImageRepeatKeyword(range);
     if (!horizontal)
@@ -1758,15 +1786,15 @@ RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange& range)
     return CSSValuePair::create(horizontal.releaseNonNull(), vertical.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeBorderImageSlice(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property)
 {
     bool fill = consumeIdentRaw<CSSValueFill>(range).has_value();
     std::array<RefPtr<CSSPrimitiveValue>, 4> slices;
 
     for (auto& value : slices) {
-        value = consumePercent(range, ValueRange::NonNegative);
+        value = consumePercentage(range, context, ValueRange::NonNegative);
         if (!value)
-            value = consumeNumber(range, ValueRange::NonNegative);
+            value = consumeNumber(range, context, ValueRange::NonNegative);
         if (!value)
             break;
     }
@@ -1786,14 +1814,14 @@ RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParserTokenR
     return CSSBorderImageSliceValue::create({ slices[0].releaseNonNull(), slices[1].releaseNonNull(), slices[2].releaseNonNull(), slices[3].releaseNonNull() }, fill);
 }
 
-RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     std::array<RefPtr<CSSPrimitiveValue>, 4> outsets;
 
     for (auto& value : outsets) {
-        value = consumeNumber(range, ValueRange::NonNegative);
+        value = consumeNumber(range, context, ValueRange::NonNegative);
         if (!value)
-            value = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
+            value = consumeLength(range, context, HTMLStandardMode, ValueRange::NonNegative);
         if (!value)
             break;
     }
@@ -1804,16 +1832,16 @@ RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range)
     return CSSQuadValue::create({ outsets[0].releaseNonNull(), outsets[1].releaseNonNull(), outsets[2].releaseNonNull(), outsets[3].releaseNonNull() });
 }
 
-RefPtr<CSSValue> consumeBorderImageWidth(CSSPropertyID property, CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeBorderImageWidth(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     std::array<RefPtr<CSSPrimitiveValue>, 4> widths;
 
     bool hasLength = false;
     for (auto& value : widths) {
-        value = consumeNumber(range, ValueRange::NonNegative);
+        value = consumeNumber(range, context, ValueRange::NonNegative);
         if (value)
             continue;
-        if (auto numericValue = consumeLengthPercentage(range, HTMLStandardMode, ValueRange::NonNegative, UnitlessQuirk::Forbid)) {
+        if (auto numericValue = consumeLengthPercentage(range, context, HTMLStandardMode, ValueRange::NonNegative, UnitlessQuirk::Forbid)) {
             if (numericValue->isLength())
                 hasLength = true;
             value = numericValue;
@@ -1828,12 +1856,12 @@ RefPtr<CSSValue> consumeBorderImageWidth(CSSPropertyID property, CSSParserTokenR
     complete4Sides(widths);
 
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
-    bool overridesBorderWidths = property == CSSPropertyWebkitBorderImage && hasLength;
+    bool overridesBorderWidths = currentShorthand == CSSPropertyWebkitBorderImage && hasLength;
 
     return CSSBorderImageWidthValue::create({ widths[0].releaseNonNull(), widths[1].releaseNonNull(), widths[2].releaseNonNull(), widths[3].releaseNonNull() }, overridesBorderWidths);
 }
 
-bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context, RefPtr<CSSValue>& source,
+bool consumeBorderImageComponents(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, RefPtr<CSSValue>& source,
     RefPtr<CSSValue>& slice, RefPtr<CSSValue>& width, RefPtr<CSSValue>& outset, RefPtr<CSSValue>& repeat)
 {
     do {
@@ -1843,18 +1871,18 @@ bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& r
                 continue;
         }
         if (!repeat) {
-            repeat = consumeBorderImageRepeat(range);
+            repeat = consumeBorderImageRepeat(range, context);
             if (repeat)
                 continue;
         }
         if (!slice) {
-            slice = consumeBorderImageSlice(property, range);
+            slice = consumeBorderImageSlice(range, context, property);
             if (slice) {
                 ASSERT(!width && !outset);
                 if (consumeSlashIncludingWhitespace(range)) {
-                    width = consumeBorderImageWidth(property, range);
+                    width = consumeBorderImageWidth(range, context, property);
                     if (consumeSlashIncludingWhitespace(range)) {
-                        outset = consumeBorderImageOutset(range);
+                        outset = consumeBorderImageOutset(range, context);
                         if (!outset)
                             return false;
                     } else if (!width)
@@ -1887,7 +1915,7 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
     if (range.atEnd())
         offset = CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
     else {
-        offset = consumeLengthPercentage(range, context.mode);
+        offset = consumeLengthPercentage(range, context);
         if (!offset)
             return nullptr;
     }
@@ -1899,14 +1927,14 @@ RefPtr<CSSValue> consumeReflect(CSSParserTokenRange& range, const CSSParserConte
         RefPtr<CSSValue> width;
         RefPtr<CSSValue> outset;
         RefPtr<CSSValue> repeat;
-        if (!consumeBorderImageComponents(CSSPropertyWebkitBoxReflect, range, context, source, slice, width, outset, repeat))
+        if (!consumeBorderImageComponents(range, context, CSSPropertyWebkitBoxReflect, source, slice, width, outset, repeat))
             return nullptr;
         mask = createBorderImageValue(WTFMove(source), WTFMove(slice), WTFMove(width), WTFMove(outset), WTFMove(repeat));
     }
     return CSSReflectValue::create(*direction, offset.releaseNonNull(), WTFMove(mask));
 }
 
-template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParserTokenRange& range, CSSParserMode mode)
+template<CSSPropertyID property> static RefPtr<CSSValue> consumeBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://www.w3.org/TR/css-backgrounds-3/#typedef-bg-size
     //
@@ -1919,7 +1947,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     bool shouldCoalesce = true;
     RefPtr<CSSPrimitiveValue> horizontal = consumeIdent<CSSValueAuto>(range);
     if (!horizontal) {
-        horizontal = consumeLengthPercentage(range, mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
+        horizontal = consumeLengthPercentage(range, context, ValueRange::NonNegative, UnitlessQuirk::Forbid);
         if (!horizontal)
             return nullptr;
         shouldCoalesce = false;
@@ -1929,7 +1957,7 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
     if (!range.atEnd()) {
         vertical = consumeIdent<CSSValueAuto>(range);
         if (!vertical)
-            vertical = consumeLengthPercentage(range, mode, ValueRange::NonNegative, UnitlessQuirk::Forbid);
+            vertical = consumeLengthPercentage(range, context, ValueRange::NonNegative, UnitlessQuirk::Forbid);
     }
     if (!vertical) {
         if constexpr (property == CSSPropertyWebkitBackgroundSize) {
@@ -1995,21 +2023,21 @@ RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange& range, const CSSPars
 RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://www.w3.org/TR/css-backgrounds-3/#background-size
-    return consumeBackgroundSize<CSSPropertyBackgroundSize>(range, context.mode);
+    return consumeBackgroundSize<CSSPropertyBackgroundSize>(range, context);
 }
 
 RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // https://www.w3.org/TR/css-masking-1/#the-mask-size
-    return consumeBackgroundSize<CSSPropertyMaskSize>(range, context.mode);
+    return consumeBackgroundSize<CSSPropertyMaskSize>(range, context);
 }
 
 RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeBackgroundSize<CSSPropertyWebkitBackgroundSize>(range, context.mode);
+    return consumeBackgroundSize<CSSPropertyWebkitBackgroundSize>(range, context);
 }
 
-RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -2045,13 +2073,13 @@ RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
     return CSSLineBoxContainValue::create(value);
 }
 
-RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     CSSValueListBuilder list;
     do {
-        auto name = consumeSingleContainerName(range);
+        auto name = consumeSingleContainerName(range, context);
         if (!name)
             break;
         list.append(name.releaseNonNull());
@@ -2061,16 +2089,16 @@ RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     if (auto ident = consumeIdent<CSSValueNormal>(range))
         return ident;
-    auto height = consumeNumber(range, ValueRange::NonNegative);
+    auto height = consumeNumber(range, context, ValueRange::NonNegative);
     if (!height)
         return nullptr;
     RefPtr<CSSPrimitiveValue> position;
     if (!range.atEnd()) {
-        position = consumeNumber(range, ValueRange::NonNegative);
+        position = consumeNumber(range, context, ValueRange::NonNegative);
         if (!position || !range.atEnd())
             return nullptr;
     } else
@@ -2078,7 +2106,7 @@ RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange& range)
     return CSSValuePair::create(position.releaseNonNull(), height.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -2125,7 +2153,7 @@ RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
@@ -2171,7 +2199,7 @@ RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))
         return singleValue;
@@ -2222,7 +2250,7 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     RefPtr<CSSPrimitiveValue> autoValue;
     if ((autoValue = consumeIdent<CSSValueAuto>(range))) {
@@ -2236,7 +2264,7 @@ RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
         return noneValue;
     }
 
-    if (auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative)) {
+    if (auto lengthValue = consumeLength(range, context, HTMLStandardMode, ValueRange::NonNegative)) {
         if (autoValue)
             return CSSValuePair::create(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
         return lengthValue;
@@ -2244,7 +2272,7 @@ RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range, const CSSParserContext&)
 {
     std::optional<CSSValueID> overUnderValueID;
     std::optional<CSSValueID> leftRightValueID;
@@ -2278,7 +2306,7 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 
 #if ENABLE(DARK_MODE_CSS)
 
-RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
@@ -2323,7 +2351,7 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 
 #endif
 
-RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode mode)
+RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto rangeCopy = range;
 
@@ -2331,7 +2359,7 @@ RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange& range, CSSParserMode m
     // successful, parse the second token as the angle. If not, try to parse the other
     // way around.
     auto modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy);
-    auto angle = consumeAngle(rangeCopy, mode);
+    auto angle = consumeAngle(rangeCopy, context);
     if (!modifier)
         modifier = consumeIdent<CSSValueAuto, CSSValueReverse>(rangeCopy);
     if (!angle && !modifier)
@@ -2346,7 +2374,7 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSPa
     return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), context);
 }
 
-RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // auto | space-all |  trim-all | [ allow-end || space-first ]
     // FIXME: add remaining values;
@@ -2358,7 +2386,7 @@ RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range, const CSSParserContext&)
 {
     //  normal | auto | no-autospace | [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ]
     // FIXME: add remaining values;
@@ -2401,45 +2429,6 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
     if (list.isEmpty())
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-RefPtr<CSSPrimitiveValue> consumeAnchor(CSSParserTokenRange& range, CSSParserMode mode)
-{
-    // https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
-    // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
-    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueAnchor)
-        return nullptr;
-
-    auto rangeCopy = range;
-    auto args = consumeFunction(rangeCopy);
-    if (!args.size())
-        return nullptr;
-
-    auto anchorElement = consumeDashedIdent(args);
-    auto anchorSidePtr = CSSPropertyParsing::consumeAnchorSide(args);
-    if (!anchorSidePtr)
-        return nullptr;
-    auto anchorSide = anchorSidePtr.releaseNonNull();
-
-    if (!anchorElement)
-        anchorElement = consumeDashedIdent(args);
-
-    if (!args.size()) {
-        range = rangeCopy;
-        auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), nullptr);
-        return CSSPrimitiveValue::create(anchor);
-    }
-
-    if (!consumeCommaIncludingWhitespace(args))
-        return nullptr;
-
-    auto fallback = consumeLengthPercentage(args, mode, ValueRange::All, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid, NegativePercentagePolicy::Allow, AnchorPolicy::Allow);
-    if (!fallback || args.size())
-        return nullptr;
-
-    range = rangeCopy;
-    auto anchor = CSSAnchorValue::create(WTFMove(anchorElement), WTFMove(anchorSide), WTFMove(fallback));
-    return CSSPrimitiveValue::create(anchor);
 }
 
 } // namespace CSSPropertyParserHelpers

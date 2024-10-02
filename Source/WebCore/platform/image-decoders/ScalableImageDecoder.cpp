@@ -62,23 +62,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ScalableImageDecoder);
 
 namespace {
 
-static unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const FragmentedSharedBuffer& sharedBuffer)
-{
-    unsigned bytesExtracted = 0;
-    for (const auto& element : sharedBuffer) {
-        if (bytesExtracted + element.segment->size() <= bufferLength) {
-            memcpy(buffer + bytesExtracted, element.segment->span().data(), element.segment->size());
-            bytesExtracted += element.segment->size();
-        } else {
-            ASSERT(bufferLength - bytesExtracted < element.segment->size());
-            memcpy(buffer + bytesExtracted, element.segment->span().data(), bufferLength - bytesExtracted);
-            bytesExtracted = bufferLength;
-            break;
-        }
-    }
-    return bytesExtracted;
-}
-
 #if !PLATFORM(COCOA)
 static bool matchesGIFSignature(char* contents)
 {
@@ -149,11 +132,12 @@ static bool matchesJPEGXLSignature(const uint8_t* contents, size_t length)
 
 RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
-    char contents[lengthOfLongestSignature];
-    unsigned length = copyFromSharedBuffer(contents, lengthOfLongestSignature, data);
-    if (length < lengthOfLongestSignature)
+    constexpr size_t lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
+    if (data.size() < lengthOfLongestSignature)
         return nullptr;
+
+    char contents[lengthOfLongestSignature];
+    data.copyTo(byteCast<uint8_t>(std::span { contents }));
 
 #if !PLATFORM(COCOA)
     if (matchesGIFSignature(contents))
@@ -184,7 +168,7 @@ RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(FragmentedSharedBuffer
 #endif
 
 #if USE(JPEGXL)
-    if (matchesJPEGXLSignature(reinterpret_cast<const uint8_t*>(contents), length))
+    if (matchesJPEGXLSignature(reinterpret_cast<const uint8_t*>(contents), lengthOfLongestSignature))
         return JPEGXLImageDecoder::create(alphaOption, gammaAndColorProfileOption);
 #endif
 

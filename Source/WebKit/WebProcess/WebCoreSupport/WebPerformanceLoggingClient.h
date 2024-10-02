@@ -28,6 +28,7 @@
 #include <WebCore/PerformanceLoggingClient.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -42,7 +43,7 @@ public:
 private:
     void logScrollingEvent(ScrollingEvent, MonotonicTime, uint64_t) override;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 }

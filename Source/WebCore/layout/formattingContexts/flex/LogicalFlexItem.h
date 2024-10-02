@@ -37,8 +37,8 @@ public:
 
         std::optional<LayoutUnit> definiteFlexBasis;
 
-        LayoutUnit maximumUsedSize;
-        LayoutUnit minimumUsedSize;
+        std::optional<LayoutUnit> maximumSize;
+        std::optional<LayoutUnit> minimumSize;
 
         std::optional<LayoutUnit> marginStart;
         std::optional<LayoutUnit> marginEnd;

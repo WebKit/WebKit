@@ -29,7 +29,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   const lengthTracking = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(lengthTracking, i, i + 1);
+    lengthTracking[i] = MayNeedBigInt(lengthTracking, i + 1);
   }
   const evil = {
     valueOf: () => {
@@ -69,7 +69,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   const lengthTracking = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(lengthTracking, i, i + 1);
+    lengthTracking[i] = MayNeedBigInt(lengthTracking, i + 1);
   }
   const evil = {
     valueOf: () => {

@@ -45,6 +45,7 @@ cocoa/TestWebExtensionsDelegate.mm
 cocoa/TestWKWebView.mm
 cocoa/TestWKWebViewConfiguration.mm
 cocoa/UserMediaCaptureUIDelegate.mm
+ios/IOSMouseEventTestHarness.mm
 
 Tests/WebKitCocoa/AVFoundationPreference.mm
 Tests/WebKitCocoa/AdaptiveImageGlyph.mm
@@ -237,6 +238,7 @@ Tests/WebKitCocoa/RunScriptAfterDocumentLoad.mm
 Tests/WebKitCocoa/SafeBrowsing.mm
 Tests/WebKitCocoa/SampledPageTopColor.mm
 Tests/WebKitCocoa/SchemeRegistry.mm
+Tests/WebKitCocoa/ScriptTelemetryTests.mm
 Tests/WebKitCocoa/ServiceWorkerBasic.mm
 Tests/WebKitCocoa/SessionStorage.mm
 Tests/WebKitCocoa/ShouldGoToBackForwardListItem.mm

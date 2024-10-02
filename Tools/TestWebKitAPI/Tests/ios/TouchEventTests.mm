@@ -137,7 +137,7 @@ TEST(TouchEventTests, DestroyWebViewWhileHandlingTouchEnd)
         [hostWindow setHidden:NO];
         [hostWindow addSubview:globalWebView];
 
-        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"active-touch-events" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [globalWebView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"active-touch-events" withExtension:@"html"]]];
         [globalWebView _test_waitForDidFinishNavigation];
 
         updateSimulatedTouchEvent(CGPointMake(100, 100), UITouchPhaseBegan);

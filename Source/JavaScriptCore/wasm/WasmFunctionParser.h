@@ -46,12 +46,15 @@ enum class BlockType {
     Loop,
     TopLevel,
     Try,
+    TryTable,
     Catch,
 };
 
 enum class CatchKind {
-    Catch,
-    CatchAll,
+    Catch = 0x00,
+    CatchRef = 0x01,
+    CatchAll = 0x02,
+    CatchAllRef = 0x03,
 };
 
 template<typename EnclosingStack, typename NewStack>
@@ -116,6 +119,13 @@ struct FunctionParserTypes {
     using ResultList = Vector<ExpressionType, 8>;
 
     using ArgumentList = Vector<ExpressionType, 8>;
+
+    struct CatchHandler {
+        CatchKind type;
+        uint32_t tag;
+        const TypeDefinition* exceptionSignature;
+        ControlType* target;
+    };
 };
 
 template<typename Context>
@@ -131,6 +141,7 @@ public:
     using Stack = typename FunctionParser::Stack;
     using ResultList = typename FunctionParser::ResultList;
     using ArgumentList = typename FunctionParser::ArgumentList;
+    using CatchHandler = typename FunctionParser::CatchHandler;
 
     FunctionParser(Context&, std::span<const uint8_t> function, const TypeDefinition&, const ModuleInformation&);
 
@@ -234,7 +245,7 @@ private:
 
     PartialResult WARN_UNUSED_RETURN parseIndexForLocal(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseIndexForGlobal(uint32_t&);
-    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseFunctionIndex(FunctionSpaceIndex&);
     PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&, uint32_t = 0);
     PartialResult WARN_UNUSED_RETURN parseDelegateTarget(uint32_t&, uint32_t);
@@ -1502,12 +1513,12 @@ auto FunctionParser<Context>::parseIndexForGlobal(uint32_t& resultIndex) -> Part
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseFunctionIndex(uint32_t& resultIndex) -> PartialResult
+auto FunctionParser<Context>::parseFunctionIndex(FunctionSpaceIndex& resultIndex) -> PartialResult
 {
     uint32_t functionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse function index"_s);
     WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "function index "_s, functionIndex, " exceeds function index space "_s, m_info.functionIndexSpaceSize());
-    resultIndex = functionIndex;
+    resultIndex = FunctionSpaceIndex(functionIndex);
     return { };
 }
 
@@ -1775,7 +1786,7 @@ void FunctionParser<Context>::addReferencedFunctions(const Element& segment)
     // wrappers will be created for GC.
     for (uint32_t i = 0; i < segment.length(); i++) {
         if (segment.initTypes[i] == Element::InitializationType::FromRefFunc)
-            m_info.addReferencedFunction(segment.initialBitsOrIndices[i]);
+            m_info.addReferencedFunction(FunctionSpaceIndex(segment.initialBitsOrIndices[i]));
     }
 }
 
@@ -2864,9 +2875,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case RefFunc: {
-        uint32_t index;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for ref.func"_s);
-        WASM_VALIDATOR_FAIL_IF(index >= m_info.functionIndexSpaceSize(), "ref.func index "_s, index, " is too large, max is "_s, m_info.functionIndexSpaceSize());
+        FunctionSpaceIndex index;
+        WASM_PARSER_FAIL_IF(!parseFunctionIndex(index), "can't get index for ref.func"_s);
         // Function references don't need to be declared in constant expression contexts.
         if constexpr (!std::is_same<Context, ConstExprGenerator>())
             WASM_VALIDATOR_FAIL_IF(!m_info.isDeclaredFunction(index), "ref.func index "_s, index, " isn't declared"_s);
@@ -3037,7 +3047,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         FALLTHROUGH;
     case Call: {
-        uint32_t functionIndex;
+        FunctionSpaceIndex functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
 
         TypeIndex calleeTypeIndex = m_info.typeIndexFromFunctionIndexSpace(functionIndex);
@@ -3386,6 +3396,106 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
+    case TryTable: {
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature"_s);
+
+        uint32_t numberOfCatches;
+        Vector<CatchHandler> targets;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfCatches), "can't get the number of catch statements for try_table"_s);
+        WASM_PARSER_FAIL_IF(numberOfCatches == std::numeric_limits<uint32_t>::max(), "try_table's number of catch targets is too big "_s, numberOfCatches);
+
+        WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfCatches), "can't allocate try_table target"_s);
+
+        String errorMessage;
+
+        targets.appendUsingFunctor(numberOfCatches, [&](size_t i) -> CatchHandler {
+            // catch = (opcode), (tag?), (label)
+            uint8_t catchOpcode = 0;
+            uint32_t exceptionTag = std::numeric_limits<uint32_t>::max();
+            uint32_t exceptionLabel;
+            const TypeDefinition* signature = nullptr;
+
+            if (!parseUInt8(catchOpcode)) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("can't read opcode of try_table catch at index "_s, i);
+                return { };
+            }
+            if (catchOpcode > 0x03) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("invalid opcode of try_table catch at index "_s, i, ",  opcode "_s, catchOpcode, " is invalid"_s);
+                return { };
+            }
+            if (catchOpcode < 2) {
+                if (!parseExceptionIndex(exceptionTag)) {
+                    if (errorMessage.isNull())
+                        errorMessage = WTF::makeString("can't read tag of try_table catch at index "_s, i);
+                    return { };
+                }
+                TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionTag);
+                const TypeDefinition& exceptionSignature = TypeInformation::get(typeIndex).expand();
+                signature = &exceptionSignature;
+                for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
+                    Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+                    if (argumentType.isV128()) {
+                        m_context.notifyFunctionUsesSIMD();
+                        if (!Context::tierSupportsSIMD) {
+                            if (errorMessage.isNull())
+                                errorMessage = WTF::makeString("tier does not support SIMD, but exception uses a V128 parameter"_s);
+                        }
+                    }
+                }
+            }
+            if (!parseVarUInt32(exceptionLabel)) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("can't read label of try_table catch at index "_s, i);
+                return { };
+            }
+
+            // Type checking
+
+            return {
+                static_cast<CatchKind>(catchOpcode),
+                exceptionTag,
+                signature,
+                &m_controlStack[m_controlStack.size() - 1 - exceptionLabel].controlData
+            };
+        });
+
+        WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
+
+        ControlType control;
+        Stack newStack;
+
+        for (auto& catchTarget : targets) {
+            ControlType* target = catchTarget.target;
+
+            Stack results;
+            results.reserveInitialCapacity(target->branchTargetArity());
+            if (catchTarget.type == CatchKind::Catch || catchTarget.type == CatchKind::CatchRef) {
+                for (unsigned arg = 0; arg < catchTarget.exceptionSignature->template as<FunctionSignature>()->argumentCount(); ++arg) {
+                    ExpressionType exp;
+                    results.constructAndAppend(catchTarget.exceptionSignature->template as<FunctionSignature>()->argumentType(arg), exp);
+                }
+            }
+            if (catchTarget.type == CatchKind::CatchRef || catchTarget.type == CatchKind::CatchAllRef) {
+                ExpressionType exp;
+                results.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::Exn) }, exp);
+            }
+
+            WASM_VALIDATOR_FAIL_IF(results.size() != target->branchTargetArity());
+            for (unsigned i = 0; i < target->branchTargetArity(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(results[i].type(), target->branchTargetType(i)), "try_table target type mismatch");
+        }
+
+        WASM_TRY_ADD_TO_CONTEXT(addTryTable(inlineSignature, m_expressionStack, targets, control, newStack));
+
+        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(control) });
+        m_expressionStack = WTFMove(newStack);
+
+        return { };
+    }
+
     case Delegate: {
         WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function"_s);
 
@@ -3426,6 +3536,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         m_expressionStack.shrink(offset);
 
         WASM_TRY_ADD_TO_CONTEXT(addThrow(exceptionIndex, args, m_expressionStack));
+        m_unreachableBlocks = 1;
+        return { };
+    }
+
+    case ThrowRef: {
+        TypedExpression exn;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(exn, "exception reference"_s);
+        WASM_VALIDATOR_FAIL_IF(exn.type() != exnrefType(), "throw_ref expected an exception reference"_s);
+
+        WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exn, m_expressionStack));
         m_unreachableBlocks = 1;
         return { };
     }
@@ -3746,6 +3866,26 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case TryTable: {
+        BlockSignature unused;
+        uint32_t numberOfCatches;
+        WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(unused), "can't get try_table's signature in unreachable context"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfCatches), "can't get the number of catch statements for try_table in unreachable context"_s);
+
+        for (uint32_t i = 0; i < numberOfCatches; ++i) {
+            uint8_t catchOpcode = 0;
+            uint32_t unusedTag;
+            uint32_t unusedLabel;
+
+            WASM_PARSER_FAIL_IF(!parseUInt8(catchOpcode), "can't get catch opcode for try_table in unreachable context"_s);
+            WASM_PARSER_FAIL_IF(catchOpcode > 0x03, "invalid catch opcode for try_table in unreachable context"_s);
+            if (catchOpcode < 2)
+                WASM_PARSER_FAIL_IF(!parseExceptionIndex(unusedTag), "invalid exception tag for try_table in unreachable context"_s);
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unusedLabel), "invalid destination label for try_table in unreachable context"_s);
+        }
+        return { };
+    }
+
     case TailCallIndirect:
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         FALLTHROUGH;
@@ -3813,7 +3953,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         FALLTHROUGH;
     case Call: {
-        uint32_t functionIndex;
+        FunctionSpaceIndex functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
         return { };
     }
@@ -3838,6 +3978,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t exceptionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
 
+        return { };
+    }
+
+    case ThrowRef: {
         return { };
     }
 

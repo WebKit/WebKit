@@ -45,7 +45,9 @@ class FetchBodySource;
 class FormData;
 class ReadableStream;
 
-class FetchBodyConsumer {
+class FetchBodyConsumer final : public CanMakeCheckedPtr<FetchBodyConsumer> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FetchBodyConsumer);
 public:
     enum class Type { None, ArrayBuffer, Blob, Bytes, JSON, Text, FormData };
 

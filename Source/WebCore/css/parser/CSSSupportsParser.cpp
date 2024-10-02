@@ -40,12 +40,12 @@
 
 namespace WebCore {
 
-CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, ParsingMode mode, CSSParserEnum::IsNestedContext isNestedContext)
+CSSSupportsParser::SupportsResult CSSSupportsParser::supportsCondition(CSSParserTokenRange range, CSSParserImpl& parser, ParsingMode mode)
 {
     // FIXME: The spec allows leading whitespace in @supports but not CSS.supports,
     // but major browser vendors allow it in CSS.supports also.
     range.consumeWhitespace();
-    CSSSupportsParser supportsParser(parser, isNestedContext);
+    CSSSupportsParser supportsParser(parser);
 
     auto result = supportsParser.consumeCondition(range);
     if (mode != ParsingMode::AllowBareDeclarationAndGeneralEnclosed || result != Invalid)
@@ -172,7 +172,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
-    auto format = CSSPropertyParserHelpers::consumeFontFormat(range, true);
+    auto format = CSSPropertyParserHelpers::consumeFontFormat(range, m_parser.context(), true);
     if (format.isNull())
         return Unsupported;
     return FontCustomPlatformData::supportsFormat(format) ? Supported : Unsupported;
@@ -182,7 +182,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFu
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontTech);
-    auto technologies = CSSPropertyParserHelpers::consumeFontTech(range, true);
+    auto technologies = CSSPropertyParserHelpers::consumeFontTech(range, m_parser.context(), true);
     if (technologies.isEmpty())
         return Unsupported;
     ASSERT(technologies.size() == 1);

@@ -112,7 +112,7 @@ otherwise install OpenSSL and ensure that it's on your $PATH.""")
 
 def check_environ(product):
     if product not in ("android_webview", "chrome", "chrome_android", "chrome_ios",
-                       "edge", "firefox", "firefox_android", "headless_shell",
+                       "content_shell", "edgechromium", "firefox", "firefox_android",
                        "ladybird", "servo", "wktr"):
         config_builder = serve.build_config(os.path.join(wpt_root, "config.json"))
         # Override the ports to avoid looking for free ports
@@ -521,9 +521,9 @@ class Chrome(BrowserSetup):
             kwargs["binary_args"].append("--no-sandbox")
 
 
-class HeadlessShell(BrowserSetup):
-    name = "headless_shell"
-    browser_cls = browser.HeadlessShell
+class ContentShell(BrowserSetup):
+    name = "content_shell"
+    browser_cls = browser.ContentShell
     experimental_channels = ("dev", "canary", "nightly")
 
     def setup_kwargs(self, kwargs):
@@ -533,7 +533,7 @@ class HeadlessShell(BrowserSetup):
             if binary:
                 kwargs["binary"] = binary
             else:
-                raise WptrunError(f"Unable to locate {self.name!r} binary")
+                raise WptrunError(f"Unable to locate {self.name.capitalize()} binary")
 
         if kwargs["mojojs_path"]:
             kwargs["enable_mojojs"] = True
@@ -544,13 +544,7 @@ class HeadlessShell(BrowserSetup):
                            "Provide '--mojojs-path' explicitly instead.")
             logger.warning("MojoJS is disabled for this run.")
 
-        # Never pause after test, since headless shell is not interactive.
-        kwargs["pause_after_test"] = False
-        # Don't add a `--headless` switch.
-        kwargs["headless"] = False
-
-        if kwargs["enable_webtransport_h3"] is None:
-            kwargs["enable_webtransport_h3"] = True
+        kwargs["enable_webtransport_h3"] = True
 
 
 class Chromium(Chrome):
@@ -571,8 +565,6 @@ class ChromeAndroidBase(BrowserSetup):
         if kwargs["package_name"] is None:
             kwargs["package_name"] = self.browser.find_binary(
                 channel=browser_channel)
-        if not kwargs["device_serial"]:
-            kwargs["device_serial"] = ["emulator-5554"]
         if kwargs["webdriver_binary"] is None:
             webdriver_binary = None
             if not kwargs["install_webdriver"]:
@@ -657,9 +649,9 @@ class Opera(BrowserSetup):
                 raise WptrunError("Unable to locate or install operadriver binary")
 
 
-class Edge(BrowserSetup):
+class EdgeChromium(BrowserSetup):
     name = "MicrosoftEdge"
-    browser_cls = browser.Edge
+    browser_cls = browser.EdgeChromium
     experimental_channels: ClassVar[Tuple[str, ...]] = ("dev", "canary")
 
     def setup_kwargs(self, kwargs):
@@ -873,8 +865,8 @@ product_setup = {
     "chrome_android": ChromeAndroid,
     "chrome_ios": ChromeiOS,
     "chromium": Chromium,
-    "edge": Edge,
-    "headless_shell": HeadlessShell,
+    "content_shell": ContentShell,
+    "edgechromium": EdgeChromium,
     "safari": Safari,
     "servo": Servo,
     "servodriver": ServoWebDriver,
@@ -917,9 +909,6 @@ def setup_wptrunner(venv, **kwargs):
     args_general(kwargs)
 
     if kwargs["product"] not in product_setup:
-        if kwargs["product"] == "edgechromium":
-            raise WptrunError("edgechromium has been renamed to edge.")
-
         raise WptrunError("Unsupported product %s" % kwargs["product"])
 
     setup_cls = product_setup[kwargs["product"]](venv, kwargs["prompt"])

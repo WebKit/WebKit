@@ -23,6 +23,7 @@
 
 #if os(visionOS)
 
+import Combine
 import Foundation
 import RealityKit
 import WebKitSwift
@@ -36,6 +37,11 @@ private extension Logger {
 @objc(WKSRKEntity)
 public final class WKSRKEntity: NSObject {
     let entity: Entity
+    @objc(delegate) weak var delegate: WKSRKEntityDelegate?
+    private var animationPlaybackController: AnimationPlaybackController? = nil
+    private var animationFinishedSubscription: Cancellable?
+    private var _duration: TimeInterval? = nil
+    private var _playbackRate: Float = 1.0
 
     @objc(initWithCoreEntity:) init(with coreEntity: REEntityRef) {
         entity = Entity.__fromCore(__EntityRef.__fromCore(coreEntity))
@@ -90,13 +96,100 @@ public final class WKSRKEntity: NSObject {
         }
     }
 
-    @objc(startAnimating) public func startAnimating() {
+    @objc(duration) public var duration: TimeInterval {
+        guard let _duration else { return 0 }
+        return _duration
+    }
+
+    @objc(loop) public var loop: Bool = false
+
+    @objc(playbackRate) public var playbackRate: Float {
+        get {
+            guard let animationPlaybackController else { return _playbackRate }
+            return animationPlaybackController.speed
+        }
+
+        set {
+            // FIXME (280081): Support negative playback rate
+            _playbackRate = max(newValue, 0);
+            guard let animationPlaybackController else { return }
+            animationPlaybackController.speed = _playbackRate
+            animationPlaybackStateDidUpdate()
+        }
+    }
+
+    @objc(paused) public var paused: Bool {
+        get {
+            guard let animationPlaybackController else { return true }
+            return animationPlaybackController.isPaused
+        }
+
+        set {
+            guard let animationPlaybackController, animationPlaybackController.isPaused != newValue else { return }
+            if newValue {
+                animationPlaybackController.pause()
+            } else {
+                animationPlaybackController.resume()
+            }
+            animationPlaybackStateDidUpdate()
+        }
+    }
+
+    @objc(currentTime) public var currentTime: TimeInterval {
+        get {
+            guard let animationPlaybackController else { return 0 }
+            return animationPlaybackController.time
+        }
+
+        set {
+            guard let animationPlaybackController, let duration = _duration else { return }
+            let clampedTime = min(max(newValue, 0), duration)
+            animationPlaybackController.time = clampedTime
+            animationPlaybackStateDidUpdate()
+        }
+    }
+
+    @objc(setUpAnimationWithAutoPlay:) public func setUpAnimation(with autoplay: Bool) {
+        assert(animationPlaybackController == nil)
+
         guard let animation = entity.availableAnimations.first else {
             Logger.realityKitEntity.info("No animation found in entity to play")
             return
         }
-        entity.playAnimation(animation.repeat(duration: .infinity))
+
+        animationPlaybackController = entity.playAnimation(animation, startsPaused: !autoplay)
+        guard let animationPlaybackController else {
+            Logger.realityKitEntity.error("Cannot play entity animation")
+            return
+        }
+        _duration = animationPlaybackController.duration
+        animationPlaybackController.speed = _playbackRate
+        animationPlaybackStateDidUpdate()
+
+        guard let scene = entity.scene else {
+            Logger.realityKitEntity.error("No scene to subscribe for animation events")
+            return
+        }
+        animationFinishedSubscription = scene.subscribe(to: AnimationEvents.PlaybackCompleted.self, on: entity) { [weak self] event in
+            guard let self,
+                  let playbackController = self.animationPlaybackController,
+                  event.playbackController == playbackController else {
+                Logger.realityKitEntity.error("Cannot schedule the next animation")
+                return
+            }
+
+            let startsPaused = !self.loop
+            let animationController = self.entity.playAnimation(animation, startsPaused: startsPaused)
+            animationController.speed = self._playbackRate
+
+            self.animationPlaybackController = animationController
+            self.animationPlaybackStateDidUpdate()
+        }
     }
+
+    private func animationPlaybackStateDidUpdate() {
+        delegate?.entityAnimationPlaybackStateDidUpdate?(self)
+     }
 }
 
 #endif // os(visionOS)

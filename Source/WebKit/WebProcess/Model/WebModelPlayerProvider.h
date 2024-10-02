@@ -41,7 +41,8 @@ public:
 
 private:
     // WebCore::ModelPlayerProvider overrides.
-    virtual RefPtr<WebCore::ModelPlayer> createModelPlayer(WebCore::ModelPlayerClient&) final;
+    RefPtr<WebCore::ModelPlayer> createModelPlayer(WebCore::ModelPlayerClient&) final;
+    void deleteModelPlayer(WebCore::ModelPlayer&) final;
 
     WeakRef<WebPage> m_page;
 };

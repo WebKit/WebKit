@@ -147,7 +147,7 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
 
 AXCoreObject* AccessibilityARIAGridRow::rowHeader()
 {
-    for (const auto& child : children()) {
+    for (const auto& child : unignoredChildren()) {
         if (child->roleValue() == AccessibilityRole::RowHeader)
             return child.get();
     }

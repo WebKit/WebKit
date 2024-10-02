@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'view-transition-class'> = none | <custom-ident>+
     // https://drafts.csswg.org/css-view-transitions-2/#view-transition-class-prop
@@ -62,7 +62,7 @@ RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'view-transition-name'> = none | <custom-ident>
     // https://drafts.csswg.org/css-view-transitions-1/#propdef-view-transition-name
@@ -76,7 +76,7 @@ RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range)
     return consumeCustomIdent(range);
 }
 
-RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'types'> = none | <custom-ident>+
     // https://www.w3.org/TR/css-view-transitions-2/#descdef-view-transition-types

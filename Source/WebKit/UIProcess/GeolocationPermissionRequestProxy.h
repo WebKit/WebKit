@@ -37,7 +37,7 @@ class WebProcessProxy;
 
 class GeolocationPermissionRequestProxy : public RefCounted<GeolocationPermissionRequestProxy> {
 public:
-    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, GeolocationIdentifier geolocationID, WebProcessProxy& process)
+    static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy& manager, GeolocationIdentifier geolocationID, WebProcessProxy& process)
     {
         return adoptRef(*new GeolocationPermissionRequestProxy(manager, geolocationID, process));
     }
@@ -50,9 +50,9 @@ public:
     WebProcessProxy* process() const;
 
 private:
-    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, GeolocationIdentifier, WebProcessProxy&);
+    GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy&, GeolocationIdentifier, WebProcessProxy&);
 
-    GeolocationPermissionRequestManagerProxy* m_manager;
+    WeakPtr<GeolocationPermissionRequestManagerProxy> m_manager;
     GeolocationIdentifier m_geolocationID;
     WeakPtr<WebProcessProxy> m_process;
 };

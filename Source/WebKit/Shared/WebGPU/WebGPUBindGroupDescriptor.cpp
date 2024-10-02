@@ -42,8 +42,6 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
         return std::nullopt;
 
     auto identifier = convertToBacking(bindGroupDescriptor.layout);
-    if (!identifier)
-        return std::nullopt;
 
     Vector<BindGroupEntry> entries;
     entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());

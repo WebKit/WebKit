@@ -115,6 +115,9 @@ public:
 
     CSSPropertyID cssPropertyID() const;
 
+    bool isCurrentPropertyInvalidAtComputedValueTime() const;
+    void setCurrentPropertyInvalidAtComputedValueTime();
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
@@ -143,7 +146,7 @@ private:
     HashSet<AtomString> m_inProgressCustomProperties;
     HashSet<AtomString> m_inCycleCustomProperties;
     WTF::BitSet<numCSSProperties> m_inProgressProperties;
-    WTF::BitSet<numCSSProperties> m_inUnitCycleProperties;
+    WTF::BitSet<numCSSProperties> m_invalidAtComputedValueTimeProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };

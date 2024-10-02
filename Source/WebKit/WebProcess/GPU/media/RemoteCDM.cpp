@@ -56,10 +56,10 @@ RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& 
 }
 
 #if !RELEASE_LOG_DISABLED
-void RemoteCDM::setLogIdentifier(const void* logIdentifier)
+void RemoteCDM::setLogIdentifier(uint64_t logIdentifier)
 {
     if (m_factory)
-        m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMProxy::SetLogIdentifier(reinterpret_cast<uint64_t>(logIdentifier)), m_identifier);
+        m_factory->gpuProcessConnection().connection().send(Messages::RemoteCDMProxy::SetLogIdentifier(logIdentifier), m_identifier);
 }
 #endif
 

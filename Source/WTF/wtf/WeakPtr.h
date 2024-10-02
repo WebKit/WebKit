@@ -50,7 +50,7 @@ public:
     template<typename U> WeakPtr(WeakRef<U, WeakPtrImpl>&&);
 
     template<typename = std::enable_if_t<!IsSmartPtr<T>::value>> WeakPtr(const T* object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
-        : m_impl(object ? implForObject(*object) : nullptr)
+        : m_impl(object ? &object->weakImpl() : nullptr)
 #if ASSERT_ENABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -60,7 +60,7 @@ public:
     }
 
     template<typename = std::enable_if_t<!IsSmartPtr<T>::value && !std::is_pointer_v<T>>> WeakPtr(const T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
-        : m_impl(implForObject(object))
+        : m_impl(&object.weakImpl())
 #if ASSERT_ENABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -155,12 +155,6 @@ private:
 #endif
     {
         UNUSED_PARAM(shouldEnableAssertions);
-    }
-
-    template<typename U> static WeakPtrImpl* implForObject(const U& object)
-    {
-        object.weakPtrFactory().initializeIfNeeded(object);
-        return object.weakPtrFactory().impl();
     }
 
 #if ASSERT_ENABLED

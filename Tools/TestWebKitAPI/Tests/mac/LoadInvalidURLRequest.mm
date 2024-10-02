@@ -70,7 +70,7 @@ TEST(WebKitLegacy, LoadInvalidURLRequest)
         RetainPtr<LoadInvalidURLWebFrameLoadDelegate> delegate = adoptNS([[LoadInvalidURLWebFrameLoadDelegate alloc] init]);
         [webView setFrameLoadDelegate:delegate.get()];
 
-        NSURL *contentURL = [[NSBundle mainBundle] URLForResource:@"LoadInvalidURLRequest" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+        NSURL *contentURL = [NSBundle.test_resourcesBundle URLForResource:@"LoadInvalidURLRequest" withExtension:@"html"];
         [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:contentURL]];
 
         didFinishTest = false;

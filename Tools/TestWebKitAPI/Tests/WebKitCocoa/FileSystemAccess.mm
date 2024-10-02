@@ -279,7 +279,7 @@ TEST(FileSystemAccess, MigrateToNewStorageDirectory)
     [fileManager createFileAtPath:oldFilePath contents:nil attributes:nil];
     EXPECT_TRUE([fileManager fileExistsAtPath:oldFilePath]);
 
-    NSString *resourceSaltPath = [[NSBundle mainBundle] URLForResource:@"file-system-access" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"].path;
+    NSString *resourceSaltPath = [NSBundle.test_resourcesBundle URLForResource:@"file-system-access" withExtension:@"salt"].path;
     NSString *oldSaltPath = [oldStorageDirectory stringByAppendingPathComponent:@"salt"];
     [fileManager copyItemAtPath:resourceSaltPath toPath:oldSaltPath error:nil];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:oldSaltPath]);

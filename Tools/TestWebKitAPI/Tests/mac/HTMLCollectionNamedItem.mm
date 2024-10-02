@@ -54,8 +54,8 @@ TEST(WebKitLegacy, HTMLCollectionNamedItemTest)
     RetainPtr<HTMLCollectionNamedItemTest> testController = adoptNS([HTMLCollectionNamedItemTest new]);
 
     webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle]
-        URLForResource:@"HTMLCollectionNamedItem" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle
+        URLForResource:@"HTMLCollectionNamedItem" withExtension:@"html"]]];
 
     Util::run(&didFinishLoad);
     didFinishLoad = false;

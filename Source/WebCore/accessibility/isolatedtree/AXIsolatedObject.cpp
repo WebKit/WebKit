@@ -58,7 +58,7 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     ASSERT(isMainThread());
     ASSERT(objectID().isValid());
 
-    auto* axParent = axObject->parentObjectUnignored();
+    auto* axParent = axObject->parentInCoreTree();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
     // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
@@ -89,6 +89,25 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 {
     AXTRACE("AXIsolatedObject::initializeProperties"_s);
     auto& object = axObject.get();
+
+
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    if (object.includeIgnoredInCoreTree()) {
+        bool isIgnored = object.isIgnored();
+        setProperty(AXPropertyName::IsIgnored, isIgnored);
+        // If an object is unconnected, it is involved in a relation or part of an outgoing notification,
+        // both of which require all properties to maintain correct AT behavior.
+        bool needsAllProperties = !isIgnored || tree()->isUnconnectedNode(axObject->objectID());
+        if (!needsAllProperties) {
+            // FIXME: If isIgnored, we should only cache a small subset of necessary properties, e.g. those used in the text marker APIs.
+            return;
+        }
+    } else {
+        // The default state — do not include ignored in the core accessibility tree, meaning
+        // everything we create an isolated object for is unignored.
+        setProperty(AXPropertyName::IsIgnored, false);
+    }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     if (object.ancestorFlagsAreInitialized())
         setProperty(AXPropertyName::AncestorFlags, object.ancestorFlags());
@@ -480,6 +499,9 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         case AXPropertyName::IsGrabbed:
             setPropertyFlag(AXPropertyFlag::IsGrabbed, std::get<bool>(value));
             return;
+        case AXPropertyName::IsIgnored:
+            setPropertyFlag(AXPropertyFlag::IsIgnored, std::get<bool>(value));
+            return;
         case AXPropertyName::IsInlineText:
             setPropertyFlag(AXPropertyFlag::IsInlineText, std::get<bool>(value));
             return;
@@ -680,27 +702,6 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
     });
 }
 
-AXCoreObject* AXIsolatedObject::sibling(AXDirection direction) const
-{
-    RefPtr parent = parentObjectUnignored();
-    if (!parent)
-        return nullptr;
-    const auto& siblings = parent->children();
-    size_t indexOfThis = siblings.find(this);
-    if (indexOfThis == notFound)
-        return nullptr;
-
-    if (direction == AXDirection::Next)
-        return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].get() : nullptr;
-    return indexOfThis > 0 ? siblings[indexOfThis - 1].get() : nullptr;
-}
-
-AXCoreObject* AXIsolatedObject::siblingOrParent(AXDirection direction) const
-{
-    auto* sibling = this->sibling(direction);
-    return sibling ? sibling : parentObjectUnignored();
-}
-
 bool AXIsolatedObject::isDetachedFromParent()
 {
     if (parent().isValid())
@@ -783,11 +784,6 @@ AXIsolatedObject* AXIsolatedObject::focusedUIElement() const
     return tree()->focusedNode().get();
 }
     
-AXIsolatedObject* AXIsolatedObject::parentObjectUnignored() const
-{
-    return tree()->objectForID(parent()).get();
-}
-
 AXIsolatedObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
 {
     return objectAttributeValue(orientation == AccessibilityOrientation::Vertical ? AXPropertyName::VerticalScrollBar : AXPropertyName::HorizontalScrollBar);
@@ -1117,6 +1113,8 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
         return hasPropertyFlag(AXPropertyFlag::IsExposedTableCell);
     case AXPropertyName::IsGrabbed:
         return hasPropertyFlag(AXPropertyFlag::IsGrabbed);
+    case AXPropertyName::IsIgnored:
+        return hasPropertyFlag(AXPropertyFlag::IsIgnored);
     case AXPropertyName::IsInlineText:
         return hasPropertyFlag(AXPropertyFlag::IsInlineText);
     case AXPropertyName::IsKeyboardFocusable:
@@ -1453,7 +1451,7 @@ FloatRect AXIsolatedObject::relativeFrame() const
 FloatRect AXIsolatedObject::relativeFrameFromChildren() const
 {
     FloatRect rect;
-    for (const auto& child : const_cast<AXIsolatedObject*>(this)->children())
+    for (const auto& child : const_cast<AXIsolatedObject*>(this)->unignoredChildren())
         rect.unite(child->relativeFrame());
     return rect;
 }

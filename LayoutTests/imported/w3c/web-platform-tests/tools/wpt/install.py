@@ -10,7 +10,7 @@ latest_channels = {
     'chrome': 'canary',
     'chrome_android': 'dev',
     'chromium': 'nightly',
-    'edge': 'dev',
+    'edgechromium': 'dev',
     'safari': 'preview',
     'servo': 'nightly',
     'webkitgtk_minibrowser': 'nightly',

@@ -11,4 +11,41 @@ PASS gbk encoder: legacy ICU special case 3
 PASS gbk encoder: legacy WebKit case 1
 PASS gbk encoder: legacy WebKit case 2
 PASS gbk encoder: legacy WebKit case 3
+PASS gbk encoder: U+10FFFF
+PASS gbk encoder: GB18030-2022 1
+PASS gbk encoder: GB18030-2022 2
+PASS gbk encoder: GB18030-2022 3
+PASS gbk encoder: GB18030-2022 4
+PASS gbk encoder: GB18030-2022 5
+PASS gbk encoder: GB18030-2022 6
+PASS gbk encoder: GB18030-2022 7
+PASS gbk encoder: GB18030-2022 8
+PASS gbk encoder: GB18030-2022 9
+PASS gbk encoder: GB18030-2022 10
+PASS gbk encoder: GB18030-2022 11
+PASS gbk encoder: GB18030-2022 12
+PASS gbk encoder: GB18030-2022 13
+PASS gbk encoder: GB18030-2022 14
+PASS gbk encoder: GB18030-2022 15
+PASS gbk encoder: GB18030-2022 16
+PASS gbk encoder: GB18030-2022 17
+PASS gbk encoder: GB18030-2022 18
+PASS gbk encoder: GB18030-2022 19
+PASS gbk encoder: GB18030-2022 20
+PASS gbk encoder: GB18030-2022 21
+PASS gbk encoder: GB18030-2022 22
+PASS gbk encoder: GB18030-2022 23
+PASS gbk encoder: GB18030-2022 24
+PASS gbk encoder: GB18030-2022 25
+PASS gbk encoder: GB18030-2022 26
+PASS gbk encoder: GB18030-2022 27
+PASS gbk encoder: GB18030-2022 28
+PASS gbk encoder: GB18030-2022 29
+PASS gbk encoder: GB18030-2022 30
+PASS gbk encoder: GB18030-2022 31
+PASS gbk encoder: GB18030-2022 32
+PASS gbk encoder: GB18030-2022 33
+PASS gbk encoder: GB18030-2022 34
+PASS gbk encoder: GB18030-2022 35
+PASS gbk encoder: GB18030-2022 36
 

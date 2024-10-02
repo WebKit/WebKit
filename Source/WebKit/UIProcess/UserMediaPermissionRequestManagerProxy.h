@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,8 +29,10 @@
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,11 +40,6 @@
 
 namespace WebKit {
 class UserMediaPermissionRequestManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaPermissionRequestManagerProxy> : std::true_type { };
 }
 
 namespace WebCore {
@@ -58,6 +55,9 @@ struct MediaConstraints;
 struct MediaStreamRequest;
 };
 
+OBJC_CLASS AVCaptureDeviceRotationCoordinator;
+OBJC_CLASS WKRotationCoordinatorObserver;
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -65,22 +65,29 @@ class WebPageProxy;
 enum class MediaDevicePermissionRequestIdentifierType { };
 using MediaDevicePermissionRequestIdentifier = LegacyNullableObjectIdentifier<MediaDevicePermissionRequestIdentifierType>;
 
-class UserMediaPermissionRequestManagerProxy
-    : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>
+class UserMediaPermissionRequestManagerProxy final
+    : public RefCountedAndCanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(UserMediaPermissionRequestManagerProxy);
 public:
-    explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
+    static Ref<UserMediaPermissionRequestManagerProxy> create(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();
 
-    WebPageProxy& page() const;
-    Ref<WebPageProxy> protectedPage() const;
+    WebPageProxy* page() const;
+    RefPtr<WebPageProxy> protectedPage() const;
+
+    void disconnectFromPage();
 
 #if ENABLE(MEDIA_STREAM)
     static void forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    void startMonitoringCaptureDeviceRotation(const String&);
+    void stopMonitoringCaptureDeviceRotation(const String&);
+    void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);
+#endif // HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
 #endif
     static bool permittedToCaptureAudio();
     static bool permittedToCaptureVideo();
@@ -140,9 +147,11 @@ public:
     void clearUserMediaPermissionRequestHistory(WebCore::PermissionName);
 
 private:
+    explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final;
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "UserMediaPermissionRequestManagerProxy"_s; }
     WTFLogChannel& logChannel() const final;
 #endif
@@ -191,7 +200,7 @@ private:
     Deque<Ref<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
     HashSet<MediaDevicePermissionRequestIdentifier> m_pendingDeviceRequests;
 
-    WeakRef<WebPageProxy> m_page;
+    WeakPtr<WebPageProxy> m_page;
 
     RunLoop::Timer m_rejectionTimer;
     Deque<Ref<UserMediaPermissionRequestProxy>> m_pendingRejections;
@@ -207,7 +216,7 @@ private:
     Seconds m_currentWatchdogInterval;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
     bool m_hasFilteredDeviceList { false };
 #if PLATFORM(COCOA)
@@ -216,6 +225,10 @@ private:
     uint64_t m_hasPendingCapture { 0 };
     std::optional<bool> m_mockDevicesEnabledOverride;
     HashSet<WebCore::FrameIdentifier> m_grantedFrames;
+#if PLATFORM(COCOA)
+    HashCountedSet<String> m_monitoredDeviceIds;
+    RetainPtr<WKRotationCoordinatorObserver> m_objcObserver;
+#endif
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);

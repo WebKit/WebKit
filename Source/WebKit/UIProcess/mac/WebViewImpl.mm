@@ -1308,8 +1308,9 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     m_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
-    auto& openerInfo = m_page->configuration().openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
+    auto& pageConfiguration = m_page->configuration();
+    auto& openerInfo = pageConfiguration.openerInfo();
+    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
 
     registerDraggedTypes();
 
@@ -2290,6 +2291,8 @@ void WebViewImpl::viewDidMoveToWindow()
             cancelImmediateActionAnimation();
             [m_view removeGestureRecognizer:m_immediateActionGestureRecognizer.get()];
         }
+
+        removeFlagsChangedEventMonitor();
     }
 
     m_page->setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
@@ -5694,6 +5697,11 @@ void WebViewImpl::removeFlagsChangedEventMonitor()
 
     [NSEvent removeMonitor:m_flagsChangedEventMonitor];
     m_flagsChangedEventMonitor = nil;
+}
+
+bool WebViewImpl::hasFlagsChangedEventMonitor()
+{
+    return m_flagsChangedEventMonitor;
 }
 
 void WebViewImpl::mouseEntered(NSEvent *event)

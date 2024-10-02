@@ -60,11 +60,12 @@ private:
     RemoteRenderPassEncoderProxy& operator=(RemoteRenderPassEncoderProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
     
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return root().streamClientConnection().send(WTFMove(message), backing());
+        return root().protectedStreamClientConnection()->send(WTFMove(message), backing());
     }
 
     void setPipeline(const WebCore::WebGPU::RenderPipeline&) final;

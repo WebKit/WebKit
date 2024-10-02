@@ -96,8 +96,8 @@ void IDBOpenDBRequest::fireSuccessAfterVersionChangeCommit()
     ASSERT(hasPendingActivity());
     m_transaction->addRequest(*this);
 
-    auto event = IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this);
-    m_openDatabaseSuccessEvent = &event.get();
+    Ref event = IDBRequestCompletionEvent::create(eventNames().successEvent, Event::CanBubble::No, Event::IsCancelable::No, *this);
+    m_openDatabaseSuccessEvent = event.get();
 
     enqueueEvent(WTFMove(event));
 }

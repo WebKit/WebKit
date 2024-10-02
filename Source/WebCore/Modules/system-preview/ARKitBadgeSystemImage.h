@@ -42,7 +42,7 @@ OBJC_CLASS CIContext;
 namespace WebCore {
 
 class WEBCORE_EXPORT ARKitBadgeSystemImage final : public SystemImage {
-    WTF_MAKE_TZONE_ALLOCATED(ARKitBadgeSystemImage);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ARKitBadgeSystemImage, WEBCORE_EXPORT);
 public:
     static Ref<ARKitBadgeSystemImage> create(Image& image)
     {
@@ -80,7 +80,7 @@ private:
     }
 
     RefPtr<Image> m_image;
-    RenderingResourceIdentifier m_renderingResourceIdentifier;
+    Markable<RenderingResourceIdentifier> m_renderingResourceIdentifier;
     FloatSize m_imageSize;
 };
 

@@ -640,6 +640,7 @@ CallData ProxyObject::getCallData(JSCell* cell)
         callData.type = CallData::Type::Native;
         callData.native.function = performProxyCall;
         callData.native.isBoundFunction = false;
+        callData.native.isWasm = false;
     }
     return callData;
 }
@@ -692,6 +693,7 @@ CallData ProxyObject::getConstructData(JSCell* cell)
         constructData.type = CallData::Type::Native;
         constructData.native.function = performProxyConstruct;
         constructData.native.isBoundFunction = false;
+        constructData.native.isWasm = false;
     }
     return constructData;
 }

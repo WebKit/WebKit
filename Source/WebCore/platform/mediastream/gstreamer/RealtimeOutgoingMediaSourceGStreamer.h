@@ -38,9 +38,8 @@ public:
 
     void start();
     void stop();
-    void setSource(Ref<MediaStreamTrackPrivate>&&);
     virtual void flush();
-    MediaStreamTrackPrivate& source() const { return m_source->get(); }
+    const RefPtr<MediaStreamTrackPrivate>& track() const { return m_track; }
 
     const String& mediaStreamID() const { return m_mediaStreamId; }
     const GRefPtr<GstCaps>& allowedCaps() const;
@@ -58,6 +57,8 @@ public:
     GUniquePtr<GstStructure> parameters();
     virtual void fillEncodingParameters(const GUniquePtr<GstStructure>&) { }
     virtual void setParameters(GUniquePtr<GstStructure>&&) { }
+
+    void replaceTrack(RefPtr<MediaStreamTrackPrivate>&&);
 
 protected:
     enum Type {
@@ -78,13 +79,11 @@ protected:
     bool m_enabled { true };
     bool m_muted { false };
     bool m_isStopped { true };
-    std::optional<Ref<MediaStreamTrackPrivate>> m_source;
+    RefPtr<MediaStreamTrackPrivate> m_track;
     std::optional<RealtimeMediaSourceSettings> m_initialSettings;
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_outgoingSource;
     GRefPtr<GstElement> m_liveSync;
-    GRefPtr<GstElement> m_inputSelector;
-    GRefPtr<GstPad> m_fallbackPad;
     GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_preEncoderQueue;
     GRefPtr<GstElement> m_encoder;
@@ -97,7 +96,6 @@ protected:
     GRefPtr<GstPad> m_webrtcSinkPad;
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
     GUniquePtr<GstStructure> m_parameters;
-    GRefPtr<GstElement> m_fallbackSource;
 
     struct PayloaderState {
         unsigned seqnum;
@@ -111,10 +109,6 @@ private:
 
     virtual RTCRtpCapabilities rtpCapabilities() const = 0;
     void codecPreferencesChanged();
-
-    virtual void connectFallbackSource() { }
-    virtual void unlinkOutgoingSource() { }
-    virtual void linkOutgoingSource() { }
 
     // MediaStreamTrackPrivateObserver API
     void trackMutedChanged(MediaStreamTrackPrivate&) override { sourceMutedChanged(); }

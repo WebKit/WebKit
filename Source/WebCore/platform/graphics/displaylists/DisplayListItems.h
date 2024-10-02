@@ -36,7 +36,6 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "MediaPlayerIdentifier.h"
 #include "PositionedGlyphs.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
@@ -395,22 +394,22 @@ class ClipToImageBuffer {
 public:
     static constexpr char name[] = "clip-to-image-buffer";
 
-    ClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
+    ClipToImageBuffer(std::optional<RenderingResourceIdentifier> imageBufferIdentifier, const FloatRect& destinationRect)
         : m_imageBufferIdentifier(imageBufferIdentifier)
         , m_destinationRect(destinationRect)
     {
     }
 
-    RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
+    RenderingResourceIdentifier imageBufferIdentifier() const { return *m_imageBufferIdentifier; }
     FloatRect destinationRect() const { return m_destinationRect; }
 
-    bool isValid() const { return m_imageBufferIdentifier.isValid(); }
+    bool isValid() const { return !!m_imageBufferIdentifier; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    RenderingResourceIdentifier m_imageBufferIdentifier;
+    Markable<RenderingResourceIdentifier> m_imageBufferIdentifier;
     FloatRect m_destinationRect;
 };
 
@@ -570,19 +569,19 @@ public:
     {
     }
 
-    RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
+    RenderingResourceIdentifier imageBufferIdentifier() const { return *m_imageBufferIdentifier; }
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
 
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return m_imageBufferIdentifier.isValid(); }
+    bool isValid() const { return !!m_imageBufferIdentifier; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    RenderingResourceIdentifier m_imageBufferIdentifier;
+    Markable<RenderingResourceIdentifier> m_imageBufferIdentifier;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -600,19 +599,19 @@ public:
     {
     }
 
-    RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
+    RenderingResourceIdentifier imageIdentifier() const { return *m_imageIdentifier; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
     const FloatRect& source() const { return m_srcRect; }
     ImagePaintingOptions options() const { return m_options; }
 
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return m_imageIdentifier.isValid(); }
+    bool isValid() const { return !!m_imageIdentifier; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, NativeImage&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    RenderingResourceIdentifier m_imageIdentifier;
+    Markable<RenderingResourceIdentifier> m_imageIdentifier;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
@@ -645,7 +644,7 @@ public:
 
     WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
-    RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
+    RenderingResourceIdentifier imageIdentifier() const { return *m_imageIdentifier; }
     FloatRect destRect() const { return m_destination; }
     FloatRect tileRect() const { return m_tileRect; }
     const AffineTransform& patternTransform() const { return m_patternTransform; }
@@ -654,13 +653,13 @@ public:
     ImagePaintingOptions options() const { return m_options; }
 
     // FIXME: We might want to validate ImagePaintingOptions.
-    bool isValid() const { return m_imageIdentifier.isValid(); }
+    bool isValid() const { return !!m_imageIdentifier; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, SourceImage&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    RenderingResourceIdentifier m_imageIdentifier;
+    Markable<RenderingResourceIdentifier> m_imageIdentifier;
     FloatRect m_destination;
     FloatRect m_tileRect;
     AffineTransform m_patternTransform;
@@ -1227,27 +1226,6 @@ public:
 private:
     FloatRect m_rect;
 };
-
-#if ENABLE(VIDEO)
-class PaintFrameForMedia {
-public:
-    static constexpr char name[] = "paint-frame-for-media";
-
-    WEBCORE_EXPORT PaintFrameForMedia(MediaPlayerIdentifier, const FloatRect& destination);
-
-    MediaPlayerIdentifier identifier() const { return m_identifier; }
-    const FloatRect& destination() const { return m_destination; }
-
-    bool isValid() const { return m_identifier.isValid(); }
-
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const;
-
-private:
-    MediaPlayerIdentifier m_identifier;
-    FloatRect m_destination;
-};
-#endif
 
 class StrokeRect {
 public:

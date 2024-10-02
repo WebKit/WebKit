@@ -875,14 +875,22 @@ ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue th
     JSString* string = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
+    JSString* searchJSString = searchValue.isString() ? asString(searchValue) : nullptr;
+    JSString* replaceJSString = replaceValue.isString() ? asString(replaceValue) : nullptr;
+
     if (searchValue.inherits<RegExpObject>())
         RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(vm, globalObject, string, searchValue, replaceValue));
+
+    if (searchJSString && replaceJSString) {
+        if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, string, searchJSString, replaceJSString))
+            return result;
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
 
     auto thisString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     // This path avoids an extra ref count churn for the most likely case that the search value is a string.
-    JSString* searchJSString = jsDynamicCast<JSString*>(searchValue);
     if (LIKELY(searchJSString)) {
         auto searchString = searchJSString->value(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -918,10 +926,18 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingStringSearch, (JSGlobalObjec
 
     JSString* string = asString(callFrame->thisValue());
 
+    JSString* searchJSString = asString(callFrame->uncheckedArgument(0));
+    JSValue replaceValue = callFrame->uncheckedArgument(1);
+    if (replaceValue.isString()) {
+        if (JSString* result = tryReplaceOneCharUsingString<DollarCheck::Yes>(globalObject, string, searchJSString, asString(replaceValue)))
+            RELEASE_AND_RETURN(scope, JSValue::encode(result));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
     auto thisString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto searchString = asString(callFrame->uncheckedArgument(0))->value(globalObject);
+    auto searchString = searchJSString->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingStringSearch(vm, globalObject, string, thisString, searchString, callFrame->uncheckedArgument(1), StringReplaceMode::Single)));

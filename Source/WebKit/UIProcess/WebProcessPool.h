@@ -160,9 +160,7 @@ class WebProcessPool final
 #endif
 {
 public:
-    using IPC::MessageReceiver::weakPtrFactory;
-    using IPC::MessageReceiver::WeakValueType;
-    using IPC::MessageReceiver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(IPC::MessageReceiver);
 
     static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 
@@ -178,6 +176,12 @@ public:
     T* supplement()
     {
         return static_cast<T*>(m_supplements.get(T::supplementName()));
+    }
+
+    template <typename T>
+    RefPtr<T> protectedSupplement()
+    {
+        return supplement<T>();
     }
 
     template <typename T>
@@ -390,6 +394,7 @@ public:
     GPUProcessProxy& ensureGPUProcess();
     Ref<GPUProcessProxy> ensureProtectedGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
+    RefPtr<GPUProcessProxy> protectedGPUProcess() const { return gpuProcess(); }
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -398,8 +403,7 @@ public:
 
     void createModelProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, WebKit::ModelProcessConnectionParameters&&);
 
-    ModelProcessProxy& ensureModelProcess();
-    Ref<ModelProcessProxy> ensureProtectedModelProcess();
+    Ref<ModelProcessProxy> ensureProtectedModelProcess(WebProcessProxy& requestingWebProcess);
     ModelProcessProxy* modelProcess() const { return m_modelProcess.get(); }
 #endif
 
@@ -576,6 +580,9 @@ public:
     ExtensionCapabilityGranter& extensionCapabilityGranter();
     RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) final;
     RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) final;
+
+    void ref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::ProcessPool>::deref(); }
 #endif
 
     bool usesSingleWebProcess() const { return m_configuration->usesSingleWebProcess(); }
@@ -585,6 +592,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     HardwareKeyboardState cachedHardwareKeyboardState() const;
 #endif
+
+    bool webProcessStateUpdatesForPageClientEnabled() const { return m_webProcessStateUpdatesForPageClientEnabled; }
+    void setWebProcessStateUpdatesForPageClientEnabled(bool enabled) { m_webProcessStateUpdatesForPageClientEnabled = enabled; }
 
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
@@ -693,6 +703,10 @@ private:
     void initializeHardwareKeyboardAvailability();
     void hardwareKeyboardAvailabilityChanged();
     void setCachedHardwareKeyboardState(HardwareKeyboardState);
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    ModelProcessProxy& ensureModelProcess();
 #endif
 
     Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -902,7 +916,7 @@ private:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    std::unique_ptr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
+    RefPtr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -913,7 +927,10 @@ private:
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<ListDataObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
     RefPtr<ListDataObserver> m_storageAccessPromptQuirksDataUpdateObserver;
+    RefPtr<ListDataObserver> m_scriptTelemetryDataUpdateObserver;
 #endif
+
+    bool m_webProcessStateUpdatesForPageClientEnabled { false };
 };
 
 template<typename T>
@@ -941,12 +958,12 @@ void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::Session
 template<typename T>
 void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message, ShouldSkipSuspendedProcesses shouldSkipSuspendedProcesses)
 {
-    for (auto& process : remoteWorkerProcesses()) {
-        if (!process.canSendMessage())
+    for (Ref process : remoteWorkerProcesses()) {
+        if (!process->canSendMessage())
             continue;
-        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process.throttler().isSuspended())
+        if (shouldSkipSuspendedProcesses == ShouldSkipSuspendedProcesses::Yes && process->throttler().isSuspended())
             continue;
-        process.send(T(message), 0);
+        process->send(T(message), 0);
     }
 }
 

@@ -69,7 +69,7 @@ public:
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const;
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
 #endif
 
     WeakRef<WebPageProxy> m_page;
@@ -78,7 +78,7 @@ private:
     HashSet<String> m_validAuthorizationTokens;
 
 #if !RELEASE_LOG_DISABLED
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

@@ -44,6 +44,7 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ThreadedScrollingTree.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(GLIB_EVENT_LOOP)
@@ -138,6 +139,8 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
 
 void LayerTreeHost::scheduleLayerFlush()
 {
+    WTFEmitSignpost(this, ScheduleLayerFlush, "isWaitingForRenderer %i", m_isWaitingForRenderer);
+
     if (!m_layerFlushSchedulingEnabled)
         return;
 
@@ -160,11 +163,17 @@ void LayerTreeHost::cancelPendingLayerFlush()
 
 void LayerTreeHost::layerFlushTimerFired()
 {
-    if (m_isSuspended)
-        return;
+    WTFBeginSignpost(this, LayerFlushTimerFired, "isWaitingForRenderer %i", m_isWaitingForRenderer);
 
-    if (m_isWaitingForRenderer)
+    if (m_isSuspended) {
+        WTFEndSignpost(this, LayerFlushTimerFired);
         return;
+    }
+
+    if (m_isWaitingForRenderer) {
+        WTFEndSignpost(this, LayerFlushTimerFired);
+        return;
+    }
 
     // If a force-repaint callback was registered, we should force a 'frame sync' that
     // will guarantee us a call to renderNextFrame() once the update is complete.
@@ -187,6 +196,8 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_transientZoom)
         applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 #endif
+
+    WTFEndSignpost(this, LayerFlushTimerFired);
 }
 
 void LayerTreeHost::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -369,6 +380,7 @@ void LayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
 
 void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
 {
+    WTFEmitSignpost(this, CommitSceneState, "compositionRequestID %i", m_compositionRequestID + 1);
     m_isWaitingForRenderer = true;
     m_compositor->updateSceneState(state, ++m_compositionRequestID);
 }
@@ -425,6 +437,8 @@ void LayerTreeHost::clearIfNeeded()
 
 void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
 {
+    WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionResponseID);
+
     auto damageRegion = [&]() -> WebCore::Region {
         if (m_scrolledSinceLastFrame || damage.isInvalid())
             return { };
@@ -487,6 +501,8 @@ void LayerTreeHost::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
 
 void LayerTreeHost::renderNextFrame(bool forceRepaint)
 {
+    WTFBeginSignpost(this, RenderNextFrame);
+
     m_isWaitingForRenderer = false;
     bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
 
@@ -510,6 +526,8 @@ void LayerTreeHost::renderNextFrame(bool forceRepaint)
             m_coordinator.forceFrameSync();
         layerFlushTimerFired();
     }
+
+    WTFEndSignpost(this, RenderNextFrame);
 }
 
 #if PLATFORM(GTK)

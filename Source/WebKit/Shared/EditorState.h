@@ -31,6 +31,7 @@
 #include <WebCore/ElementContext.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/ScrollingNodeID.h>
 #include <WebCore/WritingDirection.h>
 #include <wtf/text/WTFString.h>
 
@@ -147,11 +148,13 @@ struct EditorState {
 #endif
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect selectionClipRect;
+        WebCore::IntRect editableRootBounds;
         WebCore::IntRect caretRectAtEnd;
         Vector<WebCore::SelectionGeometry> selectionGeometries;
         Vector<WebCore::SelectionGeometry> markedTextRects;
         WebCore::IntRect markedTextCaretRectAtStart;
         WebCore::IntRect markedTextCaretRectAtEnd;
+        std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
 #endif
     };
 

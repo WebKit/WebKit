@@ -110,7 +110,7 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     assertIsMainRunLoop();
-    workQueue().dispatch([attributes = WTFMove(attributes), protectedThis = Ref { *this }]() mutable {
+    protectedWorkQueue()->dispatch([attributes = WTFMove(attributes), protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
 }
@@ -118,7 +118,7 @@ void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attribute
 void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection)
 {
     assertIsMainRunLoop();
-    workQueue().dispatch([protectedThis = WTFMove(refFromConnection)] {
+    protectedWorkQueue()->dispatch([protectedThis = WTFMove(refFromConnection)] {
         protectedThis->workQueueUninitialize();
     });
 }
@@ -127,12 +127,12 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
 {
     assertIsCurrent(workQueue());
     platformWorkQueueInitialize(WTFMove(attributes));
-    m_streamConnection->open(workQueue());
-    if (m_context) {
-        m_context->setClient(this);
-        String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
-        String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
-        auto [externalImageTarget, externalImageBindingQuery] = m_context->externalImageTextureBindingPoint();
+    m_streamConnection->open(protectedWorkQueue());
+    if (RefPtr context = m_context) {
+        context->setClient(this);
+        String extensions = context->getString(GraphicsContextGL::EXTENSIONS);
+        String requestableExtensions = context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
+        auto [externalImageTarget, externalImageBindingQuery] = context->externalImageTextureBindingPoint();
         RemoteGraphicsContextGLInitializationState initializationState { extensions, requestableExtensions, externalImageTarget, externalImageBindingQuery };
 
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore(), { initializationState }));
@@ -170,7 +170,7 @@ void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());
     if (width && height)
-        m_context->reshape(width, height);
+        protectedContext()->reshape(width, height);
     else
         forceContextLost();
 }
@@ -187,19 +187,19 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
 void RemoteGraphicsContextGL::getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    completionHandler(m_context->getErrors());
+    completionHandler(protectedContext()->getErrors());
 }
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 {
     assertIsCurrent(workQueue());
-    m_context->ensureExtensionEnabled(extension);
+    protectedContext()->ensureExtensionEnabled(extension);
 }
 
 void RemoteGraphicsContextGL::drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->withBufferAsNativeImage(buffer, [&](NativeImage& image) {
+    protectedContext()->withBufferAsNativeImage(buffer, [&](NativeImage& image) {
         paintNativeImageToImageBuffer(image, imageBufferIdentifier);
     });
     completionHandler();
@@ -210,7 +210,7 @@ void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContext
 {
     assertIsCurrent(workQueue());
     std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = m_context->surfaceBufferToVideoFrame(buffer))
+    if (auto videoFrame = protectedContext()->surfaceBufferToVideoFrame(buffer))
         result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
     completionHandler(WTFMove(result));
 }
@@ -277,7 +277,7 @@ void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL
         });
         return;
     }
-    m_context->simulateEventForTesting(event);
+    protectedContext()->simulateEventForTesting(event);
 }
 
 void RemoteGraphicsContextGL::getBufferSubDataInline(uint32_t target, uint64_t offset, size_t dataSize, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler)
@@ -285,8 +285,9 @@ void RemoteGraphicsContextGL::getBufferSubDataInline(uint32_t target, uint64_t o
     assertIsCurrent(workQueue());
     static constexpr size_t getBufferSubDataInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGLProxy too.
 
+    RefPtr context = m_context;
     if (!dataSize || dataSize > getBufferSubDataInlineSizeLimit) {
-        m_context->addError(GCGLErrorCode::InvalidOperation);
+        context->addError(GCGLErrorCode::InvalidOperation);
         completionHandler({ });
         return;
     }
@@ -296,10 +297,10 @@ void RemoteGraphicsContextGL::getBufferSubDataInline(uint32_t target, uint64_t o
     bufferStore = MallocPtr<uint8_t>::tryMalloc(dataSize);
     if (bufferStore) {
         bufferData = { bufferStore.get(), dataSize };
-        if (!m_context->getBufferSubDataWithStatus(target, offset, bufferData))
+        if (!context->getBufferSubDataWithStatus(target, offset, bufferData))
             bufferData = { };
     } else
-        m_context->addError(GCGLErrorCode::OutOfMemory);
+        context->addError(GCGLErrorCode::OutOfMemory);
 
     completionHandler(bufferData);
 }
@@ -316,12 +317,14 @@ void RemoteGraphicsContextGL::getBufferSubDataSharedMemory(uint32_t target, uint
         return;
     }
 
+    RefPtr context = m_context;
+
     handle.setOwnershipOfMemory(m_sharedResourceCache->resourceOwner(), WebKit::MemoryLedger::Default);
     auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite);
     if (buffer && dataSize <= buffer->size())
-        validBufferData = m_context->getBufferSubDataWithStatus(target, offset, buffer->mutableSpan().subspan(0, dataSize));
+        validBufferData = context->getBufferSubDataWithStatus(target, offset, buffer->mutableSpan().subspan(0, dataSize));
     else
-        m_context->addError(GCGLErrorCode::InvalidOperation);
+        context->addError(GCGLErrorCode::InvalidOperation);
 
     completionHandler(validBufferData);
 }
@@ -343,11 +346,13 @@ void RemoteGraphicsContextGL::readPixelsInline(WebCore::IntRect rect, uint32_t f
         if (pixelsStore)
             pixels = { pixelsStore.get(), replyImageBytes };
     }
+
+    RefPtr context = m_context;
     std::optional<WebCore::IntSize> readArea;
     if (pixels.size() == replyImageBytes)
-        readArea = m_context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, pixels);
+        readArea = context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, pixels);
     else
-        m_context->addError(GCGLErrorCode::OutOfMemory);
+        context->addError(GCGLErrorCode::OutOfMemory);
     if (!readArea) {
         pixels = { };
         pixelsStore = { };
@@ -361,11 +366,12 @@ void RemoteGraphicsContextGL::readPixelsSharedMemory(WebCore::IntRect rect, uint
     assertIsCurrent(workQueue());
     std::optional<WebCore::IntSize> readArea;
 
+    RefPtr context = m_context;
     handle.setOwnershipOfMemory(m_sharedResourceCache->resourceOwner(), WebKit::MemoryLedger::Default);
     if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
-        readArea = m_context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, buffer->mutableSpan());
+        readArea = context->readPixelsWithStatus(rect, format, type, packReverseRowOrder, buffer->mutableSpan());
     else
-        m_context->addError(GCGLErrorCode::InvalidOperation);
+        context->addError(GCGLErrorCode::InvalidOperation);
 
     completionHandler(readArea);
 }
@@ -376,7 +382,7 @@ void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::ArrayRefe
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
     Vector<GCGLint> firsts = vectorCopyCast<GCGLint, 0>(firstsAndCounts);
     Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 1>(firstsAndCounts);
-    m_context->multiDrawArraysANGLE(mode, GCGLSpanTuple { firsts, counts });
+    protectedContext()->multiDrawArraysANGLE(mode, GCGLSpanTuple { firsts, counts });
 }
 
 void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts)
@@ -386,7 +392,7 @@ void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::
     Vector<GCGLint> firsts = vectorCopyCast<GCGLint, 0>(firstsCountsAndInstanceCounts);
     Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 1>(firstsCountsAndInstanceCounts);
     Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(firstsCountsAndInstanceCounts);
-    m_context->multiDrawArraysInstancedANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts });
+    protectedContext()->multiDrawArraysInstancedANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts });
 }
 
 void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type)
@@ -396,7 +402,7 @@ void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayRe
     const Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 0>(countsAndOffsets);
     // Currently offsets are copied in the m_context.
     const GCGLsizei* offsets = reinterpret_cast<const GCGLsizei*>(countsAndOffsets.data<1>());
-    m_context->multiDrawElementsANGLE(mode, GCGLSpanTuple { counts.data(), offsets, counts.size() }, type);
+    protectedContext()->multiDrawElementsANGLE(mode, GCGLSpanTuple { counts.data(), offsets, counts.size() }, type);
 }
 
 void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type)
@@ -407,7 +413,7 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC
     // Currently offsets are copied in the m_context.
     const GCGLsizei* offsets = reinterpret_cast<const GCGLsizei*>(countsOffsetsAndInstanceCounts.data<1>());
     const Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(countsOffsetsAndInstanceCounts);
-    m_context->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
+    protectedContext()->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
 }
 
 void RemoteGraphicsContextGL::multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances)
@@ -418,7 +424,7 @@ void RemoteGraphicsContextGL::multiDrawArraysInstancedBaseInstanceANGLE(uint32_t
     Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 1>(firstsCountsInstanceCountsAndBaseInstances);
     Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(firstsCountsInstanceCountsAndBaseInstances);
     Vector<GCGLuint> baseInstances = vectorCopyCast<GCGLuint, 3>(firstsCountsInstanceCountsAndBaseInstances);
-    m_context->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts, baseInstances });
+    protectedContext()->multiDrawArraysInstancedBaseInstanceANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts, baseInstances });
 }
 
 void RemoteGraphicsContextGL::multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
@@ -431,7 +437,13 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedBaseVertexBaseInstanceAN
     const Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances);
     const Vector<GCGLint> baseVertices = vectorCopyCast<GCGLint, 3>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances);
     const Vector<GCGLuint> baseInstances = vectorCopyCast<GCGLuint, 4>(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances);
-    m_context->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), baseVertices.data(), baseInstances.data(), counts.size() }, type);
+    protectedContext()->multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), baseVertices.data(), baseInstances.data(), counts.size() }, type);
+}
+
+RefPtr<RemoteGraphicsContextGL::GCGLContext> RemoteGraphicsContextGL::protectedContext()
+{
+    assertIsCurrent(workQueue());
+    return m_context;
 }
 
 } // namespace WebKit

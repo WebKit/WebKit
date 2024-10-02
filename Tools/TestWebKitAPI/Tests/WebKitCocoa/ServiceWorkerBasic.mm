@@ -2326,7 +2326,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
 {
     // Copy the baked database files to the database directory
-    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"BadServiceWorkerRegistrations-4" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url1 = [NSBundle.test_resourcesBundle URLForResource:@"BadServiceWorkerRegistrations-4" withExtension:@"sqlite3"];
 
     NSURL *swPath = [NSURL fileURLWithPath:[@"~/Library/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/ServiceWorkers/" stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] removeItemAtURL:swPath error:nil];
@@ -3353,7 +3353,12 @@ function check()
 </html>
 )SWRESOURCE"_s;
 
+// rdar://136529803
+#if (PLATFORM(MAC))
+TEST(ServiceWorkers, DISABLED_CacheStorageNetworkProcessCrash)
+#else
 TEST(ServiceWorkers, CacheStorageNetworkProcessCrash)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 

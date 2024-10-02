@@ -244,7 +244,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Lock _pendingBackgroundPrintFormattersLock;
     RetainPtr<NSMutableSet> _pendingBackgroundPrintFormatters;
-    IPC::Connection::AsyncReplyID _printRenderingCallbackID;
+    Markable<IPC::Connection::AsyncReplyID> _printRenderingCallbackID;
     _WKPrintRenderingCallbackType _printRenderingCallbackType;
 
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
@@ -264,8 +264,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     ASSERT(_pageClient);
 
     _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
-    auto& openerInfo = _page->configuration().openerInfo();
-    _page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()));
+    auto& pageConfiguration = _page->configuration();
+    auto& openerInfo = pageConfiguration.openerInfo();
+    _page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
 
     [self _updateRuntimeProtocolConformanceIfNeeded];
 
@@ -724,7 +725,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         !!self.webView._allowsViewportShrinkToFit,
         !!enclosedInScrollableAncestorView,
         velocityData,
-        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
+        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedMainFrameLayerTreeTransactionID());
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
@@ -816,6 +817,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 }
 
+// FIXME: <rdar://136769319> Adopt this in visionOS too.
+#if HAVE(UI_FOCUS_ITEM_DEFERRAL_MODE) && !PLATFORM(VISION)
+- (UIFocusItemDeferralMode)focusItemDeferralMode
+{
+    return UIFocusItemDeferralModeNever;
+}
+#endif
+
 #pragma mark Internal
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification
@@ -887,7 +896,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (void)_resetPrintingState
 {
-    _printRenderingCallbackID = { };
+    _printRenderingCallbackID = std::nullopt;
 
     Locker locker { _pendingBackgroundPrintFormattersLock };
     for (_WKWebViewPrintFormatter *printFormatter in _pendingBackgroundPrintFormatters.get())
@@ -1245,7 +1254,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         // Begin generating the image in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToImage(*[formatterAttributes frameID], [formatterAttributes printInfo], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](std::optional<WebCore::ShareableBitmap::Handle>&& imageHandle) mutable {
             if (!isPrintingOnBackgroundThread)
-                retainedSelf->_printRenderingCallbackID = { };
+                retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
                 Locker locker { retainedSelf->_pendingBackgroundPrintFormattersLock };
                 [retainedSelf->_pendingBackgroundPrintFormatters removeObject:printFormatter.get()];
@@ -1281,7 +1290,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
         auto callbackID = retainedSelf->_page->drawToPDFiOS(*[formatterAttributes frameID], [formatterAttributes printInfo], [formatterAttributes pageCount], [isPrintingOnBackgroundThread, printFormatter, retainedSelf](RefPtr<WebCore::SharedBuffer>&& pdfData) mutable {
             if (!isPrintingOnBackgroundThread)
-                retainedSelf->_printRenderingCallbackID = { };
+                retainedSelf->_printRenderingCallbackID = std::nullopt;
             else {
                 Locker locker { retainedSelf->_pendingBackgroundPrintFormattersLock };
                 [retainedSelf->_pendingBackgroundPrintFormatters removeObject:printFormatter.get()];
@@ -1309,11 +1318,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (_printRenderingCallbackType != _WKPrintRenderingCallbackTypePrint)
             return;
 
-        auto callbackID = std::exchange(_printRenderingCallbackID, { });
+        auto callbackID = std::exchange(_printRenderingCallbackID, std::nullopt);
         if (!callbackID)
             return;
 
-        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(*callbackID, Seconds::infinity());
         return;
     }
 
@@ -1353,11 +1362,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
         if (_printRenderingCallbackType != _WKPrintRenderingCallbackTypePreview)
             return;
 
-        auto callbackID = std::exchange(_printRenderingCallbackID, { });
+        auto callbackID = std::exchange(_printRenderingCallbackID, std::nullopt);
         if (!callbackID)
             return;
 
-        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(callbackID, Seconds::infinity());
+        _page->legacyMainFrameProcess().connection().waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::DrawRectToImage>(*callbackID, Seconds::infinity());
         return;
     }
 

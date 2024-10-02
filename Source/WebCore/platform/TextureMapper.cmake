@@ -32,21 +32,10 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
-    platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h
     platform/graphics/texmap/TextureMapperSolidColorLayer.h
     platform/graphics/texmap/TextureMapperTile.h
     platform/graphics/texmap/TextureMapperTiledBackingStore.h
 )
-
-if (USE_TEXTURE_MAPPER_DMABUF)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp
-    )
-
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h
-    )
-endif ()
 
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
@@ -55,10 +44,10 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+        platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferHolePunch.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
@@ -70,6 +59,7 @@ if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
+        platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
         platform/graphics/texmap/coordinated/Tile.h
         platform/graphics/texmap/coordinated/TiledBackingStore.h
@@ -136,8 +126,6 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaBackingStore.h
         platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
-        platform/graphics/nicosia/NicosiaImageBacking.h
-        platform/graphics/nicosia/NicosiaImageBackingStore.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h
         platform/graphics/nicosia/NicosiaScene.h
         platform/graphics/nicosia/NicosiaSceneIntegration.h
@@ -182,14 +170,8 @@ endif ()
 if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/gbm/DMABufBuffer.h
-        platform/graphics/gbm/DMABufColorSpace.h
-        platform/graphics/gbm/DMABufEGLUtilities.h
-        platform/graphics/gbm/DMABufFormat.h
-        platform/graphics/gbm/DMABufObject.h
-        platform/graphics/gbm/DMABufReleaseFlag.h
         platform/graphics/gbm/DRMDeviceManager.h
         platform/graphics/gbm/DRMDeviceNode.h
-        platform/graphics/gbm/GBMBufferSwapchain.h
         platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.h
         platform/graphics/gbm/GraphicsLayerContentsDisplayDelegateGBM.h
     )

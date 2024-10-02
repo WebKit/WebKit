@@ -73,7 +73,7 @@ TEST(WebKitLegacy, CloseNewWindowInNavigationPolicyDelegate)
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);
         webView.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
         webView.get().UIDelegate = [TestDelegate shared];
-        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"OpenNewWindow" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"OpenNewWindow" withExtension:@"html"]]];
 
         Util::run(&testFinished);
     }

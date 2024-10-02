@@ -80,6 +80,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUBufferUsage.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasAlphaMode.idl \
     $(WebCore)/Modules/WebGPU/GPUCanvasConfiguration.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasToneMapping.idl \
+    $(WebCore)/Modules/WebGPU/GPUCanvasToneMappingMode.idl \
     $(WebCore)/Modules/WebGPU/GPUColorDict.idl \
     $(WebCore)/Modules/WebGPU/GPUColorTargetState.idl \
     $(WebCore)/Modules/WebGPU/GPUColorWrite.idl \
@@ -422,6 +424,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasource/ManagedSourceBuffer.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
     $(WebCore)/Modules/mediasource/MediaSourceHandle.idl \
+    $(WebCore)/Modules/mediasource/MediaSourceInit.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediasource/TextTrack+MediaSource.idl \
@@ -918,6 +921,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/ScrollAxis.idl \
     $(WebCore)/animation/ScrollTimeline.idl \
     $(WebCore)/animation/ScrollTimelineOptions.idl \
+    $(WebCore)/animation/TimelineRangeOffset.idl \
     $(WebCore)/animation/ViewTimeline.idl \
     $(WebCore)/animation/ViewTimelineOptions.idl \
     $(WebCore)/animation/WebAnimation.idl \

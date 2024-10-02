@@ -35,9 +35,7 @@ class ProcessingInstruction final : public CharacterData, private CachedStyleShe
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ProcessingInstruction);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessingInstruction);
 public:
-    using CharacterData::weakPtrFactory;
-    using CharacterData::WeakValueType;
-    using CharacterData::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(CharacterData);
 
     static Ref<ProcessingInstruction> create(Document&, String&& target, String&& data);
     virtual ~ProcessingInstruction();

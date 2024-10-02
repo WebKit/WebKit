@@ -65,5 +65,23 @@ view-gestures/smart-magnify/double-tap-zoom-scroll-above-top.html [ Timeout Pass
 [ Release x86_64 ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 [ Release x86_64 ] media/media-source/media-managedmse-resume-after-remove.html [ Skip ]
 
-# webkit.org/b/278332 [ iOS macOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
-[ Release ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
+# webkit.org/b/280019 [EWS] fast/canvas/offscreen-giant.html is constant failure in Ventura Intel EWS
+[ Release x86_64 ] fast/canvas/offscreen-giant.html [ Skip ]
+
+# webkit.org/b/280024 [EWS] fast/canvas/webgl/drawingbuffer-test.html is a constant failure in Ventura Intel EWS
+[ Release x86_64 ] fast/canvas/webgl/drawingbuffer-test.html [ Skip ]
+
+# webkit.org/b/280098 4 tests in imported/w3c/web-platform-tests/css/ are constant failures in Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-border-radius-001.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-images/tiled-radial-gradients.html [ Skip ]
+[ Release x86_64 ] imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-offscreen-old.html [ Skip ]
+
+# webkit.org/b/280186 [EWS] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html is failing on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas.html [ Skip ]
+
+# webkit.org/b/280187 [EWS] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html is constant failure on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Skip ]
+
+# webkit.org/b/280189 [EWS] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html is a constant failure on Ventura Intel EWS
+[ Release x86_64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Skip ]

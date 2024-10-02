@@ -361,13 +361,9 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 
     // Animated image case.
     if (bitmapImage->isAnimated()) {
-        if (!(bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled()))
-            return DecodingMode::Synchronous;
-
-        if (bitmapImage->hasEverAnimated())
+        if (bitmapImage->isLargeForDecoding() && settings().animatedImageAsyncDecodingEnabled())
             return DecodingMode::Asynchronous;
-
-        return defaultDecodingMode();
+        return DecodingMode::Synchronous;
     }
 
     // Large image case.

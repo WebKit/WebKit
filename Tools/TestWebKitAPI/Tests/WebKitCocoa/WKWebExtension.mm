@@ -108,6 +108,57 @@ TEST(WKWebExtension, DisplayStringParsing)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 }
 
+TEST(WKWebExtension, DisplayStringParsingWithLocalization)
+{
+    NSMutableDictionary *testManifestDictionary = [@{
+        @"manifest_version": @2,
+        @"default_locale": @"en_US",
+
+        @"name": @"__MSG_default_name__",
+        @"short_name": @"__MSG_regional_name__",
+        @"version": @"1.0",
+        @"description": @"__MSG_default_description__"
+    } mutableCopy];
+
+    auto *defaultMessages = @{
+        @"default_name": @{
+            @"message": @"Default String",
+            @"description": @"The test name."
+        },
+        @"default_description": @{
+            @"message": @"Default Description",
+            @"description": @"The test description."
+        }
+    };
+
+    auto *regionalMessages = @{
+        @"regional_name": @{
+            @"message": @"Regional String",
+            @"description": @"The regional name."
+        }
+    };
+
+    auto *resources = @{
+        @"_locales/en/messages.json": defaultMessages,
+        @"_locales/en_US/messages.json": regionalMessages,
+    };
+
+    auto *extension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    EXPECT_NS_EQUAL(extension.displayName, @"Default String");
+    EXPECT_NS_EQUAL(extension.displayShortName, @"Regional String");
+    EXPECT_NS_EQUAL(extension.displayVersion, @"1.0");
+    EXPECT_NS_EQUAL(extension.version, @"1.0");
+    EXPECT_NS_EQUAL(extension.displayDescription, @"Default Description");
+    EXPECT_NS_EQUAL(extension.errors, @[ ]);
+
+    testManifestDictionary[@"short_name"] = @"__MSG_default_name__";
+    extension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+
+    EXPECT_NS_EQUAL(extension.displayShortName, @"Default String");
+    EXPECT_NS_EQUAL(extension.errors, @[ ]);
+}
+
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 TEST(WKWebExtension, MultipleIconVariants)
 {

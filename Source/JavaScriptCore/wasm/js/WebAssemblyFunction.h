@@ -62,7 +62,7 @@ public:
     CodePtr<WasmEntryPtrTag> jsEntrypoint(ArityCheckMode arity)
     {
         ASSERT_UNUSED(arity, arity == ArityCheckNotRequired || arity == MustCheckArity);
-        return m_jsEntrypoint.entrypoint();
+        return m_jsToWasmCallee->entrypoint();
     }
 
     CodePtr<JSEntryPtrTag> jsCallICEntrypoint()
@@ -70,9 +70,9 @@ public:
 #if ENABLE(JIT)
         // Prep the entrypoint for the slow path.
         executable()->entrypointFor(CodeForCall, MustCheckArity);
-        if (!m_jsToWasmICCode)
-            m_jsToWasmICCode = signature().jsToWasmICEntrypoint();
-        return m_jsToWasmICCode;
+        if (!m_jsToWasmICJITCode)
+            m_jsToWasmICJITCode = signature().jsToWasmICEntrypoint();
+        return m_jsToWasmICJITCode;
 #else
         return nullptr;
 #endif
@@ -89,14 +89,10 @@ private:
 
     // This is the callee needed by LLInt/IPInt
     uintptr_t m_boxedWasmCallee;
-    // It's safe to just hold the raw callee because we have a reference
-    // to our Instance, which points to the Module that exported us, which
-    // ensures that the actual Signature/code doesn't get deallocated.
-    Wasm::JSEntrypointCallee& m_jsEntrypoint;
     // This let's the JS->Wasm interpreter find its metadata
-    RefPtr<Wasm::JITLessJSEntrypointCallee> m_jsToWasmCallee;
+    Ref<Wasm::JSEntrypointCallee> m_jsToWasmCallee;
 #if ENABLE(JIT)
-    CodePtr<JSEntryPtrTag> m_jsToWasmICCode;
+    CodePtr<JSEntryPtrTag> m_jsToWasmICJITCode;
 #endif
 };
 

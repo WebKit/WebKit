@@ -1,4 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
+//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1")
 //@ skip
 // Failure:
 // Exception: TypeError: WebAssembly.compileStreaming is not a function. (In 'WebAssembly.compileStreaming(Promise.resolve(bytes))', 'WebAssembly.compileStreaming' is undefined)

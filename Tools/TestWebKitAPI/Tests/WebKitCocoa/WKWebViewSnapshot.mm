@@ -392,7 +392,7 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
     // FIXME: This test fails when adopting TestWKWebView; it might be interesting to investigate why.
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"large-red-square-image" withExtension:@"html"];
     [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
     [webView _test_waitForDidFinishNavigation];
 

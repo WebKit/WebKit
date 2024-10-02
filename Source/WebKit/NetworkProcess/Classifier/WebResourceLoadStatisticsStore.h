@@ -33,6 +33,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/IsLoggedIn.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -252,7 +253,7 @@ private:
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<SuspendableWorkQueue> m_statisticsQueue;
-    std::unique_ptr<ResourceLoadStatisticsStore> m_statisticsStore;
+    RefPtr<ResourceLoadStatisticsStore> m_statisticsStore;
 
     RunLoop::Timer m_dailyTasksTimer;
 
@@ -261,6 +262,7 @@ private:
 
     HashSet<RegistrableDomain> m_domainsWithUserInteractionQuirk;
     HashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;
+    HashMap<RegistrableDomain, std::pair<IsLoggedIn, std::optional<WebCore::LoginStatus>>> m_loginStatus;
 
     bool m_hasScheduledProcessStats { false };
     bool m_firstNetworkProcessCreated { false };

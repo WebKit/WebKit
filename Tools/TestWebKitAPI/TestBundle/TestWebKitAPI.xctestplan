@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "F4219474-3736-43E3-B55A-C4D29FCD4CAB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:TestWebKitAPI.xcodeproj",
+        "identifier" : "A17C582D2C9B3EAD009DD0B5",
+        "name" : "TestWebKitAPIBundle"
+      }
+    }
+  ],
+  "version" : 1
+}

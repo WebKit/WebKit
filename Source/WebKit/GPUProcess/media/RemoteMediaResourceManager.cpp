@@ -71,16 +71,19 @@ void RemoteMediaResourceManager::stopListeningForIPC()
 void RemoteMediaResourceManager::initializeConnection(IPC::Connection* connection)
 {
     assertIsMainThread();
-    if (m_connection == connection)
+
+    RefPtr protectedConnection = m_connection;
+    if (protectedConnection == connection)
         return;
 
-    if (m_connection)
-        m_connection->removeWorkQueueMessageReceiver(Messages::RemoteMediaResourceManager::messageReceiverName());
+    if (protectedConnection)
+        protectedConnection->removeWorkQueueMessageReceiver(Messages::RemoteMediaResourceManager::messageReceiverName());
 
     m_connection = connection;
+    protectedConnection = m_connection;
 
-    if (m_connection)
-        m_connection->addWorkQueueMessageReceiver(Messages::RemoteMediaResourceManager::messageReceiverName(), RemoteMediaResourceLoader::defaultQueue(), *this);
+    if (protectedConnection)
+        protectedConnection->addWorkQueueMessageReceiver(Messages::RemoteMediaResourceManager::messageReceiverName(), RemoteMediaResourceLoader::defaultQueue(), *this);
 }
 
 void RemoteMediaResourceManager::addMediaResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, RemoteMediaResource& remoteMediaResource)

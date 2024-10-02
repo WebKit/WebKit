@@ -105,7 +105,6 @@ PACKAGES=(
     gyp
     libegl1-mesa-dev
     libexpat1-dev
-    libfdk-aac-dev
     libgirepository1.0-dev
     libgles2-mesa-dev
     liborc-0.4-dev
@@ -119,6 +118,7 @@ PACKAGES=(
     python3-setuptools
     uuid-dev
     yasm
+    $(aptIfExists libfdk-aac-dev)
 
     # These are dependencies necessary for using webkit-patch.
     git-svn

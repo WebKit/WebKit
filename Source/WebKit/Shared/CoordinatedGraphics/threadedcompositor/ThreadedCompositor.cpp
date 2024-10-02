@@ -225,7 +225,7 @@ void ThreadedCompositor::forceRepaint()
 void ThreadedCompositor::renderLayerTree()
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    TraceScope traceScope(FrameCompositionStart, FrameCompositionEnd);
+    TraceScope traceScope(RenderLayerTreeStart, RenderLayerTreeEnd);
 #endif
 
     if (!m_scene || !m_scene->isActive())
@@ -284,9 +284,13 @@ void ThreadedCompositor::renderLayerTree()
         glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
     m_client.clearIfNeeded();
-
+    WTFBeginSignpost(this, ApplyStateChanges);
     m_scene->applyStateChanges(states);
+    WTFEndSignpost(this, ApplyStateChanges);
+
+    WTFBeginSignpost(this, PaintToGLContext);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
+    WTFEndSignpost(this, PaintToGLContext);
 
     WebCore::Damage boundsDamage;
     const auto& frameDamage = ([this, &boundsDamage]() -> const WebCore::Damage& {
@@ -371,6 +375,8 @@ WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() cons
 
 void ThreadedCompositor::frameComplete()
 {
+    WTFEmitSignpost(this, FrameComplete);
+
     ASSERT(m_compositingRunLoop->isCurrent());
 #if !HAVE(DISPLAY_LINK)
     displayUpdateFired();

@@ -78,14 +78,6 @@ DEFAULT_SCCACHE_SCHEDULER='https://sccache.igalia.com'
 # Where the source folder is mounted inside the sandbox.
 SANDBOX_SOURCE_ROOT = "/app/webkit"
 
-# Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
-# in our SDK build definitions please don't forget to update the version here as well.
-SDK_BRANCH = "23.08"
-
-WEBKIT_SDK_FLATPAK_REPO_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
-WEBKIT_SDK_GPG_PUBKEY_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk-pubkey.gpg"
-WEBKIT_SDK_REPO_URL = "https://software.igalia.com/webkit-sdk-repo/"
-
 is_colored_output_supported = False
 try:
     import curses
@@ -263,18 +255,8 @@ class FlatpakObject:
                 return tokens[1].strip()
         return ""
 
-    def flatpak_update(self):
-        remote = "webkit-sdk"
-        try:
-            self.flatpak("remote-ls", remote, gather_output=True)
-        except subprocess.CalledProcessError as error:
-            if error.output.lower().find(b"key expired"):
-                Console.message("WebKit SDK GPG key expired, synchronizing with remote")
-                with tempfile.NamedTemporaryFile() as tmpfile:
-                    fd = urlopen(WEBKIT_SDK_GPG_PUBKEY_URL)
-                    tmpfile.write(fd.read())
-                    tmpfile.flush()
-                    self.flatpak("remote-modify", "--gpg-import=" + tmpfile.name, remote)
+    def flatpak_update(self, sdk):
+        sdk.check_remote()
 
         self.flatpak("repair", comment="Ensuring the local Flatpak repository is not corrupted")
         self.flatpak("update", comment="Updating Flatpak environment")
@@ -444,6 +426,130 @@ class FlatpakPackage(FlatpakObject):
         self.flatpak(*args, comment=comment)
         self.repo.repos.packages.update()
 
+
+class SDKBase:
+    branch = ''
+    name = ''
+    origin = ''
+    flatpak_repo_url = ''
+    repo_url = ''
+    sdk = None
+    runtime = None
+    repos = None
+    packages = []
+
+    def install_all(self, build_type, build_path):
+        Console.message("Installing %s dependencies in %s", build_type, build_path)
+        for package in self.packages:
+            if not package.is_installed(self.branch):
+                package.install()
+
+    def is_installed(self, build_path):
+        return os.path.exists(os.path.join(build_path, "runtime", self.name))
+
+    def build_init(self, build_path):
+        self.sdk_repo.flatpak("build-init", build_path, f"{self.origin}.Webkit",
+                              str(self.sdk), str(self.runtime), self.branch)
+
+    def version(self):
+        return self.sdk_repo.version(self.name)
+
+    def check_remote(self):
+        pass
+
+    def ships(self, program):
+        command = ["flatpak", "run", "--user", "--command=/usr/bin/which", self.sdk.name, program]
+        try:
+            with open(os.devnull, 'w') as stdout:
+                with open(os.devnull, 'w') as stderr:
+                    output = subprocess.check_call(command, stderr=stderr, stdout=stdout)
+        except subprocess.CalledProcessError as error:
+            return False
+        else:
+            return True
+
+
+class WebKitSDK(SDKBase):
+    # Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
+    # in our SDK build definitions please don't forget to update the version here as well.
+    branch = "23.08"
+    name = "org.webkit.Sdk"
+    origin = "org.webkit"
+
+    flatpak_repo_url = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
+    gpg_pubkey_url = "https://software.igalia.com/flatpak-refs/webkit-sdk-pubkey.gpg"
+    repo_url = "https://software.igalia.com/webkit-sdk-repo/"
+
+    def __init__(self, user_repo=None):
+        url = self.repo_url
+        repo_file = self.flatpak_repo_url
+        if user_repo:
+            url = "file://%s" % user_repo
+            repo_file = None
+
+        self.sdk_repo = FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file)
+        self.flathub_repo = FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
+                                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
+        arch = platform.machine()
+        self.runtime = FlatpakPackage("org.webkit.Platform", self.branch, self.sdk_repo, arch)
+        self.sdk = FlatpakPackage("org.webkit.Sdk", self.branch, self.sdk_repo, arch)
+        self.repos = FlatpakRepos([self.sdk_repo, self.flathub_repo])
+        self.packages = [self.runtime, self.sdk]
+        self.packages.append(FlatpakPackage('org.webkit.Sdk.Debug', self.branch,
+                                            self.sdk_repo, arch))
+        self.packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm18", self.branch,
+                                            self.flathub_repo, arch))
+        self.packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.rust-stable", self.branch,
+                                            self.flathub_repo, arch))
+        self.packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", f"{self.branch}-extra",
+                                            self.flathub_repo, arch))
+        self.packages.append(FlatpakPackage("org.freedesktop.Platform.GL.Debug.default", f"{self.branch}-extra",
+                                            self.flathub_repo, arch))
+
+    def check_remote(self):
+        remote = "webkit-sdk"
+        wrapper = FlatpakObject(True)
+        try:
+            wrapper.flatpak("remote-ls", remote, gather_output=True)
+        except subprocess.CalledProcessError as error:
+            if error.output.lower().find(b"key expired"):
+                Console.message("WebKit SDK GPG key expired, synchronizing with remote")
+                with tempfile.NamedTemporaryFile() as tmpfile:
+                    fd = urlopen(self.gpg_pubkey_url)
+                    tmpfile.write(fd.read())
+                    tmpfile.flush()
+                    wrapper.flatpak("remote-modify", "--gpg-import=" + tmpfile.name, remote)
+
+
+class GnomeSDK(SDKBase):
+    branch = "master"
+    name = "org.gnome.Sdk"
+    origin = "org.gnome"
+    flatpak_repo_url = "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
+    repo_url = "https://nightly.gnome.org/repo/"
+
+    fdo_branch = "24.08"
+
+    def __init__(self, user_repo=None):
+        url = self.repo_url
+        repo_file = self.flatpak_repo_url
+        if user_repo:
+            url = "file://%s" % user_repo
+            repo_file = None
+
+        self.sdk_repo = FlatpakRepo("gnome-sdk", url=url, repo_file=repo_file)
+        self.flathub_repo = FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
+                                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
+        arch = platform.machine()
+        self.runtime = FlatpakPackage("org.gnome.Platform", self.branch, self.sdk_repo, arch)
+        self.sdk = FlatpakPackage("org.gnome.Sdk", self.branch, self.sdk_repo, arch)
+        self.repos = FlatpakRepos([self.sdk_repo, self.flathub_repo])
+        self.packages = [self.runtime, self.sdk]
+        self.packages.append(FlatpakPackage('org.gnome.Sdk.Debug', self.branch, self.sdk_repo, arch))
+
+
+SUPPORTED_SDKS = {'webkit': WebKitSDK, 'gnome': GnomeSDK}
+
 @contextmanager
 def disable_signals(signals=[signal.SIGINT, signal.SIGTERM, signal.SIGHUP]):
     old_signal_handlers = []
@@ -524,6 +630,9 @@ class WebkitFlatpak:
         parsing_namespace, self.args = parser.parse_known_args(args=args, namespace=self)
         self.extra_command_args = extract_extra_command_args(parsing_namespace.args)
 
+        self.origin = os.environ.get('WEBKIT_SDK_ORIGIN', 'webkit')
+        Console.message(f"SDK origin: {self.origin}")
+
         if not self.build_type:
             self.build_type = "Release"
 
@@ -544,8 +653,6 @@ class WebkitFlatpak:
         return self
 
     def __init__(self):
-        self.sdk_repo = None
-        self.runtime = None
         self.sdk = None
         self.user_repo = None
 
@@ -649,16 +756,10 @@ class WebkitFlatpak:
         return True
 
     def _reset_repository(self):
-        url = WEBKIT_SDK_REPO_URL
-        repo_file = WEBKIT_SDK_FLATPAK_REPO_URL
-        if self.user_repo:
-            url = "file://%s" % self.user_repo
-            repo_file = None
-
-        self.sdk_repo = FlatpakRepo("webkit-sdk", url=url, repo_file=repo_file)
-        self.flathub_repo = FlatpakRepo("flathub", url="https://dl.flathub.org/repo/",
-                                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo")
-        self.repos = FlatpakRepos([self.sdk_repo, self. flathub_repo])
+        try:
+            self.sdk = SUPPORTED_SDKS[self.origin](user_repo=self.user_repo)
+        except KeyError:
+            _log.error("Unknown SDK origin: %s", self.origin)
 
     def setup_builddir(self):
         if os.path.exists(os.path.join(self.flatpak_build_path, "metadata")):
@@ -667,13 +768,7 @@ class WebkitFlatpak:
         if not self.check_installed_packages():
             return False
 
-        self.sdk_repo.flatpak("build-init",
-                              self.flatpak_build_path,
-                              "org.webkit.Webkit",
-                              str(self.sdk),
-                              str(self.runtime),
-                              self.sdk.branch)
-
+        self.sdk.build_init(self.flatpak_build_path)
         return True
 
     def setup_local_deps(self, building):
@@ -1023,7 +1118,7 @@ class WebkitFlatpak:
             # Enable module in `flatpak run`.
             flatpak_env["LD_PRELOAD"] = module_path
 
-        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
+        flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], self.sdk.name] + args[1:]
 
         flatpak_env.update({
             "FLATPAK_BWRAP": os.path.join(SCRIPT_DIR, "webkit-bwrap"),
@@ -1056,20 +1151,20 @@ class WebkitFlatpak:
             return 1
 
         if self.show_version:
-            print(self.sdk_repo.version("org.webkit.Sdk"))
+            print(self.sdk.version())
             return 0
 
         if self.update:
             flatpak_wrapper = FlatpakObject(True)
-            version_before_update = flatpak_wrapper.version("org.webkit.Sdk")
-            flatpak_wrapper.flatpak_update()
-            regenerate_toolchains = (flatpak_wrapper.version("org.webkit.Sdk") != version_before_update) or not self.check_toolchains_generated()
+            version_before_update = flatpak_wrapper.version(self.sdk.name)
+            flatpak_wrapper.flatpak_update(self.sdk)
+            regenerate_toolchains = (flatpak_wrapper.version(self.sdk.name) != version_before_update) or not self.check_toolchains_generated()
 
             # If we have an out-of-date package, simply remove the entire flatpak directory and start over.
-            for package in self._get_dependency_packages():
-                if package.name.startswith("org.webkit") \
-                   and self.repos.is_package_installed(package.name) \
-                   and not self.repos.is_package_installed(package.name, branch=SDK_BRANCH):
+            for package in self.sdk.packages:
+                if package.name.startswith(self.sdk.origin) \
+                   and self.sdk.repos.is_package_installed(package.name) \
+                   and not self.sdk.repos.is_package_installed(package.name, branch=self.sdk.branch):
 
                     # Cache sccache auth token before removing UserFlatpak.
                     self.acquire_sccache_auth_token_from_config_file()
@@ -1097,42 +1192,44 @@ class WebkitFlatpak:
                     self._reset_repository()
                     break
 
-            for package in self._get_dependency_packages():
-                if not self.repos.is_package_installed(package.name):
+            for package in self.sdk.packages:
+                if not self.sdk.repos.is_package_installed(package.name):
                     package.install()
                     regenerate_toolchains = True
 
-            print("SDK version: {}".format(self.sdk_repo.version("org.webkit.Sdk")))
+            print("SDK version: {}".format(self.sdk.version()))
 
         else:
             regenerate_toolchains = self.regenerate_toolchains
 
         result = self.setup_dev_env()
         if regenerate_toolchains:
+            if self.sdk.ships('icecc') or self.sdk.ships('sccache'):
+                # Toolchains used to be stored in WebKitBuild/Toolchains. Remove this path if found, to save
+                # up disk space.
+                old_toolchains_path = os.path.join(DEFAULT_BUILD_ROOT, "Toolchains")
+                if os.path.isdir(old_toolchains_path):
+                    Console.message("Purging obsolete toolchains")
+                    shutil.rmtree(old_toolchains_path)
 
-            # Toolchains used to be stored in WebKitBuild/Toolchains. Remove this path if found, to save
-            # up disk space.
-            old_toolchains_path = os.path.join(DEFAULT_BUILD_ROOT, "Toolchains")
-            if os.path.isdir(old_toolchains_path):
-                Console.message("Purging obsolete toolchains")
-                shutil.rmtree(old_toolchains_path)
+                if not os.path.isdir(self.toolchains_directory):
+                    os.makedirs(self.toolchains_directory)
 
-            if not os.path.isdir(self.toolchains_directory):
-                os.makedirs(self.toolchains_directory)
-
-            Console.message("Updating icecc/sccache standalone toolchain archives")
-            self.icc_version = {}
-            gcc_archive, toolchains = self.pack_toolchain(("gcc", "g++"), {"/usr/bin/c++": "g++",
-                                                                           "/usr/bin/cc": "gcc"})
-            clang_archive, clang_toolchains = self.pack_toolchain(("clang", "clang++"), {"/usr/bin/clang++": "clang++",
-                                                                                          "/usr/bin/clang": "clang"})
-            toolchains.extend(clang_toolchains)
-            if len(toolchains) > 1:
-                self.save_config(toolchains)
-                self.purge_unused_toolchains((gcc_archive, clang_archive))
+                Console.message("Updating icecc/sccache standalone toolchain archives")
+                self.icc_version = {}
+                gcc_archive, toolchains = self.pack_toolchain(("gcc", "g++"), {"/usr/bin/c++": "g++",
+                                                                               "/usr/bin/cc": "gcc"})
+                clang_archive, clang_toolchains = self.pack_toolchain(("clang", "clang++"), {"/usr/bin/clang++": "clang++",
+                                                                                             "/usr/bin/clang": "clang"})
+                toolchains.extend(clang_toolchains)
+                if len(toolchains) > 1:
+                    self.save_config(toolchains)
+                    if gcc_archive and clang_archive:
+                        self.purge_unused_toolchains((gcc_archive, clang_archive))
+                else:
+                    Console.error_message("Error generating icecc/sccache standalone toolchain archives")
             else:
-                Console.error_message("Error generating icecc/sccache standalone toolchain archives")
-
+                Console.message(f"Neither icecc nor sccache are provided by {self.sdk.name}")
         return result
 
     def run(self):
@@ -1195,35 +1292,38 @@ class WebkitFlatpak:
         for compiler in compilers:
             compiler_mapping[compiler] = self.run_in_sandbox("/usr/bin/which", compiler, gather_output=True)
 
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            command = ['icecc', '--build-native']
-            command.extend(compiler_mapping.values())
-            retcode = self.run_in_sandbox(*command, stdout=tmpfile, cwd=WEBKIT_SOURCE_DIR, skip_icc=True)
-            if retcode != 0:
-                Console.error_message('Flatpak command "%s" failed with return code %s', " ".join(command), retcode)
-                return []
-            tmpfile.flush()
-            tmpfile.seek(0)
-            icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
-            relative_filename = "webkit-sdk-{name}-{filename}".format(name=compilers[0], filename=icc_version_filename.decode())
-            archive_filename = os.path.join(self.toolchains_directory, relative_filename)
-            os.rename(icc_version_filename, archive_filename)
-            archive_sandbox_path = convert_webkit_source_path_to_sandbox_path(archive_filename)
-            self.icc_version[compilers[0]] = archive_sandbox_path
-            Console.message("Created %s self-contained toolchain archive", archive_filename)
+        relative_filename = None
+        if self.sdk.ships('icecc'):
+            with tempfile.NamedTemporaryFile() as tmpfile:
+                command = ['icecc', '--build-native']
+                command.extend(compiler_mapping.values())
+                retcode = self.run_in_sandbox(*command, stdout=tmpfile, cwd=WEBKIT_SOURCE_DIR, skip_icc=True)
+                if retcode != 0:
+                    Console.error_message('Flatpak command "%s" failed with return code %s', " ".join(command), retcode)
+                    return []
+                tmpfile.flush()
+                tmpfile.seek(0)
+                icc_version_filename, = re.findall(br'.*creating (.*)', tmpfile.read())
+                relative_filename = "webkit-sdk-{name}-{filename}".format(name=compilers[0], filename=icc_version_filename.decode())
+                archive_filename = os.path.join(self.toolchains_directory, relative_filename)
+                os.rename(icc_version_filename, archive_filename)
+                archive_sandbox_path = convert_webkit_source_path_to_sandbox_path(archive_filename)
+                self.icc_version[compilers[0]] = archive_sandbox_path
+                Console.message("Created %s self-contained toolchain archive", archive_filename)
 
-            sccache_toolchains = []
+        sccache_toolchains = []
+        if self.sdk.ships('sccache'):
             for (compiler_executable, archive_compiler_executable) in path_mapping.items():
                 item = {'type': 'path_override',
                         'compiler_executable': compiler_executable,
                         'archive': archive_sandbox_path,
                         'archive_compiler_executable': compiler_mapping[archive_compiler_executable]}
                 sccache_toolchains.append(item)
-            return (relative_filename, sccache_toolchains)
+        return (relative_filename, sccache_toolchains)
 
     def check_installed_packages(self):
-        for package in self._get_dependency_packages():
-            if package.name.startswith("org.webkit") and not package.is_installed(SDK_BRANCH):
+        for package in self.sdk.packages:
+            if package.name.startswith(self.sdk.origin) and not package.is_installed(self.sdk.branch):
                 Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
                 return False
         else:
@@ -1231,8 +1331,8 @@ class WebkitFlatpak:
 
 
     def setup_dev_env(self):
-        if not os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")) or self.update:
-            self.install_all()
+        if not self.sdk.is_installed(self.flatpak_build_path) or self.update:
+            self.sdk.install_all(self.build_type, self.flatpak_build_path)
 
         if not self.update and not self.check_installed_packages():
             return 1
@@ -1249,33 +1349,6 @@ class WebkitFlatpak:
             return self.run_in_sandbox()
 
         return 0
-
-    def _get_dependency_packages(self):
-        arch = platform.machine()
-        self.runtime = FlatpakPackage("org.webkit.Platform", SDK_BRANCH,
-                                      self.sdk_repo, arch)
-        self.sdk = FlatpakPackage("org.webkit.Sdk", SDK_BRANCH,
-                                  self.sdk_repo, arch)
-        packages = [self.runtime, self.sdk]
-        packages.append(FlatpakPackage('org.webkit.Sdk.Debug', SDK_BRANCH,
-                                       self.sdk_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm18", SDK_BRANCH,
-                                       self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.rust-stable", SDK_BRANCH,
-                                       self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", f"{SDK_BRANCH}-extra",
-                                       self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.Debug.default", f"{SDK_BRANCH}-extra",
-                                       self.flathub_repo, arch))
-        return packages
-
-    def install_all(self):
-        if os.path.exists(os.path.join(self.flatpak_build_path, "runtime", "org.webkit.Sdk")):
-            return
-        Console.message("Installing %s dependencies in %s", self.build_type, self.flatpak_build_path)
-        for package in self._get_dependency_packages():
-            if not package.is_installed(SDK_BRANCH):
-                package.install()
 
     def run_gdb(self):
         with disable_signals():

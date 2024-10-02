@@ -1,11 +1,9 @@
-# mypy: allow-untyped-defs
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
-from _pytest.monkeypatch import MonkeyPatch
 import pytest
-
+from _pytest.monkeypatch import MonkeyPatch
 
 # Test for _argcomplete but not specific for any application.
 

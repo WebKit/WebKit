@@ -27,6 +27,7 @@
 #include "LayoutIntegrationUtils.h"
 
 #include "LayoutBox.h"
+#include "LayoutIntegrationFormattingContextLayout.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
 
@@ -43,9 +44,14 @@ void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, 
     m_globalLayoutState.layoutWithFormattingContextForBox(box, widthConstraint);
 }
 
-std::pair<LayoutUnit, LayoutUnit> IntegrationUtils::preferredWidthWithFormattingContextForBox(const ElementBox& box) const
+LayoutUnit IntegrationUtils::maxContentLogicalWidth(const ElementBox& box) const
 {
-    return m_globalLayoutState.preferredWidthWithFormattingContextForBox(box);
+    return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
+}
+
+LayoutUnit IntegrationUtils::minContentLogicalWidth(const ElementBox& box) const
+{
+    return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
 }
 
 }

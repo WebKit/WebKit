@@ -47,7 +47,7 @@
 #include "GLFence.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 #include <skia/gpu/GrBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
@@ -88,18 +88,13 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
 #if USE(COORDINATED_GRAPHICS)
     // Use a content layer for canvas.
     if (parameters.purpose == RenderingPurpose::Canvas) {
-        auto proxy = TextureMapperPlatformLayerProxyGL::create(TextureMapperPlatformLayerProxy::ContentType::Canvas);
+        auto proxy = TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::Canvas);
         proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) {
             auto image = createNativeImageReference();
             if (!image)
                 return;
 
-            Locker locker { proxy.lock() };
-            OptionSet<TextureMapperFlags> flags;
-            if (image->hasAlpha())
-                flags.add(TextureMapperFlags::ShouldBlend);
-            auto layerBuffer = CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), flags, GLFence::create());
-            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), GLFence::create()));
         });
         m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
     }

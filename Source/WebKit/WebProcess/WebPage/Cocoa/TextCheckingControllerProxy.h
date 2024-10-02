@@ -33,6 +33,7 @@
 #include <WebCore/SimpleRange.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace IPC {
 class Decoder;
@@ -70,7 +71,7 @@ private:
     void replaceRelativeToSelection(const WebCore::AttributedString&, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength);
     void removeAnnotationRelativeToSelection(const String& annotationName, int64_t selectionOffset, uint64_t length);
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

@@ -304,6 +304,7 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::Arrayref:
     case TypeKind::Structref:
     case TypeKind::Funcref:
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Ref:
     case TypeKind::RefNull: {
@@ -405,7 +406,6 @@ private:
     FunctionArgCount m_argCount;
     FunctionArgCount m_retCount;
 #if ENABLE(JIT)
-    // FIXME: We shouldn't need this instead WebAssemblyFunction should know, which registers it saved from the PC.
     mutable RefPtr<JSToWasmICCallee> m_jsToWasmICCallee;
     // FIXME: We should have a WTF::Once that uses ParkingLot and the low bits of a pointer as a lock and use that here.
     mutable Lock m_jitCodeLock;

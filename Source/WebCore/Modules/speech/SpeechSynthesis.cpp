@@ -35,6 +35,7 @@
 #include "Page.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesizer.h"
+#include "ScriptTelemetryCategory.h"
 #include "SpeechSynthesisErrorEvent.h"
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
@@ -46,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SpeechSynthesis);
 
-Ref<SpeechSynthesis>SpeechSynthesis::create(ScriptExecutionContext& context)
+Ref<SpeechSynthesis> SpeechSynthesis::create(ScriptExecutionContext& context)
 {
     auto synthesis = adoptRef(*new SpeechSynthesis(context));
     synthesis->suspendIfNeeded();
@@ -68,9 +69,9 @@ SpeechSynthesis::SpeechSynthesis(ScriptExecutionContext& context)
         m_speechSynthesisClient = document->frame()->page()->speechSynthesisClient();
     }
 
-    if (m_speechSynthesisClient) {
-        m_speechSynthesisClient->setObserver(*this);
-        m_speechSynthesisClient->resetState();
+    if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get()) {
+        speechSynthesisClient->setObserver(*this);
+        speechSynthesisClient->resetState();
     }
 }
 
@@ -105,11 +106,19 @@ PlatformSpeechSynthesizer& SpeechSynthesis::ensurePlatformSpeechSynthesizer()
 
 const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
 {
+    if (RefPtr context = scriptExecutionContext()) {
+        if (context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Speech)) {
+            static NeverDestroyed<Vector<Ref<SpeechSynthesisVoice>>> emptyVoicesList;
+            return emptyVoicesList.get();
+        }
+    }
+
     if (m_voiceList)
         return *m_voiceList;
 
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
-    auto& voiceList = m_speechSynthesisClient ? m_speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList();
+    RefPtr speechSynthesisClient = m_speechSynthesisClient.get();
+    auto& voiceList = speechSynthesisClient ? speechSynthesisClient->voiceList() : ensurePlatformSpeechSynthesizer().voiceList();
     m_voiceList = voiceList.map([](auto& voice) {
         return SpeechSynthesisVoice::create(*voice);
     });
@@ -142,8 +151,8 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utteran
     m_currentSpeechUtterance = makeUnique<SpeechSynthesisUtteranceActivity>(Ref { utterance });
     m_isPaused = false;
 
-    if (m_speechSynthesisClient)
-        m_speechSynthesisClient->speak(utterance.platformUtterance());
+    if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())
+        speechSynthesisClient->speak(utterance.platformUtterance());
     else
         ensurePlatformSpeechSynthesizer().speak(utterance.platformUtterance());
 }
@@ -170,8 +179,8 @@ void SpeechSynthesis::cancel()
     // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
     RefPtr current = protectedCurrentSpeechUtterance();
     m_utteranceQueue.clear();
-    if (m_speechSynthesisClient) {
-        m_speechSynthesisClient->cancel();
+    if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get()) {
+        speechSynthesisClient->cancel();
         // If we wait for cancel to callback speakingErrorOccurred, then m_currentSpeechUtterance will be null
         // and the event won't be processed. Instead we process the error immediately.
         speakingErrorOccurred();
@@ -185,8 +194,8 @@ void SpeechSynthesis::cancel()
 void SpeechSynthesis::pause()
 {
     if (!m_isPaused) {
-        if (m_speechSynthesisClient)
-            m_speechSynthesisClient->pause();
+        if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())
+            speechSynthesisClient->pause();
         else if (m_platformSpeechSynthesizer)
             m_platformSpeechSynthesizer->pause();
     }
@@ -195,8 +204,8 @@ void SpeechSynthesis::pause()
 void SpeechSynthesis::resumeSynthesis()
 {
     if (m_currentSpeechUtterance) {
-        if (m_speechSynthesisClient)
-            m_speechSynthesisClient->resume();
+        if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())
+            speechSynthesisClient->resume();
         else if (m_platformSpeechSynthesizer)
             m_platformSpeechSynthesizer->resume();
     }

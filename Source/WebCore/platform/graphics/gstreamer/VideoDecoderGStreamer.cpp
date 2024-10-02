@@ -43,8 +43,7 @@ static WorkQueue& gstDecoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalVideoDecoder : public ThreadSafeRefCounted<GStreamerInternalVideoDecoder>
-    , public CanMakeWeakPtr<GStreamerInternalVideoDecoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalVideoDecoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalVideoDecoder> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GStreamerInternalVideoDecoder);
 
 public:
@@ -208,10 +207,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     } else
         harnessedElement = WTFMove(element);
 
-    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = WeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(harnessedElement), [weakThis = ThreadSafeWeakPtr { *this }, this](auto& stream, GRefPtr<GstSample>&& outputSample) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-
         if (m_isClosed)
             return;
 

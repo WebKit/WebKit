@@ -143,9 +143,9 @@
     _impl->createFlagsChangedEventMonitor();
 }
 
-- (void)_removeFlagsChangedEventMonitorForTesting
+- (BOOL)_hasFlagsChangedEventMonitorForTesting
 {
-    _impl->removeFlagsChangedEventMonitor();
+    return _impl->hasFlagsChangedEventMonitor();
 }
 
 @end

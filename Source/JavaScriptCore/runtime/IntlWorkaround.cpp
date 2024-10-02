@@ -26,25 +26,17 @@
 #include "config.h"
 #include "IntlWorkaround.h"
 
-// ICU 69 introduces draft API ubrk_clone and deprecates ubrk_safeClone.
-#if defined(U_HIDE_DRAFT_API)
+#ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
 #endif
 #include <unicode/ubrk.h>
-
-#if U_ICU_VERSION_MAJOR_NUM >= 69
-#define HAVE_ICU_UBRK_CLONE 1
-#endif
+#define U_HIDE_DRAFT_API 1
 
 namespace JSC {
 
 UBreakIterator* cloneUBreakIterator(const UBreakIterator* iterator, UErrorCode* status)
 {
-#if HAVE(ICU_UBRK_CLONE)
     return ubrk_clone(iterator, status);
-#else
-    return ubrk_safeClone(iterator, nullptr, nullptr, status);
-#endif
 }
 
 } // namespace JSC

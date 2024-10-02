@@ -254,11 +254,11 @@ private:
     class StackMembershipMutationScope {
         WTF_MAKE_NONCOPYABLE(StackMembershipMutationScope);
     public:
-        StackMembershipMutationScope(KeyframeEffect*);
+        StackMembershipMutationScope(KeyframeEffect&);
         ~StackMembershipMutationScope();
 
     private:
-        KeyframeEffect* m_effect;
+        RefPtr<KeyframeEffect> m_effect;
         RefPtr<Element> m_originalTarget;
         std::optional<Style::PseudoElementIdentifier> m_originalPseudoElementIdentifier;
     };

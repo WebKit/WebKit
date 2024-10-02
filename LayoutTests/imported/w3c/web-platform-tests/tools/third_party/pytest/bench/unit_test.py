@@ -1,6 +1,5 @@
 from unittest import TestCase  # noqa: F401
 
-
 for i in range(15000):
     exec(
         f"""

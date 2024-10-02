@@ -50,7 +50,7 @@ public:
     static PortSet get(WebExtensionPortChannelIdentifier);
 
     WebExtensionContentWorldType targetContentWorldType() const { return m_targetContentWorldType; }
-    WebExtensionPortChannelIdentifier channelIdentifier() const { return m_channelIdentifier; }
+    WebExtensionPortChannelIdentifier channelIdentifier() const { return *m_channelIdentifier; }
     WebPageProxyIdentifier owningPageProxyIdentifier() const { return m_owningPageProxyIdentifier; }
     const std::optional<WebExtensionMessageSenderParameters>& senderParameters() const { return m_senderParameters; }
 
@@ -139,7 +139,7 @@ private:
 
     WebExtensionContentWorldType m_targetContentWorldType;
     WebPageProxyIdentifier m_owningPageProxyIdentifier;
-    WebExtensionPortChannelIdentifier m_channelIdentifier;
+    Markable<WebExtensionPortChannelIdentifier> m_channelIdentifier;
     bool m_disconnected { false };
 
     String m_name;

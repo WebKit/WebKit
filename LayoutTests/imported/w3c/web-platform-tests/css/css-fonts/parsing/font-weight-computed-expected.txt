@@ -1,6 +1,7 @@
 
 PASS Property font-weight value 'normal'
 PASS Property font-weight value 'bold'
+PASS Property font-weight value '1'
 PASS Property font-weight value '100'
 PASS Property font-weight value '200'
 PASS Property font-weight value '300'
@@ -10,22 +11,50 @@ PASS Property font-weight value '600'
 PASS Property font-weight value '700'
 PASS Property font-weight value '800'
 PASS Property font-weight value '900'
+PASS Property font-weight value '1000'
+PASS Property font-weight value '101'
+PASS Property font-weight value '150.25'
+PASS Property font-weight value 'calc(100)'
+PASS Property font-weight value 'calc(0)'
+PASS Property font-weight value 'calc(-100)'
+PASS Property font-weight value 'calc(100 + 100)'
+PASS Property font-weight value 'calc(100 + (sign(20cqw - 10px) * 5))'
+PASS 1 made bolder computes to 400
+PASS 50 made bolder computes to 400
 PASS 100 made bolder computes to 400
 PASS 200 made bolder computes to 400
 PASS 300 made bolder computes to 400
+PASS 349 made bolder computes to 400
+PASS 350 made bolder computes to 700
 PASS 400 made bolder computes to 700
 PASS 500 made bolder computes to 700
+PASS 549 made bolder computes to 700
+PASS 550 made bolder computes to 900
 PASS 600 made bolder computes to 900
 PASS 700 made bolder computes to 900
+PASS 749 made bolder computes to 900
+PASS 750 made bolder computes to 900
 PASS 800 made bolder computes to 900
 PASS 900 made bolder computes to 900
+PASS 950 made bolder computes to 950
+PASS 1000 made bolder computes to 1000
+PASS 1 made lighter computes to 1
+PASS 50 made lighter computes to 50
 PASS 100 made lighter computes to 100
 PASS 200 made lighter computes to 100
 PASS 300 made lighter computes to 100
+PASS 349 made lighter computes to 100
+PASS 350 made lighter computes to 100
 PASS 400 made lighter computes to 100
 PASS 500 made lighter computes to 100
+PASS 549 made lighter computes to 100
+PASS 550 made lighter computes to 400
 PASS 600 made lighter computes to 400
 PASS 700 made lighter computes to 400
+PASS 749 made lighter computes to 400
+PASS 750 made lighter computes to 700
 PASS 800 made lighter computes to 700
 PASS 900 made lighter computes to 700
+PASS 950 made lighter computes to 700
+PASS 1000 made lighter computes to 700
 

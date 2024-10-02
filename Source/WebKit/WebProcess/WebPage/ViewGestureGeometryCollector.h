@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class FloatPoint;
@@ -71,7 +72,9 @@ private:
     std::optional<std::pair<double, double>> computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale);
 #endif
 
-    WebPage& m_webPage;
+    Ref<WebPage> protectedWebPage() const;
+
+    WeakRef<WebPage> m_webPage;
 
 #if !PLATFORM(IOS_FAMILY)
     uint64_t m_renderTreeSizeNotificationThreshold;

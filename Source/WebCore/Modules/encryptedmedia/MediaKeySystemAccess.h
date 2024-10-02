@@ -45,12 +45,10 @@ class MediaKeys;
 
 class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess>, public CanMakeWeakPtr<MediaKeySystemAccess>, public ActiveDOMObject {
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<MediaKeySystemAccess> create(Document&, const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
     ~MediaKeySystemAccess();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     const String& keySystem() const { return m_keySystem; }
     const MediaKeySystemConfiguration& getConfiguration() const { return *m_configuration; }

@@ -89,6 +89,8 @@ public:
 
     static AtomString ellipsisTextInInlineDirection(bool isHorizontal = true);
 
+    static InlineLayoutUnit hyphenWidth(const RenderStyle&);
+
     static size_t firstUserPerceivedCharacterLength(const InlineTextItem&);
     static size_t firstUserPerceivedCharacterLength(const InlineTextBox&, size_t startPosition, size_t length);
     static TextDirection directionForTextContent(StringView);

@@ -30,6 +30,7 @@
 #import "DynamicContentScalingImageBufferBackend.h"
 #import "GPUProcess.h"
 #import "ImageBufferBackendHandleSharing.h"
+#import "ImageBufferSet.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteImageBufferSetProxy.h"
@@ -389,25 +390,7 @@ void RemoteLayerBackingStore::paintContents()
     }
 
     m_lastDisplayTime = MonotonicTime::now();
-
-    // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
-    // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
-    // Otherwise, repaint the entire bounding box of the dirty region.
-    IntRect dirtyBounds = m_dirtyRegion.bounds();
-    auto dirtyRects = m_dirtyRegion.rects();
-    if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || m_dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
-        dirtyRects.clear();
-        dirtyRects.append(dirtyBounds);
-    }
-
-    // FIXME: find a consistent way to scale and snap dirty and CG clip rects.
-    for (const auto& rect : dirtyRects) {
-        FloatRect scaledRect(rect);
-        scaledRect.scale(m_parameters.scale);
-        scaledRect = enclosingIntRect(scaledRect);
-        scaledRect.scale(1 / m_parameters.scale);
-        m_paintingRects.append(scaledRect);
-    }
+    m_paintingRects = ImageBufferSet::computePaintingRects(m_dirtyRegion, m_parameters.scale);
 
     createContextAndPaintContents();
 }

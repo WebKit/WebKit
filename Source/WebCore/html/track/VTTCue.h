@@ -261,7 +261,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger; }
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
     WTFLogChannel& logChannel() const final;
     ASCIILiteral logClassName() const final { return "VTTCue"_s; }
 #endif
@@ -311,7 +311,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     mutable RefPtr<Logger> m_logger;
-    mutable const void* m_logIdentifier { nullptr };
+    mutable uint64_t m_logIdentifier { 0 };
 #endif
 };
 

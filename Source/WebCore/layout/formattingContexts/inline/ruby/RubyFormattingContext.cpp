@@ -54,7 +54,7 @@ static RubyPosition rubyPosition(const Box& rubyBaseLayoutBox)
     if (rubyBaseLayoutBox.style().isHorizontalWritingMode())
         return computedRubyPosition;
     // inter-character: If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
-    return computedRubyPosition == RubyPosition::InterCharacter ? RubyPosition::Over : computedRubyPosition;
+    return rubyBaseLayoutBox.style().isInterCharacterRubyPosition() ? RubyPosition::Over : computedRubyPosition;
 }
 
 static inline InlineRect annotationMarginBoxVisualRect(const Box& annotationBox, InlineLayoutUnit lineHeight, InlineFormattingContext& inlineFormattingContext)
@@ -599,7 +599,7 @@ bool RubyFormattingContext::hasInterCharacterAnnotation(const Box& rubyBaseLayou
     }
 
     if (auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox())
-        return annotationBox->style().rubyPosition() == RubyPosition::InterCharacter;
+        return annotationBox->style().isInterCharacterRubyPosition();
     return false;
 }
 

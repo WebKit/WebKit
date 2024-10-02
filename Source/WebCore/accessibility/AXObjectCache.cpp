@@ -334,11 +334,11 @@ void AXObjectCache::findModalNodes()
 bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
 {
     // Unless you're trying to compute the new modal node, determining whether an element
-    // has accessible content is as easy as !getOrCreate(element)->children().isEmpty().
+    // has accessible content is as easy as !getOrCreate(element)->unignoredChildren().isEmpty().
     // So don't call this method on anything besides modal elements.
     ASSERT(isModalElement(element));
 
-    // Because computing any object's children() is dependent on whether a modal is on the page,
+    // Because computing any object's unignored children is dependent on whether a modal is on the page,
     // we'll need to walk the DOM and find non-ignored AX objects manually.
     Vector<Node*> nodeStack = { element.firstChild() };
     while (!nodeStack.isEmpty()) {
@@ -483,7 +483,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement& ar
     if (!axRenderImage)
         return nullptr;
     
-    for (const auto& child : axRenderImage->children()) {
+    for (const auto& child : axRenderImage->unignoredChildren()) {
         auto* imageMapLink = dynamicDowncast<AccessibilityImageMapLink>(*child);
         if (imageMapLink && imageMapLink->areaElement() == &areaElement)
             return imageMapLink;
@@ -1290,7 +1290,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
     // Handle MenuLists and MenuListPopups as special cases.
     if (is<AccessibilityMenuList>(object)) {
-        auto& children = object.children(false);
+        const auto& children = object.unignoredChildren(/* updateChildrenIfNeeded */ false);
         if (children.isEmpty())
             return;
 

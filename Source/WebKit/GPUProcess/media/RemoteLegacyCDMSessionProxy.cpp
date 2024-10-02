@@ -51,7 +51,7 @@ RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryP
     : m_factory(factory)
 #if !RELEASE_LOG_DISABLED
     , m_logger(factory.logger())
-    , m_logIdentifier(reinterpret_cast<const void*>(parentLogIdentifier))
+    , m_logIdentifier(parentLogIdentifier)
 #endif
     , m_identifier(sessionIdentifier)
     , m_session(cdm.createSession(*this))
@@ -153,34 +153,37 @@ void RemoteLegacyCDMSessionProxy::cachedKeyForKeyID(String keyId, CachedKeyForKe
 
 void RemoteLegacyCDMSessionProxy::sendMessage(Uint8Array* message, String destinationURL)
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return;
 
-    RefPtr gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalSharedBuffer(message), destinationURL), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteLegacyCDMSession::SendMessage(convertToOptionalSharedBuffer(message), destinationURL), m_identifier);
 }
 
 void RemoteLegacyCDMSessionProxy::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return;
 
-    RefPtr gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return;
 
-    gpuConnectionToWebProcess->connection().send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
+    gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteLegacyCDMSession::SendError(errorCode, systemCode), m_identifier);
 }
 
 String RemoteLegacyCDMSessionProxy::mediaKeysStorageDirectory() const
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return emptyString();
 
-    RefPtr gpuConnectionToWebProcess = m_factory->gpuConnectionToWebProcess();
+    RefPtr gpuConnectionToWebProcess = factory->gpuConnectionToWebProcess();
     if (!gpuConnectionToWebProcess)
         return emptyString();
 
@@ -193,6 +196,11 @@ WTFLogChannel& RemoteLegacyCDMSessionProxy::logChannel() const
     return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, EME);
 }
 #endif
+
+const SharedPreferencesForWebProcess& RemoteLegacyCDMSessionProxy::sharedPreferencesForWebProcess() const
+{
+    return protectedFactory()->sharedPreferencesForWebProcess();
+}
 
 } // namespace WebKit
 

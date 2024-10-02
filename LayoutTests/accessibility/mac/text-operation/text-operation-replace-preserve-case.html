@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test-content">
+    <p contenteditable="true" id="text">The quick brown <span id="target1">fox</span> jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text2">TEXT2: <span id="target2">The</span> quick brown fox jumps over the lazy dog.</p>
+    <p contenteditable="true" id="text3">TEXT3: <span id="target3">The</span> quick brown <span id="target4">fox</span> jumps over the <span id="target5">lazy</span> dog.</p>
+    <p contenteditable="true" id="text4">TEXT4: <span id="target6">The</span> quick brown <span id="target7">fox</span> jumps over the <span id="target8">lazy</span> dog.</p>
+    <p contenteditable="true" id="text5">TEXT5: <span id="target9">The</span> quick brown <span id="target10">fox</span> jumps over the <span id="target11">lazy</span> dog.</p>
+</div>
+
+<script>
+var output = "Tests that a ReplacePreserveCase text operation replaces text and preserves the case of the replacement string.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var text, operationResult;
+    setTimeout(async function() {
+        // Validate that the case of the replacement string is preserved when replacing a lowercase string.
+        text = accessibilityController.accessibleElementById("text");
+        var markers = [await selectElementTextById("target1")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "fox named Finn", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'fox named Finn'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: The quick brown fox named Finn jumps over the lazy dog.'");
+
+        // Validate that the case of the replacement string is preserved when replacing a capitalized string.
+        text = accessibilityController.accessibleElementById("text2");
+        markers = [await selectElementTextById("target2")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "lower case prefix: The", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "1");
+        output += expect("operationResult[0]", "'lower case prefix: The'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT2: lower case prefix: The quick brown fox jumps over the lazy dog.'");
+
+        // Validate that the case of the replacement string is preserved across multiple replacements.
+        text = accessibilityController.accessibleElementById("text3");
+        markers = [await selectElementTextById("target5"), await selectElementTextById("target4"), await selectElementTextById("target3")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, "[Replaced string]", /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'[Replaced string]'");
+        output += expect("operationResult[1]", "'[Replaced string]'");
+        output += expect("operationResult[2]", "'[Replaced string]'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT3: [Replaced string] quick brown [Replaced string] jumps over the [Replaced string] dog.'");
+
+        // Validate that the case of the replacement string is preserved across multiple replacements with individual replacement strings.
+        text = accessibilityController.accessibleElementById("text4");
+        markers = [await selectElementTextById("target8"), await selectElementTextById("target7"), await selectElementTextById("target6")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, ["Three", "Two", "One"], /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'Three'");
+        output += expect("operationResult[1]", "'Two'");
+        output += expect("operationResult[2]", "'One'");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT4: One quick brown Two jumps over the Three dog.'");
+
+        // Assert the behavior when fewer individual replacement strings than the number of ranges are provided.
+        // THIS IS NOT A VALID USE OF THE API. This test case asserts the existing behavior to catch accidental changes.
+        text = accessibilityController.accessibleElementById("text5");
+        markers = [await selectElementTextById("target11"), await selectElementTextById("target10"), await selectElementTextById("target9")];
+        await waitForNotification(text, "AXValueChanged", () => {
+            operationResult = text.performTextOperation("TextOperationReplacePreserveCase", markers, ["Three", "Two"], /* smart replace */ false);
+        });
+        output += expect("operationResult.length", "3");
+        output += expect("operationResult[0]", "'Three'");
+        output += expect("operationResult[1]", "'Two'");
+        output += expect("operationResult[2]", "''");
+        output += expect("text.stringValue.replace(/\\s/g, ' ')", "'AXValue: TEXT5:  quick brown Two jumps over the Three dog.'");
+
+        document.getElementById("test-content").remove();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

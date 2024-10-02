@@ -82,7 +82,7 @@ RefPtr<IPC::Connection> RemoteGPU::connection() const
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
+    protectedWorkQueue()->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
 }
@@ -90,16 +90,18 @@ void RemoteGPU::initialize()
 void RemoteGPU::stopListeningForIPC()
 {
     assertIsMainRunLoop();
-    workQueue().dispatch([this]() {
+    Ref workQueue = m_workQueue;
+    workQueue->dispatch([this]() {
         workQueueUninitialize();
     });
-    workQueue().stopAndWaitForCompletion();
+    workQueue->stopAndWaitForCompletion();
 }
 
 void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
-    m_streamConnection->open(workQueue());
+    Ref workQueue = m_workQueue;
+    m_streamConnection->open(workQueue);
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -110,14 +112,14 @@ void RemoteGPU::workQueueInitialize()
     // The retain cycle is broken in workQueueUninitialize().
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     auto backing = WebCore::WebGPU::create([protectedThis = Ref { *this }](WebCore::WebGPU::WorkItem&& workItem) {
-        protectedThis->workQueue().dispatch(WTFMove(workItem));
+        protectedThis->protectedWorkQueue()->dispatch(WTFMove(workItem));
     }, gpuProcessConnection ? &gpuProcessConnection->webProcessIdentity() : nullptr);
 #else
     RefPtr<WebCore::WebGPU::GPU> backing;
 #endif
     if (backing) {
         m_backing = backing.releaseNonNull();
-        send(Messages::RemoteGPUProxy::WasCreated(true, workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()));
+        send(Messages::RemoteGPUProxy::WasCreated(true, workQueue->wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()));
     } else
         send(Messages::RemoteGPUProxy::WasCreated(false, { }, { }));
 }
@@ -248,7 +250,7 @@ void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool
         return;
     }
 
-    auto result = m_objectHeap->objectExistsAndValid(*gpu, identifier);
+    auto result = Ref { m_objectHeap }->objectExistsAndValid(*gpu, identifier);
     completionHandler(result.valid, result.exists);
 }
 

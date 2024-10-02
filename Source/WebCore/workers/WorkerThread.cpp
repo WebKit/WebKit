@@ -32,7 +32,11 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
+#include "WorkerBadgeProxy.h"
+#include "WorkerDebuggerProxy.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerReportingProxy.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/SetForScope.h>
@@ -114,6 +118,26 @@ WorkerThread::~WorkerThread()
 {
     ASSERT(workerThreadCounter);
     --workerThreadCounter;
+}
+
+WorkerLoaderProxy* WorkerThread::workerLoaderProxy()
+{
+    return m_workerLoaderProxy.get();
+}
+
+WorkerBadgeProxy* WorkerThread::workerBadgeProxy() const
+{
+    return m_workerBadgeProxy.get();
+}
+
+WorkerDebuggerProxy* WorkerThread::workerDebuggerProxy() const
+{
+    return m_workerDebuggerProxy.get();
+}
+
+WorkerReportingProxy* WorkerThread::workerReportingProxy() const
+{
+    return m_workerReportingProxy.get();
 }
 
 Ref<Thread> WorkerThread::createThread()

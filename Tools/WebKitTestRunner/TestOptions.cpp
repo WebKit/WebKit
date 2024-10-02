@@ -205,6 +205,7 @@ const TestFeatures& TestOptions::defaults()
             { "longPressActionsEnabled", true },
             { "enhancedWindowingEnabled", false },
             { "textExtractionEnabled", false },
+            { "useHardwareKeyboardMode", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -276,6 +277,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "longPressActionsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
         { "textExtractionEnabled", TestHeaderKeyType::BoolTestRunner },
+        { "useHardwareKeyboardMode", TestHeaderKeyType::BoolTestRunner },
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },

@@ -80,7 +80,7 @@ const double dragUpdateProgressIncrement = 0.05;
 
 static RetainPtr<NSImage> defaultExternalDragImage()
 {
-    return adoptNS([[NSImage alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]]);
+    return adoptNS([[NSImage alloc] initWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]);
 }
 
 @implementation DragAndDropSimulator {

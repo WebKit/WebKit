@@ -87,7 +87,7 @@ public:
     using MessageType = CDMMessageType;
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) { }
+    virtual void setLogIdentifier(uint64_t) { }
 #endif
 
     virtual void setClient(WeakPtr<CDMInstanceSessionClient>&&) { }

@@ -27,7 +27,7 @@
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
-using RTCVideoDecoderVTBAV1Callback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs);
+using RTCVideoDecoderVTBAV1Callback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool);
 
 __attribute__((objc_runtime_name("Web_RTCVideoDecoderVTBAV1")))
 @interface RTCVideoDecoderVTBAV1 : NSObject

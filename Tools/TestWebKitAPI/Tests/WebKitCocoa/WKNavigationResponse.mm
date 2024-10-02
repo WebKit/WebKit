@@ -27,9 +27,9 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
+#import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
-#import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -250,10 +250,9 @@ TEST(WebKit, SkipDecidePolicyForResponse)
         { "/1"_s, { { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
         { "/2"_s, { { { "Content-Type"_s, "text/plain"_s } }, "hi"_s } },
         { "/3"_s, { "hi"_s } },
-        { "/4"_s, { 204, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/5"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/6"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
-        { "/7"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
+        { "/4"_s, { 404, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/5"_s, { 503, { { "Content-Type"_s, "text/HTML"_s } }, "hi"_s } },
+        { "/6"_s, { { { "Content-Type"_s, "text/html"_s }, { "Content-Disposition"_s, "attachment ; other stuff"_s } }, "hi"_s } },
     });
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"SkipDecidePolicyForResponsePlugIn"];
@@ -270,11 +269,11 @@ TEST(WebKit, SkipDecidePolicyForResponse)
     [delegate waitForDidFinishNavigation];
     EXPECT_FALSE(responseDelegateCalled);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.mainBundle URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     [delegate waitForDidFinishNavigation];
     EXPECT_TRUE(std::exchange(responseDelegateCalled, false));
 
-    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s, "/7"_s }) {
+    for (auto& path : Vector { "/2"_s, "/3"_s, "/4"_s, "/5"_s, "/6"_s }) {
         [webView loadRequest:server.request(path)];
         [delegate waitForDidFinishNavigation];
         EXPECT_TRUE(std::exchange(responseDelegateCalled, false));

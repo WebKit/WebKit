@@ -106,6 +106,7 @@ public:
     }
 
     constexpr bool isHashTableDeletedValue() const { return m_data == deletedValue; }
+    constexpr bool isHashTableEmptyValue() const { return m_data == emptyValue; }
     WTF_EXPORT_PRIVATE String toString() const;
 
     constexpr operator bool() const { return !!m_data; }
@@ -143,6 +144,7 @@ struct UUIDHash {
 
 template<> struct HashTraits<UUID> : GenericHashTraits<UUID> {
     static UUID emptyValue() { return UUID { HashTableEmptyValue }; }
+    static bool isEmptyValue(const UUID& value) { return value.isHashTableEmptyValue(); }
     static void constructDeletedValue(UUID& slot) { slot = UUID { HashTableDeletedValue }; }
     static bool isDeletedValue(const UUID& value) { return value.isHashTableDeletedValue(); }
 };

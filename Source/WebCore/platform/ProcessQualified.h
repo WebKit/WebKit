@@ -158,6 +158,7 @@ template<typename T> struct DefaultHash<WebCore::ProcessQualified<T>> {
 template<typename T> struct HashTraits<WebCore::ProcessQualified<T>> : SimpleClassHashTraits<WebCore::ProcessQualified<T>> {
     static constexpr bool emptyValueIsZero = HashTraits<T>::emptyValueIsZero;
     static WebCore::ProcessQualified<T> emptyValue() { return { HashTraits<T>::emptyValue(), { } }; }
+    static bool isEmptyValue(const WebCore::ProcessQualified<T>& value) { return value.object().isHashTableEmptyValue(); }
 };
 
 class ProcessQualifiedStringTypeAdapter {

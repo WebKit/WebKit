@@ -1,11 +1,14 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline with px based inset. Test timed out
-NOTRUN View timeline with percent based inset.
-NOTRUN view timeline with inset auto.
-NOTRUN view timeline with font relative inset.
-NOTRUN view timeline with viewport relative insets.
-NOTRUN view timeline inset as string
-NOTRUN view timeline with invalid inset
+FAIL View timeline with px based inset. assert_equals: Effect at the start of the active phase: 0px 0px expected "0.3" but got "1"
+FAIL View timeline with percent based inset. assert_equals: Effect at the start of the active phase: 0% 0% expected "0.3" but got "1"
+FAIL view timeline with inset auto. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL view timeline with font relative inset. assert_equals: Effect at the start of the active phase: 1em 2em expected "0.3" but got "1"
+FAIL view timeline with viewport relative insets. assert_equals: Effect at the start of the active phase: 10vw 20vw expected "0.3" but got "1"
+FAIL view timeline inset as string assert_equals: Effect at the start of the active phase: 10px expected "0.3" but got "1"
+FAIL view timeline with invalid inset assert_throws_js: function "() => {
+    new ViewTimeline({
+      subject: target,
+      inset: [ CSS.rad(1) ]
+    });
+  }" did not throw
 

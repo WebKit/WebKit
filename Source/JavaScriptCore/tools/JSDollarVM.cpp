@@ -405,6 +405,7 @@ public:
         constructData.type = CallData::Type::Native;
         constructData.native.function = callHostFunctionAsConstructor;
         constructData.native.isBoundFunction = false;
+        constructData.native.isWasm = false;
         return constructData;
     }
 
@@ -1950,7 +1951,7 @@ public:
         }
 
         bool didReceiveSectionData(Wasm::Section) final { return true; }
-        bool didReceiveFunctionData(unsigned, const Wasm::FunctionData&) final { return true; }
+        bool didReceiveFunctionData(Wasm::FunctionCodeIndex, const Wasm::FunctionData&) final { return true; }
         void didFinishParsing() final { }
 
         WasmStreamingParser* m_parser;
@@ -2847,7 +2848,7 @@ JSC_DEFINE_HOST_FUNCTION(functionVMTaintedState, (JSGlobalObject* globalObject, 
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
 
-    SourceTaintedOrigin sourceTaintedOrigin = sourceTaintedOriginFromStack(vm, callFrame);
+    auto sourceTaintedOrigin = sourceTaintedOriginFromStack(vm, callFrame).first;
     return JSValue::encode(jsString(vm, sourceTaintedOriginToString(sourceTaintedOrigin)));
 }
 

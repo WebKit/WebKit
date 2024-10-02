@@ -30,6 +30,7 @@
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <optional>
 
 namespace WebKit {
 

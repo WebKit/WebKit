@@ -249,7 +249,7 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
 {
     if (hasDisplayContents()) {
         LayoutRect contentsRect;
-        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children(false))
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false))
             contentsRect.unite(child->elementRect());
 
         if (!contentsRect.isEmpty())
@@ -650,7 +650,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildr
         addChildren();
 
     AccessibilityChildrenVector result;
-    for (const auto& child : children()) {
+    for (const auto& child : unignoredChildren()) {
         if (!child->isOffScreen())
             result.append(child);
     }
@@ -1199,9 +1199,6 @@ AXCoreObject* AccessibilityNodeObject::internalLinkElement() const
         return nullptr;
 
     RefPtr linkedNode = document->findAnchor(fragmentIdentifier);
-    if (!linkedNode)
-        return nullptr;
-
     // The element we find may not be accessible, so find the first accessible object.
     return firstAccessibleObjectFromNode(linkedNode.get());
 }
@@ -1741,7 +1738,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
 
     if (isAccessibilityLabelInstance()) {
         StringBuilder builder;
-        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children()) {
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren()) {
             if (child.get() == &labeledObject)
                 continue;
 
@@ -2527,7 +2524,7 @@ String AccessibilityNodeObject::stringValue() const
     }
 
     if (isComboBox()) {
-        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children()) {
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren()) {
             if (!child->isListBox())
                 continue;
 
@@ -2610,7 +2607,7 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode)
         if (axObject->isListBox())
             selectedChildren = axObject->selectedChildren();
         else if (axObject->isComboBox()) {
-            for (const auto& child : axObject->children()) {
+            for (const auto& child : axObject->unignoredChildren()) {
                 if (child->isListBox()) {
                     selectedChildren = child->selectedChildren();
                     break;

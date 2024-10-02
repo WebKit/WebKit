@@ -27,10 +27,16 @@
 
 #include <WebCore/LayerHostingContextIdentifier.h>
 
+namespace WebCore {
+enum class SandboxFlag : uint16_t;
+using SandboxFlags = OptionSet<SandboxFlag>;
+}
+
 namespace WebKit {
 
 struct ProvisionalFrameCreationParameters {
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
+    WebCore::SandboxFlags effectiveSandboxFlags;
 };
 
 } // namespace WebKit

@@ -31,15 +31,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
-class NetworkLoad;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkLoad> : std::true_type { };
-}
-
 namespace WebCore {
 class AuthenticationChallenge;
 }
@@ -50,11 +41,21 @@ class NetworkLoadClient;
 class NetworkLoadScheduler;
 class NetworkProcess;
 
-class NetworkLoad final : public NetworkDataTaskClient {
+class NetworkLoad final : public RefCounted<NetworkLoad>, public NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(NetworkLoad);
 public:
-    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
-    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
+    DEFINE_VIRTUAL_REFCOUNTED;
+
+    static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkLoadParameters&& networkLoadParameters, NetworkSession& networkSession)
+    {
+        return adoptRef(*new NetworkLoad(networkLoadClient, WTFMove(networkLoadParameters), networkSession));
+    }
+
+    static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkSession& networkSession, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>& createTask)
+    {
+        return adoptRef(*new NetworkLoad(networkLoadClient, networkSession, createTask));
+    }
+
     ~NetworkLoad();
 
     void start();
@@ -85,6 +86,9 @@ public:
     void setTimingAllowFailedFlag();
 
 private:
+    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
+    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
+
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final;

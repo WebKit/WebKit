@@ -159,6 +159,10 @@ private:
 
     Ref<NetworkRTCMonitor> protectedRTCMonitor();
 
+#if PLATFORM(COCOA)
+    Ref<WorkQueue> protectedRTCNetworkThreadQueue();
+#endif
+
     static constexpr size_t maxSockets { 256 };
 
     StdMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>, SocketComparator> m_sockets;

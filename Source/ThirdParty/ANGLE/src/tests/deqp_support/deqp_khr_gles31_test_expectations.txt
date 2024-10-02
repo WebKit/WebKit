@@ -66,6 +66,7 @@
 
 // New failures when upgrading to Ubuntu 22/newer driver.
 362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.max_in_out_attributes = SKIP
+365974429 LINUX NVIDIA VULKAN : KHR-GLES31.core.draw_buffers_indexed.color_masks = FAIL
 
 ////
 //// SwANGLE expectations

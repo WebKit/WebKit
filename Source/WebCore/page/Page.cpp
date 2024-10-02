@@ -314,11 +314,11 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
 #define GCC_MAYBE_NO_INLINE
 #endif
 
-GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::ClientCreatorForMainFrame&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier)
+GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfiguration::MainFrameCreationParameters&& clientCreator, RefPtr<Frame> mainFrameOpener, FrameIdentifier identifier)
 {
     page.relaxAdoptionRequirement();
-    return switchOn(WTFMove(clientCreator), [&] (CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)>&& localFrameClientCreator) -> Ref<Frame> {
-        return LocalFrame::createMainFrame(page, WTFMove(localFrameClientCreator), identifier, mainFrameOpener.get());
+    return switchOn(WTFMove(clientCreator), [&] (PageConfiguration::LocalMainFrameCreationParameters&& creationParameters) -> Ref<Frame> {
+        return LocalFrame::createMainFrame(page, WTFMove(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, mainFrameOpener.get());
     }, [&] (CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>&& remoteFrameClientCreator) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClientCreator), identifier, mainFrameOpener.get());
     });
@@ -351,7 +351,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
-    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientCreatorForMainFrame), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier))
+    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.mainFrameCreationParameters), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
@@ -918,14 +918,15 @@ bool Page::showAllPlugins() const
 
 inline std::optional<std::pair<WeakRef<MediaCanStartListener>, WeakRef<Document, WeakPtrImplWithEventTargetData>>>  Page::takeAnyMediaCanStartListener()
 {
-    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (!localFrame->document())
+        RefPtr document = localFrame->document();
+        if (!document)
             continue;
-        if (MediaCanStartListener* listener = localFrame->protectedDocument()->takeAnyMediaCanStartListener())
-            return { { *listener, *localFrame->document() } };
+        if (MediaCanStartListener* listener = document->takeAnyMediaCanStartListener())
+            return { { *listener, *document } };
     }
     return std::nullopt;
 }
@@ -1429,45 +1430,51 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 {
     LOG_WITH_STREAM(Viewports, stream << "Page " << this << " setPageScaleFactor " << scale << " at " << origin << " - stable " << inStableState);
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    if (!localMainFrame)
-        return;
-    RefPtr document = localMainFrame->document();
-    RefPtr view = document->view();
+    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    RefPtr mainFrameView = mainDocument ? mainDocument->view() : nullptr;
 
     if (scale == m_pageScaleFactor) {
-        if (view && view->scrollPosition() != origin && !delegatesScaling())
-            document->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
+        if (mainFrameView && mainFrameView->scrollPosition() != origin && !delegatesScaling())
+            mainDocument->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
     } else {
         m_pageScaleFactor = scale;
 
-        if (view && !delegatesScaling()) {
-            view->setNeedsLayoutAfterViewConfigurationChange();
-            view->setNeedsCompositingGeometryUpdate();
-            view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        for (auto& rootFrame : m_rootFrames) {
+            ASSERT(rootFrame->isRootFrame());
+            RefPtr view = rootFrame->view();
+            if (!view)
+                continue;
 
-            document->resolveStyle(Document::ResolveStyleType::Rebuild);
+            if (!delegatesScaling()) {
+                view->setNeedsLayoutAfterViewConfigurationChange();
+                view->setNeedsCompositingGeometryUpdate();
+                view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
-            // Transform change on RenderView doesn't trigger repaint on non-composited contents.
-            localMainFrame->protectedView()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+                if (RefPtr doc = rootFrame->document())
+                    doc->resolveStyle(Document::ResolveStyleType::Rebuild);
+
+                // Transform change on RenderView doesn't trigger repaint on non-composited contents.
+                view->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+            }
+
+            rootFrame->deviceOrPageScaleFactorChanged();
+
+            if (view->fixedElementsLayoutRelativeToFrame())
+                view->setViewportConstrainedObjectsNeedLayout();
         }
 
-        localMainFrame->deviceOrPageScaleFactorChanged();
-
-        if (view && view->fixedElementsLayoutRelativeToFrame())
-            view->setViewportConstrainedObjectsNeedLayout();
-
-        if (view && view->scrollPosition() != origin && !delegatesScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout()) {
-            view->layoutContext().layout();
-            view->updateCompositingLayersAfterLayoutIfNeeded();
+        if (mainFrameView && mainFrameView->scrollPosition() != origin && !delegatesScaling() && mainDocument->renderView() && mainDocument->renderView()->needsLayout() && mainFrameView->didFirstLayout()) {
+            mainFrameView->layoutContext().layout();
+            mainFrameView->updateCompositingLayersAfterLayoutIfNeeded();
         }
     }
 
-    if (view && view->scrollPosition() != origin) {
-        if (view->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
-            view->setScrollPosition(origin);
+    if (mainFrameView && mainFrameView->scrollPosition() != origin) {
+        if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
+            mainFrameView->setScrollPosition(origin);
 #if USE(COORDINATED_GRAPHICS)
         else
-            view->requestScrollToPosition(origin);
+            mainFrameView->requestScrollToPosition(origin);
 #endif
     }
 
@@ -1622,6 +1629,8 @@ void Page::didCommitLoad()
 #endif
 
     m_elementTargetingController->reset();
+
+    m_reportedScriptsWithTelemetry.clear();
 
     m_isWaitingForLoadToFinish = true;
 }
@@ -3161,9 +3170,20 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
     m_currentKeyboardScrollingAnimator = animator;
 }
 
-bool Page::fingerprintingProtectionsEnabled() const
+bool Page::shouldApplyScreenFingerprintingProtections(Document& document) const
 {
-    return protectedMainFrame()->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections);
+    if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
+        return true;
+
+    if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        return document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::ScreenOrViewport);
+
+    return false;
+}
+
+OptionSet<AdvancedPrivacyProtections> Page::advancedPrivacyProtections() const
+{
+    return protectedMainFrame()->advancedPrivacyProtections();
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -4124,11 +4144,11 @@ void Page::forEachWindowEventLoop(const Function<void(WindowEventLoop&)>& functo
 {
     HashSet<Ref<WindowEventLoop>> windowEventLoops;
     WindowEventLoop* lastEventLoop = nullptr;
-    for (const Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+    for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        auto* document = localFrame->document();
+        RefPtr document = localFrame->document();
         if (!document)
             continue;
         Ref currentEventLoop = document->windowEventLoop();
@@ -4329,7 +4349,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 
 #if USE(LIBWEBRTC)
         RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-        if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral())
+        if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral() && (m_settings->webCodecsVideoEnabled() || m_settings->peerConnectionEnabled()))
             webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
     }
@@ -5052,5 +5072,18 @@ bool Page::isFullscreenManagerEnabled() const
     return settings->fullScreenEnabled() || settings->videoFullscreenRequiresElementFullscreen();
 }
 #endif
+
+bool Page::reportScriptTelemetry(const URL& url, ScriptTelemetryCategory category)
+{
+    return !url.isEmpty() && m_reportedScriptsWithTelemetry.add({ url, category }).isNewEntry;
+}
+
+bool Page::requiresScriptTelemetryForURL(const URL& scriptURL) const
+{
+    if (!advancedPrivacyProtections().contains(AdvancedPrivacyProtections::ScriptTelemetry))
+        return false;
+
+    return chrome().client().requiresScriptTelemetryForURL(scriptURL, mainFrameOrigin());
+}
 
 } // namespace WebCore

@@ -32,6 +32,7 @@
 #include "RemoteScrollingCoordinator.h"
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingTree.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 class PlatformMouseEvent;
@@ -42,6 +43,7 @@ namespace WebKit {
 class RemoteScrollingCoordinatorProxy;
 
 class RemoteScrollingTreeMac final : public RemoteScrollingTree {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingTreeMac);
 public:
     explicit RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTreeMac();

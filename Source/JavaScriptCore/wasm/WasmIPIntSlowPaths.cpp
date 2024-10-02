@@ -44,7 +44,6 @@
 #include "WasmLLIntBuiltin.h"
 #include "WasmLLIntGenerator.h"
 #include "WasmModuleInformation.h"
-#include "WasmOMGPlan.h"
 #include "WasmOSREntryPlan.h"
 #include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -63,31 +62,21 @@ namespace JSC { namespace IPInt {
         WASM_RETURN_TWO(LLInt::wasmExceptionInstructions(), 0); \
     } while (false)
 
-#define WASM_CALL_RETURN(callee, callTarget, callTargetTag) do { \
-        callee.entrypoint = retagCodePtr<callTargetTag, JSEntrySlowPathPtrTag>(callTarget); \
-        WASM_RETURN_TWO(&callee, callee.instance); \
+#define WASM_CALL_RETURN(targetInstance, callTarget) do { \
+        static_assert(callTarget.getTag() == WasmEntryPtrTag); \
+        callTarget.validate(); \
+        WASM_RETURN_TWO(callTarget.taggedPtr(), targetInstance); \
     } while (false)
 
 #define IPINT_CALLEE(callFrame) \
     static_cast<Wasm::IPIntCallee*>(callFrame->callee().asNativeCallee())
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-enum class RequiredWasmJIT { Any, OMG };
 
-static inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
+static inline bool shouldJIT(Wasm::IPIntCallee* callee)
 {
-    if (requiredJIT == RequiredWasmJIT::OMG) {
-        if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
-            return false;
-    } else {
-        if (Options::wasmIPIntTiersUpToBBQ()
-            && (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex())))
-            return false;
-        if (!Options::wasmIPIntTiersUpToOMG()
-            && (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex())))
-            return false;
-    }
+    if (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex()))
+        return false;
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
         return false;
     return true;
@@ -125,18 +114,15 @@ static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAs
     }
 
     if (compile) {
-        uint32_t functionIndex = callee->functionIndex();
-        RefPtr<Wasm::Plan> plan;
-        if (Options::wasmIPIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
-            plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
-        else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
-            plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), memoryMode, Wasm::Plan::dontFinalize()));
-
-        Wasm::ensureWorklist().enqueue(*plan);
-        if (UNLIKELY(!Options::useConcurrentJIT()))
-            plan->waitForCompletion();
-        else
-            tierUpCounter.optimizeAfterWarmUp();
+        Wasm::FunctionCodeIndex functionIndex = callee->functionIndex();
+        if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
+            auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
+            Wasm::ensureWorklist().enqueue(plan.get());
+            if (UNLIKELY(!Options::useConcurrentJIT() || !Options::useWasmIPInt()))
+                plan->waitForCompletion();
+            else
+                tierUpCounter.optimizeAfterWarmUp();
+        }
     }
 
     return !!callee->replacement(memoryMode);
@@ -161,12 +147,12 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
     WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t* pl)
+WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLocal* pl)
 {
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
     Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
-    if (!Options::useWasmOSR() || !Options::useWasmIPIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::OMG)) {
+    if (!Options::useWasmOSR() || !Options::useWasmIPIntLoopOSR() || !shouldJIT(callee)) {
         ipint_extern_prologue_osr(instance, callFrame);
         WASM_RETURN_TWO(nullptr, nullptr);
     }
@@ -178,108 +164,47 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    unsigned loopOSREntryBytecodeOffset = pc;
+    unsigned loopOSREntryBytecodeOffset = pc - callee->bytecode();
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::wasmIPIntTiersUpToBBQ() && Options::useBBQJIT()) {
-        if (!jitCompileAndSetHeuristics(callee, instance))
-            WASM_RETURN_TWO(nullptr, nullptr);
-
-        Wasm::BBQCallee* bbqCallee;
-        {
-            Locker locker { instance->calleeGroup()->m_lock };
-            bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
-        }
-        RELEASE_ASSERT(bbqCallee);
-
-        size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
-        RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->m_numLocals + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
-
-        uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
-        if (!buffer)
-            WASM_RETURN_TWO(nullptr, nullptr);
-
-        uint32_t index = 0;
-        buffer[index++] = osrEntryData.loopIndex;
-        for (uint32_t i = 0; i < callee->m_numLocals; ++i)
-            buffer[index++] = pl[i];
-
-        // If there's no rethrow slots just 0 fill the buffer.
-        ASSERT(osrEntryData.tryDepth <= callee->m_numRethrowSlotsToAlloc || !callee->m_numRethrowSlotsToAlloc);
-        for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
-            buffer[index++] = callee->m_numRethrowSlotsToAlloc ? pl[callee->m_localSizeToAlloc + i] : 0;
-
-        for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
-            pl -= 2; // each stack slot is 16B
-            buffer[index++] = *pl;
-        }
-
-        auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
-        RELEASE_ASSERT(sharedLoopEntrypoint);
-        WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
-    } else {
-        const auto doOSREntry = [&](Wasm::OSREntryCallee* osrEntryCallee) {
-            if (osrEntryCallee->loopIndex() != osrEntryData.loopIndex)
-                WASM_RETURN_TWO(nullptr, nullptr);
-
-            size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
-            RELEASE_ASSERT(osrEntryScratchBufferSize == callee->m_numLocals + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
-
-            uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
-            if (!buffer)
-                WASM_RETURN_TWO(nullptr, nullptr);
-
-            uint32_t index = 0;
-            for (uint32_t i = 0; i < callee->m_numLocals; ++i)
-                buffer[index++] = pl[i];
-
-            // If there's no rethrow slots just 0 fill the buffer.
-            ASSERT(osrEntryData.tryDepth <= callee->m_numRethrowSlotsToAlloc || !callee->m_numRethrowSlotsToAlloc);
-            for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
-                buffer[index++] = callee->m_numRethrowSlotsToAlloc ? pl[callee->m_localSizeToAlloc + i] : 0;
-
-            for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
-                pl -= 2; // each stack slot is 16B
-                buffer[index++] = *pl;
-            }
-
-            WASM_RETURN_TWO(buffer, osrEntryCallee->entrypoint().taggedPtr());
-        };
-
-        MemoryMode memoryMode = instance->memory()->mode();
-        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
-            return doOSREntry(osrEntryCallee);
-
-        bool compile = false;
-        {
-            Locker locker { tierUpCounter.m_lock };
-            switch (tierUpCounter.loopCompilationStatus(memoryMode)) {
-            case Wasm::IPIntTierUpCounter::CompilationStatus::NotCompiled:
-                compile = true;
-                tierUpCounter.setLoopCompilationStatus(memoryMode, Wasm::IPIntTierUpCounter::CompilationStatus::Compiling);
-                break;
-            case Wasm::IPIntTierUpCounter::CompilationStatus::Compiling:
-                tierUpCounter.optimizeAfterWarmUp();
-                break;
-            case Wasm::IPIntTierUpCounter::CompilationStatus::Compiled:
-                break;
-            }
-        }
-
-        if (compile) {
-            Ref<Wasm::Plan> plan = adoptRef(*static_cast<Wasm::Plan*>(new Wasm::OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::Callee>(*callee), callee->functionIndex(), callee->hasExceptionHandlers(), osrEntryData.loopIndex, memoryMode, Wasm::Plan::dontFinalize())));
-            Wasm::ensureWorklist().enqueue(plan.copyRef());
-            if (UNLIKELY(!Options::useConcurrentJIT()))
-                plan->waitForCompletion();
-            else
-                tierUpCounter.optimizeAfterWarmUp();
-        }
-
-        if (auto* osrEntryCallee = callee->osrEntryCallee(memoryMode))
-            return doOSREntry(osrEntryCallee);
-
+    if (!Options::useBBQJIT())
         WASM_RETURN_TWO(nullptr, nullptr);
+    if (!jitCompileAndSetHeuristics(callee, instance))
+        WASM_RETURN_TWO(nullptr, nullptr);
+
+    Wasm::BBQCallee* bbqCallee;
+    {
+        Locker locker { instance->calleeGroup()->m_lock };
+        bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
     }
+    RELEASE_ASSERT(bbqCallee);
+
+    size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
+    RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
+
+    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+    if (!buffer)
+        WASM_RETURN_TWO(nullptr, nullptr);
+
+    uint32_t index = 0;
+    buffer[index++] = osrEntryData.loopIndex;
+    for (uint32_t i = 0; i < callee->numLocals(); ++i)
+        buffer[index++] = pl[i].i64;
+
+    // If there's no rethrow slots just 0 fill the buffer.
+    ASSERT(osrEntryData.tryDepth <= callee->rethrowSlots() || !callee->rethrowSlots());
+    for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
+        buffer[index++] = callee->rethrowSlots() ? pl[callee->localSizeToAlloc() + i].i64 : 0;
+
+    for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
+        pl -= 1;
+        buffer[index++] = pl->i64;
+    }
+
+    auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
+    RELEASE_ASSERT(sharedLoopEntrypoint);
+
+    WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
@@ -299,18 +224,17 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
     WASM_RETURN_TWO(nullptr, nullptr);
 }
 #endif
-#endif
 
-WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, v128_t* stackPointer, uint64_t* pl)
+WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, IPIntStackEntry* stackPointer, IPIntLocal* pl)
 {
     VM& vm = instance->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(!!throwScope.exception());
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    if (callee->m_numRethrowSlotsToAlloc) {
-        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->m_numRethrowSlotsToAlloc);
-        pl[callee->m_localSizeToAlloc + vm.targetTryDepthForThrow - 1] = bitwise_cast<uint64_t>(throwScope.exception()->value());
+    if (callee->rethrowSlots()) {
+        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
+        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = bitwise_cast<uint64_t>(throwScope.exception()->value());
     }
 
     if (stackPointer) {
@@ -321,13 +245,8 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, v
         ASSERT(wasmException->payload().size() == wasmException->tag().parameterCount());
         uint64_t size = wasmException->payload().size();
 
-#if ASSERT_ENABLED
-        constexpr uint64_t hole = 0x1BADBEEF;
-#else
-        constexpr uint64_t hole = 0;
-#endif
         for (unsigned i = 0; i < size; ++i)
-            stackPointer[size - i - 1] = { hole, wasmException->payload()[i] };
+            stackPointer[size - 1 - i].i64 = wasmException->payload()[i];
     }
 
     // We want to clear the exception here rather than in the catch prologue
@@ -338,7 +257,7 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, v
     WASM_RETURN_TWO(nullptr, nullptr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, uint64_t* arguments, unsigned exceptionIndex)
+WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, IPIntStackEntry* arguments, unsigned exceptionIndex)
 {
     VM& vm = instance->vm();
     SlowPathFrameTracer tracer(vm, callFrame);
@@ -351,7 +270,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, uint64_t* argu
 
     FixedVector<uint64_t> values(tag.parameterBufferSize());
     for (unsigned i = 0; i < tag.parameterBufferSize(); ++i)
-        values[i] = arguments[i];
+        values[tag.parameterBufferSize() - 1 - i] = arguments[i].i64;
 
     ASSERT(tag.type().returnsVoid());
     JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
@@ -372,8 +291,8 @@ WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, uint64_t* pl
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
-    RELEASE_ASSERT(tryDepth <= callee->m_numRethrowSlotsToAlloc);
-    JSWebAssemblyException* exception = reinterpret_cast<JSWebAssemblyException**>(pl)[callee->m_localSizeToAlloc + tryDepth - 1];
+    RELEASE_ASSERT(tryDepth <= callee->rethrowSlots());
+    JSWebAssemblyException* exception = reinterpret_cast<JSWebAssemblyException**>(pl)[callee->localSizeToAlloc() + tryDepth - 1];
     RELEASE_ASSERT(exception);
     throwException(globalObject, throwScope, exception);
 
@@ -413,38 +332,52 @@ WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, unsigned index, Encod
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_init, tableInitMetadata* metadata)
+WASM_IPINT_EXTERN_CPP_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* metadata)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    if (!Wasm::tableInit(instance, metadata->elementIndex, metadata->tableIndex, metadata->dst, metadata->src, metadata->length))
+    int32_t n = sp[0].i32;
+    int32_t src = sp[1].i32;
+    int32_t dst = sp[2].i32;
+
+    if (!Wasm::tableInit(instance, metadata->elementIndex, metadata->tableIndex, dst, src, n))
         WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
+    UNUSED_PARAM(sp);
     UNUSED_PARAM(metadata);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_fill, tableFillMetadata* metadata)
+WASM_IPINT_EXTERN_CPP_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* metadata)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    if (!Wasm::tableFill(instance, metadata->tableIndex, metadata->offset, metadata->fill, metadata->length))
+    int32_t n = sp[0].i32;
+    EncodedJSValue fill = sp[1].ref;
+    int32_t offset = sp[2].i32;
+
+    if (!Wasm::tableFill(instance, metadata->tableIndex, offset, fill, n))
         WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
+    UNUSED_PARAM(sp);
     UNUSED_PARAM(metadata);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
 #endif
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_grow, tableGrowMetadata* metadata)
+WASM_IPINT_EXTERN_CPP_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* metadata)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    WASM_RETURN_TWO(bitwise_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, metadata->fill, metadata->length)), 0);
+    int32_t n = sp[0].i32;
+    EncodedJSValue fill = sp[1].ref;
+
+    WASM_RETURN_TWO(bitwise_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, n)), 0);
 #else
     UNUSED_PARAM(instance);
+    UNUSED_PARAM(sp);
     UNUSED_PARAM(metadata);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
 #endif
@@ -466,17 +399,20 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_grow, int32_t delta)
     WASM_RETURN_TWO(reinterpret_cast<void*>(Wasm::growMemory(instance, delta)), 0);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, int32_t dst, int64_t srcAndLength)
+WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    if (!Wasm::memoryInit(instance, dataIndex, dst, srcAndLength >> 32, srcAndLength & 0xffffffff))
+    int32_t n = sp[0].i32;
+    int32_t s = sp[1].i32;
+    int32_t d = sp[2].i32;
+
+    if (!Wasm::memoryInit(instance, dataIndex, d, s, n))
         WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(dataIndex);
-    UNUSED_PARAM(dst);
-    UNUSED_PARAM(srcAndLength);
+    UNUSED_PARAM(sp);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
 #endif
 }
@@ -523,14 +459,19 @@ WASM_IPINT_EXTERN_CPP_DECL(elem_drop, int32_t dataIndex)
     WASM_RETURN_TWO(0, 0);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(table_copy, tableCopyMetadata* metadata)
+WASM_IPINT_EXTERN_CPP_DECL(table_copy, IPIntStackEntry* sp, TableCopyMetadata* metadata)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    if (!Wasm::tableCopy(instance, metadata->dstTableIndex, metadata->srcTableIndex, metadata->dstOffset, metadata->srcOffset, metadata->length))
+    int32_t n = sp[0].i32;
+    int32_t src = sp[1].i32;
+    int32_t dst = sp[2].i32;
+
+    if (!Wasm::tableCopy(instance, metadata->dstTableIndex, metadata->srcTableIndex, dst, src, n))
         WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
+    UNUSED_PARAM(sp);
     UNUSED_PARAM(metadata);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
 #endif
@@ -548,62 +489,67 @@ WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t tableIndex)
 #endif
 }
 
-static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, callMetadata* call)
+static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::FunctionSpaceIndex functionIndex, EncodedJSValue* callee)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
     CodePtr<WasmEntryPtrTag> codePtr;
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
 
-    auto functionIndex = call->functionIndex;
     if (functionIndex < importFunctionCount) {
         JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
+#if USE(JSVALUE64)
+        *callee = bitwise_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
+#else
+        *callee = bitwise_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
+#endif
     } else {
         // Target is a wasm function within the same instance
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         boxedCallee = CalleeBits::encodeNativeCallee(
             instance->calleeGroup()->wasmCalleeFromFunctionIndexSpace(functionIndex));
+        *callee = boxedCallee;
     }
 
-    call->callee.boxedCallee = boxedCallee;
-    call->callee.instance = instance;
-
-    WASM_CALL_RETURN(call->callee, codePtr.taggedPtr(), WasmEntryPtrTag);
+    WASM_CALL_RETURN(instance, codePtr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(call, callMetadata* call)
+WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex, EncodedJSValue* callee)
 {
-    return doWasmCall(instance, call);
+    return doWasmCall(instance, Wasm::FunctionSpaceIndex(functionIndex), callee);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(call_indirect, callIndirectMetadata* call)
+WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call)
 {
-    Wasm::IPIntCallee* caller = IPINT_CALLEE(call->callFrame);
-    unsigned functionIndex = call->functionRef;
     unsigned tableIndex = call->tableIndex;
     unsigned typeIndex = call->typeIndex;
+
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
 
-    if (functionIndex >= table->length())
-        WASM_THROW(call->callFrame, Wasm::ExceptionType::OutOfBoundsCallIndirect);
+    if (*functionIndex >= table->length())
+        WASM_THROW(callFrame, Wasm::ExceptionType::OutOfBoundsCallIndirect);
 
-    const Wasm::FuncRefTable::Function& function = table->function(functionIndex);
+    const Wasm::FuncRefTable::Function& function = table->function(*functionIndex);
 
     if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
-        WASM_THROW(call->callFrame, Wasm::ExceptionType::NullTableEntry);
+        WASM_THROW(callFrame, Wasm::ExceptionType::NullTableEntry);
 
-    const auto& callSignature = caller->signature(typeIndex);
+    const auto& callSignature = static_cast<Wasm::IPIntCallee*>(callFrame->callee().asNativeCallee())->signature(typeIndex);
     if (callSignature.index() != function.m_function.typeIndex)
-        WASM_THROW(call->callFrame, Wasm::ExceptionType::BadSignature);
+        WASM_THROW(callFrame, Wasm::ExceptionType::BadSignature);
 
+    EncodedJSValue* calleeReturn = bitwise_cast<EncodedJSValue*>(functionIndex);
+    EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
     if (function.m_function.boxedWasmCalleeLoadLocation)
-        call->callee.boxedCallee = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
+        boxedCallee = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
     else
-        call->callee.boxedCallee = CalleeBits::encodeNullCallee();
-    call->callee.instance = function.m_instance;
+        boxedCallee = CalleeBits::encodeNativeCallee(
+            function.m_instance->calleeGroup()->wasmCalleeFromFunctionIndexSpace(*functionIndex));
+    *calleeReturn = boxedCallee;
 
-    WASM_CALL_RETURN(call->callee, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
+    auto callTarget = *function.m_function.entrypointLoadLocation;
+    WASM_CALL_RETURN(function.m_instance, callTarget);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(set_global_ref, uint32_t globalIndex, JSValue value)

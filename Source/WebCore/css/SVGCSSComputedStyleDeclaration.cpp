@@ -145,8 +145,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return createColor(svgStyle.stopColor());
     case CSSPropertyFill:
         return adjustSVGPaint(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), createColor(svgStyle.fillPaintColor()));
-    case CSSPropertyKerning:
-        return svgStyle.kerning().toCSSPrimitiveValue();
     case CSSPropertyMarkerEnd:
         return svgMarkerValue(svgStyle.markerEndResource(), m_element.get());
     case CSSPropertyMarkerMid:

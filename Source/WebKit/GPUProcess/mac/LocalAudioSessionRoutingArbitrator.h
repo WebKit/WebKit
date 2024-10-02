@@ -46,10 +46,10 @@ class LocalAudioSessionRoutingArbitrator final
 
     friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>(GPUConnectionToWebProcess&);
 public:
+    USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);
+
     static UniqueRef<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
     virtual ~LocalAudioSessionRoutingArbitrator();
-
-    using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 
     void processDidTerminate();
 
@@ -63,11 +63,11 @@ private:
     Logger& logger();
     ASCIILiteral logClassName() const { return "LocalAudioSessionRoutingArbitrator"_s; }
     WTFLogChannel& logChannel() const;
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     bool canLog() const final;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 };
 
 }

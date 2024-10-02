@@ -31,10 +31,17 @@ if (ENABLE_COG)
     endif ()
 
     if ("${WPE_COG_PLATFORMS}" STREQUAL "")
-        set(WPE_COG_PLATFORMS "drm,headless,gtk4,x11,wayland")
+        set(WPE_COG_PLATFORMS "drm,headless,wayland,x11")
     elseif ("${WPE_COG_PLATFORMS}" STREQUAL "none")
         set(WPE_COG_PLATFORMS "")
     endif ()
+
+    # Conditionally add 'GTK4'.
+    find_package(GTK 4.0.0)
+    if (GTK_FOUND)
+        set(WPE_COG_PLATFORMS "${WPE_COG_PLATFORMS},gtk4")
+    endif ()
+
     if (DEFINED ENV{PKG_CONFIG_PATH})
         set(WPE_COG_PKG_CONFIG_PATH ${CMAKE_BINARY_DIR}:$ENV{PKG_CONFIG_PATH})
     else ()
@@ -85,6 +92,7 @@ if (ENABLE_COG)
             -Dwpe_api=${WPE_API_VERSION}
             -Dplatforms=${WPE_COG_PLATFORMS}
             -Db_sanitize=${COG_MESON_SANITIZE_OPTION}
+            -Dlibportal=auto
         BUILD_COMMAND
             meson compile -C <BINARY_DIR>
         INSTALL_COMMAND "")

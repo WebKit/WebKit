@@ -94,6 +94,10 @@ public:
             FramePromise::AutoRejectProducer producer;
         };
 
+        explicit Decoder(VideoDecoderIdentifier identifier)
+            : identifier(identifier)
+        { }
+
         VideoDecoderIdentifier identifier;
         WebCore::VideoCodecType type;
         String codec;
@@ -131,6 +135,10 @@ public:
     struct Encoder {
         WTF_MAKE_TZONE_ALLOCATED(Encoder);
     public:
+        explicit Encoder(VideoEncoderIdentifier identifier)
+            : identifier(identifier)
+        { }
+
         VideoEncoderIdentifier identifier;
         WebCore::VideoCodecType type;
         String codec;

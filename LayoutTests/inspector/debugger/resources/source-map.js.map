@@ -11,5 +11,6 @@
         "import { middle } from \"./middle.js\"\n\nglobalThis.outer = function(x) {\n    let y = \"outer\";\n    y += middle(x);\n    return y;\n};\n"
     ],
     "mappings": "MAAO,SAASA,EAAMC,EAAG,CACrB,MAAO,QAAUA,CACrB,CCAO,SAASC,EAAOC,EAAG,CACtB,IAAIC,EAAI,SACR,OAAAA,GAAKC,EAAMF,CAAC,EACLC,CACX,CCJA,WAAW,MAAQ,SAASE,EAAG,CAC3B,IAAIC,EAAI,QACR,OAAAA,GAAKC,EAAOF,CAAC,EACNC,CACX",
-    "names": ["inner", "x", "middle", "x", "y", "inner", "x", "y", "middle"]
+    "names": ["inner", "x", "middle", "x", "y", "inner", "x", "y", "middle"],
+    "ignoreList": [1]
 }

@@ -226,6 +226,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 {
     if (layer.isRenderViewLayer()) {
         m_isMainFrameRenderViewLayer = renderer().frame().isMainFrame();
+        m_isRootFrameRenderViewLayer = renderer().frame().isRootFrame();
         m_isFrameLayerWithTiledBacking = renderer().page().chrome().client().shouldUseTiledBackingForFrameView(renderer().view().frameView());
     }
 
@@ -543,11 +544,11 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    if (m_isMainFrameRenderViewLayer) {
-        // Page scale is applied above the RenderView on iOS.
+    if (m_isMainFrameRenderViewLayer)
         m_graphicsLayer->setContentsOpaque(!compositor().viewHasTransparentBackground());
+    // Page scale is applied above the RenderView on iOS.
+    if (m_isRootFrameRenderViewLayer)
         m_graphicsLayer->setAppliesPageScale();
-    }
 #endif
 
 #if USE(CA)

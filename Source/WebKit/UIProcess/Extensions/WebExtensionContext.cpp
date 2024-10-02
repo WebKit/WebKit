@@ -58,15 +58,17 @@ WebExtensionContext::WebExtensionContext()
 
 WebExtensionContextParameters WebExtensionContext::parameters() const
 {
+    RefPtr extension = m_extension;
+
     return {
         identifier(),
         baseURL(),
         uniqueIdentifier(),
         unsupportedAPIs(),
         m_grantedPermissions,
-        extension().serializeLocalization(),
-        extension().serializeManifest(),
-        extension().manifestVersion(),
+        extension->serializeLocalization(),
+        extension->serializeManifest(),
+        extension->manifestVersion(),
         isSessionStorageAllowedInContentScripts(),
         backgroundPageIdentifier(),
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -142,10 +144,11 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
                 continue;
 
             for (auto entry : pagesEntry->value) {
-                if (!hasAccessToPrivateData() && entry.key.sessionID().isEphemeral())
+                Ref page = entry.key;
+                if (!hasAccessToPrivateData() && page->sessionID().isEphemeral())
                     continue;
 
-                Ref process = entry.key.legacyMainFrameProcess();
+                Ref process = page->legacyMainFrameProcess();
                 if (process->canSendMessage())
                     result.add(WTFMove(process));
             }

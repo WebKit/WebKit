@@ -172,8 +172,8 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
     if (parameters.parentIdentifier) {
         RefPtr updatedParentMenuItem = m_extensionContext->menuItem(parameters.parentIdentifier.value());
         if (updatedParentMenuItem.get() != m_parentMenuItem) {
-            if (m_parentMenuItem)
-                m_parentMenuItem->removeSubmenuItem(*this);
+            if (RefPtr parentMenuItem = m_parentMenuItem.get())
+                parentMenuItem->removeSubmenuItem(*this);
 
             if (updatedParentMenuItem)
                 updatedParentMenuItem->addSubmenuItem(*this);
@@ -367,13 +367,13 @@ CocoaImage *WebExtensionMenuItem::icon(CGSize idealSize) const
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_iconVariants) {
-        result = extensionContext()->extension().bestImageForIconVariants(m_iconVariants.get(), idealSize, [&](auto *error) {
+        result = extensionContext()->protectedExtension()->bestImageForIconVariants(m_iconVariants.get(), idealSize, [&](auto *error) {
             extensionContext()->recordError(error);
         });
     } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_icons) {
-        result = extensionContext()->extension().bestImageInIconsDictionary(m_icons.get(), idealSize, [&](auto *error) {
+        result = extensionContext()->protectedExtension()->bestImageInIconsDictionary(m_icons.get(), idealSize, [&](auto *error) {
             extensionContext()->recordError(error);
         });
     }

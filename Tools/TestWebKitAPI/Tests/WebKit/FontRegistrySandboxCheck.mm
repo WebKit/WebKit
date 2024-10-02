@@ -56,7 +56,7 @@ TEST(WebKit, FontdSandboxCheck)
 
 TEST(WebKit, UserInstalledFontsWork)
 {
-    NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *fontURL = [NSBundle.test_resourcesBundle URLForResource:@"Ahem" withExtension:@"ttf"];
     CFErrorRef error = nil;
     auto registrationSucceeded = CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(fontURL), kCTFontManagerScopeUser, &error);
 

@@ -659,7 +659,7 @@ TEST(WebKit, DelayDecidePolicyForNavigationAction)
     auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
     [webView setNavigationDelegate:controller.get()];
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];

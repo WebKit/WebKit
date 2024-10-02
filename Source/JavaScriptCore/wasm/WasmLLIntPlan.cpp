@@ -90,22 +90,24 @@ bool LLIntPlan::prepareImpl()
     return true;
 }
 
-void LLIntPlan::compileFunction(uint32_t functionIndex)
+void LLIntPlan::compileFunction(FunctionCodeIndex functionIndex)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    unsigned functionIndexSpace = m_moduleInformation->importFunctionTypeIndices.size() + functionIndex;
+    auto functionIndexSpace = m_moduleInformation->toSpaceIndex(functionIndex);
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 
+    beginCompilerSignpost(CompilationMode::LLIntMode, functionIndexSpace);
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
     auto parseAndCompileResult = parseAndCompileBytecode(function.data, signature, m_moduleInformation.get(), functionIndex);
+    endCompilerSignpost(CompilationMode::LLIntMode, functionIndexSpace);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };
         if (!m_errorMessage) {
             // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex)); // FIXME make this an Expected.
+            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex.rawIndex())); // FIXME make this an Expected.
         }
         m_currentIndex = m_moduleInformation->functions.size();
         return;
@@ -117,8 +119,10 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         for (auto successor : parseAndCompileResult->get()->tailCallSuccessors())
             addTailCallEdge(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex(), successor);
 
-        if (parseAndCompileResult->get()->tailCallClobbersInstance())
-            m_moduleInformation->addClobberingTailCall(m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex());
+        if (parseAndCompileResult->get()->tailCallClobbersInstance()) {
+            ASSERT(functionIndexSpace == m_moduleInformation->importFunctionCount() + parseAndCompileResult->get()->functionIndex());
+            m_moduleInformation->addClobberingTailCall(functionIndexSpace);
+        }
     }
 
     m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
@@ -140,7 +144,7 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         } else {
             if (m_moduleInformation->usesSIMD(functionIndex)) {
                 Locker locker { m_lock };
-                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
                 return;
             }
             callee->setEntrypoint(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(wasm_function_prologue_trampoline));
@@ -155,32 +159,19 @@ void LLIntPlan::compileFunction(uint32_t functionIndex)
         if (m_exportedFunctionIndices.contains(functionIndex)) {
             if (!ensureEntrypoint(*llintCallee, functionIndex)) {
                 Locker locker { m_lock };
-                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
                 return;
             }
         }
     }
 }
 
-bool LLIntPlan::ensureEntrypoint(LLIntCallee&, unsigned functionIndex)
+bool LLIntPlan::ensureEntrypoint(LLIntCallee&, FunctionCodeIndex functionIndex)
 {
     if (m_entrypoints[functionIndex])
         return true;
 
-    if (!Options::useWasmJITLessJSEntrypoint())
-        return false;
-
-    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
-
-    RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
-    size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;
-    totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
-    totalFrameSize += JITLessJSEntrypointCallee::RegisterStackSpaceAligned;
-    totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
-
-    m_entrypoints[functionIndex] = JITLessJSEntrypointCallee::create(totalFrameSize, typeIndex, m_moduleInformation->usesSIMD(functionIndex));
+    m_entrypoints[functionIndex] = JSEntrypointCallee::create(m_moduleInformation->internalFunctionTypeIndices[functionIndex], m_moduleInformation->usesSIMD(functionIndex));
     return true;
 }
 
@@ -200,17 +191,18 @@ void LLIntPlan::didCompleteCompilation()
 
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         if (!m_entrypoints[functionIndex]) {
-            const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
+            auto codeIndex = FunctionCodeIndex(functionIndex);
+            const auto functionIndexSpace = m_moduleInformation->toSpaceIndex(codeIndex);
             if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
-                if (!ensureEntrypoint(m_callees[functionIndex].get(), functionIndex)) {
-                    Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex, " requires JIT"_s));
+                if (!ensureEntrypoint(m_callees[functionIndex].get(), codeIndex)) {
+                    Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, codeIndex.rawIndex(), " requires JIT"_s));
                     return;
                 }
             }
         }
         if (auto& callee = m_entrypoints[functionIndex]) {
-            if (callee->compilationMode() == CompilationMode::JITLessJSEntrypointMode)
-                static_cast<JITLessJSEntrypointCallee*>(callee.get())->wasmCallee = CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get());
+            if (callee->compilationMode() == CompilationMode::JSToWasmEntrypointMode)
+                static_cast<JSEntrypointCallee*>(callee.get())->setWasmCallee(CalleeBits::encodeNativeCallee(&m_callees[functionIndex].get()));
             m_jsEntrypointCallees.add(functionIndex, callee);
         }
     }
@@ -261,7 +253,7 @@ void LLIntPlan::work(CompilationEffort effort)
     }
 }
 
-bool LLIntPlan::didReceiveFunctionData(unsigned, const FunctionData&)
+bool LLIntPlan::didReceiveFunctionData(FunctionCodeIndex, const FunctionData&)
 {
     // Validation is done inline by the parser
     return true;
@@ -277,6 +269,7 @@ void LLIntPlan::addTailCallEdge(uint32_t callerIndex, uint32_t calleeIndex)
 
 void LLIntPlan::computeTransitiveTailCalls() const
 {
+    // FIXME: Use FunctionCodeIndex -> FunctionSpaceIndex by adding the right HashTraits.
     GraphNodeWorklist<uint32_t, HashSet<uint32_t, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>> worklist;
 
     for (auto clobberingTailCall : m_moduleInformation->clobberingTailCalls())
@@ -290,7 +283,7 @@ void LLIntPlan::computeTransitiveTailCalls() const
         for (const auto &successor : it->value) {
             if (worklist.saw(successor))
                 continue;
-            m_moduleInformation->addClobberingTailCall(successor);
+            m_moduleInformation->addClobberingTailCall(FunctionSpaceIndex(successor));
             worklist.push(successor);
         }
     }

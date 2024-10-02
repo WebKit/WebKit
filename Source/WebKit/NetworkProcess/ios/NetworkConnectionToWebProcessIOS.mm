@@ -71,6 +71,11 @@ CocoaWindow *NetworkConnectionToWebProcess::paymentCoordinatorPresentingWindow(c
     return nil;
 }
 
+const SharedPreferencesForWebProcess& NetworkConnectionToWebProcess::sharedPreferencesForWebPaymentMessages() const
+{
+    return m_sharedPreferencesForWebProcess;
+}
+
 const String& NetworkConnectionToWebProcess::paymentCoordinatorBoundInterfaceIdentifier(const WebPaymentCoordinatorProxy&)
 {
     if (auto* session = static_cast<NetworkSessionCocoa*>(networkSession()))

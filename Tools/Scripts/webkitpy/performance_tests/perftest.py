@@ -261,12 +261,18 @@ class PerfTest(object):
         re.compile(r'WebKitTestRunner\[\d+\] <Error>: CGContext\w+: invalid context 0x0\. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.'),
     ]
 
+    _errors_to_ignore_in_sequoia = [
+        re.compile(r'WebKitTestRunner\[\d+:\d+\] \+\[IMKClient subclass\]: chose IMKClient_'),
+    ]
+
     def _filter_output(self, output):
         if output.text:
             output.text = self.filter_ignored_lines(self._lines_to_ignore, output.text)
         if output.error:
             if self._port.name().startswith('mac-sierra'):
                 output.error = self.filter_ignored_lines(self._errors_to_ignore_in_sierra, output.error)
+            if self._port.name().startswith('mac-sequoia'):
+                output.error = self.filter_ignored_lines(self._errors_to_ignore_in_sequoia, output.error)
 
 
 class SingleProcessPerfTest(PerfTest):

@@ -59,6 +59,8 @@ public:
     // FIXME: Remove this when WritingToolsController no longer needs to support `contextRangeForSessionWithID`.
     SimpleRange currentContextRange() const { return m_currentContextRange; }
 
+    void commit();
+
 private:
     WritingToolsCompositionCommand(Ref<Document>&&, const SimpleRange&);
 

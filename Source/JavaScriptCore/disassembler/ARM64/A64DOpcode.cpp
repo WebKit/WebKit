@@ -126,6 +126,7 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x1d, A64DOpcodeLoadStoreUnsignedImmediate),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointCompare),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointConditionalSelect),
+    OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing4Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing2Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointDataProcessing1Source),
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingFixedPointConversions),
@@ -827,6 +828,33 @@ const char* A64DOpcodeFloatingPointDataProcessing2Source::format()
     appendFPRegisterName(rn(), registerSize);
     appendSeparator();
     appendFPRegisterName(rm(), registerSize);
+
+    return m_formatBuffer;
+}
+
+const char* const A64DOpcodeFloatingPointDataProcessing4Source::s_opNames[4] = {
+    "frint32z", "frint32x", "frint64z", "frint64x"
+};
+
+const char* A64DOpcodeFloatingPointDataProcessing4Source::format()
+{
+    if (mBit())
+        return A64DOpcode::format();
+
+    if (sBit())
+        return A64DOpcode::format();
+
+    if (type() & 0x2)
+        return A64DOpcode::format();
+
+    if (opNum() > 4)
+        return A64DOpcode::format();
+
+    appendInstructionName(opName());
+    unsigned registerSize = type() + 2;
+    appendFPRegisterName(rd(), registerSize);
+    appendSeparator();
+    appendFPRegisterName(rn(), registerSize);
 
     return m_formatBuffer;
 }
@@ -1874,12 +1902,30 @@ const char* A64DOpcodeVectorDataProcessingLogical1Source::format()
 const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
 {
     switch (op10_15()) {
-    case 0b000111:
+    case 0b00111:
         return "ins";
-    case 0b001111:
+    case 0b01111:
         return "umov";
+    case 0b00110:
+        return "uzp1";
+    case 0b01010:
+        return "trn1";
+    case 0b01110:
+        return "zip1";
+    case 0b10110:
+        return "uzip2";
+    case 0b11010:
+        return "trn2";
+    case 0b11110:
+        return "zip2";
+    case 0b00011:
+        return "dup";
+    case 0b01011:
+        return "smov";
+    case 0b01000:
+        return "tbl";
     default:
-        dataLogLn("Dissassembler saw unknown simd one source instruction opcode ", op10_15());
+        dataLogLn("Dissassembler saw unknown simd 1 source instruction opcode ", op10_15());
         return "SIMDUK";
     }
 }
@@ -1887,7 +1933,7 @@ const char* A64DOpcodeVectorDataProcessingLogical1Source::opName()
 const char* A64DOpcodeVectorDataProcessingLogical2Source::format()
 {
     appendInstructionName(opName());
-    appendSIMDLaneType(q());
+    appendSIMDLaneType(q(), size());
     appendSeparator();
     appendCharacter('v');
     appendCharacter('/');
@@ -1909,6 +1955,10 @@ const char* A64DOpcodeVectorDataProcessingLogical2Source::opName()
     switch (op10_15()) {
     case 0b00111:
         return "orr";
+    case 0b11001:
+        return "smax";
+    case 0b10010:
+        return "bsl";
     default:
         dataLogLn("Dissassembler saw unknown simd 2 source instruction opcode ", op10_15());
         return "SIMDUK";

@@ -40,9 +40,9 @@ Child makeNumeric(double value, CSSUnitType unit)
     case CSSUnitType::CSS_INTEGER:
         return makeChild(Number { .value = value });
 
-    // Percent
+    // Percentage
     case CSSUnitType::CSS_PERCENTAGE:
-        return makeChild(Percent { .value = value, .hint = { } });
+        return makeChild(Percentage { .value = value, .hint = { } });
 
     // Canonical Dimension
     case CSSUnitType::CSS_PX:
@@ -122,11 +122,10 @@ Child makeNumeric(double value, CSSUnitType unit)
         return makeChild(NonCanonicalDimension { .value = value, .unit = unit });
 
     // Non-numeric types are not supported.
-    case CSSUnitType::CSS_ANCHOR:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_CALC:
+    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
@@ -166,7 +165,7 @@ Type getType(const Number&)
     return Type { };
 }
 
-Type getType(const Percent& root)
+Type getType(const Percentage& root)
 {
     auto type = Type { .percent = 1 };
     if (root.hint)
@@ -382,6 +381,14 @@ std::optional<Type> toType(const Abs& root)
 std::optional<Type> toType(const Sign& root)
 {
     return transformTypeFor(root, getValidatedTypeFor(root, root.a));
+}
+
+std::optional<Type> toType(const Progress& root)
+{
+    auto type = getValidatedTypeFor(root, root.progress);
+    type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.from));
+    type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.to));
+    return transformTypeFor(root, type);
 }
 
 TextStream& operator<<(TextStream& ts, Tree tree)

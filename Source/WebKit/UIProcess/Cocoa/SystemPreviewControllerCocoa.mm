@@ -393,7 +393,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    RetainPtr<UIViewController> presentingViewController = m_webPageProxy.uiClient().presentingViewController();
+    RetainPtr<UIViewController> presentingViewController = m_webPageProxy->uiClient().presentingViewController();
 
     if (!presentingViewController)
         return completionHandler();
@@ -408,7 +408,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.elementIdentifier ? protectedThis->m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
         auto request = WebCore::ResourceRequest(url);
         bool shouldRunAtForegroundPriority = false;
-        protectedThis->m_webPageProxy.dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+        protectedThis->m_webPageProxy->dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
             if (!weakThis)
                 return completionHandler();
 
@@ -603,7 +603,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
         m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
     else
         m_systemPreviewInfo.element.elementIdentifier = std::nullopt;
-    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.legacyMainFrameProcess().coreProcessIdentifier() };
+    m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy->legacyMainFrameProcess().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }

@@ -35,6 +35,8 @@ class ResponsivenessTimer {
 public:
     class Client : public CanMakeWeakPtr<Client> {
     public:
+        DECLARE_VIRTUAL_REFCOUNTED;
+
         virtual ~Client() { }
         virtual void didBecomeUnresponsive() = 0;
         virtual void didBecomeResponsive() = 0;
@@ -43,9 +45,6 @@ public:
         virtual void didChangeIsResponsive() = 0;
 
         virtual bool mayBecomeUnresponsive() = 0;
-
-        virtual void ref() = 0;
-        virtual void deref() = 0;
     };
 
     static constexpr Seconds defaultResponsivenessTimeout = 3_s;
@@ -77,6 +76,8 @@ public:
     void processTerminated();
 
 private:
+    Ref<Client> protectedClient() const;
+
     void timerFired();
 
     bool mayBecomeUnresponsive() const;

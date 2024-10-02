@@ -43,6 +43,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "MIMETypeRegistry.h"
+#include "Navigation.h"
 #include "Page.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
@@ -168,10 +169,13 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         && frame->document()->isSecureTransitionTo(url)
         && (frame->window() && !frame->window()->wasWrappedWithoutInitializedSecurityOrigin() && frame->window()->mayReuseForNavigation());
 
+    RefPtr<LocalDOMWindow> previousWindow;
     if (shouldReuseDefaultView) {
         ASSERT(frameLoader->documentLoader());
         if (CheckedPtr contentSecurityPolicy = frameLoader->documentLoader()->contentSecurityPolicy())
             shouldReuseDefaultView = !contentSecurityPolicy->sandboxFlags().contains(SandboxFlag::Origin);
+    } else {
+        previousWindow = frame->window();
     }
 
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
@@ -241,7 +245,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (existingDocument && existingDocument->contentSecurityPolicy() && document->contentSecurityPolicy())
         document->checkedContentSecurityPolicy()->setInsecureNavigationRequestsToUpgrade(existingDocument->checkedContentSecurityPolicy()->takeNavigationRequestsToUpgrade());
 
-    frameLoader->didBeginDocument(dispatch);
+    frameLoader->didBeginDocument(dispatch, previousWindow.get());
 
     document->implicitOpen();
 

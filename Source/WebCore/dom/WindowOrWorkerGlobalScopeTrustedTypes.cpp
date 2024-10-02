@@ -97,7 +97,7 @@ public:
 private:
     static ASCIILiteral supplementName() { return WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName(); }
 
-    WorkerGlobalScope& m_scope;
+    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
 };
 
@@ -120,7 +120,7 @@ WorkerGlobalScopeTrustedTypes* WorkerGlobalScopeTrustedTypes::from(WorkerGlobalS
 TrustedTypePolicyFactory* WorkerGlobalScopeTrustedTypes::trustedTypes() const
 {
     if (!m_trustedTypes)
-        m_trustedTypes = TrustedTypePolicyFactory::create(m_scope);
+        m_trustedTypes = TrustedTypePolicyFactory::create(m_scope.get());
     return m_trustedTypes.get();
 }
 

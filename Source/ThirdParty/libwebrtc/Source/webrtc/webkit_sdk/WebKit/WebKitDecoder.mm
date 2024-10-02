@@ -57,13 +57,13 @@
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback {
     if (self = [super init]) {
         m_h264Decoder = [[RTCVideoDecoderH264 alloc] init];
-        [m_h264Decoder setCallback:^(RTCVideoFrame *frame) {
+        [m_h264Decoder setCallback:^(RTCVideoFrame *frame, bool isReordered) {
             if (!frame) {
-              callback(nil, 0, 0);
+              callback(nil, 0, 0, isReordered);
               return;
             }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs, isReordered);
         }];
     }
     return self;
@@ -72,13 +72,13 @@
 - (instancetype)initH265DecoderWithCallback:(webrtc::LocalDecoderCallback)callback {
     if (self = [super init]) {
         m_h265Decoder = [[RTCVideoDecoderH265 alloc] init];
-        [m_h265Decoder setCallback:^(RTCVideoFrame *frame) {
+        [m_h265Decoder setCallback:^(RTCVideoFrame *frame, bool isReordered) {
             if (!frame) {
-              callback(nil, 0, 0);
+              callback(nil, 0, 0, isReordered);
               return;
             }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs, isReordered);
         }];
     }
     return self;
@@ -87,13 +87,13 @@
 - (instancetype)initVP9DecoderWithCallback:(webrtc::LocalDecoderCallback)callback {
     if (self = [super init]) {
         m_vp9Decoder = [[RTCVideoDecoderVTBVP9 alloc] init];
-        [m_vp9Decoder setCallback:^(RTCVideoFrame *frame) {
+        [m_vp9Decoder setCallback:^(RTCVideoFrame *frame, bool isReordered) {
             if (!frame) {
-              callback(nil, 0, 0);
+              callback(nil, 0, 0, isReordered);
               return;
             }
             auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs);
+            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs, isReordered);
         }];
     }
     return self;

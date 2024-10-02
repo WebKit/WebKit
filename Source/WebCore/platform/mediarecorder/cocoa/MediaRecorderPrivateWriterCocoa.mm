@@ -73,18 +73,13 @@
     return self;
 }
 
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
+- (void)assetWriter:(AVAssetWriter *)assetWriter didOutputSegmentData:(NSData *)segmentData segmentType:(AVAssetSegmentType)segmentType
 {
     UNUSED_PARAM(assetWriter);
-    m_writer->appendData(span(fragmentedHeaderData));
+    UNUSED_PARAM(segmentType);
+    m_writer->appendData(span(segmentData));
 }
 
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
-{
-    UNUSED_PARAM(assetWriter);
-    UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(span(fragmentedMediaData));
-}
 
 - (void)close
 {
@@ -165,6 +160,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
         return false;
+    }
+
+    [m_writer setPreferredOutputSegmentInterval:PAL::kCMTimeIndefinite];
+    if (m_hasVideo && m_hasAudio) {
+        // AVFileTypeProfileMPEG4AppleHLS allows muxed audio and video inputs
+        [m_writer setOutputFileTypeProfile:AVFileTypeProfileMPEG4AppleHLS];
+    } else {
+        // AVFileTypeProfileMPEG4CMAFCompliant allows only a single audio or video input
+        [m_writer setOutputFileTypeProfile:AVFileTypeProfileMPEG4CMAFCompliant];
     }
 
     m_writerDelegate = adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter: *this]);
@@ -477,9 +481,7 @@ void MediaRecorderPrivateWriter::stopRecording()
             if (!protectedThis)
                 return;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [m_writer flush];
-ALLOW_DEPRECATED_DECLARATIONS_END
+            [m_writer flushSegment];
 
             [m_writer finishWritingWithCompletionHandler:[whenFinished = WTFMove(whenFinished)]() mutable {
                 callOnMainThread(WTFMove(whenFinished));
@@ -516,9 +518,7 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
             if (!protectedThis)
                 return;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [protectedThis->m_writer flush];
-ALLOW_DEPRECATED_DECLARATIONS_END
+            [protectedThis->m_writer flushSegment];
 
             callOnMainThread([weakThis = WTFMove(weakThis)] {
                 if (auto protectedThis = weakThis.get())

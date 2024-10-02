@@ -716,7 +716,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
 {
     for (unsigned i = 0; i < size; ++i)
         table[i].~ValueType();
-    HashTableMalloc::free(reinterpret_cast<char*>(table));
+    HashTableMalloc::free(table);
 }
 
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, typename SizePolicy>
@@ -789,7 +789,7 @@ void RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits,
     }
 
     if (oldTable)
-        HashTableMalloc::free(reinterpret_cast<char*>(oldTable));
+        HashTableMalloc::free(oldTable);
 
     internalCheckTableConsistency();
 }

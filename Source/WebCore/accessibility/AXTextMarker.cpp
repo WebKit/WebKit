@@ -374,7 +374,7 @@ static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<A
         // Only consider the caption and rows as potential text-run yielding children. This is necessary because the
         // current table AX hierarchy scheme involves adding multiple different types of objects (rows, columns) that
         // each have the same cells (and thus the same text) as their children.
-        for (const auto& child : object->children()) {
+        for (const auto& child : object->unignoredChildren()) {
             if (child->roleValue() == AccessibilityRole::Caption) {
                 captionAndRows.append(child);
                 break;
@@ -383,7 +383,7 @@ static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<A
         captionAndRows.appendVector(object->rows());
     }
 
-    const auto& children = isExposedTable ? captionAndRows : object->children();
+    const auto& children = isExposedTable ? captionAndRows : object->unignoredChildren();
     size_t childrenSize = children.size();
 
     size_t startIndex = isForward ? childrenSize : 0;
@@ -536,7 +536,7 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     // This implementation doesn't respect the offset as the only known callsite hardcodes zero. We'll need to make changes to support this if a usecase arrives for it.
     RELEASE_ASSERT(!offset());
 
-    auto* stopObject = object->siblingOrParent(AXDirection::Next);
+    auto* stopObject = object->nextUnignoredSiblingOrParent();
     auto stopAtID = stopObject ? std::make_optional(stopObject->objectID()) : std::nullopt;
 
     auto textRunMarker = toTextRunMarker(stopAtID);
@@ -579,7 +579,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     RefPtr object = isolatedObject();
     if (!object)
         return -1;
-    auto* stopObject = object->siblingOrParent(AXDirection::Next);
+    auto* stopObject = object->nextUnignoredSiblingOrParent();
     auto stopAtID = stopObject ? std::make_optional(stopObject->objectID()) : std::nullopt;
 
     // To match the behavior of the VisiblePosition implementation of this functionality, we need to

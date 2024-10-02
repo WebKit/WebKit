@@ -19,6 +19,13 @@ add_definitions(-DNOMINMAX)
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(-DNOCRYPT)
 
+# For fileno, wcsicmp, getpid and strdup.
+# https://learn.microsoft.com/en-us/previous-versions/ms235384(v=vs.100)
+add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+
+# FIXME: warning STL4042: std::float_denorm_style, std::numeric_limits::has_denorm, and std::numeric_limits::has_denorm_loss are deprecated in C++23.
+add_definitions(-D_SILENCE_CXX23_DENORM_DEPRECATION_WARNING)
+
 # If <winsock2.h> is not included before <windows.h> redefinition errors occur
 # unless _WINSOCKAPI_ is defined before <windows.h> is included
 add_definitions(-D_WINSOCKAPI_=)
@@ -91,7 +98,6 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SOURCE PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_STATISTICS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MINIBROWSER PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MOUSE_CURSOR_SCALE PUBLIC ON)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_NOTIFICATIONS PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBASSEMBLY PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBASSEMBLY_BBQJIT PRIVATE ON)

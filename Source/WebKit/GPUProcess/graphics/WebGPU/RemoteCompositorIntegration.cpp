@@ -49,14 +49,14 @@ RemoteCompositorIntegration::RemoteCompositorIntegration(WebCore::WebGPU::Compos
     , m_gpu(gpu)
     , m_identifier(identifier)
 {
-    m_streamConnection->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->startReceivingMessages(*this, Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
 
 RemoteCompositorIntegration::~RemoteCompositorIntegration() = default;
 
 RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
 {
-    RefPtr connection = m_gpu->gpuConnectionToWebProcess();
+    RefPtr connection = protectedGPU()->gpuConnectionToWebProcess();
     if (!connection)
         return nullptr;
     return &connection->connection();
@@ -64,13 +64,13 @@ RefPtr<IPC::Connection> RemoteCompositorIntegration::connection() const
 
 void RemoteCompositorIntegration::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex, CompletionHandler<void()>&& completionHandler)
 {
     UNUSED_PARAM(imageBufferIdentifier);
-    m_backing->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
+    protectedBacking()->withDisplayBufferAsNativeImage(bufferIndex, [gpu = m_gpu, imageBufferIdentifier, completionHandler = WTFMove(completionHandler)] (WebCore::NativeImage* image) mutable {
         if (image && gpu.ptr())
             gpu->paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
         completionHandler();
@@ -79,24 +79,34 @@ void RemoteCompositorIntegration::paintCompositedResultsToCanvas(WebCore::Render
 
 void RemoteCompositorIntegration::stopListeningForIPC()
 {
-    m_streamConnection->stopReceivingMessages(Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
+    protectedStreamConnection()->stopReceivingMessages(Messages::RemoteCompositorIntegration::messageReceiverName(), m_identifier.toUInt64());
 }
 
 #if PLATFORM(COCOA)
 void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&& destinationColorSpace, WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    auto convertedDevice = m_objectHeap->convertDeviceFromBacking(deviceIdentifier);
+    auto convertedDevice = protectedObjectHeap()->convertDeviceFromBacking(deviceIdentifier);
     MESSAGE_CHECK_COMPLETION(convertedDevice, callback({ }));
 
-    callback(m_backing->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
+    callback(protectedBacking()->recreateRenderBuffers(width, height, WTFMove(destinationColorSpace), alphaMode, textureFormat, *convertedDevice));
 }
 #endif
 
 void RemoteCompositorIntegration::prepareForDisplay(CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_backing->prepareForDisplay([completionHandler = WTFMove(completionHandler)]() mutable {
+    protectedBacking()->prepareForDisplay([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(true);
     });
+}
+
+Ref<WebCore::WebGPU::CompositorIntegration> RemoteCompositorIntegration::protectedBacking()
+{
+    return m_backing;
+}
+
+Ref<IPC::StreamServerConnection> RemoteCompositorIntegration::protectedStreamConnection() const
+{
+    return m_streamConnection;
 }
 
 } // namespace WebKit

@@ -28,7 +28,7 @@ Running pytest now produces this output:
 
     $ pytest test_show_warnings.py
     =========================== test session starts ============================
-    platform linux -- Python 3.x.y, pytest-8.x.y, pluggy-1.x.y
+    platform linux -- Python 3.x.y, pytest-7.x.y, pluggy-1.x.y
     rootdir: /home/sweet/project
     collected 1 item
 
@@ -41,8 +41,6 @@ Running pytest now produces this output:
 
     -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
     ======================= 1 passed, 1 warning in 0.12s =======================
-
-.. _`controlling-warnings`:
 
 Controlling warnings
 --------------------
@@ -107,18 +105,6 @@ all other warnings into errors.
 
 When a warning matches more than one option in the list, the action for the last matching option
 is performed.
-
-
-.. note::
-
-    The ``-W`` flag and the ``filterwarnings`` ini option use warning filters that are
-    similar in structure, but each configuration option interprets its filter
-    differently. For example, *message* in ``filterwarnings`` is a string containing a
-    regular expression that the start of the warning message must match,
-    case-insensitively, while *message* in ``-W`` is a literal string that the start of
-    the warning message must contain (case-insensitively), ignoring any whitespace at
-    the start or end of message. Consult the `warning filter`_ documentation for more
-    details.
 
 
 .. _`filterwarnings`:
@@ -190,13 +176,10 @@ using an external system.
 DeprecationWarning and PendingDeprecationWarning
 ------------------------------------------------
 
+
 By default pytest will display ``DeprecationWarning`` and ``PendingDeprecationWarning`` warnings from
 user code and third-party libraries, as recommended by :pep:`565`.
 This helps users keep their code modern and avoid breakages when deprecated warnings are effectively removed.
-
-However, in the specific case where users capture any type of warnings in their test, either with
-:func:`pytest.warns`, :func:`pytest.deprecated_call` or using the :ref:`recwarn <recwarn>` fixture,
-no warning will be displayed at all.
 
 Sometimes it is useful to hide some specific deprecation warnings that happen in code that you have no control over
 (such as third-party libraries), in which case you might use the warning filters options (ini or marks) to ignore
@@ -213,9 +196,6 @@ For example:
 
 This will ignore all warnings of type ``DeprecationWarning`` where the start of the message matches
 the regular expression ``".*U.*mode is deprecated"``.
-
-See :ref:`@pytest.mark.filterwarnings <filterwarnings>` and
-:ref:`Controlling warnings <controlling-warnings>` for more examples.
 
 .. note::
 
@@ -265,15 +245,14 @@ when called with a ``17`` argument.
 Asserting warnings with the warns function
 ------------------------------------------
 
+
+
 You can check that code raises a particular warning using :func:`pytest.warns`,
-which works in a similar manner to :ref:`raises <assertraises>` (except that
-:ref:`raises <assertraises>` does not capture all exceptions, only the
-``expected_exception``):
+which works in a similar manner to :ref:`raises <assertraises>`:
 
 .. code-block:: python
 
     import warnings
-
     import pytest
 
 
@@ -281,34 +260,20 @@ which works in a similar manner to :ref:`raises <assertraises>` (except that
         with pytest.warns(UserWarning):
             warnings.warn("my warning", UserWarning)
 
-The test will fail if the warning in question is not raised. Use the keyword
-argument ``match`` to assert that the warning matches a text or regex.
-To match a literal string that may contain regular expression metacharacters like ``(`` or ``.``, the pattern can
-first be escaped with ``re.escape``.
+The test will fail if the warning in question is not raised. The keyword
+argument ``match`` to assert that the exception matches a text or regex::
 
-Some examples:
-
-.. code-block:: pycon
-
-
-    >>> with warns(UserWarning, match="must be 0 or None"):
+    >>> with warns(UserWarning, match='must be 0 or None'):
     ...     warnings.warn("value must be 0 or None", UserWarning)
-    ...
 
-    >>> with warns(UserWarning, match=r"must be \d+$"):
+    >>> with warns(UserWarning, match=r'must be \d+$'):
     ...     warnings.warn("value must be 42", UserWarning)
-    ...
 
-    >>> with warns(UserWarning, match=r"must be \d+$"):
+    >>> with warns(UserWarning, match=r'must be \d+$'):
     ...     warnings.warn("this is not here", UserWarning)
-    ...
     Traceback (most recent call last):
       ...
     Failed: DID NOT WARN. No warnings of type ...UserWarning... were emitted...
-
-    >>> with warns(UserWarning, match=re.escape("issue with foo() func")):
-    ...     warnings.warn("issue with foo() func")
-    ...
 
 You can also call :func:`pytest.warns` on a function or code string:
 
@@ -382,6 +347,8 @@ warnings: a WarningsRecorder instance. To view the recorded warnings, you can
 iterate over this instance, call ``len`` on it to get the number of recorded
 warnings, or index into it to get a particular recorded warning.
 
+.. currentmodule:: _pytest.warnings
+
 Full API: :class:`~_pytest.recwarn.WarningsRecorder`.
 
 .. _`warns use cases`:
@@ -391,32 +358,20 @@ Additional use cases of warnings in tests
 
 Here are some use cases involving warnings that often come up in tests, and suggestions on how to deal with them:
 
-- To ensure that **at least one** of the indicated warnings is issued, use:
+- To ensure that **any** warning is emitted, use:
 
 .. code-block:: python
 
-    def test_warning():
-        with pytest.warns((RuntimeWarning, UserWarning)):
-            ...
-
-- To ensure that **only** certain warnings are issued, use:
-
-.. code-block:: python
-
-    def test_warning(recwarn):
+    with pytest.warns():
         ...
-        assert len(recwarn) == 1
-        user_warning = recwarn.pop(UserWarning)
-        assert issubclass(user_warning.category, UserWarning)
 
 -  To ensure that **no** warnings are emitted, use:
 
 .. code-block:: python
 
-    def test_warning():
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            ...
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ...
 
 - To suppress warnings, use:
 
@@ -486,18 +441,3 @@ Please read our :ref:`backwards-compatibility` to learn how we proceed about dep
 features.
 
 The full list of warnings is listed in :ref:`the reference documentation <warnings ref>`.
-
-
-.. _`resource-warnings`:
-
-Resource Warnings
------------------
-
-Additional information of the source of a :class:`ResourceWarning` can be obtained when captured by pytest if
-:mod:`tracemalloc` module is enabled.
-
-One convenient way to enable :mod:`tracemalloc` when running tests is to set the :envvar:`PYTHONTRACEMALLOC` to a large
-enough number of frames (say ``20``, but that number is application dependent).
-
-For more information, consult the `Python Development Mode <https://docs.python.org/3/library/devmode.html>`__
-section in the Python documentation.

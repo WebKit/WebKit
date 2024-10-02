@@ -191,7 +191,7 @@ TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
     startedLoad = false;
     finishedLoad = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rich-and-plain-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"rich-and-plain-text" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&finishedLoad);
 
     startedLoad = false;
@@ -229,7 +229,7 @@ TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
     startedLoad = false;
     finishedLoad = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rich-and-plain-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"rich-and-plain-text" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&finishedLoad);
 
     startedLoad = false;
@@ -262,7 +262,7 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
     startedLoad = false;
     finishedLoad = false;
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"rich-and-plain-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"rich-and-plain-text" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&finishedLoad);
 
     startedLoad = false;
@@ -496,7 +496,7 @@ TEST(WKNavigation, MultipleProcessCrashesRelatedWebViews)
     }];
 
     webview1FinishedLoad = false;
-    [webView1 loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&webview1FinishedLoad);
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -513,7 +513,7 @@ TEST(WKNavigation, MultipleProcessCrashesRelatedWebViews)
     }];
 
     webview2FinishedLoad = false;
-    [webView2 loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&webview2FinishedLoad);
 
     // The 2 WebViews should use the same process since they're related.
@@ -524,7 +524,7 @@ TEST(WKNavigation, MultipleProcessCrashesRelatedWebViews)
         decisionHandler(_WKNavigationActionPolicyAllowInNewProcess);
     };
     webview1FinishedLoad = false;
-    [webView1 loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"]]];
     TestWebKitAPI::Util::run(&webview1FinishedLoad);
 
     navigationDelegate.get().decidePolicyForNavigationAction = nil;

@@ -1912,6 +1912,7 @@ static Ref<CSSValue> valueForWebkitRubyPosition(RubyPosition position)
         case RubyPosition::Under:
             return CSSValueAfter;
         case RubyPosition::InterCharacter:
+        case RubyPosition::LegacyInterCharacter:
             return CSSValueInterCharacter;
         }
         return CSSValueBefore;
@@ -1929,18 +1930,18 @@ static Element* styleElementForNode(Node* node)
 
 static Ref<CSSValue> valueForPosition(const RenderStyle& style, const LengthPoint& position)
 {
-    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.x(), style),
-        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.y(), style));
+    return CSSValueList::createSpaceSeparated(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.x, style),
+        ComputedStyleExtractor::zoomAdjustedPixelValueForLength(position.y, style));
 }
 
 static bool isAuto(const LengthPoint& position)
 {
-    return position.x().isAuto() && position.y().isAuto();
+    return position.x.isAuto() && position.y.isAuto();
 }
 
 static bool isNormal(const LengthPoint& position)
 {
-    return position.x().isNormal();
+    return position.x.isNormal();
 }
 
 static Ref<CSSValue> valueForPositionOrAuto(const RenderStyle& style, const LengthPoint& position)
@@ -2009,7 +2010,7 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     case PathOperation::Type::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
         auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
-        RefPtr<CSSValuePair> position = ray.position().x().isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x(), style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y(), style) }) };
+        RefPtr<CSSValuePair> position = ray.position().x.isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x, style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y, style) }) };
         return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
     }
     }
@@ -3181,6 +3182,19 @@ static Ref<CSSValue> valueForScrollTimelineName(const Vector<AtomString>& names)
 }
 
 static Ref<CSSValue> valueForAnchorName(const Vector<AtomString>& names)
+{
+    if (names.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& name : names) {
+        ASSERT(!name.isNull());
+        list.append(CSSPrimitiveValue::createCustomIdent(name));
+    }
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> valueForTimelineScopeNames(const Vector<AtomString>& names)
 {
     if (names.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -4861,6 +4875,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.positionAnchor().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createCustomIdent(style.positionAnchor());
+    case CSSPropertyTimelineScope:
+        switch (style.timelineScope().type) {
+        case TimelineScope::Type::None:
+            return CSSPrimitiveValue::create(CSSValueNone);
+        case TimelineScope::Type::All:
+            return CSSPrimitiveValue::create(CSSValueAll);
+        case TimelineScope::Type::Ident:
+            return valueForTimelineScopeNames(style.timelineScope().scopeNames);
+        }
+        ASSERT_NOT_REACHED();
+        return CSSPrimitiveValue::create(CSSValueNone);
 
     // Unimplemented CSS 3 properties (including CSS3 shorthand properties).
     case CSSPropertyAll:
@@ -5004,7 +5029,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyDominantBaseline:
     case CSSPropertyGlyphOrientationHorizontal:
     case CSSPropertyGlyphOrientationVertical:
-    case CSSPropertyKerning:
     case CSSPropertyTextAnchor:
     case CSSPropertyVectorEffect:
         return svgPropertyValue(propertyID);

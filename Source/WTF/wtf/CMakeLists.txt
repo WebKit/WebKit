@@ -217,6 +217,7 @@ set(WTF_PUBLIC_HEADERS
     PlatformUse.h
     PointerComparison.h
     PointerPreparations.h
+    PreciseSum.h
     PrintStream.h
     PriorityQueue.h
     ProcessID.h
@@ -236,6 +237,7 @@ set(WTF_PUBLIC_HEADERS
     RedBlackTree.h
     Ref.h
     RefCounted.h
+    RefCountedAndCanMakeWeakPtr.h
     RefCountedFixedVector.h
     RefCountedLeakCounter.h
     RefCounter.h
@@ -403,6 +405,7 @@ set(WTF_PUBLIC_HEADERS
     simde/simde.h
     simde/arm/neon.h
     simde/arm/sve.h
+    simde/wasm/simd128.h
 
     simdutf/simdutf_impl.h
 
@@ -537,6 +540,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    PreciseSum.cpp
     PrintStream.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp

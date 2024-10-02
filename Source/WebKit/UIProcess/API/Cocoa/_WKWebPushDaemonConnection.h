@@ -45,8 +45,8 @@ WK_EXTERN
 - (instancetype)init;
 @property (nonatomic, copy) NSString *machServiceName;
 @property (nonatomic, copy) NSString *partition;
-@property (nonatomic, copy) NSString *bundleIdentifier;
-
+@property (nonatomic, assign) audit_token_t hostApplicationAuditToken;
+@property (nonatomic, copy) NSString *bundleIdentifierOverrideForTesting;
 @end
 
 WK_EXTERN

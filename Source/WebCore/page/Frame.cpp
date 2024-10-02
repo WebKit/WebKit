@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HistoryController.h"
@@ -300,6 +301,12 @@ std::optional<OwnerPermissionsPolicyData> Frame::ownerPermissionsPolicy() const
     RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(owner);
     auto containerPolicy = iframe ? PermissionsPolicy::processPermissionsPolicyAttribute(*iframe) : PermissionsPolicy::PolicyDirective { };
     return OwnerPermissionsPolicyData { WTFMove(documentOrigin), WTFMove(documentPolicy), WTFMove(containerPolicy) };
+}
+
+void Frame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProcess)
+{
+    if (notifyUIProcess == NotifyUIProcess::Yes)
+        loaderClient().updateSandboxFlags(flags);
 }
 
 } // namespace WebCore

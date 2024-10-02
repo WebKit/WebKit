@@ -1499,6 +1499,9 @@ angle::Result TextureGL::clearImage(const gl::Context *context,
     nativegl::TexSubImageFormat texSubImageFormat =
         nativegl::GetTexSubImageFormat(functions, features, format, type);
 
+    // Some drivers may use color mask state when clearing textures.
+    contextGL->getStateManager()->setColorMask(true, true, true, true);
+
     ANGLE_GL_TRY(context, functions->clearTexImage(mTextureID, level, texSubImageFormat.format,
                                                    texSubImageFormat.type, data));
 
@@ -1516,6 +1519,9 @@ angle::Result TextureGL::clearSubImage(const gl::Context *context,
     ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+
+    // Some drivers may use color mask state when clearing textures.
+    contextGL->getStateManager()->setColorMask(true, true, true, true);
 
     nativegl::TexSubImageFormat texSubImageFormat =
         nativegl::GetTexSubImageFormat(functions, features, format, type);

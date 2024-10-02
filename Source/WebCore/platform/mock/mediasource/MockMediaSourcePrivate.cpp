@@ -78,6 +78,11 @@ RefPtr<MediaPlayerPrivateInterface> MockMediaSourcePrivate::player() const
     return m_player.get();
 }
 
+void MockMediaSourcePrivate::setPlayer(MediaPlayerPrivateInterface* player)
+{
+    m_player = downcast<MockMediaPlayerMediaSource>(player);
+}
+
 void MockMediaSourcePrivate::durationChanged(const MediaTime& duration)
 {
     MediaSourcePrivate::durationChanged(duration);

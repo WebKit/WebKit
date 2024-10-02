@@ -65,7 +65,7 @@ static int horizontalScrollChars()
     return scrollChars;
 }
 
-static int verticalScrollLines()
+static unsigned verticalScrollLines()
 {
     static ULONG scrollLines;
     if (!scrollLines && !::SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0))
@@ -444,7 +444,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
     } else {
         deltaX = 0;
         deltaY = delta;
-        int verticalMultiplier = verticalScrollLines();
+        unsigned verticalMultiplier = verticalScrollLines();
         if (verticalMultiplier == WHEEL_PAGESCROLL)
             granularity = WebWheelEvent::ScrollByPageWheelEvent;
         else {

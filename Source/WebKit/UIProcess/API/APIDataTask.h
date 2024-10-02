@@ -59,14 +59,15 @@ public:
     WebKit::WebPageProxy* page() { return m_page.get(); }
     const WTF::URL& originalURL() const { return m_originalURL; }
     const DataTaskClient& client() const { return m_client.get(); }
+    Ref<DataTaskClient> protectedClient() const;
     void setClient(Ref<DataTaskClient>&&);
     void networkProcessCrashed();
     void didCompleteWithError(WebCore::ResourceError&&);
 
 private:
-    DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&, bool shouldRunAtForegroundPriority);
+    DataTask(std::optional<WebKit::DataTaskIdentifier>, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&, bool shouldRunAtForegroundPriority);
 
-    WebKit::DataTaskIdentifier m_identifier;
+    Markable<WebKit::DataTaskIdentifier> m_identifier;
     WeakPtr<WebKit::WebPageProxy> m_page;
     WTF::URL m_originalURL;
     WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;

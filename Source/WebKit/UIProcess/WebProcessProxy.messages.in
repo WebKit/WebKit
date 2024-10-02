@@ -20,8 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebProcessProxy LegacyReceiver {
-    UpdateBackForwardItem(struct WebKit::BackForwardListItemState backForwardListItemState)
+messages -> WebProcessProxy WantsDispatchMessage {
+    UpdateBackForwardItem(Ref<WebKit::FrameState> mainFrameState)
     DidDestroyFrame(WebCore::FrameIdentifier frameID, WebKit::WebPageProxyIdentifier pageID) 
 
     DidDestroyUserGestureToken(WebCore::PageIdentifier pageID, uint64_t userGestureTokenID) 
@@ -91,4 +91,8 @@ messages -> WebProcessProxy LegacyReceiver {
 
     WrapCryptoKey(Vector<uint8_t> key) -> (std::optional<Vector<uint8_t>> wrappedKey) Synchronous
     UnwrapCryptoKey(struct WebCore::WrappedCryptoKey wrappedKey) -> (std::optional<Vector<uint8_t>> key) Synchronous
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    SetupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle serverConnection, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
+#endif
 }

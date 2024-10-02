@@ -34,12 +34,12 @@ namespace WebCore {
 // using the default, possibly-unsafe font parser.
 // Any: any font binary will be downloaded, no checks will be done during load.
 // Restricted: any font binary will be downloaded but just binaries listed by WebKit are trusted to load through the system font parser. A not allowed binary will be deleted after the check is done.
-// FallbackParser: any font binary will be downloaded. Binaries listed by WebKit are trusted to load through the system font parser. WebKit will attempt to load fonts that are not trusted with the fallback font parser, which is assumed to be safe.
+// SafeFontParser: any font binary will be downloaded. Binaries listed by WebKit are trusted to load through the safe font parser.
 // None: No font binary will be downloaded or loaded.
 enum class DownloadableBinaryFontTrustedTypes : uint8_t {
     Any,
     Restricted,
-    FallbackParser,
+    SafeFontParser,
     None
 };
 

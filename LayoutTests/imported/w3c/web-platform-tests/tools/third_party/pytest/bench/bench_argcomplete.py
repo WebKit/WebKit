@@ -4,7 +4,6 @@
 # FastFilesCompleter    0.7383    1.0760
 import timeit
 
-
 imports = [
     "from argcomplete.completers import FilesCompleter as completer",
     "from _pytest._argcomplete import FastFilesCompleter as completer",

@@ -563,7 +563,7 @@ index 5cc743ea996bd5242ada38d7fd35145c13b577ef..29aabaad8c96f1001a149290fd0799ab
  
  #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd439039d53 100644
+index bef68a77a231f8446938f651dc9384d858a666f5..fc545fb50b014caeff9d0bfb28b527bb47dccdf6 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
 @@ -164,6 +164,47 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
@@ -614,7 +614,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  FramebufferStatus CheckAttachmentSampleCounts(const Context *context,
                                                GLsizei currAttachmentSamples,
                                                GLsizei samples,
-@@ -369,6 +410,9 @@ FramebufferState::FramebufferState(rx::UniqueSerial serial)
+@@ -376,6 +417,9 @@ FramebufferState::FramebufferState(rx::UniqueSerial serial)
        mFramebufferSerial(serial),
        mLabel(),
        mColorAttachments(1),
@@ -624,7 +624,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
        mColorAttachmentsMask(0),
        mDrawBufferStates(1, GL_BACK),
        mReadBufferState(GL_BACK),
-@@ -392,6 +436,9 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Uniqu
+@@ -399,6 +443,9 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Uniqu
        mFramebufferSerial(serial),
        mLabel(),
        mColorAttachments(caps.maxColorAttachments),
@@ -634,7 +634,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
        mColorAttachmentsMask(0),
        mDrawBufferStates(caps.maxDrawBuffers, GL_NONE),
        mReadBufferState(GL_COLOR_ATTACHMENT0_EXT),
-@@ -598,6 +645,27 @@ const FramebufferAttachment *FramebufferState::getDepthStencilAttachment() const
+@@ -605,6 +652,27 @@ const FramebufferAttachment *FramebufferState::getDepthStencilAttachment() const
      return nullptr;
  }
  
@@ -662,7 +662,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  const Extents FramebufferState::getAttachmentExtentsIntersection() const
  {
      int32_t width  = std::numeric_limits<int32_t>::max();
-@@ -828,6 +896,10 @@ Framebuffer::Framebuffer(const Context *context, rx::GLImplFactory *factory, Fra
+@@ -835,6 +903,10 @@ Framebuffer::Framebuffer(const Context *context, rx::GLImplFactory *factory, Fra
      ASSERT(mImpl != nullptr);
      ASSERT(mState.mColorAttachments.size() ==
             static_cast<size_t>(context->getCaps().maxColorAttachments));
@@ -673,7 +673,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  
      for (uint32_t colorIndex = 0;
           colorIndex < static_cast<uint32_t>(mState.mColorAttachments.size()); ++colorIndex)
-@@ -862,6 +934,15 @@ void Framebuffer::onDestroy(const Context *context)
+@@ -869,6 +941,15 @@ void Framebuffer::onDestroy(const Context *context)
      mState.mWebGLStencilAttachment.detach(context, mState.mFramebufferSerial);
      mState.mWebGLDepthStencilAttachment.detach(context, mState.mFramebufferSerial);
  
@@ -689,7 +689,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
      if (mPixelLocalStorage)
      {
          mPixelLocalStorage->onFramebufferDestroyed(context);
-@@ -1151,6 +1232,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
+@@ -1158,6 +1239,23 @@ size_t Framebuffer::getDrawbufferStateCount() const
      return mState.mDrawBufferStates.size();
  }
  
@@ -713,7 +713,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  GLenum Framebuffer::getDrawBufferState(size_t drawBuffer) const
  {
      ASSERT(drawBuffer < mState.mDrawBufferStates.size());
-@@ -1445,6 +1543,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1452,6 +1550,25 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
          }
      }
  
@@ -739,7 +739,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
      const FramebufferAttachment &depthAttachment = mState.mDepthAttachment;
      if (depthAttachment.isAttached())
      {
-@@ -1498,6 +1615,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1505,6 +1622,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -760,7 +760,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
      }
  
      const FramebufferAttachment &stencilAttachment = mState.mStencilAttachment;
-@@ -1553,6 +1684,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
+@@ -1560,6 +1691,20 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
                      err::kFramebufferIncompleteMismatchedLayeredAttachments);
              }
          }
@@ -781,7 +781,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
      }
  
      // Starting from ES 3.0 stencil and depth, if present, should be the same image
-@@ -1680,6 +1825,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
+@@ -1687,6 +1832,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
      // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
      // can be no-ops, so we should probably do that to ensure consistency.
      // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
@@ -790,7 +790,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  
      return mImpl->discard(context, count, attachments);
  }
-@@ -1691,6 +1838,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
+@@ -1698,6 +1845,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
      // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
      // can be no-ops, so we should probably do that to ensure consistency.
      // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
@@ -799,30 +799,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  
      return mImpl->invalidate(context, count, attachments);
  }
-@@ -1726,9 +1875,20 @@ bool Framebuffer::partialClearNeedsInit(const Context *context,
-         return true;
-     }
- 
-+    const Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
-+    const FramebufferAttachment *stencilAttachment =
-+        drawFramebuffer ? drawFramebuffer->getStencilOrDepthStencilAttachment() : nullptr;
-+    const GLuint stencilBits    = stencilAttachment ? stencilAttachment->getStencilSize() : 0;
-+    const GLuint maxStencilMask = (1 << stencilBits) - 1;
-+
-+    // The least significant |stencilBits| of stencil mask state specify a
-+    // mask. Compare the masks for differences only in those bits, ignoring any
-+    // difference in the high bits.
-     const auto &depthStencil       = glState.getDepthStencilState();
--    if (stencil && (depthStencil.stencilMask != depthStencil.stencilWritemask ||
--                    depthStencil.stencilBackMask != depthStencil.stencilBackWritemask))
-+    const GLuint differentFwdMasks = depthStencil.stencilMask ^ depthStencil.stencilWritemask;
-+    const GLuint differentBackMasks =
-+        depthStencil.stencilBackMask ^ depthStencil.stencilBackWritemask;
-+    if (stencil && ((differentFwdMasks | differentBackMasks) & maxStencilMask) != 0)
-     {
-         return true;
-     }
-@@ -2012,6 +2172,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
+@@ -2030,6 +2179,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
                    FramebufferAttachment::kDefaultRenderToTextureSamples);
  }
  
@@ -889,7 +866,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                         GLsizei numViews,
                                                         GLuint baseViewIndex,
-@@ -2189,11 +2409,40 @@ void Framebuffer::updateAttachment(const Context *context,
+@@ -2207,11 +2416,40 @@ void Framebuffer::updateAttachment(const Context *context,
      invalidateCompletenessCache();
  }
  
@@ -930,7 +907,7 @@ index a7a1cc00168789858d23f9799317c293bda6b077..a276a6c5f5244cb72fbc3c750dd2dcd4
  void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
  {
      if (srgbWriteControlMode != mState.getWriteControlMode())
-@@ -2839,4 +3088,56 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -2857,4 +3095,56 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
@@ -1701,10 +1678,10 @@ index 84e5326b7270f29630d2c353a6ebadb5d10b6a21..0afffbbb5ad7f3961d49addf1f74d44b
  
      const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907f5315dcc 100644
+index f97f7b0af7ca6c0f02c99fe4e20ea0d75831697b..751a2d212c2b1a5f2f086e7ab687683f244f2a63 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -121,6 +121,9 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
+@@ -128,6 +128,9 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
  FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, ContextMtl *context, bool flipY)
      : FramebufferImpl(state),
        mColorRenderTargets(context->getNativeCaps().maxColorAttachments, nullptr),
@@ -1714,7 +1691,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
        mBackbuffer(nullptr),
        mFlipY(flipY)
  {
-@@ -137,6 +140,14 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
+@@ -144,6 +147,14 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
      }
      mDepthRenderTarget = mStencilRenderTarget = nullptr;
  
@@ -1729,7 +1706,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      mRenderPassFirstColorAttachmentFormat = nullptr;
  
      mReadPixelBuffer = nullptr;
-@@ -936,7 +947,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -943,7 +954,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          attachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -1738,7 +1715,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      {
          attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1003,22 +1014,47 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1010,22 +1021,47 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      ASSERT(colorIndexGL < mColorRenderTargets.size());
      // Reset load store action
      mRenderPassDesc.colorAttachments[colorIndexGL].reset();
@@ -1790,7 +1767,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
  }
  
  angle::Result FramebufferMtl::updateCachedRenderTarget(const gl::Context *context,
-@@ -1060,6 +1096,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1067,6 +1103,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
  
          mtl::RenderPassColorAttachmentDesc &colorAttachment = desc.colorAttachments[colorIndexGL];
          const RenderTargetMtl *colorRenderTarget            = mColorRenderTargets[colorIndexGL];
@@ -1800,7 +1777,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
  
          // GL allows data types of fragment shader color outputs to be incompatible with disabled
          // color attachments. To prevent various Metal validation issues, assign textures only to
-@@ -1067,6 +1106,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1074,6 +1113,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          if (colorRenderTarget && enabledDrawBuffers.test(colorIndexGL))
          {
              colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
@@ -1813,7 +1790,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
  
              desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
              desc.rasterSampleCount =
-@@ -1096,6 +1141,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1103,6 +1148,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      if (mDepthRenderTarget)
      {
          mDepthRenderTarget->toRenderPassAttachmentDesc(&desc.depthAttachment);
@@ -1826,7 +1803,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
          desc.rasterSampleCount =
              std::max(desc.rasterSampleCount, mDepthRenderTarget->getRenderSamples());
      }
-@@ -1107,6 +1158,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1114,6 +1165,12 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      if (mStencilRenderTarget)
      {
          mStencilRenderTarget->toRenderPassAttachmentDesc(&desc.stencilAttachment);
@@ -1839,7 +1816,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
          desc.rasterSampleCount =
              std::max(desc.rasterSampleCount, mStencilRenderTarget->getRenderSamples());
      }
-@@ -1181,7 +1238,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1188,7 +1245,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              colorAttachment.loadAction = MTLLoadActionLoad;
          }
  
@@ -1848,7 +1825,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
          {
              colorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
          }
-@@ -1201,7 +1258,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1208,7 +1265,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          tempDesc.depthAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -1857,7 +1834,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      {
          tempDesc.depthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1220,7 +1277,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1227,7 +1284,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          tempDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
      }
  
@@ -1866,7 +1843,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      {
          tempDesc.stencilAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
      }
-@@ -1458,31 +1515,54 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1465,31 +1522,54 @@ void RoundValueAndAdjustCorrespondingValue(float a,
                  }
              }
  
@@ -1928,7 +1905,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
          }
      }
  
-@@ -1666,8 +1746,13 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1673,8 +1753,13 @@ void RoundValueAndAdjustCorrespondingValue(float a,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -1943,7 +1920,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-@@ -1816,8 +1901,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1823,8 +1908,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              renderPassDesc.colorAttachments[colorIndexGL];
  
          if (colorAttachment.loadAction != MTLLoadActionLoad ||
@@ -1954,7 +1931,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
          {
              continue;
          }
-@@ -1825,9 +1910,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1832,9 +1917,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          const angle::Format &angleFormat = colorRenderTarget->getFormat().actualAngleFormat();
  
          // Blit the resolve texture to the MS texture.
@@ -1967,7 +1944,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
  
          colorBlitParams.enabledBuffers.reset();
          colorBlitParams.enabledBuffers.set(colorIndexGL);
-@@ -1842,19 +1927,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1849,19 +1934,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      mtl::DepthStencilBlitParams dsBlitParams;
      dsBlitParams.BlitParams::operator=(baseParams);
      const mtl::RenderPassDepthAttachmentDesc &depthAttachment = renderPassDesc.depthAttachment;
@@ -1994,7 +1971,7 @@ index 5945505eb54fc3cf0063be051856b8ecf865af46..96b48b389fdad1b299c48ac370cef907
      {
          if (mState.hasSeparateDepthAndStencilAttachments())
          {
-@@ -1864,9 +1948,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1871,9 +1955,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              dsBlitParams.src = nullptr;
          }
  
@@ -3384,7 +3361,7 @@ index 969cd2f96d302d74dd3515ac842b93eb51387cd2..730d0ffa536caf536ec750e2bac82c81
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 56c9ce9a1195f3f0bb0f359f09dae079e40290ec..9f1728d89c05838e537d758ba7af5669ff1eeaea 100644
+index 2cb05ddf46f4e01bf81eec494f6f9707c7594862..5bdf5ba46809580d5e0e3b985c5ef891a52b2aef 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -206,6 +206,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -3396,7 +3373,7 @@ index 56c9ce9a1195f3f0bb0f359f09dae079e40290ec..9f1728d89c05838e537d758ba7af5669
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index ecce984db5256fa124b93611d4d720551f0a31ba..f24aa33796c7e331a244a2de345767456e5b4088 100644
+index 764ec5c5c717ba55f48f1c0609574f84258a4bc8..7edae4f66e8cf36e2417a5d0ab1919500b4b4853 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -206,6 +206,7 @@ enum class Feature

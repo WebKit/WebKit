@@ -275,6 +275,15 @@ extension Curve25519.KeyAgreement.PrivateKey {
     }
 }
 
+extension Curve25519.KeyAgreement.PublicKey {
+    init(span: SpanConstUInt8) throws {
+        if span.empty() {
+            throw UnsafeErrors.emptySpan
+        }
+        try self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
+    }
+}
+
 extension CryptoKit.HMAC {
     static func authenticationCode(
         data: SpanConstUInt8,

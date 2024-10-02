@@ -29,6 +29,7 @@
 #if HAVE(APPLE_PUSH_SERVICE_URL_TOKEN_SUPPORT)
 
 #import <wtf/BlockPtr.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface _WKAPSConnectionDelegate : NSObject<APSConnectionDelegate> {

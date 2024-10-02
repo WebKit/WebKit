@@ -25,22 +25,21 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
+#include "CSSParserContext.h"
 
 namespace WebCore {
     
 class Document;
-struct CSSParserContext;
+
+// FIXME: Change all call sites to use CSSParserContext directly and then remove this.
 
 struct MediaQueryParserContext {
 public:
-    MediaQueryParserContext() { }
+    MediaQueryParserContext();
     MediaQueryParserContext(const CSSParserContext&);
     WEBCORE_EXPORT MediaQueryParserContext(const Document&);
 
-    bool useSystemAppearance { false };
-    bool cssStyleQueriesEnabled { false };
-    CSSParserMode mode { HTMLStandardMode };
+    CSSParserContext context;
 };
-    
+
 } // namespace WebCore

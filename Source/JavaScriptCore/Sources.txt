@@ -743,7 +743,6 @@ profiler/ProfilerOSRExitSite.cpp
 profiler/ProfilerOrigin.cpp
 profiler/ProfilerOriginStack.cpp
 profiler/ProfilerProfiledBytecodes.cpp
-profiler/ProfilerUID.cpp
 profiler/ProfilerTZoneImpls.cpp
 
 runtime/AbstractModuleRecord.cpp

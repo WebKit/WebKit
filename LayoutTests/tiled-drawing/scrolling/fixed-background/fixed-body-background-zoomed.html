@@ -23,18 +23,23 @@
         }
     </style>
     <script>
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
     
-    function doTest()
+    async function doTest()
     {
-        if (window.eventSender)
-            eventSender.scalePageBy(2.3, 0, 0);
+        if (window.testRunner)
+            await testRunner.setPageScaleFactor(2.3, 0, 0);
 
         window.scrollTo(0, 200);
 
         if (window.internals)
             document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
     window.addEventListener('load', doTest, false);

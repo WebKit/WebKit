@@ -645,16 +645,20 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTranslator, typename T>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkKey(const T& key)
     {
-        if (!HashFunctions::safeToCompareToEmptyOrDeleted)
-            return;
-        ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
-        ValueType& deletedValue = *deletedValuePtr;
-        Traits::constructDeletedValue(deletedValue);
-        ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
+        if constexpr (std::is_convertible_v<T, Key>) {
+            ASSERT(!isHashTraitsEmptyValue<KeyTraits>(key));
+            ASSERT(!KeyTraits::isDeletedValue(key));
+        } else if constexpr (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
+
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            typename std::aligned_storage<sizeof(ValueType), std::alignment_of<ValueType>::value>::type deletedValueBuffer;
+            ALLOW_DEPRECATED_DECLARATIONS_END
+            ValueType* deletedValuePtr = reinterpret_cast_ptr<ValueType*>(&deletedValueBuffer);
+            ValueType& deletedValue = *deletedValuePtr;
+            Traits::constructDeletedValue(deletedValue);
+            ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
+        }
     }
 
 #endif // ASSERT_ENABLED

@@ -31,6 +31,7 @@
 #include "WebPage.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editing.h>
 #include <WebCore/FocusController.h>
@@ -232,8 +233,8 @@ void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession
 
     if (runMode == WebCore::TextAnimationRunMode::OnlyReplaceText) {
         if (m_activeAnimation) {
-            if (m_finalReplaceHandler)
-                (*m_finalReplaceHandler)(WebCore::TextAnimationRunMode::OnlyReplaceText);
+            if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+                (*finalReplaceHander)(WebCore::TextAnimationRunMode::OnlyReplaceText);
             m_finalReplaceHandler = WTFMove(completionHandler);
         } else
             completionHandler(WebCore::TextAnimationRunMode::OnlyReplaceText);
@@ -249,19 +250,19 @@ void TextAnimationController::addSourceTextAnimationForActiveWritingToolsSession
 void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSession(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const std::optional<WebCore::CharacterRange>& characterRangeAfterReplace, const String& string)
 {
     if (!characterRangeAfterReplace) {
-        m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
+        m_webPage->didEndPartialIntelligenceTextAnimation();
         return;
     }
 
     auto sessionRange = contextRangeForActiveWritingToolsSession();
     if (!sessionRange) {
-        m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
+        m_webPage->didEndPartialIntelligenceTextAnimation();
         return;
     }
 
     RefPtr document = this->document();
     if (!document) {
-        m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
+        m_webPage->didEndPartialIntelligenceTextAnimation();
         ASSERT_NOT_REACHED();
         return;
     }
@@ -290,7 +291,7 @@ void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSe
     auto textIndicatorData = createTextIndicatorForRange(replacedRangeAfterReplace);
 
     if (!textIndicatorData) {
-        m_webPage->didEndPartialIntelligenceTextPonderingAnimation();
+        m_webPage->didEndPartialIntelligenceTextAnimation();
         return;
     }
 
@@ -306,8 +307,8 @@ void TextAnimationController::addDestinationTextAnimationForActiveWritingToolsSe
 
     if (m_activeAnimation == sourceAnimationUUID) {
         m_activeAnimation = std::nullopt;
-        if (m_finalReplaceHandler)
-            (*m_finalReplaceHandler)(WebCore::TextAnimationRunMode::OnlyReplaceText);
+        if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+            (*finalReplaceHander)(WebCore::TextAnimationRunMode::OnlyReplaceText);
     }
 
     m_textAnimationRanges.append({ destinationAnimationUUID, replacedCharacterRange });
@@ -401,8 +402,12 @@ void TextAnimationController::clearAnimationsForActiveWritingToolsSession()
     for (auto textAnimationRange : textAnimationRanges)
         m_webPage->removeTextAnimationForAnimationID(textAnimationRange.animationUUID);
 
+    if (auto finalReplaceHander = std::exchange(m_finalReplaceHandler, std::nullopt))
+        (*finalReplaceHander)(WebCore::TextAnimationRunMode::DoNotRun);
+
     m_alreadyReplacedRange = std::nullopt;
     m_unanimatedRangeData = std::nullopt;
+    m_activeAnimation = std::nullopt;
 }
 
 // FIXME: This shouldn't be called anymore, make sure that that is true, and remove.

@@ -62,7 +62,7 @@ void platformReleaseMemory(Critical)
     tileControllerMemoryHandler().trimUnparentedTilesToTarget(0);
 #endif
 
-    IOSurfacePool::sharedPool().discardAllSurfaces();
+    IOSurfacePool::sharedPoolSingleton().discardAllSurfaces();
 
 #if CACHE_SUBIMAGES
     CGSubimageCacheWithTimer::clear();
@@ -71,7 +71,7 @@ void platformReleaseMemory(Critical)
 
 void platformReleaseGraphicsMemory(Critical)
 {
-    IOSurfacePool::sharedPool().discardAllSurfaces();
+    IOSurfacePool::sharedPoolSingleton().discardAllSurfaces();
 
 #if CACHE_SUBIMAGES
     CGSubimageCacheWithTimer::clear();

@@ -233,7 +233,7 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
     auto color = webkitColorToWebCoreColor(backgroundColor);
     page.setBackgroundColor(color);
 #if ENABLE(WPE_PLATFORM)
-    if (auto* view = static_cast<WebKit::PageClientImpl&>(page.pageClient()).wpeView()) {
+    if (auto* view = static_cast<WebKit::PageClientImpl&>(*page.pageClient()).wpeView()) {
         if (color.isOpaque()) {
             WPERectangle rect { 0, 0, wpe_view_get_width(view), wpe_view_get_height(view) };
             wpe_view_set_opaque_rectangles(view, &rect, 1);
@@ -295,7 +295,7 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
-#if ENABLE(2022_GLIB_API)
+#if ENABLE(WPE_PLATFORM)
 /**
  * webkit_web_view_toggle_inspector:
  * @web_view: a #WebKitWebView

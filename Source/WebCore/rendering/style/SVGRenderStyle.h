@@ -83,7 +83,6 @@ public:
     static String initialMarkerEndResource() { return String(); }
     static MaskType initialMaskType() { return MaskType::Luminance; }
     static SVGLengthValue initialBaselineShiftValue() { return SVGLengthValue(0, SVGLengthType::Number); }
-    static SVGLengthValue initialKerning() { return SVGLengthValue(0, SVGLengthType::Number); }
 
     // SVG CSS Property setters
     void setAlignmentBaseline(AlignmentBaseline val) { m_nonInheritedFlags.flagBits.alignmentBaseline = static_cast<unsigned>(val); }
@@ -115,7 +114,6 @@ public:
 
     void setStrokeDashArray(const Vector<SVGLengthValue>&);
     void setStrokeDashOffset(const Length&);
-    void setKerning(const SVGLengthValue&);
     void setStopOpacity(float);
     void setStopColor(const StyleColor&);
     void setFloodOpacity(float);
@@ -152,7 +150,6 @@ public:
     const String& strokePaintUri() const { return m_strokeData->paintUri; }
     Vector<SVGLengthValue> strokeDashArray() const { return m_strokeData->dashArray; }
     const Length& strokeDashOffset() const { return m_strokeData->dashOffset; }
-    SVGLengthValue kerning() const { return m_textData->kerning; }
     float stopOpacity() const { return m_stopData->opacity; }
     const StyleColor& stopColor() const { return m_stopData->color; }
     float floodOpacity() const { return m_miscData->floodOpacity; }
@@ -232,7 +229,6 @@ private:
     // inherited attributes
     DataRef<StyleFillData> m_fillData;
     DataRef<StyleStrokeData> m_strokeData;
-    DataRef<StyleTextData> m_textData;
     DataRef<StyleInheritedResourceData> m_inheritedResourceData;
 
     // non-inherited attributes
@@ -255,7 +251,6 @@ inline const StyleColor& RenderStyle::floodColor() const { return svgStyle().flo
 inline float RenderStyle::floodOpacity() const { return svgStyle().floodOpacity(); }
 inline bool RenderStyle::hasExplicitlySetStrokeWidth() const { return m_rareInheritedData->hasSetStrokeWidth; }
 inline bool RenderStyle::hasVisibleStroke() const { return svgStyle().hasStroke() && !strokeWidth().isZero(); }
-inline SVGLengthValue RenderStyle::kerning() const { return svgStyle().kerning(); }
 inline const StyleColor& RenderStyle::lightingColor() const { return svgStyle().lightingColor(); }
 inline const Length& RenderStyle::r() const { return svgStyle().r(); }
 inline const Length& RenderStyle::rx() const { return svgStyle().rx(); }
@@ -270,7 +265,6 @@ inline void RenderStyle::setVisitedFillPaintColor(const StyleColor& color) { acc
 
 inline void RenderStyle::setFloodColor(const StyleColor& c) { accessSVGStyle().setFloodColor(c); }
 inline void RenderStyle::setFloodOpacity(float f) { accessSVGStyle().setFloodOpacity(f); }
-inline void RenderStyle::setKerning(SVGLengthValue k) { accessSVGStyle().setKerning(k); }
 inline void RenderStyle::setLightingColor(const StyleColor& c) { accessSVGStyle().setLightingColor(c); }
 inline void RenderStyle::setR(Length&& r) { accessSVGStyle().setR(WTFMove(r)); }
 inline void RenderStyle::setRx(Length&& rx) { accessSVGStyle().setRx(WTFMove(rx)); }
@@ -409,12 +403,6 @@ inline void SVGRenderStyle::setStrokeDashOffset(const Length& offset)
 {
     if (!(m_strokeData->dashOffset == offset))
         m_strokeData.access().dashOffset = offset;
-}
-
-inline void SVGRenderStyle::setKerning(const SVGLengthValue& kerning)
-{
-    if (!(m_textData->kerning == kerning))
-        m_textData.access().kerning = kerning;
 }
 
 inline void SVGRenderStyle::setStopOpacity(float opacity)

@@ -265,41 +265,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunk()
     });
     return codeRef;
 }
-
-MacroAssemblerCodeRef<JITThunkPtrTag> inPlaceInterpreterEntryThunkSIMD()
-{
-    static LazyNeverDestroyed<MacroAssemblerCodeRef<JITThunkPtrTag>> codeRef;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        JSInterfaceJIT jit;
-        void* ptr = reinterpret_cast<void*>(ipint_entry_simd);
-        void* untagged = untaggedPtr(ptr);
-        void* retagged = nullptr;
-#if ENABLE(JIT_CAGE)
-        if (Options::useJITCage())
-#else
-        if (false)
-#endif
-            retagged = tagCodePtr<OperationPtrTag>(untagged);
-        else
-            retagged = WTF::tagNativeCodePtrImpl<OperationPtrTag>(untagged);
-
-        assertIsTaggedWith<OperationPtrTag>(retagged);
-
-#if ENABLE(WEBASSEMBLY)
-        CCallHelpers::RegisterID scratch = Wasm::wasmCallingConvention().prologueScratchGPRs[0];
-#else
-        CCallHelpers::RegisterID scratch = JSInterfaceJIT::regT0;
-#endif
-        jit.tagReturnAddress();
-        jit.move(JSInterfaceJIT::TrustedImmPtr(retagged), scratch);
-        jit.farJump(scratch, OperationPtrTag);
-
-        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
-        codeRef.construct(FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "inPlaceInterpreterEntryThunkSIMD"_s, "LLInt %s jump to prologue thunk", "function for wasm in place interpreter"));
-    });
-    return codeRef;
-}
 #endif // ENABLE(WEBASSEMBLY)
 
 MacroAssemblerCodeRef<JSEntryPtrTag> defaultCallThunk()
@@ -486,6 +451,89 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmCatchAllThunk(OpcodeSize
             codeRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(opcode), "wasm_catch_all32"));
         });
         return codeRef;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+
+MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleWasmTryTableThunk(WasmOpcodeID opcode, OpcodeSize size)
+{
+    switch (size) {
+    case OpcodeSize::Narrow: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch"));
+            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref"));
+            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall"));
+            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getCodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref"));
+        });
+        switch (opcode) {
+        case wasm_try_table_catch:
+            return codeRefCatch;
+        case wasm_try_table_catchref:
+            return codeRefCatchRef;
+        case wasm_try_table_catchall:
+            return codeRefCatchAll;
+        case wasm_try_table_catchallref:
+            return codeRefCatchAllRef;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+    case OpcodeSize::Wide16: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch16"));
+            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref16"));
+            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall16"));
+            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide16CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref16"));
+        });
+        switch (opcode) {
+        case wasm_try_table_catch:
+            return codeRefCatch;
+        case wasm_try_table_catchref:
+            return codeRefCatchRef;
+        case wasm_try_table_catchall:
+            return codeRefCatchAll;
+        case wasm_try_table_catchallref:
+            return codeRefCatchAllRef;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+    case OpcodeSize::Wide32: {
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatch;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchRef;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAll;
+        static LazyNeverDestroyed<MacroAssemblerCodeRef<ExceptionHandlerPtrTag>> codeRefCatchAllRef;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            codeRefCatch.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catch), "wasm_try_table_catch32"));
+            codeRefCatchRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchref), "wasm_try_table_catchref32"));
+            codeRefCatchAll.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchall), "wasm_try_table_catchall32"));
+            codeRefCatchAllRef.construct(generateThunkWithJumpTo<ExceptionHandlerPtrTag>(LLInt::getWide32CodeFunctionPtr<OperationPtrTag>(wasm_try_table_catchallref), "wasm_try_table_catchallref32"));
+        });
+        switch (opcode) {
+        case wasm_try_table_catch:
+            return codeRefCatch;
+        case wasm_try_table_catchref:
+            return codeRefCatchRef;
+        case wasm_try_table_catchall:
+            return codeRefCatchAll;
+        case wasm_try_table_catchallref:
+            return codeRefCatchAllRef;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

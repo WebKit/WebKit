@@ -29,6 +29,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleSheet.h"
 #include "CSSTokenizer.h"
+#include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "MutableStyleProperties.h"
 #include "StyleProperties.h"

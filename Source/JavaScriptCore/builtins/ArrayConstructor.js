@@ -53,7 +53,7 @@ function from(items /*, mapFn, thisArg */)
     var arrayLike = @toObject(items, "Array.from requires an array-like object - not null or undefined");
 
     if (!mapFn) {
-        var fastResult = @arrayFromFast(this, arrayLike);
+        var fastResult = @arrayFromFastFillWithUndefined(this, arrayLike);
         if (fastResult)
             return fastResult;
     }

@@ -77,7 +77,7 @@ private:
     const Logger& logger() const final;
     ASCIILiteral logClassName() const final { return "IncomingAudioMediaStreamTrackRendererUnit"_s; }
     WTFLogChannel& logChannel() const final;
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
 #endif
 
     // Main thread variables.
@@ -96,7 +96,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

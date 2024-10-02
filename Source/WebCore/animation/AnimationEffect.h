@@ -56,9 +56,9 @@ public:
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;
-    BasicEffectTiming getBasicTiming(std::optional<Seconds> = std::nullopt) const;
+    BasicEffectTiming getBasicTiming(std::optional<CSSNumberishTime> = std::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
-    ComputedEffectTiming getComputedTiming(std::optional<Seconds> = std::nullopt) const;
+    ComputedEffectTiming getComputedTiming(std::optional<CSSNumberishTime> = std::nullopt) const;
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -114,7 +114,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    std::optional<Seconds> localTime(std::optional<Seconds>) const;
+    std::optional<CSSNumberishTime> localTime(std::optional<CSSNumberishTime>) const;
     double playbackRate() const;
 
     AnimationEffectTiming m_timing;

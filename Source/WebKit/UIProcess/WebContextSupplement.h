@@ -48,7 +48,9 @@ public:
     {
     }
 
-    WebProcessPool* processPool() const { return m_processPool.get(); }
+    WebProcessPool* processPool() { return m_processPool.get(); }
+    RefPtr<WebProcessPool> protectedProcessPool() { return processPool(); }
+
     void clearProcessPool() { m_processPool = nullptr; }
 
     void ref() { refWebContextSupplement(); }

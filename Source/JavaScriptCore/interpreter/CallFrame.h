@@ -30,6 +30,10 @@
 #include "VM.h"
 #include <wtf/EnumClassOperatorOverloads.h>
 
+#if OS(WINDOWS)
+#include <intrin.h>
+#endif
+
 namespace JSC  {
 
 class JSWebAssemblyInstance;

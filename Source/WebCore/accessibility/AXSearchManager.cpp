@@ -226,7 +226,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
     // FIXME: Unlike AXCoreObject::children(), AXCoreObject::rows() returns a copy, not a const-reference. This can be wasteful
     // for tables with lots of rows and probably should be changed.
-    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->children();
+    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->unignoredChildren();
 
     size_t childrenSize = searchChildren.size();
 

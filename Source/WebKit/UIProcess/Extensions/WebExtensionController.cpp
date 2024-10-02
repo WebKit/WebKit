@@ -91,8 +91,8 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
 WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const
 {
     WebProcessProxySet processes;
-    for (auto& page : m_pages)
-        processes.add(page.legacyMainFrameProcess());
+    for (Ref page : m_pages)
+        processes.add(page->legacyMainFrameProcess());
     return processes;
 }
 

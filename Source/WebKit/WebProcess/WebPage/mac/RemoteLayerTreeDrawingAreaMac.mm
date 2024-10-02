@@ -72,20 +72,6 @@ void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(WebCore::FrameId
     // Do nothing. This is only relevant to DelegatedToNativeScrollView implementations.
 }
 
-void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
-{
-    Ref webPage = m_webPage.get();
-    RefPtr frameView = webPage->localMainFrameView();
-    if (!frameView)
-        return;
-
-    auto unscrolledOrigin = origin;
-    FloatRect unobscuredContentRect = frameView->unobscuredContentRectIncludingScrollbars();
-    unscrolledOrigin.moveBy(-unobscuredContentRect.location());
-    webPage->scalePage(scale / webPage->viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
-    updateRendering();
-}
-
 void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::FloatPoint origin)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::adjustTransientZoom - scale " << scale << " origin " << origin);
@@ -95,17 +81,6 @@ void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::F
     // FIXME: Need to trigger some re-rendering here to render at the new scale, so tiles update while zooming.
 
     prepopulateRectForZoom(totalScale, origin);
-}
-
-void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&& completionHandler)
-{
-    LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::commitTransientZoom - scale " << scale << " origin " << origin);
-
-    scale *= m_webPage->viewScaleFactor();
-    
-    applyTransientZoomToPage(scale, origin);
-
-    completionHandler();
 }
 
 void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)

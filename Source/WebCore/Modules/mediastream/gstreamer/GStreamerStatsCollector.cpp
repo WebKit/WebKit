@@ -44,7 +44,7 @@ RTCStatsReport::Stats::Stats(Type type, const GstStructure* structure)
     , id(gstStructureGetString(structure, "id"_s).toString())
 {
     if (auto value = gstStructureGet<double>(structure, "timestamp"_s))
-        timestamp = *value;
+        timestamp = Seconds::fromMicroseconds(*value).milliseconds();
 }
 
 RTCStatsReport::RtpStreamStats::RtpStreamStats(Type type, const GstStructure* structure)
@@ -376,13 +376,13 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefP
             return;
         }
 
-        auto preprocessedStats = holder->preprocessCallback(holder->pad, stats);
-        callOnMainThreadAndWait([promise = WTFMove(promise), holder, stats = WTFMove(preprocessedStats)]() mutable {
-            holder->callback(RTCStatsReport::create([preprocessedStats = WTFMove(stats)](auto& mapAdapter) mutable {
-                if (!preprocessedStats)
-                    return;
+        callOnMainThreadAndWait([holder, stats] {
+            auto preprocessedStats = holder->preprocessCallback(holder->pad, stats);
+            if (!preprocessedStats)
+                return;
+            holder->callback(RTCStatsReport::create([stats = WTFMove(preprocessedStats)](auto& mapAdapter) mutable {
                 auto holder = adoptRef(*new ReportHolder(&mapAdapter));
-                gst_structure_foreach(preprocessedStats.get(), fillReportCallback, holder.ptr());
+                gst_structure_foreach(stats.get(), fillReportCallback, holder.ptr());
             }));
         });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));

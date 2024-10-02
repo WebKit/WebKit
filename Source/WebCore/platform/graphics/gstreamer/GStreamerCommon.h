@@ -283,6 +283,9 @@ StringView gstStructureGetString(const GstStructure*, StringView key);
 
 StringView gstStructureGetName(const GstStructure*);
 
+template<typename T>
+Vector<T> gstStructureGetArray(const GstStructure*, ASCIILiteral key);
+
 String gstStructureToJSONString(const GstStructure*);
 
 GstClockTime webkitGstInitTime();

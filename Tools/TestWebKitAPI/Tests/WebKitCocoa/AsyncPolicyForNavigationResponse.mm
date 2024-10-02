@@ -77,7 +77,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, RespondToPolicyForNavigationResponseAsynchronously)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[TestAsyncNavigationDelegate alloc] init]);
@@ -95,7 +95,7 @@ TEST(WebKit, RespondToPolicyForNavigationResponseAsynchronously)
 
 TEST(WebKit, PolicyForNavigationResponseCancelAsynchronously)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
 
     auto webView = adoptNS([[WKWebView alloc] init]);
     auto delegate = adoptNS([[TestAsyncNavigationDelegate alloc] init]);

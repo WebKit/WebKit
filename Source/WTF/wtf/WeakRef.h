@@ -46,8 +46,8 @@ template<typename T, typename WeakPtrImpl>
 class WeakRef {
 public:
     template<typename = std::enable_if_t<!IsSmartPtr<T>::value && !std::is_pointer_v<T>>>
-    WeakRef(T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
-        : m_impl(implForObject(object))
+    WeakRef(const T& object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
+        : m_impl(object.weakImpl())
 #if ASSERT_ENABLED
         , m_shouldEnableAssertions(shouldEnableAssertions == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -132,12 +132,6 @@ private:
             || m_impl->wasConstructedOnMainThread() == isMainThread();
     }
 #endif
-
-    template<typename U> static WeakPtrImpl& implForObject(const U& object)
-    {
-        object.weakPtrFactory().initializeIfNeeded(object);
-        return *object.weakPtrFactory().impl();
-    }
 
     Ref<WeakPtrImpl> m_impl;
 #if ASSERT_ENABLED

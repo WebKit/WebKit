@@ -27,6 +27,7 @@
 
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
@@ -43,7 +44,7 @@ public:
     WebBackForwardCacheEntry(WebBackForwardCache&, WebCore::BackForwardItemIdentifier, WebCore::ProcessIdentifier, std::unique_ptr<SuspendedPageProxy>&&);
     ~WebBackForwardCacheEntry();
 
-    WebBackForwardCache& backForwardCache() const { return m_backForwardCache; }
+    WebBackForwardCache& backForwardCache() const;
 
     SuspendedPageProxy* suspendedPage() const { return m_suspendedPage.get(); }
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage();
@@ -53,7 +54,7 @@ public:
 private:
     void expirationTimerFired();
 
-    WebBackForwardCache& m_backForwardCache;
+    CheckedRef<WebBackForwardCache> m_backForwardCache;
     WebCore::ProcessIdentifier m_processIdentifier;
     WebCore::BackForwardItemIdentifier m_backForwardItemID;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPage;

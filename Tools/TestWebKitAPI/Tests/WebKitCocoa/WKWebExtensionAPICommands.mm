@@ -176,6 +176,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"test-command");
     EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌥⌘Z");
+    EXPECT_FALSE(command._isActionCommand);
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagControl | NSEventModifierFlagShift)
         timestamp:0 windowNumber:0 context:nil characters:@"Á" charactersIgnoringModifiers:@"y" isARepeat:NO keyCode:kVK_ANSI_A];
@@ -184,6 +185,7 @@ TEST(WKWebExtensionAPICommands, CommandForEvent)
     EXPECT_NOT_NULL(command);
     EXPECT_NS_EQUAL(command.identifier, @"_execute_action");
     EXPECT_NS_EQUAL(command._userVisibleShortcut, @"⌃⇧Y");
+    EXPECT_TRUE(command._isActionCommand);
 
     keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"å" charactersIgnoringModifiers:@"a" isARepeat:NO keyCode:kVK_ANSI_A];

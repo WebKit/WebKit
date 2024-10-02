@@ -30,15 +30,6 @@
 #include "DrawingAreaProxy.h"
 
 namespace WebKit {
-class TiledCoreAnimationDrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::TiledCoreAnimationDrawingAreaProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class TiledCoreAnimationDrawingAreaProxy final : public DrawingAreaProxy {
     WTF_MAKE_TZONE_ALLOCATED(TiledCoreAnimationDrawingAreaProxy);
@@ -50,7 +41,7 @@ public:
 
 private:
     // DrawingAreaProxy
-    void deviceScaleFactorDidChange() override;
+    void deviceScaleFactorDidChange(CompletionHandler<void()>&&) override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;
     void minimumSizeForAutoLayoutDidChange() override;
@@ -63,7 +54,7 @@ private:
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
-    void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
+    void waitForDidUpdateActivityState(ActivityStateChangeID) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;
 
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;

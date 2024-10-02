@@ -379,7 +379,7 @@ static bool isEnabledColorInput(Node& node)
 
 static bool isInShadowTreeOfEnabledColorInput(Node& node)
 {
-    auto* host = node.shadowHost();
+    RefPtr host = node.shadowHost();
     return host && isEnabledColorInput(*host);
 }
 
@@ -806,7 +806,7 @@ static RefPtr<HTMLAttachmentElement> enclosingAttachmentElement(Element& element
 
 #endif
 
-Element* DragController::draggableElement(const LocalFrame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
+RefPtr<Element> DragController::draggableElement(const LocalFrame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
 {
     state.type = sourceFrame->selection().contains(dragOrigin) ? DragSourceAction::Selection : OptionSet<DragSourceAction>({ });
     if (!startElement)
@@ -823,16 +823,16 @@ Element* DragController::draggableElement(const LocalFrame* sourceFrame, Element
         auto selectedRange = selection.firstRange();
         if (isSingleAttachmentSelection || !selectedRange || !contains<ComposedTree>(*selectedRange, *attachment)) {
             state.type = DragSourceAction::Attachment;
-            return attachment.get();
+            return attachment;
         }
     }
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
     RefPtr selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
     if (ImageOverlay::isOverlayText(startElement))
-        return selectionDragElement.get();
+        return selectionDragElement;
 
-    for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {
+    for (RefPtr element = startElement; element; element = element->parentOrShadowHostElement()) {
         auto* renderer = element->renderer();
         if (!renderer)
             continue;
@@ -879,7 +879,7 @@ Element* DragController::draggableElement(const LocalFrame* sourceFrame, Element
     }
 
     // We either have nothing to drag or we have a selection and we're not over a draggable element.
-    return selectionDragElement.get();
+    return selectionDragElement;
 }
 
 static CachedImage* getCachedImage(Element& element)

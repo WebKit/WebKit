@@ -8,11 +8,14 @@ includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const expected = [
+const expectedOptionsReading = [
   // GetTemporalOverflowOption
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
+];
+
+const expected = [
   // GetTemporalCalendarSlotValueWithISODefault
   "get fields.calendar",
   // PrepareTemporalFields
@@ -46,7 +49,7 @@ const expected = [
   "get fields.year",
   "get fields.year.valueOf",
   "call fields.year.valueOf",
-];
+].concat(expectedOptionsReading);
 const actual = [];
 
 const fields = TemporalHelpers.propertyBagObserver(actual, {
@@ -70,3 +73,23 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
 
 Temporal.PlainDateTime.from(fields, options);
 assert.compareArray(actual, expected, "order of operations");
+
+actual.splice(0);  // clear for next test
+
+Temporal.PlainDateTime.from(new Temporal.PlainDateTime(2000, 5, 2), options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when cloning a PlainDateTime instance");
+
+actual.splice(0);
+
+Temporal.PlainDateTime.from(new Temporal.PlainDate(2000, 5, 2), options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when converting a PlainDate instance");
+
+actual.splice(0);
+
+Temporal.PlainDateTime.from(new Temporal.ZonedDateTime(0n, "UTC"), options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when converting a ZonedDateTime instance");
+
+actual.splice(0);
+
+Temporal.PlainDateTime.from("2001-05-02", options);
+assert.compareArray(actual, expectedOptionsReading, "order of operations when parsing a string");

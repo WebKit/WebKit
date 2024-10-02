@@ -910,6 +910,7 @@ void RenderTable::computePreferredLogicalWidths()
 
     for (unsigned i = 0; i < m_captions.size(); i++)
         m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());
+    m_maxPreferredLogicalWidth = std::max(m_maxPreferredLogicalWidth, m_minPreferredLogicalWidth);
 
     auto& styleToUse = style();
     // FIXME: This should probably be checking for isSpecified since you should be able to use percentage or calc values for min-width.
@@ -1224,7 +1225,7 @@ LayoutUnit RenderTable::calcBorderStart() const
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->firstRowCellAdjoiningTableStart()) {
+        if (const RenderTableCell* adjoiningStartCell = topNonEmptySection->cellAt(0, 0).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
             const BorderValue& startCellAdjoiningBorder = adjoiningStartCell->borderAdjoiningTableStart();
             if (startCellAdjoiningBorder.style() == BorderStyle::Hidden)
@@ -1279,7 +1280,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
         if (sectionAdjoiningBorder.style() > BorderStyle::Hidden)
             borderWidth = std::max(borderWidth, sectionAdjoiningBorder.width());
 
-        if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->firstRowCellAdjoiningTableEnd()) {
+        if (const RenderTableCell* adjoiningEndCell = topNonEmptySection->cellAt(0, lastColumnIndex()).primaryCell()) {
             // FIXME: Make this work with perpendicular and flipped cells.
             const BorderValue& endCellAdjoiningBorder = adjoiningEndCell->borderAdjoiningTableEnd();
             if (endCellAdjoiningBorder.style() == BorderStyle::Hidden)
@@ -1669,24 +1670,6 @@ RenderPtr<RenderTable> RenderTable::createTableWithStyle(Document& document, con
 RenderPtr<RenderTable> RenderTable::createAnonymousWithParentRenderer(const RenderElement& parent)
 {
     return RenderTable::createTableWithStyle(parent.document(), parent.style());
-}
-
-const BorderValue& RenderTable::tableStartBorderAdjoiningCell(const RenderTableCell& cell) const
-{
-    ASSERT(cell.isFirstOrLastCellInRow());
-    if (isDirectionSame(this, cell.row()))
-        return style().borderStart();
-
-    return style().borderEnd();
-}
-
-const BorderValue& RenderTable::tableEndBorderAdjoiningCell(const RenderTableCell& cell) const
-{
-    ASSERT(cell.isFirstOrLastCellInRow());
-    if (isDirectionSame(this, cell.row()))
-        return style().borderEnd();
-
-    return style().borderStart();
 }
 
 void RenderTable::markForPaginationRelayoutIfNeeded()

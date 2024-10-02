@@ -36,10 +36,9 @@ enum class PushPermissionState : uint8_t;
 
 class PushSubscriptionOwner {
 public:
-    virtual ~PushSubscriptionOwner() = default;
+    DECLARE_VIRTUAL_REFCOUNTED;
 
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
+    virtual ~PushSubscriptionOwner() = default;
 
     virtual bool isActive() const = 0;
 

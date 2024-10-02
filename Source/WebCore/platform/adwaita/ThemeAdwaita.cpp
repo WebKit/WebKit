@@ -31,13 +31,12 @@
 
 #include "Adwaita.h"
 #include "Color.h"
-#include "GraphicsContext.h"
+#include "FontCascade.h"
 #include "LengthSize.h"
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#include <wtf/glib/GUniquePtr.h>
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include "SystemSettings.h"
 #endif
 
 namespace WebCore {
@@ -51,46 +50,34 @@ Theme& Theme::singleton()
 
 ThemeAdwaita::ThemeAdwaita()
 {
-#if PLATFORM(GTK)
-    if (auto* settings = gtk_settings_get_default()) {
-        refreshGtkSettings();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    refreshSettings();
 
-        // Note that Theme is NeverDestroy'd so the destructor will never be called to disconnect this.
-        g_signal_connect_swapped(G_OBJECT(settings), "notify::gtk-enable-animations", G_CALLBACK(+[](ThemeAdwaita* theme, GParamSpec*, GObject*) {
-            theme->refreshGtkSettings();
-        }), this);
-#if !USE(GTK4)
-        g_signal_connect_swapped(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(+[](ThemeAdwaita* theme, GParamSpec*, GObject*) {
-            theme->refreshGtkSettings();
-        }), this);
-#endif // !USE(GTK4)
-    }
-
-#endif // PLATFORM(GTK)
+    // Note that Theme is NeverDestroy'd so the destructor will never be called to disconnect this.
+    SystemSettings::singleton().addObserver([this](const SystemSettings::State& state) mutable {
+        if (state.enableAnimations || state.themeName)
+            this->refreshSettings();
+    }, this);
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 }
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 
-void ThemeAdwaita::refreshGtkSettings()
+void ThemeAdwaita::refreshSettings()
 {
-    if (auto* settings = gtk_settings_get_default()) {
-        gboolean enableAnimations;
-        g_object_get(settings, "gtk-enable-animations", &enableAnimations, nullptr);
-        m_prefersReducedMotion = !enableAnimations;
+    if (auto enableAnimations = SystemSettings::singleton().enableAnimations())
+        m_prefersReducedMotion = !enableAnimations.value();
 
-        // For high contrast in GTK3 we can rely on the theme name and be accurate most of the time.
-        // However whether or not high-contrast is enabled is also stored in GSettings/xdg-desktop-portal.
-        // We could rely on libadwaita, dynamically, to re-use its logic but, no matter how we do it, the setting
-        // has to be proxied over from the UI process different than how GtkSettings is.
-#if !USE(GTK4)
-        GUniqueOutPtr<char> gtkThemeName;
-        g_object_get(settings, "gtk-theme-name", &gtkThemeName.outPtr(), nullptr);
-        m_prefersContrast = !g_strcmp0(gtkThemeName.get(), "HighContrast") || !g_strcmp0(gtkThemeName.get(), "HighContrastInverse");
-#endif // !USE(GTK4)
-    }
+    // For high contrast in GTK3 we can rely on the theme name and be accurate most of the time.
+    // However whether or not high-contrast is enabled is also stored in GSettings/xdg-desktop-portal.
+    // We could rely on libadwaita, dynamically, to re-use its logic.
+#if PLATFORM(GTK) && !USE(GTK4)
+    if (auto themeName = SystemSettings::singleton().themeName())
+        m_prefersContrast = themeName == "HighContrast"_s || themeName == "HighContrastInverse"_s;
+#endif // PLATFORM(GTK) && !USE(GTK4)
 }
 
-#endif // PLATFORM(GTK)
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 
 LengthSize ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
 {

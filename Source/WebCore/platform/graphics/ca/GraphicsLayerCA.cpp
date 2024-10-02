@@ -211,7 +211,7 @@ static void getTransformFunctionValue(const TransformOperation* transformOp, Tra
     case TransformOperation::Type::Identity:
     case TransformOperation::Type::None:
         if (transformOp)
-            transformOp->apply(value, size);
+            transformOp->applyUnrounded(value, size);
         else
             value.makeIdentity();
         break;
@@ -4612,6 +4612,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | FiltersChanged
         | BackdropFiltersChanged
         | BackdropRootChanged
+        | BlendModeChanged
         | MaskLayerChanged
         | OpacityChanged
         | EventRegionChanged

@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "HTTPServer.h"
+#import "IOSMouseEventTestHarness.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -284,3 +285,51 @@ TEST(WKNavigationAction, TargetFrameName)
     EXPECT_WK_STREQ(targetFrameNames[3].get(), "_blank");
     EXPECT_NULL(targetFrameNames[4]);
 }
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+
+TEST(WKNavigationAction, UserInputState)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+#if PLATFORM(MAC)
+    RetainPtr window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    [window makeKeyAndOrderFront:nil];
+#endif
+
+    RetainPtr navigationDelegate = adoptNS([[NavigationActionTestDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"https://webkit.org/destination.html\" target=\"_blank\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    [navigationDelegate waitForDidFinishNavigation];
+
+#if PLATFORM(MAC)
+    NSPoint clickPoint = NSMakePoint(100, 100);
+
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+#else
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+
+    testHarness.mouseMove(100, 100);
+    testHarness.mouseDown(UIEventButtonMaskPrimary, UIKeyModifierCommand);
+    testHarness.mouseUp();
+#endif
+
+    navigationDelegate.get().navigationPolicy = WKNavigationActionPolicyCancel;
+    [navigationDelegate waitForNavigationActionCallback];
+
+    WKNavigationAction *navigationAction = [navigationDelegate navigationAction];
+
+#if PLATFORM(MAC)
+    EXPECT_EQ(navigationAction.buttonNumber, 1);
+    EXPECT_EQ(navigationAction.modifierFlags, NSEventModifierFlagCommand);
+#else
+    EXPECT_EQ(navigationAction.modifierFlags, UIKeyModifierCommand);
+#endif
+}
+
+#endif

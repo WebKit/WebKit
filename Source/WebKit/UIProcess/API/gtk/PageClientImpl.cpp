@@ -55,6 +55,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SystemSettings.h>
 #include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -600,21 +601,7 @@ UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 
 bool PageClientImpl::effectiveAppearanceIsDark() const
 {
-    auto* settings = gtk_widget_get_settings(m_viewWidget);
-    gboolean preferDarkTheme;
-    g_object_get(settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
-    if (preferDarkTheme)
-        return true;
-
-    if (auto* themeNameEnv = g_getenv("GTK_THEME"))
-        return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, "-Dark") || g_str_has_suffix(themeNameEnv, ":dark");
-
-    GUniqueOutPtr<char> themeName;
-    g_object_get(settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
-    if (g_str_has_suffix(themeName.get(), "-dark") || (g_str_has_suffix(themeName.get(), "-Dark")))
-        return true;
-
-    return false;
+    return SystemSettings::singleton().darkMode().value_or(false);
 }
 
 void PageClientImpl::didChangeWebPageID() const

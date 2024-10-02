@@ -157,13 +157,14 @@ static const LocalFrame& rootFrame(const LocalFrame& frame)
     return frame;
 }
 
-LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
+LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags sandboxFlags, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener)
     , m_loader(makeUniqueRef<FrameLoader>(*this, clientCreator(*this)))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_rootFrame(WebCore::rootFrame(*this))
+    , m_sandboxFlags(sandboxFlags)
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
     ProcessWarming::initializeNames();
@@ -191,19 +192,19 @@ void LocalFrame::init()
     checkedLoader()->init();
 }
 
-Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame* opener)
+Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, Frame* opener)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, nullptr, nullptr, opener));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, nullptr, nullptr, opener));
 }
 
-Ref<LocalFrame> LocalFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
+Ref<LocalFrame> LocalFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, HTMLFrameOwnerElement& ownerElement)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, &ownerElement, ownerElement.document().frame(), nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, &ownerElement, ownerElement.document().frame(), nullptr));
 }
 
-Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, Frame& parent)
+Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, Frame& parent)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, nullptr, &parent, nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, nullptr, &parent, nullptr));
 }
 
 LocalFrame::~LocalFrame()
@@ -817,7 +818,7 @@ void LocalFrame::willDetachPage()
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
-    if (RefPtrAllowingPartiallyDestroyed<Page> page = this->page()) {
+    if (RefPtr<Page> page = this->page()) {
         CheckedRef focusController = page->focusController();
         if (focusController->focusedFrame() == this)
             focusController->setFocusedFrame(nullptr);
@@ -946,6 +947,11 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
 LocalDOMWindow* LocalFrame::window() const
 {
     return document() ? document()->domWindow() : nullptr;
+}
+
+RefPtr<LocalDOMWindow> LocalFrame::protectedWindow() const
+{
+    return window();
 }
 
 DOMWindow* LocalFrame::virtualWindow() const
@@ -1129,11 +1135,11 @@ FloatSize LocalFrame::screenSize() const
     if (!document)
         return defaultSize;
 
-    RefPtr loader = document->loader();
-    if (!loader || !loader->fingerprintingProtectionsEnabled())
+    RefPtr page = this->page();
+    if (!page)
         return defaultSize;
 
-    if (RefPtr page = this->page())
+    if (page->shouldApplyScreenFingerprintingProtections(*document))
         return page->chrome().client().screenSizeForFingerprintingProtections(*this, defaultSize);
 
     return defaultSize;
@@ -1348,6 +1354,20 @@ OptionSet<AdvancedPrivacyProtections> LocalFrame::advancedPrivacyProtections() c
     if (auto* documentLoader = loader().activeDocumentLoader())
         return documentLoader->advancedPrivacyProtections();
     return { };
+}
+
+SandboxFlags LocalFrame::effectiveSandboxFlags() const
+{
+    auto effectiveSandboxFlags = m_sandboxFlags;
+    if (RefPtr document = this->document())
+        effectiveSandboxFlags.add(document->sandboxFlags());
+    return effectiveSandboxFlags;
+}
+
+void LocalFrame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUIProcess)
+{
+    Frame::updateSandboxFlags(flags, notifyUIProcess);
+    m_sandboxFlags = flags;
 }
 
 } // namespace WebCore

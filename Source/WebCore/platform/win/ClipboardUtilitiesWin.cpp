@@ -614,8 +614,8 @@ Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
     // obtain baseURL if present
     String srcURLStr("sourceURL:"_s);
     String srcURL;
-    unsigned lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
-    if (lineStart != -1) {
+    size_t lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
+    if (lineStart != notFound) {
         unsigned srcEnd = cfhtml.find('\n', lineStart);
         unsigned srcStart = lineStart+srcURLStr.length();
         String rawSrcURL = cfhtml.substring(srcStart, srcEnd-srcStart);

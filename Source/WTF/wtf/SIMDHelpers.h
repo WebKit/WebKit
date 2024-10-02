@@ -273,6 +273,18 @@ ALWAYS_INLINE bool isNonZero(simde_uint32x4_t accumulated)
 #endif
 }
 
+ALWAYS_INLINE bool isNonZero(simde_uint64x2_t accumulated)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint64x2_to_m128i(accumulated);
+    return !simde_mm_test_all_zeros(raw, raw);
+#else
+    // There is no simde_vmaxvq_u64, so using simde_vmaxvq_u8.
+    // But this is fine since it only just checks if the input is all-zeros.
+    return simde_vmaxvq_u32(simde_vreinterpretq_u32_u64(accumulated));
+#endif
+}
+
 ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint8x16_t value)
 {
 #if CPU(X86_64)

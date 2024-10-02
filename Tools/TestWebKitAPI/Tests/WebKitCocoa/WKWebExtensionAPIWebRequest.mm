@@ -356,8 +356,7 @@ TEST(WKWebExtensionAPIWebRequest, Initialization)
     } outErrorMessage:&error];
     EXPECT_NULL(filter);
 
-    // FIXME: We shouldn't be generating an error message with two periods.
-    EXPECT_NS_EQUAL(error, @"The 'urls' value is invalid, because '$' is an invalid match pattern. \"$\" cannot be parsed because it doesn't have a scheme..");
+    EXPECT_NS_EQUAL(error, @"The 'urls' value is invalid, because '$' is an invalid match pattern. \"$\" cannot be parsed because it doesn't have a scheme.");
 }
 
 static _WKWebExtensionWebRequestFilter *filterWithDictionary(NSDictionary *dictionary)

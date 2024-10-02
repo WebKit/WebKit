@@ -35,21 +35,12 @@ OBJC_CLASS RPScreenRecorder;
 OBJC_CLASS WebCoreReplayKitScreenRecorderHelper;
 
 namespace WebCore {
-class ReplayKitCaptureSource;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ReplayKitCaptureSource> : std::true_type { };
-}
-
-namespace WebCore {
 
 class ReplayKitCaptureSource final : public DisplayCaptureSourceCocoa::Capturer, public CanMakeWeakPtr<ReplayKitCaptureSource> {
 public:
-    static Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, CaptureSourceError> create(const String&);
+    static UniqueRef<DisplayCaptureSourceCocoa::Capturer> create(CapturerObserver&);
 
-    ReplayKitCaptureSource();
+    ReplayKitCaptureSource(CapturerObserver&);
     virtual ~ReplayKitCaptureSource();
 
     static bool isAvailable();

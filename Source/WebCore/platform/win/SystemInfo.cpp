@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+IGNORE_CLANG_WARNINGS_BEGIN("deprecated-declarations")
+
 WindowsVersion windowsVersion(int* major, int* minor)
 {
     static bool initialized = false;
@@ -77,6 +79,8 @@ WindowsVersion windowsVersion(int* major, int* minor)
     return version;
 }
 
+IGNORE_CLANG_WARNINGS_END
+
 static String osVersionForUAString()
 {
     int major, minor;
@@ -117,7 +121,7 @@ static bool isWOW64()
         if (!kernel32Module)
             return wow64;
         typedef BOOL (WINAPI* IsWow64ProcessFunc)(HANDLE, PBOOL);
-        IsWow64ProcessFunc isWOW64Process = reinterpret_cast<IsWow64ProcessFunc>(GetProcAddress(kernel32Module, "IsWow64Process"));
+        IsWow64ProcessFunc isWOW64Process = reinterpret_cast<IsWow64ProcessFunc>((void*)GetProcAddress(kernel32Module, "IsWow64Process"));
         if (isWOW64Process) {
             BOOL result = FALSE;
             wow64 = isWOW64Process(GetCurrentProcess(), &result) && result;
@@ -138,7 +142,7 @@ static WORD processorArchitecture()
         if (!kernel32Module)
             return architecture;
         typedef VOID (WINAPI* GetNativeSystemInfoFunc)(LPSYSTEM_INFO);
-        GetNativeSystemInfoFunc getNativeSystemInfo = reinterpret_cast<GetNativeSystemInfoFunc>(GetProcAddress(kernel32Module, "GetNativeSystemInfo"));
+        GetNativeSystemInfoFunc getNativeSystemInfo = reinterpret_cast<GetNativeSystemInfoFunc>((void*)::GetProcAddress(kernel32Module, "GetNativeSystemInfo"));
         if (getNativeSystemInfo) {
             SYSTEM_INFO systemInfo;
             ZeroMemory(&systemInfo, sizeof(systemInfo));

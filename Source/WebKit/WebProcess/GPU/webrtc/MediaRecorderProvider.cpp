@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MediaRecorderProvider.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
 
@@ -33,11 +34,14 @@
 #include <WebCore/MediaRecorderPrivate.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
-#include <wtf/TZoneMallocInlines.h>
+
+#endif // ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderProvider);
+
+#if ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
 
 using namespace WebCore;
 
@@ -51,6 +55,6 @@ std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMedi
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);
 }
 
-}
-
 #endif // ENABLE(MEDIA_RECORDER) && PLATFORM(COCOA)
+
+}

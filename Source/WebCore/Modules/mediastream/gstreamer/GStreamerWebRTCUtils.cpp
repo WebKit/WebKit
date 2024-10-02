@@ -116,13 +116,13 @@ GUniquePtr<GstStructure> fromRTCEncodingParameters(const RTCRtpEncodingParameter
         gst_structure_set(rtcParameters.get(), "ssrc", G_TYPE_UINT, parameters.ssrc, nullptr);
 
     if (parameters.maxBitrate)
-        gst_structure_set(rtcParameters.get(), "max-bitrate", G_TYPE_ULONG, parameters.maxBitrate, nullptr);
+        gst_structure_set(rtcParameters.get(), "max-bitrate", G_TYPE_ULONG, *parameters.maxBitrate, nullptr);
 
     if (parameters.maxFramerate)
-        gst_structure_set(rtcParameters.get(), "max-framerate", G_TYPE_ULONG, parameters.maxFramerate, nullptr);
+        gst_structure_set(rtcParameters.get(), "max-framerate", G_TYPE_ULONG, *parameters.maxFramerate, nullptr);
 
     if (parameters.scaleResolutionDownBy)
-        gst_structure_set(rtcParameters.get(), "scale-resolution-down-by", G_TYPE_DOUBLE, parameters.scaleResolutionDownBy, nullptr);
+        gst_structure_set(rtcParameters.get(), "scale-resolution-down-by", G_TYPE_DOUBLE, *parameters.scaleResolutionDownBy, nullptr);
 
     if (parameters.networkPriority)
         gst_structure_set(rtcParameters.get(), "network-priority", G_TYPE_INT, *parameters.networkPriority, nullptr);
@@ -650,6 +650,19 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
         gst_structure_remove_field(structure, fieldName.ascii().data());
         gst_structure_take_value(structure, fieldName.ascii().data(), &arrayValue);
     }
+}
+
+StatsTimestampConverter& StatsTimestampConverter::singleton()
+{
+    static NeverDestroyed<StatsTimestampConverter> sharedInstance;
+    return sharedInstance;
+}
+
+Seconds StatsTimestampConverter::convertFromMonotonicTime(Seconds value) const
+{
+    auto monotonicOffset = value - m_initialMonotonicTime;
+    auto newTimestamp = m_epoch.secondsSinceEpoch() + monotonicOffset;
+    return Performance::reduceTimeResolution(newTimestamp.secondsSinceEpoch());
 }
 
 #undef GST_CAT_DEFAULT

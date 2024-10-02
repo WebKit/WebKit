@@ -65,9 +65,7 @@ public:
     using Callback = CompletionHandler<void(Respond&&)>;
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 
-    using AuthenticatorTransportServiceObserver::weakPtrFactory;
-    using AuthenticatorTransportServiceObserver::WeakValueType;
-    using AuthenticatorTransportServiceObserver::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(AuthenticatorTransportServiceObserver);
 
     const static size_t maxTransportNumber;
 

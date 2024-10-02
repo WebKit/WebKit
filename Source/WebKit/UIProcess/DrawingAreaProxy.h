@@ -42,15 +42,6 @@
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakRef.h>
 
-namespace WebKit {
-class DrawingAreaProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::DrawingAreaProxy> : std::true_type { };
-}
-
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -89,7 +80,7 @@ public:
 
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
-    virtual void deviceScaleFactorDidChange() = 0;
+    virtual void deviceScaleFactorDidChange(CompletionHandler<void()>&&) = 0;
     virtual void colorSpaceDidChange() { }
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
     virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
@@ -117,7 +108,7 @@ public:
 
     virtual void updateDebugIndicator() { }
 
-    virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
+    virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }
@@ -160,6 +151,7 @@ protected:
     DrawingAreaProxy(DrawingAreaType, WebPageProxy&, WebProcessProxy&);
 
     Ref<WebPageProxy> protectedWebPageProxy() const;
+    Ref<WebProcessProxy> protectedWebProcessProxy() const;
 
     DrawingAreaType m_type;
     WeakRef<WebPageProxy> m_webPageProxy;

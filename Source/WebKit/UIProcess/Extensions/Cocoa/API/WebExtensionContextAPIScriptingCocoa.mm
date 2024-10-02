@@ -117,7 +117,7 @@ void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionPa
         auto injectedFrames = parameters.frameIDs ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames;
 
         auto styleSheetPairs = getSourcePairsForParameters(parameters, *this);
-        injectStyleSheets(styleSheetPairs, webView, *m_contentScriptWorld, parameters.styleLevel, injectedFrames, *this);
+        injectStyleSheets(styleSheetPairs, webView, Ref { *m_contentScriptWorld }, parameters.styleLevel, injectedFrames, *this);
 
         completionHandler({ });
     });
@@ -359,9 +359,10 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
             return !!string.length;
         });
 
+        RefPtr extension = m_extension;
         for (NSString *scriptPath in scriptPaths) {
             NSError *error;
-            if (!extension().resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            if (!extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
                 recordError(error);
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", scriptPath);
                 return false;
@@ -376,7 +377,7 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
 
         for (NSString *styleSheetPath in styleSheetPaths) {
             NSError *error;
-            if (!extension().resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+            if (!extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
                 recordError(error);
                 *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", styleSheetPath);
                 return false;
@@ -423,8 +424,8 @@ bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtens
         injectedContentData.injectsIntoAllFrames = parameters.allFrames.value_or(false);
         injectedContentData.contentWorldType = parameters.world.value_or(WebExtensionContentWorldType::ContentScript);
         injectedContentData.styleLevel = parameters.styleLevel.value_or(WebCore::UserStyleLevel::Author);
-        injectedContentData.scriptPaths = scriptPaths;
-        injectedContentData.styleSheetPaths = styleSheetPaths;
+        injectedContentData.scriptPaths = makeVector<String>(scriptPaths);
+        injectedContentData.styleSheetPaths = makeVector<String>(styleSheetPaths);
 
         injectedContentsMap.add(scriptID, WTFMove(injectedContentData));
     }

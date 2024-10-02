@@ -1,10 +1,10 @@
-# mypy: allow-untyped-defs
 import ast
-from bisect import bisect_right
 import inspect
 import textwrap
 import tokenize
 import types
+import warnings
+from bisect import bisect_right
 from typing import Iterable
 from typing import Iterator
 from typing import List
@@ -12,7 +12,6 @@ from typing import Optional
 from typing import overload
 from typing import Tuple
 from typing import Union
-import warnings
 
 
 class Source:
@@ -47,10 +46,12 @@ class Source:
     __hash__ = None  # type: ignore
 
     @overload
-    def __getitem__(self, key: int) -> str: ...
+    def __getitem__(self, key: int) -> str:
+        ...
 
     @overload
-    def __getitem__(self, key: slice) -> "Source": ...
+    def __getitem__(self, key: slice) -> "Source":
+        ...
 
     def __getitem__(self, key: Union[int, slice]) -> Union[str, "Source"]:
         if isinstance(key, int):
@@ -148,7 +149,8 @@ def get_statement_startend2(lineno: int, node: ast.AST) -> Tuple[int, Optional[i
     values: List[int] = []
     for x in ast.walk(node):
         if isinstance(x, (ast.stmt, ast.ExceptHandler)):
-            # The lineno points to the class/def, so need to include the decorators.
+            # Before Python 3.8, the lineno of a decorated class or function pointed at the decorator.
+            # Since Python 3.8, the lineno points to the class/def, so need to include the decorators.
             if isinstance(x, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
                 for d in x.decorator_list:
                     values.append(d.lineno - 1)
@@ -195,9 +197,7 @@ def getstatementrange_ast(
         # by using the BlockFinder helper used which inspect.getsource() uses itself.
         block_finder = inspect.BlockFinder()
         # If we start with an indented line, put blockfinder to "started" mode.
-        block_finder.started = (
-            bool(source.lines[start]) and source.lines[start][0].isspace()
-        )
+        block_finder.started = source.lines[start][0].isspace()
         it = ((x + "\n") for x in source.lines[start:end])
         try:
             for tok in tokenize.generate_tokens(lambda: next(it)):

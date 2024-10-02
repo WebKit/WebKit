@@ -96,7 +96,7 @@ public:
     }
     static unsigned toIndex(FPRReg reg)
     {
-        unsigned result = (unsigned)reg;
+        auto result = static_cast<unsigned>(reg);
         if (result >= numberOfRegisters)
             return InvalidIndex;
         return result;
@@ -105,6 +105,13 @@ public:
     static constexpr FPRReg toArgumentRegister(unsigned index)
     {
         return (FPRReg)index;
+    }
+    static unsigned toArgumentIndex(FPRReg reg)
+    {
+        auto result = static_cast<unsigned>(reg);
+        if (result >= numberOfArgumentRegisters)
+            return InvalidIndex;
+        return result;
     }
 
     static ASCIILiteral debugName(FPRReg reg)
@@ -176,13 +183,17 @@ public:
     }
     static unsigned toIndex(FPRReg reg)
     {
-        return (unsigned)reg;
+        return static_cast<unsigned>(reg);
     }
 
     static constexpr FPRReg toArgumentRegister(unsigned index)
     {
         ASSERT_UNDER_CONSTEXPR_CONTEXT(index < numberOfArgumentRegisters);
         return static_cast<FPRReg>(index);
+    }
+    static unsigned toArgumentIndex(FPRReg reg)
+    {
+        return static_cast<unsigned>(reg);
     }
 
     static ASCIILiteral debugName(FPRReg reg)
@@ -281,6 +292,15 @@ public:
         return static_cast<FPRReg>(index);
     }
 
+    static unsigned toArgumentIndex(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        if (reg > argumentFPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg);
+    }
+
     static ASCIILiteral debugName(FPRReg reg)
     {
         ASSERT(reg != InvalidFPRReg);
@@ -376,6 +396,15 @@ public:
             InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 16, 17, InvalidIndex, InvalidIndex,
         };
         return indexForRegister[reg];
+    }
+
+    static unsigned toArgumentIndex(FPRReg reg)
+    {
+        ASSERT(reg != InvalidFPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        if (reg < argumentFPR0 || reg > argumentFPR7)
+            return InvalidIndex;
+        return static_cast<unsigned>(reg) - 10;
     }
 
     static ASCIILiteral debugName(FPRReg reg)

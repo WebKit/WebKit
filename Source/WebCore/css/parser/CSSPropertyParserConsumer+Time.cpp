@@ -26,30 +26,32 @@
 #include "CSSPropertyParserConsumer+Time.h"
 #include "CSSPropertyParserConsumer+TimeDefinitions.h"
 
-#include "CSSCalcParser.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcSymbolsAllowed.h"
+#include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CalculationCategory.h"
 #include "Length.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<TimeRaw> validatedRange(TimeRaw value, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> validatedRange(CSS::TimeRaw value, CSSPropertyParserOptions options)
 {
     if (options.valueRange == ValueRange::NonNegative && value.value < 0)
         return std::nullopt;
     return value;
 }
 
-std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::UnevaluatedCalc<CSS::TimeRaw>> TimeKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == FunctionToken);
 
     auto rangeCopy = range;
-    if (RefPtr value = consumeCalcRawWithKnownTokenTypeFunction(rangeCopy, Calculation::Category::Time, WTFMove(symbolsAllowed), options)) {
+    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Time, WTFMove(symbolsAllowed), options)) {
         range = rangeCopy;
         return {{ value.releaseNonNull() }};
     }
@@ -57,7 +59,7 @@ std::optional<UnevaluatedCalc<TimeRaw>> TimeKnownTokenTypeFunctionConsumer::cons
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
@@ -73,14 +75,14 @@ std::optional<TimeRaw> TimeKnownTokenTypeDimensionConsumer::consume(CSSParserTok
         return std::nullopt;
     }
 
-    if (auto validatedValue = validatedRange(TimeRaw { unitType, token.numericValue() }, options)) {
+    if (auto validatedValue = validatedRange(CSS::TimeRaw { unitType, token.numericValue() }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
     return std::nullopt;
 }
 
-std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
+std::optional<CSS::TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
 {
     ASSERT(range.peek().type() == NumberToken);
 
@@ -94,7 +96,7 @@ std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenR
     if (!shouldAcceptUnitlessValue(numericValue, options))
         return std::nullopt;
 
-    if (auto validatedValue = validatedRange(TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
+    if (auto validatedValue = validatedRange(CSS::TimeRaw { CSSUnitType::CSS_MS, numericValue }, options)) {
         range.consumeIncludingWhitespace();
         return validatedValue;
     }
@@ -104,14 +106,14 @@ std::optional<TimeRaw> TimeKnownTokenTypeNumberConsumer::consume(CSSParserTokenR
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode parserMode, ValueRange valueRange, UnitlessQuirk unitless)
+RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange, UnitlessQuirk unitless)
 {
     const auto options = CSSPropertyParserOptions {
-        .parserMode = parserMode,
+        .parserMode = context.mode,
         .valueRange = valueRange,
         .unitless = unitless
     };
-    return CSSPrimitiveValueResolver<TimeRaw>::consumeAndResolve(range, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Time>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

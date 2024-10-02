@@ -162,6 +162,13 @@
    },
    {
       "emails" : [
+         "ja_lopezlozoya@apple.com"
+      ],
+      "github" : "lopezlozoya",
+      "name" : "Adan Lopez"
+   },
+   {
+      "emails" : [
          "adele@apple.com"
       ],
       "expertise" : "HTML Forms, Security, Layout and Rendering, Web Compatibility (General)",
@@ -849,6 +856,13 @@
    },
    {
       "emails" : [
+         "anil_hebbar@apple.com"
+      ],
+      "github" : "anil-hebbar",
+      "name" : "Anil Hebbar"
+   },
+   {
+      "emails" : [
          "anjalik_22@apple.com"
       ],
       "name" : "Anjali Kumar",
@@ -1307,7 +1321,7 @@
       ],
       "github" : "stwrt",
       "name" : "Brandon Stewart",
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -1933,7 +1947,8 @@
       ],
       "expertise" : "JavaScriptCore",
       "github" : "dhecht",
-      "name" : "Dan Hecht"
+      "name" : "Dan Hecht",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -4121,6 +4136,16 @@
    },
    {
       "emails" : [
+         "jlee53@apple.com"
+      ],
+      "github" : "jelee53",
+      "name" : "Jessica Lee",
+      "nicks" : [
+         "jlee53"
+      ]
+   },
+   {
+      "emails" : [
          "jberlin@webkit.org",
          "jberlin@apple.com"
       ],
@@ -4977,6 +5002,13 @@
    },
    {
       "emails" : [
+         "kohei.asano@sony.com"
+      ],
+      "github" : "khei4",
+      "name" : "Kohei Asano"
+   },
+   {
+      "emails" : [
          "kohei.ueno119@gmail.com"
       ],
       "github" : "cola119",
@@ -5209,7 +5241,8 @@
          "lily_spiniolas@apple.com"
       ],
       "github" : "lilyspiniolas",
-      "name" : "Lily Spiniolas"
+      "name" : "Lily Spiniolas",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -6407,6 +6440,19 @@
    },
    {
       "emails" : [
+         "pvarangot@apple.com",
+         "pedrov@gmail.com"
+      ],
+      "github" : "pedrovarangot",
+      "name" : "Pedro Varangot",
+      "nicks" : [
+         "pvarangot",
+         "pedrov",
+         "piter"
+      ]
+   },
+   {
+      "emails" : [
          "peng.liu6@apple.com",
          "peng.liu6@icloud.com"
       ],
@@ -6573,6 +6619,13 @@
       "nicks" : [
          "psolanki"
       ]
+   },
+   {
+      "emails" : [
+         "p_choudhury@apple.com"
+      ],
+      "github" : "pratiksha-99",
+      "name" : "Pratiksha Choudhury"
    },
    {
       "emails" : [
@@ -6974,6 +7027,13 @@
          "rreno"
       ],
       "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ryosei.otaka@sony.com"
+      ],
+      "github" : "r-otaka",
+      "name" : "Ryosei Otaka"
    },
    {
       "emails" : [

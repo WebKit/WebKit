@@ -394,12 +394,10 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
     if source_file.root is None:
         return [rules.ParseFailed.error(path)]
 
-    test_type = source_file.type
-
-    if test_type == "manual" and not source_file.name_is_manual:
+    if source_file.type == "manual" and not source_file.name_is_manual:
         errors.append(rules.ContentManual.error(path))
 
-    if test_type == "visual" and not source_file.name_is_visual:
+    if source_file.type == "visual" and not source_file.name_is_visual:
         errors.append(rules.ContentVisual.error(path))
 
     about_blank_parts = urlsplit("about:blank")
@@ -430,10 +428,6 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
             errors.append(rules.NonexistentRef.error(path,
                                                      (reference_rel, href)))
 
-    if source_file.reftest_nodes:
-        if test_type not in ("print-reftest", "reftest"):
-            errors.append(rules.ReferenceInOtherType.error(path, (test_type,)))
-
     if len(source_file.timeout_nodes) > 1:
         errors.append(rules.MultipleTimeout.error(path))
 
@@ -456,6 +450,7 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
 
     testharnessreport_nodes: List[ElementTree.Element] = []
     if source_file.testharness_nodes:
+        test_type = source_file.manifest_items()[0]
         if test_type not in ("testharness", "manual"):
             errors.append(rules.TestharnessInOtherType.error(path, (test_type,)))
         if len(source_file.testharness_nodes) > 1:
@@ -475,9 +470,6 @@ def check_parsed(repo_root: Text, path: Text, f: IO[bytes]) -> List[rules.Error]
 
     testdriver_vendor_nodes: List[ElementTree.Element] = []
     if source_file.testdriver_nodes:
-        if test_type != "testharness":
-            errors.append(rules.TestdriverInUnsupportedType.error(path, (test_type,)))
-
         if len(source_file.testdriver_nodes) > 1:
             errors.append(rules.MultipleTestdriver.error(path))
 

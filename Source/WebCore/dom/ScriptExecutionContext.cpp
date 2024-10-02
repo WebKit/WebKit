@@ -58,6 +58,7 @@
 #include "SWContextManager.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptTelemetryCategory.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
@@ -78,6 +79,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/SourceTaintedOrigin.h>
 #include <JavaScriptCore/StackVisitor.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/VM.h>
@@ -888,36 +890,6 @@ void ScriptExecutionContext::deref()
     }
 }
 
-void ScriptExecutionContext::refAllowingPartiallyDestroyed()
-{
-    switch (m_type) {
-    case Type::Document:
-        uncheckedDowncast<Document>(*this).refAllowingPartiallyDestroyed();
-        break;
-    case Type::WorkerOrWorkletGlobalScope:
-        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).refAllowingPartiallyDestroyed();
-        break;
-    case Type::EmptyScriptExecutionContext:
-        uncheckedDowncast<EmptyScriptExecutionContext>(*this).refAllowingPartiallyDestroyed();
-        break;
-    }
-}
-
-void ScriptExecutionContext::derefAllowingPartiallyDestroyed()
-{
-    switch (m_type) {
-    case Type::Document:
-        uncheckedDowncast<Document>(*this).derefAllowingPartiallyDestroyed();
-        break;
-    case Type::WorkerOrWorkletGlobalScope:
-        uncheckedDowncast<WorkerOrWorkletGlobalScope>(*this).derefAllowingPartiallyDestroyed();
-        break;
-    case Type::EmptyScriptExecutionContext:
-        uncheckedDowncast<EmptyScriptExecutionContext>(*this).derefAllowingPartiallyDestroyed();
-        break;
-    }
-}
-
 class ScriptExecutionContextDispatcher final
     : public ThreadSafeRefCounted<ScriptExecutionContextDispatcher>
     , public RefCountedSerialFunctionDispatcher {
@@ -955,6 +927,40 @@ RefCountedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatc
     if (!m_nativePromiseDispatcher)
         m_nativePromiseDispatcher = ScriptExecutionContextDispatcher::create(*this);
     return *m_nativePromiseDispatcher;
+}
+
+bool ScriptExecutionContext::requiresScriptExecutionTelemetry(ScriptTelemetryCategory category)
+{
+    Ref vm = this->vm();
+    if (!vm->topCallFrame)
+        return false;
+
+    auto [taintedness, taintedURL] = JSC::sourceTaintedOriginFromStack(vm, vm->topCallFrame);
+    switch (taintedness) {
+    case JSC::SourceTaintedOrigin::Untainted:
+    case JSC::SourceTaintedOrigin::IndirectlyTaintedByHistory:
+        return false;
+    case JSC::SourceTaintedOrigin::IndirectlyTainted:
+    case JSC::SourceTaintedOrigin::KnownTainted:
+        break;
+    }
+
+    RefPtr document = dynamicDowncast<Document>(*this);
+    if (!document)
+        return true;
+
+    RefPtr page = document->page();
+    if (!page)
+        return true;
+
+    if (!page->settings().scriptTelemetryLoggingEnabled())
+        return true;
+
+    if (!page->reportScriptTelemetry(taintedURL, category))
+        return true;
+
+    addConsoleMessage(MessageSource::JS, MessageLevel::Info, makeLogMessage(taintedURL, category));
+    return true;
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

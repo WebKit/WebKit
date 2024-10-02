@@ -32,6 +32,7 @@
 #import "WKGroupSession.h"
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
+#import <mutex>
 #import <wtf/TZoneMallocInlines.h>
 
 #import "WebKitSwiftSoftLink.h"
@@ -43,7 +44,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GroupActivitiesSessionNotifier);
 
-GroupActivitiesSessionNotifier& GroupActivitiesSessionNotifier::sharedNotifier()
+GroupActivitiesSessionNotifier& GroupActivitiesSessionNotifier::singleton()
 {
     static NeverDestroyed<GroupActivitiesSessionNotifier> notifier;
     return notifier;
@@ -54,7 +55,8 @@ GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier()
     , m_stateChangeObserver([this] (auto& session, auto state) { sessionStateChanged(session, state); })
 {
     m_sessionObserver.get().newSessionCallback = [this, weakThis = WeakPtr { *this }] (WKGroupSession *groupSession) {
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto session = GroupActivitiesSession::create(groupSession);

@@ -29,7 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCJSValueInlines.h"
-#include "JSWebAssemblyTable.h"
+#include "JSWebAssemblyInstance.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <type_traits>
 #include <wtf/CheckedArithmetic.h>

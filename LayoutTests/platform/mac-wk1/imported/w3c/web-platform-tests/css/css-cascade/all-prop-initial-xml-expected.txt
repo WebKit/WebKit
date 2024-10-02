@@ -182,7 +182,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -348,6 +347,7 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
+PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform
@@ -414,6 +414,7 @@ PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-nbsp-mode
 PASS -webkit-rtl-ordering
+PASS -webkit-ruby-position
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color

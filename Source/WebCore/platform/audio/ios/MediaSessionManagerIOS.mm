@@ -39,8 +39,11 @@
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManageriOS);
 
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {
@@ -116,7 +119,7 @@ void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 
 void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 {
-#if HAVE(CELESTIAL)
+#if HAVE(MEDIAEXPERIENCE_AVSYSTEMCONTROLLER)
     if (m_havePresentedApplicationPID)
         return;
     m_havePresentedApplicationPID = true;

@@ -39,6 +39,7 @@
 namespace JSC {
 
 class JSWebAssemblyTable;
+class WebAssemblyFunctionBase;
 
 namespace Wasm {
 

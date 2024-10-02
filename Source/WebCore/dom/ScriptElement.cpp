@@ -47,6 +47,7 @@
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchParameters.h"
+#include "Page.h"
 #include "PendingScript.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
@@ -274,6 +275,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     }
     }
 
+    updateTaintedOriginFromSourceURL();
+
     // All the inlined module script is handled by requestModuleScript. It produces LoadableModuleScript and inlined module script
     // is handled as the same to the external module script.
 
@@ -308,6 +311,22 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     }
 
     return true;
+}
+
+void ScriptElement::updateTaintedOriginFromSourceURL()
+{
+    if (m_taintedOrigin == JSC::SourceTaintedOrigin::KnownTainted)
+        return;
+
+    Ref document = element().document();
+    RefPtr page = document->page();
+    if (!page)
+        return;
+
+    if (!page->requiresScriptTelemetryForURL(hasSourceAttribute() ? document->completeURL(sourceAttributeValue()) : document->url()))
+        return;
+
+    m_taintedOrigin = JSC::SourceTaintedOrigin::KnownTainted;
 }
 
 bool ScriptElement::requestClassicScript(const String& sourceURL)

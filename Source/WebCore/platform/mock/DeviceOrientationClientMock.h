@@ -31,6 +31,7 @@
 #include "Timer.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -40,6 +41,7 @@ class DeviceOrientationController;
 // DumpRenderTree. Embedders should should configure the Page object to use this
 // client when running DumpRenderTree.
 class DeviceOrientationClientMock : public DeviceOrientationClient {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(DeviceOrientationClientMock, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT DeviceOrientationClientMock();
 

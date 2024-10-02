@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +35,7 @@
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
@@ -42,7 +44,7 @@
 #include "CSSPropertyParserConsumer+NoneDefinitions.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CSSPropertyParserConsumer+PercentDefinitions.h"
+#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+SymbolDefinitions.h"
 #include "CSSPropertyParsing.h"
@@ -53,6 +55,7 @@
 #include "CSSUnresolvedColorLayers.h"
 #include "CSSUnresolvedColorMix.h"
 #include "CSSUnresolvedColorResolutionState.h"
+#include "CSSUnresolvedContrastColor.h"
 #include "CSSUnresolvedLightDark.h"
 #include "CSSUnresolvedRelativeColor.h"
 #include "CSSValuePool.h"
@@ -64,41 +67,30 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename T>
-static CSSUnresolvedColor makeCSSUnresolvedColor(T&& unresolvedColorKind)
+template<typename T> static CSSUnresolvedColor makeCSSUnresolvedColor(T&& unresolvedColorKind)
 {
     return CSSUnresolvedColor { std::forward<T>(unresolvedColorKind) };
 }
 
-template<typename T>
-static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>&& unresolvedColorKind)
+template<typename T> static std::optional<CSSUnresolvedColor> makeCSSUnresolvedColor(std::optional<T>&& unresolvedColorKind)
 {
-    if (!unresolvedColorKind)
-        return { };
-    return makeCSSUnresolvedColor(std::forward<T>(*unresolvedColorKind));
+    return unresolvedColorKind ? std::make_optional(makeCSSUnresolvedColor(std::forward<T>(*unresolvedColorKind))) : std::nullopt;
 }
 
 // State passed to internal color consumer functions. Used to pass information
 // down the stack and levels of color parsing nesting.
 struct ColorParserState {
     ColorParserState(const CSSParserContext& context, const CSSColorParsingOptions& options)
-        : allowedColorTypes { options.allowedColorTypes }
+        : context { context }
+        , allowedColorTypes { options.allowedColorTypes }
         , acceptQuirkyColors { options.acceptQuirkyColors }
-        , colorLayersEnabled { context.colorLayersEnabled }
-        , lightDarkEnabled { context.lightDarkEnabled }
-        , mode { context.mode }
     {
     }
 
+    const CSSParserContext& context;
     OptionSet<StyleColor::CSSColorType> allowedColorTypes;
-
-    bool acceptQuirkyColors;
-    bool colorLayersEnabled;
-    bool lightDarkEnabled;
-
-    CSSParserMode mode;
-
-    unsigned nestingLevel = 0;
+    bool acceptQuirkyColors { false };
+    unsigned nestingLevel { 0 };
 };
 
 // RAII helper to increment/decrement nesting level.
@@ -129,29 +121,21 @@ template<typename... Ts> using MetaConsumerWrapper = MetaConsumer<Ts...>;
 template<typename Descriptor, unsigned Index>
 static std::optional<CSSUnresolvedAbsoluteColorComponent<Descriptor, Index>> consumeAbsoluteComponent(CSSParserTokenRange& range, ColorParserState& state)
 {
-    using TypeList = GetComponentResultTypeList<Descriptor, Index>;
+    using TypeList = GetCSSColorParseTypeWithCalcComponentTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, { }, { .parserMode = state.mode });
-    if (!result)
-        return { };
-
-    return WTF::switchOn(*result, [](auto& v) -> CSSUnresolvedAbsoluteColorComponent<Descriptor, Index> { return v; });
+    return Consumer::consume(range, state.context, { }, { .parserMode = state.context.mode });
 }
 
 template<typename Descriptor, unsigned Index>
 static std::optional<CSSUnresolvedRelativeColorComponent<Descriptor, Index>> consumeRelativeComponent(CSSParserTokenRange& range, ColorParserState& state, CSSCalcSymbolsAllowed symbolsAllowed)
 {
-    // Append `SymbolRaw` to the TypeList to allow unadorned symbols from the symbol
+    // Append `CSS::Symbol` to the TypeList to allow unadorned symbols from the symbol
     // table to be consumed.
-    using TypeList = brigand::append<GetComponentResultTypeList<Descriptor, Index>, brigand::list<SymbolRaw>>;
+    using TypeList = GetCSSColorParseTypeWithCalcAndSymbolsComponentTypeList<Descriptor, Index>;
     using Consumer = brigand::wrap<TypeList, MetaConsumerWrapper>;
 
-    auto result = Consumer::consume(range, WTFMove(symbolsAllowed), { .parserMode = state.mode });
-    if (!result)
-        return { };
-
-    return WTF::switchOn(*result, [](auto& v) -> CSSUnresolvedRelativeColorComponent<Descriptor, Index> { return v; });
+    return Consumer::consume(range, state.context, WTFMove(symbolsAllowed), { .parserMode = state.context.mode });
 }
 
 template<typename Descriptor>
@@ -202,10 +186,10 @@ template<typename Descriptor> static CSSUnresolvedAbsoluteColor<typename Descrip
     // Evaluated any calc values that don't require conversion data.
     auto partiallyResolved = CSSUnresolvedAbsoluteColor<Descriptor> {
         CSSColorParseTypeWithCalc<Descriptor> {
-            evaluateCalcIfNoConversionDataRequired(std::get<0>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<1>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<2>(unresolved.components), CSSCalcSymbolTable { }),
-            evaluateCalcIfNoConversionDataRequired(std::get<3>(unresolved.components), CSSCalcSymbolTable { })
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<0>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<1>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<2>(unresolved.components), CSSCalcSymbolTable { }),
+            CSS::evaluateCalcIfNoConversionDataRequired(std::get<3>(unresolved.components), CSSCalcSymbolTable { })
         }
     };
 
@@ -395,12 +379,7 @@ static std::optional<CSSUnresolvedColor> consumeRGBFunction(CSSParserTokenRange&
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
             },
-            [&]<typename T>(UnevaluatedCalc<T> red) -> std::optional<CSSUnresolvedColor>  {
-                using Descriptor = RGBFunctionLegacy<T>;
-
-                return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
-            },
-            [](NoneRaw) -> std::optional<CSSUnresolvedColor> {
+            [](CSS::None) -> std::optional<CSSUnresolvedColor> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -449,7 +428,7 @@ static std::optional<CSSUnresolvedColor> consumeHSLFunction(CSSParserTokenRange&
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(hue));
             },
-            [](NoneRaw) -> std::optional<CSSUnresolvedColor> {
+            [](CSS::None) -> std::optional<CSSUnresolvedColor> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -532,7 +511,7 @@ static std::optional<CSSUnresolvedColor> consumeColorLayersFunction(CSSParserTok
 
     ASSERT(range.peek().functionId() == CSSValueColorLayers);
 
-    if (!state.colorLayersEnabled)
+    if (!state.context.colorLayersEnabled)
         return std::nullopt;
 
     auto args = consumeFunction(range);
@@ -567,8 +546,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 
     std::optional<CSSUnresolvedColorMix::Component::Percentage> percentage;
 
-    if (auto percent = MetaConsumer<PercentRaw>::consume(args, { }, { })) {
-        if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percent))) {
+    if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
+        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
             auto value = rawValue->value;
             if (value < 0.0 || value > 100.0)
                 return std::nullopt;
@@ -581,8 +560,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = MetaConsumer<PercentRaw>::consume(args, { }, { })) {
-            if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percent))) {
+        if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
+            if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
                 auto value = rawValue->value;
                 if (value < 0.0 || value > 100.0)
                     return std::nullopt;
@@ -600,7 +579,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Component& mixComponent)
 {
     if (auto percentage = mixComponent.percentage) {
-        if (PercentRaw* rawValue = std::get_if<PercentRaw>(&(*percentage)))
+        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percentage->value)))
             return rawValue->value == 0.0;
     }
     return false;
@@ -609,6 +588,7 @@ static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Componen
 static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
     // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
+    // https://drafts.csswg.org/css-color-5/#color-mix
 
     ASSERT(range.peek().functionId() == CSSValueColorMix);
 
@@ -617,7 +597,7 @@ static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenR
     if (args.peek().id() != CSSValueIn)
         return std::nullopt;
 
-    auto colorInterpolationMethod = consumeColorInterpolationMethod(args);
+    auto colorInterpolationMethod = consumeColorInterpolationMethod(args, state.context);
     if (!colorInterpolationMethod)
         return std::nullopt;
 
@@ -661,15 +641,47 @@ static std::optional<CSSUnresolvedColor> consumeColorMixFunction(CSSParserTokenR
     };
 }
 
+// MARK: - contrast-color()
+
+static std::optional<CSSUnresolvedColor> consumeContrastColorFunction(CSSParserTokenRange& range, ColorParserState& state)
+{
+    // contrast-color() = contrast-color( <color> max? )
+    // https://drafts.csswg.org/css-color-5/#funcdef-contrast-color
+
+    ASSERT(range.peek().functionId() == CSSValueContrastColor);
+
+    if (!state.context.contrastColorEnabled)
+        return std::nullopt;
+
+    auto args = consumeFunction(range);
+
+    auto color = consumeColor(args, state);
+    if (!color)
+        return std::nullopt;
+
+    bool max = consumeIdentRaw<CSSValueMax>(args).has_value();
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return CSSUnresolvedColor {
+        CSSUnresolvedContrastColor {
+            .color = makeUniqueRef<CSSUnresolvedColor>(WTFMove(*color)),
+            .max = max
+        }
+    };
+}
+
 // MARK: - light-dark()
 
 static std::optional<CSSUnresolvedColor> consumeLightDarkFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
     // light-dark() = light-dark( <color>, <color> )
+    // https://drafts.csswg.org/css-color-5/#light-dark
 
     ASSERT(range.peek().functionId() == CSSValueLightDark);
 
-    if (!state.lightDarkEnabled)
+    if (!state.context.lightDarkEnabled)
         return std::nullopt;
 
     auto args = consumeFunction(range);
@@ -738,6 +750,9 @@ static std::optional<CSSUnresolvedColor> consumeAColorFunction(CSSParserTokenRan
     case CSSValueColorMix:
         color = consumeColorMixFunction(colorRange, state);
         break;
+    case CSSValueContrastColor:
+        color = consumeContrastColorFunction(colorRange, state);
+        break;
     case CSSValueLightDark:
         color = consumeLightDarkFunction(colorRange, state);
         break;
@@ -800,7 +815,7 @@ std::optional<CSSUnresolvedColor> consumeColor(CSSParserTokenRange& range, Color
 
     auto keyword = range.peek().id();
     if (StyleColor::isColorKeyword(keyword, state.allowedColorTypes)) {
-        if (!isColorKeywordAllowedInMode(keyword, state.mode))
+        if (!isColorKeywordAllowedInMode(keyword, state.context.mode))
             return { };
 
         consumeIdentRaw(range);

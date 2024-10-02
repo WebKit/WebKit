@@ -402,9 +402,9 @@ void DocumentThreadableLoader::responseReceived(CachedResource& resource, const 
     if (!m_responsesCanBeOpaque) {
         ResourceResponse responseWithoutTainting = responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier;
         responseWithoutTainting.setTainting(ResourceResponse::Tainting::Basic);
-        didReceiveResponse(m_resource->identifier(), responseWithoutTainting);
+        didReceiveResponse(*m_resource->identifier(), responseWithoutTainting);
     } else
-        didReceiveResponse(m_resource->identifier(), responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier);
+        didReceiveResponse(*m_resource->identifier(), responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier);
 
     if (completionHandler)
         completionHandler();
@@ -449,7 +449,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
 void DocumentThreadableLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    didReceiveData(m_resource->identifier(), buffer);
+    didReceiveData(*m_resource->identifier(), buffer);
 }
 
 void DocumentThreadableLoader::didReceiveData(ResourceLoaderIdentifier, const SharedBuffer& buffer)
@@ -488,7 +488,7 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
         didFinishLoading(m_resource->identifier(), metrics);
 }
 
-void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& metrics)
+void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
 {
     ASSERT(m_client);
 
@@ -520,7 +520,7 @@ void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identif
     m_client->didFinishLoading(m_document->identifier(), identifier, metrics);
 }
 
-void DocumentThreadableLoader::didFail(ResourceLoaderIdentifier, const ResourceError& error)
+void DocumentThreadableLoader::didFail(std::optional<ResourceLoaderIdentifier>, const ResourceError& error)
 {
     ASSERT(m_client);
     if (m_bypassingPreflightForServiceWorkerRequest && error.isCancellation()) {

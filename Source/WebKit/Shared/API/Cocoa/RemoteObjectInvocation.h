@@ -26,7 +26,7 @@
 #pragma once
 
 #include "APIDictionary.h"
-#include <wtf/TZoneMallocInlines.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
@@ -37,9 +37,10 @@ class Decoder;
 namespace WebKit {
 
 class RemoteObjectInvocation {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteObjectInvocation);
 public:
     struct ReplyInfo {
-        WTF_MAKE_TZONE_ALLOCATED_INLINE(RemoteObjectInvocation);
+        WTF_MAKE_TZONE_ALLOCATED(ReplyInfo);
     public:
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)

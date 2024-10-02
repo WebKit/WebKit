@@ -153,7 +153,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         // {ID 5, Role Group}
         //
         // We would expect the returned range to be: {ID 2, offset 0} to {ID 4, offset 3}
-        auto* stopObject = siblingOrParent(AXDirection::Next);
+        auto* stopObject = nextUnignoredSiblingOrParent();
 
         auto thisMarker = AXTextMarker { tree()->treeID(), objectID(), 0 };
         AXTextMarkerRange range { thisMarker, thisMarker };

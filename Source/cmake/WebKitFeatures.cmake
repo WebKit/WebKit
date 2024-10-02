@@ -349,6 +349,11 @@ macro(WEBKIT_OPTION_END)
         endif ()
     endforeach ()
 
+    if (ENABLE_LAYOUT_TESTS AND NOT DEVELOPER_MODE)
+        set(ENABLE_LAYOUT_TESTS OFF)
+        message(STATUS "Disabling ENABLE_LAYOUT_TESTS since DEVELOPER_MODE is disabled.")
+    endif ()
+
     # Run through every possible depends to make sure we have disabled anything
     # that could cause an unnecessary conflict before processing conflicts.
     _WEBKIT_OPTION_ENFORCE_ALL_DEPENDS()

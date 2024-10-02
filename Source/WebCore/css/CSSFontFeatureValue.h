@@ -26,12 +26,10 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSPrimitiveValue.h"
 #include "FontTaggedSettings.h"
 
 namespace WebCore {
-
-class CSSPrimitiveValue;
 
 class CSSFontFeatureValue final : public CSSValue {
 public:
@@ -42,6 +40,7 @@ public:
 
     const FontTag& tag() const { return m_tag; }
     const CSSPrimitiveValue& value() const { return m_value; }
+    Ref<CSSPrimitiveValue> protectedValue() const { return m_value; }
     String customCSSText() const;
 
     bool equals(const CSSFontFeatureValue&) const;

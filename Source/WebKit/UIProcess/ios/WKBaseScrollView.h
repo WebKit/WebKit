@@ -49,6 +49,8 @@
 @property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
 @property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;
 
+@property (nonatomic, readonly) UIView *scrolledContentView;
+
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 @property (nonatomic) NSUInteger _scrollingBehavior;
 @property (nonatomic, readonly, getter=overlayRegionsForTesting) HashSet<WebCore::IntRect>& overlayRegionRects;

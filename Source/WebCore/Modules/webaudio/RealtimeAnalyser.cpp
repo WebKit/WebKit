@@ -181,7 +181,7 @@ void RealtimeAnalyser::doFFTAnalysisIfNecessary()
         destination[i] = static_cast<float>(k * destination[i] + (1 - k) * scalarMagnitude);
     }
 
-    if (m_noiseInjectionPolicies.contains(NoiseInjectionPolicy::Minimal))
+    if (m_noiseInjectionPolicies)
         AudioUtilities::applyNoise(destination, n, 0.25);
 }
 

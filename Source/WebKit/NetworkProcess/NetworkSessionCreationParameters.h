@@ -104,6 +104,7 @@ struct NetworkSessionCreationParameters {
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
     bool isBlobRegistryTopOriginPartitioningEnabled { false };
+    bool isOptInCookiePartitioningEnabled { false };
     bool shouldSendPrivateTokenIPCForTesting { false };
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Standard };

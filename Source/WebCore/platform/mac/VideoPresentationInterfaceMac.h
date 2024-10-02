@@ -108,7 +108,7 @@ public:
     WEBCORE_EXPORT void documentVisibilityChanged(bool) final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
+    uint64_t logIdentifier() const;
     const Logger* loggerPtr() const;
     ASCIILiteral logClassName() const { return "VideoPresentationInterfaceMac"_s; };
     WTFLogChannel& logChannel() const;

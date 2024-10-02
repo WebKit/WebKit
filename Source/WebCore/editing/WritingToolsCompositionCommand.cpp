@@ -63,9 +63,14 @@ void WritingToolsCompositionCommand::replaceContentsOfRangeWithFragment(RefPtr<D
 
     if (state == State::Complete) {
         // When the command is signaled to be "complete", this commits the entire command as a whole to the undo/redo stack.
-        this->apply();
-        m_endingContextRange = *newContextRange;
+        commit();
     }
+}
+
+void WritingToolsCompositionCommand::commit()
+{
+    this->apply();
+    m_endingContextRange = m_currentContextRange;
 }
 
 } // namespace WebCore

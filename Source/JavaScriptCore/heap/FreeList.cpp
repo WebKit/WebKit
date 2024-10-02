@@ -58,24 +58,6 @@ void FreeList::initialize(FreeCell* start, uint64_t secret, unsigned bytes)
     m_originalSize = bytes;
 }
 
-bool FreeList::contains(HeapCell* target) const
-{
-    char* targetPtr = bitwise_cast<char*>(target);
-    if (m_intervalStart <= targetPtr && targetPtr < m_intervalEnd)
-        return true;
-
-    FreeCell* candidate = nextInterval();
-    while (!isSentinel(candidate)) {
-        char* start;
-        char* end;
-        FreeCell::advance(m_secret, candidate, start, end);
-        if (start <= targetPtr && targetPtr < end)
-            return true;
-    }
-
-    return false;
-}
-
 void FreeList::dump(PrintStream& out) const
 {
     out.print("{nextInterval = ", RawPointer(nextInterval()), ", secret = ", m_secret, ", intervalStart = ", RawPointer(m_intervalStart), ", intervalEnd = ", RawPointer(m_intervalEnd), ", originalSize = ", m_originalSize, "}");

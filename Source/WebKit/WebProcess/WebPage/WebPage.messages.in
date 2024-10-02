@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebPage LegacyReceiver {
+messages -> WebPage WantsAsyncDispatchMessage {
     SetInitialFocus(bool forward, bool isKeyboardEventValid, std::optional<WebKit::WebKeyboardEvent> event) -> ()
     SetActivityState(OptionSet<WebCore::ActivityState> activityState, WebKit::ActivityStateChangeID activityStateChangeID) -> ()
     SetLayerHostingMode(enum:uint8_t WebKit::LayerHostingMode layerHostingMode)
@@ -208,9 +208,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     StopLoading()
     StopLoadingDueToProcessSwap()
 
-    RestoreSession(Vector<WebKit::BackForwardListItemState> itemStates)
-    UpdateBackForwardListForReattach(Vector<WebKit::BackForwardListItemState> itemStates)
-    SetCurrentHistoryItemForReattach(struct WebKit::BackForwardListItemState itemState)
+    RestoreSession(Vector<Ref<WebKit::FrameState>> frameStates)
+    UpdateBackForwardListForReattach(Vector<Ref<WebKit::FrameState>> frameStates)
+    SetCurrentHistoryItemForReattach(Ref<WebKit::FrameState> frameState)
 
     DidRemoveBackForwardItem(WebCore::BackForwardItemIdentifier backForwardItemID)
 
@@ -292,16 +292,16 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     ReapplyEditCommand(uint64_t commandID) AllowedWhenWaitingForSyncReply
     UnapplyEditCommand(uint64_t commandID) AllowedWhenWaitingForSyncReply
 
-    SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
-    SetPageZoomFactor(double zoomFactor)
-    SetTextZoomFactor(double zoomFactor)
+    DidSetPageZoomFactor(double zoomFactor)
+    DidSetTextZoomFactor(double zoomFactor)
     WindowScreenDidChange(uint32_t displayID, std::optional<unsigned> nominalFramesPerSecond)
 
     AccessibilitySettingsDidChange()
 
-    ScalePage(double scale, WebCore::IntPoint origin)
-    ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)
-    ScaleView(double scale)
+    DidScalePage(double scale, WebCore::IntPoint origin)
+    DidScalePageInViewCoordinates(double scale, WebCore::IntPoint origin)
+    DidScalePageRelativeToScrollPosition(double scale, WebCore::IntPoint origin)
+    DidScaleView(double scale)
 
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)
@@ -489,7 +489,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CollapseSelectionInFrame(WebCore::FrameIdentifier frameID)
 #endif
 
-    CopyLinkToHighlight()
+    CopyLinkWithHighlight()
 
     BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
     UpdateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset);
@@ -553,6 +553,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if PLATFORM(IOS_FAMILY)
     WillStartUserTriggeredZooming();
+    DidEndUserTriggeredZooming();
 #endif
 
     SetScrollPinningBehavior(enum:uint8_t WebCore::ScrollPinningBehavior pinning)

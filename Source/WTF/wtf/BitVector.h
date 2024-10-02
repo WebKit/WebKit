@@ -273,6 +273,14 @@ public:
         }
         return result;
     }
+
+    // If the lambda returns an IterationStatus, we use it. The lambda can also return
+    // void, in which case, we'll iterate every set bit.
+    template<typename Func>
+    constexpr ALWAYS_INLINE void forEachSetBit(const Func&) const;
+
+    template<typename Func>
+    constexpr ALWAYS_INLINE void forEachSetBit(size_t startIndex, const Func&) const;
     
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
@@ -508,6 +516,34 @@ private:
     
     uintptr_t m_bitsOrPointer;
 };
+
+template<typename Func>
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(const Func& func) const
+{
+    uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
+    const uintptr_t* bits = &copiedInline;
+    size_t words = 1;
+    if (!isInline()) {
+        const OutOfLineBits* outOfLineBits = this->outOfLineBits();
+        bits = outOfLineBits->bits();
+        words = outOfLineBits->numWords();
+    }
+    WTF::forEachSetBit(std::span { bits, words }, func);
+}
+
+template<typename Func>
+ALWAYS_INLINE constexpr void BitVector::forEachSetBit(size_t startIndex, const Func& func) const
+{
+    uintptr_t copiedInline = cleanseInlineBits(m_bitsOrPointer);
+    const uintptr_t* bits = &copiedInline;
+    size_t words = 1;
+    if (!isInline()) {
+        const OutOfLineBits* outOfLineBits = this->outOfLineBits();
+        bits = outOfLineBits->bits();
+        words = outOfLineBits->numWords();
+    }
+    WTF::forEachSetBit(std::span { bits, words }, startIndex, func);
+}
 
 struct BitVectorHash {
     static unsigned hash(const BitVector& vector) { return vector.hash(); }

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "RemoteScrollingTree.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
@@ -40,6 +41,9 @@
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteScrollingTree);
+
 using namespace WebCore;
 
 RemoteScrollingTree::RemoteScrollingTree(RemoteScrollingCoordinatorProxy& scrollingCoordinator)

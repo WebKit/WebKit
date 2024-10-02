@@ -97,6 +97,9 @@ public:
     bool destroyEGLImage(EGLImage) const;
 #if USE(GBM)
     const Vector<GLDisplay::DMABufFormat>& dmabufFormats();
+#if USE(GSTREAMER)
+    const Vector<GLDisplay::DMABufFormat>& dmabufFormatsForVideo();
+#endif
 #endif
 
 #if ENABLE(WEBGL)

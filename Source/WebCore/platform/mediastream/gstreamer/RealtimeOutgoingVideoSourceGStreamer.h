@@ -54,10 +54,6 @@ private:
     void startUpdatingStats();
     void stopUpdatingStats();
 
-    void connectFallbackSource() final;
-    void unlinkOutgoingSource() final;
-    void linkOutgoingSource() final;
-
     void updateStats(GstBuffer*);
 
     GRefPtr<GstElement> m_videoConvert;

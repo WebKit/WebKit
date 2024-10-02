@@ -25,6 +25,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
+[EnabledBy=EncryptedMediaAPIEnabled]
 messages -> RemoteCDMInstanceProxy NotRefCounted {
     CreateSession(uint64_t logIdentifier) -> (WebKit::RemoteCDMInstanceSessionIdentifier identifier) Synchronous
     InitializeWithConfiguration(struct WebCore::CDMKeySystemConfiguration configuration, enum:bool WebCore::CDMInstance::AllowDistinctiveIdentifiers distinctiveIdentifiersAllowed, enum:bool WebCore::CDMInstance::AllowPersistentState persistentStateAllowed) -> (enum:bool WebCore::CDMInstance::SuccessValue success)

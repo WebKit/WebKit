@@ -53,8 +53,6 @@ PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
 #define PAS_END_EXTERN_C __PAS_END_EXTERN_C
 
-PAS_BEGIN_EXTERN_C;
-
 #if PAS_BMALLOC
 #if defined(__has_include)
 #if __has_include(<WebKitAdditions/pas_utils_additions.h>) && !PAS_ENABLE_TESTING
@@ -62,6 +60,8 @@ PAS_BEGIN_EXTERN_C;
 #endif
 #endif
 #endif
+
+PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALWAYS_INLINE_BUT_NOT_INLINE __PAS_ALWAYS_INLINE_BUT_NOT_INLINE
 #define PAS_ALWAYS_INLINE __PAS_ALWAYS_INLINE

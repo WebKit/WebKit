@@ -32,6 +32,7 @@
 #import "RemoteScrollingCoordinatorProxyIOS.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessProxy.h"
 #import <QuartzCore/CADisplayLink.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollView.h>
@@ -211,8 +212,11 @@ WKDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxyIOS::displayLinkHandler()
     return m_displayLinkHandler.get();
 }
 
-void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+void RemoteLayerTreeDrawingAreaProxyIOS::setPreferredFramesPerSecond(IPC::Connection& connection, FramesPerSecond preferredFramesPerSecond)
 {
+    if (!m_webProcessProxy->hasConnection(connection))
+        return;
+
     [displayLinkHandler() setPreferredFramesPerSecond:preferredFramesPerSecond];
 }
 

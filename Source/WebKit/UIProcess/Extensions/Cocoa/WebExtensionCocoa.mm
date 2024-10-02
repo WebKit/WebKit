@@ -68,14 +68,6 @@ SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (doc
 
 namespace WebKit {
 
-static NSString * const manifestVersionManifestKey = @"manifest_version";
-
-static NSString * const nameManifestKey = @"name";
-static NSString * const shortNameManifestKey = @"short_name";
-static NSString * const versionManifestKey = @"version";
-static NSString * const versionNameManifestKey = @"version_name";
-static NSString * const descriptionManifestKey = @"description";
-
 static NSString * const iconsManifestKey = @"icons";
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
@@ -95,63 +87,20 @@ static NSString * const defaultLocaleManifestKey = @"default_locale";
 static NSString * const defaultTitleManifestKey = @"default_title";
 static NSString * const defaultPopupManifestKey = @"default_popup";
 
-static NSString * const backgroundManifestKey = @"background";
-static NSString * const backgroundPageManifestKey = @"page";
-static NSString * const backgroundServiceWorkerManifestKey = @"service_worker";
-static NSString * const backgroundScriptsManifestKey = @"scripts";
-static NSString * const backgroundPersistentManifestKey = @"persistent";
-static NSString * const backgroundPageTypeKey = @"type";
-static NSString * const backgroundPageTypeModuleValue = @"module";
-static NSString * const backgroundPreferredEnvironmentManifestKey = @"preferred_environment";
-static NSString * const backgroundDocumentManifestKey = @"document";
+static NSString * const optionsUIManifestKey = @"options_ui";
+static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
 
 static NSString * const generatedBackgroundPageFilename = @"_generated_background_page.html";
 static NSString * const generatedBackgroundServiceWorkerFilename = @"_generated_service_worker.js";
-
-static NSString * const devtoolsPageManifestKey = @"devtools_page";
-
-static NSString * const contentScriptsManifestKey = @"content_scripts";
-static NSString * const contentScriptsMatchesManifestKey = @"matches";
-static NSString * const contentScriptsExcludeMatchesManifestKey = @"exclude_matches";
-static NSString * const contentScriptsIncludeGlobsManifestKey = @"include_globs";
-static NSString * const contentScriptsExcludeGlobsManifestKey = @"exclude_globs";
-static NSString * const contentScriptsMatchesAboutBlankManifestKey = @"match_about_blank";
-static NSString * const contentScriptsRunAtManifestKey = @"run_at";
-static NSString * const contentScriptsDocumentIdleManifestKey = @"document_idle";
-static NSString * const contentScriptsDocumentStartManifestKey = @"document_start";
-static NSString * const contentScriptsDocumentEndManifestKey = @"document_end";
-static NSString * const contentScriptsAllFramesManifestKey = @"all_frames";
-static NSString * const contentScriptsJSManifestKey = @"js";
-static NSString * const contentScriptsCSSManifestKey = @"css";
-static NSString * const contentScriptsWorldManifestKey = @"world";
-static NSString * const contentScriptsIsolatedManifestKey = @"ISOLATED";
-static NSString * const contentScriptsMainManifestKey = @"MAIN";
-static NSString * const contentScriptsCSSOriginManifestKey = @"css_origin";
-static NSString * const contentScriptsAuthorManifestKey = @"author";
-static NSString * const contentScriptsUserManifestKey = @"user";
 
 static NSString * const permissionsManifestKey = @"permissions";
 static NSString * const optionalPermissionsManifestKey = @"optional_permissions";
 static NSString * const hostPermissionsManifestKey = @"host_permissions";
 static NSString * const optionalHostPermissionsManifestKey = @"optional_host_permissions";
 
-static NSString * const optionsUIManifestKey = @"options_ui";
-static NSString * const optionsUIPageManifestKey = @"page";
-static NSString * const optionsPageManifestKey = @"options_page";
-static NSString * const chromeURLOverridesManifestKey = @"chrome_url_overrides";
-static NSString * const browserURLOverridesManifestKey = @"browser_url_overrides";
-static NSString * const newTabManifestKey = @"newtab";
-
-static NSString * const contentSecurityPolicyManifestKey = @"content_security_policy";
-static NSString * const contentSecurityPolicyExtensionPagesManifestKey = @"extension_pages";
-
 static NSString * const commandsManifestKey = @"commands";
 static NSString * const commandsSuggestedKeyManifestKey = @"suggested_key";
 static NSString * const commandsDescriptionKeyManifestKey = @"description";
-
-static NSString * const webAccessibleResourcesManifestKey = @"web_accessible_resources";
-static NSString * const webAccessibleResourcesResourcesManifestKey = @"resources";
-static NSString * const webAccessibleResourcesMatchesManifestKey = @"matches";
 
 static NSString * const declarativeNetRequestManifestKey = @"declarative_net_request";
 static NSString * const declarativeNetRequestRulesManifestKey = @"rule_resources";
@@ -176,6 +125,7 @@ static const size_t maximumNumberOfShortcutCommands = 4;
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
     , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
+    , m_manifestJSON(JSON::Value::null())
 {
     ASSERT(appExtensionBundle);
 
@@ -190,6 +140,7 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
 
 WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
     : m_resourceBaseURL(resourceBaseURL.URLByStandardizingPath.absoluteURL)
+    , m_manifestJSON(JSON::Value::null())
 {
     ASSERT(resourceBaseURL);
     ASSERT([resourceBaseURL isFileURL]);
@@ -205,7 +156,8 @@ WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
 }
 
 WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
-    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    : m_manifestJSON(JSON::Value::null())
+    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
     ASSERT(manifest);
 
@@ -216,16 +168,9 @@ WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
 }
 
 WebExtension::WebExtension(NSDictionary *resources)
-    : m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    : m_manifestJSON(JSON::Value::null())
+    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
-}
-
-bool WebExtension::manifestParsedSuccessfully()
-{
-    if (m_parsedManifest)
-        return !!m_manifest;
-    // If we haven't parsed yet, trigger a parse by calling the getter.
-    return !!manifest();
 }
 
 bool WebExtension::parseManifest(NSData *manifestData)
@@ -233,9 +178,35 @@ bool WebExtension::parseManifest(NSData *manifestData)
     NSError *parseError;
     m_manifest = parseJSON(manifestData, { }, &parseError);
     if (!m_manifest) {
-        recordError(createError(Error::InvalidManifest, nil, parseError));
+        recordError(createError(Error::InvalidManifest, { }, parseError));
         return false;
     }
+
+    // Set to an empty object for now so calls to manifestParsedSuccessfully() during this will be true.
+    // This is needed for localization to properly get the defaultLocale() while we are mid-parse.
+    m_manifestJSON = JSON::Object::create();
+
+    auto *defaultLocale = objectForKey<NSString>(m_manifest, defaultLocaleManifestKey);
+    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
+
+    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
+
+    m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
+    if (!m_manifest) {
+        m_manifestJSON = JSON::Value::null();
+        recordError(createError(Error::InvalidManifest));
+        return false;
+    }
+
+    // Parse m_manifestJSON after localization so it gets the localized version.
+    RefPtr manifestJSON = JSON::Value::parseJSON(String(encodeJSONString(m_manifest.get())));
+    if (!manifestJSON || !manifestJSON->asObject()) {
+        m_manifestJSON = JSON::Value::null();
+        recordError(createError(Error::InvalidManifest));
+        return false;
+    }
+
+    m_manifestJSON = *manifestJSON;
 
     return true;
 }
@@ -257,31 +228,12 @@ NSDictionary *WebExtension::manifest()
     if (!parseManifest(manifestData))
         return nil;
 
-    NSString *defaultLocale = [m_manifest objectForKey:defaultLocaleManifestKey];
-    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
-
-    m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
-
-    m_manifest = [m_localization.get() localizedDictionaryForDictionary:m_manifest.get()];
-    ASSERT(m_manifest);
-
-    // FIXME: Handle Safari version compatibility check.
-    // Likely do this version checking when the extension is added to the WKWebExtensionController,
-    // since that will need delegated to the app.
-
     return m_manifest.get();
 }
 
 Ref<API::Data> WebExtension::serializeManifest()
 {
     return API::Data::createWithoutCopying(encodeJSONData(manifest()));
-}
-
-double WebExtension::manifestVersion()
-{
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/manifest_version
-
-    return objectForKey<NSNumber>(manifest(), manifestVersionManifestKey).doubleValue;
 }
 
 Ref<API::Data> WebExtension::serializeLocalization()
@@ -358,108 +310,6 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-bool WebExtension::isWebAccessibleResource(const URL& resourceURL, const URL& pageURL)
-{
-    populateWebAccessibleResourcesIfNeeded();
-
-    auto resourcePath = resourceURL.path().toString();
-
-    // The path is expected to match without the prefix slash.
-    ASSERT(resourcePath.startsWith('/'));
-    resourcePath = resourcePath.substring(1);
-
-    for (auto& data : m_webAccessibleResources) {
-        // If matchPatterns is empty, these resources are allowed on any page.
-        bool allowed = data.matchPatterns.isEmpty();
-        for (auto& matchPattern : data.matchPatterns) {
-            if (matchPattern->matchesURL(pageURL)) {
-                allowed = true;
-                break;
-            }
-        }
-
-        if (!allowed)
-            continue;
-
-        for (auto& pathPattern : data.resourcePathPatterns) {
-            if (WebCore::matchesWildcardPattern(pathPattern, resourcePath))
-                return true;
-        }
-    }
-
-    return false;
-}
-
-void WebExtension::populateWebAccessibleResourcesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestWebAccessibleResources)
-        return;
-
-    m_parsedManifestWebAccessibleResources = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/web_accessible_resources
-
-    if (supportsManifestVersion(3)) {
-        if (auto *resourcesArray = objectForKey<NSArray>(m_manifest, webAccessibleResourcesManifestKey, false, NSDictionary.class)) {
-            bool errorOccurred = false;
-            for (NSDictionary *resourcesDictionary in resourcesArray) {
-                auto *pathsArray = objectForKey<NSArray>(resourcesDictionary, webAccessibleResourcesResourcesManifestKey, false, NSString.class);
-                auto *matchesArray = objectForKey<NSArray>(resourcesDictionary, webAccessibleResourcesMatchesManifestKey, false, NSString.class);
-
-                pathsArray = filterObjects(pathsArray, ^(id key, NSString *string) {
-                    return !!string.length;
-                });
-
-                matchesArray = filterObjects(matchesArray, ^(id key, NSString *string) {
-                    return !!string.length;
-                });
-
-                if (!pathsArray || !matchesArray) {
-                    errorOccurred = true;
-                    continue;
-                }
-
-                if (!pathsArray.count || !matchesArray.count)
-                    continue;
-
-                MatchPatternSet matchPatterns;
-                for (NSString *matchPatternString in matchesArray) {
-                    if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
-                        if (matchPattern->isSupported())
-                            matchPatterns.add(matchPattern.releaseNonNull());
-                        else
-                            errorOccurred = true;
-                    }
-                }
-
-                if (matchPatterns.isEmpty()) {
-                    errorOccurred = true;
-                    continue;
-                }
-
-                m_webAccessibleResources.append({ WTFMove(matchPatterns), makeVector<String>(pathsArray) });
-            }
-
-            if (errorOccurred)
-                recordError(createError(Error::InvalidWebAccessibleResources));
-        } else if ([m_manifest objectForKey:webAccessibleResourcesManifestKey])
-            recordError(createError(Error::InvalidWebAccessibleResources));
-    } else {
-        if (auto *resourcesArray = objectForKey<NSArray>(m_manifest, webAccessibleResourcesManifestKey, false, NSString.class)) {
-            resourcesArray = filterObjects(resourcesArray, ^(id key, NSString *string) {
-                return !!string.length;
-            });
-
-            if (resourcesArray.count)
-                m_webAccessibleResources.append({ { }, makeVector<String>(resourcesArray) });
-        } else if ([m_manifest objectForKey:webAccessibleResourcesManifestKey])
-            recordError(createError(Error::InvalidWebAccessibleResources));
-    }
-}
-
 NSURL *WebExtension::resourceFileURLForPath(NSString *path)
 {
     ASSERT(path);
@@ -510,11 +360,7 @@ NSString *WebExtension::resourceStringForPath(NSString *path, NSError **outError
     if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
         return cachedString;
 
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])
-        return generatedBackgroundContent();
-
-    if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
+    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
         return generatedBackgroundContent();
 
     NSData *data = resourceDataForPath(path, outError, CacheResult::No, suppressErrors);
@@ -580,12 +426,8 @@ NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, Ca
         return result;
     }
 
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])
-        return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
-
-    if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return [generatedBackgroundContent() dataUsingEncoding:NSUTF8StringEncoding];
+    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
+        return [static_cast<NSString *>(generatedBackgroundContent()) dataUsingEncoding:NSUTF8StringEncoding];
 
     NSURL *resourceURL = resourceFileURLForPath(path);
     if (!resourceURL) {
@@ -618,11 +460,6 @@ NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, Ca
     }
 
     return resultData;
-}
-
-bool WebExtension::hasRequestedPermission(NSString *permission) const
-{
-    return m_permissions.contains(permission);
 }
 
 static WKWebExtensionError toAPI(WebExtension::Error error)
@@ -673,10 +510,10 @@ static WKWebExtensionError toAPI(WebExtension::Error error)
     }
 }
 
-NSError *WebExtension::createError(Error error, NSString *customLocalizedDescription, NSError *underlyingError)
+NSError *WebExtension::createError(Error error, String customLocalizedDescription, NSError *underlyingError)
 {
     auto errorCode = toAPI(error);
-    NSString *localizedDescription;
+    String localizedDescription;
 
     switch (error) {
     case Error::Unknown:
@@ -799,7 +636,7 @@ ALLOW_NONLITERAL_FORMAT_END
         break;
     }
 
-    if (customLocalizedDescription.length)
+    if (!customLocalizedDescription.isEmpty())
         localizedDescription = customLocalizedDescription;
 
     NSDictionary *userInfo;
@@ -863,36 +700,6 @@ NSLocale *WebExtension::defaultLocale()
     return m_defaultLocale.get();
 }
 
-NSString *WebExtension::displayName()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayName.get();
-}
-
-NSString *WebExtension::displayShortName()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayShortName.get();
-}
-
-NSString *WebExtension::displayVersion()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayVersion.get();
-}
-
-NSString *WebExtension::displayDescription()
-{
-    populateDisplayStringsIfNeeded();
-    return m_displayDescription.get();
-}
-
-NSString *WebExtension::version()
-{
-    populateDisplayStringsIfNeeded();
-    return m_version.get();
-}
-
 void WebExtension::populateExternallyConnectableIfNeeded()
 {
     if (!manifestParsedSuccessfully())
@@ -948,83 +755,6 @@ void WebExtension::populateExternallyConnectableIfNeeded()
 
     if (shouldReportError || (matchPatterns.isEmpty() && !extensionIDs.count))
         recordError(createError(Error::InvalidExternallyConnectable));
-}
-
-void WebExtension::populateDisplayStringsIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestDisplayStrings)
-        return;
-
-    m_parsedManifestDisplayStrings = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/name
-
-    m_displayName = objectForKey<NSString>(m_manifest, nameManifestKey);
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/short_name
-
-    m_displayShortName = objectForKey<NSString>(m_manifest, shortNameManifestKey);
-    if (!m_displayShortName)
-        m_displayShortName = m_displayName;
-
-    if (!m_displayName)
-        recordError(createError(Error::InvalidName));
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version
-
-    m_version = objectForKey<NSString>(m_manifest, versionManifestKey);
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/version_name
-
-    m_displayVersion = objectForKey<NSString>(m_manifest, versionNameManifestKey);
-    if (!m_displayVersion)
-        m_displayVersion = m_version;
-
-    if (!m_version)
-        recordError(createError(Error::InvalidVersion));
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/description
-
-    m_displayDescription = objectForKey<NSString>(m_manifest, descriptionManifestKey);
-    if (!m_displayDescription)
-        recordError(createError(Error::InvalidDescription));
-}
-
-NSString *WebExtension::contentSecurityPolicy()
-{
-    populateContentSecurityPolicyStringsIfNeeded();
-    return m_contentSecurityPolicy.get();
-}
-
-void WebExtension::populateContentSecurityPolicyStringsIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestContentSecurityPolicyStrings)
-        return;
-
-    m_parsedManifestContentSecurityPolicyStrings = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/content_security_policy
-
-    if (supportsManifestVersion(3)) {
-        if (auto *policyDictionary = objectForKey<NSDictionary>(m_manifest, contentSecurityPolicyManifestKey, false)) {
-            m_contentSecurityPolicy = objectForKey<NSString>(policyDictionary, contentSecurityPolicyExtensionPagesManifestKey);
-            if (!m_contentSecurityPolicy && (!policyDictionary.count || policyDictionary[contentSecurityPolicyExtensionPagesManifestKey]))
-                recordError(createError(Error::InvalidContentSecurityPolicy));
-        }
-    } else {
-        m_contentSecurityPolicy = objectForKey<NSString>(m_manifest, contentSecurityPolicyManifestKey);
-        if (!m_contentSecurityPolicy && [m_manifest objectForKey:contentSecurityPolicyManifestKey])
-            recordError(createError(Error::InvalidContentSecurityPolicy));
-    }
-
-    if (!m_contentSecurityPolicy)
-        m_contentSecurityPolicy = @"script-src 'self'";
 }
 
 CocoaImage *WebExtension::icon(CGSize size)
@@ -1148,9 +878,19 @@ void WebExtension::populateActionPropertiesIfNeeded()
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-bool WebExtension::hasSidebar()
+bool WebExtension::hasSidebarAction()
 {
-    return objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey) || hasRequestedPermission(WKWebExtensionPermissionSidePanel);
+    return objectForKey<NSDictionary>(m_manifest, sidebarActionManifestKey);
+}
+
+bool WebExtension::hasSidePanel()
+{
+    return hasRequestedPermission(WKWebExtensionPermissionSidePanel);
+}
+
+bool WebExtension::hasAnySidebar()
+{
+    return hasSidebarAction() || hasSidePanel();
 }
 
 CocoaImage *WebExtension::sidebarIcon(CGSize idealSize)
@@ -1595,294 +1335,6 @@ CocoaImage *WebExtension::bestImageForIconVariantsManifestKey(NSDictionary *dict
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 
-bool WebExtension::hasBackgroundContent()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return m_backgroundScriptPaths.get().count || m_backgroundPagePath || m_backgroundServiceWorkerPath;
-}
-
-bool WebExtension::backgroundContentIsPersistent()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return hasBackgroundContent() && m_backgroundContentIsPersistent;
-}
-
-bool WebExtension::backgroundContentUsesModules()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return hasBackgroundContent() && m_backgroundContentUsesModules;
-}
-
-bool WebExtension::backgroundContentIsServiceWorker()
-{
-    populateBackgroundPropertiesIfNeeded();
-    return m_backgroundContentEnvironment == Environment::ServiceWorker;
-}
-
-NSString *WebExtension::backgroundContentPath()
-{
-    populateBackgroundPropertiesIfNeeded();
-
-    if (m_backgroundServiceWorkerPath)
-        return m_backgroundServiceWorkerPath.get();
-
-    if (m_backgroundScriptPaths.get().count)
-        return backgroundContentIsServiceWorker() ? generatedBackgroundServiceWorkerFilename : generatedBackgroundPageFilename;
-
-    if (m_backgroundPagePath)
-        return m_backgroundPagePath.get();
-
-    ASSERT_NOT_REACHED();
-    return nil;
-}
-
-NSString *WebExtension::generatedBackgroundContent()
-{
-    if (m_generatedBackgroundContent)
-        return m_generatedBackgroundContent.get();
-
-    populateBackgroundPropertiesIfNeeded();
-
-    if (m_backgroundServiceWorkerPath || m_backgroundPagePath)
-        return nil;
-
-    if (!m_backgroundScriptPaths.get().count)
-        return nil;
-
-    bool isServiceWorker = backgroundContentIsServiceWorker();
-    bool usesModules = backgroundContentUsesModules();
-
-    auto *scriptsArray = mapObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
-        if (isServiceWorker) {
-            if (usesModules)
-                return [NSString stringWithFormat:@"import \"./%@\";", scriptPath];
-            return [NSString stringWithFormat:@"importScripts(\"%@\");", scriptPath];
-        }
-
-        if (usesModules)
-            return [NSString stringWithFormat:@"<script type=\"module\" src=\"%@\"></script>", scriptPath];
-        return [NSString stringWithFormat:@"<script src=\"%@\"></script>", scriptPath];
-    });
-
-    if (isServiceWorker)
-        m_generatedBackgroundContent = [scriptsArray componentsJoinedByString:@"\n"];
-    else
-        m_generatedBackgroundContent = [NSString stringWithFormat:@"<!DOCTYPE html>\n<body>\n%@\n</body>", [scriptsArray componentsJoinedByString:@"\n"]];
-
-    return m_generatedBackgroundContent.get();
-}
-
-void WebExtension::populateBackgroundPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestBackgroundProperties)
-        return;
-
-    m_parsedManifestBackgroundProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background
-
-    auto *backgroundManifestDictionary = objectForKey<NSDictionary>(m_manifest, backgroundManifestKey);
-    if (!backgroundManifestDictionary.count) {
-        if ([m_manifest objectForKey:backgroundManifestKey])
-            recordError(createError(Error::InvalidBackgroundContent));
-        return;
-    }
-
-    m_backgroundScriptPaths = objectForKey<NSArray>(backgroundManifestDictionary, backgroundScriptsManifestKey, true, NSString.class);
-    m_backgroundPagePath = objectForKey<NSString>(backgroundManifestDictionary, backgroundPageManifestKey);
-    m_backgroundServiceWorkerPath = objectForKey<NSString>(backgroundManifestDictionary, backgroundServiceWorkerManifestKey);
-    m_backgroundContentUsesModules = [objectForKey<NSString>(backgroundManifestDictionary, backgroundPageTypeKey) isEqualToString:backgroundPageTypeModuleValue];
-
-    m_backgroundScriptPaths = filterObjects(m_backgroundScriptPaths, ^(NSNumber *index, NSString *scriptPath) {
-        return !!scriptPath.length;
-    });
-
-    static auto *supportedEnvironments = [NSOrderedSet orderedSetWithObjects:backgroundDocumentManifestKey, backgroundServiceWorkerManifestKey, nil];
-
-    NSOrderedSet *preferredEnvironments;
-    if (auto *environment = objectForKey<NSString>(backgroundManifestDictionary, backgroundPreferredEnvironmentManifestKey)) {
-        if ([supportedEnvironments containsObject:environment])
-            preferredEnvironments = [NSOrderedSet orderedSetWithObject:environment];
-    } else if (auto *environments = objectForKey<NSArray>(backgroundManifestDictionary, backgroundPreferredEnvironmentManifestKey, true, NSString.class)) {
-        auto *filteredEnvironments = filterObjects(environments, ^bool(NSNumber *, NSString *environment) {
-            return [supportedEnvironments containsObject:environment];
-        });
-
-        preferredEnvironments = [NSOrderedSet orderedSetWithArray:filteredEnvironments];
-    } else if (backgroundManifestDictionary[backgroundPreferredEnvironmentManifestKey])
-        recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has an empty or invalid `preferred_environment` key.", "WKWebExtensionErrorInvalidBackgroundContent description for empty or invalid preferred environment key")));
-
-    for (NSString *environment in preferredEnvironments) {
-        if ([environment isEqualToString:backgroundDocumentManifestKey]) {
-            m_backgroundContentEnvironment = Environment::Document;
-            m_backgroundServiceWorkerPath = nil;
-
-            if (m_backgroundPagePath) {
-                // Page takes precedence over scripts and service worker.
-                m_backgroundScriptPaths = nil;
-                break;
-            }
-
-            if (m_backgroundScriptPaths.get().count) {
-                // Scripts takes precedence over service worker.
-                break;
-            }
-
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `page` or `scripts` key for `preferred_environment` of `document`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background page or scripts keys")));
-            break;
-        }
-
-        if ([environment isEqualToString:backgroundServiceWorkerManifestKey]) {
-            m_backgroundContentEnvironment = Environment::ServiceWorker;
-            m_backgroundPagePath = nil;
-
-            if (m_backgroundServiceWorkerPath) {
-                // Service worker takes precedence over scripts and page.
-                m_backgroundScriptPaths = nil;
-                break;
-            }
-
-            if (m_backgroundScriptPaths.get().count) {
-                // Scripts takes precedence over page.
-                break;
-            }
-
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `service_worker` or `scripts` key for `preferred_environment` of `service_worker`.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background service_worker or scripts keys")));
-            break;
-        }
-    }
-
-    if (!preferredEnvironments.count) {
-        // Page takes precedence over service worker.
-        if (m_backgroundPagePath)
-            m_backgroundServiceWorkerPath = nil;
-
-        // Scripts takes precedence over page and service worker.
-        if (m_backgroundScriptPaths.get().count) {
-            m_backgroundServiceWorkerPath = nil;
-            m_backgroundPagePath = nil;
-        }
-
-        m_backgroundContentEnvironment = m_backgroundServiceWorkerPath ? Environment::ServiceWorker : Environment::Document;
-
-        if (!m_backgroundScriptPaths.get().count && !m_backgroundPagePath && !m_backgroundServiceWorkerPath)
-            recordError(createError(Error::InvalidBackgroundContent, WEB_UI_STRING("Manifest `background` entry has missing or empty required `scripts`, `page`, or `service_worker` key.", "WKWebExtensionErrorInvalidBackgroundContent description for missing background required keys")));
-    }
-
-    auto *persistentBoolean = objectForKey<NSNumber>(backgroundManifestDictionary, backgroundPersistentManifestKey);
-    m_backgroundContentIsPersistent = persistentBoolean ? persistentBoolean.boolValue : !(supportsManifestVersion(3) || m_backgroundServiceWorkerPath);
-
-    if (m_backgroundContentIsPersistent && supportsManifestVersion(3)) {
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `manifest_version` greater-than or equal to `3` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for manifest v3")));
-        m_backgroundContentIsPersistent = false;
-    }
-
-    if (m_backgroundContentIsPersistent && m_backgroundServiceWorkerPath) {
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A `service_worker` must be non-persistent.", "WKWebExtensionErrorInvalidBackgroundPersistence description for service worker")));
-        m_backgroundContentIsPersistent = false;
-    }
-
-    if (!m_backgroundContentIsPersistent && hasRequestedPermission(WKWebExtensionPermissionWebRequest))
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Non-persistent background content cannot listen to `webRequest` events.", "WKWebExtensionErrorInvalidBackgroundPersistence description for webRequest events")));
-
-#if PLATFORM(VISION)
-    if (m_backgroundContentIsPersistent)
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on visionOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for visionOS")));
-#elif PLATFORM(IOS)
-    if (m_backgroundContentIsPersistent)
-        recordError(createError(Error::InvalidBackgroundPersistence, WEB_UI_STRING("Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.", "WKWebExtensionErrorInvalidBackgroundPersistence description for iOS")));
-#endif
-}
-
-bool WebExtension::hasInspectorBackgroundPage()
-{
-    return !!inspectorBackgroundPagePath();
-}
-
-NSString *WebExtension::inspectorBackgroundPagePath()
-{
-    populateInspectorPropertiesIfNeeded();
-    return m_inspectorBackgroundPagePath.get();
-}
-
-void WebExtension::populateInspectorPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestInspectorProperties)
-        return;
-
-    m_parsedManifestInspectorProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/devtools_page
-
-    m_inspectorBackgroundPagePath = objectForKey<NSString>(m_manifest, devtoolsPageManifestKey);
-}
-
-bool WebExtension::hasOptionsPage()
-{
-    populatePagePropertiesIfNeeded();
-    return !!m_optionsPagePath;
-}
-
-bool WebExtension::hasOverrideNewTabPage()
-{
-    populatePagePropertiesIfNeeded();
-    return !!m_overrideNewTabPagePath;
-}
-
-NSString *WebExtension::optionsPagePath()
-{
-    populatePagePropertiesIfNeeded();
-    return m_optionsPagePath.get();
-}
-
-NSString *WebExtension::overrideNewTabPagePath()
-{
-    populatePagePropertiesIfNeeded();
-    return m_overrideNewTabPagePath.get();
-}
-
-void WebExtension::populatePagePropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestPageProperties)
-        return;
-
-    m_parsedManifestPageProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_ui
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/options_page
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/chrome_url_overrides
-
-    if (auto *optionsDictionary = objectForKey<NSDictionary>(m_manifest, optionsUIManifestKey, false)) {
-        m_optionsPagePath = objectForKey<NSString>(optionsDictionary, optionsUIPageManifestKey);
-        if (!m_optionsPagePath)
-            recordError(createError(Error::InvalidOptionsPage));
-    } else {
-        m_optionsPagePath = objectForKey<NSString>(m_manifest, optionsPageManifestKey);
-        if (!m_optionsPagePath && [m_manifest objectForKey:optionsPageManifestKey])
-            recordError(createError(Error::InvalidOptionsPage));
-    }
-
-    auto *overridesDictionary = objectForKey<NSDictionary>(m_manifest, browserURLOverridesManifestKey, false);
-    if (!overridesDictionary)
-        overridesDictionary = objectForKey<NSDictionary>(m_manifest, chromeURLOverridesManifestKey, false);
-
-    if (overridesDictionary && !overridesDictionary.count)
-        recordError(createError(Error::InvalidURLOverrides));
-
-    m_overrideNewTabPagePath = objectForKey<NSString>(overridesDictionary, newTabManifestKey);
-    if (!m_overrideNewTabPagePath && overridesDictionary[newTabManifestKey])
-        recordError(createError(Error::InvalidURLOverrides, WEB_UI_STRING("Empty or invalid `newtab` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry")));
-}
-
 const WebExtension::CommandsVector& WebExtension::commands()
 {
     populateCommandsIfNeeded();
@@ -2101,47 +1553,6 @@ void WebExtension::populateCommandsIfNeeded()
         recordError(createError(Error::InvalidCommands, error.value()));
 }
 
-const Vector<WebExtension::InjectedContentData>& WebExtension::staticInjectedContents()
-{
-    populateContentScriptPropertiesIfNeeded();
-    return m_staticInjectedContents;
-}
-
-bool WebExtension::hasStaticInjectedContentForURL(NSURL *url)
-{
-    ASSERT(url);
-
-    populateContentScriptPropertiesIfNeeded();
-
-    for (auto& injectedContent : m_staticInjectedContents) {
-        // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
-        bool isExcluded = false;
-        for (auto& excludeMatchPattern : injectedContent.excludeMatchPatterns) {
-            if (excludeMatchPattern->matchesURL(url)) {
-                isExcluded = true;
-                break;
-            }
-        }
-
-        if (isExcluded)
-            continue;
-
-        // FIXME: <https://webkit.org/b/246492> Add support for include globs.
-        for (auto& includeMatchPattern : injectedContent.includeMatchPatterns) {
-            if (includeMatchPattern->matchesURL(url))
-                return true;
-        }
-    }
-
-    return false;
-}
-
-bool WebExtension::hasStaticInjectedContent()
-{
-    populateContentScriptPropertiesIfNeeded();
-    return !m_staticInjectedContents.isEmpty();
-}
-
 std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::parseDeclarativeNetRequestRulesetDictionary(NSDictionary *rulesetDictionary, NSError **error)
 {
     NSArray *requiredKeysInRulesetDictionary = @[
@@ -2230,7 +1641,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         NSError *error;
         auto optionalRuleset = parseDeclarativeNetRequestRulesetDictionary(rulesetDictionary, &error);
         if (!optionalRuleset) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, nil, error));
+            recordError(createError(Error::InvalidDeclarativeNetRequest, { }, error));
             continue;
         }
 
@@ -2267,165 +1678,6 @@ std::optional<WebExtension::DeclarativeNetRequestRulesetData> WebExtension::decl
     }
 
     return std::nullopt;
-}
-
-NSArray *WebExtension::InjectedContentData::expandedIncludeMatchPatternStrings() const
-{
-    NSMutableArray<NSString *> *result = [NSMutableArray array];
-
-    for (auto& includeMatchPattern : includeMatchPatterns)
-        [result addObjectsFromArray:includeMatchPattern->expandedStrings()];
-
-    return [result copy];
-}
-
-NSArray *WebExtension::InjectedContentData::expandedExcludeMatchPatternStrings() const
-{
-    NSMutableArray<NSString *> *result = [NSMutableArray array];
-
-    for (auto& excludeMatchPattern : excludeMatchPatterns)
-        [result addObjectsFromArray:excludeMatchPattern->expandedStrings()];
-
-    return [result copy];
-}
-
-void WebExtension::populateContentScriptPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestContentScriptProperties)
-        return;
-
-    m_parsedManifestContentScriptProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/content_scripts
-
-    NSArray<NSDictionary *> *contentScriptsManifestArray = objectForKey<NSArray>(m_manifest, contentScriptsManifestKey, true, NSDictionary.class);
-    if (!contentScriptsManifestArray.count) {
-        if ([m_manifest objectForKey:contentScriptsManifestKey])
-            recordError(createError(Error::InvalidContentScripts));
-        return;
-    }
-
-    auto addInjectedContentData = ^(NSDictionary<NSString *, id> *dictionary) {
-        HashSet<Ref<WebExtensionMatchPattern>> includeMatchPatterns;
-
-        // Required. Specifies which pages the specified scripts and stylesheets will be injected into.
-        NSArray<NSString *> *matchesArray = objectForKey<NSArray>(dictionary, contentScriptsMatchesManifestKey, true, NSString.class);
-        for (NSString *matchPatternString in matchesArray) {
-            if (!matchPatternString.length)
-                continue;
-
-            if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
-                if (matchPattern->isSupported())
-                    includeMatchPatterns.add(matchPattern.releaseNonNull());
-            }
-        }
-
-        if (includeMatchPatterns.isEmpty()) {
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has no specified `matches` entry.", "WKWebExtensionErrorInvalidContentScripts description for missing matches entry")));
-            return;
-        }
-
-        // Optional. The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.
-        NSArray *scriptPaths = objectForKey<NSArray>(dictionary, contentScriptsJSManifestKey, true, NSString.class);
-        scriptPaths = filterObjects(scriptPaths, ^(id key, NSString *string) {
-            return !!string.length;
-        });
-
-        // Optional. The list of CSS files to be injected into matching pages. These are injected in the order they appear in this array, before any DOM is constructed or displayed for the page.
-        NSArray *styleSheetPaths = objectForKey<NSArray>(dictionary, contentScriptsCSSManifestKey, true, NSString.class);
-        styleSheetPaths = filterObjects(styleSheetPaths, ^(id key, NSString *string) {
-            return !!string.length;
-        });
-
-        if (!scriptPaths.count && !styleSheetPaths.count) {
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has missing or empty 'js' and 'css' arrays.", "WKWebExtensionErrorInvalidContentScripts description for missing or empty 'js' and 'css' arrays")));
-            return;
-        }
-
-        // Optional. Whether the script should inject into an about:blank frame where the parent or opener frame matches one of the patterns declared in matches. Defaults to false.
-        bool matchesAboutBlank = objectForKey<NSNumber>(dictionary, contentScriptsMatchesAboutBlankManifestKey).boolValue;
-
-        HashSet<Ref<WebExtensionMatchPattern>> excludeMatchPatterns;
-
-        // Optional. Excludes pages that this content script would otherwise be injected into.
-        NSArray<NSString *> *excludeMatchesArray = objectForKey<NSArray>(dictionary, contentScriptsExcludeMatchesManifestKey, true, NSString.class);
-        for (NSString *matchPatternString in excludeMatchesArray) {
-            if (!matchPatternString.length)
-                continue;
-
-            if (auto matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString)) {
-                if (matchPattern->isSupported())
-                    excludeMatchPatterns.add(matchPattern.releaseNonNull());
-            }
-        }
-
-        // Optional. Applied after matches to include only those URLs that also match this glob.
-        NSArray *includeGlobPatternStrings = objectForKey<NSArray>(dictionary, contentScriptsIncludeGlobsManifestKey, true, NSString.class);
-        includeGlobPatternStrings = filterObjects(includeGlobPatternStrings, ^(id key, NSString *string) {
-            return !!string.length;
-        });
-
-        // Optional. Applied after matches to exclude URLs that match this glob.
-        NSArray *excludeGlobPatternStrings = objectForKey<NSArray>(dictionary, contentScriptsExcludeGlobsManifestKey, true, NSString.class);
-        excludeGlobPatternStrings = filterObjects(excludeGlobPatternStrings, ^(id key, NSString *string) {
-            return !!string.length;
-        });
-
-        // Optional. The "all_frames" field allows the extension to specify if JavaScript and CSS files should be injected into all frames matching the specified URL requirements or only into the
-        // topmost frame in a tab. Defaults to false, meaning that only the top frame is matched. If specified true, it will inject into all frames, even if the frame is not the topmost frame in
-        // the tab. Each frame is checked independently for URL requirements, it will not inject into child frames if the URL requirements are not met.
-        bool injectsIntoAllFrames = objectForKey<NSNumber>(dictionary, contentScriptsAllFramesManifestKey).boolValue;
-
-        InjectionTime injectionTime = InjectionTime::DocumentIdle;
-        NSString *runsAtString = objectForKey<NSString>(dictionary, contentScriptsRunAtManifestKey);
-        if (!runsAtString || [runsAtString isEqualToString:contentScriptsDocumentIdleManifestKey])
-            injectionTime = InjectionTime::DocumentIdle;
-        else if ([runsAtString isEqualToString:contentScriptsDocumentStartManifestKey])
-            injectionTime = InjectionTime::DocumentStart;
-        else if ([runsAtString isEqualToString:contentScriptsDocumentEndManifestKey])
-            injectionTime = InjectionTime::DocumentEnd;
-        else
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
-
-        WebExtensionContentWorldType contentWorldType = WebExtensionContentWorldType::ContentScript;
-        NSString *worldString = objectForKey<NSString>(dictionary, contentScriptsWorldManifestKey);
-        if (!worldString || [worldString isEqualToString:contentScriptsIsolatedManifestKey])
-            contentWorldType = WebExtensionContentWorldType::ContentScript;
-        else if ([worldString isEqualToString:contentScriptsMainManifestKey])
-            contentWorldType = WebExtensionContentWorldType::Main;
-        else
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
-
-        auto styleLevel = WebCore::UserStyleLevel::Author;
-        auto *cssOriginString = objectForKey<NSString>(dictionary, contentScriptsCSSOriginManifestKey).lowercaseString;
-        if (!cssOriginString || [cssOriginString isEqualToString:contentScriptsAuthorManifestKey])
-            styleLevel = WebCore::UserStyleLevel::Author;
-        else if ([cssOriginString isEqualToString:contentScriptsUserManifestKey])
-            styleLevel = WebCore::UserStyleLevel::User;
-        else
-            recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `css_origin` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value")));
-
-        InjectedContentData injectedContentData;
-        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
-        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
-        injectedContentData.injectionTime = injectionTime;
-        injectedContentData.matchesAboutBlank = matchesAboutBlank;
-        injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
-        injectedContentData.contentWorldType = contentWorldType;
-        injectedContentData.styleLevel = styleLevel;
-        injectedContentData.scriptPaths = scriptPaths;
-        injectedContentData.styleSheetPaths = styleSheetPaths;
-        injectedContentData.includeGlobPatternStrings = includeGlobPatternStrings;
-        injectedContentData.excludeGlobPatternStrings = excludeGlobPatternStrings;
-
-        m_staticInjectedContents.append(WTFMove(injectedContentData));
-    };
-
-    for (NSDictionary<NSString *, id> *contentScriptsManifestEntry in contentScriptsManifestArray)
-        addInjectedContentData(contentScriptsManifestEntry);
 }
 
 const WebExtension::PermissionsSet& WebExtension::supportedPermissions()

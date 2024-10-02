@@ -43,6 +43,9 @@
 #include "StackVisitor.h"
 #include "TypeError.h"
 #include "VMTrapsInlines.h"
+#if ENABLE(WEBASSEMBLY)
+#include "WebAssemblyFunction.h"
+#endif
 
 namespace JSC {
 
@@ -311,6 +314,10 @@ CallData JSFunction::getCallData(JSCell* cell)
         callData.type = CallData::Type::Native;
         callData.native.function = thisObject->nativeFunction();
         callData.native.isBoundFunction = thisObject->inherits<JSBoundFunction>();
+        callData.native.isWasm = false;
+#if ENABLE(WEBASSEMBLY)
+        callData.native.isWasm = thisObject->inherits<WebAssemblyFunction>();
+#endif
     } else {
         callData.type = CallData::Type::JS;
         callData.js.functionExecutable = thisObject->jsExecutable();
@@ -469,6 +476,7 @@ CallData JSFunction::getConstructData(JSCell* cell)
                 constructData.type = CallData::Type::Native;
                 constructData.native.function = thisObject->nativeConstructor();
                 constructData.native.isBoundFunction = true;
+                constructData.native.isWasm = false;
             }
         } else if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
             constructData.type = CallData::Type::Native;

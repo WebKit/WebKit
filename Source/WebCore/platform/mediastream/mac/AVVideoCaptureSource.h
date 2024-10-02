@@ -39,6 +39,7 @@ typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 OBJC_CLASS AVCaptureConnection;
 OBJC_CLASS AVCaptureDevice;
 OBJC_CLASS AVCaptureDeviceFormat;
+OBJC_CLASS AVCaptureDeviceRotationCoordinator;
 OBJC_CLASS AVCapturePhoto;
 OBJC_CLASS AVCapturePhotoOutput;
 OBJC_CLASS AVCapturePhotoSettings;
@@ -116,6 +117,8 @@ private:
 
     // OrientationNotifier::Observer API
     void orientationChanged(IntDegrees orientation) final;
+    void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) final;
+
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
     bool areSettingsMatching() const;
@@ -197,6 +200,7 @@ private:
     uint64_t m_framesCount { 0 };
     uint64_t m_lastFramesCount { 0 };
     int64_t m_defaultTorchMode { 0 };
+    bool m_useSensorAndDeviceOrientation { true };
 };
 
 } // namespace WebCore

@@ -55,7 +55,7 @@ static NSString * const pagesDocumentPreviewMIMEType = @"application/pdf";
 
 static RetainPtr<NSURL> pagesDocumentURL()
 {
-    static NeverDestroyed<RetainPtr<NSURL>> pagesDocumentURL = [NSBundle.mainBundle URLForResource:@"pages" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+    static NeverDestroyed<RetainPtr<NSURL>> pagesDocumentURL = [NSBundle.test_resourcesBundle URLForResource:@"pages" withExtension:@"pages"];
     return pagesDocumentURL;
 }
 
@@ -412,7 +412,7 @@ TEST(QuickLook, DownloadResponseAfterLoadingPreview)
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 130400) || PLATFORM(VISION)
 TEST(QuickLook, RequestPasswordBeforeLoadingPreview)
 {
-    NSURL *passwordProtectedDocumentURL = [NSBundle.mainBundle URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *passwordProtectedDocumentURL = [NSBundle.test_resourcesBundle URLForResource:@"password-protected" withExtension:@"pages"];
     auto delegate = adoptNS([[QuickLookPasswordDelegate alloc] initWithExpectedFileURL:passwordProtectedDocumentURL responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:passwordProtectedDocumentURL]);
     EXPECT_FALSE([delegate didFailNavigation]);
@@ -424,7 +424,7 @@ TEST(QuickLook, RequestPasswordBeforeLoadingPreview)
 
 TEST(QuickLook, RequestPasswordAfterLoadingPreview)
 {
-    NSURL *passwordProtectedDocumentURL = [NSBundle.mainBundle URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *passwordProtectedDocumentURL = [NSBundle.test_resourcesBundle URLForResource:@"password-protected" withExtension:@"pages"];
     auto delegate = adoptNS([[QuickLookPasswordDelegate alloc] initWithExpectedFileURL:passwordProtectedDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:passwordProtectedDocumentURL]);
     EXPECT_FALSE([delegate didFailNavigation]);

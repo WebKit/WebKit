@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> GPUProcess LegacyReceiver {
+messages -> GPUProcess : AuxiliaryProcess {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters) -> ()
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
@@ -40,6 +40,8 @@ messages -> GPUProcess LegacyReceiver {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
+    RotationAngleForCaptureDeviceChanged(String persistentId, enum:uint16_t WebCore::VideoFrameRotation rotation);
+
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
     UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)
@@ -50,6 +52,7 @@ messages -> GPUProcess LegacyReceiver {
     SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
     TriggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
     SetShouldListenToVoiceActivity(bool shouldListen)
+    EnableMicrophoneMuteStatusAPI()
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     SetUseSCContentSharingPicker(bool use)

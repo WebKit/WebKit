@@ -60,6 +60,8 @@ template<typename IDLType> class DOMPromiseDeferred;
 class MediaDevices final : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaDevices);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<MediaDevices> create(Document&);
 
     ~MediaDevices();
@@ -93,10 +95,6 @@ public:
 
     String deviceIdToPersistentId(const String& deviceId) const { return m_audioOutputDeviceIdToPersistentId.get(deviceId); }
     String hashedGroupId(const String& groupId);
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit MediaDevices(Document&);

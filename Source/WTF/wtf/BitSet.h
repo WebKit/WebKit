@@ -401,92 +401,14 @@ template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(const Func& func) const
 {
-    for (size_t i = 0; i < words; ++i) {
-        WordType word = bits[i];
-        if (!word)
-            continue;
-        size_t base = i * wordSize;
-
-#if CPU(X86_64) || CPU(ARM64)
-        // We should only use ctz() when we know that ctz() is implementated using
-        // a fast hardware instruction. Otherwise, this will actually result in
-        // worse performance.
-        while (word) {
-            WordType temp = word & -word;
-            size_t offset = ctz(word);
-            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
-                if (func(base + offset) == IterationStatus::Done)
-                    return;
-            } else
-                func(base + offset);
-            word ^= temp;
-        }
-#else
-        for (size_t j = 0; j < wordSize; ++j) {
-            if (word & 1) {
-                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
-                    if (func(base + j) == IterationStatus::Done)
-                        return;
-                } else
-                    func(base + j);
-            }
-            word >>= 1;
-        }
-#endif
-    }
+    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, func);
 }
 
 template<size_t bitSetSize, typename WordType>
 template<typename Func>
 ALWAYS_INLINE constexpr void BitSet<bitSetSize, WordType>::forEachSetBit(size_t startIndex, const Func& func) const
 {
-    auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
-        size_t base = i * wordSize;
-
-#if CPU(X86_64) || CPU(ARM64)
-        // We should only use ctz() when we know that ctz() is implementated using
-        // a fast hardware instruction. Otherwise, this will actually result in
-        // worse performance.
-        while (word) {
-            WordType temp = word & -word;
-            size_t offset = ctz(word);
-            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
-                if (func(base + offset) == IterationStatus::Done)
-                    return;
-            } else
-                func(base + offset);
-            word ^= temp;
-        }
-#else
-        for (size_t j = 0; j < wordSize; ++j) {
-            if (word & 1) {
-                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
-                    if (func(base + j) == IterationStatus::Done)
-                        return;
-                } else
-                    func(base + j);
-            }
-            word >>= 1;
-        }
-#endif
-    };
-
-    size_t startWord = startIndex / wordSize;
-    if (startWord == words)
-        return;
-
-    WordType word = bits[startWord];
-    size_t startIndexInWord = startIndex - startWord * wordSize;
-    WordType masked = word & (~((static_cast<WordType>(1) << startIndexInWord) - 1));
-    if (masked)
-        iterate(masked, startWord);
-
-    for (size_t i = startWord + 1; i < words; ++i) {
-        WordType word = bits[i];
-        if (!word)
-            continue;
-        iterate(word, i);
-    }
+    WTF::forEachSetBit(std::span { bits.data(), bits.size() }, startIndex, func);
 }
 
 template<size_t bitSetSize, typename WordType>

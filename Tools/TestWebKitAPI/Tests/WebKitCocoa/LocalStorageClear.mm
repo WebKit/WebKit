@@ -61,7 +61,7 @@ TEST(WKWebView, LocalStorageClear)
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageClear" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"LocalStorageClear" withExtension:@"html"]];
         [webView loadRequest:request];
 
         TestWebKitAPI::Util::run(&readyToContinue);
@@ -148,9 +148,9 @@ TEST(WKWebView, ClearStaleAppCache)
         [[NSFileManager defaultManager] removeItemAtURL:appCacheURL error:nil];
     }
 
-    NSURL *dbResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *shmResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-shm" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *walResourceURL = [[NSBundle mainBundle] URLForResource:@"ApplicationCache" withExtension:@"db-wal" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *dbResourceURL = [NSBundle.test_resourcesBundle URLForResource:@"ApplicationCache" withExtension:@"db"];
+    NSURL *shmResourceURL = [NSBundle.test_resourcesBundle URLForResource:@"ApplicationCache" withExtension:@"db-shm"];
+    NSURL *walResourceURL = [NSBundle.test_resourcesBundle URLForResource:@"ApplicationCache" withExtension:@"db-wal"];
 
     NSURL *targetURL = [NSURL fileURLWithPath:[defaultApplicationCacheDirectory() stringByExpandingTildeInPath]];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];

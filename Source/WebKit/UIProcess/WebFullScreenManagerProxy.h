@@ -58,7 +58,9 @@ namespace WebKit {
 class WebPageProxy;
 struct SharedPreferencesForWebProcess;
 
-class WebFullScreenManagerProxyClient {
+class WebFullScreenManagerProxyClient : public CanMakeCheckedPtr<WebFullScreenManagerProxyClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebFullScreenManagerProxyClient);
 public:
     virtual ~WebFullScreenManagerProxyClient() { }
 
@@ -134,13 +136,13 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    uint64_t logIdentifier() const { return m_logIdentifier; }
     ASCIILiteral logClassName() const { return "WebFullScreenManagerProxy"_s; }
     WTFLogChannel& logChannel() const;
 #endif
 
     WeakRef<WebPageProxy> m_page;
-    WebFullScreenManagerProxyClient& m_client;
+    CheckedRef<WebFullScreenManagerProxyClient> m_client;
     FullscreenState m_fullscreenState { FullscreenState::NotInFullscreen };
     bool m_blocksReturnToFullscreenFromPictureInPicture { false };
 #if ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
@@ -154,7 +156,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 };
 

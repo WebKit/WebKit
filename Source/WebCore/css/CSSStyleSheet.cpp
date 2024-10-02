@@ -65,8 +65,8 @@ public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
 private:
-    void ref() final { m_styleSheet->ref(); }
-    void deref() final { m_styleSheet->deref(); }
+    void ref() const final { m_styleSheet->ref(); }
+    void deref() const final { m_styleSheet->deref(); }
 
     unsigned length() const final { return m_styleSheet->length(); }
     CSSRule* item(unsigned index) const final { return m_styleSheet->item(index); }

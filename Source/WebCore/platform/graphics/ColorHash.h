@@ -41,6 +41,7 @@ template<> struct DefaultHash<WebCore::Color> : ColorHash { };
 template<> struct HashTraits<WebCore::Color> : GenericHashTraits<WebCore::Color> {
     static const bool emptyValueIsZero = false;
     static WebCore::Color emptyValue() { return WebCore::Color(HashTableEmptyValue); }
+    static bool isEmptyValue(const WebCore::Color& value) { return value.isHashTableEmptyValue(); }
 
     static void constructDeletedValue(WebCore::Color& slot) { new (NotNull, &slot) WebCore::Color(HashTableDeletedValue); }
     static bool isDeletedValue(const WebCore::Color& value) { return value.isHashTableDeletedValue(); }

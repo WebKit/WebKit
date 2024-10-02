@@ -24,7 +24,7 @@ for (let ctor of ctors) {
   // Write some data into the array.
   let ta_write = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(ta_write, i, i);
+    ta_write[i] = MayNeedBigInt(ta_write, i);
   }
   assert.sameValue(ArrayAtHelper(fixedLength, -1), 3);
   assert.sameValue(ArrayAtHelper(lengthTracking, -1), 3);

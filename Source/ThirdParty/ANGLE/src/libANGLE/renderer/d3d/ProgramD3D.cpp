@@ -183,8 +183,6 @@ ProgramD3DMetadata::ProgramD3DMetadata(
     int shaderVersion)
     : mRendererMajorShaderModel(renderer->getMajorShaderModel()),
       mShaderModelSuffix(renderer->getShaderModelSuffix()),
-      mUsesInstancedPointSpriteEmulation(
-          renderer->getFeatures().useInstancedPointSpriteEmulation.enabled),
       mUsesViewScale(renderer->presentPathFastEnabled()),
       mCanSelectViewInVertexShader(renderer->canSelectViewInVertexShader()),
       mFragmentShader(fragmentShader),
@@ -239,8 +237,7 @@ bool ProgramD3DMetadata::usesPointSize() const
 
 bool ProgramD3DMetadata::usesInsertedPointCoordValue() const
 {
-    return (!usesPointSize() || !mUsesInstancedPointSpriteEmulation) && usesPointCoord() &&
-           mRendererMajorShaderModel >= 4;
+    return usesPointCoord() && mRendererMajorShaderModel >= 4;
 }
 
 bool ProgramD3DMetadata::usesViewScale() const
@@ -273,14 +270,11 @@ bool ProgramD3DMetadata::canSelectViewInVertexShader() const
 
 bool ProgramD3DMetadata::addsPointCoordToVertexShader() const
 {
-    // PointSprite emulation requiress that gl_PointCoord is present in the vertex shader
-    // VS_OUTPUT structure to ensure compatibility with the generated PS_INPUT of the pixel shader.
-    // Even with a geometry shader, the app can render triangles or lines and reference
+    // With a geometry shader, the app can render triangles or lines and reference
     // gl_PointCoord in the fragment shader, requiring us to provide a placeholder value. For
     // simplicity, we always add this to the vertex shader when the fragment shader
     // references gl_PointCoord, even if we could skip it in the geometry shader.
-    return (mUsesInstancedPointSpriteEmulation && usesPointCoord()) ||
-           usesInsertedPointCoordValue();
+    return usesInsertedPointCoordValue();
 }
 
 bool ProgramD3DMetadata::usesTransformFeedbackGLPosition() const
@@ -293,7 +287,7 @@ bool ProgramD3DMetadata::usesTransformFeedbackGLPosition() const
 
 bool ProgramD3DMetadata::usesSystemValuePointSize() const
 {
-    return !mUsesInstancedPointSpriteEmulation && usesPointSize();
+    return usesPointSize();
 }
 
 bool ProgramD3DMetadata::usesMultipleFragmentOuts() const

@@ -701,7 +701,7 @@ bool AccessibilityObjectAtspi::selectionBounds(int& startOffset, int& endOffset)
 
 void AccessibilityObjectAtspi::setSelectedRange(unsigned utf16Offset, unsigned length)
 {
-    auto* axObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
+    auto* axObject = dynamicDowncast<AccessibilityObject>(m_coreObject.get());
     if (!axObject)
         return;
 
@@ -829,7 +829,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         return attributes;
     };
 
-    auto defaultAttributes = accessibilityTextAttributes(m_coreObject, { });
+    auto defaultAttributes = accessibilityTextAttributes(m_coreObject.get(), { });
     if (!utf16Offset)
         return { WTFMove(defaultAttributes), -1, -1 };
 

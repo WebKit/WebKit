@@ -85,7 +85,7 @@ TEST(IOSurfacePoolTest, IOSurfacePoolNames)
 {
     auto initialPurpose = WebCore::RenderingPurpose::Unspecified;
     auto purpose = WebCore::RenderingPurpose::Canvas;
-    auto* pool = &WebCore::IOSurfacePool::sharedPool();
+    auto* pool = &WebCore::IOSurfacePool::sharedPoolSingleton();
 
     auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
     EXPECT_EQ(WebCore::IOSurface::Name::ImageBufferShareableMapped, s1->name());

@@ -38,7 +38,8 @@ public:
 
 private:
     // ModelPlayerProvider overrides.
-    virtual RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) override;
+    RefPtr<ModelPlayer> createModelPlayer(ModelPlayerClient&) final;
+    void deleteModelPlayer(ModelPlayer&) final;
 };
 
 }

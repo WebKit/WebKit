@@ -298,6 +298,7 @@ public:
     virtual void processDidExit() = 0;
     virtual void processWillSwap() { processDidExit(); }
     virtual void didRelaunchProcess() = 0;
+    virtual void processDidUpdateThrottleState() { }
     virtual void pageClosed() = 0;
 
     virtual void preferencesDidChange() = 0;
@@ -758,7 +759,7 @@ public:
     virtual void writingToolsActiveWillChange() = 0;
     virtual void writingToolsActiveDidChange() = 0;
 
-    virtual void didEndPartialIntelligenceTextPonderingAnimation() = 0;
+    virtual void didEndPartialIntelligenceTextAnimation() = 0;
     virtual bool writingToolsTextReplacementsFinished() = 0;
 
     virtual void addTextAnimationForAnimationID(const WTF::UUID&, const WebCore::TextAnimationData&) = 0;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteImageBufferSet.h"
 
+#include "GPUConnectionToWebProcess.h"
 #include "ImageBufferBackendHandleSharing.h"
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
@@ -34,11 +35,9 @@
 #include "RemoteRenderingBackendProxyMessages.h"
 #include <WebCore/GraphicsContext.h>
 
-#if PLATFORM(COCOA)
-#include <WebCore/PlatformCALayer.h>
-#endif
-
 #if ENABLE(GPU_PROCESS)
+
+#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_backend->gpuConnectionToWebProcess().connection(), message)
 
 namespace WebKit {
 
@@ -58,14 +57,15 @@ RemoteImageBufferSet::RemoteImageBufferSet(RemoteImageBufferSetIdentifier identi
 
 RemoteImageBufferSet::~RemoteImageBufferSet()
 {
+    RefPtr frontBuffer = m_frontBuffer;
     // Volatile image buffers do not have contexts.
-    if (!m_frontBuffer || m_frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+    if (!frontBuffer || frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
         return;
-    if (!m_frontBuffer->hasBackend())
+    if (!frontBuffer->hasBackend())
         return;
     // Unwind the context's state stack before destruction, since calls to restore may not have
     // been flushed yet, or the web process may have terminated.
-    auto& context = m_frontBuffer->context();
+    auto& context = frontBuffer->context();
     while (context.stackSize())
         context.restore();
 }
@@ -93,18 +93,17 @@ void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logical
     m_resolutionScale = resolutionScale;
     m_colorSpace = colorSpace;
     m_pixelFormat = pixelFormat;
-    m_frontBuffer = m_backBuffer = m_secondaryBackBuffer = nullptr;
-
+    clearBuffers();
 }
 
 void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdateID)
 {
     if (m_displayListCreated) {
-        m_backend->releaseDisplayListRecorder(m_displayListIdentifier);
+        RefPtr { m_backend }->releaseDisplayListRecorder(m_displayListIdentifier);
         m_displayListCreated = false;
     }
-    if (m_frontBuffer)
-        m_frontBuffer->flushDrawingContext();
+    if (RefPtr frontBuffer = m_frontBuffer)
+        frontBuffer->flushDrawingContext();
 
 #if PLATFORM(COCOA)
     auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<WebCore::RenderingResourceIdentifier> {
@@ -114,72 +113,42 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
     };
 
     ImageBufferSetPrepareBufferForDisplayOutputData outputData;
-    if (m_frontBuffer) {
-        auto* sharing = m_frontBuffer->toBackendSharing();
+    RefPtr frontBuffer = m_frontBuffer;
+
+    if (frontBuffer) {
+        auto* sharing = frontBuffer->toBackendSharing();
         outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     }
 
-    outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(m_frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
+    outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
     m_backend->streamConnection().send(Messages::RemoteImageBufferSetProxy::DidPrepareForDisplay(WTFMove(outputData), renderingUpdateID), m_identifier);
 #endif
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
-void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, SwapBuffersDisplayRequirement& displayRequirement)
+void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, SwapBuffersDisplayRequirement& displayRequirement, bool isSync)
 {
     assertIsCurrent(workQueue());
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ::ensureFrontBufferForDisplay " << " - front "
-        << m_frontBuffer << " (in-use " << (m_frontBuffer && m_frontBuffer->isInUse()) << ") "
-        << m_backBuffer << " (in-use " << (m_backBuffer && m_backBuffer->isInUse()) << ") "
-        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && m_secondaryBackBuffer->isInUse()) << ") ");
+        << m_frontBuffer << " (in-use " << (m_frontBuffer && protectedFrontBuffer()->isInUse()) << ") "
+        << m_backBuffer << " (in-use " << (m_backBuffer && protectedBackBuffer()->isInUse()) << ") "
+        << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && protectedSecondaryBackBuffer()->isInUse()) << ") ");
 
-    m_previousFrontBuffer = m_frontBuffer;
-
-    bool needsFullDisplay = false;
-    if (m_frontBuffer) {
-        auto previousState = m_frontBuffer->setNonVolatile();
-        if (previousState == WebCore::SetNonVolatileResult::Empty) {
-            needsFullDisplay = true;
-            inputData.dirtyRegion = WebCore::IntRect { { }, expandedIntSize(m_logicalSize) };
-        }
+    displayRequirement = swapBuffersForDisplay(inputData.hasEmptyDirtyRegion, inputData.supportsPartialRepaint && !isSmallLayerBacking({ m_logicalSize, m_resolutionScale, m_colorSpace, m_pixelFormat, WebCore::RenderingPurpose::LayerBacking }));
+    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay) {
+        auto layerBounds = WebCore::IntRect { { }, expandedIntSize(m_logicalSize) };
+        MESSAGE_CHECK(isSync || inputData.dirtyRegion.contains(layerBounds), "Can't asynchronously require full display for a buffer set");
+        inputData.dirtyRegion = layerBounds;
     }
 
-    if (!m_frontBuffer || !inputData.supportsPartialRepaint || isSmallLayerBacking(m_frontBuffer->parameters()))
-        m_previouslyPaintedRect = std::nullopt;
-
-    if (!m_backBuffer || m_backBuffer->isInUse()) {
-        std::swap(m_backBuffer, m_secondaryBackBuffer);
-
-        // When pulling the secondary back buffer out of hibernation (to become
-        // the new front buffer), if it is somehow still in use (e.g. we got
-        // three swaps ahead of the render server), just give up and discard it.
-        if (m_backBuffer && m_backBuffer->isInUse())
-            m_backBuffer = nullptr;
-
-        m_previouslyPaintedRect = std::nullopt;
-    }
-
-    if (m_frontBuffer && !needsFullDisplay && inputData.hasEmptyDirtyRegion) {
-        // No swap necessary.
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
-    } else {
-        displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-        std::swap(m_frontBuffer, m_backBuffer);
-
-        if (m_frontBuffer) {
-            auto previousState = m_frontBuffer->setNonVolatile();
-            if (previousState == WebCore::SetNonVolatileResult::Empty)
-                m_previouslyPaintedRect = std::nullopt;
-        }
-    }
-
+    RefPtr backend = m_backend;
     if (!m_frontBuffer) {
         WebCore::ImageBufferCreationContext creationContext;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
 #endif
 
-        m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, WTFMove(creationContext), WebCore::RenderingResourceIdentifier::generate());
+        m_frontBuffer = backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, WTFMove(creationContext), WebCore::RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
 
@@ -187,73 +156,17 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         << m_frontBuffer << ", " << m_backBuffer << ", " << m_secondaryBackBuffer << "]");
 
     if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay) {
-        m_backend->createDisplayListRecorder(m_frontBuffer, m_displayListIdentifier);
+        backend->createDisplayListRecorder(m_frontBuffer, m_displayListIdentifier);
         m_displayListCreated = true;
     }
 }
 
 void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyRegion, bool requiresClearedPixels)
 {
-    if (!m_frontBuffer) {
-        m_previouslyPaintedRect = std::nullopt;
-        return;
-    }
+    PaintRectList paintingRects = computePaintingRects(dirtyRegion, m_resolutionScale);
+    WebCore::FloatRect layerBounds { { }, m_logicalSize };
 
-    WebCore::FloatRect bufferBounds { { }, m_logicalSize };
-
-    WebCore::GraphicsContext& context = m_frontBuffer->context();
-    context.resetClip();
-
-    WebCore::FloatRect copyRect;
-    if (m_previousFrontBuffer && m_frontBuffer != m_previousFrontBuffer) {
-        WebCore::IntRect enclosingCopyRect { m_previouslyPaintedRect ? *m_previouslyPaintedRect : enclosingIntRect(bufferBounds) };
-        if (!dirtyRegion.contains(enclosingCopyRect)) {
-            WebCore::Region copyRegion(enclosingCopyRect);
-            copyRegion.subtract(dirtyRegion);
-            copyRect = intersection(copyRegion.bounds(), bufferBounds);
-            if (!copyRect.isEmpty())
-                m_frontBuffer->context().drawImageBuffer(*m_previousFrontBuffer, copyRect, copyRect, { WebCore::CompositeOperator::Copy });
-        }
-    }
-
-    auto dirtyRects = dirtyRegion.rects();
-#if PLATFORM(COCOA)
-    WebCore::IntRect dirtyBounds = dirtyRegion.bounds();
-    if (dirtyRects.size() > PlatformCALayer::webLayerMaxRectsToPaint || dirtyRegion.totalArea() > PlatformCALayer::webLayerWastedSpaceThreshold * dirtyBounds.width() * dirtyBounds.height()) {
-        dirtyRects.clear();
-        dirtyRects.append(dirtyBounds);
-    }
-#endif
-
-    Vector<WebCore::FloatRect, 5> paintingRects;
-    for (const auto& rect : dirtyRects) {
-        WebCore::FloatRect scaledRect(rect);
-        scaledRect.scale(m_resolutionScale);
-        scaledRect = enclosingIntRect(scaledRect);
-        scaledRect.scale(1 / m_resolutionScale);
-        paintingRects.append(scaledRect);
-
-        // If the copy-forward touched pixels that are about to be painted, then they
-        // won't be 'clear' any more.
-        if (copyRect.intersects(scaledRect))
-            m_frontBufferIsCleared = false;
-    }
-
-    if (paintingRects.size() == 1)
-        context.clip(paintingRects[0]);
-    else {
-        WebCore::Path clipPath;
-        for (auto rect : paintingRects)
-            clipPath.addRect(rect);
-        context.clipPath(clipPath);
-    }
-
-    if (requiresClearedPixels && !m_frontBufferIsCleared)
-        context.clearRect(bufferBounds);
-
-    m_previouslyPaintedRect = dirtyRegion.bounds();
-    m_previousFrontBuffer = nullptr;
-    m_frontBufferIsCleared = false;
+    ImageBufferSet::prepareBufferForDisplay(layerBounds, dirtyRegion, paintingRects, requiresClearedPixels);
 }
 
 bool RemoteImageBufferSet::makeBuffersVolatile(OptionSet<BufferInSetType> requestedBuffers, OptionSet<BufferInSetType>& volatileBuffers, bool forcePurge)
@@ -303,5 +216,7 @@ DynamicContentScalingResourceCache RemoteImageBufferSet::ensureDynamicContentSca
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif

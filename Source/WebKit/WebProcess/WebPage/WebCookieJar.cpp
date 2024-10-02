@@ -44,6 +44,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Page.h>
+#include <WebCore/ScriptTelemetryCategory.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
 #include <optional>
@@ -101,6 +102,11 @@ static bool shouldBlockCookies(WebFrame* frame, const URL& firstPartyForCookies,
     return true;
 }
 
+static bool requiresScriptExecutionTelemetry(Document& document)
+{
+    return document.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Cookies);
+}
+
 bool WebCookieJar::isEligibleForCache(WebFrame& frame, const URL& firstPartyForCookies, const URL& resourceURL) const
 {
     auto* page = frame.page() ? frame.page()->corePage() : nullptr;
@@ -137,6 +143,9 @@ String WebCookieJar::cookies(WebCore::Document& document, const URL& url) const
     if (!webFrame || !webFrame->page())
         return { };
 
+    if (requiresScriptExecutionTelemetry(document))
+        return { };
+
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
@@ -159,6 +168,9 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
 {
     RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame || !webFrame->page())
+        return;
+
+    if (requiresScriptExecutionTelemetry(document))
         return;
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
@@ -220,6 +232,9 @@ bool WebCookieJar::cookiesEnabled(Document& document)
     if (!webFrame || !webFrame->page())
         return false;
 
+    if (requiresScriptExecutionTelemetry(document))
+        return false;
+
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), document.cookieURL(), applyTrackingPreventionInNetworkProcess))
         return false;
@@ -270,6 +285,12 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
 {
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
+
+    if (RefPtr frame = webFrame ? webFrame->protectedCoreLocalFrame() : nullptr) {
+        if (RefPtr document = frame->protectedDocument(); document && requiresScriptExecutionTelemetry(document.releaseNonNull()))
+            return { };
+    }
+
     if (shouldBlockCookies(webFrame.get(), firstParty, url, applyTrackingPreventionInNetworkProcess))
         return { };
 
@@ -281,12 +302,15 @@ std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHea
     return { cookieString, secureCookiesAccessed ? WebCore::SecureCookiesAccessed::Yes : WebCore::SecureCookiesAccessed::No };
 }
 
-bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
+bool WebCookieJar::getRawCookies(WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const
 {
+    if (requiresScriptExecutionTelemetry(document))
+        return false;
+
     RefPtr webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess))
-        return { };
+        return false;
 
     std::optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
     std::optional<PageIdentifier> pageID = webFrame && webFrame->page() ? std::make_optional(webFrame->page()->identifier()) : std::nullopt;
@@ -315,6 +339,12 @@ void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, 
         completionHandler({ });
         return;
     }
+
+    if (requiresScriptExecutionTelemetry(document)) {
+        completionHandler({ });
+        return;
+    }
+
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
@@ -338,6 +368,12 @@ void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, c
         completionHandler(false);
         return;
     }
+
+    if (requiresScriptExecutionTelemetry(document)) {
+        completionHandler(false);
+        return;
+    }
+
     RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
 
     ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;

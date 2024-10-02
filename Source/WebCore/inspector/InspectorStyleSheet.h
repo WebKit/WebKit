@@ -179,8 +179,7 @@ public:
     Ref<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
     RefPtr<Inspector::Protocol::CSS::Grouping> buildObjectForGrouping(CSSRule*);
 
-    enum class IsUndo : bool { No, Yes };
-    virtual ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newText, String* oldText, IsUndo = IsUndo::No);
+    virtual ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText);
 
     virtual ExceptionOr<String> text() const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
@@ -211,7 +210,6 @@ private:
     bool ensureText() const;
     bool ensureSourceData();
     void ensureFlatRules() const;
-    bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
     bool originalStyleSheetText(String* result) const;
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
@@ -241,7 +239,7 @@ public:
     void didModifyElementAttribute();
     ExceptionOr<String> text() const final;
     CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const final { ASSERT_UNUSED(id, !id.ordinal()); return &inlineStyle(); }
-    ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newText, String* oldText, InspectorStyleSheet::IsUndo = InspectorStyleSheet::IsUndo::No) final;
+    ExceptionOr<void> setRuleStyleText(const InspectorCSSId&, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText);
 
 private:
     InspectorStyleSheetForInlineStyle(InspectorPageAgent*, const String& id, Ref<StyledElement>&&, Inspector::Protocol::CSS::StyleSheetOrigin, Listener*);

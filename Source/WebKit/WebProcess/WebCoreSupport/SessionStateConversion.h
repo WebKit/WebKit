@@ -34,9 +34,9 @@ class HistoryItemClient;
 
 namespace WebKit {
 
-struct BackForwardListItemState;
+class FrameState;
 
-BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem&);
-Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const BackForwardListItemState&);
+Ref<FrameState> toFrameState(const WebCore::HistoryItem&);
+Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const FrameState&);
 
 } // namespace WebKit

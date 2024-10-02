@@ -94,11 +94,6 @@ public:
 
     bool isOpen() const { return m_isOpen; }
     bool opensSidebar() { return !sidebarPath().isEmpty(); };
-    bool canProgrammaticallyOpenSidebar() const;
-    void openSidebarWhenReady();
-
-    bool canProgrammaticallyCloseSidebar() const;
-    void closeSidebarWhenReady();
 
     /// `sidebarPath()` will return the overriden path of this sidebar, or the path of the first parent sidebar in which the path is set
     String sidebarPath() const;
@@ -146,8 +141,6 @@ private:
     const std::optional<WeakPtr<WebExtensionWindow>> m_window;
 
     bool m_isOpen { false };
-    bool m_opensSidebarWhenReady { false };
-    bool m_sidebarOpened { false };
     const IsDefault m_isDefault { IsDefault::No };
 
     RetainPtr<WKWebView> m_webView;

@@ -1,0 +1,100 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+    @import url("resources/external.css");
+    body {
+        #x {
+            color: yellow;
+        }
+        color: lime;
+    }
+    @media (width >= 0) {
+        body {
+            color: blue;
+            #x {
+                color: magenta;
+            }
+        }
+    }
+</style>
+<script>
+function test() {
+    let suite = ProtocolTest.createAsyncSuite("CSS.setStyleText");
+
+    suite.addTestCase({
+        name: "CSS.setStyleText with @import rule and nested styles",
+        description: "Test that CSS.setStyleText works OK when there are @import rules and nested styles",
+        test: async () => {
+            ProtocolTest.log("Fetching author CSS rules for body and target element (div#x)...");
+            await InspectorProtocol.awaitCommand({ method: "Page.enable" });
+            let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
+            let body = await InspectorProtocol.awaitCommand({
+                method: "DOM.querySelector",
+                params: { nodeId: root.nodeId, selector: "body" },
+            });
+            let myDiv = await InspectorProtocol.awaitCommand({
+                method: "DOM.querySelector",
+                params: { nodeId: root.nodeId, selector: "div#x" },
+            });
+
+            const getAuthorRulesMatchingElement = async (element) => {
+                let { matchedCSSRules } = await InspectorProtocol.awaitCommand({
+                    method: "CSS.getMatchedStylesForNode",
+                    params: { nodeId: element.nodeId },
+                });
+                return matchedCSSRules
+                    .map(({ rule }) => rule)
+                    .filter((rule) => rule.origin === "author");
+            };
+
+            const getAllAuthorRules = async () => {
+                let myElements = [body, myDiv];
+                return (await Promise.all(myElements.map(getAuthorRulesMatchingElement))).flat();
+            };
+
+            const modifyBackgroundColorStyle = async (targetColor) => {
+                for (let rule of await getAllAuthorRules()) {
+                    let styleDeclaration = rule.style;
+                    let value = styleDeclaration.cssProperties[0].value;
+                    if (value !== targetColor)
+                        continue;
+
+                    await InspectorProtocol.awaitCommand({
+                        method: "CSS.setStyleText",
+                        params: {
+                            styleId: styleDeclaration.styleId,
+                            text: `background-color: ${value};`,
+                        },
+                    });
+                    return;
+                }
+                throw new Error(`Style with color "${targetColor}" was not found.`);
+            };
+
+            ProtocolTest.log("");
+            for (let targetColor of ["red", "yellow", "lime", "blue", "magenta"]) {
+                ProtocolTest.log(`Modifying style text for color "${targetColor}"...`);
+                await modifyBackgroundColorStyle(targetColor);
+            }
+
+            const filteredValueReplacer = (key, value) => {
+                if (["ruleId", "styleId", "range", "sourceLine", "sourceURL"].includes(key))
+                    return "<filtered>";
+                return value;
+            };
+            ProtocolTest.log("");
+            ProtocolTest.log("Author CSS rules after modifications:");
+            ProtocolTest.json(await getAllAuthorRules(), filteredValueReplacer);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the CSS.setStyleText command.</p>
+<div id="x"></div>
+</body>
+</html>

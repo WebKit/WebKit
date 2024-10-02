@@ -75,17 +75,8 @@ void AnimationTimeline::removeAnimation(WebAnimation& animation)
     }
 }
 
-std::optional<double> AnimationTimeline::bindingsCurrentTime()
-{
-    auto time = currentTime();
-    if (!time)
-        return std::nullopt;
-    return secondsToWebAnimationsAPITime(*time);
-}
-
 void AnimationTimeline::detachFromDocument()
 {
-    Ref<AnimationTimeline> protectedThis(*this);
     if (CheckedPtr controller = this->controller())
         controller->removeTimeline(*this);
 

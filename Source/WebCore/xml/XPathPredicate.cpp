@@ -33,10 +33,19 @@
 #include <math.h>
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace XPath {
-        
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Number);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StringExpression);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Negative);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NumericOp);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EqTestOp);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LogicalOp);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Union);
+
 Number::Number(double value)
     : m_value(value)
 {

@@ -476,6 +476,116 @@ public enum EdKeyAgreementAlgorithm {
 }
 
 public class EdKey {
+    public static func generatePrivateKey(algo: EdSigningAlgorithm) -> VectorUInt8 {
+        switch algo {
+        case .ed25519:
+            return Curve25519.Signing.PrivateKey().rawRepresentation.copyToVectorUInt8()
+        case .ed448:
+            return Data(count: 0).copyToVectorUInt8()
+        }
+    }
+
+    public static func generatePrivateKeyKeyAgreement(algo: EdKeyAgreementAlgorithm) -> VectorUInt8
+    {
+        switch algo {
+        case .x25519:
+            return Curve25519.KeyAgreement.PrivateKey().rawRepresentation.copyToVectorUInt8()
+        case .x448:
+            return Data(count: 0).copyToVectorUInt8()
+        }
+    }
+
+    public static func privateToPublic(algo: EdSigningAlgorithm, priv: SpanConstUInt8)
+        -> CryptoOperationReturnValue
+    {
+        var rv = CryptoOperationReturnValue()
+        do {
+            if priv.size() != 32 {
+                throw LocalErrors.invalidArgument
+            }
+            switch algo {
+            case .ed25519:
+                rv.result = try Curve25519.Signing.PrivateKey(span: priv).publicKey
+                    .rawRepresentation.copyToVectorUInt8()
+                if rv.result.size() != 32 {
+                    throw LocalErrors.invalidArgument
+                }
+                rv.errorCode = .Success
+            case .ed448:
+                rv.errorCode = .UnsupportedAlgorithm
+            }
+        } catch {
+            rv.errorCode = .FailedToImport
+        }
+        return rv
+    }
+
+    public static func privateToPublicKeyAgreement(
+        algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8
+    ) -> CryptoOperationReturnValue {
+        var rv = CryptoOperationReturnValue()
+        do {
+            if priv.size() != 32 {
+                throw LocalErrors.invalidArgument
+            }
+            switch algo {
+            case .x25519:
+                rv.result = try Curve25519.KeyAgreement.PrivateKey(span: priv).publicKey
+                    .rawRepresentation.copyToVectorUInt8()
+                if rv.result.size() != 32 {
+                    throw LocalErrors.invalidArgument
+                }
+                rv.errorCode = .Success
+            case .x448:
+                rv.errorCode = .UnsupportedAlgorithm
+            }
+        } catch {
+            rv.errorCode = .FailedToImport
+        }
+        return rv
+    }
+    public static func validateKeyPair(
+        algo: EdSigningAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8
+    ) -> Bool {
+        do {
+            if priv.size() != 32 || pub.size() != 32 {
+                throw LocalErrors.invalidArgument
+            }
+            switch algo {
+            case .ed25519:
+                let derivedPublicKey = try Curve25519.Signing.PrivateKey(span: priv).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.Signing.PublicKey(span: pub).rawRepresentation
+                return derivedPublicKey == importedPublicKey
+            case .ed448:
+                return false
+            }
+        } catch {
+            return false
+        }
+
+    }
+
+    public static func validateKeyPairKeyAgreement(
+        algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8
+    ) -> Bool {
+        do {
+            if priv.size() != 32 || pub.size() != 32 {
+                throw LocalErrors.invalidArgument
+            }
+            switch algo {
+            case .x25519:
+                let derivedPublicKey = try Curve25519.KeyAgreement.PrivateKey(span: priv).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.KeyAgreement.PublicKey(span: pub).rawRepresentation
+                return derivedPublicKey == importedPublicKey
+            case .x448:
+                return false
+            }
+        } catch {
+            return false
+        }
+
+    }
+
     public static func sign(algo: EdSigningAlgorithm, key: SpanConstUInt8, data: SpanConstUInt8)
         -> CryptoOperationReturnValue
     {

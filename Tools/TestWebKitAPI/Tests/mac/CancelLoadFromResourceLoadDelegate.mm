@@ -70,7 +70,7 @@ TEST(WebKitLegacy, CancelLoadFromResourceLoadDelegate)
         RetainPtr<CancelLoadFromResourceLoadDelegateFrameLoadDelegate> frameLoadDelegate = adoptNS([[CancelLoadFromResourceLoadDelegateFrameLoadDelegate alloc] init]);
         webView.get().frameLoadDelegate = frameLoadDelegate.get();
 
-        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"CancelLoadFromResourceLoadDelegate" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+        [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"CancelLoadFromResourceLoadDelegate" withExtension:@"html"]]];
 
         Util::run(&didFinishLoad);
     }

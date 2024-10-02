@@ -75,25 +75,25 @@ bool RenderMathMLRoot::isValid() const
         return true;
 
     ASSERT(rootType() == RootType::RootWithIndex);
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
-    return child && !child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
+    return child && !child->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLRoot::getBase() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLRoot::getIndex() const
 {
     ASSERT(isValid());
     ASSERT(rootType() == RootType::RootWithIndex);
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 void RenderMathMLRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -189,6 +189,8 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
 
@@ -199,6 +201,8 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
+
+    layoutFloatingChildren();
 
     // We layout the children, determine the vertical metrics of the base and set the logical width.
     // Note: Per the MathML specification, the children of <msqrt> are wrapped in an inferred <mrow>, which is the desired base.
@@ -257,7 +261,7 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
     if (rootType() == RootType::SquareRoot) {
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset, m_baseWidth), ascent - baseAscent);
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox())
+        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);

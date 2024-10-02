@@ -51,7 +51,8 @@ void UserMediaPermissionRequestProxyMac::invalidate()
 {
 #if ENABLE(MEDIA_STREAM)
     if (m_hasPendingGetDispayMediaPrompt) {
-        DisplayCaptureSessionManager::singleton().cancelGetDisplayMediaPrompt(Ref { manager()->page() });
+        if (RefPtr page = protectedManager()->page())
+            DisplayCaptureSessionManager::singleton().cancelGetDisplayMediaPrompt(*page);
         m_hasPendingGetDispayMediaPrompt = false;
     }
 #endif
@@ -64,8 +65,12 @@ void UserMediaPermissionRequestProxyMac::promptForGetDisplayMedia(UserMediaDispl
     if (!manager())
         return;
 
+    RefPtr page = protectedManager()->page();
+    if (!page)
+        return;
+
     m_hasPendingGetDispayMediaPrompt = true;
-    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, Ref { manager()->page() }, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }](std::optional<CaptureDevice> device) mutable {
+    DisplayCaptureSessionManager::singleton().promptForGetDisplayMedia(promptType, *page, topLevelDocumentSecurityOrigin().data(), [protectedThis = Ref { *this }](std::optional<CaptureDevice> device) mutable {
 
         protectedThis->m_hasPendingGetDispayMediaPrompt = false;
 
@@ -86,7 +91,8 @@ bool UserMediaPermissionRequestProxyMac::canRequestDisplayCapturePermission()
 {
 #if ENABLE(MEDIA_STREAM)
     auto overridePreference = DisplayCaptureSessionManager::singleton().overrideCanRequestDisplayCapturePermissionForTesting();
-    if (!manager() || (!overridePreference && manager()->page().preferences().requireUAGetDisplayMediaPrompt()))
+    RefPtr manager = this->manager();
+    if (!manager || !manager->page() || (!overridePreference && manager->page()->preferences().requireUAGetDisplayMediaPrompt()))
         return false;
 
     return DisplayCaptureSessionManager::singleton().canRequestDisplayCapturePermission();

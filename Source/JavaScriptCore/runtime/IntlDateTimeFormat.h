@@ -32,12 +32,6 @@
 
 struct UDateIntervalFormat;
 
-#if !defined(HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-#if U_ICU_VERSION_MAJOR_NUM >= 64
-#define HAVE_ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS 1
-#endif
-#endif
-
 namespace JSC {
 
 enum class RelevantExtensionKey : uint8_t;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 namespace WTF {
@@ -51,8 +52,7 @@ public:
 // A RefCountedSerialFunctionDispatcher guarantees that a dispatched function will always be run.
 class RefCountedSerialFunctionDispatcher : public SerialFunctionDispatcher {
 public:
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
+    DECLARE_VIRTUAL_REFCOUNTED;
 };
 
 inline void assertIsCurrent(const SerialFunctionDispatcher& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)

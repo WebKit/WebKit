@@ -63,7 +63,7 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
     WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
-    WEBCORE_EXPORT String contextMenuItemTagCopyLinkToHighlight();
+    WEBCORE_EXPORT String contextMenuItemTagCopyLinkWithHighlight();
 
 #if ENABLE(CONTEXT_MENUS)
     WEBCORE_EXPORT String contextMenuItemTagOpenLinkInNewWindow();
@@ -425,6 +425,10 @@ namespace WebCore {
     WEBCORE_EXPORT String pdfPasswordFormTitle();
     WEBCORE_EXPORT String pdfPasswordFormSubtitle();
     WEBCORE_EXPORT String pdfPasswordFormInvalidPasswordSubtitle();
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    WEBCORE_EXPORT String fullscreenControllerViewSpatial();
+#endif
 
 #if PLATFORM(COCOA)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(CFSTR(string))

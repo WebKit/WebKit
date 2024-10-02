@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -44,7 +45,7 @@ class EventPath;
 class EventTarget;
 class ScriptExecutionContext;
 
-class Event : public ScriptWrappable, public RefCounted<Event> {
+class Event : public ScriptWrappable, public RefCountedAndCanMakeWeakPtr<Event> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Event);
 public:
     using IsTrusted = EventIsTrusted;

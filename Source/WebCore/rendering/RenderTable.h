@@ -200,9 +200,6 @@ public:
     static RenderPtr<RenderTable> createAnonymousWithParentRenderer(const RenderElement&);
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const override;
 
-    const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell&) const;
-    const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell&) const;
-
     void addCaption(RenderTableCaption&);
     void removeCaption(RenderTableCaption&);
     void addColumn(const RenderTableCol*);
@@ -320,8 +317,6 @@ private:
     mutable LayoutUnit m_columnOffsetHeight;
     unsigned m_recursiveSectionMovedWithPaginationLevel { 0 };
 };
-
-inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
 
 inline RenderPtr<RenderBox> RenderTable::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
 {

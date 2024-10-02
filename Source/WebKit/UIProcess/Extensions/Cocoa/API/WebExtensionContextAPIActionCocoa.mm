@@ -83,7 +83,8 @@ static Expected<Ref<WebExtensionAction>, WebExtensionError> getOrCreateActionWit
 
 bool WebExtensionContext::isActionMessageAllowed()
 {
-    return isLoaded() && (extension().hasAction() || extension().hasBrowserAction() || extension().hasPageAction());
+    Ref extension = *m_extension;
+    return isLoaded() && (extension->hasAction() || extension->hasBrowserAction() || extension->hasPageAction());
 }
 
 void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
@@ -96,7 +97,7 @@ void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    completionHandler(action.value()->label(WebExtensionAction::FallbackWhenEmpty::No));
+    completionHandler(Ref { action.value() }->label(WebExtensionAction::FallbackWhenEmpty::No));
 }
 
 void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -151,7 +152,7 @@ void WebExtensionContext::actionGetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    completionHandler(action.value()->popupPath());
+    completionHandler(Ref { action.value() }->popupPath());
 }
 
 void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& popupPath, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -173,7 +174,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
 {
     static NSString * const apiName = @"action.openPopup()";
 
-    if (!defaultAction().canProgrammaticallyPresentPopup()) {
+    if (!protectedDefaultAction()->canProgrammaticallyPresentPopup()) {
         completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
         return;
     }
@@ -238,7 +239,7 @@ void WebExtensionContext::actionGetBadgeText(std::optional<WebExtensionWindowIde
         return;
     }
 
-    completionHandler(action.value()->badgeText());
+    completionHandler(Ref { action.value() }->badgeText());
 }
 
 void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& text, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
@@ -266,7 +267,7 @@ void WebExtensionContext::actionGetEnabled(std::optional<WebExtensionWindowIdent
         return;
     }
 
-    completionHandler(action.value()->isEnabled());
+    completionHandler(Ref { action.value() }->isEnabled());
 }
 
 void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifier> tabIdentifier, bool enabled, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

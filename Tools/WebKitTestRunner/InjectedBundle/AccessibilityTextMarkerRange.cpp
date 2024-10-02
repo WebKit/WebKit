@@ -70,5 +70,10 @@ JSClassRef AccessibilityTextMarkerRange::wrapperClass()
 {
     return JSAccessibilityTextMarkerRange::accessibilityTextMarkerRangeClass();
 }
-    
+
+AccessibilityTextMarkerRange* toTextMarkerRange(JSObjectRef object)
+{
+    return static_cast<AccessibilityTextMarkerRange*>(JSObjectGetPrivate(object));
+}
+
 } // namespace WTR

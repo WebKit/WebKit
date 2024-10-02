@@ -27,18 +27,9 @@
 #include <WebCore/BackgroundFetchStore.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-class BackgroundFetchStoreManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::BackgroundFetchStoreManager> : std::true_type { };
-}
 
 namespace WTF {
 class WorkQueue;
@@ -46,11 +37,15 @@ class WorkQueue;
 
 namespace WebKit {
 
-class BackgroundFetchStoreManager : public CanMakeWeakPtr<BackgroundFetchStoreManager> {
+class BackgroundFetchStoreManager : public RefCountedAndCanMakeWeakPtr<BackgroundFetchStoreManager> {
     WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchStoreManager);
 public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    BackgroundFetchStoreManager(const String&, Ref<WTF::WorkQueue>&&, QuotaCheckFunction&&);
+
+    static Ref<BackgroundFetchStoreManager> create(const String& path, Ref<WTF::WorkQueue>&& taskQueue, QuotaCheckFunction&& quotaCheckFunction)
+    {
+        return adoptRef(*new BackgroundFetchStoreManager(path, WTFMove(taskQueue), WTFMove(quotaCheckFunction)));
+    }
     ~BackgroundFetchStoreManager();
 
     static String createNewStorageIdentifier();
@@ -69,6 +64,8 @@ public:
     void retrieveResponseBody(const String&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 private:
+    BackgroundFetchStoreManager(const String&, Ref<WTF::WorkQueue>&&, QuotaCheckFunction&&);
+
     void storeFetchAfterQuotaCheck(const String&, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
 
     String m_path;

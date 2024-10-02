@@ -56,7 +56,7 @@ public:
     // to prevent crashing while loading old data.
     static constexpr uint32_t CurrentContentRuleListFileVersion = 17;
 
-    static ContentRuleListStore& defaultStore();
+    static ContentRuleListStore& defaultStoreSingleton();
     static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);
 
     explicit ContentRuleListStore();

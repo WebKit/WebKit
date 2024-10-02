@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "GPU.h"
+#include "ScriptTelemetryCategory.h"
 #include "ServiceWorkerContainer.h"
 #include "StorageManager.h"
 #include "WebCoreOpaqueRoot.h"
@@ -39,6 +40,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakRandom.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
@@ -178,9 +180,14 @@ ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutio
     return serviceWorker();
 }
 
-int NavigatorBase::hardwareConcurrency()
+int NavigatorBase::hardwareConcurrency(ScriptExecutionContext& context)
 {
     static int numberOfCores;
+
+    if (context.requiresScriptExecutionTelemetry(ScriptTelemetryCategory::HardwareConcurrency)) {
+        auto randomSeed = static_cast<unsigned>(context.noiseInjectionHashSalt().value_or(0));
+        return 1 + WeakRandom { randomSeed }.getUint32(63);
+    }
 
     static std::once_flag once;
     std::call_once(once, [] {

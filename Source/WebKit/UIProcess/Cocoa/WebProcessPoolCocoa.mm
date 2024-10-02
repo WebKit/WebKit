@@ -401,7 +401,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         parameters.enableRemoteWebInspectorExtensionHandles = WTFMove(handles);
 
 #if ENABLE(GPU_PROCESS)
-        if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated()) {
+        if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated()) {
             if (!gpuProcess->hasSentGPUToolsSandboxExtensions()) {
                 auto gpuToolsHandle = GPUProcessProxy::createGPUToolsSandboxExtensionHandlesIfNeeded();
                 gpuProcess->send(Messages::GPUProcess::UpdateSandboxAccess(WTFMove(gpuToolsHandle)), 0);
@@ -481,7 +481,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-#if PLATFORM(MAC) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
     // FIXME: this will not be needed when rdar://74144544 is fixed.
     if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
         parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
@@ -522,9 +522,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     // FIXME: Filter by process's site when site isolation is enabled
-    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedListData();
+    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::sharedSingleton().cachedListData();
 
-    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedListData()) {
+    for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
             for (auto&& page : entry.triggerPages)
                 parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
@@ -533,7 +533,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         for (auto&& domain : entry.quirkDomains.keys())
             parameters.storageAccessPromptQuirksDomains.add(domain);
     }
-#endif
+
+    parameters.scriptTelemetryRules = ScriptTelemetryController::sharedSingleton().cachedListData();
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
@@ -556,7 +558,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedListData();
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
 #endif
 }
 
@@ -668,7 +670,7 @@ void WebProcessPool::lockdownModeConfigurationUpdateCallback(CFNotificationCente
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 void WebProcessPool::powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->enablePowerLogging();
 }
 #endif
@@ -856,7 +858,7 @@ void WebProcessPool::registerNotificationObservers()
             auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, std::nullopt);
             if (!handle)
                 return;
-            if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+            if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
                 gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(WTFMove(*handle)), 0);
 #endif
             for (auto& process : m_processes) {
@@ -1200,7 +1202,7 @@ void WebProcessPool::screenPropertiesChanged()
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
 
 #if PLATFORM(MAC) && ENABLE(GPU_PROCESS)
-    if (auto gpuProcess = this->gpuProcess())
+    if (RefPtr gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
 #endif
 }
@@ -1214,14 +1216,14 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
         displayLink->displayPropertiesChanged();
 
 #if ENABLE(GPU_PROCESS)
-    if (auto gpuProcess = this->gpuProcess())
+    if (RefPtr gpuProcess = this->gpuProcess())
         gpuProcess->setScreenProperties(screenProperties);
 #endif
 }
 
 static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    RunLoop::main().dispatch([displayID, flags]() {
+    RunLoop::protectedMain()->dispatch([displayID, flags]() {
         auto screenProperties = WebCore::collectScreenProperties();
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->displayPropertiesChanged(screenProperties, displayID, flags);
@@ -1240,7 +1242,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
 
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CFNotificationCenterRef, void*, CFNotificationName, const void*, CFDictionaryRef)
 {
-    RunLoop::main().dispatch([] {
+    RunLoop::protectedMain()->dispatch([] {
         auto properties = WebCore::collectScreenProperties();
         for (auto& pool : WebProcessPool::allProcessPools())
             pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
@@ -1289,7 +1291,7 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
 ExtensionCapabilityGranter& WebProcessPool::extensionCapabilityGranter()
 {
     if (!m_extensionCapabilityGranter)
-        m_extensionCapabilityGranter = ExtensionCapabilityGranter::create(*this).moveToUniquePtr();
+        m_extensionCapabilityGranter = ExtensionCapabilityGranter::create(*this);
     return *m_extensionCapabilityGranter;
 }
 

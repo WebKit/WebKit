@@ -1512,11 +1512,14 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
+                return makeUniqueRef<WebFrameLoaderClient>();
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
@@ -1775,11 +1778,14 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         BackForwardList::create(self),
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
-        CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-            return makeUniqueRef<WebFrameLoaderClient>();
-        } },
+        WebCore::PageConfiguration::LocalMainFrameCreationParameters {
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
+                return makeUniqueRef<WebFrameLoaderClient>();
+            } },
+            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+        },
         WebCore::FrameIdentifier::generate(),
-        nullptr, // Opener may be set by setOpenerForWebKitLegacy.
+        nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
         makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),

@@ -590,6 +590,7 @@ animation/AnimationTimeline.cpp
 animation/BlendingKeyframes.cpp
 animation/CSSAnimation.cpp
 animation/CSSAnimationEvent.cpp
+animation/CSSNumberishTime.cpp
 animation/CSSPropertyAnimation.cpp
 animation/CSSTransition.cpp
 animation/CSSTransitionEvent.cpp
@@ -704,6 +705,7 @@ bindings/js/JSMessageEventCustom.cpp
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSMutationObserverCustom.cpp
 bindings/js/JSMutationRecordCustom.cpp
+bindings/js/JSNavigateEventCustom.cpp
 bindings/js/JSNavigatorCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
@@ -841,7 +843,6 @@ crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 css/BasicShapeConversion.cpp
 css/BasicShapesShapeSegmentConversion.cpp
-css/CSSAnchorValue.cpp
 css/CSSAspectRatioValue.cpp
 css/CSSBackgroundRepeatValue.cpp
 css/CSSShapeSegmentValue.cpp
@@ -990,6 +991,7 @@ css/calc/CSSCalcValue.cpp
 css/color/CSSColorLayersResolver.cpp
 css/color/CSSColorMixResolver.cpp
 css/color/CSSColorMixSerialization.cpp
+css/color/CSSContrastColorResolver.cpp
 css/color/CSSRelativeColorSerialization.cpp
 css/color/CSSUnresolvedAbsoluteResolvedColor.cpp
 css/color/CSSUnresolvedColor.cpp
@@ -998,15 +1000,16 @@ css/color/CSSUnresolvedColorKeyword.cpp
 css/color/CSSUnresolvedColorLayers.cpp
 css/color/CSSUnresolvedColorMix.cpp
 css/color/CSSUnresolvedColorResolutionState.cpp
+css/color/CSSUnresolvedContrastColor.cpp
 css/color/CSSUnresolvedLightDark.cpp
 css/color/CSSUnresolvedRelativeColor.cpp
 css/color/StyleAbsoluteColor.cpp
 css/color/StyleColor.cpp
 css/color/StyleColorLayers.cpp
 css/color/StyleColorMix.cpp
+css/color/StyleContrastColor.cpp
 css/color/StyleCurrentColor.cpp
 css/parser/CSSAtRuleID.cpp
-css/parser/CSSCalcParser.cpp
 css/parser/CSSCustomPropertySyntax.cpp
 css/parser/CSSParser.cpp
 css/parser/CSSParserContext.cpp
@@ -1019,6 +1022,7 @@ css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
 css/parser/CSSPropertyParserConsumer+Align.cpp
 css/parser/CSSPropertyParserConsumer+Angle.cpp
+css/parser/CSSPropertyParserConsumer+AnglePercentage.cpp
 css/parser/CSSPropertyParserConsumer+CSSPrimitiveValueResolver.cpp
 css/parser/CSSPropertyParserConsumer+Color.cpp
 css/parser/CSSPropertyParserConsumer+ColorInterpolationMethod.cpp
@@ -1034,11 +1038,9 @@ css/parser/CSSPropertyParserConsumer+LengthPercentage.cpp
 css/parser/CSSPropertyParserConsumer+Lists.cpp
 css/parser/CSSPropertyParserConsumer+None.cpp
 css/parser/CSSPropertyParserConsumer+Number.cpp
-css/parser/CSSPropertyParserConsumer+Percent.cpp
+css/parser/CSSPropertyParserConsumer+Percentage.cpp
 css/parser/CSSPropertyParserConsumer+Position.cpp
 css/parser/CSSPropertyParserConsumer+Primitives.cpp
-css/parser/CSSPropertyParserConsumer+RawResolver.cpp
-css/parser/CSSPropertyParserConsumer+RawTypes.cpp
 css/parser/CSSPropertyParserConsumer+Resolution.cpp
 css/parser/CSSPropertyParserConsumer+String.cpp
 css/parser/CSSPropertyParserConsumer+Symbol.cpp
@@ -1047,7 +1049,6 @@ css/parser/CSSPropertyParserConsumer+Timeline.cpp
 css/parser/CSSPropertyParserConsumer+TimingFunction.cpp
 css/parser/CSSPropertyParserConsumer+Transform.cpp
 css/parser/CSSPropertyParserConsumer+URL.cpp
-css/parser/CSSPropertyParserConsumer+UnevaluatedCalc.cpp
 css/parser/CSSPropertyParserConsumer+ViewTransition.cpp
 css/parser/CSSPropertyParserHelpers.cpp
 css/parser/CSSSelectorParser.cpp
@@ -1114,6 +1115,11 @@ css/typedom/transform/CSSSkewY.cpp
 css/typedom/transform/CSSTransformComponent.cpp
 css/typedom/transform/CSSTransformValue.cpp
 css/typedom/transform/CSSTranslate.cpp
+css/values/CSSPosition.cpp
+css/values/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp
+css/values/CSSPrimitiveNumericTypes+Serialization.cpp
+css/values/CSSPrimitiveNumericTypes+SymbolReplacement.cpp
+css/values/CSSUnevaluatedCalc.cpp
 cssjit/SelectorCompiler.cpp
 dom/AbortController.cpp
 dom/AbortSignal.cpp
@@ -1838,7 +1844,7 @@ layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.cpp
 layout/formattingContexts/inline/InlineContentAligner.cpp
-layout/formattingContexts/inline/InlineContentBalancer.cpp
+layout/formattingContexts/inline/InlineContentConstrainer.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp
 layout/formattingContexts/inline/InlineFormattingUtils.cpp
@@ -1873,7 +1879,7 @@ layout/integration/inline/LayoutIntegrationInlineContent.cpp
 layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LayoutIntegrationPagination.cpp
-layout/integration/inline/LayoutIntegrationBoxGeometryUpdater.cpp
+layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTree.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
@@ -2103,6 +2109,7 @@ page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/Screen.cpp
 page/ScreenOrientation.cpp
+page/ScriptTelemetryCategory.cpp
 page/ScrollBehavior.cpp
 page/SecurityOrigin.cpp
 page/SecurityOriginData.cpp
@@ -3031,7 +3038,7 @@ style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleRelations.cpp
 style/StyleResolveForDocument.cpp
-style/StyleResolveForFontRaw.cpp
+style/StyleResolveForFont.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleScopeRuleSets.cpp
@@ -3042,6 +3049,9 @@ style/StyleUpdate.cpp
 style/Styleable.cpp
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
+style/values/StylePosition.cpp
+style/values/StylePrimitiveNumericTypes.cpp
+style/values/StylePrimitiveNumericTypes+Conversions.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
 svg/SVGAltGlyphDefElement.cpp
@@ -3716,6 +3726,8 @@ JSGPUBufferUsage.cpp
 JSGPUCanvasAlphaMode.cpp
 JSGPUCanvasConfiguration.cpp
 JSGPUCanvasContext.cpp
+JSGPUCanvasToneMapping.cpp
+JSGPUCanvasToneMappingMode.cpp
 JSGPUColorDict.cpp
 JSGPUColorTargetState.cpp
 JSGPUColorWrite.cpp
@@ -4040,6 +4052,7 @@ JSMediaSession.cpp
 JSMediaSettingsRange.cpp
 JSMediaSource.cpp
 JSMediaSourceHandle.cpp
+JSMediaSourceInit.cpp
 JSMediaStream.cpp
 JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp
@@ -4523,6 +4536,7 @@ JSTextTrackCueGeneric.cpp
 JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTimeRanges.cpp
+JSTimelineRangeOffset.cpp
 JSToggleEvent.cpp
 JSTrackEvent.cpp
 JSTransferFunction.cpp

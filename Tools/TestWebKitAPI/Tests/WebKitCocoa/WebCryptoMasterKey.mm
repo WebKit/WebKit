@@ -58,7 +58,7 @@ namespace TestWebKitAPI {
 
 TEST(WebKit, WebCryptoNilMasterKey)
 {
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"navigation-client-default-crypto" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"navigation-client-default-crypto" withExtension:@"html"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[WebCryptoMasterKeyNavigationDelegate alloc] init]);

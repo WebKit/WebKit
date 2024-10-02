@@ -42,8 +42,8 @@ public:
     }
     ~RemotePageVisitedLinkStoreRegistration()
     {
-        if (m_page)
-            m_process->removeVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
+        if (RefPtr page = m_page.get())
+            m_process->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
     }
 private:
     WeakPtr<WebPageProxy> m_page;

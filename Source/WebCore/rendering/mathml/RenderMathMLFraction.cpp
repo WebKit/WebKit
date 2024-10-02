@@ -53,23 +53,23 @@ bool RenderMathMLFraction::isValid() const
 {
     // Verify whether the list of children is valid:
     // <mfrac> numerator denominator </mfrac>
-    auto* child = firstChildBox();
+    auto* child = firstInFlowChildBox();
     if (!child)
         return false;
-    child = child->nextSiblingBox();
-    return child && !child->nextSiblingBox();
+    child = child->nextInFlowSiblingBox();
+    return child && !child->nextInFlowSiblingBox();
 }
 
 RenderBox& RenderMathMLFraction::numerator() const
 {
     ASSERT(isValid());
-    return *firstChildBox();
+    return *firstInFlowChildBox();
 }
 
 RenderBox& RenderMathMLFraction::denominator() const
 {
     ASSERT(isValid());
-    return *firstChildBox()->nextSiblingBox();
+    return *firstInFlowChildBox()->nextInFlowSiblingBox();
 }
 
 LayoutUnit RenderMathMLFraction::defaultLineThickness() const
@@ -225,6 +225,8 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
+    insertPositionedChildrenIntoContainingBlock();
+
     if (!relayoutChildren && simplifiedLayout())
         return;
 
@@ -232,6 +234,8 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
         RenderMathMLRow::layoutBlock(relayoutChildren);
         return;
     }
+
+    layoutFloatingChildren();
 
     recomputeLogicalWidth();
 
@@ -258,11 +262,6 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
     verticalOffset += denominator().marginBefore();
     LayoutPoint denominatorLocation(borderAndPaddingLeft + denominator().marginLeft() + horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
-
-    if (numerator().isOutOfFlowPositioned())
-        numerator().containingBlock()->insertPositionedObject(numerator());
-    if (denominator().isOutOfFlowPositioned())
-        denominator().containingBlock()->insertPositionedObject(denominator());
 
     verticalOffset += denominator().logicalHeight() + denominator().marginAfter() + borderAndPaddingAfter(); // This is the bottom of our renderer.
     setLogicalHeight(verticalOffset);

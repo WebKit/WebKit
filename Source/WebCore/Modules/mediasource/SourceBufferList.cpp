@@ -82,7 +82,7 @@ void SourceBufferList::clear()
     scheduleEvent(eventNames().removesourcebufferEvent);
 }
 
-void SourceBufferList::swap(Vector<RefPtr<SourceBuffer>>& other)
+void SourceBufferList::replaceWith(Vector<RefPtr<SourceBuffer>>&& other)
 {
     int changeInSize = other.size() - m_list.size();
     int addedEntries = 0;
@@ -92,7 +92,7 @@ void SourceBufferList::swap(Vector<RefPtr<SourceBuffer>>& other)
     }
     int removedEntries = addedEntries - changeInSize;
 
-    m_list.swap(other);
+    m_list = WTFMove(other);
 
     if (addedEntries)
         scheduleEvent(eventNames().addsourcebufferEvent);

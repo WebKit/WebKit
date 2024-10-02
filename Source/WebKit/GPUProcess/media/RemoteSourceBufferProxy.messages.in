@@ -25,6 +25,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
+[EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled]
 messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
@@ -57,6 +58,8 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     BufferedSamplesForTrackId(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     EnqueuedSamplesForTrackID(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     MemoryPressure(MediaTime currentTime)
+    Detach()
+    Attach()
     SetMaximumQueueDepthForTrackID(WebCore::TrackID trackID, uint64_t depth)
     MinimumUpcomingPresentationTimeForTrackID(WebCore::TrackID trackID) -> (MediaTime time) Synchronous
 }

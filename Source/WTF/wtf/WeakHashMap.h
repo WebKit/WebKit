@@ -369,13 +369,13 @@ private:
     template <typename T>
     static RefType makeKeyImpl(const T& key)
     {
-        return *key.weakPtrFactory().template createWeakPtr<T>(const_cast<T&>(key)).m_impl;
+        return WeakRef<T, WeakPtrImpl>(key).releaseImpl();
     }
 
     template <typename T>
     static WeakPtrImpl* keyImplIfExists(const T& key)
     {
-        if (auto* impl = key.weakPtrFactory().impl(); impl && *impl)
+        if (auto* impl = key.weakImplIfExists(); impl && *impl)
             return impl;
         return nullptr;
     }

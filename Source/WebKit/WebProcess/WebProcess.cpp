@@ -285,7 +285,7 @@ WebProcess& WebProcess::singleton()
 }
 
 WebProcess::WebProcess()
-    : m_webLoaderStrategy(*new WebLoaderStrategy)
+    : m_webLoaderStrategy(makeUniqueRef<WebLoaderStrategy>())
 #if PLATFORM(COCOA) && USE(LIBWEBRTC) && ENABLE(WEB_CODECS)
     , m_remoteVideoCodecFactory(*this)
 #endif
@@ -642,6 +642,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     updateStorageAccessUserAgentStringQuirks(WTFMove(parameters.storageAccessUserAgentStringQuirksData));
     updateDomainsWithStorageAccessQuirks(WTFMove(parameters.storageAccessPromptQuirksDomains));
+    updateScriptTelemetryFilter(WTFMove(parameters.scriptTelemetryRules));
 
 #if ENABLE(GAMEPAD)
     // Web processes need to periodically notify the UI process of gamepad access at least as frequently
@@ -963,43 +964,30 @@ void WebProcess::terminate()
     AuxiliaryProcess::terminate();
 }
 
-bool WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+bool WebProcess::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
-        return true;
-    return false;
-}
-
-void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (messageReceiverMap().dispatchMessage(connection, decoder))
-        return;
-
-    if (decoder.messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        didReceiveWebProcessMessage(connection, decoder);
-        return;
-    }
-
-    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
-        AuxiliaryProcess::didReceiveMessage(connection, decoder);
-        return;
-    }
-
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
             static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
 
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
         ASSERT(SharedWorkerContextManager::singleton().connection());
         if (auto* contextManagerConnection = SharedWorkerContextManager::singleton().connection())
             static_cast<WebSharedWorkerContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
-        return;
+        return true;
     }
+    return false;
+}
 
+bool WebProcess::filterUnhandledMessage(IPC::Connection&, IPC::Decoder& decoder)
+{
+    // Note: due to receiving messages to non-existing IDs, we have to filter the messages.
+    // This should be removed once these messages are fixed.
     LOG_ERROR("Unhandled web process message '%s' (destination: %" PRIu64 " pid: %d)", description(decoder.messageName()).characters(), decoder.destinationID(), static_cast<int>(getCurrentProcessID()));
+    return true;
 }
 
 void WebProcess::didClose(IPC::Connection& connection)
@@ -1236,7 +1224,6 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(connectionInfo.auditToken ? std::optional(connectionInfo.auditToken->auditToken()) : std::nullopt);
 #endif
-        setNetworkProcessConnectionID(m_networkProcessConnection->connection().uniqueID());
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
@@ -1290,7 +1277,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
     for (auto key : copyToVector(m_storageAreaMaps.keys())) {
-        if (auto map = m_storageAreaMaps.get(key))
+        if (RefPtr map = m_storageAreaMaps.get(key).get())
             map->disconnect();
     }
 
@@ -1309,11 +1296,10 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         SWContextManager::singleton().stopAllServiceWorkers();
 
     m_networkProcessConnection = nullptr;
-    setNetworkProcessConnectionID({ });
 
     logDiagnosticMessageForNetworkProcessCrash();
 
-    m_webLoaderStrategy.networkProcessCrashed();
+    m_webLoaderStrategy->networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
     m_broadcastChannelRegistry->networkProcessCrashed();
 
@@ -1412,6 +1398,11 @@ LibWebRTCCodecs& WebProcess::libWebRTCCodecs()
     if (!m_libWebRTCCodecs)
         m_libWebRTCCodecs = LibWebRTCCodecs::create();
     return *m_libWebRTCCodecs;
+}
+
+Ref<LibWebRTCCodecs> WebProcess::protectedLibWebRTCCodecs()
+{
+    return libWebRTCCodecs();
 }
 #endif
 
@@ -2220,6 +2211,14 @@ void WebProcess::updateDomainsWithStorageAccessQuirks(HashSet<WebCore::Registrab
         m_domainsWithStorageAccessQuirks.add(domain);
 }
 
+void WebProcess::updateScriptTelemetryFilter(ScriptTelemetryRules&& rules)
+{
+    if (rules.isEmpty())
+        return;
+
+    m_scriptTelemetryFilter = WTF::makeUnique<ScriptTelemetryFilter>(WTFMove(rules));
+}
+
 void WebProcess::setChildProcessDebuggabilityEnabled(bool childProcessDebuggabilityEnabled)
 {
     m_childProcessDebuggabilityEnabled = childProcessDebuggabilityEnabled;
@@ -2376,19 +2375,6 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
 }
 #endif
 
-IPC::Connection::UniqueID WebProcess::networkProcessConnectionID()
-{
-    Locker lock { m_lockNetworkProcessConnectionID };
-    return m_networkProcessConnectionID;
-}
-
-void WebProcess::setNetworkProcessConnectionID(IPC::Connection::UniqueID uniqueID)
-{
-    Locker lock { m_lockNetworkProcessConnectionID };
-    m_networkProcessConnectionID = uniqueID;
-
-}
-
 WebTransportSession* WebProcess::webTransportSession(WebTransportSessionIdentifier identifier)
 {
     return m_webTransportSessions.get(identifier).get();
@@ -2411,6 +2397,18 @@ void WebProcess::updateCachedCookiesEnabled()
     for (auto& document : Document::allDocuments())
         document->updateCachedCookiesEnabled();
 }
+
+bool WebProcess::requiresScriptTelemetryForURL(const URL& url, const WebCore::SecurityOrigin& topOrigin) const
+{
+    return m_scriptTelemetryFilter && m_scriptTelemetryFilter->matches(url, topOrigin);
+}
+
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+Ref<RemoteMediaPlayerManager> WebProcess::protectedRemoteMediaPlayerManager()
+{
+    return m_remoteMediaPlayerManager;
+}
+#endif
 
 } // namespace WebKit
 

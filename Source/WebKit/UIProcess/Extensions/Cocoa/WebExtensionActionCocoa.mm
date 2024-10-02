@@ -459,12 +459,11 @@ static void* kvoContext = &kvoContext;
 
         [self _updateDetentForSheetPresentationController:dynamic_objc_cast<UISheetPresentationController>(presentationController)];
     } else {
-        CGSize boundsSize = _popupWebView.bounds.size;
         CGSize contentSize = _popupWebView.scrollView.contentSize;
         CGSize desiredSize = CGSizeMake(std::min(contentSize.width, maximumPopoverWidth), std::min(contentSize.height, maximumPopoverHeight));
 
-        CGFloat minimumWidth = std::min(desiredSize.width, boundsSize.width);
-        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, boundsSize.height) : minimumPopoverHeight;
+        CGFloat minimumWidth = desiredSize.width;
+        CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, minimumPopoverHeight) : minimumPopoverHeight;
         CGSize minimumLayoutSize = CGSizeMake(minimumWidth, minimumHeight);
 
         [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:CGSizeZero];
@@ -601,20 +600,6 @@ bool WebExtensionAction::operator==(const WebExtensionAction& other) const
 WebExtensionContext* WebExtensionAction::extensionContext() const
 {
     return m_extensionContext.get();
-}
-
-RefPtr<WebExtensionTab> WebExtensionAction::tab() const
-{
-    return m_tab.and_then([](auto const& maybeTab) {
-        return std::optional(RefPtr(maybeTab.get()));
-    }).value_or(nullptr);
-}
-
-RefPtr<WebExtensionWindow> WebExtensionAction::window() const
-{
-    return m_window.and_then([](auto const& maybeWindow) {
-        return std::optional(RefPtr(maybeWindow.get()));
-    }).value_or(nullptr);
 }
 
 void WebExtensionAction::clearCustomizations()
@@ -798,7 +783,7 @@ void WebExtensionAction::setPopupPath(String path)
 NSString *WebExtensionAction::popupWebViewInspectionName()
 {
     if (m_popupWebViewInspectionName.isEmpty())
-        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", (__bridge CFStringRef)extensionContext()->extension().displayShortName());
+        m_popupWebViewInspectionName = WEB_UI_FORMAT_CFSTRING("%@ — Extension Popup Page", "Label for an inspectable Web Extension popup page", extensionContext()->extension().displayShortName().createCFString().get());
 
     return m_popupWebViewInspectionName;
 }

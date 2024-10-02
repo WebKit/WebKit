@@ -29,6 +29,7 @@
 #include "StylePropertiesInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

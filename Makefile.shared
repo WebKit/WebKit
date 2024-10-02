@@ -198,7 +198,7 @@ testing t: force
 	@$(call invoke_xcode,,)
 
 analyze:
-	@$(call set_webkit_configuration,--debug)
+	@$(call set_webkit_configuration,)
 	@$(call invoke_xcode,analyze,$(ANALYZER_XCODE_SETTINGS)) || true
 	@for dir in $$(ls -d $(ANALYZER_OUTPUT)/StaticAnalyzer/*); do \
 		mkdir -p $$dir/StaticAnalyzerReports; \

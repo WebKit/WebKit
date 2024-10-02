@@ -39,7 +39,13 @@ public:
     WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
 #endif
 
-    WEBCORE_EXPORT explicit DestinationColorSpace(PlatformColorSpace);
+    explicit DestinationColorSpace(PlatformColorSpace platformColorSpace)
+        : m_platformColorSpace { WTFMove(platformColorSpace) }
+    {
+#if USE(CG) || USE(SKIA)
+        ASSERT(m_platformColorSpace);
+#endif
+    }
 
 #if USE(SKIA)
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace; }

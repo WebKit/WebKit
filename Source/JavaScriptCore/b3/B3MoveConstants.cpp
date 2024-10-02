@@ -378,12 +378,10 @@ private:
     {
         switch (value->opcode()) {
         case ConstDouble: {
-            double doubleZero = 0.0;
-            return bitwise_cast<uint64_t>(value->asDouble()) != bitwise_cast<uint64_t>(doubleZero);
+            return !Air::Arg::isValidFPImm64Form(bitwise_cast<uint64_t>(value->asDouble()));
         }
         case ConstFloat: {
-            float floatZero = 0.0;
-            return bitwise_cast<uint32_t>(value->asFloat()) != bitwise_cast<uint32_t>(floatZero);
+            return !Air::Arg::isValidFPImm32Form(bitwise_cast<uint32_t>(value->asFloat()));
         }
         case Const128: {
             return !bitEquals(value->asV128(), v128_t { });

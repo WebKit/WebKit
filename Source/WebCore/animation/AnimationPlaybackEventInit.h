@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct AnimationPlaybackEventInit : EventInit {
-    MarkableDouble currentTime;
-    MarkableDouble timelineTime;
+    std::optional<CSSNumberishTime> currentTime;
+    std::optional<CSSNumberishTime> timelineTime;
 };
 
 }

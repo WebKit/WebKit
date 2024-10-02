@@ -778,11 +778,11 @@ bool PlaybackSessionModelMediaElement::isInWindowFullscreenActive() const
 }
 
 #if !RELEASE_LOG_DISABLED
-const void* PlaybackSessionModelMediaElement::logIdentifier() const
+uint64_t PlaybackSessionModelMediaElement::logIdentifier() const
 {
     if (RefPtr mediaElement = m_mediaElement)
         return mediaElement->logIdentifier();
-    return nullptr;
+    return 0;
 }
 
 const Logger* PlaybackSessionModelMediaElement::loggerPtr() const

@@ -57,7 +57,7 @@ private:
     void beforeStart() final;
 
     // FrameLoadStateObserver
-    void didFinishLoad() final;
+    void didFinishLoad(IsMainFrame, const URL&) final;
 
     void appendRequestToLoad(URL&&, Supplement&&);
     void loadRequestToFrame();

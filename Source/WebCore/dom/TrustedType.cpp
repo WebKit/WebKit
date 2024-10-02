@@ -304,10 +304,8 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
 
 ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, JSC::JSValue bodyArgument)
 {
-    VM& vm = scriptExecutionContext.vm();
-
     if (bodyArgument.isObject())
-        return JSTrustedScript::toWrapped(vm, bodyArgument) ? true : false;
+        return JSTrustedScript::toWrapped(scriptExecutionContext.vm(), bodyArgument) ? true : false;
 
     ASSERT(bodyArgument.isString());
 

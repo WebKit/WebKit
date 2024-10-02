@@ -60,7 +60,7 @@ public:
 
     const CSSNumericType& type() const { return m_type; }
     
-    static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);
+    static ExceptionOr<Ref<CSSNumericValue>> parse(Document&, String&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
     // https://drafts.css-houdini.org/css-typed-om/#sum-value-value

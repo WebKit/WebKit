@@ -41,6 +41,8 @@ class PictureInPictureWindow final
     , public RefCounted<PictureInPictureWindow> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PictureInPictureWindow);
 public:
+    DEFINE_VIRTUAL_REFCOUNTED;
+
     static Ref<PictureInPictureWindow> create(Document&);
     virtual ~PictureInPictureWindow();
 
@@ -48,10 +50,6 @@ public:
     int height() const { return m_size.height(); }
     void setSize(const IntSize&);
     void close();
-
-    // ActiveDOMObject.
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
 private:
     PictureInPictureWindow(Document&);

@@ -30,6 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "WebCoreOpaqueRoot.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
@@ -48,6 +49,7 @@ class TrackBase
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(TrackBase);
 public:
     virtual ~TrackBase();
 
@@ -77,9 +79,9 @@ public:
     virtual bool enabled() const = 0;
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogger(const Logger&, const void*);
+    virtual void setLogger(const Logger&, uint64_t);
     const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -111,13 +113,14 @@ private:
     AtomString m_validBCP47Language;
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    uint64_t m_logIdentifier { 0 };
 #endif
     WeakPtr<TrackListBase, WeakPtrImplWithEventTargetData> m_trackList;
     size_t m_clientRegistrationId;
 };
 
 class MediaTrackBase : public TrackBase {
+    WTF_MAKE_TZONE_ALLOCATED(MediaTrackBase);
 public:
     const AtomString& kind() const { return m_kind; }
     virtual void setKind(const AtomString&);

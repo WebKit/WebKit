@@ -39,11 +39,14 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace XPath {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Function);
 
 static inline bool isWhitespace(UChar c)
 {
@@ -68,6 +71,7 @@ private:
 };
 
 class FunLast final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLast);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 public:
@@ -75,6 +79,7 @@ public:
 };
 
 class FunPosition final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunPosition);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 public:
@@ -82,16 +87,19 @@ public:
 };
 
 class FunCount final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCount);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunId final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunId);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::NodeSet; }
 };
 
 class FunLocalName final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLocalName);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 public:
@@ -99,6 +107,7 @@ public:
 };
 
 class FunNamespaceURI final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNamespaceURI);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 public:
@@ -106,6 +115,7 @@ public:
 };
 
 class FunName final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunName);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 public:
@@ -113,6 +123,7 @@ public:
 };
 
 class FunString final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunString);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 public:
@@ -120,36 +131,43 @@ public:
 };
 
 class FunConcat final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunConcat);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunStartsWith final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStartsWith);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunContains final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunContains);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunSubstringBefore final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringBefore);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunSubstringAfter final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstringAfter);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunSubstring final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSubstring);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunStringLength final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunStringLength);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 public:
@@ -157,6 +175,7 @@ public:
 };
 
 class FunNormalizeSpace final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNormalizeSpace);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 public:
@@ -164,31 +183,37 @@ public:
 };
 
 class FunTranslate final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTranslate);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::String; }
 };
 
 class FunBoolean final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunBoolean);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunNot : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNot);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunTrue final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunTrue);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunFalse final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFalse);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 };
 
 class FunLang final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunLang);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Boolean; }
 public:
@@ -196,6 +221,7 @@ public:
 };
 
 class FunNumber final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunNumber);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 public:
@@ -203,21 +229,25 @@ public:
 };
 
 class FunSum final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunSum);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunFloor final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunFloor);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunCeiling final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunCeiling);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 };
 
 class FunRound final : public Function {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FunRound);
     Value evaluate() const override;
     Value::Type resultType() const override { return Value::Type::Number; }
 public:

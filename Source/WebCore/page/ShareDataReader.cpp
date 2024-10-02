@@ -93,9 +93,7 @@ void ShareDataReader::didFinishLoading(int loadIndex, const String& fileName)
 
 void ShareDataReader::cancel()
 {
-    // Don't call m_pendingFileLoads.clear() here since destroying a BlobLoader will cause its completion handler
-    // to get called, which will call didFinishLoading() and try to access m_pendingFileLoads.
-    std::exchange(m_pendingFileLoads, { });
+    m_pendingFileLoads.clear();
 }
 
 }

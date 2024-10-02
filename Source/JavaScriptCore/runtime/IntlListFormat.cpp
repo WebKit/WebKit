@@ -33,19 +33,12 @@
 
 // While UListFormatter APIs are draft in ICU 67, they are stable in ICU 68 with the same function signatures.
 // So we can assume that these signatures of draft APIs are stable.
-#if HAVE(ICU_U_LIST_FORMATTER)
 #ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
 #endif
-#endif
 #include <unicode/ulistformatter.h>
-#if HAVE(ICU_U_LIST_FORMATTER)
 #define U_HIDE_DRAFT_API 1
-#endif
-
-#if HAVE(ICU_U_LIST_FORMATTER)
 #include <unicode/uformattedvalue.h>
-#endif
 
 namespace JSC {
 
@@ -112,7 +105,6 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow } }, "style must be either \"long\", \"short\", or \"narrow\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     auto toUListFormatterType = [](Type type) {
         switch (type) {
         case Type::Conjunction:
@@ -143,13 +135,8 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
         throwTypeError(globalObject, scope, "failed to initialize ListFormat"_s);
         return;
     }
-#else
-    throwTypeError(globalObject, scope, "Failed to initialize Intl.ListFormat since this feature is not supported in the linked ICU version"_s);
-    return;
-#endif
 }
 
-#if HAVE(ICU_U_LIST_FORMATTER)
 static Vector<String, 4> stringListFromIterable(JSGlobalObject* globalObject, JSValue iterable)
 {
     Vector<String, 4> result;
@@ -169,7 +156,6 @@ static Vector<String, 4> stringListFromIterable(JSGlobalObject* globalObject, JS
     });
     return result;
 }
-#endif
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.format
 JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
@@ -177,7 +163,6 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     auto stringList = stringListFromIterable(globalObject, list);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -189,10 +174,6 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
     return jsString(vm, String(WTFMove(result)));
-#else
-    UNUSED_PARAM(list);
-    return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-#endif
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.formatToParts
@@ -201,7 +182,6 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     auto stringList = stringListFromIterable(globalObject, list);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -287,10 +267,6 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
     }
 
     return parts;
-#else
-    UNUSED_PARAM(list);
-    return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-#endif
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.resolvedOptions

@@ -86,6 +86,7 @@ namespace WebKit {
 
 class PaymentSetupConfiguration;
 class PaymentSetupFeatures;
+struct SharedPreferencesForWebProcess;
 
 class WebPaymentCoordinatorProxy
     : public IPC::MessageReceiver
@@ -112,6 +113,7 @@ public:
 #endif
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
+        virtual const SharedPreferencesForWebProcess& sharedPreferencesForWebPaymentMessages() const = 0;
     };
 
     friend class NetworkConnectionToWebProcess;
@@ -119,6 +121,7 @@ public:
     ~WebPaymentCoordinatorProxy();
 
     void webProcessExited();
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_client.sharedPreferencesForWebPaymentMessages(); }
 
 private:
     // IPC::MessageReceiver

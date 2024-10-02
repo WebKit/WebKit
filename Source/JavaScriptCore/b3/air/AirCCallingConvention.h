@@ -44,6 +44,7 @@ class Code;
 Vector<Arg> computeCCallingConvention(Code&, CCallValue*);
 
 size_t cCallResultCount(Code&, CCallValue*);
+bool cCallArgumentEvenRegisterAlignment(Type);
 
 /*
  * On some platforms (well, on 32-bit platforms,) C functions can take arguments

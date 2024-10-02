@@ -31,6 +31,7 @@ namespace WebCore {
 namespace Layout {
 
 class FlexFormattingContext;
+class LogicalFlexItem;
 
 // Helper class for flex layout.
 class FlexFormattingUtils {
@@ -39,6 +40,12 @@ public:
 
     static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
     static bool isReversedToContentDirection(const ElementBox& flexBox);
+
+    LayoutUnit usedMinimumMainSize(const LogicalFlexItem&) const;
+    std::optional<LayoutUnit> usedMaxiumMainSize(const LogicalFlexItem&) const;
+
+private:
+    const FlexFormattingContext& formattingContext() const { return m_flexFormattingContext; }
 
 private:
     const FlexFormattingContext& m_flexFormattingContext;

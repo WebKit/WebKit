@@ -30,11 +30,12 @@
 #include "NicosiaBuffer.h"
 
 #if USE(SKIA)
+#include "BitmapTexture.h"
 #include "FontRenderOptions.h"
 #include "GLContext.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
-#include <skia/core/SkCanvas.h>
+#include "ProcessCapabilities.h"
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
@@ -50,6 +51,8 @@
 #include <GLES3/gl3.h>
 #endif
 #endif
+
+#include "PixelFormat.h"
 
 namespace Nicosia {
 using namespace WebCore;
@@ -73,12 +76,21 @@ double Buffer::getMemoryUsage()
     return memoryUsage;
 }
 
+#if USE(SKIA)
+SkCanvas* Buffer::canvas()
+{
+    if (!tryEnsureSurface())
+        return nullptr;
+    return m_surface->getCanvas();
+}
+#endif
+
 Ref<Buffer> UnacceleratedBuffer::create(const WebCore::IntSize& size, Flags flags)
 {
     return adoptRef(*new UnacceleratedBuffer(size, flags));
 }
 
-UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags flags)
+UnacceleratedBuffer::UnacceleratedBuffer(const IntSize& size, Flags flags)
     : Buffer(flags)
     , m_size(size)
 {
@@ -90,13 +102,17 @@ UnacceleratedBuffer::UnacceleratedBuffer(const WebCore::IntSize& size, Flags fla
         s_currentLayersMemoryUsage += checkedArea;
         s_maxLayersMemoryUsage = std::max(s_maxLayersMemoryUsage, s_currentLayersMemoryUsage);
     }
+}
 
+PixelFormat UnacceleratedBuffer::pixelFormat() const
+{
 #if USE(SKIA)
-    auto imageInfo = SkImageInfo::MakeN32Premul(size.width(), size.height(), SkColorSpace::MakeSRGB());
-    // FIXME: ref buffer and unref on release proc?
-    SkSurfaceProps properties = { 0, WebCore::FontRenderOptions::singleton().subpixelOrder() };
-    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
+    // For GPU/hybrid rendering, prefer RGBA, otherwise use BGRA.
+    if (ProcessCapabilities::canUseAcceleratedBuffers())
+        return PixelFormat::RGBA8;
 #endif
+
+    return PixelFormat::BGRA8;
 }
 
 UnacceleratedBuffer::~UnacceleratedBuffer()
@@ -107,6 +123,21 @@ UnacceleratedBuffer::~UnacceleratedBuffer()
         s_currentLayersMemoryUsage -= checkedArea;
     }
 }
+
+#if USE(SKIA)
+bool UnacceleratedBuffer::tryEnsureSurface()
+{
+    if (m_surface)
+        return true;
+
+    auto colorType = pixelFormat() == PixelFormat::BGRA8 ? kBGRA_8888_SkColorType : kRGBA_8888_SkColorType;
+    auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
+    // FIXME: ref buffer and unref on release proc?
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
+    return true;
+}
+#endif
 
 void UnacceleratedBuffer::beginPainting()
 {
@@ -121,6 +152,11 @@ void UnacceleratedBuffer::completePainting()
     ASSERT(m_painting.state == PaintingState::InProgress);
     m_painting.state = PaintingState::Complete;
     m_painting.condition.notifyOne();
+
+#if USE(SKIA)
+    // Surface is no longer needed, destroy it here (in the same thread that created it).
+    m_surface = nullptr;
+#endif
 }
 
 void UnacceleratedBuffer::waitUntilPaintingComplete()
@@ -132,41 +168,61 @@ void UnacceleratedBuffer::waitUntilPaintingComplete()
 }
 
 #if USE(SKIA)
-Ref<Buffer> AcceleratedBuffer::create(sk_sp<SkSurface>&& surface, Flags flags)
+Ref<Buffer> AcceleratedBuffer::create(Ref<BitmapTexture>&& texture)
 {
-    return adoptRef(*new AcceleratedBuffer(WTFMove(surface), flags));
+    auto flags = Nicosia::Buffer::Flags { texture->isOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha };
+    return adoptRef(*new AcceleratedBuffer(WTFMove(texture), flags));
 }
 
-AcceleratedBuffer::AcceleratedBuffer(sk_sp<SkSurface>&& surface, Flags flags)
+AcceleratedBuffer::AcceleratedBuffer(Ref<BitmapTexture>&& texture, Flags flags)
     : Buffer(flags)
+    , m_texture(WTFMove(texture))
 {
-    m_surface = WTFMove(surface);
 }
 
 AcceleratedBuffer::~AcceleratedBuffer()
 {
-    ensureOnMainThread([surface = WTFMove(m_surface), fence = WTFMove(m_fence)]() mutable {
+    ensureOnMainThread([fence = WTFMove(m_fence)]() mutable {
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
         fence = nullptr;
-        surface = nullptr;
     });
 }
 
 WebCore::IntSize AcceleratedBuffer::size() const
 {
-    return { m_surface->width(), m_surface->height() };
+    return m_texture->size();
 }
 
-void AcceleratedBuffer::beginPainting()
+bool AcceleratedBuffer::tryEnsureSurface()
 {
-    m_surface->getCanvas()->save();
-    m_surface->getCanvas()->clear(SkColors::kTransparent);
+    if (m_surface)
+        return true;
+
+    if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
+        return false;
+
+    GrGLTextureInfo externalTexture;
+    externalTexture.fTarget = GL_TEXTURE_2D;
+    externalTexture.fID = m_texture->id();
+    externalTexture.fFormat = GL_RGBA8;
+
+    const auto& size = m_texture->size();
+    auto backendTexture = GrBackendTextures::MakeGL(size.width(), size.height(), skgpu::Mipmapped::kNo, externalTexture);
+
+    SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
+    m_surface = SkSurfaces::WrapBackendTexture(PlatformDisplay::sharedDisplay().skiaGrContext(),
+        backendTexture,
+        kTopLeft_GrSurfaceOrigin,
+        PlatformDisplay::sharedDisplay().msaaSampleCount(),
+        kRGBA_8888_SkColorType,
+        SkColorSpace::MakeSRGB(),
+        &properties);
+
+    return true;
 }
 
 void AcceleratedBuffer::completePainting()
 {
-    m_surface->getCanvas()->restore();
-
     auto* grContext = WebCore::PlatformDisplay::sharedDisplay().skiaGrContext();
     if (WebCore::GLFence::isSupported()) {
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kNo);
@@ -176,13 +232,8 @@ void AcceleratedBuffer::completePainting()
     } else
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kYes);
 
-    auto texture = SkSurfaces::GetBackendTexture(m_surface.get(), SkSurface::BackendHandleAccess::kFlushRead);
-    ASSERT(texture.isValid());
-    GrGLTextureInfo textureInfo;
-    bool retrievedTextureInfo = GrBackendTextures::GetGLTextureInfo(texture, &textureInfo);
-    ASSERT_UNUSED(retrievedTextureInfo, retrievedTextureInfo);
-    m_textureID = textureInfo.fID;
-    RELEASE_ASSERT(m_textureID > 0);
+    // Surface is no longer needed, destroy it here (in the same thread that created it).
+    m_surface = nullptr;
 }
 
 void AcceleratedBuffer::waitUntilPaintingComplete()

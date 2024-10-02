@@ -25,8 +25,12 @@
 
 #import "config.h"
 #import "RemoteObjectInvocation.h"
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteObjectInvocation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RemoteObjectInvocationReplyInfo, RemoteObjectInvocation::ReplyInfo);
 
 RemoteObjectInvocation::RemoteObjectInvocation() = default;
 

@@ -63,10 +63,8 @@ public:
 
     void optimizeAfterWarmUp()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
-        else
-            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+        setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
+        ASSERT(Options::useWasmIPInt() || checkIfOptimizationThresholdReached());
     }
 
     bool checkIfOptimizationThresholdReached()
@@ -76,10 +74,7 @@ public:
 
     void optimizeSoon()
     {
-        if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeSoon());
-        else
-            setNewThreshold(Options::thresholdForOMGOptimizeSoon());
+        setNewThreshold(Options::thresholdForBBQOptimizeSoon());
     }
 
     const OSREntryData& osrEntryDataForLoop(IPIntPC offset) const

@@ -29,6 +29,7 @@
 #include "UserMessage.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/NotImplemented.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <wtf/FileSystem.h>
@@ -74,22 +75,14 @@ void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
 
 void WebProcessProxy::platformSuspendProcess()
 {
-    auto id = processID();
-    if (!id)
-        return;
-
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, id);
-    kill(id, SIGSTOP);
+    // FIXME: https://webkit.org/b/280014
+    notImplemented();
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
-    auto id = processID();
-    if (!id)
-        return;
-
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, id);
-    kill(id, SIGCONT);
+    // FIXME: https://webkit.org/b/280014
+    notImplemented();
 }
 
 } // namespace WebKit

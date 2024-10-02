@@ -58,121 +58,121 @@ TEST(WKWebExtensionMatchPattern, PatternValidity)
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"\" cannot be parsed because it doesn't have a scheme.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"\" cannot be parsed because it doesn't have a scheme.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://www.example.com", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://www.example.com\" cannot be parsed because it doesn't have a path.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://www.example.com\" cannot be parsed because it doesn't have a path.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://www.example.com:8080/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://www.example.com:8080/\" cannot be parsed because the host \"www.example.com:8080\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://www.example.com:8080/\" cannot be parsed because the host \"www.example.com:8080\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://[::1]:8080/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://[::1]:8080/\" cannot be parsed because the host \"[::1]:8080\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://[::1]:8080/\" cannot be parsed because the host \"[::1]:8080\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://user@www.example.com/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://user@www.example.com/\" cannot be parsed because the host \"user@www.example.com\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://user@www.example.com/\" cannot be parsed because the host \"user@www.example.com\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://user:password@www.example.com/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://user:password@www.example.com/\" cannot be parsed because the host \"user:password@www.example.com\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://user:password@www.example.com/\" cannot be parsed because the host \"user:password@www.example.com\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"file://localhost", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"file://localhost\" cannot be parsed because it doesn't have a path.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"file://localhost\" cannot be parsed because it doesn't have a path.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"file://", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"file://\" cannot be parsed because it doesn't have a path.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"file://\" cannot be parsed because it doesn't have a path.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://*foo/bar", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://*foo/bar\" cannot be parsed because the host \"*foo\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://*foo/bar\" cannot be parsed because the host \"*foo\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http://foo.*.bar/baz", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http://foo.*.bar/baz\" cannot be parsed because the host \"foo.*.bar\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http://foo.*.bar/baz\" cannot be parsed because the host \"foo.*.bar\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"http:/bar", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"http:/bar\" cannot be parsed because it doesn't have a scheme.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"http:/bar\" cannot be parsed because it doesn't have a scheme.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"foo://*", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"\"foo://*\" cannot be parsed because the scheme \"foo\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"\"foo://*\" cannot be parsed because the scheme \"foo\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"foo", @"*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"foo\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Scheme \"foo\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"example.*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"example.*\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"example.*\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"*.example.com:8080", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"*.example.com:8080\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"*.example.com:8080\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"[::1]:8080", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"[::1]:8080\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"[::1]:8080\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"user@example.*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user@example.*\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"user@example.*\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"user@example.*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user@example.*\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"user@example.*\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"user:password@example.*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Host \"user:password@example.*\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Host \"user:password@example.*\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"https", @"example.com", @"*", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Path \"*\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Path \"*\" is invalid.");
     }
 }
 
@@ -557,13 +557,13 @@ TEST(WKWebExtensionMatchPattern, CustomURLScheme)
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"foo", @"*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"foo\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Scheme \"foo\" is invalid.");
     }
 
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"bar", @"*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Scheme \"bar\" is invalid.");
     }
 
     [WKWebExtensionMatchPattern registerCustomURLScheme:@"foo"];
@@ -577,7 +577,7 @@ TEST(WKWebExtensionMatchPattern, CustomURLScheme)
     {
         NSError *error;
         EXPECT_NULL(toPatternAlloc(@"bar", @"*", @"/", &error));
-        EXPECT_NS_EQUAL(error.userInfo[NSDebugDescriptionErrorKey], @"Scheme \"bar\" is invalid.");
+        EXPECT_NS_EQUAL(error.localizedDescription, @"Scheme \"bar\" is invalid.");
     }
 
     [WKWebExtensionMatchPattern registerCustomURLScheme:@"bar"];

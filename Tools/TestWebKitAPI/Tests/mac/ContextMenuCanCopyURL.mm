@@ -94,7 +94,7 @@ TEST(WebKitLegacy, ContextMenuCanCopyURL)
     [window.get().contentView addSubview:webView.get()];
     webView.get().frameLoadDelegate = delegate.get();
 
-    [webView.get().mainFrame loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"ContextMenuCanCopyURL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+    [webView.get().mainFrame loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"ContextMenuCanCopyURL" withExtension:@"html"]]];
     
     Util::run(&didFinishLoad);
 

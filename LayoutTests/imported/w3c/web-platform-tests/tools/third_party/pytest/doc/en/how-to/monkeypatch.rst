@@ -3,7 +3,7 @@
 How to monkeypatch/mock modules and environments
 ================================================================
 
-.. currentmodule:: pytest
+.. currentmodule:: _pytest.monkeypatch
 
 Sometimes tests need to invoke functionality which depends
 on global settings or which invokes code which cannot be easily
@@ -14,16 +14,17 @@ environment variable, or to modify ``sys.path`` for importing.
 The ``monkeypatch`` fixture provides these helper methods for safely patching and mocking
 functionality in tests:
 
-* :meth:`monkeypatch.setattr(obj, name, value, raising=True) <pytest.MonkeyPatch.setattr>`
-* :meth:`monkeypatch.delattr(obj, name, raising=True) <pytest.MonkeyPatch.delattr>`
-* :meth:`monkeypatch.setitem(mapping, name, value) <pytest.MonkeyPatch.setitem>`
-* :meth:`monkeypatch.delitem(obj, name, raising=True) <pytest.MonkeyPatch.delitem>`
-* :meth:`monkeypatch.setenv(name, value, prepend=None) <pytest.MonkeyPatch.setenv>`
-* :meth:`monkeypatch.delenv(name, raising=True) <pytest.MonkeyPatch.delenv>`
-* :meth:`monkeypatch.syspath_prepend(path) <pytest.MonkeyPatch.syspath_prepend>`
-* :meth:`monkeypatch.chdir(path) <pytest.MonkeyPatch.chdir>`
-* :meth:`monkeypatch.context() <pytest.MonkeyPatch.context>`
+.. code-block:: python
 
+    monkeypatch.setattr(obj, name, value, raising=True)
+    monkeypatch.setattr("somemodule.obj.name", value, raising=True)
+    monkeypatch.delattr(obj, name, raising=True)
+    monkeypatch.setitem(mapping, name, value)
+    monkeypatch.delitem(obj, name, raising=True)
+    monkeypatch.setenv(name, value, prepend=None)
+    monkeypatch.delenv(name, raising=True)
+    monkeypatch.syspath_prepend(path)
+    monkeypatch.chdir(path)
 
 All modifications will be undone after the requesting
 test function or fixture has finished. The ``raising``
@@ -54,16 +55,13 @@ during a test.
 5. Use :py:meth:`monkeypatch.syspath_prepend <MonkeyPatch.syspath_prepend>` to modify ``sys.path`` which will also
 call ``pkg_resources.fixup_namespace_packages`` and :py:func:`importlib.invalidate_caches`.
 
-6. Use :py:meth:`monkeypatch.context <MonkeyPatch.context>` to apply patches only in a specific scope, which can help
-control teardown of complex fixtures or patches to the stdlib.
-
 See the `monkeypatch blog post`_ for some introduction material
 and a discussion of its motivation.
 
 .. _`monkeypatch blog post`: https://tetamap.wordpress.com//2009/03/03/monkeypatching-in-unit-tests-done-right/
 
-Monkeypatching functions
-------------------------
+Simple example: monkeypatching functions
+----------------------------------------
 
 Consider a scenario where you are working with user directories. In the context of
 testing, you do not want your test to depend on the running user. ``monkeypatch``
@@ -135,10 +133,10 @@ This can be done in our test file by defining a class to represent ``r``.
     # this is the previous code block example
     import app
 
-
     # custom class to be the mock return value
     # will override the requests.Response returned from requests.get
     class MockResponse:
+
         # mock json() method always returns a specific testing dictionary
         @staticmethod
         def json():
@@ -146,6 +144,7 @@ This can be done in our test file by defining a class to represent ``r``.
 
 
     def test_get_json(monkeypatch):
+
         # Any arguments may be passed and mock_get() will always return our
         # mocked object, which only has the .json() method.
         def mock_get(*args, **kwargs):
@@ -179,7 +178,6 @@ This mock can be shared across tests using a ``fixture``:
 
     # app.py that includes the get_json() function
     import app
-
 
     # custom class to be the mock return value of requests.get()
     class MockResponse:
@@ -358,6 +356,7 @@ For testing purposes we can patch the ``DEFAULT_CONFIG`` dictionary to specific 
 
 
     def test_connection(monkeypatch):
+
         # Patch the values of DEFAULT_CONFIG to specific
         # testing values only for this test.
         monkeypatch.setitem(app.DEFAULT_CONFIG, "user", "test_user")
@@ -382,6 +381,7 @@ You can use the :py:meth:`monkeypatch.delitem <MonkeyPatch.delitem>` to remove v
 
 
     def test_missing_user(monkeypatch):
+
         # patch the DEFAULT_CONFIG t be missing the 'user' key
         monkeypatch.delitem(app.DEFAULT_CONFIG, "user", raising=False)
 
@@ -401,7 +401,6 @@ separate fixtures for each potential mock and reference them in the needed tests
 
     # app.py with the connection string function
     import app
-
 
     # all of the mocks are moved into separated fixtures
     @pytest.fixture
@@ -424,6 +423,7 @@ separate fixtures for each potential mock and reference them in the needed tests
 
     # tests reference only the fixture mocks that are needed
     def test_connection(mock_test_user, mock_test_database):
+
         expected = "User Id=test_user; Location=test_db;"
 
         result = app.create_connection_string()
@@ -431,11 +431,12 @@ separate fixtures for each potential mock and reference them in the needed tests
 
 
     def test_missing_user(mock_missing_default_user):
+
         with pytest.raises(KeyError):
             _ = app.create_connection_string()
 
 
-.. currentmodule:: pytest
+.. currentmodule:: _pytest.monkeypatch
 
 API Reference
 -------------

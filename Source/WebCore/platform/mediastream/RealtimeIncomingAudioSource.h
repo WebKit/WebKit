@@ -94,7 +94,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     mutable RefPtr<const Logger> m_logger;
-    const void* m_logIdentifier;
+    uint64_t m_logIdentifier { 0 };
 #endif
 };
 

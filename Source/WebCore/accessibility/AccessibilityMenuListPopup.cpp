@@ -77,7 +77,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMenuListPo
         addChildren();
 
     AccessibilityChildrenVector result;
-    for (const auto& child : m_children) {
+    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
         auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get());
         if (liveChild && liveChild->isMenuListOption() && liveChild->isSelected())
             result.append(child.get());
@@ -127,8 +127,9 @@ void AccessibilityMenuListPopup::handleChildrenChanged()
     if (!cache)
         return;
 
-    for (size_t i = m_children.size(); i > 0 ; --i) {
-        auto* child = m_children[i - 1].get();
+    const auto& children = unignoredChildren(/* updateChildrenIfNeeded */ false);
+    for (size_t i = children.size(); i > 0; --i) {
+        auto* child = children[i - 1].get();
         if (child->actionElement() && !child->actionElement()->inRenderedDocument()) {
             child->detachFromParent();
             cache->remove(child->objectID());
@@ -143,13 +144,14 @@ void AccessibilityMenuListPopup::handleChildrenChanged()
 void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
 {
     ASSERT_ARG(optionIndex, optionIndex >= 0);
-    ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(m_children.size()));
+    const auto& children = unignoredChildren(/* updateChildrenIfNeeded */ false);
+    ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(children.size()));
 
     auto* cache = axObjectCache();
     if (!cache)
         return;
 
-    RefPtr child = downcast<AccessibilityObject>(m_children[optionIndex].get());
+    RefPtr child = downcast<AccessibilityObject>(children[optionIndex].get());
     cache->postNotification(child.get(), document(), AXObjectCache::AXFocusedUIElementChanged);
     cache->postNotification(child.get(), document(), AXObjectCache::AXMenuListItemSelected);
 }

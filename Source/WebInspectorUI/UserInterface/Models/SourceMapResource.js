@@ -25,7 +25,7 @@
 
 WI.SourceMapResource = class SourceMapResource extends WI.Resource
 {
-    constructor(url, sourceMap)
+    constructor(url, sourceMap, {ignored} = {})
     {
         super(url);
 
@@ -33,6 +33,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         console.assert(sourceMap);
 
         this._sourceMap = sourceMap;
+        this._ignored = ignored || false;
 
         var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WI.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
@@ -54,6 +55,9 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
     // Public
 
     get sourceMap() { return this._sourceMap; }
+
+    get ignored() { return this._ignored; }
+    set ignored(ignored) { this._ignored = ignored; }
 
     get sourceMapDisplaySubpath()
     {

@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -217,6 +217,11 @@ void SVGImageElement::didMoveToNewDocument(Document& oldDocument, Document& newD
 {
     m_imageLoader.elementDidMoveToNewDocument(oldDocument);
     SVGGraphicsElement::didMoveToNewDocument(oldDocument, newDocument);
+}
+
+void SVGImageElement::decode(Ref<DeferredPromise>&& promise)
+{
+    return m_imageLoader.decode(WTFMove(promise));
 }
 
 }

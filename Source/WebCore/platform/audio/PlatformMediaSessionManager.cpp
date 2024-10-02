@@ -917,7 +917,7 @@ void PlatformMediaSessionManager::dumpSessionStates()
     StringBuilder builder;
 
     forEachSession([&](auto& session) {
-        builder.append('(', hex(reinterpret_cast<uintptr_t>(session.logIdentifier())), "): "_s, session.description(), "\n"_s);
+        builder.append('(', hex(session.logIdentifier()), "): "_s, session.description(), "\n"_s);
     });
 
     ALWAYS_LOG(LOGIDENTIFIER, " Sessions:\n", builder.toString());

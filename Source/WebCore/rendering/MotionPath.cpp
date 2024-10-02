@@ -74,10 +74,10 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     auto startingPositionForOffsetPosition = [&](const LengthPoint& offsetPosition, const FloatRect& referenceRect, RenderBlock& container) -> FloatPoint {
         // If offset-position is normal, the element does not have an offset starting position.
-        if (offsetPosition.x().isNormal())
+        if (offsetPosition.x.isNormal())
             return normalPositionForOffsetPath(pathOperation, referenceRect);
         // If offset-position is auto, use top / left corner of the box.
-        if (offsetPosition.x().isAuto())
+        if (offsetPosition.x.isAuto())
             return offsetFromContainer(renderer, container, referenceRect);
         return floatPointForLengthPoint(offsetPosition, referenceRect.size());
     };
@@ -96,7 +96,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     if (auto* rayPathOperation = dynamicDowncast<RayPathOperation>(pathOperation)) {
         auto startingPosition = rayPathOperation->position();
-        data.usedStartingPosition = startingPosition.x().isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
+        data.usedStartingPosition = startingPosition.x.isAuto() ? startingPositionForOffsetPosition(offsetPosition, data.containingBlockBoundingRect.rect(), *container) : floatPointForLengthPoint(startingPosition, data.containingBlockBoundingRect.rect().size());
     }
 
     return data;
@@ -125,7 +125,7 @@ void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const Tr
 {
     auto boundingBox = transformData.boundingBox;
     auto anchor = transformOrigin;
-    if (!offsetAnchor.x().isAuto())
+    if (!offsetAnchor.x.isAuto())
         anchor = floatPointForLengthPoint(offsetAnchor, boundingBox.size()) + boundingBox.location();
 
     // Shift element to the point on path specified by offset-path and offset-distance.

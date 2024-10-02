@@ -95,12 +95,4 @@ WallTime LoginStatus::expiry() const
     return WallTime::now() + m_timeToLive;
 }
 
-LoginStatus LoginStatus::isolatedCopy() const & {
-    return LoginStatus { m_domain.isolatedCopy(), m_username.isolatedCopy(), m_tokenType, m_authType, m_loggedInTime, m_timeToLive };
-}
-
-LoginStatus LoginStatus::isolatedCopy() && {
-    return LoginStatus { WTFMove(m_domain).isolatedCopy(), WTFMove(m_username).isolatedCopy(), m_tokenType, m_authType, m_loggedInTime, m_timeToLive };
-}
-
 }

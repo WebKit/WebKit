@@ -137,7 +137,7 @@ static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<Exc
     computeExceptionHandlerAndLoopEntrypointLocations(handlers, ignored, function, context, linkBuffer);
 }
 
-static inline void emitRethrowImpl(CCallHelpers& jit)
+static inline void emitThrowRefImpl(CCallHelpers& jit)
 {
     // JSWebAssemblyInstance in argumentGPR0
     // exception pointer in argumentGPR1
@@ -228,4 +228,4 @@ static inline void prepareForTailCall(CCallHelpers& jit, const B3::StackmapGener
 #endif // ENABLE(WEBASSEMBLY_OMGJIT)
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif // ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)

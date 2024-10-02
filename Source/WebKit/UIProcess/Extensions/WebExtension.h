@@ -34,6 +34,7 @@
 #include <WebCore/UserStyleSheetTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/JSONValues.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -165,14 +166,14 @@ public:
         WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
         WebCore::UserStyleLevel styleLevel { WebCore::UserStyleLevel::Author };
 
-        RetainPtr<NSArray> scriptPaths;
-        RetainPtr<NSArray> styleSheetPaths;
+        Vector<String> scriptPaths;
+        Vector<String> styleSheetPaths;
 
-        RetainPtr<NSArray> includeGlobPatternStrings;
-        RetainPtr<NSArray> excludeGlobPatternStrings;
+        Vector<String> includeGlobPatternStrings;
+        Vector<String> excludeGlobPatternStrings;
 
-        NSArray *expandedIncludeMatchPatternStrings() const;
-        NSArray *expandedExcludeMatchPatternStrings() const;
+        Vector<String> expandedIncludeMatchPatternStrings() const;
+        Vector<String> expandedExcludeMatchPatternStrings() const;
     };
 
     struct WebAccessibleResourceData {
@@ -197,6 +198,7 @@ public:
 
     bool manifestParsedSuccessfully();
     NSDictionary *manifest();
+    RefPtr<const JSON::Object> manifestObject() { return manifestParsedSuccessfully() ? m_manifestJSON->asObject() : nullptr; }
     Ref<API::Data> serializeManifest();
 
     double manifestVersion();
@@ -222,13 +224,13 @@ public:
     _WKWebExtensionLocalization *localization();
     NSLocale *defaultLocale();
 
-    NSString *displayName();
-    NSString *displayShortName();
-    NSString *displayVersion();
-    NSString *displayDescription();
-    NSString *version();
+    const String& displayName();
+    const String& displayShortName();
+    const String& displayVersion();
+    const String& displayDescription();
+    const String& version();
 
-    NSString *contentSecurityPolicy();
+    const String& contentSecurityPolicy();
 
     CocoaImage *icon(CGSize idealSize);
 
@@ -241,7 +243,9 @@ public:
     bool hasPageAction();
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    bool hasSidebar();
+    bool hasSidebarAction();
+    bool hasSidePanel();
+    bool hasAnySidebar();
     CocoaImage *sidebarIcon(CGSize idealSize);
     NSString *sidebarDocumentPath();
     NSString *sidebarTitle();
@@ -266,17 +270,17 @@ public:
     bool backgroundContentUsesModules();
     bool backgroundContentIsServiceWorker();
 
-    NSString *backgroundContentPath();
-    NSString *generatedBackgroundContent();
+    const String& backgroundContentPath();
+    const String& generatedBackgroundContent();
 
     bool hasInspectorBackgroundPage();
-    NSString *inspectorBackgroundPagePath();
+    const String& inspectorBackgroundPagePath();
 
     bool hasOptionsPage();
     bool hasOverrideNewTabPage();
 
-    NSString *optionsPagePath();
-    NSString *overrideNewTabPagePath();
+    const String& optionsPagePath();
+    const String& overrideNewTabPagePath();
 
     const CommandsVector& commands();
     bool hasCommands();
@@ -286,7 +290,7 @@ public:
     bool hasContentModificationRules() { return !declarativeNetRequestRulesets().isEmpty(); }
 
     const InjectedContentVector& staticInjectedContents();
-    bool hasStaticInjectedContentForURL(NSURL *);
+    bool hasStaticInjectedContentForURL(const URL&);
     bool hasStaticInjectedContent();
 
     // Permissions requested by the extension in their manifest.
@@ -294,7 +298,7 @@ public:
     const PermissionsSet& requestedPermissions();
     const PermissionsSet& optionalPermissions();
 
-    bool hasRequestedPermission(NSString *) const;
+    bool hasRequestedPermission(String) const;
 
     // Match patterns requested by the extension in their manifest.
     // These are not the currently allowed permission patterns.
@@ -308,7 +312,7 @@ public:
     // Combined pattern set that includes permission patterns and injected content patterns from the manifest.
     MatchPatternSet allRequestedMatchPatterns();
 
-    NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+    NSError *createError(Error, String customLocalizedDescription = { }, NSError *underlyingError = nil);
     void recordErrorIfNeeded(NSError *error) { if (error) recordError(error); }
     void recordError(NSError *);
 
@@ -320,6 +324,9 @@ public:
 
 private:
     bool parseManifest(NSData *);
+
+    void parseWebAccessibleResourcesVersion3();
+    void parseWebAccessibleResourcesVersion2();
 
     void populateDisplayStringsIfNeeded();
     void populateActionPropertiesIfNeeded();
@@ -360,6 +367,7 @@ private:
     mutable RetainPtr<SecStaticCodeRef> m_bundleStaticCode;
     RetainPtr<NSURL> m_resourceBaseURL;
     RetainPtr<NSDictionary> m_manifest;
+    Ref<const JSON::Value> m_manifestJSON;
     RetainPtr<NSMutableDictionary> m_resources;
 
     RetainPtr<NSLocale> m_defaultLocale;
@@ -367,11 +375,11 @@ private:
 
     RetainPtr<NSMutableArray> m_errors;
 
-    RetainPtr<NSString> m_displayName;
-    RetainPtr<NSString> m_displayShortName;
-    RetainPtr<NSString> m_displayVersion;
-    RetainPtr<NSString> m_displayDescription;
-    RetainPtr<NSString> m_version;
+    String m_displayName;
+    String m_displayShortName;
+    String m_displayVersion;
+    String m_displayDescription;
+    String m_version;
 
     RetainPtr<NSMutableDictionary> m_iconsCache;
 
@@ -387,18 +395,18 @@ private:
     RetainPtr<NSString> m_sidebarTitle;
 #endif
 
-    RetainPtr<NSString> m_contentSecurityPolicy;
+    String m_contentSecurityPolicy;
 
-    RetainPtr<NSArray> m_backgroundScriptPaths;
-    RetainPtr<NSString> m_backgroundPagePath;
-    RetainPtr<NSString> m_backgroundServiceWorkerPath;
-    RetainPtr<NSString> m_generatedBackgroundContent;
+    Vector<String> m_backgroundScriptPaths;
+    String m_backgroundPagePath;
+    String m_backgroundServiceWorkerPath;
+    String m_generatedBackgroundContent;
     Environment m_backgroundContentEnvironment { Environment::Document };
 
-    RetainPtr<NSString> m_inspectorBackgroundPagePath;
+    String m_inspectorBackgroundPagePath;
 
-    RetainPtr<NSString> m_optionsPagePath;
-    RetainPtr<NSString> m_overrideNewTabPagePath;
+    String m_optionsPagePath;
+    String m_overrideNewTabPagePath;
 
     bool m_backgroundContentIsPersistent : 1 { false };
     bool m_backgroundContentUsesModules : 1 { false };

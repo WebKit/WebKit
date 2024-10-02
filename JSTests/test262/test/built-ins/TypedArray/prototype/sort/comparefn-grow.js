@@ -27,7 +27,7 @@ function ResizeAndCompare(rab, resizeTo) {
 
 function WriteUnsortedData(taFull) {
   for (let i = 0; i < taFull.length; ++i) {
-    WriteToTypedArray(taFull, i, 10 - i);
+    taFull[i] = MayNeedBigInt(taFull, 10 - i);
   }
 }
 

@@ -26,9 +26,21 @@
 #include "config.h"
 #include "WebFoundTextRange.h"
 
-#include "WebCoreArgumentCoders.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
+
+unsigned WebFoundTextRange::hash() const
+{
+    return WTF::switchOn(data,
+        [] (const WebFoundTextRange::DOMData& domData) {
+            return pairIntHash(domData.location, domData.length);
+        },
+        [] (const WebFoundTextRange::PDFData& pdfData) {
+            return pairIntHash(pairIntHash(pairIntHash(pdfData.startPage, pdfData.endPage), pdfData.startOffset), pdfData.endOffset);
+        }
+    );
+}
 
 bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
 {
@@ -37,8 +49,7 @@ bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
     if (other.frameIdentifier.isHashTableDeletedValue())
         return false;
 
-    return location == other.location
-        && length == other.length
+    return data == other.data
         && frameIdentifier == other.frameIdentifier
         && order == other.order;
 }

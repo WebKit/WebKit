@@ -51,7 +51,7 @@ public:
 };
 
 class WEBCORE_EXPORT LegacyCDM final {
-    WTF_MAKE_TZONE_ALLOCATED(LegacyCDM);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(LegacyCDM, WEBCORE_EXPORT);
 public:
     explicit LegacyCDM(const String& keySystem);
 

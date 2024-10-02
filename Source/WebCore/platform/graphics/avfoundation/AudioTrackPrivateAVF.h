@@ -28,10 +28,12 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class AudioTrackPrivateAVF : public AudioTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AudioTrackPrivateAVF);
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVF)
 public:
     Kind kind() const override { return m_kind; }

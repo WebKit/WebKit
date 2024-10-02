@@ -44,7 +44,7 @@ WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(Web
 
 void WebPageInspectorTargetFrontendChannel::sendMessageToFrontend(const String& message)
 {
-    m_page.send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
+    Ref { m_page.get() }->send(Messages::WebPageProxy::SendMessageToInspectorFrontend(m_targetId, message));
 }
 
 } // namespace WebKit

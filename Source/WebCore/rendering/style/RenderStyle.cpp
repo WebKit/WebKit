@@ -3175,9 +3175,9 @@ Color RenderStyle::usedScrollbarTrackColor() const
     return colorResolvingCurrentColor(scrollbarColor().value().trackColor);
 }
 
-const BorderValue& RenderStyle::borderBefore() const
+const BorderValue& RenderStyle::borderBefore(const RenderStyle& styleForFlow) const
 {
-    switch (blockFlowDirection()) {
+    switch (styleForFlow.blockFlowDirection()) {
     case FlowDirection::TopToBottom:
         return borderTop();
     case FlowDirection::BottomToTop:
@@ -3191,9 +3191,9 @@ const BorderValue& RenderStyle::borderBefore() const
     return borderTop();
 }
 
-const BorderValue& RenderStyle::borderAfter() const
+const BorderValue& RenderStyle::borderAfter(const RenderStyle& styleForFlow) const
 {
-    switch (blockFlowDirection()) {
+    switch (styleForFlow.blockFlowDirection()) {
     case FlowDirection::TopToBottom:
         return borderBottom();
     case FlowDirection::BottomToTop:
@@ -3207,18 +3207,18 @@ const BorderValue& RenderStyle::borderAfter() const
     return borderBottom();
 }
 
-const BorderValue& RenderStyle::borderStart() const
+const BorderValue& RenderStyle::borderStart(const RenderStyle& styleForFlow) const
 {
-    if (isHorizontalWritingMode())
-        return isLeftToRightDirection() ? borderLeft() : borderRight();
-    return isLeftToRightDirection() ? borderTop() : borderBottom();
+    if (styleForFlow.isHorizontalWritingMode())
+        return styleForFlow.isLeftToRightDirection() ? borderLeft() : borderRight();
+    return styleForFlow.isLeftToRightDirection() ? borderTop() : borderBottom();
 }
 
-const BorderValue& RenderStyle::borderEnd() const
+const BorderValue& RenderStyle::borderEnd(const RenderStyle& styleForFlow) const
 {
-    if (isHorizontalWritingMode())
-        return isLeftToRightDirection() ? borderRight() : borderLeft();
-    return isLeftToRightDirection() ? borderBottom() : borderTop();
+    if (styleForFlow.isHorizontalWritingMode())
+        return styleForFlow.isLeftToRightDirection() ? borderRight() : borderLeft();
+    return styleForFlow.isLeftToRightDirection() ? borderBottom() : borderTop();
 }
 
 float RenderStyle::borderBeforeWidth() const

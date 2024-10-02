@@ -46,15 +46,6 @@ OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
 
-namespace WebKit {
-class Download;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::Download> : std::true_type { };
-}
-
 namespace WebCore {
 class AuthenticationChallenge;
 class BlobDataFileReference;
@@ -83,7 +74,7 @@ public:
 
     ~Download();
 
-    void resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&&);
+    void resume(std::span<const uint8_t> resumeData, const String& path, SandboxExtension::Handle&&, std::span<const uint8_t> activityAccessToken);
     enum class IgnoreDidFailCallback : bool { No, Yes };
     void cancel(CompletionHandler<void(std::span<const uint8_t>)>&&, IgnoreDidFailCallback);
 #if PLATFORM(COCOA)
@@ -91,9 +82,9 @@ public:
 #endif
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder);
-    void setPlaceholderURL(NSURL *);
-    void setFinalURL(NSURL *);
+    void publishProgress(const URL&, std::span<const uint8_t>, WebKit::UseDownloadPlaceholder, std::span<const uint8_t>);
+    void setPlaceholderURL(NSURL *, NSData *);
+    void setFinalURL(NSURL *, NSData *);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }
@@ -123,6 +114,7 @@ private:
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     void startUpdatingProgress() const;
+    static Vector<uint8_t> updateResumeDataWithPlaceholderURL(NSURL *, std::span<const uint8_t> resumeData);
 #endif
 
     CheckedRef<DownloadManager> m_downloadManager;
@@ -136,6 +128,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
     RetainPtr<NSProgress> m_progress;
+    RetainPtr<NSURL> m_placeholderURL;
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     RetainPtr<NSData> m_bookmarkData;
     RetainPtr<NSURL> m_bookmarkURL;

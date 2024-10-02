@@ -45,8 +45,8 @@
 #include "FontPaletteValues.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include "StyleBuilderConverter.h"
 #include "StyleProperties.h"
+#include "StyleResolveForFont.h"
 #include "StyleRule.h"
 
 namespace WebCore {
@@ -173,13 +173,13 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
         ASSERT(valueList->item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
-        auto result0 = Style::BuilderConverter::convertFontWeightFromValue(value0);
-        auto result1 = Style::BuilderConverter::convertFontWeightFromValue(value1);
+        auto result0 = Style::fontWeightFromCSSValueDeprecated(value0);
+        auto result1 = Style::fontWeightFromCSSValueDeprecated(value1);
         return { result0, result1 };
     }
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontWeightFromValue(primitiveValue);
+    FontSelectionValue result = Style::fontWeightFromCSSValueDeprecated(primitiveValue);
     return { result, result };
 }
 
@@ -208,13 +208,13 @@ static FontSelectionRange calculateStretchRange(CSSValue& value)
         ASSERT(valueList->item(1)->isPrimitiveValue());
         auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
         auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
-        auto result0 = Style::BuilderConverter::convertFontStretchFromValue(value0);
-        auto result1 = Style::BuilderConverter::convertFontStretchFromValue(value1);
+        auto result0 = Style::fontStretchFromCSSValueDeprecated(value0);
+        auto result1 = Style::fontStretchFromCSSValueDeprecated(value1);
         return { result0, result1 };
     }
 
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontSelectionValue result = Style::BuilderConverter::convertFontStretchFromValue(primitiveValue);
+    FontSelectionValue result = Style::fontStretchFromCSSValueDeprecated(primitiveValue);
     return { result, result };
 }
 
@@ -237,7 +237,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
     auto* rangeValue = dynamicDowncast<CSSFontStyleRangeValue>(value);
     if (!rangeValue)
-        return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
+        return FontSelectionRange { Style::fontStyleFromCSSValueDeprecated(value).value_or(normalItalicValue()) };
 
     auto keyword = rangeValue->fontStyleValue->valueID();
     if (!rangeValue->obliqueValues) {
@@ -250,7 +250,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
     auto length = rangeValue->obliqueValues->length();
     ASSERT(length == 1 || length == 2);
     auto angleAtIndex = [&] (size_t index) {
-        return Style::BuilderConverter::convertFontStyleAngle(*rangeValue->obliqueValues->itemWithoutBoundsCheck(index));
+        return Style::fontStyleAngleFromCSSValueDeprecated(*rangeValue->obliqueValues->itemWithoutBoundsCheck(index));
     };
     if (length == 1)
         return FontSelectionRange { angleAtIndex(0) };

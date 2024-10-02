@@ -51,10 +51,7 @@ public:
 
     static RetainPtr<CFLocaleRef> createValueForNullKey()
     {
-        // CF hyphenation functions use locale (regional formats) language, which doesn't necessarily match primary UI language,
-        // so we can't use default locale here. See <rdar://problem/14897664>.
-        RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
-        return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : nullptr;
+        return nullptr;
     }
 
     static RetainPtr<CFLocaleRef> createValueForKey(const AtomString& localeIdentifier)
@@ -72,6 +69,8 @@ namespace WebCore {
 
 bool canHyphenate(const AtomString& localeIdentifier)
 {
+    if (localeIdentifier.isNull())
+        return false;
     return TinyLRUCachePolicy<AtomString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
 }
 

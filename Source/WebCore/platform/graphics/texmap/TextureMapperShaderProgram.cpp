@@ -151,6 +151,9 @@ static const char* vertexTemplateCommon =
     GLSL_DIRECTIVE(ifdef ENABLE_TextureExternalOES) \
         GLSL_DIRECTIVE(extension GL_OES_EGL_image_external : require) \
         GLSL_DIRECTIVE(define SamplerExternalOESType samplerExternalOES) \
+        STRINGIFY( \
+            precision mediump samplerExternalOES;\n \
+        ) \
     GLSL_DIRECTIVE(else) \
         GLSL_DIRECTIVE(define SamplerExternalOESType sampler2D) \
     GLSL_DIRECTIVE(endif)

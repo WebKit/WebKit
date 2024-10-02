@@ -123,7 +123,6 @@ public:
 
 private:
     void emitNecessaryHelpers();
-    void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
     bool emitPackedVector(const Types::Vector&);
@@ -145,7 +144,6 @@ private:
     HashSet<AST::Function*> m_visitedFunctions;
     PrepareResult& m_prepareResult;
     const HashMap<String, ConstantValue>& m_constantValues;
-    HashMap<String, ConstantValue> m_overrides;
 };
 
 static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
@@ -172,8 +170,6 @@ void FunctionDefinitionWriter::write()
     for (auto& declaration : m_shaderModule.declarations()) {
         if (auto* structure = dynamicDowncast<AST::Structure>(declaration))
             visit(*structure);
-        else if (auto* variable = dynamicDowncast<AST::Variable>(declaration))
-            visitGlobal(*variable);
     }
 
     for (auto& declaration : m_shaderModule.declarations()) {
@@ -237,7 +233,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesPackArray()) {
         m_shaderModule.clearUsesPackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s,
+            m_indent, "static array<typename T::PackedType, N> __pack(array<T, N> unpacked)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -253,7 +249,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-                m_indent, "array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
+                m_indent, "static array<PackedVec3<T>, N> __pack(array<vec<T, 3>, N> unpacked)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
@@ -272,7 +268,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesUnpackArray()) {
         m_shaderModule.clearUsesUnpackArray();
         m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-            m_indent, "array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s,
+            m_indent, "static array<typename T::UnpackedType, N> __unpack(array<T, N> packed)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -288,7 +284,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n"_s,
-                m_indent, "array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
+                m_indent, "static array<vec<T, 3>, N> __unpack(array<PackedVec3<T>, N> packed)\n"_s,
                 m_indent, "{\n"_s);
             {
                 IndentationScope scope(m_indent);
@@ -307,23 +303,23 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     if (m_shaderModule.usesPackVector()) {
         m_shaderModule.clearUsesPackVector();
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
+            m_indent, "static packed_vec<T, 3> __pack(vec<T, 3> unpacked) { return unpacked; }\n\n"_s);
     }
 
     if (m_shaderModule.usesUnpackVector()) {
         m_shaderModule.clearUsesUnpackVector();
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
+            m_indent, "static vec<T, 3> __unpack(packed_vec<T, 3> packed) { return packed; }\n\n"_s);
 
         if (m_shaderModule.usesPackedVec3()) {
             m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-                m_indent, "vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
+                m_indent, "static vec<T, 3> __unpack(PackedVec3<T> packed) { return packed; }\n\n"_s);
         }
     }
 
     if (m_shaderModule.usesWorkgroupUniformLoad()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
+            m_indent, "static T __workgroup_uniform_load(threadgroup T* const ptr)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -337,7 +333,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesDivision()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
-            m_indent, "V __wgslDiv(T lhs, U rhs)\n"_s,
+            m_indent, "static V __wgslDiv(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -354,7 +350,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesModulo()) {
         m_stringBuilder.append(m_indent, "template<typename T, typename U, typename V = conditional_t<is_scalar_v<U>, T, U>>\n"_s,
-            m_indent, "V __wgslMod(T lhs, U rhs)\n"_s,
+            m_indent, "static V __wgslMod(T lhs, U rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -380,7 +376,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T, typename U = conditional_t<is_vector_v<T>, vec<int, vec_elements<T>::value ?: 2>, int>>\n"_s,
-            m_indent, "__frexp_result<T, U> __wgslFrexp(T value)\n"_s,
+            m_indent, "static __frexp_result<T, U> __wgslFrexp(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -401,7 +397,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         }
         m_stringBuilder.append(m_indent, "};\n\n"_s,
             m_indent, "template<typename T>\n"_s,
-            m_indent, "__modf_result<T, T> __wgslModf(T value)\n"_s,
+            m_indent, "static __modf_result<T, T> __wgslModf(T value)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -433,7 +429,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesDot()) {
         m_stringBuilder.append(m_indent, "template<typename T, unsigned N>\n"_s,
-            m_indent, "T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s,
+            m_indent, "static T __wgslDot(vec<T, N> lhs, vec<T, N> rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -446,7 +442,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesDot4I8Packed()) {
-        m_stringBuilder.append(m_indent, "int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
+        m_stringBuilder.append(m_indent, "static int __wgslDot4I8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -458,7 +454,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
     }
 
     if (m_shaderModule.usesDot4U8Packed()) {
-        m_stringBuilder.append(m_indent, "uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
+        m_stringBuilder.append(m_indent, "static uint __wgslDot4U8Packed(uint lhs, uint rhs)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -471,7 +467,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesFirstLeadingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslFirstLeadingBit(T e)\n"_s,
+            m_indent, "static T __wgslFirstLeadingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -485,7 +481,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesFirstTrailingBit()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslFirstTrailingBit(T e)\n"_s,
+            m_indent, "static T __wgslFirstTrailingBit(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -496,7 +492,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesSign()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslSign(T e)\n"_s,
+            m_indent, "static T __wgslSign(T e)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -507,7 +503,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesExtractBits()) {
         m_stringBuilder.append(m_indent, "template<typename T>\n"_s,
-            m_indent, "T __wgslExtractBits(T e, uint offset, uint count)\n"_s,
+            m_indent, "static T __wgslExtractBits(T e, uint offset, uint count)\n"_s,
             m_indent, "{\n"_s);
         {
             IndentationScope scope(m_indent);
@@ -666,7 +662,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     const String& packedName = structure.name();
     auto unpackedName = structure.original()->name();
 
-    m_stringBuilder.append(m_indent, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
+    m_stringBuilder.append(m_indent, "static "_s, packedName, " __pack("_s, unpackedName, " unpacked)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
@@ -681,7 +677,7 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
         m_stringBuilder.append(m_indent, "return packed;\n"_s);
     }
     m_stringBuilder.append(m_indent, "}\n\n"_s,
-        m_indent, unpackedName, " __unpack("_s, packedName, " packed)\n"_s,
+        m_indent, "static "_s, unpackedName, " __unpack("_s, packedName, " packed)\n"_s,
         m_indent, "{\n"_s);
     {
         IndentationScope scope(m_indent);
@@ -757,26 +753,6 @@ void FunctionDefinitionWriter::visit(AST::Variable& variable)
 void FunctionDefinitionWriter::visit(AST::ConstAssert&)
 {
     // const_assert should not generate any code
-}
-
-void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
-{
-    if (variable.flavor() != AST::VariableFlavor::Override)
-        return;
-
-    String entryName = variable.originalName();
-    if (variable.id())
-        entryName = String::number(*variable.id());
-    auto it = m_constantValues.find(entryName);
-    if (it != m_constantValues.end()) {
-        m_overrides.add(variable.name(), it->value);
-        return;
-    }
-    auto* initializer = variable.maybeInitializer();
-    if (!initializer)
-        return;
-    if (auto& maybeConstant = initializer->constantValue())
-        m_overrides.add(variable.name(), *maybeConstant);
 }
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
@@ -2199,8 +2175,8 @@ void FunctionDefinitionWriter::visit(AST::IndexAccessExpression& access)
 
 void FunctionDefinitionWriter::visit(AST::IdentifierExpression& identifier)
 {
-    auto it = m_overrides.find(identifier.identifier());
-    if (UNLIKELY(it != m_overrides.end())) {
+    auto it = m_constantValues.find(identifier.identifier());
+    if (UNLIKELY(it != m_constantValues.end())) {
         m_stringBuilder.append('(');
         serializeConstant(identifier.inferredType(), it->value);
         m_stringBuilder.append(')');

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All Rights Reserved.
  * Copyright (C) 2013 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,9 @@
 
 #pragma once
 
+#include <algorithm>
+#include <climits>
+#include <concepts>
 #include <cstring>
 #include <functional>
 #include <memory>
@@ -37,6 +40,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
 #include <wtf/GetPtr.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/TypeCasts.h>
 #include <bit>
 
@@ -53,6 +57,8 @@ inline constexpr Dest __bit_cast(const Source &source) {
   return __builtin_bit_cast(Dest, source);
 }
 #endif
+
+#define SINGLE_ARG(...) __VA_ARGS__ // useful when a macro argument includes a comma
 
 // Use this macro to declare and define a debug-only global variable that may have a
 // non-trivial constructor and destructor. When building with clang, this will suppress
@@ -407,7 +413,7 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
 {
     static_assert(std::is_unsigned<T>::value, "Type used in findBitInWord must be unsigned");
 
-    constexpr size_t bitsInWord = sizeof(word) * 8;
+    constexpr size_t bitsInWord = sizeof(word) * CHAR_BIT;
     ASSERT_UNUSED(bitsInWord, startOrResultIndex <= bitsInWord && endIndex <= bitsInWord);
 
     size_t index = startOrResultIndex;
@@ -441,8 +447,7 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
 
 // Visitor adapted from http://stackoverflow.com/questions/25338795/is-there-a-name-for-this-tuple-creation-idiom
 
-template <class A, class... B>
-struct Visitor : Visitor<A>, Visitor<B...> {
+template<class A, class... B> struct Visitor : Visitor<A>, Visitor<B...> {
     Visitor(A a, B... b)
         : Visitor<A>(a)
         , Visitor<B...>(b...)
@@ -453,8 +458,7 @@ struct Visitor : Visitor<A>, Visitor<B...> {
     using Visitor<B...>::operator ();
 };
   
-template <class A>
-struct Visitor<A> : A {
+template<class A> struct Visitor<A> : A {
     Visitor(A a)
         : A(a)
     {
@@ -463,17 +467,113 @@ struct Visitor<A> : A {
     using A::operator();
 };
  
-template <class... F>
-Visitor<F...> makeVisitor(F... f)
+template<class... F> ALWAYS_INLINE Visitor<F...> makeVisitor(F... f)
 {
     return Visitor<F...>(f...);
 }
 
-template<class V, class... F>
-auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+// `asVariant` is used to allow subclasses of std::variant to work with `switchOn`.
+
+template<class... Ts> ALWAYS_INLINE constexpr std::variant<Ts...>& asVariant(std::variant<Ts...>& v)
 {
-    return std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
+    return v;
 }
+
+template<class... Ts> ALWAYS_INLINE constexpr const std::variant<Ts...>& asVariant(const std::variant<Ts...>& v)
+{
+    return v;
+}
+
+template<class... Ts> ALWAYS_INLINE constexpr std::variant<Ts...>&& asVariant(std::variant<Ts...>&& v)
+{
+    return std::move(v);
+}
+
+template<class... Ts> ALWAYS_INLINE constexpr const std::variant<Ts...>&& asVariant(const std::variant<Ts...>&& v)
+{
+    return std::move(v);
+}
+
+#ifdef _LIBCPP_VERSION
+
+// Single-variant switch-based visit function adapted from https://www.reddit.com/r/cpp/comments/kst2pu/comment/giilcxv/.
+// Works around bad code generation for std::visit with one std::variant by some standard library / compilers that
+// lead to excessive binary size growth. Currently only needed by libc++. See https://webkit.org/b/279498.
+
+template<size_t I = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVariant(F&& f, V&& v)
+{
+    constexpr auto size = std::variant_size_v<std::remove_cvref_t<V>>;
+
+#define WTF_VISIT_CASE_COUNT 32
+#define WTF_VISIT_CASE(N, D) \
+        case I + N:                                                                                 \
+        {                                                                                           \
+            if constexpr (I + N < size) {                                                           \
+                return std::invoke(std::forward<F>(f), std::get<I + N>(std::forward<V>(v)));        \
+            } else {                                                                                \
+                WTF_UNREACHABLE()                                                                   \
+            }                                                                                       \
+        }                                                                                           \
+
+    switch (v.index()) {
+        WTF_VISIT_CASE(0, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(1, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(2, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(3, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(4, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(5, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(6, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(7, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(8, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(9, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(10, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(11, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(12, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(13, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(14, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(15, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(16, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(17, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(18, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(19, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(20, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(21, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(22, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(23, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(24, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(25, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(26, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(27, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(28, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(29, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(30, WTF_VISIT_CASE_COUNT)
+        WTF_VISIT_CASE(31, WTF_VISIT_CASE_COUNT)
+    }
+
+    constexpr auto nextI = std::min(I + WTF_VISIT_CASE_COUNT, size);
+
+    if constexpr (nextI < size)
+        return visitOneVariant<nextI>(std::forward<F>(f), std::forward<V>(v));
+
+    WTF_UNREACHABLE();
+
+#undef WTF_VISIT_CASE_COUNT
+#undef WTF_VISIT_CASE
+}
+
+template<class V, class... F> ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+{
+    return visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
+}
+
+#else
+
+template<class V, class... F> ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+{
+    return std::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
+}
+
+#endif
 
 namespace detail {
 
@@ -699,11 +799,18 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 }
 
 template<typename T, typename U, std::size_t Extent>
-std::span<T, Extent> spanReinterpretCast(std::span<U, Extent> span)
+std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
 {
-    RELEASE_ASSERT(!(span.size_bytes() % sizeof(T)));
-    static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanCast will not remove constness from source");
-    return std::span<T, Extent> { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
+    if constexpr (Extent == std::dynamic_extent) {
+        if constexpr (sizeof(U) < sizeof(T) || sizeof(U) % sizeof(T))
+            RELEASE_ASSERT_WITH_MESSAGE(!(span.size_bytes() % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
+    } else
+        static_assert(!((sizeof(U) * Extent) % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
+
+    static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanReinterpretCast will not remove constness from source");
+
+    using ReturnType = std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)>;
+    return ReturnType { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
 }
 
 template<typename T, std::size_t Extent>
@@ -805,6 +912,98 @@ template<class F, class T>
 constexpr decltype(auto) apply(F&& functor, T&& tupleLike)
 {
     return apply_impl(std::forward<F>(functor), std::forward<T>(tupleLike), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<T>>> { });
+}
+
+template<typename WordType, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, const Func& func)
+{
+    constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
+    for (size_t i = 0; i < bits.size(); ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        size_t base = i * wordSize;
+
+#if CPU(X86_64) || CPU(ARM64)
+        // We should only use ctz() when we know that ctz() is implementated using
+        // a fast hardware instruction. Otherwise, this will actually result in
+        // worse performance.
+        while (word) {
+            WordType temp = word & -word;
+            size_t offset = ctz(word);
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
+                if (func(base + offset) == IterationStatus::Done)
+                    return;
+            } else
+                func(base + offset);
+            word ^= temp;
+        }
+#else
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
+            word >>= 1;
+        }
+#endif
+    }
+}
+
+template<typename WordType, typename Func>
+ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, size_t startIndex, const Func& func)
+{
+    constexpr size_t wordSize = sizeof(WordType) * CHAR_BIT;
+    auto iterate = [&](WordType word, size_t i) ALWAYS_INLINE_LAMBDA {
+        size_t base = i * wordSize;
+
+#if CPU(X86_64) || CPU(ARM64)
+        // We should only use ctz() when we know that ctz() is implementated using
+        // a fast hardware instruction. Otherwise, this will actually result in
+        // worse performance.
+        while (word) {
+            WordType temp = word & -word;
+            size_t offset = ctz(word);
+            if constexpr (std::is_same_v<IterationStatus, decltype(func(base + offset))>) {
+                if (func(base + offset) == IterationStatus::Done)
+                    return;
+            } else
+                func(base + offset);
+            word ^= temp;
+        }
+#else
+        for (size_t j = 0; j < wordSize; ++j) {
+            if (word & 1) {
+                if constexpr (std::is_same_v<IterationStatus, decltype(func(base + j))>) {
+                    if (func(base + j) == IterationStatus::Done)
+                        return;
+                } else
+                    func(base + j);
+            }
+            word >>= 1;
+        }
+#endif
+    };
+
+    size_t startWord = startIndex / wordSize;
+    if (startWord >= bits.size())
+        return;
+
+    WordType word = bits[startWord];
+    size_t startIndexInWord = startIndex - startWord * wordSize;
+    WordType masked = word & (~((static_cast<WordType>(1) << startIndexInWord) - 1));
+    if (masked)
+        iterate(masked, startWord);
+
+    for (size_t i = startWord + 1; i < bits.size(); ++i) {
+        WordType word = bits[i];
+        if (!word)
+            continue;
+        iterate(word, i);
+    }
 }
 
 } // namespace WTF

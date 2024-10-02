@@ -55,6 +55,7 @@
 - (void)selectWord;
 - (void)selectAll:(id)sender;
 - (void)translate:(NSString *)text fromRect:(CGRect)presentationRect;
+- (void)prepareToMoveSelectionContainer:(UIView *)newContainer;
 
 #if USE(UICONTEXTMENU)
 - (void)setExternalContextMenuInteractionDelegate:(id<UIContextMenuInteractionDelegate>)delegate;

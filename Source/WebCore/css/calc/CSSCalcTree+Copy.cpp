@@ -31,12 +31,13 @@ namespace WebCore {
 namespace CSSCalc {
 
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
-static auto copy(const NoneRaw&) -> NoneRaw;
+static auto copy(const CSS::NoneRaw&) -> CSS::NoneRaw;
 static auto copy(const ChildOrNone&) -> ChildOrNone;
 static auto copy(const Children&) -> Children;
 static auto copy(const Child&) -> Child;
 template<Leaf Op> Child copy(const Op&);
 template<typename Op> static auto copy(const IndirectNode<Op>&) -> Child;
+static auto copy(const IndirectNode<Anchor>&) -> Child;
 
 // MARK: Copying
 
@@ -47,7 +48,7 @@ std::optional<Child> copy(const std::optional<Child>& root)
     return std::nullopt;
 }
 
-NoneRaw copy(const NoneRaw& none)
+CSS::NoneRaw copy(const CSS::NoneRaw& none)
 {
     return none;
 }
@@ -75,6 +76,22 @@ template<Leaf Op> Child copy(const Op& root)
 template<typename Op> Child copy(const IndirectNode<Op>& root)
 {
     return makeChild(WTF::apply([](const auto& ...x) { return Op { copy(x)... }; } , *root), root.type);
+}
+
+static Anchor::Side copy(const Anchor::Side& side)
+{
+    return WTF::switchOn(side,
+        [](CSSValueID value) -> Anchor::Side {
+            return value;
+        }, [](const Child& percentage) -> Anchor::Side {
+            return copy(percentage);
+        }
+    );
+}
+
+Child copy(const IndirectNode<Anchor>& anchor)
+{
+    return makeChild(Anchor { .elementName = anchor->elementName, .side = copy(anchor->side), .fallback = copy(anchor->fallback) }, anchor.type);
 }
 
 // MARK: Exposed functions

@@ -151,7 +151,7 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(m_parameters), *m_session);
+    m_networkLoad = NetworkLoad::create(*this, WTFMove(m_parameters), *m_session);
     m_networkLoad->start();
 }
 
@@ -257,7 +257,8 @@ bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manage
     if (!m_networkLoad)
         return false;
 
-    manager.convertNetworkLoadToDownload(downloadID, std::exchange(m_networkLoad, nullptr), WTFMove(m_responseCompletionHandler), { }, request, response);
+    auto networkLoad = std::exchange(m_networkLoad, nullptr);
+    manager.convertNetworkLoadToDownload(downloadID, networkLoad.releaseNonNull(), WTFMove(m_responseCompletionHandler), { }, request, response);
     return true;
 }
 

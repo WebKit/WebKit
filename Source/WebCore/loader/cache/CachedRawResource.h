@@ -40,7 +40,7 @@ public:
     void setDataBufferingPolicy(DataBufferingPolicy);
 
     // FIXME: This is exposed for the InspectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
-    ResourceLoaderIdentifier identifier() const { return m_identifier; }
+    std::optional<ResourceLoaderIdentifier> identifier() const { return m_identifier; }
 
     void clear();
 
@@ -74,7 +74,7 @@ private:
     void previewResponseReceived(const ResourceResponse&) final;
 #endif
 
-    ResourceLoaderIdentifier m_identifier;
+    Markable<ResourceLoaderIdentifier> m_identifier;
 
     struct RedirectPair {
     public:

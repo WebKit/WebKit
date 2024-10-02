@@ -33,7 +33,11 @@
 #include "CSSUnits.h"
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
+#include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
+#include "RenderBox.h"
+#include "ScrollAnchoringController.h"
 #include "StyleBuilderConverter.h"
 
 namespace WebCore {
@@ -74,8 +78,6 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderS
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
 {
     if (m_subject)
         m_subject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
@@ -83,8 +85,6 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
     : ScrollTimeline(name, axis)
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
     , m_insets(WTFMove(insets))
 {
 }
@@ -127,7 +127,7 @@ Ref<CSSValue> ViewTimeline::toCSSValue(const RenderStyle& style) const
 AnimationTimelinesController* ViewTimeline::controller() const
 {
     if (m_subject)
-        return &m_subject->document().ensureTimelinesController();
+        return &m_subject->protectedDocument()->ensureTimelinesController();
     return nullptr;
 }
 
@@ -136,6 +136,80 @@ AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWil
     if (m_subject && m_subject->isConnected())
         return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
     return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
+}
+
+Element* ViewTimeline::source() const
+{
+    if (auto* sourceRender = sourceRenderer())
+        return sourceRender->element();
+    return nullptr;
+}
+
+RenderBox* ViewTimeline::sourceRenderer() const
+{
+    if (!m_subject)
+        return nullptr;
+
+    CheckedPtr subjectRenderer = m_subject->renderer();
+    if (!subjectRenderer)
+        return { };
+
+    // https://drafts.csswg.org/scroll-animations-1/#dom-scrolltimeline-source
+    // Determine source renderer by looking for the nearest ancestor that establishes a scroll container
+    return subjectRenderer->enclosingScrollableContainer();
+}
+
+ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
+{
+    if (!m_subject)
+        return { };
+
+    Ref document = m_subject->document();
+
+    CheckedPtr subjectRenderBox = dynamicDowncast<RenderBox>(m_subject->renderer());
+    if (!subjectRenderBox)
+        return { };
+
+    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer(), document);
+    if (!sourceScrollableArea)
+        return { };
+
+    // https://drafts.csswg.org/scroll-animations-1/#view-timeline-progress
+    //
+    // Progress (the current time) in a view progress timeline is calculated as: distance ÷ range where:
+    //
+    // - distance is the current scroll offset minus the scroll offset corresponding to the start of the
+    //   cover range
+    // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
+    //   corresponding to the start of the cover range
+    // TODO: take into account view-timeline-inset: https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
+    // TODO: take into account animation-range: https://drafts.csswg.org/scroll-animations-1/#animation-range
+    // TODO: investigate best way to compute subjectOffset, as offsetTop uses offsetParent(), not the containing scroller
+    // TODO: view timeline progress calculation: (currentScrollOffset - coverRangeStart) / (coverRangeEnd - coverRangeStart)
+
+    float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
+    float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
+
+    float subjectOffset = axis() == ScrollAxis::Block ? subjectRenderBox->offsetTop() : subjectRenderBox->offsetLeft();
+
+    float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
+
+    auto coverRangeStart = subjectOffset - scrollContainerSize;
+    auto coverRangeEnd = subjectOffset + subjectSize;
+
+    return { currentScrollOffset, coverRangeStart, coverRangeEnd };
+}
+
+const CSSNumericValue& ViewTimeline::startOffset() const
+{
+    auto data = computeViewTimelineData();
+    return CSSNumericFactory::px(data.coverRangeStart);
+}
+
+const CSSNumericValue& ViewTimeline::endOffset() const
+{
+    auto data = computeViewTimelineData();
+    return CSSNumericFactory::px(data.coverRangeEnd);
 }
 
 } // namespace WebCore

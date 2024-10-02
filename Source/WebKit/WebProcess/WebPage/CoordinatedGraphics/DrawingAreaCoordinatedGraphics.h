@@ -41,10 +41,16 @@ struct UpdateInfo;
 
 class DrawingAreaCoordinatedGraphics final : public DrawingArea {
 public:
-    DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
+    static Ref<DrawingAreaCoordinatedGraphics> create(WebPage& webPage, const WebPageCreationParameters& parameters)
+    {
+        return adoptRef(*new DrawingAreaCoordinatedGraphics(webPage, parameters));
+    }
+
     virtual ~DrawingAreaCoordinatedGraphics();
 
 private:
+    DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
+
     // DrawingArea
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;

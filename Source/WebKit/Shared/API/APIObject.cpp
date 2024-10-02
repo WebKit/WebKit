@@ -33,10 +33,34 @@
 
 #include "WebKit2Initialize.h"
 
+#include <wtf/ThreadSpecific.h>
+
+#define DELEGATE_REF_COUNTING_TO_COCOA PLATFORM(COCOA)
+
 namespace API {
 
-Object::Object()
+#if DELEGATE_REF_COUNTING_TO_COCOA
+
+HashMap<Object*, CFTypeRef>& Object::apiObjectsUnderConstruction()
 {
+    static LazyNeverDestroyed<ThreadSpecific<HashMap<Object*, CFTypeRef>>> s_apiObjectsUnderConstruction;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        s_apiObjectsUnderConstruction.construct();
+    });
+    return *s_apiObjectsUnderConstruction.get();
+}
+
+#endif
+
+Object::Object()
+#if DELEGATE_REF_COUNTING_TO_COCOA
+    : m_wrapper(apiObjectsUnderConstruction().take(this))
+#endif
+{
+#if DELEGATE_REF_COUNTING_TO_COCOA
+    ASSERT(m_wrapper);
+#endif
     WebKit::InitializeWebKit2();
 }
 

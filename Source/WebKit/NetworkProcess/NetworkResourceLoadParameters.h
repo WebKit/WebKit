@@ -51,7 +51,7 @@ public:
     NetworkResourceLoadParameters() = default;
     NetworkResourceLoadParameters(
         NetworkLoadParameters&&
-        , WebCore::ResourceLoaderIdentifier
+        , std::optional<WebCore::ResourceLoaderIdentifier>
         , RefPtr<WebCore::FormData>&& httpBody
         , std::optional<Vector<SandboxExtension::Handle>>&& sandboxExtensionIfHttpBody
         , std::optional<SandboxExtension::Handle>&& sandboxExtensionIflocalFile
@@ -99,7 +99,7 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    WebCore::ResourceLoaderIdentifier identifier;
+    Markable<WebCore::ResourceLoaderIdentifier> identifier;
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     Seconds maximumBufferingTime;

@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WKWebExtensionMatchPatternInternal.h"
 
+#import "APIError.h"
 #import "WebExtensionMatchPattern.h"
 #import <wtf/URLParser.h>
 
@@ -96,7 +97,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(string)).autorelease();
     }
 
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, error);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, string, internalError);
+
+    if (error)
+        *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
 
     return _webExtensionMatchPattern->isValid() ? self : nil;
 }
@@ -115,7 +120,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionMatchPattern, WebExtensionMa
         return WebKit::wrapper(WebKit::WebExtensionMatchPattern::getOrCreate(scheme, host, path)).autorelease();
     }
 
-    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, error);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtensionMatchPattern>(self, scheme, host, path, internalError);
+
+    if (error)
+        *error = internalError ? static_cast<NSError *>(internalError->platformError()) : nil;
 
     return _webExtensionMatchPattern->isValid() ? self : nil;
 }

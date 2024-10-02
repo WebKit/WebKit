@@ -104,7 +104,8 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
-    WebPage& webPage() { return m_webPage; }
+    WebPage& webPage();
+    Ref<WebPage> protectedWebPage();
 
 private:
     explicit RemoteLayerTreeContext(WebPage&);
@@ -112,7 +113,7 @@ private:
     // WebCore::GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
 
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
 
     HashMap<WebCore::PlatformLayerIdentifier, RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayers;

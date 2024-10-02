@@ -267,6 +267,7 @@ struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
 struct ScrollbarColor;
+struct TimelineScope;
 struct ViewTimelineInsets;
 
 struct TabSize;
@@ -469,10 +470,15 @@ public:
     inline const BorderValue& borderTop() const;
     inline const BorderValue& borderBottom() const;
 
-    const BorderValue& borderBefore() const;
-    const BorderValue& borderAfter() const;
-    const BorderValue& borderStart() const;
-    const BorderValue& borderEnd() const;
+
+    inline const BorderValue& borderBefore() const;
+    inline const BorderValue& borderAfter() const;
+    inline const BorderValue& borderStart() const;
+    inline const BorderValue& borderEnd() const;
+    const BorderValue& borderBefore(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderAfter(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderStart(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderEnd(const RenderStyle& styleForFlow) const;
 
     inline const NinePieceImage& borderImage() const;
     inline StyleImage* borderImageSource() const;
@@ -906,6 +912,7 @@ public:
     const AtomString& textEmphasisMarkString() const;
 
     inline RubyPosition rubyPosition() const;
+    inline bool isInterCharacterRubyPosition() const;
     inline RubyAlign rubyAlign() const;
     inline RubyOverhang rubyOverhang() const;
 
@@ -984,6 +991,10 @@ public:
     inline void setViewTimelineAxes(const Vector<ScrollAxis>&);
     inline void setViewTimelineInsets(const Vector<ViewTimelineInsets>&);
     inline void setViewTimelineNames(const Vector<AtomString>&);
+
+    static inline const TimelineScope initialTimelineScope();
+    inline const TimelineScope& timelineScope() const;
+    inline void setTimelineScope(const TimelineScope&);
 
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;

@@ -68,6 +68,9 @@ public:
         Vector<uint64_t, 1> modifiers;
     };
     const Vector<DMABufFormat>& dmabufFormats();
+#if USE(GSTREAMER)
+    const Vector<DMABufFormat>& dmabufFormatsForVideo();
+#endif
 #endif
 
 private:
@@ -80,6 +83,9 @@ private:
 
 #if USE(GBM)
     Vector<DMABufFormat> m_dmabufFormats;
+#if USE(GSTREAMER)
+    Vector<DMABufFormat> m_dmabufFormatsForVideo;
+#endif
 #endif
 };
 

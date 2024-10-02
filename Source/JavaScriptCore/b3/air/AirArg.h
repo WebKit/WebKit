@@ -71,6 +71,8 @@ public:
         BigImm,
         BitImm,
         BitImm64,
+        FPImm32,
+        FPImm64,
 
         // These are the addresses. Instructions may load from (Use), store to (Def), or evaluate
         // (UseAddr) addresses.
@@ -564,6 +566,26 @@ public:
         return result;
     }
 
+    static Arg fpImm32(int64_t value)
+    {
+        if constexpr (is32Bit())
+            RELEASE_ASSERT((Fits<int64_t, Wide32>::check(value)));
+        Arg result;
+        result.m_kind = FPImm32;
+        result.m_offset = value;
+        return result;
+    }
+
+    static Arg fpImm64(int64_t value)
+    {
+        if constexpr (is32Bit())
+            UNREACHABLE_FOR_PLATFORM();
+        Arg result;
+        result.m_kind = FPImm64;
+        result.m_offset = value;
+        return result;
+    }
+
     static Arg immPtr(const void* address)
     {
         return bigImm(bitwise_cast<intptr_t>(address));
@@ -813,6 +835,16 @@ public:
         return kind() == BitImm64;
     }
 
+    bool isFPImm32() const
+    {
+        return kind() == FPImm32;
+    }
+
+    bool isFPImm64() const
+    {
+        return kind() == FPImm64;
+    }
+
     bool isZeroReg() const
     {
         return kind() == ZeroReg;
@@ -825,6 +857,8 @@ public:
         case BigImm:
         case BitImm:
         case BitImm64:
+        case FPImm32:
+        case FPImm64:
             return true;
         default:
             return false;
@@ -1126,6 +1160,8 @@ public:
         case BigImm:
         case BitImm:
         case BitImm64:
+        case FPImm32:
+        case FPImm64:
         case ZeroReg:
         case SimpleAddr:
         case Addr:
@@ -1158,6 +1194,8 @@ public:
         case Imm:
         case BitImm:
         case BitImm64:
+        case FPImm32:
+        case FPImm64:
         case RelCond:
         case ResCond:
         case DoubleCond:
@@ -1302,6 +1340,38 @@ public:
         return false;
     }
 
+    static bool isValidFPImm32Form(int64_t value)
+    {
+        if (!value)
+            return true;
+
+        if (!isARM64())
+            return false;
+
+#if CPU(ARM64)
+        if (ARM64Assembler::canEncodeFPImm<32>(value))
+            return true;
+#endif
+
+        return false;
+    }
+
+    static bool isValidFPImm64Form(int64_t value)
+    {
+        if (!value)
+            return true;
+
+        if (!isARM64())
+            return false;
+
+#if CPU(ARM64)
+        if (ARM64Assembler::canEncodeFPImm<64>(value))
+            return true;
+#endif
+
+        return ARM64FPImmediate::create64(value).isValid();
+    }
+
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     static bool isValidAddrForm(Air::Opcode opcode, Int offset, std::optional<Width> width = std::nullopt)
     {
@@ -1396,6 +1466,10 @@ public:
             return isValidBitImmForm(value());
         case BitImm64:
             return isValidBitImm64Form(value());
+        case FPImm32:
+            return isValidFPImm32Form(value());
+        case FPImm64:
+            return isValidFPImm64Form(value());
         case ZeroReg:
         case SimpleAddr:
         case ExtendedOffsetAddr:
@@ -1490,7 +1564,7 @@ public:
 
     MacroAssembler::TrustedImm32 asTrustedImm32() const
     {
-        ASSERT(isImm() || isBitImm());
+        ASSERT(isImm() || isBitImm() || isFPImm32());
         return MacroAssembler::TrustedImm32(static_cast<Value::OffsetType>(m_offset));
     }
 
@@ -1498,7 +1572,7 @@ public:
     {
         if constexpr (is32Bit())
             UNREACHABLE_FOR_PLATFORM();
-        ASSERT(isBigImm() || isBitImm64());
+        ASSERT(isBigImm() || isBitImm64() || isFPImm64());
         return MacroAssembler::TrustedImm64(value());
     }
 

@@ -74,6 +74,7 @@ struct Sqrt;
 struct Hypot;
 struct Abs;
 struct Sign;
+struct Progress;
 
 // Non-standard
 struct Blend;
@@ -100,13 +101,13 @@ struct Number {
     bool operator==(const Number&) const = default;
 };
 
-struct Percent {
+struct Percentage {
     static constexpr bool isLeaf = true;
     static constexpr bool isNumeric = true;
 
     NumericValue value;
 
-    bool operator==(const Percent&) const = default;
+    bool operator==(const Percentage&) const = default;
 };
 
 struct Dimension {
@@ -135,7 +136,7 @@ template<typename Op> struct IndirectNode {
 
 using Child = std::variant<
     Number,
-    Percent,
+    Percentage,
     Dimension,
     IndirectNode<Sum>,
     IndirectNode<Product>,
@@ -164,6 +165,7 @@ using Child = std::variant<
     IndirectNode<Exp>,
     IndirectNode<Abs>,
     IndirectNode<Sign>,
+    IndirectNode<Progress>,
     IndirectNode<Blend>
 >;
 
@@ -472,15 +474,28 @@ public:
     bool operator==(const Sign&) const = default;
 };
 
+// Progress-Related Functions - https://drafts.csswg.org/css-values-5/#progress
+struct Progress {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(Progress);
+public:
+    static constexpr auto op = Operator::Progress;
+
+    Child progress;
+    Child from;
+    Child to;
+
+    bool operator==(const Progress&) const = default;
+};
+
 // Non-standard
 struct Blend {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(Blend);
 public:
     static constexpr auto op = Operator::Blend;
 
+    double progress;
     Child from;
     Child to;
-    double progress;
 
     bool operator==(const Blend&) const = default;
 };
@@ -499,9 +514,9 @@ template<> struct ChildConstruction<Number> {
     static Child make(Number&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Percent, needed to avoid `makeUniqueRef`.
-template<> struct ChildConstruction<Percent> {
-    static Child make(Percent&& op) { return Child { WTFMove(op) }; }
+// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
+template<> struct ChildConstruction<Percentage> {
+    static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
 };
 
 // Specialized implementation of ChildConstruction for Dimension, needed to avoid `makeUniqueRef`.
@@ -521,9 +536,9 @@ inline Child number(NumericValue value)
     return makeChild(Number { .value = value });
 }
 
-inline Child percent(NumericValue value)
+inline Child percentage(NumericValue value)
 {
-    return makeChild(Percent { .value = value });
+    return makeChild(Percentage { .value = value });
 }
 
 inline Child dimension(NumericValue value)
@@ -554,7 +569,7 @@ inline Child subtract(Child&& a, Child&& b)
 
 inline Child blend(Child&& from, Child&& to, double progress)
 {
-    return makeChild(Blend { .from = WTFMove(from), .to = WTFMove(to), .progress = progress });
+    return makeChild(Blend { .progress = progress, .from = WTFMove(from), .to = WTFMove(to) });
 }
 
 // MARK: Dumping
@@ -749,14 +764,24 @@ template<size_t I> const auto& get(const Sign& root)
     return root.a;
 }
 
+template<size_t I> const auto& get(const Progress& root)
+{
+    if constexpr (!I)
+        return root.progress;
+    else if constexpr (I == 1)
+        return root.from;
+    else if constexpr (I == 2)
+        return root.to;
+}
+
 template<size_t I> const auto& get(const Blend& root)
 {
     if constexpr (!I)
-        return root.from;
-    else if constexpr (I == 1)
-        return root.to;
-    else if constexpr (I == 2)
         return root.progress;
+    else if constexpr (I == 1)
+        return root.from;
+    else if constexpr (I == 2)
+        return root.to;
 }
 
 } // namespace Calculation
@@ -799,6 +824,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Log, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
+OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(Blend, 3);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE

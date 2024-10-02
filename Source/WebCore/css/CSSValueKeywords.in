@@ -1075,7 +1075,6 @@ view
 //
 // CSS_PROP_ZOOM
 //
-document
 reset
 
 //
@@ -1160,6 +1159,7 @@ horizontal-bt
 after
 before
 inter-character
+legacy-inter-character
 
 // -webkit-text-combine
 // horizontal
@@ -1496,6 +1496,9 @@ mod
 rem
 to-zero
 // nearest
+// progress
+// from
+// to
 infinity
 -infinity id=NegativeInfinity
 NaN
@@ -1607,6 +1610,10 @@ color-layers
 
 // color-mix()
 color-mix
+
+// contrast-color()
+contrast-color
+// max
 
 // light-dark()
 light-dark

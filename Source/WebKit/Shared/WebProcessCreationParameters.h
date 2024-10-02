@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessCreationParameters.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "ScriptTelemetry.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
 
@@ -58,11 +59,8 @@
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "DMABufRendererBufferMode.h"
+#include <WebCore/SystemSettings.h>
 #include <wtf/MemoryPressureHandler.h>
-#endif
-
-#if PLATFORM(GTK)
-#include "GtkSettingsState.h"
 #endif
 
 namespace API {
@@ -197,7 +195,7 @@ struct WebProcessCreationParameters {
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     SandboxExtension::Handle trustdExtensionHandle;
 #endif
     bool enableDecodingHEIC { false };
@@ -233,11 +231,11 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<DMABufRendererBufferMode> dmaBufRendererBufferMode;
+    WebCore::SystemSettings::State systemSettings;
 #endif
 
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
-    GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -275,6 +273,7 @@ struct WebProcessCreationParameters {
 
     HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
+    ScriptTelemetryRules scriptTelemetryRules;
 
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<size_t> memoryFootprintNotificationThresholds;

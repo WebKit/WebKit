@@ -36,7 +36,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, 1);
+    taWrite[i] = MayNeedBigInt(taWrite, 1);
   }
   let resizeWhenConstructorCalled = false;
   class MyArray extends ctor {
@@ -69,7 +69,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(4 * ctor.BYTES_PER_ELEMENT, 8 * ctor.BYTES_PER_ELEMENT);
   const taWrite = new ctor(rab);
   for (let i = 0; i < 4; ++i) {
-    WriteToTypedArray(taWrite, i, 1);
+    taWrite[i] = MayNeedBigInt(taWrite, 1);
   }
   let resizeWhenConstructorCalled = false;
   class MyArray extends ctor {
@@ -99,7 +99,7 @@ for (let ctor of ctors) {
   const rab = CreateResizableArrayBuffer(8, 16);
   const taWrite = new Uint8Array(rab);
   for (let i = 0; i < 8; ++i) {
-    WriteToTypedArray(taWrite, i, 255);
+    taWrite[i] = MayNeedBigInt(taWrite, 255);
   }
   let resizeWhenConstructorCalled = false;
   class MyArray extends Uint16Array {

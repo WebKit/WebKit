@@ -547,6 +547,13 @@ end
     break
 end
 
+macro branchIfWasmException(exceptionTarget)
+    loadp JSWebAssemblyInstance::m_vm[cfr], t3
+    btpz VM::m_exception[t3], .noException
+    jmp exceptionTarget
+.noException:
+end
+
 macro zeroExtend32ToWord(r)
     if JSVALUE64
         andq 0xffffffff, r
@@ -561,23 +568,6 @@ macro boxInt32(r, rTag)
     end
 end
 
-// This is the interpreted analogue to createJSToWasmJITSharedCrashForSIMDParameters
-op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro()
-    if not WEBASSEMBLY or C_LOOP
-        error
-    end
-    tagReturnAddress sp
-    preserveCallerPCAndCFR()
-
-    loadp JSWebAssemblyInstance::m_vm[wasmInstance], a2
-    // copyCalleeSavesToVMEntryFrameCalleeSavesBuffer
-    move wasmInstance, a0
-    move constexpr Wasm::ExceptionType::TypeErrorInvalidV128Use, a1
-    cCall3(_operationWasmToJSException)
-    jumpToException()
-end)
-
-// This is the interpreted analogue to createJSToWasmWrapper
 // If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITShared
 op(js_to_wasm_wrapper_entry, macro ()
     if not WEBASSEMBLY or C_LOOP
@@ -599,19 +589,8 @@ op(js_to_wasm_wrapper_entry, macro ()
         end
     end
 
-    macro clobberArgumentOnlyRegisters()
-        if ARM64 or ARM64E
-            emit "movz x2, #0xBAD"
-            emit "movz x3, #0xBAD"
-            emit "movz x4, #0xBAD"
-            emit "movz x5, #0xBAD"
-            emit "movz x6, #0xBAD"
-            emit "movz x7, #0xBAD"
-        end
-    end
-
-    macro repeat(f)
-        move 0xBEEF, ws0
+    macro repeat(scratch, f)
+        move 0xBEEF, scratch
         f(0)
         f(1)
         f(2)
@@ -649,7 +628,7 @@ if ASSERT_ENABLED
 end
 
     macro saveJSEntrypointRegisters()
-        subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
+        subp constexpr Wasm::JSEntrypointCallee::SpillStackSpaceAligned, sp
         if ARM64 or ARM64E
             storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
             storep wasmInstance, -3 * SlotSize[cfr]
@@ -674,7 +653,7 @@ end
         else
             loadi -1 * SlotSize[cfr], wasmInstance
         end
-        addp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
+        addp constexpr Wasm::JSEntrypointCallee::SpillStackSpaceAligned, sp
     end
 
     tagReturnAddress sp
@@ -684,34 +663,28 @@ end
     # Load data from the entry callee
     # This was written by doVMEntry
     loadp Callee[cfr], ws0 # WebAssemblyFunction*
-    loadp WebAssemblyFunction::m_jsToWasmCallee[ws0], ws0 # JITLessJSEntrypointCallee*
+    loadp WebAssemblyFunction::m_jsToWasmCallee[ws0], ws1 # JSEntrypointCallee*
 
 if ASSERT_ENABLED
     # Check to confirm we have the right kind of callee
-    loadi Wasm::JITLessJSEntrypointCallee::ident[ws0], ws1
-    move 0xBF, wa0
-    bpeq wa0, ws1, .ident_ok
+    loadi Wasm::JSEntrypointCallee::m_ident[ws1], wa0
+    move 0xBF, wa1
+    bpeq wa0, wa1, .ident_ok
     break
 .ident_ok:
 end
 
-    # Allocate stack space (no stack check)
-    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
-    subp ws1, sp
-
-if ASSERT_ENABLED
-    repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
-    end)
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, wa0
+    loadp [wa0], wa0
+    subp ws1, wa0, wa0
+if JSVALUE64
+    orp (constexpr JSValue::NativeCalleeTag), wa0
 end
-
-    # Prepare frame
-    move sp, a0
-    move cfr, a1
-    cCall2(_operationJSToWasmEntryWrapperBuildFrame)
+    storep wa0, Callee[cfr] # CalleeBits(JSEntrypointCallee*)
 
     # Instance
-    loadp constexpr CallFrameSlot::codeBlock * 8[cfr], wasmInstance
+    loadp WebAssemblyFunction::m_instance[ws0], wasmInstance
+    storep wasmInstance, CodeBlock[cfr]
 
     # Memory
     if ARM64 or ARM64E
@@ -721,8 +694,38 @@ end
         loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
     if not ARMv7
-        cagedPrimitiveMayBeNull(memoryBase, ws0)
+        cagedPrimitiveMayBeNull(memoryBase, wa0)
     end
+
+    # Allocate stack space
+    loadi Wasm::JSEntrypointCallee::m_frameSize[ws1], wa0
+    subp sp, wa0, wa0
+
+    bpa wa0, cfr, .stackOverflow
+    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], wa0, .stackHeightOK
+
+.stackHeightOK:
+    move wa0, sp
+
+if ASSERT_ENABLED
+    repeat(wa0, macro (i)
+        storep wa0, -i * SlotSize + constexpr Wasm::JSEntrypointCallee::RegisterStackSpaceAligned[sp]
+    end)
+end
+
+    # Prepare frame
+    move ws0, a2
+    move cfr, a1
+    move sp, a0
+    cCall3(_operationJSToWasmEntryWrapperBuildFrame)
+
+if ARMv7
+    # CodeBlock slot is not an instance yet, so use JS version.
+    branchIfException(_wasm_throw_from_slow_path_trampoline)
+else
+    btpnz r1, _wasm_throw_from_slow_path_trampoline
+end
+    move r0, ws0
 
     # Arguments
 
@@ -751,54 +754,47 @@ else
 end
 
     # Pop argument space values
-    addp constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned, sp
+    addp constexpr Wasm::JSEntrypointCallee::RegisterStackSpaceAligned, sp
 
 if ASSERT_ENABLED
-    repeat(macro (i)
-        storep ws0, -i * SlotSize[sp]
+    repeat(ws1, macro (i)
+        storep ws1, -i * SlotSize[sp]
     end)
 end
 
-    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
-if JSVALUE64
-    andp ~(constexpr JSValue::NativeCalleeTag), ws0
-end
-    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
-    loadp [ws1], ws1
-    addp ws1, ws0
-
     # Store Callee's wasm callee
 if JSVALUE64
-    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
 else
-    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + PayloadOffset[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee + PayloadOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + PayloadOffset[sp]
-    loadp Wasm::JITLessJSEntrypointCallee::wasmCallee + TagOffset[ws0], ws1
+    loadp Wasm::JSEntrypointCallee::m_wasmCallee + TagOffset[ws0], ws1
     storep ws1, constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8 + TagOffset[sp]
 end
 
-    loadp Wasm::JITLessJSEntrypointCallee::wasmFunctionPrologue[ws0], ws0
-    call ws0, WasmEntryPtrTag
+    call Wasm::JSEntrypointCallee::m_wasmFunctionPrologue[ws0], WasmEntryPtrTag
 
+if ASSERT_ENABLED
     clobberVolatileRegisters()
+end
 
     # Restore SP
-    loadp Callee[cfr], ws0 # CalleeBits(JITLessJSEntrypointCallee*)
+    loadp Callee[cfr], ws0 # CalleeBits(JSEntrypointCallee*)
 if JSVALUE64
     andp ~(constexpr JSValue::NativeCalleeTag), ws0
 end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    loadi Wasm::JITLessJSEntrypointCallee::frameSize[ws0], ws1
+    loadi Wasm::JSEntrypointCallee::m_frameSize[ws0], ws1
     subp cfr, ws1, ws1
     move ws1, sp
-    subp constexpr Wasm::JITLessJSEntrypointCallee::SpillStackSpaceAligned, sp
+    subp constexpr Wasm::JSEntrypointCallee::SpillStackSpaceAligned, sp
 
 if ASSERT_ENABLED
-    repeat(macro (i)
-        storep ws0, -i * SlotSize + constexpr Wasm::JITLessJSEntrypointCallee::RegisterStackSpaceAligned[sp]
+    repeat(ws0, macro (i)
+        storep ws0, -i * SlotSize + constexpr Wasm::JSEntrypointCallee::RegisterStackSpaceAligned[sp]
     end)
 end
 
@@ -872,25 +868,31 @@ end
     cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
 
 if ARMv7
-    branchIfException(.handleException)
+    branchIfWasmException(_wasm_throw_from_slow_path_trampoline)
 else
-    btpnz r1, .handleException
+    btpnz r1, _wasm_throw_from_slow_path_trampoline
 end
 
     # Clean up and return
     restoreJSEntrypointRegisters()
+if ASSERT_ENABLED
     clobberVolatileRegisters()
+end
     restoreCallerPCAndCFR()
     ret
 
-.handleException:
-    throwException(OutOfMemory)
-    break
+.stackOverflow:
+    throwException(StackOverflow)
 end)
 
 # This is the interpreted analogue to WasmBinding.cpp:wasmToWasm
 op(wasm_to_wasm_wrapper_entry, macro()
     loadp (Callee - PrologueStackPointerDelta)[sp], ws0
+    loadp [ws0], ws0
+
+if JSVALUE64
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+end
 
     loadi Wasm::Callee::m_index[ws0], ws1
 
@@ -1626,28 +1628,28 @@ end
                 macro callNarrow()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%:
-                    call ws0, JSEntrySlowPathPtrTag
+                    call ws0, WasmEntryPtrTag
                 end
 
                 macro callWide16()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide16) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide16) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide16:
-                    call ws0, JSEntrySlowPathPtrTag
+                    call ws0, WasmEntryPtrTag
                 end
 
                 macro callWide32()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide32) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%_wide32) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide32:
-                    call ws0, JSEntrySlowPathPtrTag
+                    call ws0, WasmEntryPtrTag
                 end
 
                 size(callNarrow, callWide16, callWide32, macro (gen) gen() end)
@@ -1865,28 +1867,28 @@ end
                 macro jumpNarrow()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallWasmEntryPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%:
-                    jmp ws0, JSEntrySlowPathPtrTag
+                    jmp ws0, WasmEntryPtrTag
                 end
 
                 macro jumpWide16()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallWasmEntryPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide16:
-                    jmp ws0, JSEntrySlowPathPtrTag
+                    jmp ws0, WasmEntryPtrTag
                 end
 
                 macro jumpWide32()
                     if ARM64E
                         leap _g_config, ws1
-                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallJSEntrySlowPathPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # JSEntrySlowPathPtrTag
+                        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmTailCallWasmEntryPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
                     end
                     _wasm_trampoline_%opcodeName%_wide32:
-                    jmp ws0, JSEntrySlowPathPtrTag
+                    jmp ws0, WasmEntryPtrTag
                 end
 
                 size(jumpNarrow, jumpWide16, jumpWide32, macro (gen) gen() end)
@@ -2691,6 +2693,19 @@ wasmOp(rethrow, WasmRethrow, macro(ctx)
     jumpToException()
 end)
 
+wasmOp(throw_ref, WasmThrowRef, macro(ctx)
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
+    callWasmSlowPath(_slow_path_wasm_throw_ref)
+    btpz r1, .throw
+    jumpToException()
+.throw:
+    restoreStateAfterCCall()
+    dispatch(ctx)
+end)
+
 macro commonCatchImpl(ctx)
     getVMFromCallFrame(t3, t0)
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
@@ -2746,6 +2761,82 @@ end)
 commonWasmOp(wasm_catch_all, WasmCatchAll, macro() end, macro(ctx)
     commonCatchImpl(ctx)
     traceExecution()
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catch, WasmTryTableCatch, macro() end, macro(ctx)
+    # push the arguments to the stack
+    commonCatchImpl(ctx)
+
+    move r1, t1
+
+    wgetu(ctx, m_startOffset, t2)
+    wgetu(ctx, m_argumentCount, t3)
+
+    lshifti 3, t2
+    subp cfr, t2, t2
+
+.copyLoop:
+    btiz t3, .done
+if JSVALUE64
+    loadq [t1], t6
+    storeq t6, [t2]
+else
+    load2ia [t1], t5, t6
+    store2ia t5, t6, [t2]
+end
+    subi 1, t3
+    # FIXME: Use arm store-add/sub instructions in wasm LLInt catch
+    # https://bugs.webkit.org/show_bug.cgi?id=231210
+    subp 8, t2
+    addp 8, t1
+    jmp .copyLoop
+
+.done:
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchref, WasmTryTableCatch, macro() end, macro(ctx)
+    # push the arguments, exnref handled by the slow path
+    commonCatchImpl(ctx)
+
+    move r1, t1
+
+    wgetu(ctx, m_startOffset, t2)
+    wgetu(ctx, m_argumentCount, t3)
+
+    lshifti 3, t2
+    subp cfr, t2, t2
+
+.copyLoop:
+    btiz t3, .done
+if JSVALUE64
+    loadq [t1], t6
+    storeq t6, [t2]
+else
+    load2ia [t1], t5, t6
+    store2ia t5, t6, [t2]
+end
+    subi 1, t3
+    # FIXME: Use arm store-add/sub instructions in wasm LLInt catch
+    # https://bugs.webkit.org/show_bug.cgi?id=231210
+    subp 8, t2
+    addp 8, t1
+    jmp .copyLoop
+
+.done:
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchall, WasmTryTableCatch, macro() end, macro(ctx)
+    # don't do anything, we don't push at all just jump
+    commonCatchImpl(ctx)
+    dispatch(ctx)
+end)
+
+commonWasmOp(wasm_try_table_catchallref, WasmTryTableCatch, macro() end, macro(ctx)
+    # exnref handled by the slow path
+    commonCatchImpl(ctx)
     dispatch(ctx)
 end)
 

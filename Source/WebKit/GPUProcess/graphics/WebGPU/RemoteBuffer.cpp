@@ -99,6 +99,7 @@ void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
         return;
     }
 
+#if !ENABLE(WEBGPU_SWIFT)
     auto buffer = m_backing->getBufferContents();
     if (buffer.empty()) {
         completionHandler(false);
@@ -112,7 +113,11 @@ void RemoteBuffer::copy(std::optional<WebCore::SharedMemoryHandle>&& dataHandle,
     }
 
     memcpySpan(buffer.subspan(offset), data);
+#else
+    backing().copy(data, offset);
+#endif
     completionHandler(true);
+
 }
 
 void RemoteBuffer::destroy()

@@ -30,6 +30,7 @@
 #import "APIWebPushSubscriptionData.h"
 #import "WKError.h"
 #import "WKSecurityOriginInternal.h"
+#import "WebPushDaemonConnectionConfiguration.h"
 #import "_WKNotificationDataInternal.h"
 #import "_WKWebPushSubscriptionDataInternal.h"
 #import <WebCore/ExceptionData.h>
@@ -64,7 +65,21 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::WebPushDaemonConnection>(self, configuration.machServiceName, configuration.partition, configuration.bundleIdentifier);
+    WebKit::WebPushD::WebPushDaemonConnectionConfiguration connectionConfiguration {
+        { },
+        configuration.bundleIdentifierOverrideForTesting,
+        configuration.partition,
+        { },
+    };
+
+#if !USE(EXTENSIONKIT)
+    auto hostAppAuditToken = configuration.hostApplicationAuditToken;
+    Vector<uint8_t> hostAppAuditTokenData(sizeof(hostAppAuditToken));
+    memcpy(hostAppAuditTokenData.data(), &hostAppAuditToken, sizeof(hostAppAuditToken));
+    connectionConfiguration.hostAppAuditTokenData = WTFMove(hostAppAuditTokenData);
+#endif
+
+    API::Object::constructInWrapper<API::WebPushDaemonConnection>(self, configuration.machServiceName, WTFMove(connectionConfiguration));
 
     return self;
 }

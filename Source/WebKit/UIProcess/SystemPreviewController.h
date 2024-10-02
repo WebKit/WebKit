@@ -77,7 +77,7 @@ public:
     void loadFailed();
     void end();
 
-    WebPageProxy& page() { return m_webPageProxy; }
+    WebPageProxy& page() { return m_webPageProxy.get(); }
     const WebCore::SystemPreviewInfo& previewInfo() const { return m_systemPreviewInfo; }
 
     void triggerSystemPreviewAction();
@@ -100,7 +100,7 @@ private:
 
     State m_state { State::Initial };
 
-    WebPageProxy& m_webPageProxy;
+    WeakRef<WebPageProxy> m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
     URL m_downloadURL;
     URL m_localFileURL;

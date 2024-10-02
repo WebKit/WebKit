@@ -55,8 +55,8 @@ static bool didExitFullscreen;
 
 namespace TestWebKitAPI {
 
-// FIXME: Re-enable this test once webkit.org/b/248093 is resolved.
-#if !defined(NDEBUG)
+// FIXME: Re-enable this test once webkit.org/b/248093 is resolved. Flaky timeout on Sonoma+ rdar://136717743
+#if (!defined(NDEBUG) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000))
 TEST(Fullscreen, DISABLED_Focus)
 #else
 TEST(Fullscreen, Focus)

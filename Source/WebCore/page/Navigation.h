@@ -126,7 +126,7 @@ public:
     bool canGoBack() const;
     bool canGoForward() const;
 
-    void initializeEntries(Ref<HistoryItem>&& currentItem, Vector<Ref<HistoryItem>>& items);
+    void initializeForNewWindow(std::optional<NavigationNavigationType>, LocalDOMWindow* previousWindow);
 
     Result navigate(const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
@@ -151,6 +151,7 @@ public:
     void abortOngoingNavigationIfNeeded();
 
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
+    bool suppressNormalScrollRestoration() const { return m_suppressNormalScrollRestorationDuringOngoingNavigation; }
 
 private:
     explicit Navigation(LocalDOMWindow&);

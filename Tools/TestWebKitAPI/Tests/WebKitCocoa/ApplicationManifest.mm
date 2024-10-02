@@ -130,7 +130,7 @@ TEST(ApplicationManifest, DisplayMode)
         @"fullscreen": @"(display-mode) (display-mode: fullscreen)",
     };
 
-    NSURL *baseURL = [[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"];
+    NSURL *baseURL = NSBundle.test_resourcesBundle.resourceURL;
     [displayModesAndExpectedContent enumerateKeysAndObjectsUsingBlock:^(NSString *displayMode, NSString *expectedPageContent, BOOL* stop) {
         @autoreleasepool {
             NSString *m2 = displayMode.length ? [NSString stringWithFormat:@"{\"display\": \"%@\"}", displayMode] : @"{}";

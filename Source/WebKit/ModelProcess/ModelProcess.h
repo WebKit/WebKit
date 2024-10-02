@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcess.h"
 #include "SandboxExtension.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
@@ -44,7 +45,7 @@ class ModelConnectionToWebProcess;
 struct ModelProcessConnectionParameters;
 struct ModelProcessCreationParameters;
 
-class ModelProcess : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
+class ModelProcess final : public AuxiliaryProcess, public ThreadSafeRefCounted<ModelProcess> {
     WTF_MAKE_NONCOPYABLE(ModelProcess);
     WTF_MAKE_TZONE_ALLOCATED(ModelProcess);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ModelProcess);
@@ -83,11 +84,11 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveModelProcessMessage(IPC::Connection&, IPC::Decoder&);
 
     // Message Handlers
     void initializeModelProcess(ModelProcessCreationParameters&&, CompletionHandler<void()>&&);
     void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void addSession(PAL::SessionID);
     void removeSession(PAL::SessionID);
 

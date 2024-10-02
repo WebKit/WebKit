@@ -129,6 +129,8 @@ FetchLoader::FetchLoader(FetchLoaderClient& client, FetchBodyConsumer* consumer)
 {
 }
 
+FetchLoader::~FetchLoader() = default;
+
 void FetchLoader::stop()
 {
     if (m_consumer)
@@ -145,7 +147,7 @@ RefPtr<FragmentedSharedBuffer> FetchLoader::startStreaming()
     return firstChunk;
 }
 
-void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const ResourceResponse& response)
+void FetchLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
     m_client->didReceiveResponse(response);
 }
@@ -159,7 +161,7 @@ void FetchLoader::didReceiveData(const SharedBuffer& buffer)
     m_consumer->append(buffer);
 }
 
-void FetchLoader::didFinishLoading(ScriptExecutionContextIdentifier, ResourceLoaderIdentifier, const NetworkLoadMetrics& metrics)
+void FetchLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics& metrics)
 {
     m_client->didSucceed(metrics);
 }

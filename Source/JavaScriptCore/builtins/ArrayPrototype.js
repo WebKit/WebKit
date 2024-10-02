@@ -400,6 +400,16 @@ function concat(first)
             return result;
     }
 
+    if (@argumentCount() === 0
+        && @isJSArray(this)
+        && @tryGetByIdWithWellKnownSymbol(this, "isConcatSpreadable") === @undefined
+        && @arraySpeciesWatchpointIsValid(this)) {
+
+        var result = @arrayFromFastFillWithEmpty(@Array, this);
+        if (result)
+            return result;
+    }
+
     return @tailCallForwardArguments(@concatSlowPath, this);
 }
 
@@ -694,6 +704,11 @@ function with(index, value)
         @throwRangeError("Array index out of Range");
 
     // Step 7.
+    var fastResult = @arrayFromFastFillWithUndefined(@Array, array);
+    if (fastResult) {
+        @putByValDirect(fastResult, actualIndex, value);
+        return fastResult;
+    }
     var result = @newArrayWithSize(length);
 
     // Step 8-9

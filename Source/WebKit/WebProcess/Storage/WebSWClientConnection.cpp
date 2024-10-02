@@ -172,8 +172,11 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
         return;
     }
 
-    runOrDelayTaskForImport([this, callback = WTFMove(callback), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
-        sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(callback));
+    CompletionHandlerWithFinalizer<void(std::optional<ServiceWorkerRegistrationData>)> completionHandler(WTFMove(callback), [] (auto& callback) {
+        callback(std::nullopt);
+    });
+    runOrDelayTaskForImport([this, completionHandler = WTFMove(completionHandler), topOrigin = WTFMove(topOrigin), clientURL]() mutable {
+        sendWithAsyncReply(Messages::WebSWServerConnection::MatchRegistration { topOrigin, clientURL }, WTFMove(completionHandler));
     });
 }
 

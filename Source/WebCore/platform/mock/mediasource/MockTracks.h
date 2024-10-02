@@ -31,10 +31,12 @@
 #include "InbandTextTrackPrivate.h"
 #include "MockBox.h"
 #include "VideoTrackPrivate.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 class MockAudioTrackPrivate : public AudioTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockAudioTrackPrivate);
 public:
     static Ref<MockAudioTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockAudioTrackPrivate(box)); }
     virtual ~MockAudioTrackPrivate() = default;
@@ -52,6 +54,7 @@ protected:
 };
 
 class MockTextTrackPrivate : public InbandTextTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockTextTrackPrivate);
 public:
     static Ref<MockTextTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockTextTrackPrivate(box)); }
     virtual ~MockTextTrackPrivate() = default;
@@ -71,6 +74,7 @@ protected:
 
 
 class MockVideoTrackPrivate : public VideoTrackPrivate {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MockVideoTrackPrivate);
 public:
     static Ref<MockVideoTrackPrivate> create(const MockTrackBox& box) { return adoptRef(*new MockVideoTrackPrivate(box)); }
     virtual ~MockVideoTrackPrivate() = default;

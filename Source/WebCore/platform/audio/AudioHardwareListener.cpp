@@ -54,10 +54,10 @@ void AudioHardwareListener::resetCreationFunction()
 #else
         class RefCountedAudioHardwareListener : public AudioHardwareListener, public RefCounted<RefCountedAudioHardwareListener> {
         public:
+            DEFINE_VIRTUAL_REFCOUNTED;
+
             RefCountedAudioHardwareListener(AudioHardwareListener::Client& client)
                 : AudioHardwareListener(client) { }
-            void ref() const final { RefCounted<RefCountedAudioHardwareListener>::ref(); }
-            void deref() const final { RefCounted<RefCountedAudioHardwareListener>::deref(); }
         };
         return adoptRef(*new RefCountedAudioHardwareListener(client));
 #endif

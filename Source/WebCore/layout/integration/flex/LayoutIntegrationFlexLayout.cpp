@@ -34,6 +34,8 @@
 #include "HitTestResult.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
+#include "LayoutIntegrationBoxGeometryUpdater.h"
+#include "RenderBox.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderView.h"
@@ -77,48 +79,11 @@ static inline Layout::BoxGeometry::Edges flexBoxLogicalPadding(const RenderBoxMo
     return { { padding.left(), padding.right() }, { padding.top(), padding.bottom() } };
 }
 
-void FlexLayout::updateFormattingRootGeometryAndInvalidate()
+void FlexLayout::updateFormattingContexGeometries(LayoutUnit availableLogicalWidth)
 {
-    auto updateGeometry = [&](auto& root) {
-        auto& flexBoxRenderer = this->flexBoxRenderer();
-
-        auto isLeftToRightInlineDirection = flexBoxRenderer.style().isLeftToRightDirection();
-        auto blockFlowDirection = writingModeToBlockFlowDirection(flexBoxRenderer.style().writingMode());
-
-        root.setContentBoxWidth(blockFlowDirection == FlowDirection::TopToBottom ? flexBoxRenderer.contentWidth() : flexBoxRenderer.contentHeight());
-        root.setPadding(flexBoxLogicalPadding(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
-        root.setBorder(flexBoxLogicalBorder(flexBoxRenderer, isLeftToRightInlineDirection, blockFlowDirection));
-        root.setHorizontalMargin({ });
-        root.setVerticalMargin({ });
-    };
-    updateGeometry(layoutState().ensureGeometryForBox(flexBox()));
-}
-
-void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit, LayoutUnit)
-{
-    auto& rootGeometry = layoutState().geometryForBox(flexBox());
-    auto& layoutBox = *flexItem.layoutBox();
-    auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
-    auto& style = flexItem.style();
-
-    boxGeometry.setVerticalMargin({ flexItem.marginTop(), flexItem.marginBottom() });
-    boxGeometry.setHorizontalMargin({ flexItem.marginLeft(), flexItem.marginRight() });
-    boxGeometry.setBorder({ { flexItem.borderLeft(), flexItem.borderRight() }, { flexItem.borderTop(), flexItem.borderBottom() } });
-    boxGeometry.setPadding(Layout::BoxGeometry::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
-
-    if (style.width().isFixed() || style.width().isPercentOrCalculated()) {
-        auto widthValue = minimumValueForLength(style.width(), rootGeometry.contentBoxWidth());
-        if (style.boxSizing() == BoxSizing::BorderBox)
-            widthValue = std::max(0_lu, widthValue - boxGeometry.horizontalBorderAndPadding());
-        boxGeometry.setContentBoxWidth(widthValue);
-    }
-
-    if (style.height().isFixed()) {
-        auto heightValue = LayoutUnit { style.height().value() };
-        if (style.boxSizing() == BoxSizing::BorderBox)
-            heightValue = std::max(0_lu, heightValue - boxGeometry.verticalBorderAndPadding());
-        boxGeometry.setContentBoxHeight(heightValue);
-    }
+    auto boxGeometryUpdater = BoxGeometryUpdater { layoutState(), flexBox() };
+    boxGeometryUpdater.setFormattingContextRootGeometry(availableLogicalWidth);
+    boxGeometryUpdater.setFormattingContextContentGeometry(layoutState().geometryForBox(flexBox()).contentBoxWidth(), { });
 }
 
 void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
@@ -137,23 +102,28 @@ void FlexLayout::layout()
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
-    auto verticalSpaceForFlexItems = [&]() -> std::tuple<std::optional<LayoutUnit>, std::optional<LayoutUnit>> {
+    auto crossAxisSpaceForFlexItems = [&]() -> std::tuple<std::optional<LayoutUnit>, std::optional<LayoutUnit>> {
         auto& flexBoxStyle = flexBox().style();
 
-        auto adjustedHeightValue = [&](auto& property) -> std::optional<LayoutUnit> {
-            if (!property.isFixed())
-                return { };
-            auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
-            return LayoutUnit { boxSizingIsContentBox ? property.value() : property.value() - rootGeometry.verticalMarginBorderAndPadding() };
+        auto heightValue = [&](auto& computedValue) -> std::optional<LayoutUnit> {
+            if (computedValue.isPercent())
+                return flexBoxRenderer().computePercentageLogicalHeight(computedValue, RenderBoxModelObject::UpdatePercentageHeightDescendants::No);
+
+            if (computedValue.isFixed()) {
+                auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
+                return LayoutUnit { boxSizingIsContentBox ? computedValue.value() : computedValue.value() - rootGeometry.verticalMarginBorderAndPadding() };
+            }
+
+            return { };
         };
 
-        auto verticalSpace = adjustedHeightValue(flexBoxStyle.logicalHeight());
-        if (auto maximumHeightValue = adjustedHeightValue(flexBoxStyle.logicalMaxHeight()))
-            verticalSpace = verticalSpace ? std::min(*verticalSpace, *maximumHeightValue) : *maximumHeightValue;
-        return { verticalSpace, adjustedHeightValue(flexBoxStyle.logicalMinHeight()) };
+        auto crossAxisSpace = heightValue(flexBoxStyle.logicalHeight());
+        if (auto maximumHeightValue = heightValue(flexBoxStyle.logicalMaxHeight()))
+            crossAxisSpace = crossAxisSpace ? std::min(*crossAxisSpace, *maximumHeightValue) : *maximumHeightValue;
+        return { crossAxisSpace, heightValue(flexBoxStyle.logicalMinHeight()) };
     };
-    auto [availableVerticalSpace, minimumVerticalSpace] = verticalSpaceForFlexItems();
-    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace, minimumVerticalSpace };
+    auto [availableCrossAxisSpace, minimumCrossAxisSpace] = crossAxisSpaceForFlexItems();
+    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableCrossAxisSpace, minimumCrossAxisSpace };
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), layoutState() };
     flexFormattingContext.layout(constraints);
 
@@ -197,6 +167,9 @@ void FlexLayout::updateRenderers()
         renderer.setMarginEnd(flexItemGeometry.marginEnd());
         renderer.setMarginBefore(flexItemGeometry.marginBefore());
         renderer.setMarginAfter(flexItemGeometry.marginAfter());
+
+        if (!renderer.everHadLayout() || renderer.checkForRepaintDuringLayout())
+            renderer.repaint();
     }
 }
 
@@ -213,9 +186,12 @@ void FlexLayout::collectOverflow()
 {
 }
 
-LayoutUnit FlexLayout::contentLogicalHeight() const
+LayoutUnit FlexLayout::contentBoxLogicalHeight() const
 {
-    return { };
+    auto contentLogicalBottom = LayoutUnit { };
+    for (auto& layoutBox : formattingContextBoxes(flexBox()))
+        contentLogicalBottom = std::max(contentLogicalBottom, Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).bottom());
+    return contentLogicalBottom - layoutState().geometryForBox(flexBox()).contentBoxTop();
 }
 
 }

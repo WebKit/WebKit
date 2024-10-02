@@ -69,6 +69,7 @@ public:
         Snapshot,
         ShareableSnapshot,
         ShareableLocalSnapshot,
+        WebGPU,
     };
 
     enum class Format {

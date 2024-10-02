@@ -32,8 +32,11 @@
 #include "ButtonInputType.h"
 
 #include "InputTypeNames.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ButtonInputType);
 
 const AtomString& ButtonInputType::formControlType() const
 {

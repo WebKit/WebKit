@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
- * Copyright (C) Apple 2023. All rights reserved.
+ * Copyright (C) Apple 2023-2024. All rights reserved.
  * Copyright (C) Google 2014-2017. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -51,10 +51,10 @@ void SVGTextLayoutEngine::updateCharacterPositionIfNeeded(float& x, float& y)
 
     // Replace characters x/y position, with the current text position plus any
     // relative adjustments, if it doesn't specify an absolute position itself.
-    if (x == SVGTextLayoutAttributes::emptyValue()) 
+    if (SVGTextLayoutAttributes::isEmptyValue(x))
         x = m_x + m_dx;
 
-    if (y == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(y))
         y = m_y + m_dy;
 
     m_dx = 0;
@@ -76,12 +76,12 @@ void SVGTextLayoutEngine::updateCurrentTextPosition(float x, float y, float glyp
 void SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded(float dx, float dy)
 {
     // Update relative positioning information.
-    if (dx == SVGTextLayoutAttributes::emptyValue() && dy == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dx) && SVGTextLayoutAttributes::isEmptyValue(dy))
         return;
 
-    if (dx == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dx))
         dx = 0;
-    if (dy == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dy))
         dy = 0;
 
     if (m_inPathLayout) {
@@ -469,10 +469,10 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
                 return;
 
             if (m_isVerticalText) {
-                if (y != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(y))
                     return;
             } else {
-                if (x != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(x))
                     return;
             }
 
@@ -518,7 +518,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
                 m_lineLayoutChunkStarts.add(makeKey(*textBox));
         }
 
-        float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;
+        float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : data.rotate;
 
         // Calculate glyph orientation angle.
         const UChar* currentCharacter = characters + m_visualCharacterOffset;
@@ -535,15 +535,15 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         // Apply dx/dy value adjustments to current text position, if needed.
         updateRelativePositionAdjustmentsIfNeeded(data.dx, data.dy);
 
-        // Calculate CSS 'kerning', 'letter-spacing' and 'word-spacing' for next character, if needed.
-        float spacing = spacingLayout.calculateCSSKerningAndSpacing(&svgStyle, lengthContext.get(), currentCharacter);
+        // Calculate CSS 'letter-spacing' and 'word-spacing' for next character, if needed.
+        float spacing = spacingLayout.calculateCSSSpacing(currentCharacter);
 
         float textPathOffset = 0;
         if (m_inPathLayout) {
             float scaledGlyphAdvance = glyphAdvance * m_textPathScaling;
             if (m_isVerticalText) {
                 // If there's an absolute y position available, it marks the beginning of a new position along the path.
-                if (y != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(y))
                     m_textPathCurrentOffset = y + m_textPathStartOffset;
 
                 m_textPathCurrentOffset += m_dy;
@@ -554,7 +554,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
                 yOrientationShift -= scaledGlyphAdvance / 2;
             } else {
                 // If there's an absolute x position available, it marks the beginning of a new position along the path.
-                if (x != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(x))
                     m_textPathCurrentOffset = x + m_textPathStartOffset;
 
                 m_textPathCurrentOffset += m_dx;
@@ -656,7 +656,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         if (m_inPathLayout)
             updateCurrentTextPosition(x, y, glyphAdvance);
         else {
-            // Apply CSS 'kerning', 'letter-spacing' and 'word-spacing' to next character, if needed.
+            // Apply CSS 'letter-spacing' and 'word-spacing' to next character, if needed.
             if (spacing)
                 applySpacingToNextCharacter = true;
 

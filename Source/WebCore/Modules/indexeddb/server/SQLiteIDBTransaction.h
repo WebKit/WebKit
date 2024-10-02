@@ -30,6 +30,7 @@
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashSet.h>
@@ -47,9 +48,10 @@ namespace IDBServer {
 class SQLiteIDBBackingStore;
 class SQLiteIDBCursor;
 
-class SQLiteIDBTransaction {
+class SQLiteIDBTransaction : public CanMakeThreadSafeCheckedPtr<SQLiteIDBTransaction> {
     WTF_MAKE_TZONE_ALLOCATED(SQLiteIDBTransaction);
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SQLiteIDBTransaction);
 public:
     SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);
     ~SQLiteIDBTransaction();

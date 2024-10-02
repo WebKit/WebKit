@@ -245,9 +245,13 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
 
     if (isDownload()) {
         deleteDownloadFile();
-        auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
-        RELEASE_ASSERT(download);
-        download->didFail(resourceError, { });
+        if (m_client)
+            m_client->didCompleteWithError(resourceError);
+        else {
+            auto* download = m_session->networkProcess().downloadManager().download(*m_pendingDownloadID);
+            RELEASE_ASSERT(download);
+            download->didFail(resourceError, { });
+        }
         return;
     }
 

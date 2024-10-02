@@ -66,7 +66,7 @@ Child copyAndSimplify(const Child&, const SimplificationOptions&);
 // MARK: In-place Simplify
 
 std::optional<Child> simplify(Number&, const SimplificationOptions&);
-std::optional<Child> simplify(Percent&, const SimplificationOptions&);
+std::optional<Child> simplify(Percentage&, const SimplificationOptions&);
 std::optional<Child> simplify(NonCanonicalDimension&, const SimplificationOptions&);
 std::optional<Child> simplify(CanonicalDimension&, const SimplificationOptions&);
 std::optional<Child> simplify(Symbol&, const SimplificationOptions&);
@@ -97,6 +97,8 @@ std::optional<Child> simplify(Log&, const SimplificationOptions&);
 std::optional<Child> simplify(Exp&, const SimplificationOptions&);
 std::optional<Child> simplify(Abs&, const SimplificationOptions&);
 std::optional<Child> simplify(Sign&, const SimplificationOptions&);
+std::optional<Child> simplify(Progress&, const SimplificationOptions&);
+std::optional<Child> simplify(Anchor&, const SimplificationOptions&);
 
 // MARK: Unit Canonicalization
 

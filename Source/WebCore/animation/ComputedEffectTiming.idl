@@ -23,12 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (double or CSSNumericValue) CSSNumberish;
+
 [
     JSGenerateToJSObject
 ] dictionary ComputedEffectTiming : EffectTiming {
-    unrestricted double  endTime;
-    unrestricted double  activeDuration;
-    double?              localTime = null;
+    CSSNumberish         endTime;
+    CSSNumberish         activeDuration;
+    CSSNumberish?        localTime = null;
     double?              progress = null;
     unrestricted double? currentIteration = null;
 };

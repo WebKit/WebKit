@@ -72,9 +72,9 @@ public:
 
     void work(CompilationEffort) final;
 
-    bool didReceiveFunctionData(unsigned, const FunctionData&) final;
+    bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
 
-    void compileFunction(uint32_t functionIndex) final;
+    void compileFunction(FunctionCodeIndex functionIndex) final;
 
     void completeInStreaming();
     void didCompileFunctionInStreaming();
@@ -87,7 +87,7 @@ private:
     void addTailCallEdge(uint32_t, uint32_t);
     void computeTransitiveTailCalls() const;
 
-    bool ensureEntrypoint(IPIntCallee&, unsigned functionIndex);
+    bool ensureEntrypoint(IPIntCallee&, FunctionCodeIndex functionIndex);
 
     Vector<std::unique_ptr<FunctionIPIntMetadataGenerator>> m_wasmInternalFunctions;
     const Ref<IPIntCallee>* m_callees { nullptr };

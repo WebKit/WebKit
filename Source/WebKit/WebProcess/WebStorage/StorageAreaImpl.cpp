@@ -50,57 +50,60 @@ StorageAreaImpl::StorageAreaImpl(StorageAreaMap& storageAreaMap)
 
 StorageAreaImpl::~StorageAreaImpl()
 {
-    if (m_storageAreaMap)
-        m_storageAreaMap->decrementUseCount();
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        storageAreaMap->decrementUseCount();
 }
 
 unsigned StorageAreaImpl::length()
 {
-    return m_storageAreaMap ? m_storageAreaMap->length() : 0;
+    RefPtr storageAreaMap = m_storageAreaMap.get();
+    return storageAreaMap ? storageAreaMap->length() : 0;
 }
 
 String StorageAreaImpl::key(unsigned index)
 {
-    return m_storageAreaMap ? m_storageAreaMap->key(index) : nullString();
+    RefPtr storageAreaMap = m_storageAreaMap.get();
+    return storageAreaMap ? storageAreaMap->key(index) : nullString();
 }
 
 String StorageAreaImpl::item(const String& key)
 {
-    return m_storageAreaMap ? m_storageAreaMap->item(key) : nullString();
+    RefPtr storageAreaMap = m_storageAreaMap.get();
+    return storageAreaMap ? storageAreaMap->item(key) : nullString();
 }
 
 void StorageAreaImpl::setItem(LocalFrame& sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!value.isNull());
 
-    if (m_storageAreaMap)
-        m_storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
 }
 
 void StorageAreaImpl::removeItem(LocalFrame& sourceFrame, const String& key)
 {
-    if (m_storageAreaMap)
-        m_storageAreaMap->removeItem(sourceFrame, this, key);
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        storageAreaMap->removeItem(sourceFrame, this, key);
 }
 
 void StorageAreaImpl::clear(LocalFrame& sourceFrame)
 {
-    if (m_storageAreaMap)
-        m_storageAreaMap->clear(sourceFrame, this);
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        storageAreaMap->clear(sourceFrame, this);
 }
 
 bool StorageAreaImpl::contains(const String& key)
 {
-    if (m_storageAreaMap)
-        return m_storageAreaMap->contains(key);
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        return storageAreaMap->contains(key);
 
     return false;
 }
 
 StorageType StorageAreaImpl::storageType() const
 {
-    if (m_storageAreaMap)
-        return m_storageAreaMap->type();
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        return storageAreaMap->type();
 
     // We probably need an Invalid type.
     return StorageType::Local;
@@ -113,8 +116,8 @@ size_t StorageAreaImpl::memoryBytesUsedByCache()
 
 void StorageAreaImpl::prewarm()
 {
-    if (m_storageAreaMap)
-        m_storageAreaMap->connect();
+    if (RefPtr storageAreaMap = m_storageAreaMap.get())
+        storageAreaMap->connect();
 }
 
 } // namespace WebKit

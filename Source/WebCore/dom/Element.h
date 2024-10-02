@@ -274,6 +274,7 @@ public:
     WEBCORE_EXPORT int clientTop();
     WEBCORE_EXPORT int clientWidth();
     WEBCORE_EXPORT int clientHeight();
+    double currentCSSZoom();
 
     virtual int scrollLeft();
     virtual int scrollTop();

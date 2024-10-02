@@ -86,6 +86,8 @@ struct UnlinkedStringJumpTable {
 
     using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
     StringOffsetTable m_offsetTable;
+    unsigned m_minLength { StringImpl::MaxLength };
+    unsigned m_maxLength { 0 };
 
     inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset) const
     {
@@ -102,6 +104,9 @@ struct UnlinkedStringJumpTable {
             return defaultIndex;
         return loc->value.m_indexInTable;
     }
+
+    unsigned minLength() const { return m_minLength; }
+    unsigned maxLength() const { return m_maxLength; }
 };
 
 struct UnlinkedSimpleJumpTable {

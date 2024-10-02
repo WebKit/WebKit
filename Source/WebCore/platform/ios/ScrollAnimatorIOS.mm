@@ -32,12 +32,15 @@
 #import "RenderLayer.h"
 #import "ScrollableArea.h"
 #import "ScrollingEffectsController.h"
+#import <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TOUCH_EVENTS)
 #import "PlatformTouchEventIOS.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimatorIOS);
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {

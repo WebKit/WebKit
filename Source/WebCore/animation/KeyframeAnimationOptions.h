@@ -28,7 +28,9 @@
 #include "AnimationFrameRate.h"
 #include "AnimationFrameRatePreset.h"
 #include "AnimationTimeline.h"
+#include "CSSKeywordValue.h"
 #include "KeyframeEffectOptions.h"
+#include "TimelineRangeOffset.h"
 
 namespace WebCore {
 
@@ -36,6 +38,8 @@ struct KeyframeAnimationOptions : KeyframeEffectOptions {
     String id;
     std::optional<RefPtr<AnimationTimeline>> timeline;
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
+    TimelineRangeValue rangeStart;
+    TimelineRangeValue rangeEnd;
 };
 
 } // namespace WebCore

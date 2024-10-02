@@ -39,7 +39,7 @@ PUBLIC_GITHUB_API_ENDPOINT = 'https://api.github.com/'
 DESCRIPTION = '''Downloads a release binary from a GitHub repository.
 (Requests the latest release unless a specific tag is provided.)
 
-Intended for download of vswhere.exe and WinCairoRequirements.zip,
+Intended for download of vswhere.exe and WebKitRequirementsWin64.zip,
 but may be used for arbitrary binaries / repositories.
 
 Checks whether the desired version already exists in the output directory

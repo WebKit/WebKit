@@ -116,6 +116,7 @@ void GStreamerWebRTCProvider::initializeVideoDecodingCapabilities()
 std::optional<MediaCapabilitiesDecodingInfo> GStreamerWebRTCProvider::videoDecodingCapabilitiesOverride(const VideoConfiguration& configuration)
 {
     MediaCapabilitiesDecodingInfo info;
+    info.supportedConfiguration.type = MediaDecodingType::WebRTC;
     ContentType contentType { configuration.contentType };
     auto containerType = contentType.containerType();
     if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {

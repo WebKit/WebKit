@@ -132,13 +132,55 @@ TEST(Fullscreen, VideoLifecycle)
     runTest(configuration.get());
 }
 
+// rdar://136730607
+#if PLATFORM(MAC) && defined(NDEBUG) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(Fullscreen, DISABLED_VideoLifecycleElementFullscreenDisabled)
+#else
 TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration preferences]._videoFullscreenRequiresElementFullscreen = YES;
 
     runTest(configuration.get());
+}
+
+// rdar://136783989
+#if PLATFORM(MAC) && defined(NDEBUG)
+TEST(Fullscreen, DISABLED_VideoPausesAfterExitingFullscreen)
+#else
+TEST(Fullscreen, VideoPausesAfterExitingFullscreen)
+#endif
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration preferences]._videoFullscreenRequiresElementFullscreen = YES;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+    ASSERT_FALSE([webView _canEnterFullscreen]);
+    ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
+
+    auto observer = adoptNS([[FullscreenLifecycleObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:fullscreenStateKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView loadTestPageNamed:@"large-video-test-now-playing"];
+    [webView waitForMessage:@"playing"];
+
+    [webView _enterFullscreen];
+
+    TestWebKitAPI::Util::waitFor([&] {
+        return [webView fullscreenState] == WKFullscreenStateInFullscreen;
+    });
+    ASSERT_EQ([webView fullscreenState], WKFullscreenStateInFullscreen);
+    ASSERT_TRUE(fullscreenStateChanged);
+
+    fullscreenStateChanged = false;
+    [webView closeAllMediaPresentationsWithCompletionHandler:^{ }];
+    [webView waitForMessage:@"paused"];
+
+    ASSERT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
+    ASSERT_TRUE(fullscreenStateChanged);
 }
 
 #endif // PLATFORM(MAC)

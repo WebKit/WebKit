@@ -162,9 +162,7 @@ private:
 
     HashMap<Ref<Element>, std::optional<QueryContainerState>> m_queryContainerStates;
     bool m_hasUnresolvedQueryContainers { false };
-
     bool m_hasUnresolvedAnchorPositionedElements { false };
-    bool m_canFindAnchorsForNextAnchorPositionedElement { false };
 
     std::unique_ptr<Update> m_update;
 };

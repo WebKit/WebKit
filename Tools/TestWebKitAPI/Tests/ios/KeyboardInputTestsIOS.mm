@@ -80,7 +80,7 @@ enum class CaretVisibility : bool { Hidden, Visible };
 
 + (UIImage *)barButtonIcon
 {
-    return [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
+    return [UIImage imageNamed:@"TestWebKitAPIResources.bundle/icon.png"];
 }
 
 + (UIBarButtonItemGroup *)leadingItemsForWebView:(WKWebView *)webView
@@ -847,7 +847,7 @@ TEST(KeyboardInputTests, InsertTextSimulatingKeyboardInput)
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
     [webView _setInputDelegate:inputDelegate.get()];
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"insert-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"insert-text" withExtension:@"html"];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [[webView textInputContentView] insertText:@"hello"];
@@ -863,7 +863,7 @@ TEST(KeyboardInputTests, InsertDictationAlternativesSimulatingKeyboardInput)
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id <_WKFocusedElementInfo>) { return _WKFocusStartsInputSessionPolicyAllow; }];
     [webView _setInputDelegate:inputDelegate.get()];
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"insert-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"insert-text" withExtension:@"html"];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [[webView textInputContentView] insertText:@"hello" alternatives:@[ @"helo" ] style:UITextAlternativeStyleNone];

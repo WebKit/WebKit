@@ -36,14 +36,31 @@ std::unique_ptr<CoordinatedPlatformLayerBufferYUV> CoordinatedPlatformLayerBuffe
     return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTFMove(planes), WTFMove(yuvPlane), WTFMove(yuvPlaneOffset), yuvToRgbColorSpace, size, flags, WTFMove(fence));
 }
 
+std::unique_ptr<CoordinatedPlatformLayerBufferYUV> CoordinatedPlatformLayerBufferYUV::create(unsigned planeCount, Vector<RefPtr<BitmapTexture>, 4>&& textures, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
+{
+    return makeUnique<CoordinatedPlatformLayerBufferYUV>(planeCount, WTFMove(textures), WTFMove(yuvPlane), WTFMove(yuvPlaneOffset), yuvToRgbColorSpace, size, flags, WTFMove(fence));
+}
+
 CoordinatedPlatformLayerBufferYUV::CoordinatedPlatformLayerBufferYUV(unsigned planeCount, std::array<unsigned, 4>&& planes, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
     : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTFMove(fence))
     , m_planeCount(planeCount)
-    , m_planes(planes)
-    , m_yuvPlane(yuvPlane)
-    , m_yuvPlaneOffset(yuvPlaneOffset)
+    , m_planes(WTFMove(planes))
+    , m_yuvPlane(WTFMove(yuvPlane))
+    , m_yuvPlaneOffset(WTFMove(yuvPlaneOffset))
     , m_yuvToRgbColorSpace(yuvToRgbColorSpace)
 {
+}
+
+CoordinatedPlatformLayerBufferYUV::CoordinatedPlatformLayerBufferYUV(unsigned planeCount, Vector<RefPtr<BitmapTexture>, 4>&& textures, std::array<unsigned, 4>&& yuvPlane, std::array<unsigned, 4>&& yuvPlaneOffset, YuvToRgbColorSpace yuvToRgbColorSpace, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
+    : CoordinatedPlatformLayerBuffer(Type::YUV, size, flags, WTFMove(fence))
+    , m_planeCount(planeCount)
+    , m_textures(WTFMove(textures))
+    , m_yuvPlane(WTFMove(yuvPlane))
+    , m_yuvPlaneOffset(WTFMove(yuvPlaneOffset))
+    , m_yuvToRgbColorSpace(yuvToRgbColorSpace)
+{
+    for (unsigned i = 0; i < m_textures.size(); ++i)
+        m_planes[i] = m_textures[i] ? m_textures[i]->id() : 0;
 }
 
 CoordinatedPlatformLayerBufferYUV::~CoordinatedPlatformLayerBufferYUV() = default;

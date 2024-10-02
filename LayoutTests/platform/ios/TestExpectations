@@ -78,6 +78,8 @@ ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
 # Individually failing tests should be marked in separate expectations.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Pass ]
 
+# Caps lock indicator is disabled on iOS, as it is provided by the OS (through caret decoration UI).
+fast/forms/caps-lock-indicator-width.html [ Skip ]
 
 # --- imported from ios-wk2 ---
 
@@ -1288,6 +1290,9 @@ fast/scrolling/vertical-scrollbar-position.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root-both-edges.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root.html [ ImageOnlyFailure ]
 
+# Subpixel line positioning
+imported/w3c/web-platform-tests/css/css-overflow/line-clamp/webkit-line-clamp-027.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.html [ ImageOnlyFailure ]
@@ -1392,7 +1397,6 @@ http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml [ Failure ]
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
-http/tests/navigation/response204.html [ Failure ]
 http/tests/security/cross-frame-access-put.html [ Failure ]
 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/svg-image-with-css-cross-domain.html [ ImageOnlyFailure ]
@@ -2872,6 +2876,9 @@ fast/mediastream/screencapture-user-gesture.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints1.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints2.html [ Skip ]
 fast/mediastream/getDisplayMedia-max-constraints3.html [ Skip ]
+fast/mediastream/getDisplayMedia-max-constraints5.html [ Skip ]
+webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
+
 fast/mediastream/getDisplayMedia-size.html [ Skip ]
 
 webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
@@ -4586,8 +4593,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-011.ht
 
 webkit.org/b/263136 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-011.html [ ImageOnlyFailure ]
 
-webkit.org/b/263466 fast/mediastream/getDisplayMedia-max-constraints4.html [ Failure ]
-
 webkit.org/b/263471 fast/forms/ios/keydown-in-hidden-contenteditable-with-inputmode-none.html [ Pass Failure ]
 
 webkit.org/b/263396 css3/color/text.html [ Skip ]
@@ -5335,7 +5340,6 @@ http/tests/navigation/target-blank-opener-post.html [ Skip ]
 
 # Unskip otherwise globally-skipped test
 css2.1/20110323/replaced-intrinsic-002.htm [ Pass ]
-fast/replaced/pdf-as-object-and-embed.html [ Pass ]
 
 # These tests test the Shadow DOM based HTML form validation UI but iOS WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html [ Skip ]
@@ -7346,9 +7350,6 @@ fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass
 # webkit.org/b/277717 [ iOS ] fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html is a flaky timeout
 fast/forms/ios/show-software-keyboard-on-programmatic-focus-during-dblclick.html [ Pass Timeout ]
 
-# webkit.org/b/277758 [ iOS ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant text failure
-imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
-
 # webkit.org/b/277762 [ iOS ] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html is a constant text failure
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Failure ]
 
@@ -7378,10 +7379,6 @@ imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure
 
 # webkit.org/b/261919 NEW TEST(247465@main): [ macOS wk2 ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html is a flaky failure.
 webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html [ Pass Failure ]
-
-# webkit.org/b/276764 REGRESSION(280750@main) imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss regressed
-imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
 
 # webkit.org/b/277905 [ iOS ] fast/scrolling/ios/scroll-anchoring-momentum-scroll.html is a flaky text failure
 fast/scrolling/ios/scroll-anchoring-momentum-scroll.html [ Pass Failure ]
@@ -7425,14 +7422,8 @@ imported/w3c/web-platform-tests/screen-orientation/lock-sandboxed-iframe.html [ 
 # webkit.org/b/278330 [ iOS ] imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html is a flaky text failure
 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]
 
-# webkit.org/b/278332 [ iOS ] imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss is a flaky text failure
-imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
-
 # webkit.org/b/278333 [ iOS ] media/remove-video-best-media-element-in-main-frame-crash.html is a flaky timeout
 media/remove-video-best-media-element-in-main-frame-crash.html [ Pass Timeout ]
-
-# webkit.org/b/278340 [ iOS ] compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html is a flaky image failure
-compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/278343 [ iOS iPhone Debug ] editing/inserting/insert-composition-whitespace.html is a constant crash
 [ Debug ] editing/inserting/insert-composition-whitespace.html [ Crash ]
@@ -7446,12 +7437,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block
 # webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/278233 imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss is flakey failure on iOS Sim
-imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
-
-# webkit.org/b/278323 REGRESSION(282170@main): [ iOS ] css3/filters/backdrop-filter-page-scale.html is a flaky image failure
-css3/filters/backdrop-filter-page-scale.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/277841 REGRESSION (281870@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
 
@@ -7462,3 +7447,43 @@ webkit.org/b/279295 fast/inline/list-marker-inside-container-with-margin.html [ 
 
 # webkit.org/b/279477 REGRESSION (283102@main?): [macOS iOS wk2 Debug EWS ] ASSERTION FAILED: WebKit::WebPageProxy::startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier) result of http/tests/site-isolation/window-open-with-name-cross-site.html to crash
 [ Debug ] http/tests/site-isolation/window-open-with-name-cross-site.html [ Skip ]
+
+# webkit.org/b/279704 [ iOS wk2 EWS ] 5x fast/events/iOS/* are false positive on EWS.
+fast/events/ios/keyboard-scrolling-distance.html [ Failure Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-arrow-keys-in-non-editable-element.html [ Pass Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-in-non-editable-content.html [ Pass Timeout ]
+[ Release ] fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html [ Pass Timeout ]
+[ Release ] fast/events/ios/tab-cycle.html [ Pass Timeout ]
+
+# webkit.org/b/279321 [Navigation] scroll API behaves differently on iOS
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-basic.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-change-history-scroll-restoration-during-promise.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-explicit-scroll.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-intercept-handler-modifies.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-timing.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-dispatch.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-repeated.html [ Failure ]
+
+# webkit.org/b/280296 [EWS] 5 tests in fast/events/iOS/activating are pre-existing failures in iOS
+[ Release arm64 ] fast/events/ios/activating-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-checkbox-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Skip ]
+[ Release arm64 ] fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
+
+webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+
+# webkit.org/b/280490 REGRESSION (284225@main) : [ macOS iOS ] 2x imported/w3c/web-platform-t ests/mathml/presentation-markup/operators/* are constant failures 
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-position-of-stretchy-fences-with-default-font-001.html [ Failure ]
+imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
+
+webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
+
+# webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
+[ Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 
+[ Release ] http/tests/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html [ Pass Failure ]
+
+# webkit.org/b/280556 [ macOS iOS wk2 release ] webrtc/stats-timestamp-increases.html is a flaky failure.
+[ Release ] webrtc/stats-timestamp-increases.html  [ Pass Failure ]

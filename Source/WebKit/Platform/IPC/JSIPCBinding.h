@@ -104,12 +104,6 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, L
 }
 
 template<typename U>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, LegacyNullableAtomicObjectIdentifier<U>&& value)
-{
-    return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());
-}
-
-template<typename U>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, ObjectIdentifier<U>&& value)
 {
     return jsValueForDecodedArgumentValue(globalObject, value.toUInt64());

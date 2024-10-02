@@ -356,7 +356,7 @@ static Calculation::Category calculationCategoryForProperty(CSSPropertyID, CSSUn
     case CSSUnitType::CSS_CQMAX:
         return Calculation::Category::Length;
     case CSSUnitType::CSS_PERCENTAGE:
-        return Calculation::Category::Percent;
+        return Calculation::Category::Percentage;
     case CSSUnitType::CSS_DEG:
     case CSSUnitType::CSS_RAD:
     case CSSUnitType::CSS_GRAD:

@@ -41,7 +41,7 @@
     readonly attribute USVString scope;
     readonly attribute ServiceWorkerUpdateViaCache updateViaCache;
 
-    [EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled] readonly attribute CookieStoreManager cookies;
+    [Exposed=(Window, ServiceWorker), EnabledBySetting=CookieStoreAPIEnabled&CookieStoreManagerEnabled] readonly attribute CookieStoreManager cookies;
 
     [NewObject] Promise<undefined> update();
     [NewObject] Promise<boolean> unregister();

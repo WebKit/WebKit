@@ -73,6 +73,11 @@ MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
+void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
+{
+    m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
+}
+
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, bool webMParserEnabled, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);

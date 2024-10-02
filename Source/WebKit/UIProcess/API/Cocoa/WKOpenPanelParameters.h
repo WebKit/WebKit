@@ -23,18 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
-
-#if !TARGET_OS_IPHONE
-
 #import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*! WKOpenPanelParameters contains parameters that a file upload control has specified.
  */
 WK_SWIFT_UI_ACTOR
-WK_CLASS_AVAILABLE(macos(10.12))
+WK_CLASS_AVAILABLE(macos(10.12), ios(WK_IOS_TBA))
 @interface WKOpenPanelParameters : NSObject
 
 /*! @abstract Whether the file upload control supports multiple files.
@@ -43,10 +40,8 @@ WK_CLASS_AVAILABLE(macos(10.12))
 
 /*! @abstract Whether the file upload control supports selecting directories.
  */
-@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, readonly) BOOL allowsDirectories WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
 
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

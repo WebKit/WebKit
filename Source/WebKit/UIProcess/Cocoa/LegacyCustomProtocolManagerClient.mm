@@ -31,12 +31,13 @@
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
     WeakPtr<WebKit::LegacyCustomProtocolManagerProxy> _customProtocolManagerProxy;
-    WebKit::LegacyCustomProtocolID _customProtocolID;
+    Markable<WebKit::LegacyCustomProtocolID> _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
     RetainPtr<NSURLConnection> _urlConnection;
 }
@@ -84,8 +85,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     WebCore::ResourceError coreError(error);
-    _customProtocolManagerProxy->didFailWithError(_customProtocolID, coreError);
-    _customProtocolManagerProxy->stopLoading(_customProtocolID);
+    _customProtocolManagerProxy->didFailWithError(*_customProtocolID, coreError);
+    _customProtocolManagerProxy->stopLoading(*_customProtocolID);
 }
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
@@ -101,7 +102,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     WebCore::ResourceResponse coreResponse(response);
-    _customProtocolManagerProxy->didReceiveResponse(_customProtocolID, coreResponse, WebKit::toCacheStoragePolicy(_storagePolicy));
+    _customProtocolManagerProxy->didReceiveResponse(*_customProtocolID, coreResponse, WebKit::toCacheStoragePolicy(_storagePolicy));
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
@@ -109,7 +110,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_customProtocolManagerProxy)
         return;
 
-    _customProtocolManagerProxy->didLoadData(_customProtocolID, span(data));
+    _customProtocolManagerProxy->didLoadData(*_customProtocolID, span(data));
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
@@ -118,7 +119,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     if (redirectResponse) {
-        _customProtocolManagerProxy->wasRedirectedToRequest(_customProtocolID, request, redirectResponse);
+        _customProtocolManagerProxy->wasRedirectedToRequest(*_customProtocolID, request, redirectResponse);
         return nil;
     }
     return request;
@@ -129,13 +130,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_customProtocolManagerProxy)
         return;
 
-    _customProtocolManagerProxy->didFinishLoading(_customProtocolID);
-    _customProtocolManagerProxy->stopLoading(_customProtocolID);
+    _customProtocolManagerProxy->didFinishLoading(*_customProtocolID);
+    _customProtocolManagerProxy->stopLoading(*_customProtocolID);
 }
 
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyCustomProtocolManagerClient);
+
 using namespace WebCore;
 
 void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManagerProxy& manager, WebKit::LegacyCustomProtocolID customProtocolID, const ResourceRequest& coreRequest)

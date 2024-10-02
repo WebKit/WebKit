@@ -32,6 +32,7 @@ depends:
 - sdk/libmanette.bst
 - sdk/libportal.bst
 - sdk/libsecret.bst
+- sdk/libspiel.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
 - sdk/mold.bst

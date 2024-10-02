@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WasmBBQDisassembler.h"
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+#if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "Disassembler.h"
 #include "LinkBuffer.h"
@@ -130,4 +130,4 @@ void BBQDisassembler::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, 
 } // namespace Wasm
 } // namespace JSC
 
-#endif // ENABLE(WEBASSEMBLY_OMGJIT)
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

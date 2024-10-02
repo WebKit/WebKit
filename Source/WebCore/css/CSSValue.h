@@ -53,8 +53,9 @@ struct ComputedStyleDependencies {
     Vector<CSSPropertyID> rootProperties;
     bool containerDimensions { false };
     bool viewportDimensions { false };
+    bool anchors { false };
 
-    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions; }
+    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions && !anchors; }
 };
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
@@ -72,7 +73,6 @@ public:
 
     WEBCORE_EXPORT String cssText() const;
 
-    bool isAnchorValue() const { return m_classType == ClassType::Anchor; }
     bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
@@ -246,7 +246,6 @@ protected:
         StepsTimingFunction,
 
         // Other non-list classes.
-        Anchor,
         AspectRatio,
         BackgroundRepeat,
         BorderImageSlice,

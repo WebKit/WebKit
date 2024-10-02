@@ -226,7 +226,8 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
 
         return false;
     }
-    
+
+    PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, map_entry.begin, map_entry.end);
     PAS_ASSERT(pas_heap_config_kind_get_config(
                    pas_heap_for_large_heap(map_entry.heap)->config_kind)
                == heap_config);
@@ -269,6 +270,7 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
     if (pas_large_map_entry_is_empty(map_entry))
         return false;
 
+    PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, map_entry.begin, map_entry.end);
     heap = map_entry.heap;
     type = pas_heap_for_large_heap(heap)->type;
 

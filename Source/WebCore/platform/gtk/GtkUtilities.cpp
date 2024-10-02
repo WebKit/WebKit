@@ -21,6 +21,7 @@
 
 #include "GtkVersioning.h"
 #include "IntPoint.h"
+#include "SystemSettings.h"
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -141,13 +142,15 @@ WallTime wallTimeForEvent(const GdkEvent* event)
 
 String defaultGtkSystemFont()
 {
-    GUniqueOutPtr<char> fontString;
-    g_object_get(gtk_settings_get_default(), "gtk-font-name", &fontString.outPtr(), nullptr);
+    auto fontName = SystemSettings::singleton().fontName();
+    if (!fontName || fontName->isEmpty())
+        return "Sans"_s;
+
     // We need to remove the size from the value of the property,
     // which is separated from the font family using a space.
-    if (auto* spaceChar = strrchr(fontString.get(), ' '))
-        *spaceChar = '\0';
-    return String::fromUTF8(fontString.get());
+    if (auto index = fontName->reverseFind(' '); index != notFound)
+        fontName = fontName->left(index);
+    return *fontName;
 }
 
 unsigned stateModifierForGdkButton(unsigned button)
@@ -216,11 +219,7 @@ bool shouldUseOverlayScrollbars()
         return false;
 #endif
 
-    gboolean overlayScrolling;
-    g_object_get(gtk_settings_get_default(),
-        "gtk-overlay-scrolling",
-        &overlayScrolling, nullptr);
-    return !!overlayScrolling;
+    return SystemSettings::singleton().overlayScrolling().value_or(true);
 }
 
 bool eventModifiersContainCapsLock(GdkEvent* event)

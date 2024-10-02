@@ -140,7 +140,7 @@ private:
     const AtomString& eventNameAll();
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const final;
+    uint64_t logIdentifier() const final;
     const Logger* loggerPtr() const final;
 #endif
 

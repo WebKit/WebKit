@@ -419,7 +419,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     bool geometryIsFlippedToRoot = layerGeometryFlippedToRoot(snapshotLayerParent);
 
     RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    if (ViewSnapshot* snapshot = targetItem->snapshot()) {
+    if (RefPtr<ViewSnapshot> snapshot = targetItem->snapshot()) {
         if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), topContentInset))
             [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
 
@@ -446,7 +446,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     [m_swipeLayer addSublayer:m_swipeSnapshotLayer.get()];
 
-    if (webPageProxy->preferences().viewGestureDebuggingEnabled())
+    if (webPageProxy->protectedPreferences()->viewGestureDebuggingEnabled())
         applyDebuggingPropertiesToSwipeViews();
 
     m_didCallEndSwipeGesture = false;
@@ -572,7 +572,7 @@ void ViewGestureController::didMoveSwipeSnapshotLayer()
     if (!m_didMoveSwipeSnapshotCallback)
         return;
 
-    m_didMoveSwipeSnapshotCallback(m_webPageProxy->boundsOfLayerInLayerBackedWindowCoordinates(m_swipeLayer.get()));
+    m_didMoveSwipeSnapshotCallback(protectedWebPageProxy()->boundsOfLayerInLayerBackedWindowCoordinates(m_swipeLayer.get()));
 }
 
 void ViewGestureController::removeSwipeSnapshot()
@@ -619,7 +619,7 @@ void ViewGestureController::resetState()
 
     m_currentSwipeLiveLayers.clear();
 
-    m_webPageProxy->navigationGestureSnapshotWasRemoved();
+    protectedWebPageProxy()->navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
 

@@ -192,45 +192,17 @@ int equivalentYearForDST(int year)
     return year;
 }
 
-#if OS(WINDOWS)
-typedef BOOL(WINAPI* callGetTimeZoneInformationForYear_t)(USHORT, PDYNAMIC_TIME_ZONE_INFORMATION, LPTIME_ZONE_INFORMATION);
-
-static callGetTimeZoneInformationForYear_t timeZoneInformationForYearFunction()
-{
-    static callGetTimeZoneInformationForYear_t getTimeZoneInformationForYear = nullptr;
-
-    if (getTimeZoneInformationForYear)
-        return getTimeZoneInformationForYear;
-
-    HMODULE module = ::GetModuleHandleW(L"kernel32.dll");
-    if (!module)
-        return nullptr;
-
-    getTimeZoneInformationForYear = reinterpret_cast<callGetTimeZoneInformationForYear_t>(::GetProcAddress(module, "GetTimeZoneInformationForYear"));
-
-    return getTimeZoneInformationForYear;
-}
-#endif
-
 static int32_t calculateUTCOffset()
 {
 #if OS(WINDOWS)
     TIME_ZONE_INFORMATION timeZoneInformation;
     DWORD rc = 0;
 
-    if (callGetTimeZoneInformationForYear_t timeZoneFunction = timeZoneInformationForYearFunction()) {
-        // If available, use the Windows API call that takes into account the varying DST from
-        // year to year.
-        SYSTEMTIME systemTime;
-        ::GetSystemTime(&systemTime);
-        rc = timeZoneFunction(systemTime.wYear, nullptr, &timeZoneInformation);
-        if (rc == TIME_ZONE_ID_INVALID)
-            return 0;
-    } else {
-        rc = ::GetTimeZoneInformation(&timeZoneInformation);
-        if (rc == TIME_ZONE_ID_INVALID)
-            return 0;
-    }
+    SYSTEMTIME systemTime;
+    ::GetSystemTime(&systemTime);
+    rc = ::GetTimeZoneInformationForYear(systemTime.wYear, nullptr, &timeZoneInformation);
+    if (rc == TIME_ZONE_ID_INVALID)
+        return 0;
 
     int32_t bias = timeZoneInformation.Bias;
 
@@ -456,11 +428,11 @@ static int findMonth(std::span<const LChar> monthStr)
 static bool parseInt(std::span<const LChar>& string, int base, int* result)
 {
     char* stopPosition;
-    long longResult = strtol(reinterpret_cast<const char*>(string.data()), &stopPosition, base);
+    long longResult = strtol(byteCast<char>(string.data()), &stopPosition, base);
     // Avoid the use of errno as it is not available on Windows CE
-    if (string.data() == reinterpret_cast<const LChar*>(stopPosition) || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
+    if (byteCast<char>(string.data()) == stopPosition || longResult <= std::numeric_limits<int>::min() || longResult >= std::numeric_limits<int>::max())
         return false;
-    string = string.subspan(reinterpret_cast<const LChar*>(stopPosition) - string.data());
+    string = string.subspan(stopPosition - byteCast<char>(string.data()));
     *result = longResult;
     return true;
 }
@@ -468,11 +440,11 @@ static bool parseInt(std::span<const LChar>& string, int base, int* result)
 static bool parseLong(std::span<const LChar>& string, int base, long* result)
 {
     char* stopPosition;
-    *result = strtol(reinterpret_cast<const char*>(string.data()), &stopPosition, base);
+    *result = strtol(byteCast<char>(string.data()), &stopPosition, base);
     // Avoid the use of errno as it is not available on Windows CE
-    if (string.data() == reinterpret_cast<const LChar*>(stopPosition) || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
+    if (byteCast<char>(string.data()) == stopPosition || *result == std::numeric_limits<long>::min() || *result == std::numeric_limits<long>::max())
         return false;
-    string = string.subspan(reinterpret_cast<const LChar*>(stopPosition) - string.data());
+    string = string.subspan(stopPosition - byteCast<char>(string.data()));
     return true;
 }
 

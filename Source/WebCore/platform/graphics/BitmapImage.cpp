@@ -160,12 +160,8 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
     setImageObserver(WTFMove(observer));
     buffer->convertToLuminanceMask();
 
-    auto image = ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
-    if (!image)
-        return;
-
     context.setDrawLuminanceMask(false);
-    context.drawPattern(Ref { *image }, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
+    context.drawPattern(*buffer, destinationRect, bufferRect, transform, phase, spacing, { options, ImageOrientation::Orientation::FromImage });
 }
 
 void BitmapImage::dump(TextStream& ts) const

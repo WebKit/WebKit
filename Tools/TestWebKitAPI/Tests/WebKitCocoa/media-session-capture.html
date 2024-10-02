@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="notifyLoaded()">
+    <video id=video controls autoplay playsinline></video>
+    <script>
+function notifyLoaded()
+{
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function startCapture()
+{
+    navigator.mediaDevices.getUserMedia({ audio:true, video:true }).then(stream => {
+        window.actionState = "";
+        video.srcObject = stream;
+
+        registerActionHandlers();
+        registerMuteHandlers();
+
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("PASS");
+    }, (e) => {
+        if (window.webkit)
+            window.webkit.messageHandlers.gum.postMessage("FAIL: "  + e);
+    });
+}
+
+function registerActionHandlers()
+{
+    navigator.mediaSession.setActionHandler("togglecamera", action => {
+        addToActionState(action.isActivating ? "activating camera" : "deactivating camera");
+    });
+    navigator.mediaSession.setActionHandler("togglemicrophone", action => {
+        addToActionState(action.isActivating ? "activating microphone" : "deactivating microphone");
+    });
+}
+
+function registerMuteHandlers()
+{
+    video.srcObject.getAudioTracks()[0].onmute = () => addToActionState("muting microphone");
+    video.srcObject.getAudioTracks()[0].onunmute = () => addToActionState("unmuting microphone");
+
+    video.srcObject.getVideoTracks()[0].onmute = () => addToActionState("muting camera");
+    video.srcObject.getVideoTracks()[0].onunmute = () => addToActionState("unmuting camera");
+}
+
+function setCameraActive(shouldActivate)
+{
+    if (!window.internals) {
+        window.webkit.messageHandlers.gum.postMessage("test requires internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setCameraActive(shouldActivate).then(() => {
+            addToActionState("setCameraActive successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("PASS");
+        }, (e) => {
+            addToActionState("setCameraActive not successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("FAIL setCameraActive " + e);
+        });
+    });
+}
+
+function setMicrophoneActive(shouldActivate)
+{
+    if (!window.internals) {
+        window.webkit.messageHandlers.gum.postMessage("test requires internals");
+        return;
+    }
+
+    window.internals.withUserGesture(() => {
+        navigator.mediaSession.setMicrophoneActive(shouldActivate).then(() => {
+            addToActionState("setMicrophoneActive successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("PASS");
+        }, (e) => {
+            addToActionState("setMicrophoneActive not successful");
+            if (window.webkit)
+                window.webkit.messageHandlers.gum.postMessage("FAIL setMicrophoneActive " + e);
+        });
+    });
+}
+
+function addToActionState(state)
+{
+    window.actionState += state + ", ";
+}
+
+function validateActionState(state)
+{
+    window.actionState += "end";
+    if (window.webkit)
+        window.webkit.messageHandlers.gum.postMessage(state === actionState ? "PASS" : "FAIL, got " + window.actionState);
+    window.actionState = "";
+}
+    </script>
+</body>
+</html>

@@ -131,7 +131,7 @@ bool TrackPrivateBase::hasOneClient() const
 
 static uint64_t s_uniqueId = 0;
 
-void TrackPrivateBase::setLogger(const Logger& logger, const void* logIdentifier)
+void TrackPrivateBase::setLogger(const Logger& logger, uint64_t logIdentifier)
 {
     m_logger = &logger;
     m_logIdentifier = childLogIdentifier(logIdentifier, ++s_uniqueId);

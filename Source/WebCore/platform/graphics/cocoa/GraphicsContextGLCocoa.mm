@@ -738,7 +738,7 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
 
 
 #if ENABLE(VIDEO)
-GraphicsContextGLCV* GraphicsContextGLCocoa::asCV()
+GraphicsContextGLCV* GraphicsContextGLCocoa::cvContext()
 {
     if (!m_cv)
         m_cv = GraphicsContextGLCVCocoa::create(*this);
@@ -810,25 +810,6 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
     currentContext = nullptr;
 }
 
-#if ENABLE(VIDEO)
-bool GraphicsContextGLCocoa::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
-{
-    auto videoFrame = player.videoFrameForCurrentTime();
-    if (!videoFrame)
-        return false;
-    auto videoFrameCV = videoFrame->asVideoFrameCV();
-    if (!videoFrameCV)
-        return false;
-    auto contextCV = asCV();
-    if (!contextCV)
-        return false;
-
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(outputTarget, outputTarget == GraphicsContextGL::TEXTURE_2D);
-    return contextCV->copyVideoSampleToTexture(*videoFrameCV, outputTexture, level, internalFormat, format, type, GraphicsContextGL::FlipY(flipY));
-}
-#endif
-
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLCocoa::layerContentsDisplayDelegate()
 {
     return nullptr;
@@ -899,6 +880,25 @@ void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signa
     }
     deleteExternalSync(sync);
 }
+
+#if ENABLE(VIDEO)
+bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY)
+{
+    UNUSED_VARIABLE(premultiplyAlpha);
+    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
+    auto* contextCV = cvContext();
+    if (!contextCV) {
+        ASSERT(contextCV);
+        return false;
+    }
+    RefPtr videoFrameCV = videoFrame.asVideoFrameCV();
+    if (!videoFrameCV) {
+        ASSERT_NOT_REACHED(); // Programming error.
+        return false;
+    }
+    return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
+}
+#endif
 
 }
 

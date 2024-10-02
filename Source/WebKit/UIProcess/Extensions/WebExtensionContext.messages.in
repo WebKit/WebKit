@@ -127,6 +127,8 @@ messages -> WebExtensionContext {
     [EnabledIf='isSidebarMessageAllowed()'] SidebarGetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (Expected<String, WebKit::WebExtensionError> result)
     [EnabledIf='isSidebarMessageAllowed()'] SidebarSetTitle(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<String> title) -> (Expected<void, WebKit::WebExtensionError> result)
     [EnabledIf='isSidebarMessageAllowed()'] SidebarSetIcon(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String iconsJSON) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarSetActionClickBehavior(WebKit::WebExtensionActionClickBehavior actionClickBehavior) -> (Expected<void, WebKit::WebExtensionError> result)
+    [EnabledIf='isSidebarMessageAllowed()'] SidebarGetActionClickBehavior() -> (Expected<WebKit::WebExtensionActionClickBehavior, WebKit::WebExtensionError> result)
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     // Storage APIs

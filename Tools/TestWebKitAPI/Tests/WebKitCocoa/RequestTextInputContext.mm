@@ -191,7 +191,7 @@ static void webViewLoadHTMLStringAndWaitForAllFramesToPaint(TestWKWebView *webVi
     ASSERT(webView); // Make passing a nil web view a more obvious failure than a hang.
     bool didFireDOMLoadEvent = false;
     [webView performAfterLoading:[&] { didFireDOMLoadEvent = true; }];
-    [webView loadHTMLString:htmlString baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+    [webView loadHTMLString:htmlString baseURL:NSBundle.test_resourcesBundle.resourceURL];
     TestWebKitAPI::Util::run(&didFireDOMLoadEvent);
     [webView waitForNextPresentationUpdate];
 }

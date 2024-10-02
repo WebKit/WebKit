@@ -74,9 +74,13 @@ protected:
     AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority = AlwaysRunsAtBackgroundPriority::No, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
 
 public:
-    using ResponsivenessTimer::Client::weakPtrFactory;
-    using ResponsivenessTimer::Client::WeakValueType;
-    using ResponsivenessTimer::Client::WeakPtrImplType;
+    USING_CAN_MAKE_WEAKPTR(ResponsivenessTimer::Client);
+
+    // ProcessLauncher::Client
+    uint32_t ptrCount() const final { return IPC::Connection::Client::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const final { return IPC::Connection::Client::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const final { IPC::Connection::Client::incrementPtrCount(); }
+    void decrementPtrCount() const final { IPC::Connection::Client::decrementPtrCount(); }
 
     virtual ~AuxiliaryProcessProxy();
 
@@ -97,6 +101,8 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
     const ProcessThrottler& throttler() const { return m_throttler; }
+    Ref<ProcessThrottler> protectedThrottler() { return m_throttler; }
+    Ref<const ProcessThrottler> protectedThrottler() const { return m_throttler; }
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
@@ -105,10 +111,10 @@ public:
 
     enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     template<typename T, typename C, typename RawValue>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
     {
         return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
     }
@@ -166,7 +172,8 @@ public:
         Running,
         Terminated,
     };
-    State state() const;
+    inline State state() const;
+
     String stateString() const;
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
@@ -199,8 +206,8 @@ public:
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     const ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer; }
 
-    void ref() final { ThreadSafeRefCounted::ref(); }
-    void deref() final { ThreadSafeRefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
 
@@ -342,16 +349,17 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 {
     static_assert(T::isSync, "Sync message expected");
 
-    if (!m_connection)
+    RefPtr connection = m_connection;
+    if (!connection)
         return { IPC::Error::InvalidConnection };
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
 
-    return connection().sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+    return connection->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
 }
 
 template<typename T, typename C>
-AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     static_assert(!T::isSync, "Async message expected");
 
@@ -361,7 +369,18 @@ AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&
     auto replyID = handler.replyID;
     if (sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler), shouldStartProcessThrottlerActivity))
         return replyID;
-    return { };
+    return std::nullopt;
 }
-    
+
+inline AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
+{
+    if (m_processLauncher && m_processLauncher->isLaunching())
+        return AuxiliaryProcessProxy::State::Launching;
+
+    if (!m_connection)
+        return AuxiliaryProcessProxy::State::Terminated;
+
+    return AuxiliaryProcessProxy::State::Running;
+}
+
 } // namespace WebKit

@@ -44,65 +44,68 @@ WebDiagnosticLoggingClient::WebDiagnosticLoggingClient(WebPage& page)
 {
 }
 
-WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient()
+WebDiagnosticLoggingClient::~WebDiagnosticLoggingClient() = default;
+
+Ref<WebPage> WebDiagnosticLoggingClient::protectedPage() const
 {
+    return m_page.get();
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, const String& description, WebCore::ShouldSample shouldSample)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess(message, description, ShouldSample::No));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess(message, description, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result, WebCore::ShouldSample shouldSample)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResultFromWebProcess(message, description, result, ShouldSample::No));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageWithResultFromWebProcess(message, description, result, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample shouldSample)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValueFromWebProcess(message, description, value, significantFigures, ShouldSample::No));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageWithValueFromWebProcess(message, description, value, significantFigures, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample shouldSample)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess(message, description, ShouldSample::No));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacyFromWebProcess(message, description, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary& value, ShouldSample shouldSample)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
     if (!shouldLogAfterSampling(shouldSample))
         return;
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess(message, description, value, ShouldSample::No));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionaryFromWebProcess(message, description, value, ShouldSample::No));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
 {
-    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+    ASSERT(!m_page->corePage() || m_page->corePage()->settings().diagnosticLoggingEnabled());
 
-    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithDomainFromWebProcess(message, domain));
+    protectedPage()->send(Messages::WebPageProxy::LogDiagnosticMessageWithDomainFromWebProcess(message, domain));
 }
 
 } // namespace WebKit

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "Instance.h"
+#import <Metal/Metal.h>
 #import <utility>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -32,6 +34,7 @@
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/WeakHashSet.h>
 #import <wtf/WeakPtr.h>
@@ -103,6 +106,9 @@ public:
     void indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
     void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
     void indirectBufferInvalidated();
+#if ENABLE(WEBGPU_SWIFT)
+    void copy(const std::span<const uint8_t>, const size_t offset);
+#endif
 
 private:
     Buffer(id<MTLBuffer>, uint64_t initialSize, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
@@ -145,6 +151,16 @@ private:
 #if CPU(X86_64)
     bool m_mappedAtCreation { false };
 #endif
-};
+} SWIFT_SHARED_REFERENCE(retainBuffer, releaseBuffer);
 
 } // namespace WebGPU
+
+inline void retainBuffer(WebGPU::Buffer* obj)
+{
+    retainRefCounted(obj);
+}
+
+inline void releaseBuffer(WebGPU::Buffer* obj)
+{
+    releaseRefCounted(obj);
+}

@@ -34,10 +34,12 @@
 #include "ScrollingPlatformLayer.h"
 #include "ScrollingTreeNode.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollingTreeStickyNode : public ScrollingTreeNode {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeStickyNode);
 public:
     virtual ~ScrollingTreeStickyNode();
 

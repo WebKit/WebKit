@@ -38,7 +38,9 @@ class AudioWorklet;
 class AudioWorkletThread;
 class Document;
 
-class AudioWorkletMessagingProxy : public WorkletGlobalScopeProxy, public WorkerLoaderProxy {
+class AudioWorkletMessagingProxy : public WorkletGlobalScopeProxy, public WorkerLoaderProxy, public CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AudioWorkletMessagingProxy);
 public:
     static Ref<AudioWorkletMessagingProxy> create(AudioWorklet& worklet)
     {
@@ -54,6 +56,11 @@ public:
 
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
     ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
+
+    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::incrementPtrCount(); }
+    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::decrementPtrCount(); }
 
 private:
     explicit AudioWorkletMessagingProxy(AudioWorklet&);

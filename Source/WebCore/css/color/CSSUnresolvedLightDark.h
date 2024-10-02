@@ -26,7 +26,6 @@
 #pragma once
 
 #include "StyleColor.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 

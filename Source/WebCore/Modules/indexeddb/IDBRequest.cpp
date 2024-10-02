@@ -323,7 +323,7 @@ void IDBRequest::dispatchEvent(Event& event)
         targets = { this, m_transaction.get(), &m_transaction->database() };
 
     {
-        TransactionActivator activator(m_transaction.get());
+        TransactionActivator activator(transaction().get());
         EventDispatcher::dispatchEvent(targets, event);
     }
 

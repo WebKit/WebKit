@@ -1,0 +1,22 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  body { overflow: hidden; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+onmessage = async (event) => {
+    if (window.testRunner && event.data == "onload") {
+        await window.testRunner.setPageScaleFactor(2, 0, 0);
+        testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body>
+<iframe src="http://localhost:8000/site-isolation/resources/green-square.html" frameborder=0></iframe>
+</body>

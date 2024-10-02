@@ -27,17 +27,18 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIError.h"
 #include "APIObject.h"
 #include <WebCore/UserContentURLPattern.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(COCOA)
 OBJC_CLASS NSArray;
-OBJC_CLASS NSError;
 OBJC_CLASS NSSet;
-OBJC_CLASS NSString;
 OBJC_CLASS WKWebExtensionMatchPattern;
+#endif
 
 namespace WebKit {
 
@@ -54,6 +55,14 @@ public:
 
     using URLSchemeSet = HashSet<String>;
     using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
+    // Keep in sync with WKWebExtensionMatchPatternError values.
+    enum class Error : uint8_t {
+        Unknown = 1,
+        InvalidScheme,
+        InvalidHost,
+        InvalidPath,
+    };
 
     enum class Options : uint8_t {
         IgnoreSchemes        = 1 << 0, // Ignore the scheme component when matching.
@@ -78,17 +87,18 @@ public:
     static bool patternsMatchURL(const MatchPatternSet&, const URL&);
     static bool patternsMatchPattern(const MatchPatternSet&, const WebExtensionMatchPattern&);
 
-    explicit WebExtensionMatchPattern() { }
-    explicit WebExtensionMatchPattern(const String& pattern, NSError **outError = nullptr);
-    explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, NSError **outError = nullptr);
+    explicit WebExtensionMatchPattern() = default;
+    explicit WebExtensionMatchPattern(const String& pattern, RefPtr<API::Error>&);
+    explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, RefPtr<API::Error>&);
 
-    ~WebExtensionMatchPattern() { }
+    ~WebExtensionMatchPattern() = default;
 
     static URLSchemeSet& extensionSchemes();
     static URLSchemeSet& validSchemes();
     static URLSchemeSet& supportedSchemes();
 
     static void registerCustomURLScheme(String);
+    static bool isWebExtensionURL(const URL&);
 
     bool operator==(const WebExtensionMatchPattern&) const;
 
@@ -108,17 +118,19 @@ public:
     bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
 
     String string() const { return stringWithScheme(nullString()); }
-    NSArray *expandedStrings() const;
+    Vector<String> expandedStrings() const;
 
     const WebCore::UserContentURLPattern& pattern() const { return m_pattern; }
 
     unsigned hash() const { return m_hash; }
 
-#ifdef __OBJC__
-    WKWebExtensionMatchPattern *wrapper() const { return (WKWebExtensionMatchPattern *)API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper(); }
+#if PLATFORM(COCOA) && defined(__OBJC__)
+    WKWebExtensionMatchPattern *wrapper() const { return static_cast<WKWebExtensionMatchPattern *>(API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper()); }
 #endif
 
 private:
+    static Ref<API::Error> createError(Error, const String& localizedDescription);
+
     String stringWithScheme(const String& differentScheme) const;
 
     static bool isValidScheme(String);
@@ -133,12 +145,13 @@ private:
     unsigned m_hash { 0 };
 };
 
-using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+#if PLATFORM(COCOA)
+NSSet *toAPI(const WebExtensionMatchPattern::MatchPatternSet&);
+WebExtensionMatchPattern::MatchPatternSet toPatterns(NSSet *);
+#endif
 
-NSSet *toAPI(const MatchPatternSet&);
-MatchPatternSet toPatterns(const HashSet<String>&);
-MatchPatternSet toPatterns(NSSet *);
-HashSet<String> toStrings(const MatchPatternSet&);
+WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<String>&);
+HashSet<String> toStrings(const WebExtensionMatchPattern::MatchPatternSet&);
 
 } // namespace WebKit
 

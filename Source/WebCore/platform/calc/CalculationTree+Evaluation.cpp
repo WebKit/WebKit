@@ -37,7 +37,7 @@ static auto evaluate(const ChildOrNone&, NumericValue percentResolutionLength) -
 static auto evaluate(const std::optional<Child>&, NumericValue percentResolutionLength) -> std::optional<double>;
 static auto evaluate(const Child&, NumericValue percentResolutionLength) -> NumericValue;
 static auto evaluate(const Number&, NumericValue percentResolutionLength) -> NumericValue;
-static auto evaluate(const Percent&, NumericValue percentResolutionLength) -> NumericValue;
+static auto evaluate(const Percentage&, NumericValue percentResolutionLength) -> NumericValue;
 static auto evaluate(const Dimension&, NumericValue percentResolutionLength) -> NumericValue;
 static auto evaluate(const IndirectNode<Sum>&, NumericValue percentResolutionLength) -> NumericValue;
 static auto evaluate(const IndirectNode<Product>&, NumericValue percentResolutionLength) -> NumericValue;
@@ -77,9 +77,9 @@ NumericValue evaluate(const Number& number, NumericValue)
     return number.value;
 }
 
-NumericValue evaluate(const Percent& percent, NumericValue percentResolutionLength)
+NumericValue evaluate(const Percentage& percentage, NumericValue percentResolutionLength)
 {
-    return percentResolutionLength * percent.value / 100.0f;
+    return percentResolutionLength * percentage.value / 100.0f;
 }
 
 NumericValue evaluate(const Dimension& root, NumericValue)

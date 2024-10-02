@@ -69,20 +69,30 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     switch (device.type()) {
     case CaptureDevice::DeviceType::Screen:
 #if HAVE(REPLAYKIT)
-        return create(ReplayKitCaptureSource::create(device.persistentId()), device, WTFMove(hashSalts), constraints, pageIdentifier);
+        if (!ReplayKitCaptureSource::isAvailable())
+            return CaptureSourceOrError { CaptureSourceError { "Screen capture unavailable"_s, MediaAccessDenialReason::NoCaptureDevices } };
+
+        return create([] (auto& source) {
+            return ReplayKitCaptureSource::create(source);
+        }, device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif HAVE(SCREEN_CAPTURE_KIT)
-        if (ScreenCaptureKitCaptureSource::isAvailable())
-            return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalts), constraints, pageIdentifier);
-        ASSERT_NOT_REACHED();
-        return { };
+        FALLTHROUGH;
 #else
         ASSERT_NOT_REACHED();
         return { };
 #endif
     case CaptureDevice::DeviceType::Window:
 #if HAVE(SCREEN_CAPTURE_KIT)
-        if (ScreenCaptureKitCaptureSource::isAvailable())
-            return create(ScreenCaptureKitCaptureSource::create(device, constraints), device, WTFMove(hashSalts), constraints, pageIdentifier);
+        if (ScreenCaptureKitCaptureSource::isAvailable()) {
+            auto deviceID = ScreenCaptureKitCaptureSource::computeDeviceID(device);
+            if (!deviceID)
+                return CaptureSourceOrError { WTFMove(deviceID).error() };
+            return create([deviceID = deviceID.value(), &device] (auto& source) {
+                return ScreenCaptureKitCaptureSource::create(source, device, deviceID);
+            }, device, WTFMove(hashSalts), constraints, pageIdentifier);
+        }
+        ASSERT_NOT_REACHED();
+        return { };
 #endif
         break;
     case CaptureDevice::DeviceType::SystemAudio:
@@ -97,12 +107,9 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     return { };
 }
 
-CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Capturer>, CaptureSourceError>&& capturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
+CaptureSourceOrError DisplayCaptureSourceCocoa::create(const std::function<UniqueRef<Capturer>(CapturerObserver&)>& createCapturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)
 {
-    if (!capturer.has_value())
-        return CaptureSourceOrError { WTFMove(capturer.error()) };
-
-    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), device, WTFMove(hashSalts), pageIdentifier));
+    auto source = adoptRef(*new DisplayCaptureSourceCocoa(createCapturer, device, WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
             return CaptureSourceOrError(CaptureSourceError { result->invalidConstraint });
@@ -111,13 +118,12 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
     return CaptureSourceOrError(WTFMove(source));
 }
 
-DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
+DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(const std::function<UniqueRef<Capturer>(CapturerObserver&)>& createCapturer, const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, std::optional<PageIdentifier> pageIdentifier)
     : RealtimeMediaSource(device, WTFMove(hashSalts), pageIdentifier)
-    , m_capturer(WTFMove(capturer))
+    , m_capturer(createCapturer(*this))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
     , m_userActivity("App nap disabled for screen capture"_s)
 {
-    m_capturer->setObserver(*this);
 }
 
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
@@ -201,6 +207,11 @@ void DisplayCaptureSourceCocoa::stopProducingData()
 void DisplayCaptureSourceCocoa::endProducingData()
 {
     m_capturer->end();
+}
+
+void DisplayCaptureSourceCocoa::whenReady(CompletionHandler<void(CaptureSourceError&&)>&& callback)
+{
+    m_capturer->whenReady(WTFMove(callback));
 }
 
 Seconds DisplayCaptureSourceCocoa::elapsedTime()
@@ -338,13 +349,13 @@ void DisplayCaptureSourceCocoa::capturerConfigurationChanged()
     });
 }
 
-void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, const void* identifier)
+void DisplayCaptureSourceCocoa::setLogger(const Logger& logger, uint64_t identifier)
 {
     RealtimeMediaSource::setLogger(logger, identifier);
     m_capturer->setLogger(logger, identifier);
 }
 
-void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, uint64_t newLogIdentifier)
 {
     m_logger = &newLogger;
     m_logIdentifier = newLogIdentifier;
@@ -353,11 +364,6 @@ void DisplayCaptureSourceCocoa::Capturer::setLogger(const Logger& newLogger, con
 WTFLogChannel& DisplayCaptureSourceCocoa::Capturer::logChannel() const
 {
     return LogWebRTC;
-}
-
-void DisplayCaptureSourceCocoa::Capturer::setObserver(CapturerObserver& observer)
-{
-    m_observer = WeakPtr { observer };
 }
 
 } // namespace WebCore

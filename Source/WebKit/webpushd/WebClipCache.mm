@@ -32,9 +32,12 @@
 #import "UIKitSPI.h"
 #import <Foundation/Foundation.h>
 #import <wtf/FileSystem.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/Vector.h>
 
 namespace WebPushD {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebClipCache);
 
 WebClipCache::WebClipCache(const String& path)
     : m_path(path)

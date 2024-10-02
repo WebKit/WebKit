@@ -238,6 +238,20 @@
 #define FALLTHROUGH
 #endif
 
+/* LIFETIME_BOUND */
+
+#if !defined(LIFETIME_BOUND) && defined(__cplusplus)
+#if defined(__has_cpp_attribute) && __has_cpp_attribute(clang::lifetimebound)
+#define LIFETIME_BOUND [[clang::lifetimebound]]
+#elif COMPILER_HAS_ATTRIBUTE(lifetimebound)
+#define LIFETIME_BOUND __attribute__((lifetimebound))
+#endif
+#endif
+
+#if !defined(LIFETIME_BOUND)
+#define LIFETIME_BOUND
+#endif
+
 /* LIKELY */
 
 #if !defined(LIKELY)
@@ -341,6 +355,16 @@
 
 #if !defined(UNUSED_MEMBER_VARIABLE)
 #define UNUSED_MEMBER_VARIABLE __attribute__((unused))
+#endif
+
+/* TRIVIAL_ABI */
+
+#if !defined(TRIVIAL_ABI)
+#if COMPILER(CLANG)
+#define TRIVIAL_ABI __attribute__((trivial_abi))
+#else
+#define TRIVIAL_ABI
+#endif
 #endif
 
 /* UNUSED_TYPE_ALIAS */
@@ -559,4 +583,12 @@
 
 #if !defined(TLS_MODEL_INITIAL_EXEC)
 #define TLS_MODEL_INITIAL_EXEC
+#endif
+
+/* UNREACHABLE */
+
+#if COMPILER(MSVC)
+#define WTF_UNREACHABLE(...) __assume(0)
+#else
+#define WTF_UNREACHABLE(...) __builtin_unreachable();
 #endif

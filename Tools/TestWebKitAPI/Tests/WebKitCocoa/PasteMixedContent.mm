@@ -42,7 +42,7 @@ namespace TestWebKitAPI {
 
 static NSString *imagePath()
 {
-    return [[NSBundle mainBundle] pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"];
+    return [NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"];
 }
 
 void writeTypesAndDataToPasteboard(id type, ...)

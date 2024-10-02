@@ -224,6 +224,25 @@ op :iterator_open,
         getNext: nil,
     }
 
+# Semantically, this is dst = value instanceof constructor.
+op :instanceof,
+    args: {
+        dst: VirtualRegister,
+        value: VirtualRegister,
+        constructor: VirtualRegister,
+        hasInstanceValueProfile: unsigned,
+        prototypeValueProfile: unsigned,
+    },
+    metadata: {
+        hasInstanceModeMetadata: GetByIdModeMetadata,
+        prototypeModeMetadata: GetByIdModeMetadata,
+    },
+    checkpoints: {
+        getHasInstance: nil,
+        getPrototype: nil,
+        instanceof: nil,
+    }
+
 # Opcodes with metadata come next, in decreasing order of metadata alignment requirements
 # Alignment: 8
 op :set_private_brand, args: {
@@ -1371,21 +1390,6 @@ op :overrides_has_instance,
         hasInstanceValue: VirtualRegister,
     }
 
-op :instanceof,
-    args: {
-        dst: VirtualRegister,
-        value: VirtualRegister,
-        prototype: VirtualRegister,
-    }
-
-op :instanceof_custom,
-    args: {
-        dst: VirtualRegister,
-        value: VirtualRegister,
-        constructor: VirtualRegister,
-        hasInstanceValue: VirtualRegister,
-    }
-
 op :typeof,
     args: {
         dst: VirtualRegister,
@@ -1488,10 +1492,10 @@ op :wasm_function_prologue_trampoline
 op :wasm_function_prologue
 op :wasm_function_prologue_simd_trampoline
 op :wasm_function_prologue_simd
-op :js_to_wasm_wrapper_entry_crash_for_simd_parameters
 op :js_to_wasm_wrapper_entry
 op :wasm_to_wasm_wrapper_entry
 op :wasm_to_js_wrapper_entry
+op :ipint_trampoline
 
 op :js_trampoline_op_call
 op :js_trampoline_op_call_ignore_result
@@ -1546,6 +1550,12 @@ op :llint_cloop_did_return_from_js_22
 op :llint_cloop_did_return_from_js_23
 op :llint_cloop_did_return_from_js_24
 op :llint_cloop_did_return_from_js_25
+op :llint_cloop_did_return_from_js_26
+op :llint_cloop_did_return_from_js_27
+op :llint_cloop_did_return_from_js_28
+op :llint_cloop_did_return_from_js_29
+op :llint_cloop_did_return_from_js_30
+op :llint_cloop_did_return_from_js_31
 
 end_section :CLoopReturnHelpers
 
@@ -1887,6 +1897,11 @@ op :rethrow,
         exception: VirtualRegister,
     }
 
+op :throw_ref,
+    args: {
+        exception: VirtualRegister,
+    }
+
 op_group :Catch,
     [
         :catch,
@@ -1904,6 +1919,21 @@ op_group :CatchAll,
     ],
     args: {
         exception: VirtualRegister,
+    }
+
+op_group :TryTableCatch,
+    [
+        :try_table_catch,
+        :try_table_catchref,
+        :try_table_catchall,
+        :try_table_catchallref,
+    ],
+    args: {
+        kind: unsigned,
+        exceptionIndex: unsigned,
+        exception: VirtualRegister,
+        argumentCount: unsigned,
+        startOffset: unsigned,
     }
 
 op :ref_i31,

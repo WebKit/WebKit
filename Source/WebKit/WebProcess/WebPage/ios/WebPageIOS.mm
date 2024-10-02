@@ -132,6 +132,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/PluginDocument.h>
 #import <WebCore/PointerCaptureController.h>
 #import <WebCore/PointerCharacteristics.h>
 #import <WebCore/PrintContext.h>
@@ -141,6 +142,8 @@
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderObjectInlines.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
@@ -159,6 +162,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/IterationStatus.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
@@ -4620,7 +4624,13 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
             m_dynamicSizeUpdateHistory.clear();
 
-            m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
+#if ENABLE(PDF_PLUGIN)
+            if (RefPtr pluginView = mainFramePlugIn())
+                pluginView->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition);
+            else
+#endif
+                m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
+
             hasSetPageScale = true;
             send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFromUIProcess.value()));
         }
@@ -4788,8 +4798,23 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
 
 void WebPage::willStartUserTriggeredZooming()
 {
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn()) {
+        pluginView->didBeginMagnificationGesture();
+        return;
+    }
+#endif
+
     m_page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::webViewKey(), DiagnosticLoggingKeys::userZoomActionKey(), ShouldSample::No);
     m_userHasChangedPageScaleFactor = true;
+}
+
+void WebPage::didEndUserTriggeredZooming()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn())
+        pluginView->didEndMagnificationGesture();
+#endif
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -5524,6 +5549,108 @@ void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionH
     bool isReplaced;
     FloatSize targetSize = target->absoluteBoundingRect(&isReplaced).size();
     completion(targetSize.width() >= minimumSizeForDismissal.width() && targetSize.height() >= minimumSizeForDismissal.height());
+}
+
+static CheckedPtr<RenderBox> enclosingScroller(RenderObject* renderer)
+{
+    if (!renderer)
+        return { };
+
+    auto containingRenderer = [](const RenderObject& renderer) -> CheckedPtr<RenderElement> {
+        if (CheckedPtr container = renderer.container())
+            return container;
+
+        if (RefPtr owner = renderer.protectedDocument()->ownerElement())
+            return owner->renderer();
+
+        return { };
+    };
+
+    CheckedPtr candidate = dynamicDowncast<RenderElement>(renderer) ?: renderer->container();
+    for (; candidate; candidate = containingRenderer(*candidate)) {
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*candidate); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
+            return renderBox.get();
+    }
+
+    return { };
+}
+
+static void forEachEnclosingScroller(const VisibleSelection& selection, Function<IterationStatus(const ScrollingNodeID&, const IntRect&)>&& callback)
+{
+    RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
+    if (!ancestor)
+        return;
+
+    for (CheckedPtr scroller = enclosingScroller(ancestor->renderer()); scroller; scroller = enclosingScroller(scroller->container())) {
+        Ref view = scroller->checkedView()->frameView();
+        IntRect scrollerClipRectInContent;
+        ScrollingNodeID enclosingScrollingNodeID;
+        if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
+            if (renderView->protectedDocument()->isTopDocument())
+                break;
+
+            scrollerClipRectInContent = view->visibleContentRect();
+            enclosingScrollingNodeID = view->scrollingNodeID();
+        } else if (CheckedPtr layer = scroller->layer()) {
+            CheckedPtr scrollableArea = layer->scrollableArea();
+            if (!scrollableArea)
+                break;
+
+            scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
+            enclosingScrollingNodeID = scrollableArea->scrollingNodeID();
+        }
+
+        if (callback(WTFMove(enclosingScrollingNodeID), view->contentsToRootView(scrollerClipRectInContent)) == IterationStatus::Done)
+            break;
+    }
+}
+
+void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, const VisibleSelection& selection, const IntRect& editableRootBounds) const
+{
+    if (selection.isNoneOrOrphaned())
+        return;
+
+    if (!state.isContentEditable && selection.isCaret())
+        return;
+
+    ScrollingNodeID enclosingScrollingNodeID;
+    IntRect enclosingScrollingClipRect;
+    IntRect innerScrollingClipRect;
+    forEachEnclosingScroller(selection, [&](const ScrollingNodeID& scrollingNodeID, const IntRect& clipRectInRootView) {
+        if (scrollingNodeID) {
+            enclosingScrollingClipRect = clipRectInRootView;
+            enclosingScrollingNodeID = scrollingNodeID;
+            return IterationStatus::Done;
+        }
+
+        if (innerScrollingClipRect.isEmpty())
+            innerScrollingClipRect = clipRectInRootView;
+
+        return IterationStatus::Continue;
+    });
+
+    if (enclosingScrollingNodeID)
+        state.visualData->enclosingScrollingNodeID = { WTFMove(enclosingScrollingNodeID) };
+
+    if (!m_selectionHonorsOverflowScrolling) {
+        state.visualData->selectionClipRect = editableRootBounds;
+        if (!enclosingScrollingClipRect.isEmpty()) {
+            if (state.visualData->selectionClipRect.isEmpty())
+                state.visualData->selectionClipRect = enclosingScrollingClipRect;
+            else
+                state.visualData->selectionClipRect.intersect(enclosingScrollingClipRect);
+        }
+        return;
+    }
+
+    if (!innerScrollingClipRect.isEmpty()) {
+        // We need to clip the selection to the inner scroller, even if that scroller does not have a
+        // node in the scrolling tree. For example, this allows us to clip the selection in a scrollable
+        // single-line text form control, even if it's inside a larger scrollable area.
+        if (!editableRootBounds.isEmpty())
+            innerScrollingClipRect.unite(editableRootBounds);
+        state.visualData->selectionClipRect = WTFMove(innerScrollingClipRect);
+    }
 }
 
 } // namespace WebKit

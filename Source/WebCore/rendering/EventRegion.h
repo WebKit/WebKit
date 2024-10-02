@@ -76,7 +76,8 @@ private:
     Vector<InteractionRegion> m_interactionRegions;
     HashMap<IntRect, InteractionRegion::ContentHint> m_interactionRectsAndContentHints;
     HashSet<IntRect> m_occlusionRects;
-    HashSet<IntRect> m_elementGuardRects;
+    enum class Inflated : bool { No, Yes };
+    HashMap<IntRect, Inflated> m_guardRects;
     HashSet<ElementIdentifier> m_containerRemovalCandidates;
     HashSet<ElementIdentifier> m_containersToRemove;
     HashMap<ElementIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;

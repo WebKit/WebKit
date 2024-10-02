@@ -179,7 +179,7 @@ const ClientOrigin& SWServerWorker::origin() const
 
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    RefPtrAllowingPartiallyDestroyed<SWServer> server = m_server.get();
+    RefPtr<SWServer> server = m_server.get();
     return server ? server->contextConnectionForRegistrableDomain(topRegistrableDomain()) : nullptr;
 }
 

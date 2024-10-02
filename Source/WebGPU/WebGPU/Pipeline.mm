@@ -67,21 +67,6 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
 
     const auto& entryPointInformation = iterator->value;
 
-    for (auto& kvp : entryPointInformation.specializationConstants) {
-        auto& specializationConstant = kvp.value;
-        if (!specializationConstant.defaultValue)
-            continue;
-
-        auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
-        if (!constantValue) {
-            if (error)
-                *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"Failed to evaluate override value" }];
-            return std::nullopt;
-        }
-        auto addResult = wgslConstantValues.add(kvp.key, *constantValue);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
-
     for (uint32_t i = 0; i < constantCount; ++i) {
         const auto& entry = constants[i];
         auto keyEntry = fromAPI(entry.key);
@@ -90,6 +75,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
             return { };
 
         const auto& specializationConstant = indexIterator->value;
+        keyEntry = specializationConstant.mangledName;
         switch (specializationConstant.type) {
         case WGSL::Reflection::SpecializationConstantType::Boolean: {
             bool value = entry.value;
@@ -129,6 +115,21 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         }
     }
 
+    for (auto& kvp : entryPointInformation.specializationConstants) {
+        auto& specializationConstant = kvp.value;
+        if (!specializationConstant.defaultValue || wgslConstantValues.contains(kvp.value.mangledName))
+            continue;
+
+        auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
+        if (!constantValue) {
+            if (error)
+                *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: @"Failed to evaluate override value" }];
+            return std::nullopt;
+        }
+        auto addResult = wgslConstantValues.add(kvp.value.mangledName, *constantValue);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+
     if (pipelineLayout) {
         for (unsigned i = 0; i < pipelineLayout->numberOfBindGroupLayouts(); ++i) {
             auto& wgslBindGroupLayout = wgslPipelineLayout->bindGroupLayouts[i];
@@ -143,7 +144,13 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         }
     }
 
-    auto msl = WGSL::generate(*ast, result, wgslConstantValues);
+    auto generationResult = WGSL::generate(*ast, result, wgslConstantValues);
+    if (auto* generationError = std::get_if<WGSL::Error>(&generationResult)) {
+        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: generationError->message() }];
+        return std::nullopt;
+    }
+    auto& msl = std::get<String>(generationResult);
+
     auto library = ShaderModule::createLibrary(device, msl, label, error);
     if (error && *error)
         return { };

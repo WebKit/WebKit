@@ -103,7 +103,7 @@ static void logConsoleWarningForUpgrade(const LocalFrame& frame, bool blocked, c
     }();
 
     auto message = makeString((!blocked ? ""_s : "[blocked] "_s), "The page at "_s, frame.document()->url().stringCenterEllipsizedToLength(), " requested insecure content from "_s, target.stringCenterEllipsizedToLength(), ". This content was "_s, errorString, !isUpgradingLocalhostDisabled ? " be served over HTTPS.\n"_s : "\n"_s);
-    frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
+    frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 }
 
 static bool isUpgradeMixedContentEnabled(Document& document)

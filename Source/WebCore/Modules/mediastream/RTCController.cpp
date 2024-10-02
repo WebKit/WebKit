@@ -185,7 +185,7 @@ void RTCController::startGatheringLogs(Document& document, LogCallback&& callbac
         m_logSink = makeUnique<LibWebRTCLogSink>([weakThis = WeakPtr { *this }] (auto&& logLevel, auto&& logMessage) {
             ensureOnMainThread([weakThis, logMessage = fromStdString(logMessage).isolatedCopy(), logLevel] () mutable {
                 if (auto protectedThis = weakThis.get())
-                    protectedThis->m_callback("logs"_s, WTFMove(logMessage), toWebRTCLogLevel(logLevel), nullptr);
+                    protectedThis->m_callback("backend-logs"_s, WTFMove(logMessage), toWebRTCLogLevel(logLevel), nullptr);
             });
         });
         m_logSink->start();

@@ -56,7 +56,7 @@ private:
     static constexpr int maximumCacheableIntegerValue = 255;
 
     LazyNeverDestroyed<CSSPrimitiveValue> m_pixelValues[maximumCacheableIntegerValue + 1];
-    LazyNeverDestroyed<CSSPrimitiveValue> m_percentValues[maximumCacheableIntegerValue + 1];
+    LazyNeverDestroyed<CSSPrimitiveValue> m_percentageValues[maximumCacheableIntegerValue + 1];
     LazyNeverDestroyed<CSSPrimitiveValue> m_numberValues[maximumCacheableIntegerValue + 1];
     LazyNeverDestroyed<CSSPrimitiveValue> m_identifierValues[numCSSValueKeywords];
 };

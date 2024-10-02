@@ -157,7 +157,7 @@ public:
     SetStyleTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, const String& text)
         : InspectorCSSAgent::StyleSheetAction(styleSheet)
         , m_cssId(cssId)
-        , m_text(text)
+        , m_newStyleDeclarationText(text)
     {
     }
 
@@ -168,12 +168,22 @@ public:
 
     ExceptionOr<void> undo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_oldText, nullptr, InspectorStyleSheet::IsUndo::Yes);
+        return m_styleSheet->setRuleStyleText(
+            m_cssId,
+            m_oldStyleDeclarationText,
+            nullptr, /* outOldStyleDeclarationText */
+            &m_oldRuleText,
+            nullptr /* outOldRuleText */);
     }
 
     ExceptionOr<void> redo() override
     {
-        return m_styleSheet->setRuleStyleText(m_cssId, m_text, &m_oldText);
+        return m_styleSheet->setRuleStyleText(
+            m_cssId,
+            m_newStyleDeclarationText,
+            &m_oldStyleDeclarationText,
+            nullptr, /* newRuleText */
+            &m_oldRuleText);
     }
 
     String mergeId() override
@@ -187,13 +197,14 @@ public:
         ASSERT(action->mergeId() == mergeId());
 
         SetStyleTextAction* other = static_cast<SetStyleTextAction*>(action.get());
-        m_text = other->m_text;
+        m_newStyleDeclarationText = other->m_newStyleDeclarationText;
     }
 
 private:
     InspectorCSSId m_cssId;
-    String m_text;
-    String m_oldText;
+    String m_newStyleDeclarationText;
+    String m_oldStyleDeclarationText;
+    String m_oldRuleText;
 };
 
 class InspectorCSSAgent::SetRuleHeaderTextAction final : public InspectorCSSAgent::StyleSheetAction {

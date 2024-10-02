@@ -59,6 +59,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FileInputType);
+
 using namespace HTMLNames;
 
 FileInputType::FileInputType(HTMLInputElement& element)

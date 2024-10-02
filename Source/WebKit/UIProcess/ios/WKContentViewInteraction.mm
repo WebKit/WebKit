@@ -163,6 +163,7 @@
 #import <wtf/CallbackAggregator.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/SystemFree.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -551,8 +552,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFoundTextRange : UITextRange
 
-@property (nonatomic) NSUInteger location;
-@property (nonatomic) NSUInteger length;
 @property (nonatomic, copy) NSString *frameIdentifier;
 @property (nonatomic) NSUInteger order;
 
@@ -564,10 +563,40 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKFoundTextPosition : UITextPosition
 
-@property (nonatomic) NSUInteger offset;
 @property (nonatomic) NSUInteger order;
 
-+ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order;
+@end
+
+@interface WKFoundDOMTextRange : WKFoundTextRange
+
+@property (nonatomic) NSUInteger location;
+@property (nonatomic) NSUInteger length;
+
+@end
+
+@interface WKFoundDOMTextPosition : WKFoundTextPosition
+
+@property (nonatomic) NSUInteger offset;
+
++ (WKFoundDOMTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order;
+
+@end
+
+@interface WKFoundPDFTextRange : WKFoundTextRange
+
+@property (nonatomic) NSUInteger startPage;
+@property (nonatomic) NSUInteger startPageOffset;
+@property (nonatomic) NSUInteger endPage;
+@property (nonatomic) NSUInteger endPageOffset;
+
+@end
+
+@interface WKFoundPDFTextPosition : WKFoundTextPosition
+
+@property (nonatomic) NSUInteger page;
+@property (nonatomic) NSUInteger offset;
+
++ (WKFoundPDFTextPosition *)textPositionWithPage:(NSUInteger)page offset:(NSUInteger)offset;
 
 @end
 
@@ -1157,6 +1186,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (BOOL)shouldUseAsyncInteractions
 {
     return _page->preferences().useAsyncUIKitInteractions();
+}
+
+- (BOOL)selectionHonorsOverflowScrolling
+{
+    return _page->preferences().selectionHonorsOverflowScrolling();
 }
 
 - (BOOL)_shouldUseUIContextMenuAsyncConfiguration
@@ -2084,7 +2118,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
             _failedTouchStartDeferringGestures = { { } };
 
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
-        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
 
 #if ENABLE(TOUCH_EVENTS)
         _page->resetPotentialTapSecurityOrigin();
@@ -3120,15 +3154,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_page->hasRunningProcess())
         return NO;
 
-    Ref connection = _page->legacyMainFrameProcess().connection();
+    Ref process = _page->legacyMainFrameProcess();
+    if (!process->hasConnection())
+        return NO;
 
     if (_isWaitingOnPositionInformation)
         return NO;
-    
+
     _isWaitingOnPositionInformation = YES;
+
     if (![self _hasValidOutstandingPositionInformationRequest:request])
         [self requestAsynchronousPositionInformationUpdate:request];
-    bool receivedResponse = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+
+    bool receivedResponse = process->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
     _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     return _hasValidPositionInformation;
 }
@@ -3273,9 +3311,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return shouldAcknowledgeTap(_singleTapGestureRecognizer.get());
 
     if (gestureRecognizer == _keyboardDismissalGestureRecognizer) {
+        auto tapIsInEditableRoot = [&] {
+            auto& state = _page->editorState();
+            return state.hasVisualData() && state.visualData->editableRootBounds.contains(WebCore::roundedIntPoint(point));
+        };
         return self._hasFocusedElement
             && !self.hasHiddenContentEditable
-            && !CGRectContainsPoint(self.selectionClipRect, point)
+            && !tapIsInEditableRoot()
             && shouldAcknowledgeTap(_keyboardDismissalGestureRecognizer.get());
     }
 
@@ -3964,11 +4006,19 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (BOOL)requiresAccessoryView
 {
+#if ENABLE(WRITING_TOOLS)
+    if (_isPresentingWritingTools)
+        return NO;
+#endif
+
     if ([_formInputSession accessoryViewShouldNotShow])
         return NO;
 
     if ([_formInputSession customInputAccessoryView])
         return YES;
+
+    if ([_webView _isDisplayingPDF])
+        return NO;
 
     return [self _elementTypeRequiresAccessoryView:_focusedElementInformation.elementType];
 }
@@ -6477,12 +6527,28 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 - (NSInteger)offsetFromPosition:(UITextPosition *)from toPosition:(UITextPosition *)to
 {
 #if HAVE(UIFINDINTERACTION)
-    if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
-        WKFoundTextPosition *fromPosition = (WKFoundTextPosition *)from;
-        WKFoundTextPosition *toPosition = (WKFoundTextPosition *)to;
+    if ([from isKindOfClass:[WKFoundDOMTextPosition class]] && [to isKindOfClass:[WKFoundDOMTextPosition class]]) {
+        WKFoundDOMTextPosition *fromPosition = (WKFoundDOMTextPosition *)from;
+        WKFoundDOMTextPosition *toPosition = (WKFoundDOMTextPosition *)to;
 
         if (fromPosition.order == toPosition.order)
             return fromPosition.offset - toPosition.offset;
+    }
+
+    if ([from isKindOfClass:[WKFoundPDFTextPosition class]] && [to isKindOfClass:[WKFoundPDFTextPosition class]]) {
+        WKFoundPDFTextPosition *fromPosition = (WKFoundPDFTextPosition *)from;
+        WKFoundPDFTextPosition *toPosition = (WKFoundPDFTextPosition *)to;
+
+        if (fromPosition.order == toPosition.order) {
+            if (fromPosition.page == toPosition.page)
+                return fromPosition.offset - toPosition.offset;
+            return fromPosition.page - toPosition.page;
+        }
+    }
+
+    if ([from isKindOfClass:[WKFoundTextPosition class]] && [to isKindOfClass:[WKFoundTextPosition class]]) {
+        WKFoundTextPosition *fromPosition = (WKFoundTextPosition *)from;
+        WKFoundTextPosition *toPosition = (WKFoundTextPosition *)to;
 
         return fromPosition.order - toPosition.order;
     }
@@ -6684,7 +6750,8 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 #else
             platformReplacement = nsReplacement;
 #endif
-            page->pageClient().replaceDictationAlternatives(platformReplacement.get(), context);
+            if (RefPtr pageClient = page->pageClient())
+                pageClient->replaceDictationAlternatives(platformReplacement.get(), context);
         }
         page->clearDictationAlternatives(WTFMove(contextsToRemove));
     });
@@ -8803,7 +8870,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             editableRootIsTransparentOrFullyClipped = YES;
 
         if (self._hasFocusedElement) {
-            auto elementArea = visualData.selectionClipRect.area<RecordOverflow>();
+            auto elementArea = visualData.editableRootBounds.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
         }
@@ -8900,11 +8967,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         _cachedSelectedTextRange = nil;
         _lastSelectionDrawingInfo = selectionDrawingInfo;
 
-        // FIXME: We need to figure out what to do if the selection is changed by Javascript.
         if (_textInteractionWrapper) {
             _markedText = editorState.hasComposition ? postLayoutData.markedText : String { };
             if (![_markedText length])
                 _isDeferringKeyEventsToInputMethod = NO;
+            [_textInteractionWrapper prepareToMoveSelectionContainer:self._selectionContainerViewInternal];
             [_textInteractionWrapper selectionChanged];
         }
 
@@ -11447,8 +11514,8 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
     if (!_page->preferences().scrollToTextFragmentGenerationEnabled() || !self.shouldAllowHighlightLinkCreation)
         return nil;
 
-    return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkToHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {
-        view->_page->copyLinkToHighlight();
+    return [self menuWithInlineAction:WebCore::contextMenuItemTagCopyLinkWithHighlight() image:nil identifier:@"WKActionScrollToTextFragmentGeneration" handler:[](WKContentView *view) mutable {
+        view->_page->copyLinkWithHighlight();
     }];
 }
 
@@ -11546,7 +11613,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return;
 
     if (event.type() == WebKit::WebEventType::MouseDown) {
-        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+        _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
 
         if (auto lastLocation = interaction.lastLocation)
             _lastInteractionLocation = *lastLocation;
@@ -13383,7 +13450,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 
 - (void)replacementEffectDidComplete
 {
-    _page->didEndPartialIntelligenceTextPonderingAnimationImpl();
+    _page->didEndPartialIntelligenceTextAnimationImpl();
 }
 
 #endif
@@ -13405,6 +13472,22 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 #endif // USE(BROWSERENGINEKIT)
 
 #if ENABLE(WRITING_TOOLS)
+
+- (void)willPresentWritingTools
+{
+    _isPresentingWritingTools = YES;
+    // FIXME (rdar://problem/136376688): Stop manually hiding the accessory view once UIKit fixes rdar://136304542.
+    self.formAccessoryView.hidden = YES;
+    [self reloadInputViews];
+}
+
+- (void)didDismissWritingTools
+{
+    _isPresentingWritingTools = NO;
+    // FIXME (rdar://problem/136376688): Stop manually unhiding the accessory view once UIKit fixes rdar://136304542.
+    self.formAccessoryView.hidden = NO;
+    [self reloadInputViews];
+}
 
 // FIXME: (rdar://130540028) Remove uses of the old WritingToolsAllowedInputOptions API in favor of the new WritingToolsResultOptions API, and remove staging.
 - (PlatformWritingToolsResultOptions)writingToolsAllowedInputOptions
@@ -13524,6 +13607,41 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     _page->closeCurrentTypingCommand();
 }
 
+- (UIView *)_selectionContainerViewAboveText
+{
+    // FIXME (280624): Once -selectionContainerView (or an equivalent) is available as API, we
+    // should adopt that and make this invoke RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED().
+    return self._selectionContainerViewInternal;
+}
+
+- (UIView *)selectionContainerView
+{
+    return self._selectionContainerViewInternal;
+}
+
+- (UIView *)_selectionContainerViewInternal
+{
+    if (!self.selectionHonorsOverflowScrolling)
+        return self;
+
+    if (!_page->editorState().hasVisualData())
+        return self;
+
+    auto scrollingNodeID = _page->editorState().visualData->enclosingScrollingNodeID;
+    if (!scrollingNodeID)
+        return self;
+
+    WeakPtr coordinator = _page->scrollingCoordinatorProxy();
+    if (UNLIKELY(!coordinator))
+        return self;
+
+    RetainPtr scrollView = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(*coordinator).scrollViewForScrollingNodeID(*scrollingNodeID);
+    if (scrollView == self._scroller)
+        return self;
+
+    return dynamic_objc_cast<WKBaseScrollView>(scrollView.get()).scrolledContentView ?: self;
+}
+
 @end
 
 @implementation WKContentView (WKTesting)
@@ -13595,7 +13713,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
-    _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+    _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedMainFrameLayerTreeTransactionID();
     [self doAfterPositionInformationUpdate:[actionType, self, protectedSelf = retainPtr(self)] (WebKit::InteractionInformationAtPosition info) {
         _WKActivatedElementInfo *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:info userInfo:nil];
         _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType info:elementInfo assistant:_actionSheetAssistant.get()];
@@ -15019,9 +15137,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (WKFoundTextRange *)foundTextRangeWithWebFoundTextRange:(WebKit::WebFoundTextRange)webRange
 {
-    auto range = adoptNS([[WKFoundTextRange alloc] init]);
-    [range setLocation:webRange.location];
-    [range setLength:webRange.length];
+    RetainPtr range = WTF::switchOn(webRange.data,
+        [] (const WebKit::WebFoundTextRange::DOMData& domData) -> RetainPtr<WKFoundTextRange> {
+            RetainPtr foundDOMTextRange = adoptNS([[WKFoundDOMTextRange alloc] init]);
+            [foundDOMTextRange setLocation:domData.location];
+            [foundDOMTextRange setLength:domData.length];
+            return foundDOMTextRange;
+        },
+        [] (const WebKit::WebFoundTextRange::PDFData& pdfData) -> RetainPtr<WKFoundTextRange> {
+            RetainPtr foundPDFTextRange = adoptNS([[WKFoundPDFTextRange alloc] init]);
+            [foundPDFTextRange setStartPage:pdfData.startPage];
+            [foundPDFTextRange setStartPageOffset:pdfData.startOffset];
+            [foundPDFTextRange setEndPage:pdfData.endPage];
+            [foundPDFTextRange setEndPageOffset:pdfData.endOffset];
+            return foundPDFTextRange;
+        }
+    );
+
     [range setFrameIdentifier:webRange.frameIdentifier];
     [range setOrder:webRange.order];
     return range.autorelease();
@@ -15033,18 +15165,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [super dealloc];
 }
 
-- (WKFoundTextPosition *)start
-{
-    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:self.location order:self.order];
-    return position;
-}
-
-- (UITextPosition *)end
-{
-    WKFoundTextPosition *position = [WKFoundTextPosition textPositionWithOffset:(self.location + self.length) order:self.order];
-    return position;
-}
-
 - (BOOL)isEmpty
 {
     return NO;
@@ -15052,18 +15172,77 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WebKit::WebFoundTextRange)webFoundTextRange
 {
-    return { self.location, self.length, self.frameIdentifier, self.order };
+    return { };
 }
 
 @end
 
 @implementation WKFoundTextPosition
+@end
 
-+ (WKFoundTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order
+@implementation WKFoundDOMTextRange
+
+- (WKFoundDOMTextPosition *)start
 {
-    auto pos = adoptNS([[WKFoundTextPosition alloc] init]);
+    WKFoundDOMTextPosition *position = [WKFoundDOMTextPosition textPositionWithOffset:self.location order:self.order];
+    return position;
+}
+
+- (WKFoundDOMTextPosition *)end
+{
+    WKFoundDOMTextPosition *position = [WKFoundDOMTextPosition textPositionWithOffset:(self.location + self.length) order:self.order];
+    return position;
+}
+
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    WebKit::WebFoundTextRange::DOMData data { self.location, self.length };
+    return { data, self.frameIdentifier, self.order };
+}
+
+@end
+
+@implementation WKFoundDOMTextPosition
+
++ (WKFoundDOMTextPosition *)textPositionWithOffset:(NSUInteger)offset order:(NSUInteger)order
+{
+    RetainPtr pos = adoptNS([[WKFoundDOMTextPosition alloc] init]);
     [pos setOffset:offset];
     [pos setOrder:order];
+    return pos.autorelease();
+}
+
+@end
+
+@implementation WKFoundPDFTextRange
+
+- (WKFoundPDFTextPosition *)start
+{
+    WKFoundPDFTextPosition *position = [WKFoundPDFTextPosition textPositionWithPage:self.startPage offset:self.startPageOffset];
+    return position;
+}
+
+- (WKFoundPDFTextPosition *)end
+{
+    WKFoundPDFTextPosition *position = [WKFoundPDFTextPosition textPositionWithPage:self.endPage offset:self.endPageOffset];
+    return position;
+}
+
+- (WebKit::WebFoundTextRange)webFoundTextRange
+{
+    WebKit::WebFoundTextRange::PDFData data { self.startPage, self.startPageOffset, self.endPage, self.endPageOffset };
+    return { data, self.frameIdentifier, self.order };
+}
+
+@end
+
+@implementation WKFoundPDFTextPosition
+
++ (WKFoundPDFTextPosition *)textPositionWithPage:(NSUInteger)page offset:(NSUInteger)offset
+{
+    RetainPtr pos = adoptNS([[WKFoundPDFTextPosition alloc] init]);
+    [pos setPage:page];
+    [pos setOffset:offset];
     return pos.autorelease();
 }
 

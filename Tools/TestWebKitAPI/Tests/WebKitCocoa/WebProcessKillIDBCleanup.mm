@@ -59,7 +59,7 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebProcessKillIDBCleanup-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"WebProcessKillIDBCleanup-1" withExtension:@"html"]];
     [webView loadRequest:request];
 
     auto string1 = RetainPtr { getNextMessage().body };
@@ -70,7 +70,7 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     // Make a new web view with a new web process to finish the test
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebProcessKillIDBCleanup-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"WebProcessKillIDBCleanup-2" withExtension:@"html"]];
     [webView2 loadRequest:request];
 
     auto string5 = RetainPtr { getNextMessage().body };
@@ -101,13 +101,13 @@ TEST(IndexedDB, KillWebProcessWithOpenConnection)
     TestWebKitAPI::Util::run(&readyToContinue);
 
     auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request1 = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"KillWebProcessWithOpenConnection-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request1 = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"KillWebProcessWithOpenConnection-1" withExtension:@"html"]];
     [webView1 loadRequest:request1];
     auto string1 = RetainPtr { getNextMessage().body };
     EXPECT_WK_STREQ(@"Open Succeeded", string1.get());
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    NSURLRequest *request2 = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"KillWebProcessWithOpenConnection-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"KillWebProcessWithOpenConnection-2" withExtension:@"html"]];
     [webView2 loadRequest:request2];
     auto string2 = RetainPtr { getNextMessage().body };
     EXPECT_WK_STREQ(@"Version Change", string2.get());

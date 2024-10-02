@@ -56,10 +56,12 @@ private:
     ~IPCStreamTester();
     void initialize();
     IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+    Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
 
     // Messages.
     void syncMessage(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncMessageNotStreamEncodableReply(uint32_t value, CompletionHandler<void(uint32_t)>&&);
+    void syncMessageNotStreamEncodableBoth(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
     void syncMessageEmptyReply(uint32_t, CompletionHandler<void()>&&);
     void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);

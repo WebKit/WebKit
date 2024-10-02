@@ -90,6 +90,7 @@ public:
     std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
 
     explicit UniqueRef(HashTableEmptyValueType) { }
+    bool isHashTableEmptyValue() const { return !m_ref; }
 
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);

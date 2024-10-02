@@ -85,4 +85,15 @@ RefPtr<WebCore::ModelPlayer> WebModelPlayerProvider::createModelPlayer(WebCore::
     return nullptr;
 }
 
+void WebModelPlayerProvider::deleteModelPlayer(WebCore::ModelPlayer& modelPlayer)
+{
+#if ENABLE(MODEL_PROCESS)
+    Ref page = m_page.get();
+    if (page->corePage()->settings().modelProcessEnabled())
+        return WebProcess::singleton().modelProcessModelPlayerManager().deleteModelProcessModelPlayer(modelPlayer);
+#else
+    UNUSED_PARAM(modelPlayer);
+#endif
+}
+
 }

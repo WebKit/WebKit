@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import (
     Any,
     Dict,
@@ -8,10 +9,15 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
-    Protocol,
     Tuple,
     Union,
 )
+
+
+if sys.version_info[:2] >= (3, 8):
+    from typing import Protocol
+else:  # pragma: no cover
+    Protocol = object  # mypy will report errors on Python 3.7.
 
 
 __all__ = ["Headers", "HeadersLike", "MultipleValuesError"]

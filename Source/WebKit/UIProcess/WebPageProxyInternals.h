@@ -145,6 +145,46 @@ private:
 };
 #endif
 
+class PageLoadTimingFrameLoadStateObserver final : public FrameLoadStateObserver {
+public:
+    bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
+
+private:
+    void didCommitProvisionalLoad(IsMainFrame isMainFrame)
+    {
+        if (isMainFrame == IsMainFrame::Yes) {
+            // Teardown doesn't reliably inform the UI process of each iframe's provisional load failure.
+            m_loadingFrameCount = 1;
+        }
+    }
+
+    void didStartProvisionalLoad(const URL&) final
+    {
+        m_loadingFrameCount++;
+    }
+
+    void didFailProvisionalLoad(const URL&) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+    }
+
+    void didFailLoad(const URL&) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+    }
+
+    void didFinishLoad(IsMainFrame, const URL& url) final
+    {
+        ASSERT(m_loadingFrameCount);
+        m_loadingFrameCount--;
+        // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
+    }
+
+    size_t m_loadingFrameCount { 0 };
+};
+
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
     String sourceDescription;
@@ -231,7 +271,6 @@ public:
     WebCore::IntSize fixedLayoutSize;
     GeolocationPermissionRequestManagerProxy geolocationPermissionRequestManager;
     HiddenPageThrottlingAutoIncreasesCounter::Token hiddenPageDOMTimerThrottlingAutoIncreasesCount;
-    Identifier identifier;
     Deque<NativeWebKeyboardEvent> keyEventQueue;
     LayerHostingMode layerHostingMode { LayerHostingMode::InProcess };
     WebCore::RectEdges<bool> mainFramePinnedState { true, true, true, true };
@@ -269,7 +308,6 @@ public:
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     VisibleWebPageToken visiblePageToken;
     WebCore::IntRect visibleScrollerThumbRect;
-    WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
     std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToTitleChanges;
     std::unique_ptr<ProcessThrottlerActivity> pageAllowedToRunInTheBackgroundActivityDueToNotifications;
@@ -374,6 +412,7 @@ public:
     std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
     HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
+    PageLoadTimingFrameLoadStateObserver pageLoadTimingFrameLoadStateObserver;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     RunLoop::Timer activityStateChangeTimer;
@@ -404,6 +443,7 @@ public:
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
+    const SharedPreferencesForWebProcess& sharedPreferencesForWebPaymentMessages() const final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;

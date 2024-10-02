@@ -3581,52 +3581,11 @@ RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> hasInstanceValue = generator.newTemporary();
-    RefPtr<RegisterID> temp = generator.newTemporary();
-    RefPtr<RegisterID> prototype = generator.newTemporary();
+    RefPtr<RegisterID> dstReg = generator.finalDestination(dst);
     RefPtr<RegisterID> value = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
     RefPtr<RegisterID> constructor = generator.emitNode(m_expr2);
-    RefPtr<RegisterID> dstReg = generator.finalDestination(dst, value.get());
-    Ref<Label> ordinary = generator.newLabel();
-    Ref<Label> custom = generator.newLabel();
-    Ref<Label> done = generator.newLabel();
-    Ref<Label> typeError = generator.newLabel();
-
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitIsObject(temp.get(), constructor.get());
-    generator.emitJumpIfFalse(temp.get(), typeError.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(hasInstanceValue.get(), constructor.get(), generator.vm().propertyNames->hasInstanceSymbol);
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitOverridesHasInstance(temp.get(), constructor.get(), hasInstanceValue.get());
-    generator.emitJumpIfTrue(temp.get(), custom.get());
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitIsObject(temp.get(), value.get());
-    generator.emitJumpIfTrue(temp.get(), ordinary.get());
-
-    generator.emitLoad(dstReg.get(), false);
-    generator.emitJump(done.get());
-
-    generator.emitLabel(ordinary.get());
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitGetById(prototype.get(), constructor.get(), generator.vm().propertyNames->prototype);
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOf(dstReg.get(), value.get(), prototype.get());
-    generator.emitJump(done.get());
-
-    generator.emitLabel(typeError.get());
-    generator.emitThrowTypeError("Right hand side of instanceof is not an object"_s);
-
-    generator.emitLabel(custom.get());
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    generator.emitInstanceOfCustom(dstReg.get(), value.get(), constructor.get(), hasInstanceValue.get());
-
-    generator.emitLabel(done.get());
-    return dstReg.get();
+    return generator.emitInstanceof(dstReg.get(), value.get(), constructor.get());
 }
 
 // ------------------------------ InNode ----------------------------
@@ -5971,14 +5930,16 @@ void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs)
                 } else {
                     RefPtr<RegisterID> propertyName;
                     if (m_containsRestElement)
-                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments++), target.propertyExpression);
+                        propertyName = generator.emitNodeForProperty(args->argumentRegister(indexInArguments), target.propertyExpression);
                     else
                         propertyName = generator.emitNodeForProperty(target.propertyExpression);
                     if (!target.propertyExpression->isNumber() && !target.propertyExpression->isString()) {
                         // ToPropertyKey(Number | String) does not have side-effect.
                         // And for Number case, passing it to GetByVal is better for performance.
-                        propertyName = generator.emitToPropertyKeyOrNumber(propertyName.get(), propertyName.get());
+                        propertyName = generator.emitToPropertyKeyOrNumber(m_containsRestElement ? args->argumentRegister(indexInArguments) : generator.newTemporary(), propertyName.get());
                     }
+                    if (m_containsRestElement)
+                        indexInArguments++;
                     if (target.pattern->isAssignmentElementNode())
                         targetBaseAndPropertyName = static_cast<AssignmentElementNode*>(target.pattern)->emitNodesForDestructuring(generator);
                     generator.emitGetByVal(temp.get(), rhs, propertyName.get());

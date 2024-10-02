@@ -74,7 +74,7 @@
 #  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, and CLOOP)
 #  and holds the return PC
 #
-#  - t0, t1, t2, t3, t4, and optionally t5, t6, and t7 are temporary registers that can get trashed on
+#  - t0, t1, t2, t3, t4, t5, and optionally t6 and t7 are temporary registers that can get trashed on
 #  calls, and are pairwise distinct registers. t4 holds the JS program counter, so use
 #  with caution in opcodes (actually, don't use it in opcodes at all, except as PC).
 #
@@ -526,8 +526,6 @@ macro llintOpWithProfile(opcodeName, opcodeStruct, fn)
         end)
     end)
 end
-
-const extraTempReg = t5
 
 # Constants for reasoning about value representation.
 const TagOffset = constexpr TagOffset
@@ -2063,7 +2061,6 @@ if not JSVALUE64
     slowPathOp(get_prototype_of)
 end
 
-slowPathOp(instanceof_custom)
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(new_array_buffer)
@@ -2093,7 +2090,6 @@ llintSlowPathOp(has_private_name)
 llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
-llintSlowPathOp(instanceof)
 llintSlowPathOp(create_lexical_environment)
 llintSlowPathOp(create_direct_arguments)
 llintSlowPathOp(create_scoped_arguments)
@@ -2775,10 +2771,6 @@ _wasmLLIntPCRangeEnd:
 else
 
 # These need to be defined even when WebAssembly is disabled
-op(js_to_wasm_wrapper_entry_crash_for_simd_parameters, macro ()
-    crash()
-end)
-
 op(js_to_wasm_wrapper_entry, macro ()
     crash()
 end)
@@ -2804,6 +2796,10 @@ op(wasm_function_prologue_simd_trampoline, macro ()
 end)
 
 op(wasm_function_prologue_simd, macro ()
+    crash()
+end)
+
+op(ipint_trampoline, macro ()
     crash()
 end)
 

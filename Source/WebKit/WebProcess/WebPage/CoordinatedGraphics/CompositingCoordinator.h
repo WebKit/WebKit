@@ -30,6 +30,7 @@
 
 #include "WebPage.h"
 #include <WebCore/CoordinatedGraphicsLayer.h>
+#include <WebCore/CoordinatedImageBackingStore.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -41,16 +42,17 @@
 #include <wtf/WorkerPool.h>
 
 namespace Nicosia {
-class ImageBackingStore;
 class PaintingEngine;
 class SceneIntegration;
 }
 
 namespace WebCore {
+class BitmapTexturePool;
 class GraphicsContext;
 class GraphicsLayer;
 class Image;
-class SkiaAcceleratedBufferPool;
+class NativeImage;
+class SkiaThreadedPaintingPool;
 }
 
 namespace WebKit {
@@ -98,10 +100,10 @@ private:
 #if USE(CAIRO)
     Nicosia::PaintingEngine& paintingEngine() override;
 #elif USE(SKIA)
-    WebCore::SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const override { return m_skiaAcceleratedBufferPool.get(); }
-    WorkerPool* skiaUnacceleratedThreadedRenderingPool() const override { return m_skiaUnacceleratedThreadedRenderingPool.get(); }
+    WebCore::BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const override { return m_skiaAcceleratedBitmapTexturePool.get(); }
+    WebCore::SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const override { return m_skiaThreadedPaintingPool.get(); }
 #endif
-    RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
+    Ref<WebCore::CoordinatedImageBackingStore> imageBackingStore(Ref<WebCore::NativeImage>&&) override;
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -115,7 +117,7 @@ private:
 
     double timestamp() const;
 
-    WebPage& m_page;
+    WeakRef<WebPage> m_page;
     CompositingCoordinator::Client& m_client;
 
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
@@ -133,10 +135,10 @@ private:
 #if USE(CAIRO)
     std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
 #elif USE(SKIA)
-    std::unique_ptr<WebCore::SkiaAcceleratedBufferPool> m_skiaAcceleratedBufferPool;
-    RefPtr<WorkerPool> m_skiaUnacceleratedThreadedRenderingPool;
+    std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
+    std::unique_ptr<WebCore::SkiaThreadedPaintingPool> m_skiaThreadedPaintingPool;
 #endif
-    HashMap<uint64_t, Ref<Nicosia::ImageBackingStore>> m_imageBackingStores;
+    HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
 
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
     bool m_isPurging { false };

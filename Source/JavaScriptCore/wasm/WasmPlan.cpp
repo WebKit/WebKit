@@ -34,6 +34,8 @@
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StringPrintStream.h>
+#include <wtf/SystemTracing.h>
 
 namespace JSC { namespace Wasm {
 
@@ -126,6 +128,41 @@ void Plan::fail(String&& errorMessage, Error error)
 }
 
 Plan::~Plan() = default;
+
+CString Plan::signpostMessage(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    CString signpostMessage;
+    const FunctionData& function = m_moduleInformation->functions[functionIndexSpace - m_moduleInformation->importFunctionTypeIndices.size()];
+    StringPrintStream stream;
+    stream.print(compilationMode, " ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))), " instructions size = ", function.data.size());
+    return stream.toCString();
+}
+
+void Plan::beginCompilerSignpost(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    if (UNLIKELY(Options::useCompilerSignpost())) {
+        auto message = signpostMessage(compilationMode, functionIndexSpace);
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.data() ? message.data() : "(nullptr)");
+    }
+}
+
+void Plan::beginCompilerSignpost(const Callee& callee) const
+{
+    beginCompilerSignpost(callee.compilationMode(), callee.index());
+}
+
+void Plan::endCompilerSignpost(CompilationMode compilationMode, uint32_t functionIndexSpace) const
+{
+    if (UNLIKELY(Options::useCompilerSignpost())) {
+        auto message = signpostMessage(compilationMode, functionIndexSpace);
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.data() ? message.data() : "(nullptr)");
+    }
+}
+
+void Plan::endCompilerSignpost(const Callee& callee) const
+{
+    endCompilerSignpost(callee.compilationMode(), callee.index());
+}
 
 } } // namespace JSC::Wasm
 

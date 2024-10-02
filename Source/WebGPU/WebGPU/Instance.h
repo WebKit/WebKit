@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <WebGPU/WebGPU.h>
+#import <WebGPU/WebGPUExt.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Deque.h>
 #import <wtf/FastMalloc.h>

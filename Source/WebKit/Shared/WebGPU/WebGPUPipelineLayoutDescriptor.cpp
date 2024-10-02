@@ -45,12 +45,8 @@ std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBackin
     Vector<WebGPUIdentifier> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
-        for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
-            auto entry = convertToBacking(backingBindGroupLayout);
-            if (!entry)
-                return std::nullopt;
-            bindGroupLayouts.append(entry);
-        }
+        for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts)
+            bindGroupLayouts.append(convertToBacking(backingBindGroupLayout));
 
         optionalBindGroupLayouts = bindGroupLayouts;
     }

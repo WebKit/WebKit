@@ -33,15 +33,17 @@
 #include <WebCore/StorageArea.h>
 #include <WebCore/StorageMap.h>
 #include <WebCore/StorageNamespace.h>
+#include <WebCore/StorageType.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class StorageAreaMap;
 class WebPage;
 
-class StorageNamespaceImpl final : public WebCore::StorageNamespace {
+class StorageNamespaceImpl final : public WebCore::StorageNamespace, public CanMakeWeakPtr<StorageNamespaceImpl> {
 public:
     using Identifier = StorageNamespaceIdentifier;
 
@@ -79,7 +81,13 @@ private:
     const unsigned m_quotaInBytes;
     std::optional<Identifier> m_storageNamespaceID;
 
-    HashMap<WebCore::SecurityOriginData, std::unique_ptr<StorageAreaMap>> m_storageAreaMaps;
+    HashMap<WebCore::SecurityOriginData, Ref<StorageAreaMap>> m_storageAreaMaps;
 };
+
+inline WebCore::PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
+{
+    ASSERT(m_storageType == WebCore::StorageType::Session);
+    return *m_sessionPageID;
+}
 
 } // namespace WebKit

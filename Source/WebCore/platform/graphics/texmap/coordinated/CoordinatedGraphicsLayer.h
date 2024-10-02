@@ -41,7 +41,8 @@
 #if USE(SKIA)
 namespace WebCore {
 class BitmapTexture;
-class SkiaAcceleratedBufferPool;
+class BitmapTexturePool;
+class SkiaThreadedPaintingPool;
 }
 #endif
 
@@ -53,6 +54,7 @@ class PaintingEngine;
 
 namespace WebCore {
 class CoordinatedGraphicsLayer;
+class CoordinatedImageBackingStore;
 class TextureMapperPlatformLayerProxy;
 
 class CoordinatedGraphicsLayerClient {
@@ -64,11 +66,11 @@ public:
 #if USE(CAIRO)
     virtual Nicosia::PaintingEngine& paintingEngine() = 0;
 #elif USE(SKIA)
-    virtual SkiaAcceleratedBufferPool* skiaAcceleratedBufferPool() const = 0;
-    virtual WorkerPool* skiaUnacceleratedThreadedRenderingPool() const = 0;
+    virtual BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const = 0;
+    virtual SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const = 0;
 #endif
 
-    virtual RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) = 0;
+    virtual Ref<CoordinatedImageBackingStore> imageBackingStore(Ref<NativeImage>&&) = 0;
 };
 
 class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer {
@@ -184,6 +186,10 @@ public:
 
     Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
 
+#if USE(SKIA)
+    void paintIntoGraphicsContext(GraphicsContext&, const IntRect&) const;
+#endif
+
 private:
     enum class FlushNotification {
         Required,
@@ -208,17 +214,16 @@ private:
     bool checkPendingStateChanges();
     bool checkContentLayerUpdated();
 
-    Ref<Nicosia::Buffer> paintTile(const IntRect&, const IntRect& mappedTileRect, float contentsScale);
-    Ref<Nicosia::Buffer> paintImage(Image&);
+    Ref<Nicosia::Buffer> paintTile(const IntRect& dirtyRect);
 
     void notifyFlushRequired();
 
     bool shouldHaveBackingStore() const;
     bool selfOrAncestorHasActiveTransformAnimation() const;
-    bool selfOrAncestorHaveNonAffineTransforms();
+    bool selfOrAncestorHaveNonAffineTransforms() const;
 
     void setShouldUpdateVisibleRect();
-    float effectiveContentsScale();
+    float effectiveContentsScale() const;
 
     void animationStartedTimerFired();
     void requestPendingTileCreationTimerFired();
@@ -252,9 +257,6 @@ private:
     } m_needsDisplay;
     bool m_damagedRectsAreUnreliable { false };
 
-    RefPtr<Image> m_compositedImage;
-    RefPtr<NativeImage> m_compositedNativeImage;
-
     Timer m_animationStartedTimer;
     RunLoop::Timer m_requestPendingTileCreationTimer;
     Nicosia::Animations m_animations;
@@ -268,9 +270,14 @@ private:
         bool performLayerSync { false };
 
         RefPtr<Nicosia::BackingStore> backingStore;
-        RefPtr<Nicosia::ImageBacking> imageBacking;
         RefPtr<Nicosia::AnimatedBackingStoreClient> animatedBackingStoreClient;
     } m_nicosia;
+
+    RefPtr<NativeImage> m_pendingContentsImage;
+    struct {
+        RefPtr<CoordinatedImageBackingStore> store;
+        bool isVisible { false };
+    } m_imageBacking;
 
     RefPtr<TextureMapperPlatformLayerProxy> m_contentsLayer;
     bool m_contentsLayerNeedsUpdate { false };

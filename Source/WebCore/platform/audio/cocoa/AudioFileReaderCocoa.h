@@ -64,7 +64,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    const void* logIdentifier() const final { return m_logIdentifier; }
+    uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
     ASCIILiteral logClassName() const final { return "AudioFileReaderCocoa"_s; }
 #endif
@@ -91,7 +91,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const Ref<Logger> m_logger;
-    const void* m_logIdentifier;
+    const uint64_t m_logIdentifier;
 #endif
 
 };

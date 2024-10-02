@@ -56,6 +56,7 @@ const ClassInfo IntlDateTimeFormatPrototype::s_info = { "Intl.DateTimeFormat"_s,
 @begin dateTimeFormatPrototypeTable
   format                intlDateTimeFormatPrototypeGetterFormat              DontEnum|ReadOnly|CustomAccessor
   formatRange           intlDateTimeFormatPrototypeFuncFormatRange           DontEnum|Function 2
+  formatRangeToParts    intlDateTimeFormatPrototypeFuncFormatRangeToParts    DontEnum|Function 2
   formatToParts         intlDateTimeFormatPrototypeFuncFormatToParts         DontEnum|Function 1
   resolvedOptions       intlDateTimeFormatPrototypeFuncResolvedOptions       DontEnum|Function 0
 @end
@@ -82,12 +83,7 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts"_s, intlDateTimeFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-#else
     UNUSED_PARAM(globalObject);
-    UNUSED_PARAM(&intlDateTimeFormatPrototypeFuncFormatRangeToParts);
-#endif
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

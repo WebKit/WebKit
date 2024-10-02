@@ -39,7 +39,7 @@ class MediaStreamTrackPrivate;
 
 class WEBCORE_EXPORT MediaRecorderPrivateMock final
     : public MediaRecorderPrivate {
-    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateMock);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(MediaRecorderPrivateMock, WEBCORE_EXPORT);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaRecorderPrivateMock);
 public:
     explicit MediaRecorderPrivateMock(MediaStreamPrivate&);

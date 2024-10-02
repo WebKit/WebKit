@@ -547,7 +547,7 @@ static inline void buildBidiParagraph(const RenderStyle& rootStyle, const Inline
         } else if (inlineItem.isAtomicInlineBox()) {
             inlineItemOffsetList.append({ paragraphContentBuilder.length() });
             paragraphContentBuilder.append(objectReplacementCharacter);
-        } else if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
+        } else if (inlineItem.isInlineBoxStartOrEnd()) {
             // https://drafts.csswg.org/css-writing-modes/#unicode-bidi
             auto& style = inlineItem.style();
             auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal;
@@ -711,10 +711,17 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemLis
                 inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
-            // Mark the inline box stack with "content yes", when we come across a content type of inline item.
-            auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem);
-            if (!inlineTextItem || !inlineTextItem->isWhitespace() || TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem->layoutBox()))
+
+            auto isContentfulInlineItem = [&] {
+                if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
+                    return !inlineTextItem->isWhitespace() || TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem->layoutBox());
+                return inlineItem.isAtomicInlineBox() || inlineItem.isLineBreak() || (inlineItem.isOpaque() && inlineItem.layoutBox().isOutOfFlowPositioned());
+            };
+            if (isContentfulInlineItem()) {
+                // Mark the inline box stack with "content yes", when we come across a content type of inline item
+                // so that we can mark the inline box as opaque and let the content drive visual ordering.
                 inlineBoxContentFlagStack.fill(InlineBoxHasContent::Yes);
+            }
         }
     };
     setBidiLevelForOpaqueInlineItems();

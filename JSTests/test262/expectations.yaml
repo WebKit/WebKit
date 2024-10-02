@@ -151,84 +151,6 @@ test/built-ins/Iterator/prototype/drop/underlying-iterator-closed-in-parallel.js
 test/built-ins/Iterator/prototype/drop/underlying-iterator-closed.js:
   default: "TypeError: iterator.drop is not a function. (In 'iterator.drop(2)', 'iterator.drop' is undefined)"
   strict mode: "TypeError: iterator.drop is not a function. (In 'iterator.drop(2)', 'iterator.drop' is undefined)"
-test/built-ins/Iterator/prototype/every/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.every.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.every.call')"
-test/built-ins/Iterator/prototype/every/get-next-method-only-once.js:
-  default: "TypeError: iterator.every is not a function. (In 'iterator.every(() => true)', 'iterator.every' is undefined)"
-  strict mode: "TypeError: iterator.every is not a function. (In 'iterator.every(() => true)', 'iterator.every' is undefined)"
-test/built-ins/Iterator/prototype/every/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/get-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/every/iterator-already-exhausted.js:
-  default: "TypeError: iterator.every is not a function. (In 'iterator.every(() => true)', 'iterator.every' is undefined)"
-  strict mode: "TypeError: iterator.every is not a function. (In 'iterator.every(() => true)', 'iterator.every' is undefined)"
-test/built-ins/Iterator/prototype/every/iterator-has-no-return.js:
-  default: "TypeError: iterator.every is not a function. (In 'iterator.every(v => v < 4)', 'iterator.every' is undefined)"
-  strict mode: "TypeError: iterator.every is not a function. (In 'iterator.every(v => v < 4)', 'iterator.every' is undefined)"
-test/built-ins/Iterator/prototype/every/iterator-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/every/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/every/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.every is not a function. (In 'iterator.every(() => {})', 'iterator.every' is undefined)"
-  strict mode: "TypeError: iterator.every is not a function. (In 'iterator.every(() => {})', 'iterator.every' is undefined)"
-test/built-ins/Iterator/prototype/every/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/predicate-args.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every((v, count) => {"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every((v, count) => {"
-test/built-ins/Iterator/prototype/every/predicate-returns-falsey.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-test/built-ins/Iterator/prototype/every/predicate-returns-non-boolean.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-test/built-ins/Iterator/prototype/every/predicate-returns-truthy-then-falsey.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every(v => {"
-test/built-ins/Iterator/prototype/every/predicate-returns-truthy.js:
-  default: "TypeError: g().every is not a function. (In 'g().every(() => true)', 'g().every' is undefined)"
-  strict mode: "TypeError: g().every is not a function. (In 'g().every(() => true)', 'g().every' is undefined)"
-test/built-ins/Iterator/prototype/every/predicate-this.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every(function (v, count) {"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every(function (v, count) {"
-test/built-ins/Iterator/prototype/every/predicate-throws-then-closing-iterator-also-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/predicate-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/every/prop-desc.js:
-  default: 'Test262Error: obj should have an own property every'
-  strict mode: 'Test262Error: obj should have an own property every'
-test/built-ins/Iterator/prototype/every/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.every)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.every)')"
-test/built-ins/Iterator/prototype/every/result-is-boolean.js:
-  default: "TypeError: iter.every is not a function. (In 'iter.every(() => {})', 'iter.every' is undefined)"
-  strict mode: "TypeError: iter.every is not a function. (In 'iter.every(() => {})', 'iter.every' is undefined)"
-test/built-ins/Iterator/prototype/every/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.every.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.every.call')"
 test/built-ins/Iterator/prototype/filter/callable.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.filter.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.filter.call')"
@@ -325,81 +247,6 @@ test/built-ins/Iterator/prototype/filter/underlying-iterator-closed-in-parallel.
 test/built-ins/Iterator/prototype/filter/underlying-iterator-closed.js:
   default: "TypeError: iterator.filter is not a function. (In 'iterator.filter(() => true)', 'iterator.filter' is undefined)"
   strict mode: "TypeError: iterator.filter is not a function. (In 'iterator.filter(() => true)', 'iterator.filter' is undefined)"
-test/built-ins/Iterator/prototype/find/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.find.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.find.call')"
-test/built-ins/Iterator/prototype/find/get-next-method-only-once.js:
-  default: "TypeError: iterator.find is not a function. (In 'iterator.find(() => true)', 'iterator.find' is undefined)"
-  strict mode: "TypeError: iterator.find is not a function. (In 'iterator.find(() => true)', 'iterator.find' is undefined)"
-test/built-ins/Iterator/prototype/find/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/get-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/find/iterator-already-exhausted.js:
-  default: "TypeError: iterator.find is not a function. (In 'iterator.find(() => true)', 'iterator.find' is undefined)"
-  strict mode: "TypeError: iterator.find is not a function. (In 'iterator.find(() => true)', 'iterator.find' is undefined)"
-test/built-ins/Iterator/prototype/find/iterator-has-no-return.js:
-  default: "TypeError: iterator.find is not a function. (In 'iterator.find(v => v > 3)', 'iterator.find' is undefined)"
-  strict mode: "TypeError: iterator.find is not a function. (In 'iterator.find(v => v > 3)', 'iterator.find' is undefined)"
-test/built-ins/Iterator/prototype/find/iterator-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/find/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/find/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.find is not a function. (In 'iterator.find(() => {})', 'iterator.find' is undefined)"
-  strict mode: "TypeError: iterator.find is not a function. (In 'iterator.find(() => {})', 'iterator.find' is undefined)"
-test/built-ins/Iterator/prototype/find/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/predicate-args.js:
-  default: "TypeError: iter.find is not a function. (In 'iter.find((v, count) => {"
-  strict mode: "TypeError: iter.find is not a function. (In 'iter.find((v, count) => {"
-test/built-ins/Iterator/prototype/find/predicate-returns-falsey-then-truthy.js:
-  default: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-  strict mode: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-test/built-ins/Iterator/prototype/find/predicate-returns-falsey.js:
-  default: "TypeError: g().find is not a function. (In 'g().find(() => false)', 'g().find' is undefined)"
-  strict mode: "TypeError: g().find is not a function. (In 'g().find(() => false)', 'g().find' is undefined)"
-test/built-ins/Iterator/prototype/find/predicate-returns-non-boolean.js:
-  default: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-  strict mode: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-test/built-ins/Iterator/prototype/find/predicate-returns-truthy.js:
-  default: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-  strict mode: "TypeError: iter.find is not a function. (In 'iter.find(v => {"
-test/built-ins/Iterator/prototype/find/predicate-this.js:
-  default: "TypeError: iter.find is not a function. (In 'iter.find(function (v, count) {"
-  strict mode: "TypeError: iter.find is not a function. (In 'iter.find(function (v, count) {"
-test/built-ins/Iterator/prototype/find/predicate-throws-then-closing-iterator-also-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/predicate-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/find/prop-desc.js:
-  default: 'Test262Error: obj should have an own property find'
-  strict mode: 'Test262Error: obj should have an own property find'
-test/built-ins/Iterator/prototype/find/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.find)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.find)')"
-test/built-ins/Iterator/prototype/find/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.find.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.find.call')"
 test/built-ins/Iterator/prototype/flatMap/callable.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.flatMap.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.flatMap.call')"
@@ -517,66 +364,6 @@ test/built-ins/Iterator/prototype/flatMap/underlying-iterator-closed-in-parallel
 test/built-ins/Iterator/prototype/flatMap/underlying-iterator-closed.js:
   default: "TypeError: iterator.flatMap is not a function. (In 'iterator.flatMap(() => [])', 'iterator.flatMap' is undefined)"
   strict mode: "TypeError: iterator.flatMap is not a function. (In 'iterator.flatMap(() => [])', 'iterator.flatMap' is undefined)"
-test/built-ins/Iterator/prototype/forEach/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.forEach.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.forEach.call')"
-test/built-ins/Iterator/prototype/forEach/fn-args.js:
-  default: "TypeError: iter.forEach is not a function. (In 'iter.forEach((v, count) => {"
-  strict mode: "TypeError: iter.forEach is not a function. (In 'iter.forEach((v, count) => {"
-test/built-ins/Iterator/prototype/forEach/fn-called-for-each-yielded-value.js:
-  default: "TypeError: g().forEach is not a function. (In 'g().forEach((value, count) => {"
-  strict mode: "TypeError: g().forEach is not a function. (In 'g().forEach((value, count) => {"
-test/built-ins/Iterator/prototype/forEach/fn-this.js:
-  default: "TypeError: iter.forEach is not a function. (In 'iter.forEach(function (v, count) {"
-  strict mode: "TypeError: iter.forEach is not a function. (In 'iter.forEach(function (v, count) {"
-test/built-ins/Iterator/prototype/forEach/fn-throws-then-closing-iterator-also-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/fn-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/get-next-method-only-once.js:
-  default: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {})', 'iterator.forEach' is undefined)"
-  strict mode: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {})', 'iterator.forEach' is undefined)"
-test/built-ins/Iterator/prototype/forEach/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/forEach/iterator-already-exhausted.js:
-  default: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {"
-  strict mode: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {"
-test/built-ins/Iterator/prototype/forEach/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/forEach/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/forEach/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {})', 'iterator.forEach' is undefined)"
-  strict mode: "TypeError: iterator.forEach is not a function. (In 'iterator.forEach(() => {})', 'iterator.forEach' is undefined)"
-test/built-ins/Iterator/prototype/forEach/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/forEach/prop-desc.js:
-  default: 'Test262Error: obj should have an own property forEach'
-  strict mode: 'Test262Error: obj should have an own property forEach'
-test/built-ins/Iterator/prototype/forEach/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.forEach)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.forEach)')"
-test/built-ins/Iterator/prototype/forEach/result-is-undefined.js:
-  default: "TypeError: iter.forEach is not a function. (In 'iter.forEach(() => {})', 'iter.forEach' is undefined)"
-  strict mode: "TypeError: iter.forEach is not a function. (In 'iter.forEach(() => {})', 'iter.forEach' is undefined)"
-test/built-ins/Iterator/prototype/forEach/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.forEach.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.forEach.call')"
 test/built-ins/Iterator/prototype/map/callable.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.map.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.map.call')"
@@ -670,159 +457,6 @@ test/built-ins/Iterator/prototype/map/underlying-iterator-closed-in-parallel.js:
 test/built-ins/Iterator/prototype/map/underlying-iterator-closed.js:
   default: "TypeError: iterator.map is not a function. (In 'iterator.map(() => 0)', 'iterator.map' is undefined)"
   strict mode: "TypeError: iterator.map is not a function. (In 'iterator.map(() => 0)', 'iterator.map' is undefined)"
-test/built-ins/Iterator/prototype/reduce/argument-effect-order.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-test/built-ins/Iterator/prototype/reduce/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-test/built-ins/Iterator/prototype/reduce/get-next-method-only-once.js:
-  default: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(x => x)', 'iterator.reduce' is undefined)"
-  strict mode: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(x => x)', 'iterator.reduce' is undefined)"
-test/built-ins/Iterator/prototype/reduce/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/reduce/iterator-already-exhausted-initial-value.js:
-  default: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, initialValue)', 'iterator.reduce' is undefined)"
-  strict mode: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, initialValue)', 'iterator.reduce' is undefined)"
-test/built-ins/Iterator/prototype/reduce/iterator-already-exhausted-no-initial-value.js:
-  default: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, 0)', 'iterator.reduce' is undefined)"
-  strict mode: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, 0)', 'iterator.reduce' is undefined)"
-test/built-ins/Iterator/prototype/reduce/iterator-yields-once-initial-value.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-test/built-ins/Iterator/prototype/reduce/iterator-yields-once-no-initial-value.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-test/built-ins/Iterator/prototype/reduce/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/reduce/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/reduce/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, 0)', 'iterator.reduce' is undefined)"
-  strict mode: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {}, 0)', 'iterator.reduce' is undefined)"
-test/built-ins/Iterator/prototype/reduce/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/non-callable-reducer.js:
-  default: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {})', 'iterator.reduce' is undefined)"
-  strict mode: "TypeError: iterator.reduce is not a function. (In 'iterator.reduce(() => {})', 'iterator.reduce' is undefined)"
-test/built-ins/Iterator/prototype/reduce/prop-desc.js:
-  default: 'Test262Error: obj should have an own property reduce'
-  strict mode: 'Test262Error: obj should have an own property reduce'
-test/built-ins/Iterator/prototype/reduce/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.reduce)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.reduce)')"
-test/built-ins/Iterator/prototype/reduce/reducer-args-initial-value.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-test/built-ins/Iterator/prototype/reduce/reducer-args-no-initial-value.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-test/built-ins/Iterator/prototype/reduce/reducer-memo-can-be-any-type.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce((memo, v, count) => {"
-test/built-ins/Iterator/prototype/reduce/reducer-this.js:
-  default: "TypeError: iter.reduce is not a function. (In 'iter.reduce(function (memo, v, count) {"
-  strict mode: "TypeError: iter.reduce is not a function. (In 'iter.reduce(function (memo, v, count) {"
-test/built-ins/Iterator/prototype/reduce/reducer-throws-then-closing-iterator-also-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/reducer-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/reduce/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.reduce.call')"
-test/built-ins/Iterator/prototype/some/callable.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.some.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.some.call')"
-test/built-ins/Iterator/prototype/some/get-next-method-only-once.js:
-  default: "TypeError: iterator.some is not a function. (In 'iterator.some(() => true)', 'iterator.some' is undefined)"
-  strict mode: "TypeError: iterator.some is not a function. (In 'iterator.some(() => true)', 'iterator.some' is undefined)"
-test/built-ins/Iterator/prototype/some/get-next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/get-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/is-function.js:
-  default: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Iterator/prototype/some/iterator-already-exhausted.js:
-  default: "TypeError: iterator.some is not a function. (In 'iterator.some(() => true)', 'iterator.some' is undefined)"
-  strict mode: "TypeError: iterator.some is not a function. (In 'iterator.some(() => true)', 'iterator.some' is undefined)"
-test/built-ins/Iterator/prototype/some/iterator-has-no-return.js:
-  default: "TypeError: iterator.some is not a function. (In 'iterator.some(v => v > 3)', 'iterator.some' is undefined)"
-  strict mode: "TypeError: iterator.some is not a function. (In 'iterator.some(v => v > 3)', 'iterator.some' is undefined)"
-test/built-ins/Iterator/prototype/some/iterator-return-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/some/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Iterator/prototype/some/next-method-returns-throwing-done.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/next-method-returns-throwing-value-done.js:
-  default: "TypeError: iterator.some is not a function. (In 'iterator.some(() => {})', 'iterator.some' is undefined)"
-  strict mode: "TypeError: iterator.some is not a function. (In 'iterator.some(() => {})', 'iterator.some' is undefined)"
-test/built-ins/Iterator/prototype/some/next-method-returns-throwing-value.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/next-method-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/predicate-args.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some((v, count) => {"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some((v, count) => {"
-test/built-ins/Iterator/prototype/some/predicate-returns-falsey-then-truthy.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-test/built-ins/Iterator/prototype/some/predicate-returns-falsey.js:
-  default: "TypeError: g().some is not a function. (In 'g().some(() => false)', 'g().some' is undefined)"
-  strict mode: "TypeError: g().some is not a function. (In 'g().some(() => false)', 'g().some' is undefined)"
-test/built-ins/Iterator/prototype/some/predicate-returns-non-boolean.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-test/built-ins/Iterator/prototype/some/predicate-returns-truthy.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some(v => {"
-test/built-ins/Iterator/prototype/some/predicate-this.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some(function (v, count) {"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some(function (v, count) {"
-test/built-ins/Iterator/prototype/some/predicate-throws-then-closing-iterator-also-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/predicate-throws.js:
-  default: 'Test262Error: Expected a Test262Error but got a TypeError'
-  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
-test/built-ins/Iterator/prototype/some/prop-desc.js:
-  default: 'Test262Error: obj should have an own property some'
-  strict mode: 'Test262Error: obj should have an own property some'
-test/built-ins/Iterator/prototype/some/proto.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.some)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(Iterator.prototype.some)')"
-test/built-ins/Iterator/prototype/some/result-is-boolean.js:
-  default: "TypeError: iter.some is not a function. (In 'iter.some(() => {})', 'iter.some' is undefined)"
-  strict mode: "TypeError: iter.some is not a function. (In 'iter.some(() => {})', 'iter.some' is undefined)"
-test/built-ins/Iterator/prototype/some/this-plain-iterator.js:
-  default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.some.call')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.some.call')"
 test/built-ins/Iterator/prototype/take/argument-effect-order.js:
   default: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.take.call')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Iterator.prototype.take.call')"
@@ -1039,6 +673,9 @@ test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-durati
 test/built-ins/Temporal/Duration/prototype/round/result-out-of-range.js:
   default: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/round/round-and-balance-calendar-units-with-increment-disallowed.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/round/round-cross-unit-boundary.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -1225,12 +862,21 @@ test/built-ins/Temporal/PlainDate/from/limits.js:
 test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-primitive.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string-invalid.js:
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString] and [] to have the same contents. options read after ISO string parsing'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString] and [] to have the same contents. options read after ISO string parsing'
 test/built-ins/Temporal/PlainDate/from/one-of-era-erayear-undefined.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDate/from/options-object.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+test/built-ins/Temporal/PlainDate/from/options-wrong-type.js:
+  default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
+test/built-ins/Temporal/PlainDate/from/order-of-operations.js:
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDate/from/out-of-range.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1414,9 +1060,6 @@ test/built-ins/Temporal/PlainDate/prototype/with/copy-properties-not-undefined.j
 test/built-ins/Temporal/PlainDate/prototype/with/options-object.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
-test/built-ins/Temporal/PlainDate/prototype/with/order-of-operations.js:
-  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDate/prototype/with/overflow-undefined.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
@@ -1498,12 +1141,18 @@ test/built-ins/Temporal/PlainDateTime/from/limits.js:
 test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-primitive.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-string-invalid.js:
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString] and [] to have the same contents. options read after string parsing'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString] and [] to have the same contents. options read after string parsing'
 test/built-ins/Temporal/PlainDateTime/from/options-object.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+test/built-ins/Temporal/PlainDateTime/from/options-wrong-type.js:
+  default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
-  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/from/overflow-default-constrain.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
@@ -1693,6 +1342,9 @@ test/built-ins/Temporal/PlainDateTime/prototype/toPlainDate/limits.js:
 test/built-ins/Temporal/PlainDateTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/rounding-edge-of-range.js:
+  default: 'Test262Error: Rounding down can go out of range Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Rounding down can go out of range Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/PlainDateTime/prototype/with/argument-object-insufficient-data.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
@@ -1709,8 +1361,8 @@ test/built-ins/Temporal/PlainDateTime/prototype/with/options-empty.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
-  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-undefined.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
@@ -1765,9 +1417,15 @@ test/built-ins/Temporal/PlainDateTime/second-undefined.js:
 test/built-ins/Temporal/PlainDateTime/subclass.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«undefined», «string») to be true'
+test/built-ins/Temporal/PlainTime/from/observable-get-overflow-argument-string-invalid.js:
+  default: 'Test262Error: Expected [get overflow, get overflow.toString, call overflow.toString] and [] to have the same contents. options read after ISO string parsing'
+  strict mode: 'Test262Error: Expected [get overflow, get overflow.toString, call overflow.toString] and [] to have the same contents. options read after ISO string parsing'
+test/built-ins/Temporal/PlainTime/from/options-wrong-type.js:
+  default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
+  strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
 test/built-ins/Temporal/PlainTime/from/order-of-operations.js:
-  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.calendar.toString, call fields.calendar.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainTime/prototype/add/argument-duration-out-of-range.js:
   default: 'Test262Error: string with years > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: string with years > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
@@ -1789,9 +1447,6 @@ test/built-ins/Temporal/PlainTime/prototype/toString/order-of-operations.js:
 test/built-ins/Temporal/PlainTime/prototype/until/order-of-operations.js:
   default: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get other.calendar, get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and [get other.hour, get other.hour.valueOf, call other.hour.valueOf, get other.microsecond, get other.microsecond.valueOf, call other.microsecond.valueOf, get other.millisecond, get other.millisecond.valueOf, call other.millisecond.valueOf, get other.minute, get other.minute.valueOf, call other.minute.valueOf, get other.nanosecond, get other.nanosecond.valueOf, call other.nanosecond.valueOf, get other.second, get other.second.valueOf, call other.second.valueOf, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] to have the same contents. order of operations'
-test/built-ins/Temporal/PlainTime/prototype/with/order-of-operations.js:
-  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] and [get fields.calendar, get fields.timeZone, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
@@ -1801,6 +1456,9 @@ test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-leng
 test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-length.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
+test/built-ins/TypedArray/prototype/set/array-arg-value-conversion-resizes-array-buffer.js:
+  default: 'Test262Error: Expected [shrink, shrink, shrink] and [shrink, shrink, shrink, grow, grow] to have the same contents. '
+  strict mode: 'Test262Error: Expected [shrink, shrink, shrink] and [shrink, shrink, shrink, grow, grow] to have the same contents. '
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «2») to be true (Testing with Float64Array.)'
@@ -1822,18 +1480,24 @@ test/built-ins/TypedArrayConstructors/internals/Set/key-is-canonical-invalid-ind
 test/built-ins/TypedArrayConstructors/internals/Set/key-is-canonical-invalid-index-reflect-set.js:
   default: 'Test262Error: value should not be coerced Expected SameValue(«160», «0») to be true'
   strict mode: 'Test262Error: value should not be coerced Expected SameValue(«160», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-in-bounds-receiver-is-not-typed-array.js:
+  default: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+  strict mode: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-out-of-bounds-receiver-is-not-object.js:
+  default: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+  strict mode: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-out-of-bounds-receiver-is-not-typed-array.js:
+  default: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+  strict mode: 'Test262Error: valueOf is not called Expected SameValue(«1», «0») to be true'
+test/built-ins/TypedArrayConstructors/internals/Set/key-is-out-of-bounds-receiver-is-proto.js:
+  default: 'Test262Error: [[Set]] succeeeds'
+  strict mode: 'Test262Error: [[Set]] succeeeds'
 test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-prototype-chain-set.js:
   default: 'Test262Error: 0 setter should be unreachable! (Testing with Float64Array.)'
   strict mode: 'Test262Error: 0 setter should be unreachable! (Testing with Float64Array.)'
 test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-reflect-set.js:
   default: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2.3», «0») to be true (Testing with Float64Array.)'
   strict mode: 'Test262Error: target[0] should remain unchanged (receiver: empty object) Expected SameValue(«2.3», «0») to be true (Testing with Float64Array.)'
-test/harness/asyncHelpers-throwsAsync-func-throws-sync.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: assert.throwsAsync did not reject improper function function () {'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: assert.throwsAsync did not reject improper function function () {'
-test/harness/asyncHelpers-throwsAsync-no-arg.js:
-  default: "Test262:AsyncTestFailure:Test262Error: Test262Error: Expected a Test262Error, but a 'TypeError' was thrown. Expected SameValue(«function TypeError() {"
-  strict mode: "Test262:AsyncTestFailure:Test262Error: Test262Error: Expected a Test262Error, but a 'TypeError' was thrown. Expected SameValue(«function TypeError() {"
 test/intl402/DateTimeFormat/canonicalize-calendar.js:
   default: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
   strict mode: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
@@ -1858,15 +1522,9 @@ test/intl402/DateTimeFormat/timezone-legacy-non-iana.js:
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
   strict mode: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
-test/intl402/DurationFormat/constructor-option-read-order.js:
-  default: 'Test262Error: Expected [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits] and [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
-  strict mode: 'Test262Error: Expected [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits] and [numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
   default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
   strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
-test/intl402/DurationFormat/prototype/resolvedOptions/return-keys-order-default.js:
-  default: 'Test262Error: Expected [locale, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits, numberingSystem] and [locale, numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
-  strict mode: 'Test262Error: Expected [locale, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay, fractionalDigits, numberingSystem] and [locale, numberingSystem, style, years, yearsDisplay, months, monthsDisplay, weeks, weeksDisplay, days, daysDisplay, hours, hoursDisplay, minutes, minutesDisplay, seconds, secondsDisplay, milliseconds, millisecondsDisplay, microseconds, microsecondsDisplay, nanoseconds, nanosecondsDisplay] to have the same contents. '
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
@@ -1946,24 +1604,6 @@ test/language/expressions/class/elements/nested-private-direct-eval-err-contains
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-enumeration-abrupt.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but promise was fulfilled.'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but promise was fulfilled.'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-enumeration-enumerable.js:
-  default: 'Test262Error: Expected [] and [type] to have the same contents. '
-  strict mode: 'Test262Error: Expected [] and [type] to have the same contents. '
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-non-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for null was not rejected.'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for null was not rejected.'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-value-abrupt.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but it was fulfilled'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected promise to be rejected, but it was fulfilled'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-assert-value-non-string.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for undefined was not rejected.'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise for undefined was not rejected.'
-test/language/expressions/dynamic-import/import-assertions/2nd-param-get-assert-error.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected an error, but observed no error'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected an error, but observed no error'
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
@@ -1981,30 +1621,30 @@ test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   strict mode: 'Test262Error: access count (second iteration) Expected SameValue(«1», «0») to be true'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
-test/language/import/import-assertions/json-extensibility-array.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-extensibility-object.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-idempotency.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-array.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-boolean.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-null.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-number.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-object.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-value-string.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/import/import-assertions/json-via-namespace.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/module-code/import-assertions/eval-gtbndng-indirect-faux-assertion.js:
-  raw: "SyntaxError: Unexpected token '*'. import call expects one or two arguments."
-test/language/module-code/import-assertions/import-assertion-empty.js:
-  module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
+test/language/identifiers/part-unicode-16.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0897'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0897'"
+test/language/identifiers/part-unicode-16.0.0-class.js:
+  default: "SyntaxError: Invalid character '\\u0897'"
+  strict mode: "SyntaxError: Invalid character '\\u0897'"
+test/language/identifiers/part-unicode-16.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0897'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0897'"
+test/language/identifiers/part-unicode-16.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0897'"
+  strict mode: "SyntaxError: Invalid character '\\u0897'"
+test/language/identifiers/start-unicode-16.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#\\u1C89'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#\\u1C89'"
+test/language/identifiers/start-unicode-16.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-16.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '\\u1C89'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u1C89'"
+test/language/identifiers/start-unicode-16.0.0.js:
+  default: "SyntaxError: Invalid character '\\u1c89'"
+  strict mode: "SyntaxError: Invalid character '\\u1c89'"
 test/language/module-code/top-level-await/async-module-does-not-block-sibling-modules.js:
   module: 'Test262Error: Expected SameValue(«true», «false») to be true'
 test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
@@ -2043,3 +1683,11 @@ test/language/statements/for-in/identifier-let-allowed-as-lefthandside-expressio
   default: "SyntaxError: Cannot use the keyword 'in' as a lexical variable name."
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
+test/language/statements/with/get-binding-value-call-with-proxy-env.js:
+  default: 'Test262Error: Expected [has:Object, get:Symbol(Symbol.unscopables), get:Object] and [has:Object, get:Symbol(Symbol.unscopables), has:Object, get:Object] to have the same contents. '
+test/language/statements/with/get-binding-value-idref-with-proxy-env.js:
+  default: 'Test262Error: Expected [has:Object, get:Symbol(Symbol.unscopables), get:Object] and [has:Object, get:Symbol(Symbol.unscopables), has:Object, get:Object] to have the same contents. '
+test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopables.js:
+  default: "ReferenceError: Can't find variable: binding"
+test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js:
+  default: 'Test262Error: Expected [has:p, get:Symbol(Symbol.unscopables), get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] and [has:p, get:Symbol(Symbol.unscopables), has:p, get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] to have the same contents. '

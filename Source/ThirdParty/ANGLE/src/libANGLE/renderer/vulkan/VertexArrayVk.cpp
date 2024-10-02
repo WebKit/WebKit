@@ -609,11 +609,21 @@ angle::Result VertexArrayVk::convertVertexBufferGPU(ContextVk *contextVk,
     }
     else
     {
-        const std::vector<RangeDeviceSize> &dirtyRanges = conversion->getDirtyBufferRanges();
+        // dirtyRanges may overlap with each other. Try to do a quick merge to reduce the number of
+        // dispatch calls as well as avoid redundant conversion in the overlapped area.
+        conversion->consolidateDirtyRanges();
 
+        const std::vector<RangeDeviceSize> &dirtyRanges = conversion->getDirtyBufferRanges();
         additionalOffsetVertexCounts.reserve(dirtyRanges.size());
+
         for (const RangeDeviceSize &dirtyRange : dirtyRanges)
         {
+            if (dirtyRange.empty())
+            {
+                // consolidateDirtyRanges may end up with invalid range if it gets merged.
+                continue;
+            }
+
             uint32_t srcOffset, dstOffset, numVertices;
             CalculateOffsetAndVertexCountForDirtyRange(srcBuffer, conversion, srcFormat, dstFormat,
                                                        dirtyRange, &srcOffset, &dstOffset,
@@ -672,9 +682,19 @@ angle::Result VertexArrayVk::convertVertexBufferCPU(ContextVk *contextVk,
     }
     else
     {
+        // dirtyRanges may overlap with each other. Try to do a quick merge to avoid redundant
+        // conversion in the overlapped area.
+        conversion->consolidateDirtyRanges();
+
         const std::vector<RangeDeviceSize> &dirtyRanges = conversion->getDirtyBufferRanges();
         for (const RangeDeviceSize &dirtyRange : dirtyRanges)
         {
+            if (dirtyRange.empty())
+            {
+                // consolidateDirtyRanges may end up with invalid range if it gets merged.
+                continue;
+            }
+
             uint32_t srcOffset, dstOffset, numVertices;
             CalculateOffsetAndVertexCountForDirtyRange(srcBuffer, conversion, srcFormat, dstFormat,
                                                        dirtyRange, &srcOffset, &dstOffset,
