@@ -2080,8 +2080,6 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 [ Ventura+ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
 [ Ventura+ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
 [ Ventura+ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
-[ Ventura+ arm64 ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-by-pct-pct.svg [ ImageOnlyFailure ]
-[ Ventura+ arm64 ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-to-pct-pct.svg [ ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/shrink-wrap/rect-shrink-wrap.html [ Pass ImageOnlyFailure ]
 
 # webkit.org/b/275963 -- these tests have slight differences on x86_64 and arm64
