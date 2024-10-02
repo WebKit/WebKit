@@ -85,7 +85,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
     SetCaptionLanguage(String language)
 #endif
 
-    GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
+    [EnabledBy=NotificationEventEnabled] GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
     [EnabledBy=AppBadgeEnabled] SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     [EnabledBy=AppBadgeEnabled] SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
 
