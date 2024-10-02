@@ -41,11 +41,6 @@ ControlFactory& ControlPart::controlFactory() const
     return m_overrideControlFactory ? *m_overrideControlFactory : ControlFactory::shared();
 }
 
-void ControlPart::setOverrideControlFactory(ControlFactory* controlFactory)
-{
-    m_overrideControlFactory = controlFactory;
-}
-
 PlatformControl* ControlPart::platformControl() const
 {
     if (!m_platformControl)
