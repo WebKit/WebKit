@@ -71,9 +71,9 @@ void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleShe
     return CSSParserImpl::parseStyleSheetForInspector(string, context, sheet, observer);
 }
 
-RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserEnum::IsNestedContext isNestedContext)
+RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserEnum::NestedContext nestedContext)
 {
-    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowedRules::ImportRules, isNestedContext);
+    return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowedRules::ImportRules, nestedContext);
 }
 
 RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)
@@ -87,7 +87,7 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     CSSParserImpl parser(m_context, condition);
     if (!parser.tokenizer())
         return false;
-    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ParsingMode::AllowBareDeclarationAndGeneralEnclosed, CSSParserEnum::IsNestedContext::No) == CSSSupportsParser::Supported;
+    return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ParsingMode::AllowBareDeclarationAndGeneralEnclosed) == CSSSupportsParser::Supported;
 }
 
 static Color color(RefPtr<CSSValue>&& value)
@@ -160,9 +160,9 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return CSSParserImpl::parseValue(declaration, propertyID, string, important, m_context);
 }
 
-std::optional<CSSSelectorList> CSSParser::parseSelectorList(const String& string, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
+std::optional<CSSSelectorList> CSSParser::parseSelectorList(const String& string, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
 {
-    return parseCSSSelectorList(CSSTokenizer(string).tokenRange(), m_context, styleSheet, isNestedContext);
+    return parseCSSSelectorList(CSSTokenizer(string).tokenRange(), m_context, styleSheet, nestedContext);
 }
 
 Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element& element)

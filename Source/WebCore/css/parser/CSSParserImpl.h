@@ -31,6 +31,7 @@
 
 #include "CSSAtRuleID.h"
 #include "CSSParser.h"
+#include "CSSParserEnum.h"
 #include "CSSParserTokenRange.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -72,7 +73,7 @@ class MutableStyleProperties;
 class CSSParserImpl {
     WTF_MAKE_NONCOPYABLE(CSSParserImpl);
 public:
-    CSSParserImpl(const CSSParserContext&, const String&, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    CSSParserImpl(const CSSParserContext&, const String&, StyleSheetContents* = nullptr, CSSParserObserverWrapper* = nullptr, CSSParserEnum::NestedContext = { });
     ~CSSParserImpl();
 
     enum class AllowedRules : uint8_t {
@@ -97,7 +98,7 @@ public:
     static CSSParser::ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, IsImportant, const CSSParserContext&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element&);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
-    static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
+    static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::NestedContext = { });
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
 
@@ -196,27 +197,20 @@ private:
 
     bool isStyleNestedContext()
     {
-        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel) && context().cssNestingEnabled;
+        return m_styleRuleNestingLevel && context().cssNestingEnabled;
     }
-
-    bool isNestedContext()
-    {
-        return m_scopeRuleNestingLevel || isStyleNestedContext();
-    }
-
-    CSSParserEnum::IsNestedContext m_isAlwaysNestedContext { CSSParserEnum::IsNestedContext::No }; // Do we directly start in a nested context (for CSSOM)
 
     // FIXME: we could unify all those into a single stack data structure.
     // https://bugs.webkit.org/show_bug.cgi?id=265566
     unsigned m_styleRuleNestingLevel { 0 };
-    unsigned m_scopeRuleNestingLevel { 0 };
     unsigned m_ruleListNestingLevel { 0 };
-    enum class AncestorRuleType : bool {
-        Style,
-        Scope,
-    };
-    Vector<AncestorRuleType, 16> m_ancestorRuleTypeStack;
-    static void appendImplicitSelectorIfNeeded(MutableCSSSelector&, AncestorRuleType);
+    Vector<CSSParserEnum::NestedContextType, 16> m_ancestorRuleTypeStack;
+    std::optional<CSSParserEnum::NestedContextType> lastAncestorRuleType() const
+    {
+        if (!m_ancestorRuleTypeStack.isEmpty())
+            return m_ancestorRuleTypeStack.last();
+        return { };
+    }
 
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
