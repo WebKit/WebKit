@@ -162,6 +162,7 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/IterationStatus.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
@@ -5550,14 +5551,9 @@ void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionH
     completion(targetSize.width() >= minimumSizeForDismissal.width() && targetSize.height() >= minimumSizeForDismissal.height());
 }
 
-static CheckedPtr<RenderBox> enclosingScroller(const VisibleSelection& selection)
+static CheckedPtr<RenderBox> enclosingScroller(RenderObject* renderer)
 {
-    RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
-    if (!ancestor)
-        return { };
-
-    CheckedPtr selectionRenderer = ancestor->renderer();
-    if (!selectionRenderer)
+    if (!renderer)
         return { };
 
     auto containingRenderer = [](const RenderObject& renderer) -> CheckedPtr<RenderElement> {
@@ -5570,62 +5566,91 @@ static CheckedPtr<RenderBox> enclosingScroller(const VisibleSelection& selection
         return { };
     };
 
-    CheckedPtr candidate = dynamicDowncast<RenderElement>(selectionRenderer.get()) ?: selectionRenderer->container();
+    CheckedPtr candidate = dynamicDowncast<RenderElement>(renderer) ?: renderer->container();
     for (; candidate; candidate = containingRenderer(*candidate)) {
         if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*candidate); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
-            return renderBox;
+            return renderBox.get();
     }
 
     return { };
 }
 
-void WebPage::computeSelectionClipRect(EditorState& state, const VisibleSelection& selection, const Element* editableRootOrFormControl) const
+static void forEachEnclosingScroller(const VisibleSelection& selection, Function<IterationStatus(const ScrollingNodeID&, const IntRect&)>&& callback)
 {
-    if (editableRootOrFormControl)
-        state.visualData->selectionClipRect = rootViewInteractionBounds(Ref { *editableRootOrFormControl });
+    RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
+    if (!ancestor)
+        return;
 
+    for (CheckedPtr scroller = enclosingScroller(ancestor->renderer()); scroller; scroller = enclosingScroller(scroller->container())) {
+        Ref view = scroller->checkedView()->frameView();
+        IntRect scrollerClipRectInContent;
+        ScrollingNodeID enclosingScrollingNodeID;
+        if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
+            if (renderView->protectedDocument()->isTopDocument())
+                break;
+
+            scrollerClipRectInContent = view->visibleContentRect();
+            enclosingScrollingNodeID = view->scrollingNodeID();
+        } else if (CheckedPtr layer = scroller->layer()) {
+            CheckedPtr scrollableArea = layer->scrollableArea();
+            if (!scrollableArea)
+                break;
+
+            scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
+            enclosingScrollingNodeID = scrollableArea->scrollingNodeID();
+        }
+
+        if (callback(WTFMove(enclosingScrollingNodeID), view->contentsToRootView(scrollerClipRectInContent)) == IterationStatus::Done)
+            break;
+    }
+}
+
+void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, const VisibleSelection& selection, const IntRect& editableRootBounds) const
+{
     if (selection.isNoneOrOrphaned())
         return;
 
     if (!state.isContentEditable && selection.isCaret())
         return;
 
-    CheckedPtr scroller = enclosingScroller(selection);
-    if (!scroller)
-        return;
-
-    Ref view = scroller->checkedView()->frameView();
-    IntRect scrollerClipRectInContent;
     ScrollingNodeID enclosingScrollingNodeID;
-    if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
-        if (renderView->protectedDocument()->isTopDocument())
-            return;
+    IntRect enclosingScrollingClipRect;
+    IntRect innerScrollingClipRect;
+    forEachEnclosingScroller(selection, [&](const ScrollingNodeID& scrollingNodeID, const IntRect& clipRectInRootView) {
+        if (scrollingNodeID) {
+            enclosingScrollingClipRect = clipRectInRootView;
+            enclosingScrollingNodeID = scrollingNodeID;
+            return IterationStatus::Done;
+        }
 
-        scrollerClipRectInContent = view->visibleContentRect();
-        enclosingScrollingNodeID = view->scrollingNodeID();
-    } else if (CheckedPtr scrollingLayer = scroller->layer()) {
-        CheckedPtr scrollableArea = scrollingLayer->scrollableArea();
-        if (!scrollableArea)
-            return;
+        if (innerScrollingClipRect.isEmpty())
+            innerScrollingClipRect = clipRectInRootView;
 
-        scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
-        enclosingScrollingNodeID = scrollableArea->scrollingNodeID();
-    }
+        return IterationStatus::Continue;
+    });
 
     if (enclosingScrollingNodeID)
         state.visualData->enclosingScrollingNodeID = { WTFMove(enclosingScrollingNodeID) };
 
-    if (m_selectionHonorsOverflowScrolling)
+    if (!m_selectionHonorsOverflowScrolling) {
+        state.visualData->selectionClipRect = editableRootBounds;
+        if (!enclosingScrollingClipRect.isEmpty()) {
+            if (state.visualData->selectionClipRect.isEmpty())
+                state.visualData->selectionClipRect = enclosingScrollingClipRect;
+            else
+                state.visualData->selectionClipRect.intersect(enclosingScrollingClipRect);
+        }
         return;
+    }
 
-    if (scrollerClipRectInContent.isEmpty())
-        return;
-
-    auto scrollerClipRectInRootView = view->contentsToRootView(scrollerClipRectInContent);
-    if (state.visualData->selectionClipRect.isEmpty())
-        state.visualData->selectionClipRect = scrollerClipRectInRootView;
-    else
-        state.visualData->selectionClipRect.intersect(scrollerClipRectInRootView);
+    if (!innerScrollingClipRect.isEmpty()) {
+        // We need to clip the selection to the inner scroller, even if that scroller does not have a
+        // node in the scrolling tree. For example, this allows us to clip the selection in a scrollable
+        // single-line text form control, even if it's inside a larger scrollable area.
+        if (!editableRootBounds.isEmpty())
+            innerScrollingClipRect.unite(editableRootBounds);
+        state.visualData->selectionClipRect = WTFMove(innerScrollingClipRect);
+    }
 }
 
 } // namespace WebKit

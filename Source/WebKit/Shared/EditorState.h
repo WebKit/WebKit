@@ -148,6 +148,7 @@ struct EditorState {
 #endif
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect selectionClipRect;
+        WebCore::IntRect editableRootBounds;
         WebCore::IntRect caretRectAtEnd;
         Vector<WebCore::SelectionGeometry> selectionGeometries;
         Vector<WebCore::SelectionGeometry> markedTextRects;

@@ -3311,9 +3311,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return shouldAcknowledgeTap(_singleTapGestureRecognizer.get());
 
     if (gestureRecognizer == _keyboardDismissalGestureRecognizer) {
+        auto tapIsInEditableRoot = [&] {
+            auto& state = _page->editorState();
+            return state.hasVisualData() && state.visualData->editableRootBounds.contains(WebCore::roundedIntPoint(point));
+        };
         return self._hasFocusedElement
             && !self.hasHiddenContentEditable
-            && !CGRectContainsPoint(self.selectionClipRect, point)
+            && !tapIsInEditableRoot()
             && shouldAcknowledgeTap(_keyboardDismissalGestureRecognizer.get());
     }
 
@@ -8866,7 +8870,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             editableRootIsTransparentOrFullyClipped = YES;
 
         if (self._hasFocusedElement) {
-            auto elementArea = visualData.selectionClipRect.area<RecordOverflow>();
+            auto elementArea = visualData.editableRootBounds.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
         }

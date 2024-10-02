@@ -665,12 +665,15 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         }();
     }
 
-    RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement();
-    if (editableRootOrFormControl)
+    if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
         postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
+#if PLATFORM(IOS_FAMILY)
+        result.visualData->editableRootBounds = rootViewInteractionBounds(Ref { *editableRootOrFormControl });
+#endif
+    }
 
 #if PLATFORM(IOS_FAMILY)
-    computeSelectionClipRect(result, selection, editableRootOrFormControl.get());
+    computeSelectionClipRectAndEnclosingScroller(result, selection, result.visualData->editableRootBounds);
 #endif
 }
 

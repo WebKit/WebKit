@@ -133,6 +133,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
 #if PLATFORM(IOS_FAMILY)
         if (editorState.visualData->selectionClipRect != IntRect())
             ts.dumpProperty("selectionClipRect", editorState.visualData->selectionClipRect);
+        if (editorState.visualData->editableRootBounds != IntRect())
+            ts.dumpProperty("editableRootBounds", editorState.visualData->editableRootBounds);
         if (editorState.visualData->caretRectAtEnd != IntRect())
             ts.dumpProperty("caretRectAtEnd", editorState.visualData->caretRectAtEnd);
         if (!editorState.visualData->selectionGeometries.isEmpty())
@@ -163,6 +165,7 @@ void EditorState::clipOwnedRectExtentsToNumericLimits()
     auto sanitizeVisualData = [](auto& visualData) {
 #if PLATFORM(IOS_FAMILY)
         visualData.selectionClipRect = visualData.selectionClipRect.toRectWithExtentsClippedToNumericLimits();
+        visualData.editableRootBounds = visualData.editableRootBounds.toRectWithExtentsClippedToNumericLimits();
         visualData.caretRectAtEnd = visualData.caretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtStart = visualData.markedTextCaretRectAtStart.toRectWithExtentsClippedToNumericLimits();
         visualData.markedTextCaretRectAtEnd = visualData.markedTextCaretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
