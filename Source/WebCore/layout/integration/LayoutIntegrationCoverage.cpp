@@ -57,7 +57,7 @@ enum class AvoidanceReason : uint32_t {
     FlexBoxIsVertical                   = 1U << 3,
     FlexBoxIsRTL                        = 1U << 4,
     FlexBoxHasColumnDirection           = 1U << 5,
-    FlexBoxHeightIsPercent              = 1U << 6,
+    // Unused                           = 1U << 6,
     FlexBoxHasUnsupportedOverflow       = 1U << 7,
     FlexBoxHasUnsupportedAlignItems     = 1U << 8,
     FlexBoxHasUnsupportedAlignContent   = 1U << 9,
@@ -127,9 +127,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
 
     if (flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasColumnDirection, reasons, includeReasons);
-
-    if (flexBoxStyle.logicalHeight().isPercent())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHeightIsPercent, reasons, includeReasons);
 
     if (mayHaveScrollbarOrScrollableOverflow(flexBoxStyle))
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
@@ -248,9 +245,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxHasColumnDirection:
         stream << "flex box has column direction";
-        break;
-    case AvoidanceReason::FlexBoxHeightIsPercent:
-        stream << "flex box's height is percent";
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
         stream << "flex box has non-hidden overflow";

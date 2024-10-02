@@ -35,6 +35,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
+#include "RenderBox.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderView.h"
@@ -101,23 +102,28 @@ void FlexLayout::layout()
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
-    auto verticalSpaceForFlexItems = [&]() -> std::tuple<std::optional<LayoutUnit>, std::optional<LayoutUnit>> {
+    auto crossAxisSpaceForFlexItems = [&]() -> std::tuple<std::optional<LayoutUnit>, std::optional<LayoutUnit>> {
         auto& flexBoxStyle = flexBox().style();
 
-        auto adjustedHeightValue = [&](auto& property) -> std::optional<LayoutUnit> {
-            if (!property.isFixed())
-                return { };
-            auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
-            return LayoutUnit { boxSizingIsContentBox ? property.value() : property.value() - rootGeometry.verticalMarginBorderAndPadding() };
+        auto heightValue = [&](auto& computedValue) -> std::optional<LayoutUnit> {
+            if (computedValue.isPercent())
+                return flexBoxRenderer().computePercentageLogicalHeight(computedValue, RenderBoxModelObject::UpdatePercentageHeightDescendants::No);
+
+            if (computedValue.isFixed()) {
+                auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
+                return LayoutUnit { boxSizingIsContentBox ? computedValue.value() : computedValue.value() - rootGeometry.verticalMarginBorderAndPadding() };
+            }
+
+            return { };
         };
 
-        auto verticalSpace = adjustedHeightValue(flexBoxStyle.logicalHeight());
-        if (auto maximumHeightValue = adjustedHeightValue(flexBoxStyle.logicalMaxHeight()))
-            verticalSpace = verticalSpace ? std::min(*verticalSpace, *maximumHeightValue) : *maximumHeightValue;
-        return { verticalSpace, adjustedHeightValue(flexBoxStyle.logicalMinHeight()) };
+        auto crossAxisSpace = heightValue(flexBoxStyle.logicalHeight());
+        if (auto maximumHeightValue = heightValue(flexBoxStyle.logicalMaxHeight()))
+            crossAxisSpace = crossAxisSpace ? std::min(*crossAxisSpace, *maximumHeightValue) : *maximumHeightValue;
+        return { crossAxisSpace, heightValue(flexBoxStyle.logicalMinHeight()) };
     };
-    auto [availableVerticalSpace, minimumVerticalSpace] = verticalSpaceForFlexItems();
-    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace, minimumVerticalSpace };
+    auto [availableCrossAxisSpace, minimumCrossAxisSpace] = crossAxisSpaceForFlexItems();
+    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableCrossAxisSpace, minimumCrossAxisSpace };
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), layoutState() };
     flexFormattingContext.layout(constraints);
 
