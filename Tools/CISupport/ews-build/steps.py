@@ -7074,7 +7074,7 @@ class InstallNinja(shell.ShellCommandNewStyle, ShellMixin):
     @defer.inlineCallbacks
     def run(self):
         self.env['PATH'] = f"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:{self.getProperty('builddir')}"
-        self.command = self.shell_command('cd ../; python3 Tools/CISupport/Shared/download-and-install-build-tools ninja')
+        self.command = self.shell_command('cd ../; python3 build/Tools/CISupport/Shared/download-and-install-build-tools ninja')
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
