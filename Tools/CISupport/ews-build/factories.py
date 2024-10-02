@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize,
                     CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                     CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CleanDerivedSources, CompileJSC, CompileWebKit, ConfigureBuild, DetermineLabelOwner,
-                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub,
+                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, InstallCMake, InstallNinja,
                     InstallGtkDependencies, InstallHooks, InstallWpeDependencies, InstallWinDependencies, KillOldProcesses, PrintClangVersion, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                     MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                     RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
@@ -111,6 +111,8 @@ class SmartPointerStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
+        self.addStep(InstallCMake())
+        self.addStep(InstallNinja())
         self.addStep(PrintClangVersion())
         self.addStep(CheckOutPullRequest())
         self.addStep(KillOldProcesses())

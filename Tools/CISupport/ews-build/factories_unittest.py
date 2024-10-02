@@ -303,6 +303,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-source',
             'fetch-branch-references',
             'show-identifier',
+            'install-cmake',
+            'install-ninja',
             'print-clang-version',
             'checkout-pull-request',
             'kill-old-processes',

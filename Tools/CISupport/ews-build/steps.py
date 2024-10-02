@@ -6916,6 +6916,82 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
         return not self.doStepIf(step)
 
 
+class InstallCMake(shell.ShellCommandNewStyle):
+    name = 'install-cmake'
+    haltOnFailure = True
+    summary = 'Successfully installed CMake'
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=True, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.env['PATH'] = f'/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/'
+        self.command = ['python3', 'Tools/CISupport/Shared/download-and-install-build-tools', 'cmake']
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        log_text = self.log_observer.getStdout()
+        index_skipped = log_text.rfind('skipping download and installation')
+        if index_skipped != -1:
+            self.summary = 'CMake is already installed'
+        return defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            self.summary = f'Failed to install CMake'
+        return {u'step': self.summary}
+
+
+class InstallNinja(shell.ShellCommandNewStyle, ShellMixin):
+    name = 'install-ninja'
+    haltOnFailure = True
+    summary = 'Successfully installed Ninja'
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=True, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.env['PATH'] = f"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:{self.getProperty('builddir')}"
+        self.command = self.shell_command('cd ../; python3 Tools/CISupport/Shared/download-and-install-build-tools ninja')
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        log_text = self.log_observer.getStdout()
+        index_skipped = log_text.rfind('skipping download and installation')
+        if index_skipped != -1:
+            self.summary = 'Ninja is already installed'
+        return defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            self.summary = f'Failed to install Ninja'
+        return {u'step': self.summary}
+
+
 # FIXME: Share smart pointer steps with build-webkit-org since they have a lot of similarities
 class ScanBuildSmartPointer(steps.ShellSequence, ShellMixin):
     name = "scan-build-smart-pointer"

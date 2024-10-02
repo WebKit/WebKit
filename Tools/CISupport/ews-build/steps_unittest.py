@@ -51,7 +51,7 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                     DetermineLandedIdentifier, DisplaySmartPointerResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                     EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
                     FetchBranches, FindModifiedLayoutTests, FindUnexpectedStaticAnalyzerResults, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
-                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
+                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks, InstallCMake, InstallNinja,
                     KillOldProcesses, ParseStaticAnalyzerResults, PrintConfiguration, PrintClangVersion, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                     MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                     RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
@@ -9386,6 +9386,119 @@ class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('llvm_revision'), None)
         return rc
+
+
+class TestInstallCMake(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = {'PATH': '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/'}
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(InstallCMake())
+
+    def test_success_update(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['python3', 'Tools/CISupport/Shared/download-and-install-build-tools', 'cmake'])
+            + ExpectShell.log('stdio', stdout='cmake version 3.30.4\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Successfully installed CMake')
+        return self.runStep()
+
+    def test_success_update_skipped(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['python3', 'Tools/CISupport/Shared/download-and-install-build-tools', 'cmake'])
+            + ExpectShell.log('stdio', stdout='cmake is already up to date... skipping download and installation.\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='CMake is already installed')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['python3', 'Tools/CISupport/Shared/download-and-install-build-tools', 'cmake'])
+            + ExpectShell.log('stdio', stdout='zsh: command not found: cmake\n')
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to install CMake')
+        return self.runStep()
+
+
+class TestInstallNinja(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = {'PATH': "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:BuildDir"}
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(InstallNinja())
+        self.setProperty('builddir', 'BuildDir')
+
+    def test_success_update(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'cd ../; python3 Tools/CISupport/Shared/download-and-install-build-tools ninja'])
+            + ExpectShell.log('stdio', stdout='1.12.1\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Successfully installed Ninja')
+        return self.runStep()
+
+    def test_success_update_skipped(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'cd ../; python3 Tools/CISupport/Shared/download-and-install-build-tools ninja'])
+            + ExpectShell.log('stdio', stdout='ninja is already up to date... skipping download and installation.\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Ninja is already installed')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=True,
+                        timeout=1200,
+                        env=self.ENV,
+                        command=['/bin/sh', '-c', 'cd ../; python3 Tools/CISupport/Shared/download-and-install-build-tools ninja'])
+            + ExpectShell.log('stdio', stdout='zsh: command not found: ninja')
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to install Ninja')
+        return self.runStep()
 
 
 if __name__ == '__main__':
