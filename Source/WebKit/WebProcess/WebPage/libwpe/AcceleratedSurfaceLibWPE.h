@@ -29,6 +29,7 @@
 
 #include "AcceleratedSurface.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 struct wpe_renderer_backend_egl_target;
 
@@ -63,6 +64,7 @@ public:
 private:
     AcceleratedSurfaceLibWPE(WebPage&, Client&);
 
+    UnixFileDescriptor m_hostFD;
     struct wpe_renderer_backend_egl_target* m_backend { nullptr };
 };
 

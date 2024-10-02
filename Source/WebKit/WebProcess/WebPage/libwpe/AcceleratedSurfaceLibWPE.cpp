@@ -46,6 +46,7 @@ std::unique_ptr<AcceleratedSurfaceLibWPE> AcceleratedSurfaceLibWPE::create(WebPa
 
 AcceleratedSurfaceLibWPE::AcceleratedSurfaceLibWPE(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
+    , m_hostFD(webPage.hostFileDescriptor())
 {
 }
 
@@ -56,7 +57,7 @@ AcceleratedSurfaceLibWPE::~AcceleratedSurfaceLibWPE()
 
 void AcceleratedSurfaceLibWPE::initialize()
 {
-    m_backend = wpe_renderer_backend_egl_target_create(dupCloseOnExec(m_webPage->hostFileDescriptor()));
+    m_backend = wpe_renderer_backend_egl_target_create(m_hostFD.release());
     static struct wpe_renderer_backend_egl_target_client s_client = {
         // frame_complete
         [](void* data)
