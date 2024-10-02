@@ -604,7 +604,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecInt32Only | SpecBigInt);
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecInt32Only);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
         break;
     }
@@ -806,8 +813,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         else {
             DFG_ASSERT(m_graph, node, node->binaryUseKind() == UntypedUse);
             clobberWorld();
-            // FIXME: do we really need SpecString here for ValueSub? It seems like we only need it for ValueAdd.
-            setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
+            if (node->op() == ValueAdd)
+                setTypeForNode(node, SpecString | SpecBytecodeNumber | SpecBigInt);
+            else {
+                auto& value1 = forNode(node->child1());
+                auto& value2 = forNode(node->child2());
+                if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                    setTypeForNode(node, SpecBytecodeNumber);
+                else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                    setTypeForNode(node, SpecBigInt);
+                else
+                    setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            }
         }
         break;
     }
@@ -1137,7 +1154,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt32);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecBytecodeNumber);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         }
         break;
     }
@@ -1215,7 +1239,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+            auto& value1 = forNode(node->child1());
+            auto& value2 = forNode(node->child2());
+            if (value1.isType(SpecFullNumber) || value2.isType(SpecFullNumber))
+                setTypeForNode(node, SpecBytecodeNumber);
+            else if (value1.isType(SpecBigInt) || value2.isType(SpecBigInt))
+                setTypeForNode(node, SpecBigInt);
+            else
+                setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         }
         break;
     }
