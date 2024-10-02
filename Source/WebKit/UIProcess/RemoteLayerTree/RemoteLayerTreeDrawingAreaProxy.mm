@@ -405,14 +405,14 @@ void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLay
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
-    auto& connection = connectionForIdentifier(layerID.processIdentifier());
-    connection.send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
+    Ref connection = connectionForIdentifier(layerID.processIdentifier());
+    connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
-    auto& connection = connectionForIdentifier(layerID.processIdentifier());
-    connection.send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());
+    Ref connection = connectionForIdentifier(layerID.processIdentifier());
+    connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());
 }
 
 static const float indicatorInset = 10;
