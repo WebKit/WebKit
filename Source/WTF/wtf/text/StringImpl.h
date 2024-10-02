@@ -772,6 +772,38 @@ template<typename CharacterType1, typename CharacterType2> inline int codePointC
     auto* characters1Ptr = characters1.data();
     auto* characters2Ptr = characters2.data();
     size_t position = 0;
+
+#if CPU(REGISTER64) && !CPU(NEEDS_ALIGNED_ACCESS) && CPU(LITTLE_ENDIAN)
+    if constexpr (sizeof(CharacterType1) == sizeof(CharacterType2)) {
+        constexpr size_t stride = sizeof(uint64_t) / sizeof(CharacterType1);
+        for (; position + (stride - 1) < commonLength;) {
+            uint64_t lhs = *bitwise_cast<const uint64_t*>(characters1Ptr);
+            uint64_t rhs = *bitwise_cast<const uint64_t*>(characters2Ptr);
+            if (lhs != rhs) {
+                if constexpr (sizeof(CharacterType1) == 1)
+                    return (__builtin_bswap64(lhs) > __builtin_bswap64(rhs)) ? 1 : -1;
+
+#if CPU(ARM64)
+                if constexpr (sizeof(CharacterType1) == 2) {
+                    auto rev16 = [](uint64_t value) ALWAYS_INLINE_LAMBDA {
+                        uint64_t result;
+                        asm ("rev16 %x0, %x1" : "=r"(result) : "r"(value));
+                        return result;
+                    };
+                    return (rev16(__builtin_bswap64(lhs)) > rev16(__builtin_bswap64(rhs))) ? 1 : -1;
+                }
+#endif
+
+                break;
+            }
+
+            characters1Ptr += stride;
+            characters2Ptr += stride;
+            position += stride;
+        }
+    }
+#endif
+
     while (position < commonLength && *characters1Ptr == *characters2Ptr) {
         ++characters1Ptr;
         ++characters2Ptr;
