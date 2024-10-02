@@ -198,7 +198,7 @@ messages -> WebPageProxy {
 #endif
 
     # BackForward messages
-    BackForwardAddItem(WebCore::FrameIdentifier targetFrameID, WebKit::FrameState mainFrameState)
+    BackForwardAddItem(WebCore::FrameIdentifier targetFrameID, Ref<WebKit::FrameState> mainFrameState)
     BackForwardGoToItem(WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
     BackForwardItemAtIndex(int32_t itemIndex) -> (std::optional<WebCore::BackForwardItemIdentifier> itemID) Synchronous
     BackForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID) -> (bool contains) Synchronous

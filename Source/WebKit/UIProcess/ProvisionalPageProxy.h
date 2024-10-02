@@ -181,7 +181,7 @@ private:
     void startURLSchemeTask(IPC::Connection&, URLSchemeTaskParameters&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(const WebBackForwardListCounts&)>&&);
     void decidePolicyForNavigationActionSync(NavigationActionData&&, CompletionHandler<void(PolicyDecision&&)>&&);
-    void backForwardAddItem(WebCore::FrameIdentifier, FrameState&&);
+    void backForwardAddItem(WebCore::FrameIdentifier, Ref<FrameState>&&);
     void didDestroyNavigation(WebCore::NavigationIdentifier);
 #if USE(QUICK_LOOK)
     void requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&&);

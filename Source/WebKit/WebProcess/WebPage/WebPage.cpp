@@ -3755,7 +3755,7 @@ void WebPage::setNeedsFontAttributes(bool needsFontAttributes)
         scheduleFullEditorStateUpdate();
 }
 
-void WebPage::restoreSessionInternal(const Vector<FrameState>& frameStates, WasRestoredByAPIRequest restoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem overwrite)
+void WebPage::restoreSessionInternal(const Vector<Ref<FrameState>>& frameStates, WasRestoredByAPIRequest restoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem overwrite)
 {
     // Since we're merely restoring HistoryItems from the UIProcess, there is no need to send HistoryItem update notifications back to the UIProcess.
     // Also, with process-swap on navigation, these updates may actually overwrite important state in the UIProcess such as the scroll position.
@@ -3763,25 +3763,25 @@ void WebPage::restoreSessionInternal(const Vector<FrameState>& frameStates, WasR
     for (const auto& frameState : frameStates) {
         auto historyItem = toHistoryItem(m_historyItemClient, frameState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
-        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(frameState.identifier, WTFMove(historyItem), m_identifier, overwrite);
+        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(frameState->identifier, WTFMove(historyItem), m_identifier, overwrite);
     }
 }
 
-void WebPage::restoreSession(const Vector<FrameState>& frameStates)
+void WebPage::restoreSession(const Vector<Ref<FrameState>>& frameStates)
 {
     restoreSessionInternal(frameStates, WasRestoredByAPIRequest::Yes, WebBackForwardListProxy::OverwriteExistingItem::No);
 }
 
-void WebPage::updateBackForwardListForReattach(const Vector<FrameState>& frameStates)
+void WebPage::updateBackForwardListForReattach(const Vector<Ref<FrameState>>& frameStates)
 {
     restoreSessionInternal(frameStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::Yes);
 }
 
-void WebPage::setCurrentHistoryItemForReattach(FrameState&& mainFrameState)
+void WebPage::setCurrentHistoryItemForReattach(Ref<FrameState>&& mainFrameState)
 {
     Ref historyItem = toHistoryItem(m_historyItemClient, mainFrameState);
     auto& historyItemRef = historyItem.get();
-    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(mainFrameState.identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
+    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(mainFrameState->identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
         localMainFrame->checkedHistory()->setCurrentItem(historyItemRef);
 }

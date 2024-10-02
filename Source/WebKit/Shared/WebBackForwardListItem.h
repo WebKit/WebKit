@@ -51,25 +51,25 @@ class WebBackForwardCacheEntry;
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem>, public CanMakeWeakPtr<WebBackForwardListItem> {
 public:
-    static Ref<WebBackForwardListItem> create(FrameState&&, WebPageProxyIdentifier);
+    static Ref<WebBackForwardListItem> create(Ref<FrameState>&&, WebPageProxyIdentifier);
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
     static HashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& allItems();
 
-    WebCore::BackForwardItemIdentifier itemID() const { return m_mainFrameState.identifier; }
+    WebCore::BackForwardItemIdentifier itemID() const { return m_mainFrameState->identifier; }
     WebPageProxyIdentifier pageID() const { return m_pageID; }
 
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }
     void setLastProcessIdentifier(const WebCore::ProcessIdentifier& identifier) { m_lastProcessIdentifier = identifier; }
 
-    void setMainFrameState(FrameState&& mainFrameState) { m_mainFrameState = WTFMove(mainFrameState); }
-    const FrameState& mainFrameState() const { return m_mainFrameState; }
+    void setMainFrameState(Ref<FrameState>&& mainFrameState) { m_mainFrameState = WTFMove(mainFrameState); }
+    FrameState& mainFrameState() const { return m_mainFrameState; }
 
-    const String& originalURL() const { return m_mainFrameState.originalURLString; }
-    const String& url() const { return m_mainFrameState.urlString; }
-    const String& title() const { return m_mainFrameState.title; }
-    bool wasCreatedByJSWithoutUserInteraction() const { return m_mainFrameState.wasCreatedByJSWithoutUserInteraction; }
+    const String& originalURL() const { return m_mainFrameState->originalURLString; }
+    const String& url() const { return m_mainFrameState->urlString; }
+    const String& title() const { return m_mainFrameState->title; }
+    bool wasCreatedByJSWithoutUserInteraction() const { return m_mainFrameState->wasCreatedByJSWithoutUserInteraction; }
 
     const URL& resourceDirectoryURL() const { return m_resourceDirectoryURL; }
     void setResourceDirectoryURL(URL&& url) { m_resourceDirectoryURL = WTFMove(url); }
@@ -104,7 +104,7 @@ public:
 #endif
 
 private:
-    WebBackForwardListItem(FrameState&&, WebPageProxyIdentifier);
+    WebBackForwardListItem(Ref<FrameState>&&, WebPageProxyIdentifier);
 
     void removeFromBackForwardCache();
 
@@ -114,7 +114,7 @@ private:
 
     RefPtr<WebsiteDataStore> m_dataStoreForWebArchive;
 
-    FrameState m_mainFrameState;
+    Ref<FrameState> m_mainFrameState;
     URL m_resourceDirectoryURL;
     WebPageProxyIdentifier m_pageID;
     WebCore::ProcessIdentifier m_lastProcessIdentifier;

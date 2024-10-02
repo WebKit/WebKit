@@ -313,9 +313,9 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 {
     encoder << static_cast<uint64_t>(frameState.children.size());
 
-    for (const auto& childFrameState : frameState.children) {
-        encoder << childFrameState.originalURLString;
-        encoder << childFrameState.urlString;
+    for (auto& childFrameState : frameState.children) {
+        encoder << childFrameState->originalURLString;
+        encoder << childFrameState->urlString;
 
         encodeFrameStateNode(encoder, childFrameState);
     }
@@ -431,10 +431,10 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
     auto entries = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, backForwardListState.items.size(), &kCFTypeArrayCallBacks));
     size_t totalDataSize = 0;
 
-    for (const auto& item : backForwardListState.items) {
-        auto url = item.urlString.createCFString();
-        auto title = item.title.createCFString();
-        auto originalURL = item.originalURLString.createCFString();
+    for (auto& item : backForwardListState.items) {
+        auto url = item->urlString.createCFString();
+        auto title = item->title.createCFString();
+        auto originalURL = item->originalURLString.createCFString();
 
         // We allow the first item to be unlimited in size. We refrain from serializing the data for subsequent items if they would cause us to trip over the maximumSessionStateDataSize limit.
         auto data = totalDataSize <= maximumSessionStateDataSize ? encodeSessionHistoryEntryData(item) : nullptr;
@@ -444,7 +444,7 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
                 data = nullptr;
         }
 
-        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item.shouldOpenExternalURLsPolicy);
+        auto shouldOpenExternalURLsPolicyValue = static_cast<uint64_t>(item->shouldOpenExternalURLsPolicy);
         auto shouldOpenExternalURLsPolicy = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &shouldOpenExternalURLsPolicyValue));
 
         RetainPtr<CFDictionaryRef> entryDictionary;
@@ -902,9 +902,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     decoder >> childCount;
 
     for (uint64_t i = 0; i < childCount; ++i) {
-        FrameState childFrameState;
-        decoder >> childFrameState.originalURLString;
-        decoder >> childFrameState.urlString;
+        Ref childFrameState = FrameState::create();
+        decoder >> childFrameState->originalURLString;
+        decoder >> childFrameState->urlString;
 
         decodeBackForwardTreeNode(decoder, childFrameState);
 
@@ -1037,14 +1037,14 @@ static WARN_UNUSED_RETURN bool decodeSessionHistoryEntry(CFDictionaryRef entryDi
     return true;
 }
 
-static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<FrameState>& entries)
+static WARN_UNUSED_RETURN bool decodeSessionHistoryEntries(CFArrayRef entriesArray, Vector<Ref<FrameState>>& entries)
 {
     for (CFIndex i = 0, size = CFArrayGetCount(entriesArray); i < size; ++i) {
         auto entryDictionary = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(entriesArray, i));
         if (!entryDictionary)
             return false;
 
-        FrameState entry;
+        Ref entry = FrameState::create();
         if (!decodeSessionHistoryEntry(entryDictionary, entry))
             return false;
 

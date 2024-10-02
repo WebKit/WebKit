@@ -208,9 +208,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     StopLoading()
     StopLoadingDueToProcessSwap()
 
-    RestoreSession(Vector<WebKit::FrameState> frameStates)
-    UpdateBackForwardListForReattach(Vector<WebKit::FrameState> frameStates)
-    SetCurrentHistoryItemForReattach(WebKit::FrameState frameState)
+    RestoreSession(Vector<Ref<WebKit::FrameState>> frameStates)
+    UpdateBackForwardListForReattach(Vector<Ref<WebKit::FrameState>> frameStates)
+    SetCurrentHistoryItemForReattach(Ref<WebKit::FrameState> frameState)
 
     DidRemoveBackForwardItem(WebCore::BackForwardItemIdentifier backForwardItemID)
 

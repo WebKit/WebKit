@@ -36,7 +36,7 @@ namespace WebKit {
 
 class FrameState;
 
-FrameState toFrameState(const WebCore::HistoryItem&);
+Ref<FrameState> toFrameState(const WebCore::HistoryItem&);
 Ref<WebCore::HistoryItem> toHistoryItem(WebCore::HistoryItemClient&, const FrameState&);
 
 } // namespace WebKit

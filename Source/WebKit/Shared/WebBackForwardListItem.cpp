@@ -39,26 +39,26 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebBackForwardListItem> WebBackForwardListItem::create(FrameState&& mainFrameState, WebPageProxyIdentifier pageID)
+Ref<WebBackForwardListItem> WebBackForwardListItem::create(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID)
 {
     RELEASE_ASSERT(RunLoop::isMain());
     return adoptRef(*new WebBackForwardListItem(WTFMove(mainFrameState), pageID));
 }
 
-WebBackForwardListItem::WebBackForwardListItem(FrameState&& mainFrameState, WebPageProxyIdentifier pageID)
+WebBackForwardListItem::WebBackForwardListItem(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID)
     : m_mainFrameState(WTFMove(mainFrameState))
     , m_pageID(pageID)
-    , m_lastProcessIdentifier(m_mainFrameState.identifier.processIdentifier())
+    , m_lastProcessIdentifier(m_mainFrameState->identifier.processIdentifier())
 {
-    auto result = allItems().add(m_mainFrameState.identifier, *this);
+    auto result = allItems().add(m_mainFrameState->identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    ASSERT(allItems().get(m_mainFrameState.identifier) == this);
-    allItems().remove(m_mainFrameState.identifier);
+    ASSERT(allItems().get(m_mainFrameState->identifier) == this);
+    allItems().remove(m_mainFrameState->identifier);
     removeFromBackForwardCache();
 }
 
@@ -76,9 +76,9 @@ WebBackForwardListItem* WebBackForwardListItem::itemForID(const BackForwardItemI
 
 static const FrameState* childItemWithDocumentSequenceNumber(const FrameState& frameState, int64_t number)
 {
-    for (const auto& child : frameState.children) {
-        if (child.documentSequenceNumber == number)
-            return &child;
+    for (auto& child : frameState.children) {
+        if (child->documentSequenceNumber == number)
+            return child.ptr();
     }
 
     return nullptr;
@@ -86,9 +86,9 @@ static const FrameState* childItemWithDocumentSequenceNumber(const FrameState& f
 
 static const FrameState* childItemWithTarget(const FrameState& frameState, const String& target)
 {
-    for (const auto& child : frameState.children) {
-        if (child.target == target)
-            return &child;
+    for (auto& child : frameState.children) {
+        if (child->target == target)
+            return child.ptr();
     }
 
     return nullptr;
@@ -102,8 +102,8 @@ static bool documentTreesAreEqual(const FrameState& a, const FrameState& b)
     if (a.children.size() != b.children.size())
         return false;
 
-    for (const auto& child : a.children) {
-        const FrameState* otherChild = childItemWithDocumentSequenceNumber(b, child.documentSequenceNumber);
+    for (auto& child : a.children) {
+        const FrameState* otherChild = childItemWithDocumentSequenceNumber(b, child->documentSequenceNumber);
         if (!otherChild || !documentTreesAreEqual(child, *otherChild))
             return false;
     }
@@ -118,17 +118,17 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
 
     // The following logic must be kept in sync with WebCore::HistoryItem::shouldDoSameDocumentNavigationTo().
 
-    const auto& mainFrameState = m_mainFrameState;
-    const auto& otherMainFrameState = other.m_mainFrameState;
+    Ref mainFrameState = m_mainFrameState;
+    Ref otherMainFrameState = other.m_mainFrameState;
 
-    if (mainFrameState.stateObjectData || otherMainFrameState.stateObjectData)
-        return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
+    if (mainFrameState->stateObjectData || otherMainFrameState->stateObjectData)
+        return mainFrameState->documentSequenceNumber == otherMainFrameState->documentSequenceNumber;
 
-    URL url = URL({ }, mainFrameState.urlString);
-    URL otherURL = URL({ }, otherMainFrameState.urlString);
+    URL url = URL({ }, mainFrameState->urlString);
+    URL otherURL = URL({ }, otherMainFrameState->urlString);
 
     if ((url.hasFragmentIdentifier() || otherURL.hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url, otherURL))
-        return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
+        return mainFrameState->documentSequenceNumber == otherMainFrameState->documentSequenceNumber;
 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
@@ -141,8 +141,8 @@ static bool hasSameFrames(const FrameState& a, const FrameState& b)
     if (a.children.size() != b.children.size())
         return false;
 
-    for (const auto& child : a.children) {
-        if (!childItemWithTarget(b, child.target))
+    for (auto& child : a.children) {
+        if (!childItemWithTarget(b, child->target))
             return false;
     }
 
@@ -159,7 +159,7 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     const auto& mainFrameState = m_mainFrameState;
     const auto& otherMainFrameState = other.m_mainFrameState;
 
-    if (mainFrameState.itemSequenceNumber != otherMainFrameState.itemSequenceNumber)
+    if (mainFrameState->itemSequenceNumber != otherMainFrameState->itemSequenceNumber)
         return false;
 
     return hasSameFrames(mainFrameState, otherMainFrameState);

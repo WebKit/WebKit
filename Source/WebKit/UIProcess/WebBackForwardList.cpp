@@ -463,24 +463,25 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
     // FIXME: Enable restoring resourceDirectoryURL.
     m_entries = WTF::map(WTFMove(backForwardListState.items), [this](auto&& state) {
-        setBackForwardItemIdentifiers(state);
-        return WebBackForwardListItem::create(WTFMove(state), m_page->identifier());
+        Ref stateCopy = state->copy();
+        setBackForwardItemIdentifiers(stateCopy);
+        return WebBackForwardListItem::create(WTFMove(stateCopy), m_page->identifier());
     });
     m_currentIndex = backForwardListState.currentIndex ? std::optional<size_t>(*backForwardListState.currentIndex) : std::nullopt;
 
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p restored from state (has %zu entries)", this, m_entries.size());
 }
 
-Vector<FrameState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
+Vector<Ref<FrameState>> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
 {
-    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<FrameState> {
+    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<Ref<FrameState>> {
         if (functor(entry))
             return entry->mainFrameState();
         return std::nullopt;
     });
 }
 
-Vector<FrameState> WebBackForwardList::itemStates() const
+Vector<Ref<FrameState>> WebBackForwardList::itemStates() const
 {
     return filteredItemStates([](WebBackForwardListItem&) {
         return true;

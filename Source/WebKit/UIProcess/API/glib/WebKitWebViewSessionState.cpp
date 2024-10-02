@@ -353,7 +353,7 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
         frameState.httpBody = WTFMove(httpBody);
     g_variant_unref(httpBodyVariant);
     while (GRefPtr<GVariant> child = adoptGRef(g_variant_iter_next_value(childrenIter.get()))) {
-        FrameState childFrameState;
+        Ref childFrameState = FrameState::create();
         GRefPtr<GVariant> childVariant = adoptGRef(g_variant_get_variant(child.get()));
         decodeFrameState(childVariant.get(), childFrameState);
         frameState.children.append(WTFMove(childFrameState));
@@ -367,10 +367,10 @@ static inline void decodeBackForwardListItemStateV1(GVariantIter* backForwardLis
     GVariant* frameStateVariant;
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V1, &identifier, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
-        FrameState mainFrameState;
-        mainFrameState.title = String::fromUTF8(title);
+        Ref mainFrameState = FrameState::create();
+        mainFrameState->title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
-        mainFrameState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
+        mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
         backForwardListState.items.append(WTFMove(mainFrameState));
     }
 }
@@ -391,10 +391,10 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
     GVariant* frameStateVariant;
     unsigned shouldOpenExternalURLsPolicy;
     while (g_variant_iter_loop(backForwardListStateIter, BACK_FORWARD_LIST_ITEM_FORMAT_STRING_V2, &title, &frameStateVariant, &shouldOpenExternalURLsPolicy)) {
-        FrameState mainFrameState;
-        mainFrameState.title = String::fromUTF8(title);
+        Ref mainFrameState = FrameState::create();
+        mainFrameState->title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, mainFrameState);
-        mainFrameState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
+        mainFrameState->shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
         backForwardListState.items.append(WTFMove(mainFrameState));
     }
 }

@@ -560,7 +560,7 @@ private:
     void platformDestroy();
 
     // IPC message handlers.
-    void updateBackForwardItem(FrameState&&);
+    void updateBackForwardItem(Ref<FrameState>&&);
     void didDestroyFrame(IPC::Connection&, WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(WebCore::PageIdentifier, uint64_t);
 

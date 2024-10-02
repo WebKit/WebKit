@@ -2005,11 +2005,11 @@ private:
     void loadDataInFrame(std::span<const uint8_t>, String&& MIMEType, String&& encodingName, URL&& baseURL, WebCore::FrameIdentifier);
 
     enum class WasRestoredByAPIRequest : bool { No, Yes };
-    void restoreSessionInternal(const Vector<FrameState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
-    void restoreSession(const Vector<FrameState>&);
+    void restoreSessionInternal(const Vector<Ref<FrameState>>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
+    void restoreSession(const Vector<Ref<FrameState>>&);
     void didRemoveBackForwardItem(const WebCore::BackForwardItemIdentifier&);
-    void updateBackForwardListForReattach(const Vector<FrameState>&);
-    void setCurrentHistoryItemForReattach(FrameState&&);
+    void updateBackForwardListForReattach(const Vector<Ref<FrameState>>&);
+    void setCurrentHistoryItemForReattach(Ref<FrameState>&&);
 
     void requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&&);
 

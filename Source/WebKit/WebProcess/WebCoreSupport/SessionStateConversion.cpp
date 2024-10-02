@@ -64,53 +64,53 @@ static HTTPBody toHTTPBody(const FormData& formData)
     return httpBody;
 }
 
-FrameState toFrameState(const HistoryItem& historyItem)
+Ref<FrameState> toFrameState(const HistoryItem& historyItem)
 {
-    FrameState frameState;
+    Ref frameState = FrameState::create();
 
-    frameState.urlString = historyItem.urlString();
-    frameState.originalURLString = historyItem.originalURLString();
-    frameState.referrer = historyItem.referrer();
-    frameState.target = historyItem.target();
-    frameState.frameID = historyItem.frameID();
+    frameState->urlString = historyItem.urlString();
+    frameState->originalURLString = historyItem.originalURLString();
+    frameState->referrer = historyItem.referrer();
+    frameState->target = historyItem.target();
+    frameState->frameID = historyItem.frameID();
 
-    frameState.setDocumentState(historyItem.documentState());
+    frameState->setDocumentState(historyItem.documentState());
     if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
-        frameState.stateObjectData = stateObject->wireBytes();
+        frameState->stateObjectData = stateObject->wireBytes();
 
-    frameState.documentSequenceNumber = historyItem.documentSequenceNumber();
-    frameState.itemSequenceNumber = historyItem.itemSequenceNumber();
+    frameState->documentSequenceNumber = historyItem.documentSequenceNumber();
+    frameState->itemSequenceNumber = historyItem.itemSequenceNumber();
 
-    frameState.scrollPosition = historyItem.scrollPosition();
-    frameState.shouldRestoreScrollPosition = historyItem.shouldRestoreScrollPosition();
-    frameState.pageScaleFactor = historyItem.pageScaleFactor();
+    frameState->scrollPosition = historyItem.scrollPosition();
+    frameState->shouldRestoreScrollPosition = historyItem.shouldRestoreScrollPosition();
+    frameState->pageScaleFactor = historyItem.pageScaleFactor();
 
     if (FormData* formData = const_cast<HistoryItem&>(historyItem).formData()) {
         HTTPBody httpBody = toHTTPBody(*formData);
         httpBody.contentType = historyItem.formContentType();
 
-        frameState.httpBody = WTFMove(httpBody);
+        frameState->httpBody = WTFMove(httpBody);
     }
 
-    frameState.identifier = historyItem.identifier();
-    frameState.hasCachedPage = historyItem.isInBackForwardCache();
-    frameState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
-    frameState.sessionStateObject = historyItem.stateObject();
-    frameState.wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
+    frameState->identifier = historyItem.identifier();
+    frameState->hasCachedPage = historyItem.isInBackForwardCache();
+    frameState->shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
+    frameState->sessionStateObject = historyItem.stateObject();
+    frameState->wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
 
     static constexpr auto maxTitleLength = 1000u; // Closest power of 10 above the W3C recommendation for Title length.
-    frameState.title = historyItem.title().left(maxTitleLength);
+    frameState->title = historyItem.title().left(maxTitleLength);
 
 #if PLATFORM(IOS_FAMILY)
-    frameState.exposedContentRect = historyItem.exposedContentRect();
-    frameState.unobscuredContentRect = historyItem.unobscuredContentRect();
-    frameState.minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
-    frameState.contentSize = historyItem.contentSize();
-    frameState.scaleIsInitial = historyItem.scaleIsInitial();
-    frameState.obscuredInsets = historyItem.obscuredInsets();
+    frameState->exposedContentRect = historyItem.exposedContentRect();
+    frameState->unobscuredContentRect = historyItem.unobscuredContentRect();
+    frameState->minimumLayoutSizeInScrollViewCoordinates = historyItem.minimumLayoutSizeInScrollViewCoordinates();
+    frameState->contentSize = historyItem.contentSize();
+    frameState->scaleIsInitial = historyItem.scaleIsInitial();
+    frameState->obscuredInsets = historyItem.obscuredInsets();
 #endif
 
-    frameState.children = historyItem.children().map([](auto& childHistoryItem) {
+    frameState->children = historyItem.children().map([](auto& childHistoryItem) {
         return toFrameState(childHistoryItem);
     });
 
@@ -174,8 +174,8 @@ static void applyFrameState(HistoryItemClient& client, HistoryItem& historyItem,
     historyItem.setObscuredInsets(frameState.obscuredInsets);
 #endif
 
-    for (const auto& childFrameState : frameState.children) {
-        Ref childHistoryItem = HistoryItem::create(client, childFrameState.urlString, { }, { }, childFrameState.identifier);
+    for (auto& childFrameState : frameState.children) {
+        Ref childHistoryItem = HistoryItem::create(client, childFrameState->urlString, { }, { }, childFrameState->identifier);
         applyFrameState(client, childHistoryItem, childFrameState);
 
         historyItem.addChildItem(WTFMove(childHistoryItem));

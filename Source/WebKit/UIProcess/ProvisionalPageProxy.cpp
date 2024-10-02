@@ -508,7 +508,7 @@ void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess
     m_page->logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
 }
 
-void ProvisionalPageProxy::backForwardAddItem(FrameIdentifier targetFrameID, FrameState&& mainFrameState)
+void ProvisionalPageProxy::backForwardAddItem(FrameIdentifier targetFrameID, Ref<FrameState>&& mainFrameState)
 {
     m_page->backForwardAddItemShared(protectedProcess(), targetFrameID, WTFMove(mainFrameState), m_replacedDataStoreForWebArchiveLoad ? LoadedWebArchive::Yes : LoadedWebArchive::No);
 }
