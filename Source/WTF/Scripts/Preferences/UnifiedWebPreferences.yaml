@@ -1188,6 +1188,20 @@ CSSFontVariantEmojiEnabled:
     WebCore:
       default: false
 
+CSSHasSlottedEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS :has-slotted pseudo class"
+  humanReadableDescription: "Enable the :has-slotted pseudo class on Slot elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSInputSecurityEnabled:
   type: bool
   status: testable

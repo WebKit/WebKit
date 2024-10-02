@@ -28,6 +28,7 @@
 
 #include "ElementInlines.h"
 #include "HTMLSlotElement.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderTreeUpdater.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
@@ -385,6 +386,9 @@ void NamedSlotAssignment::willRemoveAssignedNode(const Node& node, ShadowRoot&)
     slot->assignedNodes.removeFirstMatching([&node](const auto& item) {
         return item.get() == &node;
     });
+
+    if (auto* slotElement = slot->element.get())
+        Style::PseudoClassChangeInvalidation styleInvalidation(*slotElement, CSSSelector::PseudoClass::HasSlotted, !slot->assignedNodes.isEmpty());
 }
 
 const AtomString& NamedSlotAssignment::slotNameForHostChild(const Node& child) const
@@ -416,8 +420,11 @@ void NamedSlotAssignment::assignSlots(ShadowRoot& shadowRoot)
         }
     }
 
-    for (auto& entry : m_slots)
+    for (auto& entry : m_slots) {
         entry.value->assignedNodes.shrinkToFit();
+        if (auto* slotElement = entry.value->element.get())
+            Style::PseudoClassChangeInvalidation styleInvalidation(*slotElement, CSSSelector::PseudoClass::HasSlotted, !entry.value->assignedNodes.isEmpty());
+    }
 }
 
 void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
@@ -425,8 +432,11 @@ void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
     ASSERT(!slotName.isNull());
     if (slotName == defaultSlotName()) {
         auto defaultSlotEntry = m_slots.find(defaultSlotName());
-        if (defaultSlotEntry != m_slots.end())
+        if (defaultSlotEntry != m_slots.end()) {
             defaultSlotEntry->value->assignedNodes.append(child);
+            if (auto* slotElement = defaultSlotEntry->value->element.get())
+                Style::PseudoClassChangeInvalidation styleInvalidation(*slotElement, CSSSelector::PseudoClass::HasSlotted, true);
+        }
         return;
     }
 
@@ -434,6 +444,9 @@ void NamedSlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
         return makeUnique<Slot>();
     });
     addResult.iterator->value->assignedNodes.append(child);
+
+    if (auto* slotElement = addResult.iterator->value->element.get())
+        Style::PseudoClassChangeInvalidation styleInvalidation(*slotElement, CSSSelector::PseudoClass::HasSlotted, true);
 }
 
 HTMLSlotElement* ManualSlotAssignment::findAssignedSlot(const Node& node)

@@ -263,6 +263,13 @@ ALWAYS_INLINE bool matchesDirPseudoClass(const Element& element, const AtomStrin
     return false;
 }
 
+ALWAYS_INLINE bool matchesHasSlottedPseudoClass(const Element& element)
+{
+    auto* slotElement = dynamicDowncast<HTMLSlotElement>(element);
+    auto* assignedNodes = slotElement ? slotElement->assignedNodes() : nullptr;
+    return assignedNodes && !assignedNodes->isEmpty();
+}
+
 ALWAYS_INLINE bool matchesReadOnlyPseudoClass(const Element& element)
 {
     return !element.matchesReadWritePseudoClass();
