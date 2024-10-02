@@ -203,12 +203,20 @@ void printInternal(PrintStream& out, RawHex value)
         return;
     }
 #endif
+#if OS(WINDOWS)
+    out.printf("0x%p", value.ptr());
+#else
     out.printf("%p", value.ptr());
+#endif
 }
 
 void printInternal(PrintStream& out, RawPointer value)
 {
+#if OS(WINDOWS)
+    out.printf("0x%p", value.value());
+#else
     out.printf("%p", value.value());
+#endif
 }
 
 void printInternal(PrintStream& out, FixedWidthDouble value)
