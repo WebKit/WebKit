@@ -1878,3 +1878,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/280556 [ macOS iOS wk2 release ] webrtc/stats-timestamp-increases.html is a flaky failure.
 [ Release ] webrtc/stats-timestamp-increases.html  [ Pass Failure ]
+
+# webkit.org/b/280728 [ Ventura wk2 ] imported/w3c/web-platform-tests/screen-orientation/active-lock.html is a flaky failure.
+[ Ventura ] imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
