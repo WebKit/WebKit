@@ -46,11 +46,17 @@ bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& fle
     return flexDirection == FlexDirection::Row || flexBox.style().flexDirection() == FlexDirection::RowReverse;
 }
 
-bool FlexFormattingUtils::isReversedToContentDirection(const ElementBox& flexBox)
+bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexBox)
 {
     ASSERT(flexBox.isFlexBox());
     auto flexDirection = flexBox.style().flexDirection();
     return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
+}
+
+bool FlexFormattingUtils::areFlexLinesReversedInCrossAxis(const ElementBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    return flexBox.style().flexWrap() == FlexWrap::Reverse;
 }
 
 LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const

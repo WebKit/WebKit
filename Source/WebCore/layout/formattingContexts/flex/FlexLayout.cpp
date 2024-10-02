@@ -649,12 +649,12 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 // non-logical alignments
                 case ContentPosition::Left:
                 case ContentPosition::Start:
-                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
+                    if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return availableMainSpace - lineContentOuterMainSize;
                     return LayoutUnit { };
                 case ContentPosition::Right:
                 case ContentPosition::End:
-                    if (FlexFormattingUtils::isReversedToContentDirection(flexContainer()))
+                    if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return LayoutUnit { };
                     return availableMainSpace - lineContentOuterMainSize;
                 default:
@@ -809,13 +809,22 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     auto flexContainerUsedCrossSize = crossAxis.definiteSize.value_or(flexLinesCrossSize);
     // Align all flex lines per align-content.
     auto initialOffset = [&]() -> LayoutUnit {
-        switch (flexContainerStyle().alignContent().position()) {
-        case ContentPosition::Start:
+        auto alignContentValue = [&] {
+            auto value = flexContainerStyle().alignContent().position();
+            auto isWrapReversed = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(flexContainer());
+            if (value == ContentPosition::Start)
+                return isWrapReversed ? ContentPosition::FlexEnd : ContentPosition::FlexStart;
+            if (value == ContentPosition::End)
+                return isWrapReversed ? ContentPosition::FlexStart : ContentPosition::FlexEnd;
+            return value;
+        };
+        switch (alignContentValue()) {
         case ContentPosition::Normal:
+        case ContentPosition::FlexStart:
             return { };
         case ContentPosition::Center:
             return flexContainerUsedCrossSize / 2 - flexLinesCrossSize / 2;
-        case ContentPosition::End:
+        case ContentPosition::FlexEnd:
             return flexContainerUsedCrossSize - flexLinesCrossSize;
         default:
             switch (flexContainerStyle().alignContent().distribution()) {
@@ -844,8 +853,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
             return extraCrossSpace / (lineRanges.size() - 1);
         case ContentDistribution::SpaceAround:
             return extraCrossSpace / lineRanges.size();
-        case ContentDistribution::Stretch:
-        case ContentDistribution::Default: {
+        case ContentDistribution::Stretch: {
             // Lines stretch to take up the remaining space. If the leftover free-space is negative,
             // this value is identical to flex-start. Otherwise, the free-space is split equally between all of the lines,
             // increasing their cross size.

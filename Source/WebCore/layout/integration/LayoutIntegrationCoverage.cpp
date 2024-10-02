@@ -135,7 +135,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignItems, reasons, includeReasons);
 
-    if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
+    if (flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignContent, reasons, includeReasons);
 
     if (!flexBoxStyle.rowGap().isNormal())
