@@ -14,9 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/WEB_FEATURES.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/all-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/all-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/layer-import-parsing.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/layer.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/supports-import-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/reference/all-green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/reference/ref-filled-green-100px-square.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/reference/ref-green-text.html
