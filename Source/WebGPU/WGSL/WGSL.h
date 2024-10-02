@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -233,7 +233,7 @@ struct PrepareResult {
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, PipelineLayout*>&);
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, PipelineLayout*);
 
-String generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
+std::variant<String, Error> generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
 
 std::optional<ConstantValue> evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
 

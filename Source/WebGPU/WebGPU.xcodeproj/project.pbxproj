@@ -188,6 +188,7 @@
 		97A448A62AE3546700A4E147 /* ASTMustUseAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 97A448A32AE3546700A4E147 /* ASTMustUseAttribute.h */; };
 		97A448A72AE3546700A4E147 /* ASTDiagnosticAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 97A448A42AE3546700A4E147 /* ASTDiagnosticAttribute.h */; };
 		97A448A82AE3546700A4E147 /* ASTCallStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 97A448A52AE3546700A4E147 /* ASTCallStatement.h */; };
+		97B4CFCB2CAAF3CD00C87163 /* WGSLShaderModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97B4CFCA2CAAF3CD00C87163 /* WGSLShaderModule.cpp */; };
 		97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		97C36CFE29F1730100CFB379 /* Constraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C36CFC29F1730000CFB379 /* Constraints.h */; };
 		97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C36CFD29F1730000CFB379 /* Constraints.cpp */; };
@@ -501,6 +502,7 @@
 		97A448A32AE3546700A4E147 /* ASTMustUseAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTMustUseAttribute.h; sourceTree = "<group>"; };
 		97A448A42AE3546700A4E147 /* ASTDiagnosticAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnosticAttribute.h; sourceTree = "<group>"; };
 		97A448A52AE3546700A4E147 /* ASTCallStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTCallStatement.h; sourceTree = "<group>"; };
+		97B4CFCA2CAAF3CD00C87163 /* WGSLShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WGSLShaderModule.cpp; sourceTree = "<group>"; };
 		97C36CFC29F1730000CFB379 /* Constraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constraints.h; sourceTree = "<group>"; };
 		97C36CFD29F1730000CFB379 /* Constraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constraints.cpp; sourceTree = "<group>"; };
 		97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTFloat16Literal.h; sourceTree = "<group>"; };
@@ -737,6 +739,7 @@
 				97099AC42AC49AAB003B41F8 /* WGSLEnums.cpp */,
 				97099AC52AC49AAB003B41F8 /* WGSLEnums.h */,
 				1CA5B4F32A6F28C400E5F297 /* wgslfuzz.cpp */,
+				97B4CFCA2CAAF3CD00C87163 /* WGSLShaderModule.cpp */,
 				9776BE7529957E12002D6D93 /* WGSLShaderModule.h */,
 			);
 			path = WGSL;
@@ -1253,6 +1256,7 @@
 				97DE28482C348D8A00F4DEC3 /* VisibilityValidator.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 				97099AC62AC49AAB003B41F8 /* WGSLEnums.cpp in Sources */,
+				97B4CFCB2CAAF3CD00C87163 /* WGSLShaderModule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

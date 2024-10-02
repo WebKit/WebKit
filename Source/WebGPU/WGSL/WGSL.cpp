@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,16 +120,18 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
     return result;
 }
 
-String generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
+std::variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
 {
     PhaseTimes phaseTimes;
     String result;
+    if (auto maybeError = shaderModule.validateOverrides(constantValues))
+        return { *maybeError };
     {
         PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
         result = Metal::generateMetalCode(shaderModule, prepareResult, constantValues);
     }
     logPhaseTimes(phaseTimes);
-    return result;
+    return { result };
 }
 
 std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, PipelineLayout*>& pipelineLayouts)

@@ -160,7 +160,14 @@ static int runWGSL(const CommandLine& options)
 
         constantValues.add(constant.mangledName, *defaultValue);
     }
-    auto msl = WGSL::generate(shaderModule, result, constantValues);
+    auto generationResult = WGSL::generate(shaderModule, result, constantValues);
+
+    if (auto* error = std::get_if<WGSL::Error>(&generationResult)) {
+        dataLogLn(*error);
+        return EXIT_FAILURE;
+    }
+
+    auto& msl = std::get<String>(generationResult);
 
     if (options.dumpASTAtEnd())
         WGSL::AST::dumpAST(shaderModule);

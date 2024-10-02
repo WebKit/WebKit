@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -270,6 +270,15 @@ public:
     }
     bool hasFeature(const String& featureName) const { return m_configuration.supportedFeatures.contains(featureName); }
 
+    template<typename Validator>
+    void addOverrideValidation(AST::Expression& expression, Validator&& validator)
+    {
+        auto result = m_overrideValidations.add(&expression, Vector<Function<std::optional<String>(const ConstantValue&)>> { });
+        result.iterator->value.append(WTFMove(validator));
+    }
+
+    std::optional<Error> validateOverrides(const HashMap<String, ConstantValue>&);
+
 private:
     String m_source;
     bool m_usesExternalTextures { false };
@@ -306,6 +315,7 @@ private:
     std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
+    HashMap<const AST::Expression*, Vector<Function<std::optional<String>(const ConstantValue&)>>> m_overrideValidations;
 };
 
 } // namespace WGSL
