@@ -14795,6 +14795,11 @@ GeolocationPermissionRequestManagerProxy& WebPageProxy::geolocationPermissionReq
     return internals().geolocationPermissionRequestManager;
 }
 
+Ref<GeolocationPermissionRequestManagerProxy> WebPageProxy::protectedGeolocationPermissionRequestManager()
+{
+    return geolocationPermissionRequestManager();
+}
+
 ScrollPinningBehavior WebPageProxy::scrollPinningBehavior() const
 {
     return internals().scrollPinningBehavior;

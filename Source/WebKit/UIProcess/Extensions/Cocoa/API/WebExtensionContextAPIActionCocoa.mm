@@ -110,7 +110,7 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    action.value()->setLabel(title);
+    Ref { action.value() }->setLabel(title);
 
     completionHandler({ });
 }
@@ -126,16 +126,18 @@ void WebExtensionContext::actionSetIcon(std::optional<WebExtensionWindowIdentifi
     }
 
     id parsedIcons = parseJSON(iconsJSON, JSONOptions::FragmentsAllowed);
+    Ref webExtensionAction = action.value();
+
     if (auto *dictionary = dynamic_objc_cast<NSDictionary>(parsedIcons))
-        action.value()->setIcons(dictionary);
+        webExtensionAction->setIcons(dictionary);
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     else if (auto *array = dynamic_objc_cast<NSArray>(parsedIcons))
-        action.value()->setIconVariants(array);
+        webExtensionAction->setIconVariants(array);
 #endif
     else {
-        action.value()->setIcons(nil);
+        webExtensionAction->setIcons(nil);
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-        action.value()->setIconVariants(nil);
+        webExtensionAction->setIconVariants(nil);
 #endif
     }
 
@@ -165,7 +167,7 @@ void WebExtensionContext::actionSetPopup(std::optional<WebExtensionWindowIdentif
         return;
     }
 
-    action.value()->setPopupPath(popupPath);
+    Ref { action.value() }->setPopupPath(popupPath);
 
     completionHandler({ });
 }
@@ -252,7 +254,7 @@ void WebExtensionContext::actionSetBadgeText(std::optional<WebExtensionWindowIde
         return;
     }
 
-    action.value()->setBadgeText(text);
+    Ref { action.value() }->setBadgeText(text);
 
     completionHandler({ });
 }
@@ -278,7 +280,7 @@ void WebExtensionContext::actionSetEnabled(std::optional<WebExtensionTabIdentifi
         return;
     }
 
-    action.value()->setEnabled(enabled);
+    Ref { action.value() }->setEnabled(enabled);
 
     completionHandler({ });
 }

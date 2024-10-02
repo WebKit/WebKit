@@ -386,7 +386,7 @@ void WebExtensionController::removePage(WebPageProxy& page)
     ASSERT(m_pages.contains(page));
     m_pages.remove(page);
 
-    Ref pool = page.configuration().processPool();
+    Ref pool = page.protectedConfiguration()->processPool();
     removeProcessPool(pool);
 
     Ref dataStore = page.websiteDataStore();
