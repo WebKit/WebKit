@@ -463,28 +463,23 @@ void Connection::removeMessageReceiver(ReceiverName receiverName, uint64_t desti
 
 void Connection::dispatchMessageReceiverMessage(MessageReceiver& messageReceiver, UniqueRef<Decoder>&& decoder)
 {
-    if (!decoder->isSyncMessage()) {
+    if (decoder->isSyncMessage()) {
+        auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, decoder->syncRequestID().toUInt64());
+        messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
+        // If the message was not handled or handler tried to decode and marked it invalid, reply with
+        // cancel message. For more info, see Connection:dispatchSyncMessage.
+        std::unique_ptr remainingReplyEncoder = replyEncoder.moveToUniquePtr();
+        if (remainingReplyEncoder)
+            sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, decoder->syncRequestID().toUInt64()), { });
+    } else
         messageReceiver.didReceiveMessage(*this, *decoder);
+#if ENABLE(IPC_TESTING_API)
+    if (m_ignoreInvalidMessageForTesting)
         return;
-    }
-
-    auto syncRequestID = decoder->decode<SyncRequestID>();
-    if (UNLIKELY(!syncRequestID)) {
-        // We received an invalid sync message.
-        // FIXME: Handle this.
-        return;
-    }
-
-    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID->toUInt64());
-
-    // Hand off both the decoder and encoder to the work queue message receiver.
-    bool wasHandled = messageReceiver.didReceiveSyncMessage(*this, *decoder, replyEncoder);
-
-    // FIXME: If the message was invalid, we should send back a SyncMessageError.
+#endif
     ASSERT(decoder->isValid());
-
-    if (!wasHandled)
-        sendSyncReply(WTFMove(replyEncoder));
+    if (!decoder->isValid())
+        dispatchDidReceiveInvalidMessage(decoder->messageName(), decoder->indexOfObjectFailingDecoding());
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -1025,7 +1020,15 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 {
     ASSERT(message->messageReceiverName() != ReceiverName::Invalid);
 
-    if (message->messageName() == MessageName::SyncMessageReply) {
+    if (!message->isValid()) {
+        // If the message is invalid, we could send back a SyncMessageError. In case the message
+        // would need a reply, we do not cancel it as we don't know the destination to cancel it
+        // with. Currently ther is no use-case to handle invalid messages.
+        dispatchDidReceiveInvalidMessage(message->messageName(), message->indexOfObjectFailingDecoding());
+        return;
+    }
+
+    if (message->messageName() == MessageName::SyncMessageReply || message->messageName() == MessageName::CancelSyncMessageReply) {
         processIncomingSyncReply(WTFMove(message));
         return;
     }
@@ -1228,17 +1231,8 @@ void Connection::sendOutgoingMessages()
 
 void Connection::dispatchSyncMessage(Decoder& decoder)
 {
-    // FIXME: If the message is invalid, we should send back a SyncMessageError.
-    // Currently we just wait for a timeout to happen, which will block the WebContent process.
-
     assertIsCurrent(dispatcher());
     ASSERT(decoder.isSyncMessage());
-
-    auto syncRequestID = decoder.decode<SyncRequestID>();
-    if (UNLIKELY(!syncRequestID)) {
-        // We received an invalid sync message.
-        return;
-    }
 
     ++m_inDispatchSyncMessageCount;
     auto decrementSyncMessageCount = makeScopeExit([&] {
@@ -1246,33 +1240,28 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         --m_inDispatchSyncMessageCount;
     });
 
-    auto replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID->toUInt64());
-
-    bool wasHandled = false;
+    UniqueRef replyEncoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, decoder.syncRequestID().toUInt64());
     if (decoder.messageName() == MessageName::WrappedAsyncMessageForTesting) {
-        if (!m_fullySynchronousModeIsAllowedForTesting) {
+        if (m_fullySynchronousModeIsAllowedForTesting) {
+            std::unique_ptr<Decoder> unwrappedDecoder = Decoder::unwrapForTesting(decoder);
+            RELEASE_ASSERT(unwrappedDecoder);
+            processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(unwrappedDecoder)));
+            m_syncState->dispatchMessages();
+            sendMessageImpl(WTFMove(replyEncoder), { });
+        } else
             decoder.markInvalid();
-            return;
-        }
-        std::unique_ptr<Decoder> unwrappedDecoder = Decoder::unwrapForTesting(decoder);
-        RELEASE_ASSERT(unwrappedDecoder);
-        processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(unwrappedDecoder)));
-        m_syncState->dispatchMessages();
-    } else {
-        // Hand off both the decoder and encoder to the client.
-        wasHandled = m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
-    }
+    } else
+        m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
 
-#if ENABLE(IPC_TESTING_API)
-    ASSERT(decoder.isValid() || m_ignoreInvalidMessageForTesting);
-    if (!wasHandled && !decoder.isValid())
-        replyEncoder->setSyncMessageDeserializationFailure();
-#else
-    ASSERT(decoder.isValid());
-#endif
-
-    if (!wasHandled)
-        sendSyncReply(WTFMove(replyEncoder));
+    // If the message was not handled, i.e. replyEncoder was not consumed, reply with cancel
+    // message. We do not distinquish between a decode failure and failure to find a
+    // destination, as there would be an observable difference when sending malformed message to
+    // non-existing id (cancel) and sending malformed message to existing id (decoding error).
+    // FIXME: Using potentially moved-from UniquePtr is not nice but at the moment well-defined.
+    // In later work, the encoder will be removed altogether.
+    std::unique_ptr remainingReplyEncoder = replyEncoder.moveToUniquePtr();
+    if (remainingReplyEncoder)
+        sendMessageImpl(makeUniqueRef<Encoder>(MessageName::CancelSyncMessageReply, decoder.syncRequestID().toUInt64()), { });
 }
 
 void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName, int32_t indexOfObjectFailingDecoding)
@@ -1451,14 +1440,16 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
     if (message->shouldUseFullySynchronousModeForTesting())
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting--;
 
-    if (m_didReceiveInvalidMessage
-#if ENABLE(IPC_TESTING_API)
-        && !m_ignoreInvalidMessageForTesting
-#endif
-        && isValid())
-        m_client->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
-
+    bool didReceiveInvalidMessage = m_didReceiveInvalidMessage;
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
+
+#if ENABLE(IPC_TESTING_API)
+    if (m_ignoreInvalidMessageForTesting)
+        return;
+#endif
+    ASSERT(!didReceiveInvalidMessage);
+    if (didReceiveInvalidMessage && isValid())
+        m_client->didReceiveInvalidMessage(*this, message->messageName(), message->indexOfObjectFailingDecoding());
 }
 
 size_t Connection::numberOfMessagesToProcess(size_t totalMessages)
@@ -1672,6 +1663,7 @@ ASCIILiteral errorAsString(Error error)
     case Error::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage"_s;
     case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling"_s;
     case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait"_s;
+    case Error::SyncMessageCancelled: return "SyncMessageCancelled"_s;
     case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies"_s;
     case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments"_s;
     case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments"_s;

@@ -32,6 +32,7 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "ReceiverMatcher.h"
+#include "SyncRequestID.h"
 #include "Timeout.h"
 #include <wtf/Assertions.h>
 #include <wtf/CheckedPtr.h>
@@ -101,6 +102,7 @@ enum class Error : uint8_t {
     WaitingOnAlreadyDispatchedMessage,
     AttemptingToWaitInsideSyncMessageHandling,
     SyncMessageInterruptedWait,
+    SyncMessageCancelled,
     CantWaitForSyncReplies,
     FailedToEncodeMessageArguments,
     FailedToDecodeReplyArguments,
@@ -165,7 +167,6 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 };
 
 class Decoder;
-class Encoder;
 class MachMessage;
 class UnixMessage;
 class WorkQueueMessageReceiver;
@@ -222,13 +223,9 @@ struct ConnectionAsyncReplyHandler {
     Markable<AsyncReplyID> replyID;
 };
 
-enum class ConnectionSyncRequestIDType { };
-using ConnectionSyncRequestID = AtomicObjectIdentifier<ConnectionSyncRequestIDType>;
-
 class Connection : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
-    enum class SyncRequestIDType { };
-    using SyncRequestID = ConnectionSyncRequestID;
+    using SyncRequestID = IPC::SyncRequestID;
     using AsyncReplyID = IPC::AsyncReplyID;
 
     class Client : public MessageReceiver, public CanMakeThreadSafeCheckedPtr<Client> {
@@ -794,12 +791,14 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
         return { replyDecoderOrError.error() };
     }
 
+    UniqueRef decoder = WTFMove(replyDecoderOrError.value());
+    if (decoder->messageName() == MessageName::CancelSyncMessageReply)
+        return { Error::SyncMessageCancelled };
     std::optional<typename T::ReplyArguments> replyArguments;
-    *replyDecoderOrError.value() >> replyArguments;
+    *decoder >> replyArguments;
     if (!replyArguments)
         return { Error::FailedToDecodeReplyArguments };
-
-    return SendSyncResult<T> { WTFMove(replyDecoderOrError.value()), WTFMove(*replyArguments) };
+    return SendSyncResult<T> { WTFMove(decoder), WTFMove(*replyArguments) };
 }
 
 template<typename T, typename... Arguments>

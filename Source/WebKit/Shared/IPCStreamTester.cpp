@@ -109,6 +109,11 @@ void IPCStreamTester::syncMessageNotStreamEncodableReply(uint32_t value, Complet
     completionHandler(value);
 }
 
+void IPCStreamTester::syncMessageNotStreamEncodableBoth(uint32_t value, CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(value);
+}
+
 void IPCStreamTester::syncCrashOnZero(int32_t value, CompletionHandler<void(int32_t)>&& completionHandler)
 {
     if (!value) {

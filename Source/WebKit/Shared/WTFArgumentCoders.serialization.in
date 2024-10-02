@@ -168,7 +168,7 @@ template: struct WebKit::WebExtensionWindowIdentifierType
 header: <wtf/ObjectIdentifier.h>
 template: class WebCore::ResourceLoader
 template: class WebCore::WebSocketChannel
-template: enum class IPC::ConnectionSyncRequestIDType
+template: enum class IPC::SyncRequestIDType
 template: enum class JSC::MicrotaskIdentifierType
 template: enum class TestWebKitAPI::TestedObjectIdentifierType
 template: enum class WebCore::DOMCacheIdentifierType

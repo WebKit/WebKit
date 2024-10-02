@@ -94,6 +94,12 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
     if (UNLIKELY(!destinationID))
         return;
     m_destinationID = WTFMove(*destinationID);
+    if (messageIsSync(m_messageName)) {
+        auto syncRequestID = decode<SyncRequestID>();
+        if (UNLIKELY(!syncRequestID))
+            return;
+        m_syncRequestID = syncRequestID;
+    }
 }
 
 Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
@@ -106,6 +112,12 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     if (UNLIKELY(!messageName))
         return;
     m_messageName = WTFMove(*messageName);
+    if (messageIsSync(m_messageName)) {
+        auto syncRequestID = decode<SyncRequestID>();
+        if (UNLIKELY(!syncRequestID))
+            return;
+        m_syncRequestID = syncRequestID;
+    }
 }
 
 Decoder::~Decoder()
@@ -133,13 +145,6 @@ bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
 {
     return m_messageFlags.contains(MessageFlags::MaintainOrderingWithAsyncMessages);
 }
-
-#if ENABLE(IPC_TESTING_API)
-bool Decoder::hasSyncMessageDeserializationFailure() const
-{
-    return m_messageFlags.contains(MessageFlags::SyncMessageDeserializationFailure);
-}
-#endif
 
 #if PLATFORM(MAC)
 void Decoder::setImportanceAssertion(ImportanceAssertion&& assertion)

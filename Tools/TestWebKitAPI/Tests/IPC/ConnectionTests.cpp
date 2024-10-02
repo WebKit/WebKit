@@ -53,7 +53,7 @@ struct MockTestSyncMessage {
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(124); }
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_SyncPing; }
     using ReplyArguments = std::tuple<>;
     auto&& arguments()
     {
@@ -71,7 +71,7 @@ struct MockTestSyncMessageWithDataReply {
     static constexpr bool isSync = true;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr IPC::MessageName name()  { return  IPC::MessageName::IPCTester_SyncPing; } // Needs to be sync.
+    static constexpr IPC::MessageName name()  { return IPC::MessageName::IPCTester_SyncPing; } // Needs to be sync.
     using ReplyArguments = std::tuple<std::span<const uint8_t>>;
     auto&& arguments()
     {
@@ -1073,12 +1073,13 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
             for (size_t i = 0; i < dataSize; ++i)
                 data[i] = static_cast<uint8_t>(i);
             encoder.get() << data;
-            return false;
+            b()->sendSyncReply(WTFMove(encoder));
+            return true;
         });
         ASSERT_TRUE(openB());
     });
     for (int i = 0; i < iterations; ++i) {
-        auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, IPC::Timeout::infinity());
+        auto sendResult = a()->sendSync(MockTestSyncMessageWithDataReply { }, i, kDefaultWaitForTimeout);
         ASSERT_TRUE(sendResult.succeeded());
         auto& [replyData] = sendResult.reply();
         for (size_t i = 0; i < replyData.size(); ++i) {
@@ -1093,6 +1094,98 @@ TEST_P(ConnectionRunLoopTest, SendLocalSyncMessageWithDataReply)
     });
     localReferenceBarrier();
 }
+
+// Tests that unhandled sync message is cancelled. IPC::Connection receiving unhandled messages.
+TEST_P(ConnectionRunLoopTest, SyncMessageNotHandledIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t gotDestination = 0;
+    runLoop->dispatch([&] {
+        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+            gotDestination = decoder.destinationID();
+            // Unhandled message.
+            if (decoder.destinationID() == 77)
+                return false; // Message destiation was unknown, unhandled message.
+            if (decoder.destinationID() == 99) {
+                b()->sendSyncReply(WTFMove(encoder));
+                return true;
+            }
+            EXPECT_TRUE(false);
+            return false;
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (size_t i = 0; i < iterations; ++i) {
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 77, kDefaultWaitForTimeout);
+            ASSERT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+            EXPECT_EQ(77u, gotDestination);
+        }
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 99, kDefaultWaitForTimeout);
+            EXPECT_TRUE(result.succeeded());
+            EXPECT_EQ(99u, gotDestination);
+        }
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+
+#if ENABLE(IPC_TESTING_API)
+// Tests that sync message with decode failure is cancelled. IPC::Connection does not allow these,
+// but JS IPC Testing API uses these.
+TEST_P(ConnectionRunLoopTest, SyncMessageDecodeFailureIsCancelled)
+{
+    constexpr size_t iterations = 10;
+    ASSERT_TRUE(openA());
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    uint64_t gotDestination = 0;
+    runLoop->dispatch([&] {
+        b()->setIgnoreInvalidMessageForTesting();
+        bClient().setSyncMessageHandler([&](IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) -> bool {
+            gotDestination = decoder.destinationID();
+            // Decode failure.
+            if (decoder.destinationID() == 88) {
+                EXPECT_FALSE(decoder.decode<uint64_t>());
+                return true; // Message was handled, but decode failed.
+            }
+            if (decoder.destinationID() == 99) {
+                b()->sendSyncReply(WTFMove(encoder));
+                return true;
+            }
+            EXPECT_TRUE(false);
+            return false;
+        });
+        ASSERT_TRUE(openB());
+    });
+    for (size_t i = 0; i < iterations; ++i) {
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 88, IPC::Timeout::infinity());
+            ASSERT_FALSE(result.succeeded());
+            EXPECT_EQ(IPC::Error::SyncMessageCancelled, result.error());
+            EXPECT_EQ(88u, gotDestination);
+        }
+        {
+            gotDestination = 0;
+            auto result = a()->sendSync(MockTestSyncMessage(), 99, IPC::Timeout::infinity());
+            EXPECT_TRUE(result.succeeded());
+            EXPECT_EQ(99u, gotDestination);
+        }
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+    localReferenceBarrier();
+}
+#endif
 
 #undef RUN_LOOP_NAME
 #undef LOCAL_STRINGIFY

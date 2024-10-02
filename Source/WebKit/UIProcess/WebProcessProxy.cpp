@@ -1228,13 +1228,8 @@ bool WebProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Deco
     if (protectedProcessPool()->dispatchSyncMessage(connection, decoder, replyEncoder))
         return true;
     // WebProcessProxy will receive messages to instances that were removed from
-    // the message receiver map. Filter these out by sending the cancel reply.
-#if ENABLE(IPC_TESTING_API)
-    if (!decoder.isValid())
-        replyEncoder->setSyncMessageDeserializationFailure();
-#endif
-    connection.sendSyncReply(WTFMove(replyEncoder));
-
+    // the message receiver map. Mark all messages as handled. Unreplied messages
+    // will be cancelled by the caller.
     return true;
 }
 
