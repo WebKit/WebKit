@@ -33,9 +33,7 @@
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect);
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
 static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelectRange);
-#endif
 static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions);
 
 }
@@ -49,6 +47,7 @@ const ClassInfo IntlPluralRulesPrototype::s_info = { "Intl.PluralRules"_s, &Base
 /* Source for IntlPluralRulesPrototype.lut.h
 @begin pluralRulesPrototypeTable
   select           intlPluralRulesPrototypeFuncSelect           DontEnum|Function 1
+  selectRange      intlPluralRulesPrototypeFuncSelectRange      DontEnum|Function 2
   resolvedOptions  intlPluralRulesPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
@@ -76,9 +75,6 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm, JSGlobalObject* globalObje
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     UNUSED_PARAM(globalObject);
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->selectRange, intlPluralRulesPrototypeFuncSelectRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -99,7 +95,6 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect, (JSGlobalObject* gl
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(globalObject, value)));
 }
 
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
 JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelectRange, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -124,7 +119,6 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelectRange, (JSGlobalObjec
 
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->selectRange(globalObject, start, end)));
 }
-#endif
 
 JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

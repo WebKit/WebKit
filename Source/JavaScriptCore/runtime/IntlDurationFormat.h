@@ -101,9 +101,7 @@ private:
     static ASCIILiteral unitStyleString(UnitStyle);
     static ASCIILiteral displayString(Display);
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
-#endif
     String m_locale;
     String m_numberingSystem;
     CString m_dataLocaleWithExtensions;

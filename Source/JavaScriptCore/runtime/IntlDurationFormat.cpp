@@ -36,21 +36,14 @@
 // While UListFormatter APIs are draft in ICU 67, they are stable in ICU 68 with the same function signatures.
 // So we can assume that these signatures of draft APIs are stable.
 // If UListFormatter is available, UNumberFormatter is also available.
-#if HAVE(ICU_U_LIST_FORMATTER)
 #ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
-#endif
 #endif
 #include <unicode/ulistformatter.h>
 #include <unicode/unumberformatter.h>
 #include <unicode/ures.h>
-#if HAVE(ICU_U_LIST_FORMATTER)
 #define U_HIDE_DRAFT_API 1
-#endif
-
-#if HAVE(ICU_U_LIST_FORMATTER)
 #include <unicode/uformattedvalue.h>
-#endif
 
 namespace JSC {
 namespace IntlDurationFormatInternal {
@@ -245,7 +238,6 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
     m_fractionalDigits = intlNumberOption(globalObject, options, vm.propertyNames->fractionalDigits, 0, 9, fractionalDigitsUndefinedValue);
     RETURN_IF_EXCEPTION(scope, void());
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     {
         auto toUListFormatterWidth = [](Style style) {
             // 6. Let listStyle be durationFormat.[[Style]].
@@ -272,14 +264,7 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
             return;
         }
     }
-#else
-    UNUSED_PARAM(IntlDurationFormatInternal::verbose);
-    throwTypeError(globalObject, scope, "Failed to initialize Intl.DurationFormat since this feature is not supported in the linked ICU version"_s);
-    return;
-#endif
 }
-
-#if HAVE(ICU_U_LIST_FORMATTER)
 
 static String retrieveSeparator(const CString& locale, const String& numberingSystem)
 {
@@ -540,15 +525,12 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
     return elements;
 }
 
-#endif
-
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.format
 JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Duration duration) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     auto elements = collectElements(globalObject, this, WTFMove(duration));
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -584,10 +566,6 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
     return jsString(vm, String(WTFMove(result)));
-#else
-    UNUSED_PARAM(duration);
-    return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-#endif
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.formatToParts
@@ -596,7 +574,6 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_LIST_FORMATTER)
     auto elements = collectElements(globalObject, this, WTFMove(duration));
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -749,10 +726,6 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
     }
 
     return parts;
-#else
-    UNUSED_PARAM(duration);
-    return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-#endif
 }
 
 // https://tc39.es/proposal-intl-duration-format/#sec-Intl.DurationFormat.prototype.resolvedOptions

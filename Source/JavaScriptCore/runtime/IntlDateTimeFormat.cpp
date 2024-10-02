@@ -42,16 +42,12 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #include <unicode/uformattedvalue.h>
 #ifdef U_HIDE_DRAFT_API
 #undef U_HIDE_DRAFT_API
 #endif
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #include <unicode/udateintervalformat.h>
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 #define U_HIDE_DRAFT_API 1
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
 
 namespace JSC {
 
@@ -1445,8 +1441,6 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     return m_dateIntervalFormat.get();
 }
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-
 static std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>> formattedValueFromDateRange(UDateIntervalFormat& dateIntervalFormat, UDateFormat& dateFormat, double startDate, double endDate, UErrorCode& status)
 {
     auto result = std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>>(udtitvfmt_openResult(&status));
@@ -1525,8 +1519,6 @@ static bool dateFieldsPracticallyEqual(const UFormattedValue* formattedValue, UE
     return !hasSpan;
 }
 
-#endif // HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-
 JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
 {
     ASSERT(m_dateFormat);
@@ -1545,7 +1537,6 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
     auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
     UErrorCode status = U_ZERO_ERROR;
     auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_dateFormat, startDate, endDate, status);
     if (U_FAILURE(status)) {
@@ -1583,17 +1574,6 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     return jsString(vm, String(WTFMove(buffer)));
-#else
-    Vector<UChar, 32> buffer;
-    auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
-    }
-    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
-
-    return jsString(vm, String(WTFMove(buffer)));
-#endif
 }
 
 JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, double startDate, double endDate)
@@ -1603,7 +1583,6 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-#if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
     // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
     startDate = timeClip(startDate);
     endDate = timeClip(endDate);
@@ -1807,12 +1786,6 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
     }
 
     return parts;
-#else
-    UNUSED_PARAM(startDate);
-    UNUSED_PARAM(endDate);
-    throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-    return { };
-#endif
 }
 
 

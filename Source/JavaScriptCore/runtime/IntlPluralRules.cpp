@@ -36,12 +36,8 @@
 #undef U_HIDE_DRAFT_API
 #endif
 #include <unicode/upluralrules.h>
-#if HAVE(ICU_U_NUMBER_FORMATTER)
 #include <unicode/unumberformatter.h>
-#endif
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
 #include <unicode/unumberrangeformatter.h>
-#endif
 #define U_HIDE_DRAFT_API 1
 
 namespace JSC {
@@ -122,7 +118,6 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     auto locale = m_locale.utf8();
     UErrorCode status = U_ZERO_ERROR;
 
-#if HAVE(ICU_U_NUMBER_FORMATTER)
     StringBuilder skeletonBuilder;
 
     appendNumberFormatDigitOptionsToSkeleton(this, skeletonBuilder);
@@ -137,36 +132,11 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
         return;
     }
 
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
     m_numberRangeFormatter = std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter>(unumrf_openForSkeletonWithCollapseAndIdentityFallback(upconverted.get(), skeletonView.length(), UNUM_RANGE_COLLAPSE_NONE, UNUM_IDENTITY_FALLBACK_RANGE, locale.data(), nullptr, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
     }
-#endif
-#else
-    m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(UNUM_DECIMAL, nullptr, 0, locale.data(), nullptr, &status));
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
-        return;
-    }
-
-    switch (m_roundingType) {
-    case IntlRoundingType::FractionDigits:
-        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_INTEGER_DIGITS, m_minimumIntegerDigits);
-        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_FRACTION_DIGITS, m_minimumFractionDigits);
-        unum_setAttribute(m_numberFormat.get(), UNUM_MAX_FRACTION_DIGITS, m_maximumFractionDigits);
-        break;
-    case IntlRoundingType::SignificantDigits:
-        unum_setAttribute(m_numberFormat.get(), UNUM_SIGNIFICANT_DIGITS_USED, true);
-        unum_setAttribute(m_numberFormat.get(), UNUM_MIN_SIGNIFICANT_DIGITS, m_minimumSignificantDigits);
-        unum_setAttribute(m_numberFormat.get(), UNUM_MAX_SIGNIFICANT_DIGITS, m_maximumSignificantDigits);
-        break;
-    case IntlRoundingType::MorePrecision:
-    case IntlRoundingType::LessPrecision:
-        break;
-    }
-#endif
 
     m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(locale.data(), m_type == Type::Ordinal ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL, &status));
     if (U_FAILURE(status)) {
@@ -245,7 +215,6 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
 
     UErrorCode status = U_ZERO_ERROR;
 
-#if HAVE(ICU_U_NUMBER_FORMATTER)
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
@@ -257,17 +226,8 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
     return jsString(vm, String(WTFMove(buffer)));
-#else
-    Vector<UChar, 8> result(8);
-    auto length = uplrules_selectWithFormat(m_pluralRules.get(), value, m_numberFormat.get(), result.data(), result.size(), &status);
-    if (U_FAILURE(status))
-        return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-
-    return jsString(vm, String({ result.data(), static_cast<size_t>(length) }));
-#endif
 }
 
-#if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
 JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start, double end) const
 {
     ASSERT(m_numberRangeFormatter);
@@ -293,6 +253,5 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
     return jsString(vm, String(WTFMove(buffer)));
 }
-#endif
 
 } // namespace JSC
