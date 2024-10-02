@@ -239,6 +239,12 @@ def ipint_reenable_all_breakpoints(debugger, command, exec_ctx, result, internal
         brk.enabled = True
 
 
+def ipint_continue_on_all_breakpoints(debugger, command, exec_ctx, result, internal_dict):
+    for brk in breakpoints:
+        brk.enabled = True
+        brk.SetAutoContinue(True)
+
+
 def set_breakpoints(debugger, command, exe_ctx, result, internal_dict):
     print("Initializing internal breakpoints...", file=result)
     target = debugger.GetTargetAtIndex(0)
@@ -259,5 +265,6 @@ def __lldb_init_module(debugger, internal_dict):
     debugger.HandleCommand('command script add -f debug_ipint.ipint_break_at ipint_break_at')
     debugger.HandleCommand('command script add -f debug_ipint.ipint_disable_all_breakpoints ipint_disable_all_breakpoints')
     debugger.HandleCommand('command script add -f debug_ipint.ipint_reenable_all_breakpoints ipint_reenable_all_breakpoints')
+    debugger.HandleCommand('command script add -f debug_ipint.ipint_continue_on_all_breakpoints ipint_autocontinue')
     debugger.HandleCommand('command script add -f debug_ipint.set_breakpoints set_breakpoints')
     print("IPInt debugger ready")

@@ -167,44 +167,44 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
     unsigned loopOSREntryBytecodeOffset = pc - callee->bytecode();
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::useBBQJIT()) {
-        if (!jitCompileAndSetHeuristics(callee, instance))
-            WASM_RETURN_TWO(nullptr, nullptr);
+    if (!Options::useBBQJIT())
+        WASM_RETURN_TWO(nullptr, nullptr);
+    if (!jitCompileAndSetHeuristics(callee, instance))
+        WASM_RETURN_TWO(nullptr, nullptr);
 
-        Wasm::BBQCallee* bbqCallee;
-        {
-            Locker locker { instance->calleeGroup()->m_lock };
-            bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
-        }
-        RELEASE_ASSERT(bbqCallee);
-
-        size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
-        RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
-
-        uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
-        if (!buffer)
-            WASM_RETURN_TWO(nullptr, nullptr);
-
-        uint32_t index = 0;
-        buffer[index++] = osrEntryData.loopIndex;
-        for (uint32_t i = 0; i < callee->numLocals(); ++i)
-            buffer[index++] = pl[i].i64;
-
-        // If there's no rethrow slots just 0 fill the buffer.
-        ASSERT(osrEntryData.tryDepth <= callee->rethrowSlots() || !callee->rethrowSlots());
-        for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
-            buffer[index++] = callee->rethrowSlots() ? pl[callee->localSizeToAlloc() + i].i64 : 0;
-
-        for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
-            pl -= 1;
-            buffer[index++] = pl->i64;
-        }
-
-        auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
-        RELEASE_ASSERT(sharedLoopEntrypoint);
-        WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
+    Wasm::BBQCallee* bbqCallee;
+    {
+        Locker locker { instance->calleeGroup()->m_lock };
+        bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
     }
-    WASM_RETURN_TWO(nullptr, nullptr);
+    RELEASE_ASSERT(bbqCallee);
+
+    size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
+    RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
+
+    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
+    if (!buffer)
+        WASM_RETURN_TWO(nullptr, nullptr);
+
+    uint32_t index = 0;
+    buffer[index++] = osrEntryData.loopIndex;
+    for (uint32_t i = 0; i < callee->numLocals(); ++i)
+        buffer[index++] = pl[i].i64;
+
+    // If there's no rethrow slots just 0 fill the buffer.
+    ASSERT(osrEntryData.tryDepth <= callee->rethrowSlots() || !callee->rethrowSlots());
+    for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
+        buffer[index++] = callee->rethrowSlots() ? pl[callee->localSizeToAlloc() + i].i64 : 0;
+
+    for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
+        pl -= 1;
+        buffer[index++] = pl->i64;
+    }
+
+    auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
+    RELEASE_ASSERT(sharedLoopEntrypoint);
+
+    WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)

@@ -692,10 +692,14 @@ extern "C" void ipint_catch_all_entry();
     m(0x09, mint_fa1) \
     m(0x0a, mint_fa2) \
     m(0x0b, mint_fa3) \
-    m(0x0c, mint_stackzero) \
-    m(0x0d, mint_stackeight) \
-    m(0x0e, mint_gap) \
-    m(0x0f, mint_call) \
+    m(0x0c, mint_fa4) \
+    m(0x0d, mint_fa5) \
+    m(0x0e, mint_fa6) \
+    m(0x0f, mint_fa7) \
+    m(0x10, mint_stackzero) \
+    m(0x11, mint_stackeight) \
+    m(0x12, mint_gap) \
+    m(0x13, mint_call) \
 
 #define FOR_EACH_IPINT_MINT_RETURN_OPCODE(m) \
     m(0x00, mint_r0) \
@@ -710,8 +714,12 @@ extern "C" void ipint_catch_all_entry();
     m(0x09, mint_fr1) \
     m(0x0a, mint_fr2) \
     m(0x0b, mint_fr3) \
-    m(0x0c, mint_stack) \
-    m(0x0d, mint_end) \
+    m(0x0c, mint_fr4) \
+    m(0x0d, mint_fr5) \
+    m(0x0e, mint_fr6) \
+    m(0x0f, mint_fr7) \
+    m(0x10, mint_stack) \
+    m(0x11, mint_end) \
 
 #define FOR_EACH_IPINT_UINT_OPCODE(m) \
     m(0x00, uint_r0) \

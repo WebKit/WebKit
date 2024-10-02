@@ -993,6 +993,18 @@ mintAlign(_fa2)
 mintAlign(_fa3)
     break
 
+mintAlign(_fa4)
+    break
+
+mintAlign(_fa5)
+    break
+
+mintAlign(_fa6)
+    break
+
+mintAlign(_fa7)
+    break
+
 mintAlign(_stackzero)
     break
 
@@ -1040,6 +1052,18 @@ mintAlign(_fr2)
     break
 
 mintAlign(_fr3)
+    break
+
+mintAlign(_fr4)
+    break
+
+mintAlign(_fr5)
+    break
+
+mintAlign(_fr6)
+    break
+
+mintAlign(_fr7)
     break
 
 mintAlign(_stack)

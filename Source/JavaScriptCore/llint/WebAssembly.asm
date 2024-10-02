@@ -888,6 +888,11 @@ end)
 # This is the interpreted analogue to WasmBinding.cpp:wasmToWasm
 op(wasm_to_wasm_wrapper_entry, macro()
     loadp (Callee - PrologueStackPointerDelta)[sp], ws0
+    loadp [ws0], ws0
+
+if JSVALUE64
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+end
 
     loadi Wasm::Callee::m_index[ws0], ws1
 

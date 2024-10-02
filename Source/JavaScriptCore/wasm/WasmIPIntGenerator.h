@@ -169,11 +169,11 @@ struct TableCopyMetadata {
 
 enum class CallArgumentBytecode : uint8_t { // (mINT)
     ArgumentGPR = 0x0, // 0x00 - 0x07: push into a0, a1, ...
-    ArgumentFPR = 0x8, // 0x08 - 0x0b: push into fa0, fa1, ...
-    ArgumentStackAligned = 0xc, // 0x0c: pop stack value, push onto stack[0]
-    ArgumentStackUnaligned = 0xd, // 0x0d: pop stack value, add another 16B for params, push onto stack[8]
-    StackAlign = 0xe, // 0x0e: add another 16B for params
-    End = 0xf // 0x0f: stop
+    ArgumentFPR = 0x8, // 0x08 - 0x0f: push into fa0, fa1, ...
+    ArgumentStackAligned = 0x10, // 0x10: pop stack value, push onto stack[0]
+    ArgumentStackUnaligned = 0x11, // 0x11: pop stack value, add another 16B for params, push onto stack[8]
+    StackAlign = 0x12, // 0x12: add another 16B for params
+    End = 0x13 // 0x13: stop
 };
 
 struct CallMetadata {
@@ -193,9 +193,9 @@ struct CallIndirectMetadata {
 
 enum class CallResultBytecode : uint8_t { // (mINT)
     ResultGPR = 0x0, // 0x00 - 0x07: r0 - r7
-    ResultFPR = 0x8, // 0x08 - 0x0b: fr0 - fr3
-    ResultStack = 0xc, // 0x0c: stack
-    End = 0xd // 0x0d: end
+    ResultFPR = 0x8, // 0x08 - 0x0f: fr0 - fr7
+    ResultStack = 0x10, // 0x0c: stack
+    End = 0x11 // 0x0d: end
 };
 
 struct callReturnMetadata {
