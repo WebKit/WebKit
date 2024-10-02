@@ -497,7 +497,6 @@ fast/css-generated-content/quotes-lang-case-insensitive.html [ ImageOnlyFailure 
 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure Pass ]
 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 fast/css/counters/counter-list-item.html [ ImageOnlyFailure ]
-fast/css/cssom-insertrule-crash.html [ ImageOnlyFailure ]
 fast/css/display-contents-all.html [ ImageOnlyFailure ]
 fast/css/unexpected-word-wrapping-with-non-empty-spans.html [ ImageOnlyFailure ]
 fast/custom-elements/defined-update-style.html [ ImageOnlyFailure ]
@@ -623,8 +622,6 @@ js/dom/modules/import-mjs-module.html [ Failure ]
 js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
 
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
-
-js/dom/deep-recursion-test.html [ Failure ]
 
 [ Debug ] js/dom/domjit-accessor-polymorphic.html [ Skip ]
 [ Debug ] js/dom/domjit-function-get-element-by-id.html [ Skip ]
