@@ -21,17 +21,21 @@
 #include "CoordinatedGraphicsLayer.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(CAIRO)
+#include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "NicosiaPaintingContext.h"
 #include "NicosiaPaintingEngine.h"
 
 namespace WebCore {
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const TiledBackingStore& tiledBackingStore, const IntRect& dirtyRect)
+Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& dirtyRect)
 {
-    auto mappedDirtyRect = tiledBackingStore.mapToContents(dirtyRect);
+    auto scale = effectiveContentsScale();
+    FloatRect scaledDirtyRect(dirtyRect);
+    scaledDirtyRect.scale(1 / scale);
+
     auto buffer = Nicosia::UnacceleratedBuffer::create(dirtyRect.size(), contentsOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha);
-    m_coordinator->paintingEngine().paint(*this, buffer.get(), dirtyRect, mappedDirtyRect, IntRect { { 0, 0 }, dirtyRect.size() }, tiledBackingStore.contentsScale());
+    m_coordinator->paintingEngine().paint(*this, buffer.get(), dirtyRect, enclosingIntRect(scaledDirtyRect), IntRect { { }, dirtyRect.size() }, scale);
     return buffer;
 }
 

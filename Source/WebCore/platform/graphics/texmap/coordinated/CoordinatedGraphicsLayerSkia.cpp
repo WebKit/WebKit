@@ -47,7 +47,27 @@
 
 namespace WebCore {
 
-Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const TiledBackingStore& tiledBackingStore, const IntRect& dirtyRect)
+void CoordinatedGraphicsLayer::paintIntoGraphicsContext(GraphicsContext& context, const IntRect& dirtyRect) const
+{
+    IntRect initialClip(IntPoint::zero(), dirtyRect.size());
+    context.clip(initialClip);
+
+    if (!contentsOpaque()) {
+        context.setCompositeOperation(CompositeOperator::Copy);
+        context.fillRect(initialClip, Color::transparentBlack);
+        context.setCompositeOperation(CompositeOperator::SourceOver);
+    }
+
+    auto scale = effectiveContentsScale();
+    FloatRect clipRect(dirtyRect);
+    clipRect.scale(1 / scale);
+
+    context.translate(-dirtyRect.x(), -dirtyRect.y());
+    context.scale(scale);
+    paintGraphicsLayerContents(context, enclosingIntRect(clipRect));
+}
+
+Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const IntRect& dirtyRect)
 {
     auto paintBuffer = [&](Nicosia::Buffer& buffer) {
         buffer.beginPainting();
@@ -57,7 +77,7 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const TiledBackingStore
             canvas->clear(SkColors::kTransparent);
 
             GraphicsContextSkia context(*canvas, buffer.isBackedByOpenGL() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::LayerBacking);
-            paintIntoGraphicsContext(context, tiledBackingStore, dirtyRect);
+            paintIntoGraphicsContext(context, dirtyRect);
 
             canvas->restore();
         }
@@ -84,7 +104,7 @@ Ref<Nicosia::Buffer> CoordinatedGraphicsLayer::paintTile(const TiledBackingStore
 
     // Skia/CPU - threaded unaccelerated rendering.
     if (auto* workerPool = m_coordinator->skiaThreadedPaintingPool()) {
-        workerPool->postPaintingTask(buffer, tiledBackingStore, *this, dirtyRect);
+        workerPool->postPaintingTask(buffer, *this, dirtyRect);
         return buffer;
     }
 

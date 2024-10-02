@@ -186,7 +186,9 @@ public:
 
     Vector<std::pair<String, double>> acceleratedAnimationsForTesting(const Settings&) const final;
 
-    void paintIntoGraphicsContext(GraphicsContext&, const TiledBackingStore&, const IntRect& dirtyRect) const;
+#if USE(SKIA)
+    void paintIntoGraphicsContext(GraphicsContext&, const IntRect&) const;
+#endif
 
 private:
     enum class FlushNotification {
@@ -212,16 +214,16 @@ private:
     bool checkPendingStateChanges();
     bool checkContentLayerUpdated();
 
-    Ref<Nicosia::Buffer> paintTile(const TiledBackingStore&, const IntRect& dirtyRect);
+    Ref<Nicosia::Buffer> paintTile(const IntRect& dirtyRect);
 
     void notifyFlushRequired();
 
     bool shouldHaveBackingStore() const;
     bool selfOrAncestorHasActiveTransformAnimation() const;
-    bool selfOrAncestorHaveNonAffineTransforms();
+    bool selfOrAncestorHaveNonAffineTransforms() const;
 
     void setShouldUpdateVisibleRect();
-    float effectiveContentsScale();
+    float effectiveContentsScale() const;
 
     void animationStartedTimerFired();
     void requestPendingTileCreationTimerFired();

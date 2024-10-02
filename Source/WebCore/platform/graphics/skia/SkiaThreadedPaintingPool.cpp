@@ -30,7 +30,6 @@
 #include "CoordinatedGraphicsLayer.h"
 #include "DisplayListRecorderImpl.h"
 #include "GraphicsContextSkia.h"
-#include "TiledBackingStore.h"
 #include <wtf/NumberOfCores.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -52,18 +51,18 @@ std::unique_ptr<SkiaThreadedPaintingPool> SkiaThreadedPaintingPool::create()
     return nullptr;
 }
 
-std::unique_ptr<DisplayList::DisplayList> SkiaThreadedPaintingPool::recordDisplayList(const TiledBackingStore& tiledBackingStore, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect) const
+std::unique_ptr<DisplayList::DisplayList> SkiaThreadedPaintingPool::recordDisplayList(const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect) const
 {
     auto displayList = makeUnique<DisplayList::DisplayList>();
     DisplayList::RecorderImpl recordingContext(*displayList, GraphicsContextState(), FloatRect({ }, dirtyRect.size()), AffineTransform());
-    layer.paintIntoGraphicsContext(recordingContext, tiledBackingStore, dirtyRect);
+    layer.paintIntoGraphicsContext(recordingContext, dirtyRect);
     return displayList;
 }
 
-void SkiaThreadedPaintingPool::postPaintingTask(Ref<Nicosia::Buffer>& buffer, const TiledBackingStore& tiledBackingStore, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
+void SkiaThreadedPaintingPool::postPaintingTask(Ref<Nicosia::Buffer>& buffer, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
 {
     WTFBeginSignpost(this, RecordTile);
-    auto displayList = recordDisplayList(tiledBackingStore, layer, dirtyRect);
+    auto displayList = recordDisplayList(layer, dirtyRect);
     WTFEndSignpost(this, RecordTile);
 
     buffer->beginPainting();

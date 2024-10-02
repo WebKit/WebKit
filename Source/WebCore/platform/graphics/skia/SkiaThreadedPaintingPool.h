@@ -35,7 +35,6 @@ namespace WebCore {
 
 class CoordinatedGraphicsLayer;
 class IntRect;
-class TiledBackingStore;
 
 namespace DisplayList {
 class DisplayList;
@@ -45,15 +44,15 @@ class SkiaThreadedPaintingPool {
     WTF_MAKE_TZONE_ALLOCATED(SkiaThreadedPaintingPool);
     WTF_MAKE_NONCOPYABLE(SkiaThreadedPaintingPool);
 public:
-    SkiaThreadedPaintingPool(unsigned numberOfThreads);
+    explicit SkiaThreadedPaintingPool(unsigned numberOfThreads);
     ~SkiaThreadedPaintingPool() = default;
 
     static std::unique_ptr<SkiaThreadedPaintingPool> create();
 
-    void postPaintingTask(Ref<Nicosia::Buffer>&, const TiledBackingStore&, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
+    void postPaintingTask(Ref<Nicosia::Buffer>&, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
 
 private:
-    std::unique_ptr<DisplayList::DisplayList> recordDisplayList(const TiledBackingStore&, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect) const;
+    std::unique_ptr<DisplayList::DisplayList> recordDisplayList(const CoordinatedGraphicsLayer&, const IntRect& dirtyRect) const;
     static unsigned numberOfPaintingThreads();
 
     Ref<WorkerPool> m_workerPool;

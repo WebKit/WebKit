@@ -1070,7 +1070,7 @@ void CoordinatedGraphicsLayer::deviceOrPageScaleFactorChanged()
         m_pendingContentsScaleAdjustment = true;
 }
 
-float CoordinatedGraphicsLayer::effectiveContentsScale()
+float CoordinatedGraphicsLayer::effectiveContentsScale() const
 {
     return selfOrAncestorHaveNonAffineTransforms() ? 1 : deviceScaleFactor() * pageScaleFactor();
 }
@@ -1207,7 +1207,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
             auto& tileRect = tile.rect();
             auto& dirtyRect = tile.dirtyRect();
-            auto buffer = paintTile(*layerState.mainBackingStore.get(), dirtyRect);
+            auto buffer = paintTile(dirtyRect);
 
             WTFBeginSignpost(this, UpdateTileBackingStore, "rect %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
 
@@ -1236,22 +1236,6 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     }
 
     finishUpdate();
-}
-
-void CoordinatedGraphicsLayer::paintIntoGraphicsContext(GraphicsContext& context, const TiledBackingStore& tiledBackingStore, const IntRect& dirtyRect) const
-{
-    IntRect initialClip(IntPoint::zero(), dirtyRect.size());
-    context.clip(initialClip);
-
-    if (!contentsOpaque()) {
-        context.setCompositeOperation(CompositeOperator::Copy);
-        context.fillRect(initialClip, Color::transparentBlack);
-        context.setCompositeOperation(CompositeOperator::SourceOver);
-    }
-
-    context.translate(-dirtyRect.x(), -dirtyRect.y());
-    context.scale(tiledBackingStore.contentsScale());
-    paintGraphicsLayerContents(context, tiledBackingStore.mapToContents(dirtyRect));
 }
 
 void CoordinatedGraphicsLayer::purgeBackingStores()
@@ -1431,7 +1415,7 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
     return downcast<CoordinatedGraphicsLayer>(*parent()).selfOrAncestorHasActiveTransformAnimation();
 }
 
-bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
+bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms() const
 {
     if (!m_layerTransform.combined().isAffine())
         return true;
