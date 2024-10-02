@@ -369,7 +369,7 @@ JSObjectRef toJSRejectedPromise(JSContextRef context, NSString *callingAPIName, 
 NSString *toWebAPI(NSLocale *locale)
 {
     if (!locale.languageCode)
-        return nil;
+        return @"und";
 
     if (locale.countryCode.length)
         return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];

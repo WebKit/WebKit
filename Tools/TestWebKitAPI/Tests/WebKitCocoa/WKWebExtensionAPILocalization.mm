@@ -39,6 +39,7 @@ static NSString * const placeholdersKey = @"placeholders";
 static NSString * const placeholderDictionaryContentKey = @"content";
 
 static NSLocale *currentLocale = NSLocale.currentLocale;
+static NSLocale *currentSystemLocale = NSLocale.systemLocale;
 static NSWritingDirection writingDirection = [NSParagraphStyle defaultWritingDirectionForLanguage:currentLocale.languageCode];
 static NSString *textDirection = writingDirection == NSWritingDirectionLeftToRight ? @"ltr" : @"rtl";
 static NSString *reversedTextDirection = writingDirection == NSWritingDirectionLeftToRight ? @"rtl" : @"ltr";
@@ -78,7 +79,7 @@ static auto *messages = @{
 static NSString *localeStringInWebExtensionFormat(NSLocale *locale)
 {
     if (!locale.languageCode)
-        return @"";
+        return @"und";
 
     if (locale.countryCode.length)
         return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
@@ -86,6 +87,7 @@ static NSString *localeStringInWebExtensionFormat(NSLocale *locale)
 }
 
 static NSString *currentLocaleString = localeStringInWebExtensionFormat(currentLocale);
+static NSString *currentSystemLocaleString = localeStringInWebExtensionFormat(currentSystemLocale);
 
 static auto *baseURLString = @"test-extension://76C788B8-3374-400D-8259-40E5B9DF79D3";
 
@@ -122,10 +124,13 @@ TEST(WKWebExtensionAPILocalization, i18n)
     }
 
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+    auto *preferredLanguagesString = Util::constructJSArrayOfStrings(preferredLocaleIdentifiers);
 
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const preferredLanguages = %@", preferredLanguagesString],
         [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+        [NSString stringWithFormat:@"const currentSystemUILanguage = '%@'", currentSystemLocaleString],
         [NSString stringWithFormat:@"const textDirection = '%@'", textDirection],
         [NSString stringWithFormat:@"const reversedTextDirection = '%@'", reversedTextDirection],
         [NSString stringWithFormat:@"const startEdge = '%@'", startEdge],
@@ -142,6 +147,8 @@ TEST(WKWebExtensionAPILocalization, i18n)
 
         @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
         @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getPreferredSystemLanguages(), preferredLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getSystemUILanguage(), currentSystemUILanguage)",
 
         @"browser.test.notifyPass()",
     ]);
@@ -166,10 +173,13 @@ TEST(WKWebExtensionAPILocalization, i18nWithFallback)
     }
 
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+    auto *preferredLanguagesString = Util::constructJSArrayOfStrings(preferredLocaleIdentifiers);
 
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const preferredLanguages = %@", preferredLanguagesString],
         [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+        [NSString stringWithFormat:@"const currentSystemUILanguage = '%@'", currentSystemLocaleString],
         [NSString stringWithFormat:@"const textDirection = '%@'", textDirection],
         [NSString stringWithFormat:@"const reversedTextDirection = '%@'", reversedTextDirection],
         [NSString stringWithFormat:@"const startEdge = '%@'", startEdge],
@@ -188,6 +198,8 @@ TEST(WKWebExtensionAPILocalization, i18nWithFallback)
 
         @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
         @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getPreferredSystemLanguages(), preferredLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getSystemUILanguage(), currentSystemUILanguage)",
 
         @"browser.test.notifyPass()",
     ]);
@@ -249,10 +261,13 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutMessages)
     }
 
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+    auto *preferredLanguagesString = Util::constructJSArrayOfStrings(preferredLocaleIdentifiers);
 
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const preferredLanguages = %@", preferredLanguagesString],
         [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+        [NSString stringWithFormat:@"const currentSystemUILanguage = '%@'", currentSystemLocaleString],
 
         @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
         @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), '')",
@@ -264,6 +279,8 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutMessages)
 
         @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
         @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getPreferredSystemLanguages(), preferredLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getSystemUILanguage(), currentSystemUILanguage)",
 
         @"browser.test.notifyPass()",
     ]);
@@ -302,10 +319,13 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutDefaultLocale)
     };
 
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+    auto *preferredLanguagesString = Util::constructJSArrayOfStrings(preferredLocaleIdentifiers);
 
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const preferredLanguages = %@", preferredLanguagesString],
         [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+        [NSString stringWithFormat:@"const currentSystemUILanguage = '%@'", currentSystemLocaleString],
 
         @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
         @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), '')",
@@ -317,6 +337,8 @@ TEST(WKWebExtensionAPILocalization, i18nWithoutDefaultLocale)
 
         @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
         @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getPreferredSystemLanguages(), preferredLanguages)",
+        @"browser.test.assertDeepEq(await browser.i18n.getSystemUILanguage(), currentSystemUILanguage)",
 
         @"browser.test.notifyPass()",
     ]);

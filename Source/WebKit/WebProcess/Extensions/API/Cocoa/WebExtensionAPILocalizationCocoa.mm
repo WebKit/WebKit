@@ -88,6 +88,16 @@ void WebExtensionAPILocalization::getAcceptLanguages(Ref<WebExtensionCallbackHan
     callback->call(acceptLanguages.array);
 }
 
+void WebExtensionAPILocalization::getPreferredSystemLanguages(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    callback->call(NSLocale.preferredLanguages);
+}
+
+void WebExtensionAPILocalization::getSystemUILanguage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    callback->call(toWebAPI(NSLocale.systemLocale));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
