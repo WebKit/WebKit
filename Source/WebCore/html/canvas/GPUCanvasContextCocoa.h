@@ -77,7 +77,7 @@ public:
     bool isWebGPU() const override { return true; }
 
 private:
-    explicit GPUCanvasContextCocoa(CanvasBase&, GPU&);
+    explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&);
 
     void markContextChangedAndNotifyCanvasObservers();
 
@@ -103,9 +103,9 @@ private:
     };
     std::optional<Configuration> m_configuration;
 
-    Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    RefPtr<GPUCompositorIntegration> m_compositorIntegration;
-    RefPtr<GPUPresentationContext> m_presentationContext;
+    const Ref<GPUDisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    const Ref<GPUCompositorIntegration> m_compositorIntegration;
+    const Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
 
     GPUIntegerCoordinate m_width { 0 };
