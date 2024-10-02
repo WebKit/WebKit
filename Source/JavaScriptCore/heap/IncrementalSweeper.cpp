@@ -122,7 +122,7 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
     
     if (block) {
         DeferGCForAWhile deferGC(vm);
-        block->sweep(nullptr);
+        block->sweep(SweepAndZero, nullptr);
 
         bool blockIsFreed = false;
         if (trigger == SweepTrigger::Timer) {

@@ -200,8 +200,8 @@ void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
     if (Options::stealEmptyBlocksFromOtherAllocators()) {
         if (MarkedBlock::Handle* block = m_directory->m_subspace->findEmptyBlockToSteal()) {
             RELEASE_ASSERT(block->alignedMemoryAllocator() == m_directory->m_subspace->alignedMemoryAllocator());
-            
-            block->sweep(nullptr);
+
+            block->sweep(SweepOnly, nullptr);
             
             // It's good that this clears canAllocateButNotEmpty as well as all other bits,
             // because there is a remote chance that a block may have both canAllocateButNotEmpty
@@ -229,7 +229,7 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
     m_directory->assertIsMutatorOrMutatorIsStopped();
     ASSERT(m_directory->isInUse(block));
     
-    block->sweep(&m_freeList);
+    block->sweep(SweepToFreeList, &m_freeList);
     
     // It's possible to stumble on a completely full block. Marking tries to retire these, but
     // that algorithm is racy and may forget to do it sometimes.

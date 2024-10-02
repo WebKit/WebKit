@@ -51,9 +51,9 @@ JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType()
 
 JSDestructibleObjectHeapCellType::~JSDestructibleObjectHeapCellType() = default;
 
-void JSDestructibleObjectHeapCellType::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const
+void JSDestructibleObjectHeapCellType::finishSweep(MarkedBlock::Handle& handle, SweepMode sweepMode, FreeList* freeList) const
 {
-    handle.finishSweepKnowingHeapCellType(freeList, JSDestructibleObjectDestroyFunc());
+    handle.finishSweepKnowingHeapCellType(sweepMode, freeList, JSDestructibleObjectDestroyFunc());
 }
 
 void JSDestructibleObjectHeapCellType::destroy(VM& vm, JSCell* cell) const

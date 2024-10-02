@@ -44,9 +44,9 @@ ALWAYS_INLINE void IsoInlinedHeapCellType<CellType>::DestroyFunc::operator()(VM&
 }
 
 template<typename CellType>
-inline void IsoInlinedHeapCellType<CellType>::finishSweep(MarkedBlock::Handle& handle, FreeList* freeList) const
+inline void IsoInlinedHeapCellType<CellType>::finishSweep(MarkedBlock::Handle& handle, SweepMode sweepMode, FreeList* freeList) const
 {
-    handle.finishSweepKnowingHeapCellType(freeList, DestroyFunc());
+    handle.finishSweepKnowingHeapCellType(sweepMode, freeList, DestroyFunc());
 }
 
 template<typename CellType>

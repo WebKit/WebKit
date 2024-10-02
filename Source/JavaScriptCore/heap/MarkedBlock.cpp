@@ -175,7 +175,8 @@ void MarkedBlock::Handle::lastChanceToFinalize()
     blockHeader().m_newlyAllocated.clearAll();
     blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
     m_directory->setIsInUse(this, true);
-    sweep(nullptr);
+    // There's no point in zeroing since even we're going to return this memory to the system anyway.
+    sweep(SweepOnly, nullptr);
 }
 
 void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
@@ -205,7 +206,7 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 
     // Re-create our free list from before stopping allocation. Note that this may return an empty
     // freelist, in which case the block will still be Marked!
-    sweep(&freeList);
+    sweep(SweepToFreeList, &freeList);
 }
 
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
@@ -421,13 +422,13 @@ Subspace* MarkedBlock::Handle::subspace() const
     return directory()->subspace();
 }
 
-void MarkedBlock::Handle::sweep(FreeList* freeList)
+void MarkedBlock::Handle::sweep(SweepMode sweepMode, FreeList* freeList)
 {
     SweepingScope sweepingScope(*heap());
     m_directory->assertIsMutatorOrMutatorIsStopped();
     ASSERT(m_directory->isInUse(this));
+    ASSERT(!!freeList == (sweepMode == SweepToFreeList));
 
-    SweepMode sweepMode = freeList ? SweepToFreeList : SweepOnly;
     bool needsDestruction = m_attributes.destruction == NeedsDestruction
         && m_directory->isDestructible(this);
 
@@ -436,7 +437,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     // If we don't "release" our read access without locking then the ThreadSafetyAnalysis code gets upset with the locker below.
     m_directory->releaseAssertAcquiredBitVectorLock();
 
-    if (sweepMode == SweepOnly && !needsDestruction) {
+    if (sweepMode != SweepToFreeList && !needsDestruction) {
         Locker locker(m_directory->bitvectorLock());
         m_directory->setIsUnswept(this, false);
         return;
@@ -458,7 +459,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     subspace()->didBeginSweepingToFreeList(this);
     
     if (needsDestruction) {
-        subspace()->finishSweep(*this, freeList);
+        subspace()->heapCellType()->finishSweep(*this, sweepMode, freeList);
         return;
     }
     
@@ -478,37 +479,39 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
         if (newlyAllocatedMode != DoesNotHaveNewlyAllocated)
             return false;
         
+        auto specializeMarksMode = [&] <SpecializedSweepConfig config> () -> void {
+            switch (marksMode) {
+            case MarksNotStale:
+                return specializedSweep<true, config.with(MarksNotStale)>(freeList, { }, [] (VM&, JSCell*) { });
+            case MarksStale:
+                return specializedSweep<true, config.with(MarksStale)>(freeList, { }, [] (VM&, JSCell*) { });
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        };
+
+        constexpr SpecializedSweepConfig config {
+            .sweepMode = SweepToFreeList,
+            .destructionMode = BlockHasNoDestructors,
+            .scribbleMode = DontScribble,
+            .newlyAllocatedMode = DoesNotHaveNewlyAllocated,
+        };
+
         switch (emptyMode) {
         case IsEmpty:
-            switch (marksMode) {
-            case MarksNotStale:
-                specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, [] (VM&, JSCell*) { });
-                return true;
-            case MarksStale:
-                specializedSweep<true, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, [] (VM&, JSCell*) { });
-                return true;
-            }
-            break;
+            specializeMarksMode.template operator()<config.with(IsEmpty)>();
+            return true;
         case NotEmpty:
-            switch (marksMode) {
-            case MarksNotStale:
-                specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale>(freeList, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksNotStale, [] (VM&, JSCell*) { });
-                return true;
-            case MarksStale:
-                specializedSweep<true, NotEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale>(freeList, IsEmpty, SweepToFreeList, BlockHasNoDestructors, DontScribble, DoesNotHaveNewlyAllocated, MarksStale, [] (VM&, JSCell*) { });
-                return true;
-            }
-            break;
+            specializeMarksMode.template operator()<config.with(NotEmpty)>();
+            return true;
         }
-        
-        return false;
+        RELEASE_ASSERT_NOT_REACHED();
     };
     
     if (trySpecialized())
         return;
 
     // The template arguments don't matter because the first one is false.
-    specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
+    specializedSweep<false, SpecializedSweepConfig { }>(freeList, { emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode }, [] (VM&, JSCell*) { });
 }
 
 #if PLATFORM(COCOA)
@@ -664,21 +667,4 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
 }
 
 } // namespace JSC
-
-namespace WTF {
-
-void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode mode)
-{
-    switch (mode) {
-    case JSC::MarkedBlock::Handle::SweepToFreeList:
-        out.print("SweepToFreeList");
-        return;
-    case JSC::MarkedBlock::Handle::SweepOnly:
-        out.print("SweepOnly");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-} // namespace WTF
 

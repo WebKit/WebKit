@@ -356,7 +356,9 @@ void BlockDirectory::sweep()
         setIsInUse(index, true);
         {
             DropLockForScope scope(locker);
-            block->sweep(nullptr);
+            // This is mostly called by API users that want to make their footprint as low as possible by
+            // Zeroing any unused bits the system's compressor might be able to better compress the memory.
+            block->sweep(SweepAndZero, nullptr);
         }
         ASSERT(!isUnswept(index));
         setIsInUse(index, false);

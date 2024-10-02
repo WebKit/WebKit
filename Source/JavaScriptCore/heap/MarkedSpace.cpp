@@ -205,14 +205,24 @@ void MarkedSpace::freeMemory()
 
 void MarkedSpace::lastChanceToFinalize()
 {
+    Vector<BlockDirectory*, 4> structureDirectories;
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
-            directory.lastChanceToFinalize();
+            // Defer calling lastChanceToFinalize on structure directories since some cells rely on immortal structures
+            // to find their destroy function.
+            if (directory.subspace() == &heap().structureSpace)
+                structureDirectories.append(&directory);
+            else
+                directory.lastChanceToFinalize();
             return IterationStatus::Continue;
         });
+
     for (PreciseAllocation* allocation : m_preciseAllocations)
         allocation->lastChanceToFinalize();
     // We do not call lastChanceToFinalize for lower-tier swept cells since we need nothing to do.
+
+    for (auto* directory : structureDirectories)
+        directory->lastChanceToFinalize();
 }
 
 void MarkedSpace::sweepBlocks()

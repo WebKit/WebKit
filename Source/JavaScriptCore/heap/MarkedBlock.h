@@ -48,6 +48,9 @@ class Subspace;
 
 typedef uint32_t HeapVersion;
 
+enum class SweepMode { SweepOnly, SweepAndZero, SweepToFreeList };
+using enum SweepMode;
+
 // A marked block is a page-aligned container for heap-allocated objects.
 // Objects are allocated within cells of the marked block. For a given
 // marked block, all cells have the same size. Objects smaller than the
@@ -134,8 +137,6 @@ public:
         inline MarkedSpace* space() const;
         VM& vm() const;
         WeakSet& weakSet();
-            
-        enum SweepMode { SweepOnly, SweepToFreeList };
 
         // Sweeping ensures that destructors get called and removes the block from the unswept
         // set. Sweeping to free list also removes the block from the empty set, if it was in that
@@ -146,11 +147,11 @@ public:
         // and the block is freshly created, then we'll make the mistake of running destructors in
         // the block. If it's not set and the block has nothing marked, then we'll make the
         // mistake of making a pop freelist rather than a bump freelist.
-        void sweep(FreeList*);
+        void sweep(SweepMode, FreeList*);
         
         // This is to be called by Subspace.
         template<typename DestroyFunc>
-        void finishSweepKnowingHeapCellType(FreeList*, const DestroyFunc&);
+        inline void finishSweepKnowingHeapCellType(SweepMode, FreeList*, const DestroyFunc&);
         
         void unsweepWithNoNewlyAllocated();
         
@@ -219,15 +220,28 @@ public:
         enum EmptyMode { IsEmpty, NotEmpty };
         enum NewlyAllocatedMode { HasNewlyAllocated, DoesNotHaveNewlyAllocated };
         enum MarksMode { MarksStale, MarksNotStale };
-        
+
         SweepDestructionMode sweepDestructionMode();
         EmptyMode emptyMode();
         ScribbleMode scribbleMode();
         NewlyAllocatedMode newlyAllocatedMode();
         MarksMode marksMode();
         
-        template<bool, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, typename DestroyFunc>
-        void specializedSweep(FreeList*, EmptyMode, SweepMode, SweepDestructionMode, ScribbleMode, NewlyAllocatedMode, MarksMode, const DestroyFunc&);
+        struct WTF_INTERNAL SpecializedSweepConfig {
+            constexpr SpecializedSweepConfig with(EmptyMode) const;
+            constexpr SpecializedSweepConfig with(MarksMode) const;
+            constexpr SpecializedSweepConfig with(SweepMode) const;
+
+            EmptyMode emptyMode { IsEmpty };
+            SweepMode sweepMode { SweepToFreeList };
+            SweepDestructionMode destructionMode { BlockHasDestructors };
+            ScribbleMode scribbleMode { DontScribble };
+            NewlyAllocatedMode newlyAllocatedMode { DoesNotHaveNewlyAllocated };
+            MarksMode marksMode { MarksStale };
+        };
+
+        template<bool specialize, SpecializedSweepConfig, typename DestroyFunc>
+        void specializedSweep(FreeList*, SpecializedSweepConfig, const DestroyFunc&);
         
         unsigned m_atomsPerCell { std::numeric_limits<unsigned>::max() };
         unsigned m_startAtom { std::numeric_limits<unsigned>::max() }; // Exact location of the first allocatable atom.
@@ -719,7 +733,5 @@ struct MarkedBlockHash : PtrHash<JSC::MarkedBlock*> {
 };
 
 template<> struct DefaultHash<JSC::MarkedBlock*> : MarkedBlockHash { };
-
-void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode);
 
 } // namespace WTF
