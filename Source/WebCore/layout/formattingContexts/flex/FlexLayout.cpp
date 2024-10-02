@@ -344,7 +344,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             auto adjustFreeSpaceWithFlexFactors = [&] {
                 auto totalFlexFactor = 0.f;
                 for (auto nonFrozenIndex : nonFrozenSet)
-                    totalFlexFactor += flexItems[nonFrozenIndex].growFactor() + flexItems[nonFrozenIndex].shrinkFactor();
+                    totalFlexFactor += shouldUseFlexGrowFactor ? flexItems[nonFrozenIndex].growFactor() : flexItems[nonFrozenIndex].shrinkFactor();
                 if (totalFlexFactor < 1)
                     freeSpace *= totalFlexFactor;
             };

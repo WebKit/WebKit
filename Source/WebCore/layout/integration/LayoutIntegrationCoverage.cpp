@@ -72,8 +72,8 @@ enum class AvoidanceReason : uint32_t {
     FlexItemIsRTL                       = 1U << 18,
     FlexItemHasNonFixedHeight           = 1U << 19,
     FlexItemHasUnsupportedFlexBasis     = 1U << 20,
-    FlexItemHasUnsupportedFlexShrink    = 1U << 21,
-    FlexItemHasUnsupportedFlexGrow      = 1U << 22,
+    // Unused                           = 1U << 21,
+    // Unused                           = 1U << 22,
     FlexItemHasContainsSize             = 1U << 23,
     FlexItemHasUnsupportedOverflow      = 1U << 24,
     FlexItemHasAspectRatio              = 1U << 25,
@@ -172,12 +172,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
 
         if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexBasis, reasons, includeReasons);
-
-        if (flexItemStyle.flexShrink() > 0 && flexItemStyle.flexShrink() < 1)
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexShrink, reasons, includeReasons);
-
-        if (flexItemStyle.flexGrow() > 0 && flexItemStyle.flexGrow() < 1)
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexGrow, reasons, includeReasons);
 
         if (flexItemStyle.containsSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
@@ -287,12 +281,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexItemHasUnsupportedFlexBasis:
         stream << "flex item has unsupported flex-basis value";
-        break;
-    case AvoidanceReason::FlexItemHasUnsupportedFlexShrink:
-        stream << "flex item has unsupported flex-shrink value";
-        break;
-    case AvoidanceReason::FlexItemHasUnsupportedFlexGrow:
-        stream << "flex item has unsupported flex-grow value";
         break;
     case AvoidanceReason::FlexItemHasContainsSize:
         stream << "flex item has contains: size";
