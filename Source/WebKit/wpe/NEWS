@@ -1,4 +1,28 @@
 =================
+WPE WebKit 2.46.1
+=================
+
+What's new in WPE WebKit 2.46.1?
+
+  - Use the Skia CPU renderer by default, which at the moment performs better
+    in a number of embedded devices. The GPU renderer is still available and
+    may be enabled by setting WEBKIT_SKIA_ENABLE_CPU_RENDERING=0 in the
+    environment.
+  - Add a ENABLE_WPE_PLATFORM build option to CMake. This is disabled by
+    default because the WPEPlatform API is in development and provided as
+    part of the 2.46.x releases as a preview feature.
+  - Fix login QR code not shown in WhatsApp web.
+  - Fix processes not spawning when process startup is customized using
+    the wpe_process_provider API from libwpe.
+  - Fix mouse simulation with WebDriver when using a classic WPE backend
+    through libwpe.
+  - Disable DMABuf video sink by default to prevent file descriptor leaks.
+  - Fix building the MiniBrowser.
+  - Fix the build with libsysprof-capture version 44 and older.
+  - Fix the build with GCC 13.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.46.0
 =================
 
