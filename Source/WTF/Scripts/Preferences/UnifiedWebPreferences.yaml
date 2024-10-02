@@ -5189,6 +5189,7 @@ NotificationEventEnabled:
     WebKit:
       "ENABLE(NOTIFICATION_EVENT) && !PLATFORM(IOS_FAMILY)": true
       default: false
+  sharedPreferenceForWebProcess: true
 
 NotificationsEnabled:
   type: bool

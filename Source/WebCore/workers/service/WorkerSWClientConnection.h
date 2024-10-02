@@ -64,7 +64,9 @@ private:
     void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) final;
     void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
+#if ENABLE(NOTIFICATION_EVENT)
     void getNotifications(const URL&, const String&, GetNotificationsCallback&&) final;
+#endif
 
     void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
@@ -98,7 +100,9 @@ private:
     HashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
     HashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
     HashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
+#if ENABLE(NOTIFICATION_EVENT)
     HashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
+#endif
     HashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
     HashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
     HashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
