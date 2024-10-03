@@ -136,7 +136,6 @@ platform/mediastream/mac/CoreAudioCaptureSource.h
 platform/mock/ScrollbarsControllerMock.h
 plugins/PluginData.h
 rendering/RenderQuote.cpp
-rendering/RenderScrollbarPart.h
 rendering/RenderVTTCue.h
 rendering/TextBoxPainter.h
 rendering/style/BasicShapesShape.cpp
@@ -150,7 +149,6 @@ style/ElementRuleCollector.cpp
 style/IdChangeInvalidation.h
 style/PseudoClassChangeInvalidation.h
 style/RuleSetBuilder.h
-style/StyleAdjuster.h
 style/StyleRelations.h
 style/StyleResolver.cpp
 style/StyleScope.h

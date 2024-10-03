@@ -14,6 +14,7 @@ Shared/API/c/cg/WKImageCG.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
+Shared/SessionState.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebHitTestResultData.cpp

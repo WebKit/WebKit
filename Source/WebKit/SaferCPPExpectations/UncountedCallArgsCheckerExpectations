@@ -143,7 +143,6 @@ Shared/API/c/mac/WKWebArchiveRef.cpp
 Shared/API/c/mac/WKWebArchiveResource.cpp
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
-Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/Cocoa/APIObject.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
@@ -321,12 +320,8 @@ UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
 UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 UIProcess/Inspector/InspectorTargetProxy.cpp
-UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp
-UIProcess/Inspector/WebInspectorUIProxy.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
-UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm
 UIProcess/Inspector/mac/WKInspectorViewController.mm
-UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
@@ -345,7 +340,6 @@ UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemotePageProxy.cpp
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/SuspendedPageProxy.cpp
-UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
@@ -365,6 +359,7 @@ UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp
 UIProcess/WebAuthentication/fido/CtapCcidDriver.cpp
 UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
 UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp
+UIProcess/WebBackForwardList.cpp
 UIProcess/WebContextMenuProxy.cpp
 UIProcess/WebEditCommandProxy.cpp
 UIProcess/WebFrameProxy.cpp
@@ -385,7 +380,6 @@ UIProcess/mac/CorrectionPanel.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/ServicesController.mm
-UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
 UIProcess/mac/UserMediaPermissionRequestProxyMac.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
