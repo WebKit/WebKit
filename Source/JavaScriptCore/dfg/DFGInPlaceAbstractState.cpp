@@ -30,6 +30,7 @@
 
 #include "DFGBasicBlock.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/RecursableLambda.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
@@ -343,8 +344,7 @@ void InPlaceAbstractState::activateVariable(size_t variableIndex)
 
 bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 {
-    if (DFGInPlaceAbstractStateInternal::verbose)
-        dataLog("   Merging from ", pointerDump(from), " to ", pointerDump(to), "\n");
+    dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "   Merging from ", pointerDump(from), " to ", pointerDump(to));
     ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
     ASSERT(from->variablesAtTail.numberOfLocals() == to->variablesAtHead.numberOfLocals());
     ASSERT(from->variablesAtTail.numberOfTmps() == to->variablesAtHead.numberOfTmps());
@@ -370,16 +370,13 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 
         for (NodeAbstractValuePair& entry : to->ssa->valuesAtHead) {
             NodeFlowProjection node = entry.node;
-            if (DFGInPlaceAbstractStateInternal::verbose)
-                dataLog("      Merging for ", node, ": from ", forNode(node), " to ", entry.value, "\n");
-#ifndef NDEBUG
+            dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "      Merging for ", node, ": from ", forNode(node), " to ", entry.value);
+#if ASSERT_ENABLED
             unsigned valueCountInFromBlock = 0;
             for (NodeAbstractValuePair& fromBlockValueAtTail : from->ssa->valuesAtTail) {
                 if (fromBlockValueAtTail.node == node) {
                     if (node->isTuple())
                         ASSERT(hasClearedAbstractState(node) && !fromBlockValueAtTail.value);
-                    else
-                        ASSERT(fromBlockValueAtTail.value == forNode(node));
                     ++valueCountInFromBlock;
                 }
             }
@@ -389,8 +386,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
             if (!node->isTuple())
                 changed |= entry.value.merge(forNode(node));
 
-            if (DFGInPlaceAbstractStateInternal::verbose)
-                dataLog("         Result: ", entry.value, "\n");
+            dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "         Result: ", entry.value);
         }
         break;
     }
@@ -403,8 +399,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
     if (!to->cfaHasVisited)
         changed = true;
     
-    if (DFGInPlaceAbstractStateInternal::verbose)
-        dataLog("      Will revisit: ", changed, "\n");
+    dataLogLnIf(DFGInPlaceAbstractStateInternal::verbose, "      Will revisit: ", changed);
     to->cfaShouldRevisit |= changed;
     
     return changed;
@@ -412,7 +407,9 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 
 inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
 {
-    Node* terminal = basicBlock->terminal();
+    auto terminalAndIndex = basicBlock->findTerminal();
+    Node* terminal = terminalAndIndex.node;
+    unsigned terminalIndex = terminalAndIndex.index;
     
     ASSERT(terminal->isTerminal());
     
@@ -421,14 +418,289 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         return merge(basicBlock, terminal->targetBlock());
     }
-        
+
     case Branch: {
         ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
         bool changed = false;
-        if (basicBlock->cfaBranchDirection != TakeFalse)
+        using ValueVector = Vector<std::tuple<Node*, AbstractValue>, 2>;
+        using VariableVector = Vector<std::tuple<Operand, AbstractValue>, 2>;
+        ValueVector trueNodes;
+        ValueVector falseNodes;
+
+        auto collectSparseConditionalPropagationValues = recursableLambda([&](auto self, Edge edge, ValueVector& trueNodes, ValueVector& falseNodes) -> void {
+            auto constant = [&](Node* node, JSValue constant) {
+                AbstractValue value;
+                value.set(m_graph, *m_graph.freeze(constant), basicBlock->cfaStructureClobberStateAtTail);
+                value.fixTypeForRepresentation(m_graph, node);
+                return value;
+            };
+
+            switch (edge.useKind()) {
+            case Int32Use:
+                falseNodes.append({ edge.node(), constant(edge.node(), jsNumber(0)) });
+                break;
+            case DoubleRepUse: {
+                AbstractValue trueValue = forNode(edge.node());
+                // We know the input is not NaN if it has a truthy value.
+                if (trueValue.filter(~SpecDoubleNaN) == FiltrationOK)
+                    trueNodes.append({ edge.node(), WTFMove(trueValue) });
+                break;
+            }
+            case StringUse:
+                falseNodes.append({ edge.node(), constant(edge.node(), m_graph.m_vm.smallStrings.emptyString()) });
+                break;
+            case ObjectOrOtherUse: {
+                if (!m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(edge.node()))
+                    break;
+                AbstractValue trueValue = forNode(edge);
+                AbstractValue falseValue = trueValue;
+                if (trueValue.filter(SpecObject) == FiltrationOK)
+                    trueNodes.append({ edge.node(), WTFMove(trueValue) });
+                if (falseValue.filter(SpecOther) == FiltrationOK)
+                    falseNodes.append({ edge.node(), WTFMove(falseValue) });
+                break;
+            }
+            case BooleanUse:
+            case KnownBooleanUse:
+                falseNodes.append({ edge.node(), constant(edge.node(), jsBoolean(false)) });
+                trueNodes.append({ edge.node(), constant(edge.node(), jsBoolean(true)) });
+
+                switch (edge->op()) {
+                case CompareEq:
+                case CompareStrictEq: {
+                    Node* compare = edge.node();
+
+                    bool isValidCompare = [&]() {
+                        if (compare->op() == CompareStrictEq)
+                            return true;
+                        return compare->isBinaryUseKind(Int32Use)
+#if USE(JSVALUE64)
+                            || compare->isBinaryUseKind(Int52RepUse)
+#endif
+                            || compare->isBinaryUseKind(DoubleRepUse)
+                            || compare->isBinaryUseKind(StringUse)
+                            || compare->isBinaryUseKind(StringIdentUse)
+                            || compare->isBinaryUseKind(BooleanUse)
+                            || compare->isBinaryUseKind(ObjectUse)
+                            || compare->isBinaryUseKind(SymbolUse);
+                    }();
+                    if (!isValidCompare)
+                        break;
+
+                    AbstractValue lhs = forNode(compare->child1());
+                    AbstractValue rhs = forNode(compare->child2());
+                    if ((lhs.m_type & SpecDoubleNaN) || (rhs.m_type & SpecDoubleNaN)) {
+                        // We can't say anything useful about this comparison if either
+                        // input could be NaN, since it doesn't tell us any information
+                        // about the underlying values.
+                        break;
+                    }
+
+                    if (lhs.filter(rhs) == FiltrationOK) {
+                        if (JSValue value = lhs.value()) {
+                            ASSERT(!(value.isDouble() && std::isnan(value.asDouble()))); // This is handled by the above NaN type check.
+                            // 0.0 == -0.0, so we can't have this filter produce a constant
+                            // if that constant is zero or negative zero.
+                            if (value.isDouble() && value.asNumber() == 0.0)
+                                lhs.clobberValue();
+                        }
+                        trueNodes.append({ compare->child1().node(), lhs });
+                        trueNodes.append({ compare->child2().node(), WTFMove(lhs) });
+                    }
+                    break;
+                }
+                case LogicalNot: {
+                    Node* notNode = edge.node();
+                    trueNodes.append({ notNode, constant(notNode, jsBoolean(true)) });
+                    falseNodes.append({ notNode, constant(notNode, jsBoolean(false)) });
+                    self(edge->child1(), falseNodes, trueNodes);
+                    break;
+                }
+                case IsEmpty:
+                case TypeOfIsUndefined:
+                case TypeOfIsObject:
+                case IsUndefinedOrNull:
+                case IsBoolean:
+                case IsNumber:
+                case IsBigInt:
+                case NumberIsInteger:
+                case IsObject:
+                case TypeOfIsFunction:
+                case IsCallable:
+                case IsCellWithType:
+                case IsTypedArrayView: {
+                    SpeculatedType type = SpecNone;
+                    bool canInvertTypeCheck = true;
+                    switch (edge->op()) {
+                    case IsEmpty:
+                        type = SpecEmpty;
+                        break;
+                    case TypeOfIsUndefined: {
+                        if (!m_graph.isWatchingMasqueradesAsUndefinedWatchpointSet(edge.node()))
+                            break;
+                        type = SpecOther;
+                        // We can't invert the result of this type check because if TypeOfIsUndefined is true, the input
+                        // is definitely SpecOther. But because `null` is also SpecOther, if TypeOfIsUndefined is false,
+                        // then ~SpecOther is not guaranteed to hold (specifically, when the input is `null`).
+                        canInvertTypeCheck = false;
+                        break;
+                    }
+                    case TypeOfIsObject:
+                        type = ((SpecObject - SpecFunction) | SpecOther);
+                        canInvertTypeCheck = false;
+                        break;
+                    case IsUndefinedOrNull:
+                        type = SpecOther;
+                        break;
+                    case IsBoolean:
+                        type = SpecBoolean;
+                        break;
+                    case IsNumber:
+                        type = SpecFullNumber;
+                        break;
+                    case IsBigInt:
+                        type = SpecBigInt;
+                        break;
+                    case NumberIsInteger:
+                        type = SpecFullNumber;
+                        canInvertTypeCheck = false;
+                        break;
+                    case IsObject:
+                        type = SpecObject;
+                        break;
+                    case TypeOfIsFunction:
+                    case IsCallable:
+                        type = SpecTypeofMightBeFunction;
+                        canInvertTypeCheck = false;
+                        break;
+                    case IsCellWithType: {
+                        std::optional<SpeculatedType> filter = edge->speculatedTypeForQuery();
+                        if (!filter) {
+                            type = SpecCell;
+                            canInvertTypeCheck = false;
+                            break;
+                        }
+                        type = filter.value();
+                        canInvertTypeCheck = false;
+                        break;
+                    }
+                    case IsTypedArrayView:
+                        type = SpecTypedArrayView;
+                        break;
+                    default:
+                        break;
+                    }
+
+                    if (type) {
+                        Node* argument = edge->child1().node();
+                        AbstractValue trueValue = forNode(argument);
+                        AbstractValue falseValue = trueValue;
+                        if (trueValue.filter(type) == FiltrationOK)
+                            trueNodes.append({ argument, WTFMove(trueValue) });
+                        if (canInvertTypeCheck && falseValue.filter(~type) == FiltrationOK)
+                            falseNodes.append({ argument, WTFMove(falseValue) });
+                    }
+                    break;
+                }
+                default:
+                    break;
+                }
+
+                break;
+            default:
+                break;
+            }
+        });
+
+        if (basicBlock->cfaBranchDirection == TakeBoth && basicBlock->cfaDidFinish)
+            collectSparseConditionalPropagationValues(terminal->child1(), trueNodes, falseNodes);
+
+        auto applyChanges = [&](const ValueVector& nodes) -> std::tuple<ValueVector, VariableVector> {
+            switch (m_graph.m_form) {
+            case SSA: {
+                ValueVector valuesToRestore;
+                valuesToRestore.reserveInitialCapacity(nodes.size());
+                for (auto& [node, refinedValue] : nodes) {
+                    AbstractValue& value = forNode(node);
+                    valuesToRestore.append({ node, value });
+                    value = refinedValue;
+                }
+                return std::tuple { WTFMove(valuesToRestore), VariableVector { } };
+            }
+            case ThreadedCPS: {
+                auto forEachOperand = [&](const ValueVector& nodes, auto func) {
+                    if (nodes.isEmpty())
+                        return;
+
+                    Vector<Operand, 16> toSkip;
+                    for (unsigned index = terminalIndex, count = 0; index-- && count < 16; ++count) {
+                        auto handleNode = [&](Node* node, Operand operand) {
+                            size_t index = nodes.findIf(
+                                [&](auto& entry) {
+                                    return std::get<0>(entry) == node;
+                                });
+                            if (index == notFound)
+                                return;
+                            if (toSkip.contains(operand))
+                                return;
+                            func(operand, std::get<1>(nodes[index]));
+                        };
+
+                        Node* node = basicBlock->at(index);
+                        if (node->op() == GetLocal)
+                            handleNode(node, node->operand());
+                        else if (node->op() == Flush)
+                            handleNode(node->child1().node(), node->operand());
+                        else if (node->op() == SetLocal) {
+                            Operand operand = node->operand();
+                            handleNode(node->child1().node(), operand);
+                            toSkip.append(operand);
+                        }
+                    }
+                };
+
+                VariableVector variablesToRestore;
+                forEachOperand(nodes, [&](Operand operand, const AbstractValue& newValue) {
+                    AbstractValue& value = basicBlock->valuesAtTail.operand(operand);
+                    variablesToRestore.append({ operand, value });
+                    value = newValue;
+                });
+                return std::tuple { ValueVector { }, WTFMove(variablesToRestore) };
+            }
+            default:
+                return std::tuple { ValueVector { }, VariableVector { } };
+            }
+        };
+
+        auto restoreState = [&](const std::tuple<ValueVector, VariableVector>& entry) {
+            switch (m_graph.m_form) {
+            case SSA: {
+                for (auto& [node, value] : std::get<0>(entry))
+                    forNode(node) = value;
+                break;
+            }
+            case ThreadedCPS: {
+                for (auto& [operand, value] : std::get<1>(entry))
+                    basicBlock->valuesAtTail.operand(operand) = value;
+                break;
+            }
+            default:
+                break;
+            }
+        };
+
+        if (basicBlock->cfaBranchDirection != TakeFalse) {
+            auto state = applyChanges(trueNodes);
             changed |= merge(basicBlock, terminal->branchData()->taken.block);
-        if (basicBlock->cfaBranchDirection != TakeTrue)
+            restoreState(state);
+        }
+
+        if (basicBlock->cfaBranchDirection != TakeTrue) {
+            auto state = applyChanges(falseNodes);
             changed |= merge(basicBlock, terminal->branchData()->notTaken.block);
+            restoreState(state);
+        }
+
         return changed;
     }
         
