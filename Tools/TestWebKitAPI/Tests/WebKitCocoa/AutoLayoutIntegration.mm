@@ -136,7 +136,12 @@ static bool didEvaluateJavaScript;
 
 @end
 
+// rdar://137216934
+#if #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WebKit, DISABLED_AutoLayoutIntegration)
+#else
 TEST(WebKit, AutoLayoutIntegration)
+#endif
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
