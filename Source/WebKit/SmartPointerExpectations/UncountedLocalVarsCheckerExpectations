@@ -51,7 +51,6 @@ UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
-UIProcess/VisitedLinkStore.cpp
 UIProcess/WebAuthentication/AuthenticatorManager.cpp
 UIProcess/WebBackForwardCache.cpp
 UIProcess/WebBackForwardCacheEntry.cpp
