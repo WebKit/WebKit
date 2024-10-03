@@ -128,6 +128,7 @@ public:
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebsiteDataStore&, API::DownloadClient&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy*);
 
+    Ref<API::DownloadClient> protectedClient() const;
     RefPtr<WebsiteDataStore> protectedDataStore() { return m_dataStore; }
 
     // IPC::MessageReceiver

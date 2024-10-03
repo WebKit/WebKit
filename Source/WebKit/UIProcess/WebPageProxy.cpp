@@ -14785,6 +14785,11 @@ PageLoadState& WebPageProxy::pageLoadState()
     return internals().pageLoadState;
 }
 
+Ref<PageLoadState> WebPageProxy::protectedPageLoadState()
+{
+    return internals().pageLoadState;
+}
+
 void WebPageProxy::isLoadingChanged()
 {
     activityStateDidChange(ActivityState::IsLoading);

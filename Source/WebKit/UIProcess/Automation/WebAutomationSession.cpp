@@ -132,7 +132,7 @@ RefPtr<WebProcessPool> WebAutomationSession::protectedProcessPool() const
 
 void WebAutomationSession::dispatchMessageFromRemote(String&& message)
 {
-    m_backendDispatcher->dispatch(WTFMove(message));
+    protectedBackendDispatcher()->dispatch(WTFMove(message));
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
@@ -141,7 +141,7 @@ void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isA
     UNUSED_PARAM(immediatelyPause);
 
     m_remoteChannel = &channel;
-    m_frontendRouter->connectFrontend(channel);
+    protectedFrontendRouter()->connectFrontend(channel);
 
     setIsPaired(true);
 }
@@ -180,7 +180,7 @@ void WebAutomationSession::terminate()
 #if ENABLE(REMOTE_INSPECTOR)
     if (Inspector::FrontendChannel* channel = m_remoteChannel) {
         m_remoteChannel = nullptr;
-        m_frontendRouter->disconnectFrontend(*channel);
+        protectedFrontendRouter()->disconnectFrontend(*channel);
     }
 
     setIsPaired(false);
@@ -282,7 +282,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
     return Inspector::Protocol::Automation::BrowsingContext::create()
         .setHandle(handle)
         .setActive(isActive)
-        .setUrl(page.pageLoadState().activeURL())
+        .setUrl(page.protectedPageLoadState()->activeURL())
         .setWindowOrigin(WTFMove(originObject))
         .setWindowSize(WTFMove(sizeObject))
         .release();
@@ -472,7 +472,7 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
     // we return without waiting since we know it will timeout for sure. We want to check
     // arguments first, though.
     bool shouldTimeoutDueToUnexpectedAlert = pageLoadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::Normal
-        && page->pageLoadState().isLoading() && m_client->isShowingJavaScriptDialogOnPage(*this, *page);
+        && page->protectedPageLoadState()->isLoading() && m_client->isShowingJavaScriptDialogOnPage(*this, *page);
 
     if (!optionalFrameHandle.isEmpty()) {
         bool frameNotFound = false;
@@ -502,7 +502,9 @@ void WebAutomationSession::waitForNavigationToComplete(const Inspector::Protocol
 void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Inspector::Protocol::Automation::PageLoadStrategy loadStrategy, Seconds timeout, Ref<Inspector::BackendDispatcher::CallbackBase>&& callback)
 {
     ASSERT(!m_loadTimer.isActive());
-    if (loadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::None || (!page.pageLoadState().isLoading() && !page.pageLoadState().hasUncommittedLoad())) {
+    Ref pageLoadState = page.pageLoadState();
+
+    if (loadStrategy == Inspector::Protocol::Automation::PageLoadStrategy::None || (!pageLoadState->isLoading() && !pageLoadState->hasUncommittedLoad())) {
         callback->sendSuccess(JSON::Object::create());
         return;
     }
@@ -662,7 +664,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
         if (!page->hasRunningProcess() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 
-        if (page->pageLoadState().isLoading()) {
+        if (page->protectedPageLoadState()->isLoading()) {
             m_loadTimer.stop();
             respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
             respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
@@ -1470,11 +1472,11 @@ static String domainByAddingDotPrefixIfNeeded(String domain)
     
 void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, Ref<JSON::Object>&& cookieObject, Ref<AddSingleCookieCallback>&& callback)
 {
-    auto page = webPageProxyForHandle(browsingContextHandle);
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    URL activeURL { page->pageLoadState().activeURL() };
+    URL activeURL { page->protectedPageLoadState()->activeURL() };
     ASSERT(activeURL.isValid());
 
     WebCore::Cookie cookie;
@@ -1543,11 +1545,11 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)
 {
-    auto page = webPageProxyForHandle(browsingContextHandle);
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    URL activeURL { page->pageLoadState().activeURL() };
+    URL activeURL { page->protectedPageLoadState()->activeURL() };
     ASSERT(activeURL.isValid());
 
     String host = activeURL.host().toString();
@@ -2470,6 +2472,16 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, std::optional<
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
 
     callback->sendSuccess(base64EncodedData.value());
+}
+
+Ref<Inspector::FrontendRouter> WebAutomationSession::protectedFrontendRouter() const
+{
+    return m_frontendRouter;
+}
+
+Ref<Inspector::BackendDispatcher> WebAutomationSession::protectedBackendDispatcher() const
+{
+    return m_backendDispatcher;
 }
 
 #if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)

@@ -301,6 +301,9 @@ private:
     std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
+    Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
+    Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
+
     WeakPtr<WebProcessPool> m_processPool;
 
     std::unique_ptr<API::AutomationSessionClient> m_client;

@@ -1675,6 +1675,7 @@ public:
 
     const PageLoadState& pageLoadState() const;
     PageLoadState& pageLoadState();
+    Ref<PageLoadState> protectedPageLoadState();
 
 #if PLATFORM(COCOA)
     void handleAlternativeTextUIResult(const String& result);

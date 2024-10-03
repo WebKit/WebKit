@@ -85,6 +85,7 @@ private:
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) final;
 
+    Ref<MediaSessionCoordinatorProxyPrivate> protectedPrivateCoordinator() { return m_privateCoordinator; }
     Ref<WebPageProxy> protectedWebPageProxy();
 
 #if !RELEASE_LOG_DISABLED

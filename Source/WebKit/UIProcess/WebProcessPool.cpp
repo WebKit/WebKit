@@ -1961,7 +1961,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     Site site { navigation.currentRequest().url() };
     bool siteIsolationEnabled = page.protectedPreferences()->siteIsolationEnabled();
     if (siteIsolationEnabled && !site.isEmpty()) {
-        auto mainFrameSite = frameInfo.isMainFrame ? site : Site(URL(page.pageLoadState().activeURL()));
+        auto mainFrameSite = frameInfo.isMainFrame ? site : Site(URL(page.protectedPageLoadState()->activeURL()));
         if (!frame.isMainFrame() && site == mainFrameSite) {
             Ref mainFrameProcess = page.protectedMainFrame()->protectedProcess();
             if (!mainFrameProcess->isInProcessCache())
