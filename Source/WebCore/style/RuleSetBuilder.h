@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSParserEnum.h"
 #include "MediaQuery.h"
 #include "RuleSet.h"
 
@@ -87,6 +88,7 @@ private:
     HashMap<CascadeLayerName, RuleSet::CascadeLayerIdentifier> m_cascadeLayerIdentifierMap;
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
     Vector<const CSSSelectorList*> m_selectorListStack;
+    Vector<CSSParserEnum::NestedContextType> m_ancestorStack;
     const ShouldResolveNesting m_shouldResolveNesting { ShouldResolveNesting::No };
 
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };
