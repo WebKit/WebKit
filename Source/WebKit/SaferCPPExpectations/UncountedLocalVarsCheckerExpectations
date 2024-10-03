@@ -1,7 +1,6 @@
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
-NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkSession.cpp
 NetworkProcess/PingLoad.h
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp

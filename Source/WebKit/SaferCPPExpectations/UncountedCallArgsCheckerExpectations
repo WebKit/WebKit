@@ -4,19 +4,12 @@ AutomationProtocolObjects.h
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/RemoteSharedResourceCache.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
-GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.h
-GPUProcess/graphics/RemoteGraphicsContextGL.cpp
-GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
 GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
-GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBuffer.cpp
-GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp
-GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteDevice.cpp
-GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/graphics/WebGPU/RemotePresentationContext.cpp
 GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp
@@ -24,7 +17,6 @@ GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp
 GPUProcess/graphics/WebGPU/RemoteTexture.cpp
 GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp
-GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.cpp
 GPUProcess/graphics/WebGPU/RemoteXRSubImage.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.h
@@ -77,7 +69,6 @@ NetworkProcess/NetworkDataTask.cpp
 NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
-NetworkProcess/NetworkProcess.cpp
 NetworkProcess/NetworkSession.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
@@ -420,8 +411,6 @@ WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
-WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
-WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h
 WebProcess/GPU/graphics/RemoteNativeImageBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
@@ -431,10 +420,8 @@ WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemotePresentationContextProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteRenderBundleEncoderProxy.cpp
-WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
-WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.h
