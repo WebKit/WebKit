@@ -114,7 +114,7 @@ def compare_project_results_to_expectations(args, new_path, project):
     # Compare the list of dirty files to the expectations list of files
     for checker in CHECKERS:
         # Get unexpected clean and buggy files per checker
-        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/SmartPointerExpectations/{checker}Expectations'), f'{new_path}/{project}/{checker}Files')
+        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/SaferCPPExpectations/{checker}Expectations'), f'{new_path}/{project}/{checker}Files')
         unexpected_clean_files.update(clean_files)
         unexpected_buggy_files.update(buggy_files)
 

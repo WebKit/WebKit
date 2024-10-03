@@ -24,7 +24,7 @@
 import os
 import argparse
 
-EXPECTATIONS_PATH = '../../Source/{project}/SmartPointerExpectations/{checker_type}Expectations'
+EXPECTATIONS_PATH = '../../Source/{project}/SaferCPPExpectations/{checker_type}Expectations'
 CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 
@@ -35,13 +35,13 @@ def parser():
         '--add-expected-failures', '-a',
         dest='results_to_add',
         default=None,
-        help='Path to unexpected results file. Adds unexpected failures to the expectations files in SmartPointerExpectations.'
+        help='Path to unexpected results file. Adds unexpected failures to the expectations files in SaferCPPExpectations.'
     )
     parser.add_argument(
         '--remove-expected-failures', '-r',
         dest='results_to_remove',
         default=None,
-        help='Path to unexpected results file. Removes unexpected failures from the expectations files in SmartPointerExpectations.'
+        help='Path to unexpected results file. Removes unexpected failures from the expectations files in SaferCPPExpectations.'
     )
     parser.add_argument(
         '--project', '-p',
@@ -102,7 +102,7 @@ def update_expectations(unexpected_results, project, type):
 
 
 '''
-This currently checks against the files in your local checkout at SmartPointerExpectations.
+This currently checks against the files in your local checkout at SaferCPPExpectations.
 Ensure that it is up-to-date before using this script.
 '''
 def is_expected_file(expected_file):
