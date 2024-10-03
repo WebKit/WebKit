@@ -99,6 +99,7 @@ std::optional<Child> simplify(Abs&, const SimplificationOptions&);
 std::optional<Child> simplify(Sign&, const SimplificationOptions&);
 std::optional<Child> simplify(Progress&, const SimplificationOptions&);
 std::optional<Child> simplify(Anchor&, const SimplificationOptions&);
+std::optional<Child> simplify(AnchorSize&, const SimplificationOptions&);
 
 // MARK: Unit Canonicalization
 

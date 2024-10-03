@@ -72,7 +72,10 @@ struct Exp;
 struct Abs;
 struct Sign;
 struct Progress;
+
+// CSS Anchor Positioning functions.
 struct Anchor;
+struct AnchorSize;
 
 template<typename Op>
 concept Leaf = requires(Op) {
@@ -191,7 +194,8 @@ using Node = std::variant<
     IndirectNode<Abs>,
     IndirectNode<Sign>,
     IndirectNode<Progress>,
-    IndirectNode<Anchor>
+    IndirectNode<Anchor>,
+    IndirectNode<AnchorSize>
 >;
 
 using Child = Node;
@@ -746,6 +750,22 @@ public:
     bool operator==(const Anchor&) const = default;
 };
 
+struct AnchorSize {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(AnchorSize);
+public:
+    static constexpr auto id = CSSValueAnchorSize;
+
+    // anchor-size() = anchor-size( [ <anchor-element> || <anchor-size> ]? , <length-percentage>? )
+    // <anchor-element> = <dashed-ident>
+    // <anchor-size> = width | height | block | inline | self-block | self-inline
+
+    AtomString elementName;
+    std::optional<CSSValueID> size;
+    std::optional<Child> fallback;
+
+    bool operator==(const AnchorSize&) const = default;
+};
+
 // MARK: Size assertions
 
 static_assert(sizeof(Child) == 24);
@@ -1203,7 +1223,9 @@ OP_TUPLE_LIKE_CONFORMANCE(Exp, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Abs, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
+// FIXME (webkit.org/b/280798): make Anchor and AnchorSize tuple-like
 OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
+OP_TUPLE_LIKE_CONFORMANCE(AnchorSize, 0);
 
 #undef OP_TUPLE_LIKE_CONFORMANCE
 

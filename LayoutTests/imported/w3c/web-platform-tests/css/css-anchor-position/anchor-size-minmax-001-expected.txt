@@ -43,7 +43,7 @@ FAIL .target 3 assert_equals:
       <div style="height: 100px"></div>
     </div>
   </div>
-width expected 5 but got 100
+width expected 5 but got 0
 FAIL .target 4 assert_equals:
 <div class="container">
     <div class="anchor1"></div>
@@ -58,5 +58,5 @@ FAIL .target 4 assert_equals:
       <div style="height: 100px"></div>
     </div>
   </div>
-height expected 5 but got 100
+height expected 5 but got 0
 

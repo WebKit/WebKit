@@ -87,6 +87,7 @@ static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Su
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Product>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Progress>&, SerializationState&);
 static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Anchor>&, SerializationState&);
+static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<AnchorSize>&, SerializationState&);
 template<typename Op> static void serializeMathFunctionArguments(StringBuilder&, const IndirectNode<Op>&, SerializationState&);
 
 void serializeWithoutOmittingPrefix(StringBuilder&, const Child&, SerializationState&);
@@ -396,6 +397,28 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     if (anchor->fallback) {
         builder.append(", "_s);
         serializeWithoutOmittingPrefix(builder, *anchor->fallback, state);
+    }
+}
+
+void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<AnchorSize>& anchorSize, SerializationState& state)
+{
+    bool hasElementName = !anchorSize->elementName.isNull();
+
+    if (hasElementName)
+        serializeIdentifier(anchorSize->elementName, builder);
+
+    if (anchorSize->size) {
+        if (hasElementName)
+            builder.append(' ');
+
+        builder.append(nameLiteralForSerialization(*anchorSize->size));
+    }
+
+    if (anchorSize->fallback) {
+        if (hasElementName || anchorSize->size)
+            builder.append(", "_s);
+
+        serializeWithoutOmittingPrefix(builder, *anchorSize->fallback, state);
     }
 }
 

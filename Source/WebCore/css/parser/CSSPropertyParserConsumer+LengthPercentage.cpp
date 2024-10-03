@@ -165,12 +165,13 @@ std::optional<CSS::LengthPercentageRaw> LengthPercentageKnownTokenTypeNumberCons
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy)
+RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy, AnchorSizePolicy anchorSizePolicy)
 {
     const auto options = CSSPropertyParserOptions {
         .parserMode = context.mode,
         .valueRange = valueRange,
         .anchorPolicy = anchorPolicy,
+        .anchorSizePolicy = anchorSizePolicy,
         .negativePercentage = negativePercentage,
         .unitless = unitless,
         .unitlessZero = unitlessZero
@@ -179,12 +180,13 @@ RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, co
     return CSSPrimitiveValueResolver<CSS::LengthPercentage>::consumeAndResolve(range, context, { }, { }, options);
 }
 
-RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, CSSParserMode overrideParserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy)
+RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, CSSParserMode overrideParserMode, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage, AnchorPolicy anchorPolicy, AnchorSizePolicy anchorSizePolicy)
 {
     const auto options = CSSPropertyParserOptions {
         .parserMode = overrideParserMode,
         .valueRange = valueRange,
         .anchorPolicy = anchorPolicy,
+        .anchorSizePolicy = anchorSizePolicy,
         .negativePercentage = negativePercentage,
         .unitless = unitless,
         .unitlessZero = unitlessZero

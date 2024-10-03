@@ -10440,7 +10440,7 @@
             "grammar":  "intrinsic | min-intrinsic | min-content | -webkit-min-content | max-content | -webkit-max-content | -webkit-fill-available | fit-content | -webkit-fit-content"
         },
         "<width-or-height>": {
-            "grammar":  "auto | <width-or-height-keyword> | <length-percentage [0,inf]>",
+            "grammar":  "auto | <width-or-height-keyword> | <length-percentage [0,inf] anchor-size-allowed>",
             "exported": true,
             "comment": "Doesn't match current specification",
             "specification": {
@@ -10449,7 +10449,7 @@
             }
         },
         "<width-or-height-unitless-allowed>": {
-            "grammar":  "auto | <width-or-height-keyword> | <length-percentage [0,inf] unitless-allowed>",
+            "grammar":  "auto | <width-or-height-keyword> | <length-percentage [0,inf] unitless-allowed anchor-size-allowed>",
             "comment": "Doesn't match current specification",
             "specification": {
                 "category": "css-sizing",
@@ -10457,7 +10457,7 @@
             }
         },
         "<max-width-or-height>": {
-            "grammar": "none | <width-or-height-keyword> | <length-percentage [0,inf]>",
+            "grammar": "none | <width-or-height-keyword> | <length-percentage [0,inf] anchor-size-allowed>",
             "comment": "Doesn't match current specification",
             "specification": {
                 "category": "css-sizing",
@@ -10465,7 +10465,7 @@
             }
         },
         "<max-width-or-height-unitless-allowed>": {
-            "grammar":  "none | <width-or-height-keyword> | <length-percentage [0,inf] unitless-allowed>",
+            "grammar":  "none | <width-or-height-keyword> | <length-percentage [0,inf] unitless-allowed anchor-size-allowed>",
             "comment": "Doesn't match current specification",
             "specification": {
                 "category": "css-sizing",
@@ -10497,7 +10497,7 @@
             }
         },
         "<margin-logical-start-end>": {
-            "grammar": "auto | <length-percentage>",
+            "grammar": "auto | <length-percentage anchor-size-allowed>",
             "specification": {
                 "category": "css-logical-props",
                 "url": "https://www.w3.org/TR/css-logical/#margin-properties"

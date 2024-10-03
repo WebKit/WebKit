@@ -1497,7 +1497,11 @@ class ReferenceTerm:
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
         BuiltinSchema.Entry("length-percentage", "consumeLengthPercentage",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
-            BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
+            BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid"),
+            BuiltinSchema.OptionalParameter("unitless_zero", values={"unitless-zero-forbidden": "UnitlessZeroQuirk::Forbid"}, default="UnitlessZeroQuirk::Allow"),
+            BuiltinSchema.OptionalParameter("negative_percentage", values={"negative-percentage-allowed": "NegativePercentagePolicy::Allow"}, default="NegativePercentagePolicy::Forbid"),
+            BuiltinSchema.OptionalParameter("anchor", values={"anchor-allowed": "AnchorPolicy::Allow"}, default="AnchorPolicy::Forbid"),
+            BuiltinSchema.OptionalParameter("anchor_size", values={"anchor-size-allowed": "AnchorSizePolicy::Allow"}, default="AnchorSizePolicy::Forbid")),
         BuiltinSchema.Entry("time", "consumeTime",
             BuiltinSchema.OptionalParameter("value_range", values={"[0,inf]": "ValueRange::NonNegative"}, default="ValueRange::All"),
             BuiltinSchema.OptionalParameter("unitless", values={"unitless-allowed": "UnitlessQuirk::Allow"}, default="UnitlessQuirk::Forbid")),
@@ -4411,7 +4415,7 @@ class TermGeneratorReferenceTerm(TermGenerator):
                     return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.mode}, {builtin.value_range}, {builtin.unitless})"
                 return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
             elif isinstance(builtin, BuiltinLengthPercentageConsumer):
-                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless})"
+                return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range}, {builtin.unitless}, {builtin.unitless_zero}, {builtin.negative_percentage}, {builtin.anchor}, {builtin.anchor_size})"
             elif isinstance(builtin, BuiltinIntegerConsumer):
                 return f"{builtin.consume_function_name}({range_string}, {context_string}, {builtin.value_range})"
             elif isinstance(builtin, BuiltinNumberConsumer):
