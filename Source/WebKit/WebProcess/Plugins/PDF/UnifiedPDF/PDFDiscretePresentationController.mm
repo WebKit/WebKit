@@ -1149,7 +1149,7 @@ FloatSize PDFDiscretePresentationController::rowContainerSize(const PDFLayoutRow
     return scaledRowBounds.size();
 }
 
-void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor)
+void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation layoutChangeInformation)
 {
     LOG_WITH_STREAM(PDF, stream << "PDFDiscretePresentationController::updateLayersOnLayoutChange - documentSize " << documentSize << " centeringOffset " << centeringOffset);
 
@@ -1184,6 +1184,11 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
         auto rightPageIndex = row.pages.pages[1];
         updatePageContainerLayerBounds(row.rightPageContainerLayer.get(), rightPageIndex, rowBounds);
     };
+
+    if (layoutChangeInformation.scaleFactorChangedAfterInitialLayout()) {
+        if (RefPtr asyncRenderer = asyncRendererIfExists())
+            asyncRenderer->pdfContentScaleChanged(protectedRowsContainerLayer().get(), scaleFactor);
+    }
 
     TransformationMatrix transform;
     transform.scale(scaleFactor);
@@ -1221,8 +1226,13 @@ void PDFDiscretePresentationController::updateLayersOnLayoutChange(FloatSize doc
             needsRepaint = true;
         }
 
-        if (needsRepaint)
+        if (needsRepaint) {
+            if (layoutChangeInformation.scaleFactorChangedAfterInitialLayout()) {
+                if (RefPtr asyncRenderer = asyncRendererIfExists())
+                    asyncRenderer->pdfContentScaleChanged(rowContentsLayer.get(), scaleFactor);
+            }
             rowContentsLayer->setNeedsDisplay();
+        }
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
         RefPtr rowSelectionLayer = row.selectionLayer;

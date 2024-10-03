@@ -169,7 +169,9 @@ public:
     WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
 
     bool usesContentsLayer() const override { return m_contentsLayerPurpose != ContentsLayerPurpose::None; }
-    
+
+    WEBCORE_EXPORT void setRenderingIsSuppressedIncludingDescendants(bool) override;
+
     WEBCORE_EXPORT void setShowDebugBorder(bool) override;
     WEBCORE_EXPORT void setShowRepaintCounter(bool) override;
 

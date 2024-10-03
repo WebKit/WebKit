@@ -268,7 +268,9 @@ private:
     void didBeginMagnificationGesture() override;
     void didEndMagnificationGesture() override;
     void setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin) final;
-    void setScaleFactor(double scale, std::optional<WebCore::IntPoint> origin = std::nullopt);
+
+    enum class IsInitialLayout : bool { No, Yes };
+    void setScaleFactor(double scale, std::optional<WebCore::IntPoint> origin = std::nullopt, IsInitialLayout = IsInitialLayout::No);
 
     enum class CheckForMagnificationGesture : bool { No, Yes };
     void deviceOrPageScaleFactorChanged(CheckForMagnificationGesture = CheckForMagnificationGesture::No);

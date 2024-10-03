@@ -116,6 +116,8 @@ public:
     // Updates existing tiles. Can result in temporarily stale content.
     void pdfContentChangedInRect(const WebCore::GraphicsLayer*, float pageScaleFactor, const WebCore::FloatRect& paintingRect, std::optional<PDFLayoutRow>);
 
+    void pdfContentScaleChanged(WebCore::GraphicsLayer*, float newScaleFactor);
+
     void generatePreviewImageForPage(PDFDocumentLayout::PageIndex, float scale);
     RefPtr<WebCore::ImageBuffer> previewImageForPage(PDFDocumentLayout::PageIndex) const;
     void removePreviewForPage(PDFDocumentLayout::PageIndex);

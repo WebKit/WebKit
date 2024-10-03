@@ -55,6 +55,7 @@ void PDFScrollingPresentationController::teardown()
     PDFPresentationController::teardown();
 
     GraphicsLayer::unparentAndClear(m_contentsLayer);
+    GraphicsLayer::unparentAndClear(m_scalingLayer);
     GraphicsLayer::unparentAndClear(m_pageBackgroundsContainerLayer);
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     GraphicsLayer::unparentAndClear(m_selectionLayer);
@@ -151,12 +152,19 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
         scrolledContentsLayer.addChild(*m_pageBackgroundsContainerLayer);
     }
 
+    if (!m_scalingLayer) {
+        m_scalingLayer = createGraphicsLayer("PDF scaling"_s, /*GraphicsLayer::Type::Normal*/m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
+        m_scalingLayer->setAnchorPoint({ });
+        m_scalingLayer->setDrawsContent(false);
+        scrolledContentsLayer.addChild(*m_scalingLayer);
+    }
+
     if (!m_contentsLayer) {
         m_contentsLayer = createGraphicsLayer("PDF contents"_s, m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
         m_contentsLayer->setAcceleratesDrawing(m_plugin->canPaintSelectionIntoOwnedLayer());
-        scrolledContentsLayer.addChild(*m_contentsLayer);
+        m_scalingLayer->addChild(*m_contentsLayer);
 
         // This is the call that enables async rendering.
         asyncRenderer()->startTrackingLayer(*m_contentsLayer);
@@ -174,10 +182,13 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
 #endif
 }
 
-void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor)
+void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize documentSize, FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation layoutChangeInformation)
 {
     m_contentsLayer->setSize(documentSize);
     m_contentsLayer->setNeedsDisplay();
+
+    m_scalingLayer->setSize(documentSize);
+    m_scalingLayer->setNeedsDisplay();
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     m_selectionLayer->setSize(documentSize);
@@ -188,7 +199,13 @@ void PDFScrollingPresentationController::updateLayersOnLayoutChange(FloatSize do
     transform.scale(scaleFactor);
     transform.translate(centeringOffset.width(), centeringOffset.height());
 
-    m_contentsLayer->setTransform(transform);
+    if (layoutChangeInformation.scaleFactorChangedAfterInitialLayout()) {
+        if (RefPtr asyncRenderer = asyncRendererIfExists())
+            asyncRenderer->pdfContentScaleChanged(m_contentsLayer.get(), scaleFactor);
+    }
+
+    m_scalingLayer->setTransform(transform);
+//    m_contentsLayer->setTransform(transform);
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     m_selectionLayer->setTransform(transform);
 #endif
@@ -278,6 +295,7 @@ void PDFScrollingPresentationController::repaintForIncrementalLoad()
 
 void PDFScrollingPresentationController::updateIsInWindow(bool isInWindow)
 {
+    m_scalingLayer->setIsInWindow(isInWindow);
     m_contentsLayer->setIsInWindow(isInWindow);
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     if (m_selectionLayer)
@@ -304,6 +322,9 @@ void PDFScrollingPresentationController::updateDebugBorders(bool showDebugBorder
 
     if (m_contentsLayer)
         propagateSettingsToLayer(*m_contentsLayer);
+
+    if (m_scalingLayer)
+        propagateSettingsToLayer(*m_scalingLayer);
 
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     if (m_selectionLayer)

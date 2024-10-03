@@ -741,6 +741,22 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     });
 }
 
+// FIXME: This could probably be called whenever a transform is set on the presentation controllers' contents layer, instead of special casing for content scale.
+void AsyncPDFRenderer::pdfContentScaleChanged(GraphicsLayer* layer, float scale)
+{
+    layer->setRenderingIsSuppressedIncludingDescendants(true);
+
+//    RefPtr presentationController = m_presentationController.get();
+
+    // FIXME: Litmus test for the proof of concept. Actually store this callback and call it once all the work is done.
+    Timer::schedule(5_s, [layer/*, presentationController = RefPtr { m_presentationController.get() }*/] {
+        layer->setRenderingIsSuppressedIncludingDescendants(false);
+//        if (presentationController)
+//            presentationController->pluginScheduleRenderingUpdate();
+//        layer->setNeedsDisplay();
+    });
+}
+
 void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float pageScaleFactor, const FloatRect& paintingRect, std::optional<PDFLayoutRow> layoutRow)
 {
     // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave

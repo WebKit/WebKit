@@ -60,7 +60,7 @@ private:
     void deviceOrPageScaleFactorChanged() override { }
 
     void setupLayers(WebCore::GraphicsLayer& scrolledContentsLayer) override;
-    void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor) override;
+    void updateLayersOnLayoutChange(WebCore::FloatSize documentSize, WebCore::FloatSize centeringOffset, double scaleFactor, LayoutChangeInformation) override;
 
     void updateIsInWindow(bool isInWindow) override;
     void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) override;
@@ -105,6 +105,7 @@ private:
 
     RefPtr<WebCore::GraphicsLayer> m_pageBackgroundsContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
+    RefPtr<WebCore::GraphicsLayer> m_scalingLayer;
 #if ENABLE(UNIFIED_PDF_SELECTION_LAYER)
     RefPtr<WebCore::GraphicsLayer> m_selectionLayer;
 #endif

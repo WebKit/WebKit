@@ -627,6 +627,16 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
     noteLayerPropertyChanged(GeometryChanged);
 }
 
+void GraphicsLayerCA::setRenderingIsSuppressedIncludingDescendants(bool suppressed)
+{
+    if (m_renderingIsSuppressedIncludingDescendants == suppressed)
+        return;
+
+    noteLayerPropertyChanged(std::exchange(m_uncommittedChanges, NoChange));
+
+    GraphicsLayer::setRenderingIsSuppressedIncludingDescendants(suppressed);
+}
+
 void GraphicsLayerCA::setBoundsOrigin(const FloatPoint& origin)
 {
     if (origin == m_boundsOrigin)
