@@ -462,6 +462,7 @@ struct PerWebProcessState {
 
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;
+- (RefPtr<WebKit::WebPageProxy>)_protectedPage;
 
 @property (nonatomic, setter=_setHasActiveNowPlayingSession:) BOOL _hasActiveNowPlayingSession;
 

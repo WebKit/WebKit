@@ -229,7 +229,7 @@ void WebUserContentControllerProxy::removeAllUserScripts(API::ContentWorld& worl
     for (Ref process : m_processes)
         process->send(Messages::WebUserContentController::RemoveAllUserScripts({ world.identifier() }), identifier());
 
-    m_userScripts->removeAllOfTypeMatching<API::UserScript>([&](const auto& userScript) {
+    protectedUserScripts()->removeAllOfTypeMatching<API::UserScript>([&](const auto& userScript) {
         return &userScript->contentWorld() == &world;
     });
 }
@@ -302,7 +302,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets(API::ContentWorld& 
     for (Ref process : m_processes)
         process->send(Messages::WebUserContentController::RemoveAllUserStyleSheets({ world.identifier() }), identifier());
 
-    m_userStyleSheets->removeAllOfTypeMatching<API::UserStyleSheet>([&](const auto& userStyleSheet) {
+    protectedUserStyleSheets()->removeAllOfTypeMatching<API::UserStyleSheet>([&](const auto& userStyleSheet) {
         return &userStyleSheet->contentWorld() == &world;
     });
 }

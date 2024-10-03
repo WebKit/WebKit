@@ -55,6 +55,11 @@ static WeakPtr<WebPaymentCoordinatorProxy>& activePaymentCoordinatorProxy()
     return activePaymentCoordinatorProxy.get();
 }
 
+Ref<WorkQueue> WebPaymentCoordinatorProxy::protectedCanMakePaymentsQueue() const
+{
+    return m_canMakePaymentsQueue;
+}
+
 IPC::Connection* WebPaymentCoordinatorProxy::messageSenderConnection() const
 {
     return m_client.paymentCoordinatorConnection(*this);
