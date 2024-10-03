@@ -40,6 +40,7 @@ enum class WebExtensionDataType : uint8_t;
 
 - (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(WebKit::WebExtensionDataType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase;
 
+- (void)getAllKeys:(void (^)(NSArray<NSString *> *keys, NSString * _Nullable errorMessage))completionHandler;
 - (void)getValuesForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(NSDictionary<NSString *, NSString *> *results, NSString * _Nullable errorMessage))completionHandler;
 - (void)getStorageSizeForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(size_t storageSize, NSString * _Nullable errorMessage))completionHandler;
 - (void)getStorageSizeForAllKeysIncludingKeyedData:(NSDictionary<NSString *, NSString *> *)additionalKeyedData withCompletionHandler:(void (^)(size_t storageSize, NSUInteger numberOfKeysIncludingAdditionalKeyedData, NSDictionary<NSString *, NSString *> *existingKeysAndValues, NSString * _Nullable errorMessage))completionHandler;

@@ -55,7 +55,7 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".get()"_s);
 
-    auto storage = storageForType(dataType);
+    auto *storage = storageForType(dataType);
     [storage getValuesForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](NSDictionary<NSString *, NSString *> *values, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
@@ -64,11 +64,24 @@ void WebExtensionContext::storageGet(WebPageProxyIdentifier webPageProxyIdentifi
     }).get()];
 }
 
+void WebExtensionContext::storageGetKeys(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, CompletionHandler<void(Expected<Vector<String>, WebExtensionError>&&)>&& completionHandler)
+{
+    auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getKeys()"_s);
+
+    auto *storage = storageForType(dataType);
+    [storage getAllKeys:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](NSArray<NSString *> *keys, NSString *errorMessage) mutable {
+        if (errorMessage)
+            completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));
+        else
+            completionHandler(makeVector<String>(keys));
+    }).get()];
+}
+
 void WebExtensionContext::storageGetBytesInUse(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const Vector<String>& keys, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&& completionHandler)
 {
     auto callingAPIName = makeString("browser.storage."_s, toAPIString(dataType), ".getBytesInUse()"_s);
 
-    auto storage = storageForType(dataType);
+    auto *storage = storageForType(dataType);
     [storage getStorageSizeForKeys:createNSArray(keys).get() completionHandler:makeBlockPtr([callingAPIName, completionHandler = WTFMove(completionHandler)](size_t size, NSString *errorMessage) mutable {
         if (errorMessage)
             completionHandler(toWebExtensionError(callingAPIName, nil, errorMessage));

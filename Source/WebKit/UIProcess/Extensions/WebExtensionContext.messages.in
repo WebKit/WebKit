@@ -133,6 +133,7 @@ messages -> WebExtensionContext {
 
     // Storage APIs
     [EnabledIf='isStorageMessageAllowed()'] StorageGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<String, WebKit::WebExtensionError> result)
+    [EnabledIf='isStorageMessageAllowed()'] StorageGetKeys(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType) -> (Expected<Vector<String>, WebKit::WebExtensionError> result)
     [EnabledIf='isStorageMessageAllowed()'] StorageGetBytesInUse(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<size_t, WebKit::WebExtensionError> result)
     [EnabledIf='isStorageMessageAllowed()'] StorageSet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, String dataJSON) -> (Expected<void, WebKit::WebExtensionError> result)
     [EnabledIf='isStorageMessageAllowed()'] StorageRemove(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, Vector<String> keys) -> (Expected<void, WebKit::WebExtensionError> result)
