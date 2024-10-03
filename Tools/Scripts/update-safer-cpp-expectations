@@ -30,12 +30,23 @@ PROJECTS = ['WebCore', 'WebKit']
 
 
 def parser():
-    parser = argparse.ArgumentParser(description='Various tools for working on smart pointers')
+    parser = argparse.ArgumentParser(description='Automated tooling for updating safer CPP expectations')
     parser.add_argument(
-        '--update-expectations', '-u',
-        dest='unexpected_results',
+        '--add-expected-failures', '-a',
+        dest='results_to_add',
         default=None,
-        help='Path to unexpected results file following this naming scheme: "[WebKit/WebCore]-unexpected-[passes/failures]". Removes unexpected passes and adds unexpected failures to the expectations files in SmartPointerExpectations.'
+        help='Path to unexpected results file. Adds unexpected failures to the expectations files in SmartPointerExpectations.'
+    )
+    parser.add_argument(
+        '--remove-expected-failures', '-r',
+        dest='results_to_remove',
+        default=None,
+        help='Path to unexpected results file. Removes unexpected failures from the expectations files in SmartPointerExpectations.'
+    )
+    parser.add_argument(
+        '--project', '-p',
+        choices=['WebKit', 'WebCore'],
+        help='Specify which project expectations you want to update.'
     )
     parser.add_argument(
         '--find-expectations', '-f',
@@ -56,7 +67,7 @@ def modify_expectations_for_checker(checker_type, unexpected_contents, project, 
             new_checker_type = line.split()[-1]
             modify_expectations_for_checker(new_checker_type, unexpected_contents, project, type)
         elif line.strip():
-            if type == 'passes':
+            if type == 'remove':
                 expectations.remove(line)
             elif line not in expectations:
                 expectations.append(line)
@@ -65,16 +76,24 @@ def modify_expectations_for_checker(checker_type, unexpected_contents, project, 
     with open(path_to_expectations, 'w') as expectations_file:
         expectations_file.writelines(sorted(expectations))
     print(f'Updated expectations for {checker_type}!')
-    if type == 'passes':
+    if type == 'remove':
         print(f'Removed {prev_len - len(expectations)} fixed files.\n')
     else:
         print(f'Added {len(expectations) - prev_len} files with issues.\n')
 
 
-def update_expectations(unexpected_results):
+def update_expectations(unexpected_results, project, type):
     filename = unexpected_results.split('/')[-1]
-    project, type = filename.split('-')[0], filename.split('-')[-1].removesuffix('.txt')
-    print(f'Modifying unexpected {type} for {project}...\n')
+    if not project:
+        projects = [p for p in ['WebKit', 'WebCore'] if p in filename]
+        if projects:
+            project = projects[0]
+        else:
+            print(f'Could not find a project to update. Please include the project in the filename or pass in the --project argument.')
+            return
+
+    print(f"{'Adding' if type == 'add' else 'Removing'} unexpected failures in {project}...\n")
+
     with open(unexpected_results, 'r') as unexpected_contents:
         for line in unexpected_contents:
             if '=>' in line:
@@ -97,17 +116,23 @@ def is_expected_file(expected_file):
                 expectations = f.read()
                 if line in expectations:
                     if not issues:
-                        print(f'{expected_file} has smart pointer issues:')
+                        print(f'{expected_file} has issues:')
                     issues = True
                     print(f'- {project} {checker}')
     if not issues:
-        print(f'{expected_file} has no known smart pointer issues!')
+        print(f'{expected_file} has no known issues!')
 
 
 def main():
     args = parser()
-    if args.unexpected_results:
-        update_expectations(args.unexpected_results)
+    if args.results_to_add:
+        print('WARNING: Adding expected failures. Please only add expected failures when you fix false negatives in our tools.')
+        user_input = input('Are you sure you want to proceed? [y/N]: ') or 'N'
+        if user_input[0].lower() != 'y':
+            return
+        update_expectations(args.results_to_add, args.project, 'add')
+    if args.results_to_remove:
+        update_expectations(args.results_to_remove, args.project, 'remove')
     if args.expected_file:
         is_expected_file(args.expected_file)
 

@@ -48,7 +48,7 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                     Canonicalize, CheckOutPullRequest, CheckOutLLVMProject, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
                     CleanBuild, CleanDerivedSources, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                     CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
-                    DetermineLandedIdentifier, DisplaySmartPointerResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                    DetermineLandedIdentifier, DisplaySaferCPPResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                     EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
                     FetchBranches, FindModifiedLayoutTests, FindUnexpectedStaticAnalyzerResults, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
                     InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks, LeaveComment, InstallCMake, InstallNinja,
@@ -59,7 +59,7 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                     RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree,
                     RunWebKitTestsRepeatFailuresWithoutChangeRedTree, RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, SetBuildSummary, SetCommitQueueMinusFlagOnPatch,
-                    ScanBuildSmartPointer, ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdateClang, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
+                    ScanBuild, ShowIdentifier, Trigger, TransferToS3, TwistedAdditions, UpdateClang, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
                     UploadFileToS3, UploadTestResults, ValidateCommitMessage, ValidateCommitterAndReviewer, ValidateChange, ValidateRemote, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -9130,7 +9130,7 @@ Date:   Tue Mar 29 16:04:35 2023 -0700
             return rc
 
 
-class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
+class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'
     EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
 
@@ -9141,7 +9141,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(ScanBuildSmartPointer())
+        self.setupStep(ScanBuild())
         self.setProperty('configuration', 'release')
         self.setProperty('builddir', self.WORK_DIR)
 
@@ -9266,7 +9266,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         return self.runStep()
 
 
-class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase):
+class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -9274,7 +9274,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(DisplaySmartPointerResults())
+        self.setupStep(DisplaySaferCPPResults())
         self.setProperty('buildnumber', '123')
         self.setProperty('github.number', '17')
 
@@ -9310,7 +9310,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
                 }
             }
 
-        DisplaySmartPointerResults.loadResultsData = loadResultsData
+        DisplaySaferCPPResults.loadResultsData = loadResultsData
 
     def test_success_preexisting_failures(self):
         self.configureStep()
@@ -9329,8 +9329,8 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
         self.expectOutcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
         rc = self.runStep()
         self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
-        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 1 fixed file!\n"
-        expected_comment += "Please update expectations using `smart-pointer-tool --update-expectations` before landing."
+        expected_comment = "Safer CPP Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 1 fixed file!\n"
+        expected_comment += "Please update expectations using `update-safer-cpp-expectations --remove-expected-failures` before landing."
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
         self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
@@ -9345,7 +9345,7 @@ class TestDisplaySmartPointerResults(BuildStepMixinAdditions, unittest.TestCase)
 
         self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.runStep()
-        expected_comment = "Smart Pointer Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html), blocking PR #17."
+        expected_comment = "Safer CPP Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html), blocking PR #17."
         expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
@@ -9370,7 +9370,7 @@ class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         timeout=60,
                         command=['./build/bin/clang', '--version'])
-            + ExpectShell.log('stdio', stdout='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89) Target: arm64-apple-darwin23.5.0\nThread model: posix\nInstalledDir: /Volumes/Data/worker/macOS-Sonoma-Smart-Pointer-Build-EWS/llvm-project/./build/bin')
+            + ExpectShell.log('stdio', stdout='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89) Target: arm64-apple-darwin23.5.0\nThread model: posix\nInstalledDir: /Volumes/Data/worker/macOS-Sonoma-Safer-CPP-Checks-EWS/llvm-project/./build/bin')
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='clang version 17.0.6 (https://github.com/rniwa/llvm-project.git 34715c1b2049d8aa738ade79f003ed4b82259a89)')

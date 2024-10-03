@@ -1829,7 +1829,7 @@ exit 1''')
             return self.runStep()
 
 
-class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
+class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
     WORK_DIR = 'wkdir'
     EXPECTED_BUILD_COMMAND = ['/bin/sh', '-c', f'Tools/Scripts/build-and-analyze --output-dir wkdir/build/{SCAN_BUILD_OUTPUT_DIR} --configuration release --only-smart-pointers --analyzer-path=wkdir/llvm-project/build/bin/clang --scan-build-path=../llvm-project/clang/tools/scan-build/bin/scan-build --sdkroot=macosx --preprocessor-additions=CLANG_WEBKIT_BRANCH=1 2>&1 | python3 Tools/Scripts/filter-test-logs scan-build --output build-log.txt']
 
@@ -1840,7 +1840,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(ScanBuildSmartPointer())
+        self.setupStep(ScanBuild())
 
     def test_failure(self):
         self.configureStep()
@@ -1857,7 +1857,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='scan-build-static-analyzer: No bugs found.\nTotal issue count: 123\n')
             + 0
         )
-        self.expectOutcome(result=FAILURE, state_string='ANALYZE FAILED: scan-build-smart-pointer found 123 issues (failure)')
+        self.expectOutcome(result=FAILURE, state_string='ANALYZE FAILED: scan-build found 123 issues (failure)')
         return self.runStep()
 
     def test_success(self):
@@ -1876,7 +1876,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED No issues found.\n')
             + 0
         )
-        self.expectOutcome(result=SUCCESS, state_string='scan-build-smart-pointer found 0 issues')
+        self.expectOutcome(result=SUCCESS, state_string='scan-build found 0 issues')
         return self.runStep()
 
     def test_success_with_issues(self):
@@ -1895,7 +1895,7 @@ class TestScanBuildSmartPointer(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='ANALYZE SUCCEEDED\n Total issue count: 300\n')
             + 0
         )
-        self.expectOutcome(result=SUCCESS, state_string='scan-build-smart-pointer found 300 issues')
+        self.expectOutcome(result=SUCCESS, state_string='scan-build found 300 issues')
         return self.runStep()
 
 
@@ -1963,7 +1963,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         return self.runStep()
 
 
-class TestUpdateSmartPointerBaseline(BuildStepMixinAdditions, unittest.TestCase):
+class TestUpdateSaferCPPBaseline(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -1971,7 +1971,7 @@ class TestUpdateSmartPointerBaseline(BuildStepMixinAdditions, unittest.TestCase)
         return self.tearDownBuildStep()
 
     def configureStep(self):
-        self.setupStep(UpdateSmartPointerBaseline())
+        self.setupStep(UpdateSaferCPPBaseline())
 
     def test_success(self):
         self.configureStep()
@@ -1989,4 +1989,72 @@ class TestUpdateSmartPointerBaseline(BuildStepMixinAdditions, unittest.TestCase)
             + 0,
         )
         self.expectOutcome(result=SUCCESS)
+        return self.runStep()
+
+
+class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(DisplaySaferCPPResults())
+        self.setProperty('buildnumber', '123')
+
+        def loadResultsData(self, path):
+            return {
+                "passes": {
+                    "WebCore": {
+                        "NoUncountedMemberChecker": ['File17.cpp'],
+                        "RefCntblBaseVirtualDtor": ['File17.cpp'],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    },
+                    "WebKit": {
+                        "NoUncountedMemberChecker": [],
+                        "RefCntblBaseVirtualDtor": [],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    }
+                },
+                "failures": {
+                    "WebCore": {
+                        "NoUncountedMemberChecker": ['File1.cpp'],
+                        "RefCntblBaseVirtualDtor": [],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    },
+                    "WebKit": {
+                        "NoUncountedMemberChecker": [],
+                        "RefCntblBaseVirtualDtor": [],
+                        "UncountedCallArgsChecker": [],
+                        "UncountedLocalVarsChecker": []
+                    }
+                }
+            }
+
+        DisplaySaferCPPResults.loadResultsData = loadResultsData
+
+    def test_success(self):
+        self.configureStep()
+
+        self.expectOutcome(result=SUCCESS, state_string='No unexpected results')
+        return self.runStep()
+
+    def test_warning(self):
+        self.configureStep()
+        self.setProperty('unexpected_passing_files', 1)
+
+        self.expectOutcome(result=WARNINGS, state_string='Unexpected passing files: 1')
+        return self.runStep()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('unexpected_new_issues', 10)
+        self.setProperty('unexpected_passing_files', 1)
+        self.setProperty('unexpected_failing_files', 1)
+
+        self.expectOutcome(result=FAILURE, state_string='Unexpected failing files: 1 Unexpected passing files: 1')
         return self.runStep()
