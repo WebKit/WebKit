@@ -50,10 +50,9 @@ typedef (USVString or URLPatternInit) URLPatternInput;
   readonly attribute USVString hash;
 
   readonly attribute boolean hasRegExpGroups;
-  /*
 
-  URLPatternResult? exec(optional URLPatternInput input = {}, optional USVString baseURL);
-  */
+  undefined exec(optional URLPatternInput input = {}, optional USVString baseURL);
+
 };
 
 /*

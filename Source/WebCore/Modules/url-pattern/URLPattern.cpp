@@ -27,6 +27,7 @@
 #include <wtf/RefCounted.h>
 #include "URLPatternInit.h"
 #include "URLPatternOptions.h"
+#include "URLPatternResult.h"
 #include "URLPattern.h"
 
 namespace WebCore {
@@ -76,11 +77,20 @@ ExceptionOr<bool> URLPattern::test(std::optional<URLPatternInput> input, std::op
     // return false;
 }
 
-// TODO
-// URLPatternResult URLPattern::exec(std::optional<String>&& input, std::optional<String>&& baseURL)
-// {
-//     return;
-// }
+void URLPattern::exec(std::optional<String>&& input, std::optional<String>&& baseURL)
+{
+    if (input.has_value())
+    {
+        ;
+    }
+
+    if (baseURL.has_value())
+    {
+        ;
+    }
+
+    // return std::nullopt;
+}
 
 
 }

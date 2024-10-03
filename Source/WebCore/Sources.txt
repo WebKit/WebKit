@@ -4596,6 +4596,7 @@ JSUIEventInit.cpp
 JSURLPattern.cpp
 JSURLPatternInit.cpp
 JSURLPatternOptions.cpp
+JSURLPatternResult.cpp
 JSURLSearchParams.cpp
 JSUserActivation.cpp
 JSUndoItem.cpp

@@ -44,29 +44,24 @@ namespace WebCore {
 
 struct URLPatternInit;
 struct URLPatternOptions;
-
-// struct URLPatternComponentResult {
-//     String input;
-//     // TODO record<USVString, (USVString or undefined)> groups;
-// }
+struct URLPatternResult;
 
 // struct URLPatternCompatible {
 //      TODO body
 // }
 
-// TODO: typedef (USVString or URLPatternInit) URLPatternInput;
-
 class URLPattern final : public RefCounted<URLPattern> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(URLPattern);
 public:
     using URLPatternInput = std::variant<String, URLPatternInit>;
+
     static Ref<URLPattern> create(const URLPatternInput input, const String&& baseURL, URLPatternOptions&& options);
     static Ref<URLPattern> create(std::optional<URLPatternInput> input, URLPatternOptions&& options);
     ~URLPattern();
 
     ExceptionOr<bool> test(std::optional<URLPatternInput> input, std::optional<String>&& baseURL);
 
-    // URLPatternResult exec(std::optional<String>&& input, std::optional<String>&& baseURL);
+    void exec(std::optional<String>&& input, std::optional<String>&& baseURL);
 
     ExceptionOr<String> protocol() const { return Exception { ExceptionCode::NotSupportedError }; }
     ExceptionOr<String> username() const { return Exception { ExceptionCode::NotSupportedError }; }

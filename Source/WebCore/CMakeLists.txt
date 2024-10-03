@@ -823,6 +823,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/url-pattern/URLPattern.idl
     Modules/url-pattern/URLPatternInit.idl
     Modules/url-pattern/URLPatternOptions.idl
+    Modules/url-pattern/URLPatternResult.idl
 
     Modules/webdriver/Navigator+WebDriver.idl
 

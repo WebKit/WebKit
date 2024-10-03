@@ -3011,6 +3011,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternResult.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLPatternResult.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp
