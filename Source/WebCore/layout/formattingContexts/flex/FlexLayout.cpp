@@ -596,8 +596,9 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         resolveMarginAuto();
 
-        auto justifyContentValue = flexContainerStyle().justifyContent().distribution();
-        auto positionalAlignmentValue = flexContainerStyle().justifyContent().position();
+        auto& justifyContentValue = flexContainerStyle().justifyContent();
+        auto justifyContentDistribution = justifyContentValue.distribution();
+        auto justifyContentPosition = justifyContentValue.position();
 
         auto setFallbackValuesIfApplicable = [&] {
             auto itemCount = lineRange.distance();
@@ -605,27 +606,29 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
             if (!hasOverflow && itemCount > 1)
                 return;
 
-            switch (justifyContentValue) {
+            switch (justifyContentDistribution) {
             case ContentDistribution::SpaceBetween:
-                positionalAlignmentValue = hasOverflow ? ContentPosition::Start : ContentPosition::FlexStart;
+                justifyContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::FlexStart;
                 break;
             case ContentDistribution::SpaceEvenly:
             case ContentDistribution::SpaceAround:
-                positionalAlignmentValue = hasOverflow ? ContentPosition::Start : ContentPosition::Center;
+                justifyContentPosition = hasOverflow ? ContentPosition::Start : ContentPosition::Center;
                 break;
             default:
                 break;
             }
-            justifyContentValue = ContentDistribution::Default;
+            if (justifyContentValue.overflow() == OverflowAlignment::Safe && hasOverflow)
+                justifyContentPosition = justifyContentPosition == ContentPosition::Center ? ContentPosition::Start : justifyContentPosition;
+            justifyContentDistribution = ContentDistribution::Default;
         };
         setFallbackValuesIfApplicable();
 
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
             auto initialOffset = [&] {
-                // ContentDistribution::Default handles fallback to justifyContentValue.position()
-                if (justifyContentValue != ContentDistribution::Default) {
-                    switch (justifyContentValue) {
+                // ContentDistribution::Default handles fallback to justifyContentPosition
+                if (justifyContentDistribution != ContentDistribution::Default) {
+                    switch (justifyContentDistribution) {
                     case ContentDistribution::SpaceBetween:
                         return LayoutUnit { };
                     case ContentDistribution::SpaceAround:
@@ -638,7 +641,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                     }
                 }
 
-                switch (positionalAlignmentValue) {
+                switch (justifyContentPosition) {
                 // logical alignments
                 case ContentPosition::Normal:
                 case ContentPosition::FlexStart:
@@ -667,7 +670,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
             };
 
             auto gapBetweenItems = [&] {
-                switch (justifyContentValue) {
+                switch (justifyContentDistribution) {
                 case ContentDistribution::Default:
                     return LayoutUnit { };
                 case ContentDistribution::SpaceBetween:
@@ -756,16 +759,15 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                 auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex], crossPositionAndMargins[flexItemIndex].margin());
                 auto flexItemOuterCrossPosition = LayoutUnit { };
 
-                auto& flexItemAlignSelf = flexItem.style().alignSelf();
-                auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
+                auto& flexItemAlign = flexItem.style().alignSelf().position() != ItemPosition::Auto ? flexItem.style().alignSelf() : flexContainerStyle().alignItems();
+                auto alignSelfPosition = flexItemAlign.position();
                 auto setFallbackValuesIfApplicable = [&] {
-                    if (flexItemOuterCrossSize <= flexLinesCrossSizeList[lineIndex] || flexItemAlignSelf.overflow() != OverflowAlignment::Safe)
-                        return;
-                    alignValue.setPosition(ItemPosition::FlexStart);
+                    if (flexItemOuterCrossSize > flexLinesCrossSizeList[lineIndex] && flexItemAlign.overflow() == OverflowAlignment::Safe)
+                        alignSelfPosition = ItemPosition::FlexStart;
                 };
                 setFallbackValuesIfApplicable();
 
-                switch (alignValue.position()) {
+                switch (alignSelfPosition) {
                 case ItemPosition::Stretch:
                 case ItemPosition::Normal:
                     // This is taken care of at 9.4.11 see computeCrossSizeForFlexItems.
@@ -809,8 +811,9 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     // Align all flex lines per align-content.
     auto distributableCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
     auto initialOffset = [&]() -> LayoutUnit {
-        auto alignContentPosition = flexContainerStyle().alignContent().position();
-        auto alignContentDistribution = flexContainerStyle().alignContent().distribution();
+        auto& alignContentValue = flexContainerStyle().alignContent();
+        auto alignContentPosition = alignContentValue.position();
+        auto alignContentDistribution = alignContentValue.distribution();
 
         auto setFallbackValuesIfApplicable = [&] {
             auto hasOverflow = distributableCrossSpace < 0;
@@ -830,6 +833,8 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
             default:
                 break;
             }
+            if (alignContentValue.overflow() == OverflowAlignment::Safe && hasOverflow)
+                alignContentPosition = alignContentPosition == ContentPosition::Center ? ContentPosition::Start : alignContentPosition;
             alignContentDistribution = ContentDistribution::Default;
         };
         setFallbackValuesIfApplicable();
