@@ -35,8 +35,13 @@ using namespace TextSpacing;
 bool TextAutospace::shouldApplySpacing(CharacterClass firstCharacterClass, CharacterClass secondCharacterClass) const
 {
     constexpr uint8_t ideographAlphaMask = static_cast<uint8_t>(CharacterClass::Ideograph) | static_cast<uint8_t>(CharacterClass::NonIdeographLetter);
-    if (hasIdeographAlpha())
-        return (static_cast<uint8_t>(firstCharacterClass) | static_cast<uint8_t>(secondCharacterClass)) == ideographAlphaMask;
+    constexpr uint8_t ideographNumericMask = static_cast<uint8_t>(CharacterClass::Ideograph) | static_cast<uint8_t>(CharacterClass::NonIdeographNumeral);
+
+    uint8_t characterClassesMask = (static_cast<uint8_t>(firstCharacterClass) | static_cast<uint8_t>(secondCharacterClass));
+    if (hasIdeographAlpha() && characterClassesMask == ideographAlphaMask)
+        return true;
+    if (hasIdeographNumeric() && characterClassesMask == ideographNumericMask)
+        return true;
     return false;
 }
 
