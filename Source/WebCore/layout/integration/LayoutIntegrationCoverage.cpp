@@ -60,7 +60,7 @@ enum class AvoidanceReason : uint32_t {
     // Unused                           = 1U << 6,
     FlexBoxHasUnsupportedOverflow       = 1U << 7,
     FlexBoxHasUnsupportedAlignItems     = 1U << 8,
-    FlexBoxHasUnsupportedAlignContent   = 1U << 9,
+    // Unused                           = 1U << 9,
     FlexBoxHasUnsupportedRowGap         = 1U << 10,
     FlexBoxHasUnsupportedColumnGap      = 1U << 11,
     FlexBoxHasUnsupportedTypeOfRenderer = 1U << 12,
@@ -134,9 +134,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     auto alignItemValue = flexBoxStyle.alignItems().position();
     if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignItems, reasons, includeReasons);
-
-    if (flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedAlignContent, reasons, includeReasons);
 
     if (!flexBoxStyle.rowGap().isNormal())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedRowGap, reasons, includeReasons);
@@ -245,9 +242,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedAlignItems:
         stream << "flex box has unsupported align-items value";
-        break;
-    case AvoidanceReason::FlexBoxHasUnsupportedAlignContent:
-        stream << "flex box has unsupported align-content value";
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedRowGap:
         stream << "flex box has unsupported row-gap value";

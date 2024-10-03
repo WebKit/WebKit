@@ -617,8 +617,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
             default:
                 break;
             }
-            if (justifyContentValue.overflow() == OverflowAlignment::Safe && hasOverflow)
-                justifyContentPosition = justifyContentPosition == ContentPosition::Center ? ContentPosition::Start : justifyContentPosition;
+            justifyContentPosition = justifyContentValue.overflow() == OverflowAlignment::Safe && hasOverflow ? ContentPosition::Start : justifyContentPosition;
             justifyContentDistribution = ContentDistribution::Default;
         };
         setFallbackValuesIfApplicable();
@@ -833,20 +832,19 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
             default:
                 break;
             }
-            if (alignContentValue.overflow() == OverflowAlignment::Safe && hasOverflow)
-                alignContentPosition = alignContentPosition == ContentPosition::Center ? ContentPosition::Start : alignContentPosition;
+            alignContentPosition = alignContentValue.overflow() == OverflowAlignment::Safe && hasOverflow ? ContentPosition::Start : alignContentPosition;
             alignContentDistribution = ContentDistribution::Default;
         };
         setFallbackValuesIfApplicable();
 
-        auto adjustAlignContentPositionIfApplicable = [&] {
+        auto flipStartEndContentPositionIfApplicable = [&] {
             auto isWrapReversed = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(flexContainer());
             if (alignContentPosition == ContentPosition::Start)
                 alignContentPosition = isWrapReversed ? ContentPosition::FlexEnd : ContentPosition::FlexStart;
             else if (alignContentPosition == ContentPosition::End)
                 alignContentPosition = isWrapReversed ? ContentPosition::FlexStart : ContentPosition::FlexEnd;
         };
-        adjustAlignContentPositionIfApplicable();
+        flipStartEndContentPositionIfApplicable();
 
         switch (alignContentPosition) {
         case ContentPosition::FlexStart:
