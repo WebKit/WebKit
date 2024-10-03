@@ -1881,3 +1881,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/280728 [ Ventura wk2 ] imported/w3c/web-platform-tests/screen-orientation/active-lock.html is a flaky failure.
 [ Ventura ] imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
+
+# webkit.org/b/280832 [ Sequoia wk2 ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html is a constant failure.
+[ Sequoia+ ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
