@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+#target {
+    border: 1px solid tomato;
+    padding: 3px;
+    font-size: 24px;
+}
+
+.scrollable {
+    width: 300px;
+    height: 150px;
+    border: solid 1px lightgray;
+    border-radius: 4px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    line-height: 1.5em;
+    outline: none;
+    padding: 1em;
+}
+
+button {
+    font-size: 18px;
+    padding: 0.5em;
+    border: 0.5px solid lightgray;
+    border-radius: 6px;
+    background-color: white;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+handledClick = false;
+
+addEventListener("load", async () => {
+    let button = document.querySelector("button");
+    let scroller = document.querySelector(".scrollable");
+
+    description("Verifies that the selection highlight is clipped to overflow scrolling container. Select all the text in the scrollable container below, scroll the container to the top, and then tap the button. Verify that a click event is dispatched on the button");
+    button.addEventListener("click", () => {
+        handledClick = true;
+    });
+
+    await UIHelper.longPressElement(document.querySelector(".scrollable"));
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Selected text");
+
+    getSelection().selectAllChildren(scroller);
+    await UIHelper.ensureStablePresentationUpdate();
+
+    await UIHelper.activateElement(button);
+    await shouldBecomeEqual("handledClick", "true");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="description"></div>
+    <div class="scrollable">
+        <strong>1. Select all of the below text</strong>
+        <p>Here’s to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They’re not fond of rules. And they have no respect for the status quo.</p>
+        <p>You can quote them, disagree with them, glorify or vilify them. About the only thing you can’t do is ignore them.</p>
+        <p>Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+    </div>
+    <br>
+    <div><button>2. Then tap here</button></div>
+    <div id="console"></div>
+</body>
+</html>

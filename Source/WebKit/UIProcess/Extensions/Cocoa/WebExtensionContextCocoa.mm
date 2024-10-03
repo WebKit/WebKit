@@ -645,7 +645,7 @@ void WebExtensionContext::setUnsupportedAPIs(HashSet<String>&& unsupported)
 
 WebExtensionContext::InjectedContentVector WebExtensionContext::injectedContents() const
 {
-    InjectedContentVector result = m_extension->staticInjectedContents();
+    InjectedContentVector result = protectedExtension()->staticInjectedContents();
 
     for (auto& entry : m_registeredScriptsMap)
         result.append(entry.value->injectedContent());
@@ -1639,7 +1639,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (skipRequestedPermissions)
         return cacheResultAndReturn(PermissionState::Unknown);
 
-    auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
+    auto requestedMatchPatterns = protectedExtension()->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns) {
         if (urlMatchesPatternIgnoringWildcardHostPatterns(requestedMatchPattern))
             return cacheResultAndReturn(PermissionState::RequestedExplicitly);
@@ -1728,7 +1728,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     if (options.contains(PermissionStateOptions::SkipRequestedPermissions))
         return PermissionState::Unknown;
 
-    auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
+    auto requestedMatchPatterns = protectedExtension()->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns) {
         if (urlMatchesPatternIgnoringWildcardHostPatterns(requestedMatchPattern))
             return PermissionState::RequestedExplicitly;
@@ -3298,15 +3298,16 @@ ALLOW_NONLITERAL_FORMAT_END
 NSArray *WebExtensionContext::corsDisablingPatterns()
 {
     NSMutableSet<NSString *> *patterns = [NSMutableSet set];
+    RefPtr extension = m_extension;
 
-    auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
+    auto requestedMatchPatterns = extension->allRequestedMatchPatterns();
     for (auto& requestedMatchPattern : requestedMatchPatterns)
         [patterns addObjectsFromArray:createNSArray(requestedMatchPattern->expandedStrings()).get()];
 
     // Include manifest optional permission origins here, these should be dynamically added when the are granted
     // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
     // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
-    auto optionalPermissionMatchPatterns = m_extension->optionalPermissionMatchPatterns();
+    auto optionalPermissionMatchPatterns = extension->optionalPermissionMatchPatterns();
     for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
         [patterns addObjectsFromArray:createNSArray(optionalMatchPattern->expandedStrings()).get()];
 
@@ -4343,9 +4344,11 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto scriptID = injectedContentData.identifier;
         bool isRegisteredScript = !scriptID.isEmpty();
 
+        RefPtr extension = m_extension;
+
         for (NSString *scriptPath : injectedContentData.scriptPaths) {
             NSError *error;
-            auto *scriptString = m_extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
+            auto *scriptString = extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
             if (!scriptString) {
                 recordError(error);
                 continue;
@@ -4369,7 +4372,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
         for (NSString *styleSheetPath : injectedContentData.styleSheetPaths) {
             NSError *error;
-            auto *styleSheetString = m_extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
+            auto *styleSheetString = extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
             if (!styleSheetString) {
                 recordError(error);
                 continue;

@@ -11,4 +11,10 @@ PASS Parent pseudo class within scope-end
 PASS Parent pseudo class within body of nested @scope
 PASS Implicit rule within nested @scope
 PASS Implicit rule within nested @scope (proximity)
+PASS Nested :scope inside an :is
+PASS :scope within nested and scoped rule
+PASS :scope within nested and scoped rule (implied &)
+PASS :scope within nested and scoped rule (relative)
+PASS Scoped nested group rule
+PASS Scoped nested within another scope
 

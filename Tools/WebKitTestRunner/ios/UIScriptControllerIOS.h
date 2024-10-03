@@ -204,7 +204,7 @@ private:
 
     int64_t pasteboardChangeCount() const final;
 
-    void clipSelectionViewRectToContentView(CGRect&) const;
+    CGRect selectionViewBoundsClippedToContentView(UIView *, std::optional<CGRect>&& = std::nullopt) const;
 
     JSRetainPtr<JSStringRef> scrollbarStateForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID, bool) const override;
 

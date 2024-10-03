@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,13 +158,13 @@ std::optional<URL> Coder<URL>::decodeForPersistence(Decoder& decoder)
 
 void Coder<SHA1::Digest>::encodeForPersistence(Encoder& encoder, const SHA1::Digest& digest)
 {
-    encoder.encodeFixedLengthData({ digest.data(), sizeof(digest) });
+    encoder.encodeFixedLengthData({ digest });
 }
 
 std::optional<SHA1::Digest> Coder<SHA1::Digest>::decodeForPersistence(Decoder& decoder)
 {
     SHA1::Digest tmp;
-    if (!decoder.decodeFixedLengthData({ tmp.data(), sizeof(tmp) }))
+    if (!decoder.decodeFixedLengthData({ tmp }))
         return std::nullopt;
     return tmp;
 }

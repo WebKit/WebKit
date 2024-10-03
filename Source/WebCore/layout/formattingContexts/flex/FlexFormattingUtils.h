@@ -39,7 +39,8 @@ public:
     FlexFormattingUtils(const FlexFormattingContext&);
 
     static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
-    static bool isReversedToContentDirection(const ElementBox& flexBox);
+    static bool isMainReversedToContentDirection(const ElementBox& flexBox);
+    static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexBox);
 
     LayoutUnit usedMinimumMainSize(const LogicalFlexItem&) const;
     std::optional<LayoutUnit> usedMaxiumMainSize(const LogicalFlexItem&) const;

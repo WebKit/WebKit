@@ -1,4 +1,6 @@
 //@ requireOptions("--watchdog=10000", "--watchdog-exception-ok")
+// This defeats the watchdog on Windows, so we bail after 10 seconds explicitly
+const start = Date.now();
 function main() {
     runString(`
         function bar(_a) {
@@ -14,6 +16,8 @@ function main() {
         }
         bar('bar()');
     `);
+    if (Date.now() - start > 10000)
+      return
     main();
 }
 main();

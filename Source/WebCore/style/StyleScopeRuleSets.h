@@ -53,6 +53,8 @@ struct InvalidationRuleSet {
     IsNegation isNegation;
 };
 
+enum class SelectorsForStyleAttribute : uint8_t { None, SubjectPositionOnly, NonSubjectPosition };
+
 class ScopeRuleSets {
 public:
     ScopeRuleSets(Resolver&);
@@ -78,8 +80,7 @@ public:
 
     const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
 
-    bool hasSelectorsForStyleAttribute() const;
-    bool hasComplexSelectorsForStyleAttribute() const;
+    SelectorsForStyleAttribute selectorsForStyleAttribute() const;
 
     void setUsesSharedUserStyle(bool b) { m_usesSharedUserStyle = b; }
     void initializeUserStyle();
@@ -131,7 +132,7 @@ private:
 
     mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
 
-    mutable std::optional<bool> m_cachedHasComplexSelectorsForStyleAttribute;
+    mutable std::optional<SelectorsForStyleAttribute> m_cachedSelectorsForStyleAttribute;
 
     mutable unsigned m_defaultStyleVersionOnFeatureCollection { 0 };
     mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };

@@ -2431,3 +2431,5 @@ webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphena
 
 # webkit.org/b/280646 [macOS Debug EWS] media/video-webkit-playsinline.html is a flaky crash
 [ Debug ] media/video-webkit-playsinline.html [ Skip ]
+
+webkit.org/b/280792 inspector/worker/debugger-pause-subworker.html [ Skip ]

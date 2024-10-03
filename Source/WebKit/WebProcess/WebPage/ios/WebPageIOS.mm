@@ -5613,6 +5613,11 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
     if (!state.isContentEditable && selection.isCaret())
         return;
 
+    if (!m_selectionHonorsOverflowScrolling) {
+        state.visualData->selectionClipRect = editableRootBounds;
+        return;
+    }
+
     ScrollingNodeID enclosingScrollingNodeID;
     IntRect enclosingScrollingClipRect;
     IntRect innerScrollingClipRect;
@@ -5631,17 +5636,6 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
 
     if (enclosingScrollingNodeID)
         state.visualData->enclosingScrollingNodeID = { WTFMove(enclosingScrollingNodeID) };
-
-    if (!m_selectionHonorsOverflowScrolling) {
-        state.visualData->selectionClipRect = editableRootBounds;
-        if (!enclosingScrollingClipRect.isEmpty()) {
-            if (state.visualData->selectionClipRect.isEmpty())
-                state.visualData->selectionClipRect = enclosingScrollingClipRect;
-            else
-                state.visualData->selectionClipRect.intersect(enclosingScrollingClipRect);
-        }
-        return;
-    }
 
     if (!innerScrollingClipRect.isEmpty()) {
         // We need to clip the selection to the inner scroller, even if that scroller does not have a

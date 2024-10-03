@@ -606,9 +606,10 @@ void VideoPresentationManagerProxy::requestRouteSharingPolicyAndContextUID(Playb
 
 VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy::createModelAndInterface(PlaybackSessionContextIdentifier contextId)
 {
-    Ref playbackSessionModel = m_playbackSessionManagerProxy->ensureModel(contextId);
+    Ref playbackSessionManagerProxy = m_playbackSessionManagerProxy;
+    Ref playbackSessionModel = playbackSessionManagerProxy->ensureModel(contextId);
     Ref model = VideoPresentationModelContext::create(*this, playbackSessionModel, contextId);
-    Ref playbackSessionInterface = m_playbackSessionManagerProxy->ensureInterface(contextId);
+    Ref playbackSessionInterface = playbackSessionManagerProxy->ensureInterface(contextId);
 
     RefPtr<PlatformVideoPresentationInterface> interface;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -620,7 +621,7 @@ VideoPresentationManagerProxy::ModelInterfaceTuple VideoPresentationManagerProxy
     interface = PlatformVideoPresentationInterface::create(playbackSessionInterface.get());
 #endif
 
-    m_playbackSessionManagerProxy->addClientForContext(contextId);
+    playbackSessionManagerProxy->addClientForContext(contextId);
 
     interface->setVideoPresentationModel(model.ptr());
 
@@ -680,7 +681,7 @@ void VideoPresentationManagerProxy::removeClientForContext(PlaybackSessionContex
         Ref interface = ensureInterface(contextId);
         interface->setVideoPresentationModel(nullptr);
         interface->invalidate();
-        m_playbackSessionManagerProxy->removeClientForContext(contextId);
+        protectedPlaybackSessionManagerProxy()->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
 
@@ -754,16 +755,17 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
     auto [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
 
-    if (model->videoDimensions().isEmpty() && !nativeSize.isEmpty())
-        model->setVideoDimensions(nativeSize);
+    Ref protectedModel = model;
+    if (protectedModel->videoDimensions().isEmpty() && !nativeSize.isEmpty())
+        protectedModel->setVideoDimensions(nativeSize);
 
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
-    if (!model->playerLayer()) {
-        ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayer, initialSize: ", initialSize, ", nativeSize: ", nativeSize);
+    if (!protectedModel->playerLayer()) {
+        ALWAYS_LOG(LOGIDENTIFIER, protectedModel->logIdentifier(), ", Creating AVPlayerLayer, initialSize: ", initialSize, ", nativeSize: ", nativeSize);
         auto playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
 
-        [playerLayer setPresentationModel:model.ptr()];
+        [playerLayer setPresentationModel:protectedModel.ptr()];
         [playerLayer setVideoSublayer:[view layer]];
 
         // The videoView may already be reparented in fullscreen, so only parent the view
@@ -771,7 +773,7 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
-        model->setPlayerLayer(playerLayer.get());
+        protectedModel->setPlayerLayer(playerLayer.get());
 
         [playerLayer setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerLayer setNeedsLayout];
@@ -781,7 +783,7 @@ PlatformLayerContainer VideoPresentationManagerProxy::createLayerWithID(Playback
     if (RefPtr page = m_page.get())
         page->protectedLegacyMainFrameProcess()->send(Messages::VideoPresentationManager::EnsureUpdatedVideoDimensions(contextId, nativeSize), page->webPageIDInMainFrameProcess());
 
-    return model->playerLayer();
+    return protectedModel->playerLayer();
 }
 
 RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWithID(PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, const WebCore::FloatSize& initialSize, float hostingDeviceScaleFactor)
@@ -976,7 +978,7 @@ void VideoPresentationManagerProxy::setHasVideo(PlaybackSessionContextIdentifier
 void VideoPresentationManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
     auto [model, interface] = ensureModelAndInterface(contextId);
-    model->setVideoDimensions(videoDimensions);
+    Ref { model }->setVideoDimensions(videoDimensions);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (videoDimensions.isEmpty())
@@ -1445,6 +1447,11 @@ WTFLogChannel& VideoPresentationManagerProxy::logChannel() const
     return WebKit2LogFullscreen;
 }
 #endif
+
+Ref<PlaybackSessionManagerProxy> VideoPresentationManagerProxy::protectedPlaybackSessionManagerProxy() const
+{
+    return m_playbackSessionManagerProxy;
+}
 
 } // namespace WebKit
 

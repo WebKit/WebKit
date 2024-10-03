@@ -107,21 +107,25 @@ static inline bool shouldJIT(Wasm::LLIntCallee* callee)
     return true;
 }
 
-static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
-        return false;
+        return nullptr;
     }
 
     MemoryMode memoryMode = instance->memory()->mode();
-    if (callee->replacement(memoryMode))  {
-        dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
-        tierUpCounter.optimizeSoon();
-        return true;
+    Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
+    {
+        Locker locker { calleeGroup.m_lock };
+        if (auto* replacement = calleeGroup.replacement(locker, callee->index())) {
+            dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
+            tierUpCounter.optimizeSoon();
+            return replacement;
+        }
     }
 
     bool compile = false;
@@ -152,17 +156,22 @@ static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, JSWebAs
         }
     }
 
-    return !!callee->replacement(memoryMode);
+    Locker locker { calleeGroup.m_lock };
+    return calleeGroup.replacement(locker, callee->index());
 }
 
-static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
+static inline Expected<Wasm::JITCallee*, Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIntCallee* callee, JSWebAssemblyInstance* instance)
 {
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
     MemoryMode memoryMode = instance->memory()->mode();
-    if (callee->replacement(memoryMode))  {
-        dataLogLnIf(Options::verboseOSR(), "    SIMD code was already compiled.");
-        return std::nullopt;
+    Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
+    {
+        Locker locker { calleeGroup.m_lock };
+        if (auto* replacement = calleeGroup.replacement(locker, callee->index()))  {
+            dataLogLnIf(Options::verboseOSR(), "    SIMD code was already compiled.");
+            return replacement;
+        }
     }
 
     bool compile = false;
@@ -176,9 +185,12 @@ static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIn
         case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
             Thread::yield();
             continue;
-        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
-            RELEASE_ASSERT(!!callee->replacement(memoryMode));
-            return std::nullopt;
+        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled: {
+            Locker locker { calleeGroup.m_lock };
+            auto* replacement = calleeGroup.replacement(locker, callee->index());
+            RELEASE_ASSERT(replacement);
+            return replacement;
+        }
         }
     }
 
@@ -188,13 +200,17 @@ static inline std::optional<Wasm::Plan::Error> jitCompileSIMDFunction(Wasm::LLIn
     Wasm::ensureWorklist().enqueue(plan.get());
     plan->waitForCompletion();
     if (plan->failed())
-        return plan->error();
+        return makeUnexpected(plan->error());
 
-    Locker locker { tierUpCounter.m_lock };
-    RELEASE_ASSERT(tierUpCounter.compilationStatus(memoryMode) == Wasm::LLIntTierUpCounter::CompilationStatus::Compiled);
-    RELEASE_ASSERT(!!callee->replacement(memoryMode));
+    {
+        Locker locker { tierUpCounter.m_lock };
+        RELEASE_ASSERT(tierUpCounter.compilationStatus(memoryMode) == Wasm::LLIntTierUpCounter::CompilationStatus::Compiled);
+    }
 
-    return std::nullopt;
+    Locker locker { calleeGroup.m_lock };
+    auto* replacement = calleeGroup.replacement(locker, callee->index());
+    RELEASE_ASSERT(replacement);
+    return replacement;
 }
 
 WASM_SLOW_PATH_DECL(prologue_osr)
@@ -213,10 +229,10 @@ WASM_SLOW_PATH_DECL(prologue_osr)
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered prologue_osr with tierUpCounter = ", callee->tierUpCounter());
 
-    if (!jitCompileAndSetHeuristics(callee, instance))
-        WASM_RETURN_TWO(nullptr, nullptr);
+    if (auto* replacement = jitCompileAndSetHeuristics(callee, instance))
+        WASM_RETURN_TWO(replacement->entrypoint().taggedPtr(), nullptr);
 
-    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
+    WASM_RETURN_TWO(nullptr, nullptr);
 }
 
 WASM_SLOW_PATH_DECL(loop_osr)
@@ -242,6 +258,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     if (!Options::useBBQJIT())
         WASM_RETURN_TWO(nullptr, nullptr);
 
+    // We don't use the replacement directly here since it could be a OMGCallee and we can't loop OSR to OMG from LLInt.
     if (!jitCompileAndSetHeuristics(callee, instance))
         WASM_RETURN_TWO(nullptr, nullptr);
 
@@ -308,15 +325,16 @@ WASM_SLOW_PATH_DECL(simd_go_straight_to_bbq_osr)
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered simd_go_straight_to_bbq_osr with tierUpCounter = ", callee->tierUpCounter());
 
     auto result = jitCompileSIMDFunction(callee, instance);
-    if (result.has_value()) {
-        switch (result.value()) {
-        case Wasm::Plan::Error::OutOfMemory:
-            WASM_THROW(Wasm::ExceptionType::OutOfMemory);
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
+    if (LIKELY(result.has_value()))
+        WASM_RETURN_TWO(result.value()->entrypoint().taggedPtr(), nullptr);
+
+    switch (result.error()) {
+    case Wasm::Plan::Error::OutOfMemory:
+        WASM_THROW(Wasm::ExceptionType::OutOfMemory);
+    default:
+        break;
     }
-    WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
+    RELEASE_ASSERT_NOT_REACHED();
 }
 #endif
 

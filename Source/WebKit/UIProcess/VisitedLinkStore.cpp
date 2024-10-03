@@ -102,7 +102,7 @@ void VisitedLinkStore::removeAll()
 
 void VisitedLinkStore::addVisitedLinkHashFromPage(WebPageProxyIdentifier pageProxyID, SharedStringHash linkHash)
 {
-    if (auto page = WebProcessProxy::webPage(pageProxyID)) {
+    if (RefPtr page = WebProcessProxy::webPage(pageProxyID)) {
         if (!page || !page->addsVisitedLinks())
             return;
     }
@@ -130,13 +130,13 @@ void VisitedLinkStore::didUpdateSharedStringHashes(const Vector<WebCore::SharedS
 {
     ASSERT(!addedHashes.isEmpty() || !removedHashes.isEmpty());
 
-    for (auto& process : m_processes) {
-        ASSERT(process.processPool().processes().containsIf([&](auto& item) { return item.ptr() == &process; }));
+    for (Ref process : m_processes) {
+        ASSERT(process->processPool().processes().containsIf([&](auto& item) { return item.ptr() == process.ptr(); }));
 
         if (addedHashes.size() > 20 || !removedHashes.isEmpty())
-            process.send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());
+            process->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());
         else
-            process.send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedHashes), identifier());
+            process->send(Messages::VisitedLinkTableController::VisitedLinkStateChanged(addedHashes), identifier());
     }
 }
 

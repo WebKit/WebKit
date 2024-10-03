@@ -212,7 +212,7 @@ void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(boo
     saveShouldDisplayBlockedResourceCountAsBadgeText(displayActionCountAsBadgeText);
     if (!displayActionCountAsBadgeText) {
         for (auto entry : m_actionTabMap)
-            entry.value->clearBlockedResourceCount();
+            Ref { entry.value }->clearBlockedResourceCount();
     }
 
     completionHandler({ });

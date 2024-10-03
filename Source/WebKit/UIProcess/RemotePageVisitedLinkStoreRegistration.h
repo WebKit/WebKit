@@ -38,14 +38,17 @@ public:
         : m_page(page)
         , m_process(process)
     {
-        m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+        protectedProcess()->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
     }
     ~RemotePageVisitedLinkStoreRegistration()
     {
         if (RefPtr page = m_page.get())
-            m_process->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
+            protectedProcess()->removeVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
     }
+
 private:
+    Ref<WebProcessProxy> protectedProcess() const { return m_process; }
+
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;
 };

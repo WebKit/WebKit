@@ -53,6 +53,8 @@ class LLIntOffsetsExtractor;
 
 namespace Wasm {
 
+class CalleeGroup;
+
 class Callee : public NativeCallee {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(Callee);
     friend class JSC::LLIntOffsetsExtractor;
@@ -366,16 +368,6 @@ public:
     bool didStartCompilingOSREntryCallee() const { return m_didStartCompilingOSREntryCallee; }
     void setDidStartCompilingOSREntryCallee(bool value) { m_didStartCompilingOSREntryCallee = value; }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    OMGCallee* replacement() { return m_replacement.get(); }
-    void setReplacement(Ref<OMGCallee>&& replacement)
-    {
-        m_replacement = WTFMove(replacement);
-    }
-#else
-
-#endif
-
     TierUpCount& tierUpCounter() { return m_tierUpCounter; }
 
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> sharedLoopEntrypoint() { return m_sharedLoopEntrypoint; }
@@ -419,9 +411,6 @@ private:
     }
 
     RefPtr<OSREntryCallee> m_osrEntryCallee;
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    RefPtr<OMGCallee> m_replacement;
-#endif
     TierUpCount m_tierUpCounter;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;
@@ -460,20 +449,6 @@ public:
 
     IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-    JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
-    void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
-    {
-        m_replacements[static_cast<uint8_t>(mode)] = WTFMove(replacement);
-    }
-
-    OSREntryCallee* osrEntryCallee(MemoryMode mode) { return m_osrEntryCallees[static_cast<uint8_t>(mode)].get(); }
-    void setOSREntryCallee(Ref<OSREntryCallee>&& osrEntryCallee, MemoryMode mode)
-    {
-        m_osrEntryCallees[static_cast<uint8_t>(mode)] = WTFMove(osrEntryCallee);
-    }
-#endif
-
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
@@ -484,10 +459,6 @@ private:
     JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
     FunctionCodeIndex m_functionIndex;
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-    RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
-    RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
-#endif
     CodePtr<WasmEntryPtrTag> m_entrypoint;
     FixedVector<const TypeDefinition*> m_signatures;
 
@@ -566,20 +537,6 @@ public:
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-    JITCallee* replacement(MemoryMode mode) { return m_replacements[static_cast<uint8_t>(mode)].get(); }
-    void setReplacement(Ref<OptimizingJITCallee>&& replacement, MemoryMode mode)
-    {
-        m_replacements[static_cast<uint8_t>(mode)] = WTFMove(replacement);
-    }
-
-    OSREntryCallee* osrEntryCallee(MemoryMode mode) { return m_osrEntryCallees[static_cast<uint8_t>(mode)].get(); }
-    void setOSREntryCallee(Ref<OSREntryCallee>&& osrEntryCallee, MemoryMode mode)
-    {
-        m_osrEntryCallees[static_cast<uint8_t>(mode)] = WTFMove(osrEntryCallee);
-    }
-#endif
-
     using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
@@ -605,11 +562,6 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     LLIntTierUpCounter m_tierUpCounter;
     FixedVector<JumpTable> m_jumpTables;
-
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-    RefPtr<OptimizingJITCallee> m_replacements[numberOfMemoryModes];
-    RefPtr<OSREntryCallee> m_osrEntryCallees[numberOfMemoryModes];
-#endif
     CodePtr<WasmEntryPtrTag> m_entrypoint;
 };
 

@@ -195,7 +195,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
 
         // Let's use the bottom of the content if flex box does not have a definite height.
-        return constraints.availableVerticalSpace().value_or(logicalRects.last().bottom());
+        return constraints.availableVerticalSpace().value_or(constraints.minimumVerticalSpace().value_or(logicalRects.last().bottom()));
     }();
 
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
@@ -206,7 +206,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             if (!flexBoxLogicalHeightForWarpReverse)
                 return logicalRects[index];
             auto rect = logicalRects[index];
-            auto adjustedLogicalTop =  *flexBoxLogicalHeightForWarpReverse - rect.bottom();
+            auto adjustedLogicalTop = *flexBoxLogicalHeightForWarpReverse - rect.bottom();
             if (logicalFlexItem.isContentBoxBased())
                 adjustedLogicalTop -= flexItemGeometry.verticalBorderAndPadding();
             rect.setTop(adjustedLogicalTop);

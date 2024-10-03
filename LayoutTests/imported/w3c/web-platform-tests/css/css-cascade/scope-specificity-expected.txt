@@ -1,10 +1,13 @@
 
-PASS @scope (#main) { .b {  } }
-PASS @scope (#main) to (.b) { .a {  } }
-PASS @scope (#main, .foo, .bar) { #a {  } }
-PASS @scope (#main) { div.b {  } }
-PASS @scope (#main) { :scope .b {  } }
-PASS @scope (#main) { & .b {  } }
-PASS @scope (#main) { div .b {  } }
-PASS @scope (#main) { @scope (.a) { .b {  } } }
+PASS @scope (#main) { .b {  } } and .b
+PASS @scope (#main) to (.b) { .a {  } } and .a
+PASS @scope (#main, .foo, .bar) { #a {  } } and #a
+PASS @scope (#main) { div.b {  } } and div.b
+PASS @scope (#main) { :scope .b {  } } and .a .b
+PASS @scope (#main) { & .b {  } } and #main .b
+PASS @scope (#main) { div .b {  } } and div .b
+PASS @scope (#main) { @scope (.a) { .b {  } } } and .b
+PASS @scope (#main) { :scope .b {  } } and :scope .b
+PASS @scope { & .b {  } } and :scope .b
+PASS @scope (#main) { > .a {  } } and :where(#main) > .a
 

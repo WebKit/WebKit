@@ -2950,3 +2950,6 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 
 # webkit.org/b/280000 [ macOS wk1 Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html is a flaky crash.
 [ Debug ] svg/zoom/page/zoom-svg-through-object-with-override-size.html [ Pass Crash ]
+
+# webkit.org/b/279712 Clipboard API not supported on WK1
+imported/w3c/web-platform-tests/clipboard-apis/clipboard-item.https.html [ Skip ]
