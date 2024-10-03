@@ -32,12 +32,6 @@
 
 namespace WebCore {
 
-CSSNumberishTime::CSSNumberishTime(double value)
-    : m_type(Type::Time)
-    , m_value(value / 1000)
-{
-}
-
 CSSNumberishTime::CSSNumberishTime(const Seconds& value)
     : m_type(Type::Time)
     , m_value(value.seconds())
@@ -203,13 +197,6 @@ CSSNumberishTime CSSNumberishTime::operator*(double scalar) const
 CSSNumberishTime CSSNumberishTime::operator/(double scalar) const
 {
     return { m_type, m_value / scalar };
-}
-
-CSSNumberishTime::operator double() const
-{
-    if (m_type == Type::Time)
-        return secondsToWebAnimationsAPITime(*this);
-    return m_value;
 }
 
 CSSNumberishTime::operator Seconds() const

@@ -119,10 +119,9 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<CSSNumberi
     computedTiming.duration = secondsToWebAnimationsAPITime(m_timing.iterationDuration);
     computedTiming.direction = m_timing.direction;
     computedTiming.easing = m_timing.timingFunction->cssText();
-    computedTiming.endTime = secondsToWebAnimationsAPITime(m_timing.endTime);
-    computedTiming.activeDuration = secondsToWebAnimationsAPITime(m_timing.activeDuration);
-    if (localTime)
-        computedTiming.localTime = secondsToWebAnimationsAPITime(*localTime);
+    computedTiming.endTime = m_timing.endTime;
+    computedTiming.activeDuration = m_timing.activeDuration;
+    computedTiming.localTime = localTime;
     computedTiming.simpleIterationProgress = resolvedTiming.simpleIterationProgress;
     computedTiming.progress = resolvedTiming.transformedProgress;
     computedTiming.currentIteration = resolvedTiming.currentIteration;

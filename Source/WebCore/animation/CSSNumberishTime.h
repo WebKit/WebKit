@@ -34,7 +34,6 @@ class CSSNumberishTime {
 public:
     CSSNumberishTime() = default;
 
-    CSSNumberishTime(double);
     CSSNumberishTime(const Seconds&);
     CSSNumberishTime(const CSSNumberish&);
 
@@ -64,7 +63,6 @@ public:
     CSSNumberishTime operator*(double) const;
     CSSNumberishTime operator/(double) const;
 
-    operator double() const;
     operator Seconds() const;
     operator CSSNumberish() const;
 
