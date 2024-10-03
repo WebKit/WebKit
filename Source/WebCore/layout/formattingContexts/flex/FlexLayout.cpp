@@ -776,10 +776,12 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                     flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
                     break;
                 case ItemPosition::Start:
+                case ItemPosition::SelfStart:
                 case ItemPosition::FlexStart:
                     flexItemOuterCrossPosition = { };
                     break;
                 case ItemPosition::End:
+                case ItemPosition::SelfEnd:
                 case ItemPosition::FlexEnd:
                     flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
                     break;

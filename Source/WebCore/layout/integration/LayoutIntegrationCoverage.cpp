@@ -77,7 +77,7 @@ enum class AvoidanceReason : uint32_t {
     FlexItemHasContainsSize             = 1U << 23,
     FlexItemHasUnsupportedOverflow      = 1U << 24,
     FlexItemHasAspectRatio              = 1U << 25,
-    FlexItemHasUnsupportedAlignSelf     = 1U << 26,
+    FlexItemHasBaselineAlignSelf        = 1U << 26,
     EndOfReasons                        = 1U << 27
 };
 
@@ -180,8 +180,8 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasAspectRatio, reasons, includeReasons);
 
         auto alignSelfValue = flexItemStyle.alignSelf().position();
-        if (alignSelfValue == ItemPosition::Baseline || alignSelfValue == ItemPosition::LastBaseline || alignSelfValue == ItemPosition::SelfStart || alignSelfValue == ItemPosition::SelfEnd)
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedAlignSelf, reasons, includeReasons);
+        if (alignSelfValue == ItemPosition::Baseline || alignSelfValue == ItemPosition::LastBaseline)
+            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasBaselineAlignSelf, reasons, includeReasons);
     }
     return reasons;
 }
@@ -285,8 +285,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlexItemHasAspectRatio:
         stream << "flex item has aspect-ratio ";
         break;
-    case AvoidanceReason::FlexItemHasUnsupportedAlignSelf:
-        stream << "flex item has unsupported align-self value";
+    case AvoidanceReason::FlexItemHasBaselineAlignSelf:
+        stream << "flex item has (last)baseline align-self value";
         break;
     default:
         break;
