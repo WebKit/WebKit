@@ -81,7 +81,7 @@ RefPtr<IPC::Connection> RemoteXRProjectionLayer::connection() const
 
 void RemoteXRProjectionLayer::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 #if PLATFORM(COCOA)

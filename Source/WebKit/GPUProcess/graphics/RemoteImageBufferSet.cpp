@@ -98,11 +98,14 @@ void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logical
 
 void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdateID)
 {
+    RefPtr backend = m_backend;
     if (m_displayListCreated) {
-        RefPtr { m_backend }->releaseDisplayListRecorder(m_displayListIdentifier);
+        backend->releaseDisplayListRecorder(m_displayListIdentifier);
         m_displayListCreated = false;
     }
-    if (RefPtr frontBuffer = m_frontBuffer)
+
+    RefPtr frontBuffer = m_frontBuffer;
+    if (frontBuffer)
         frontBuffer->flushDrawingContext();
 
 #if PLATFORM(COCOA)
@@ -113,15 +116,13 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
     };
 
     ImageBufferSetPrepareBufferForDisplayOutputData outputData;
-    RefPtr frontBuffer = m_frontBuffer;
-
     if (frontBuffer) {
         auto* sharing = frontBuffer->toBackendSharing();
         outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     }
 
     outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
-    m_backend->streamConnection().send(Messages::RemoteImageBufferSetProxy::DidPrepareForDisplay(WTFMove(outputData), renderingUpdateID), m_identifier);
+    backend->streamConnection().send(Messages::RemoteImageBufferSetProxy::DidPrepareForDisplay(WTFMove(outputData), renderingUpdateID), m_identifier);
 #endif
 }
 
@@ -142,6 +143,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     }
 
     RefPtr backend = m_backend;
+
     if (!m_frontBuffer) {
         WebCore::ImageBufferCreationContext creationContext;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
