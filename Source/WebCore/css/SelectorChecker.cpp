@@ -290,7 +290,6 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
 SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& checkingContext, LocalContext& context, PseudoIdSet& dynamicPseudoIdSet) const
 {
     MatchType matchType = MatchType::Element;
-
     // The first selector has to match.
     if (!checkOne(checkingContext, context, matchType))
         return MatchResult::fails(Match::SelectorFailsLocally);
@@ -1016,6 +1015,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::Link:
             // :visited and :link matches are separated later when applying the style. Here both classes match all links...
             return element.isLink();
+        case CSSSelector::PseudoClass::LocalLink:
+            return element.getAttribute(WebCore::HTMLNames::hrefAttr).startsWith('#');
         case CSSSelector::PseudoClass::Visited:
             // ...except if :visited matching is disabled for ancestor/sibling matching.
             // Inside functional pseudo class except for :not, :visited never matches.

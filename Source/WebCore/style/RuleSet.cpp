@@ -241,6 +241,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             case CSSSelector::PseudoClass::Link:
             case CSSSelector::PseudoClass::Visited:
             case CSSSelector::PseudoClass::AnyLink:
+            case CSSSelector::PseudoClass::LocalLink:
                 linkSelector = selector;
                 break;
             case CSSSelector::PseudoClass::Focus:

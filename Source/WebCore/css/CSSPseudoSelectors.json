@@ -161,6 +161,7 @@
         "last-child": {},
         "last-of-type": {},
         "link": {},
+        "local-link": {},
         "modal": {},
         "muted": {
             "conditional": "ENABLE(VIDEO)"
