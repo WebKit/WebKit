@@ -17,8 +17,6 @@ Testing thirdItem:
 PASS thirdItem.types is ['text/uri-list', 'text/plain']
 PASS getType("text/uri-list") resolved to ""
 PASS getType("text/plain") resolved to ""
-Testing fourthItem:
-PASS fourthItem.types is []
 PASS successfullyParsed is true
 
 TEST COMPLETE

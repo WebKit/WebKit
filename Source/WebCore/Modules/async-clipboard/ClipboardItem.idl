@@ -41,5 +41,7 @@ dictionary ClipboardItemOptions {
 
     readonly attribute FrozenArray<DOMString> types;
     [NewObject] Promise<Blob> getType(DOMString type);
+    static boolean supports(DOMString type);
+
     readonly attribute PresentationStyle presentationStyle;
 };

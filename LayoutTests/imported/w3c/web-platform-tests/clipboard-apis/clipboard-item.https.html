@@ -95,4 +95,30 @@ promise_test(async () => {
   const text = await (new Response(blob)).text();
   assert_equals(text, 'xxx');
 }, "getType(DOMString invalid type) converts DOMString to Blob");
+
+[
+  // mandatory data types
+  ['text/plain', true],
+  ['text/html',  true],
+  ['image/png',  true],
+  // optional data types
+  ['text/uri-list', true],
+  ['image/svg+xml', true],
+  ['web foo/bar',   true],
+  ['web text/html', true],
+  // invalid types
+  ['web ',            false],
+  ['web',             false],
+  ['web foo',         false],
+  ['foo/bar',         false],
+  ['weB text/html',   false],
+  [' web text/html',  false],
+  ['not a/real type', false],
+  ['',                false],
+  [' ',               false],
+].forEach(([type, result]) => {
+  promise_test(async () => {
+    assert_equals(ClipboardItem.supports(type), result);
+  }, `supports(${type}) returns ${result ? "true" : "false"}`);
+});
 </script>
