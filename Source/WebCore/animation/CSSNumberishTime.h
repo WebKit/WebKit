@@ -35,31 +35,31 @@ public:
     CSSNumberishTime() = default;
 
     CSSNumberishTime(double);
-    CSSNumberishTime(Seconds);
-    CSSNumberishTime(CSSNumberish);
+    CSSNumberishTime(const Seconds&);
+    CSSNumberishTime(const CSSNumberish&);
 
     std::optional<Seconds> time() const;
     std::optional<double> percentage() const;
 
     bool isValid() const;
 
-    CSSNumberishTime operator+(CSSNumberishTime) const;
-    CSSNumberishTime operator-(CSSNumberishTime) const;
+    CSSNumberishTime operator+(const CSSNumberishTime&) const;
+    CSSNumberishTime operator-(const CSSNumberishTime&) const;
     CSSNumberishTime& operator+=(const CSSNumberishTime&);
     CSSNumberishTime& operator-=(const CSSNumberishTime&);
-    bool operator<(CSSNumberishTime) const;
-    bool operator<=(CSSNumberishTime) const;
-    bool operator>(CSSNumberishTime) const;
-    bool operator>=(CSSNumberishTime) const;
-    bool operator==(CSSNumberishTime) const;
+    bool operator<(const CSSNumberishTime&) const;
+    bool operator<=(const CSSNumberishTime&) const;
+    bool operator>(const CSSNumberishTime&) const;
+    bool operator>=(const CSSNumberishTime&) const;
+    bool operator==(const CSSNumberishTime&) const;
 
-    CSSNumberishTime operator+(Seconds) const;
-    CSSNumberishTime operator-(Seconds) const;
-    bool operator<(Seconds) const;
-    bool operator<=(Seconds) const;
-    bool operator>(Seconds) const;
-    bool operator>=(Seconds) const;
-    bool operator==(Seconds) const;
+    CSSNumberishTime operator+(const Seconds&) const;
+    CSSNumberishTime operator-(const Seconds&) const;
+    bool operator<(const Seconds&) const;
+    bool operator<=(const Seconds&) const;
+    bool operator>(const Seconds&) const;
+    bool operator>=(const Seconds&) const;
+    bool operator==(const Seconds&) const;
 
     CSSNumberishTime operator*(double) const;
     CSSNumberishTime operator/(double) const;
@@ -79,6 +79,6 @@ private:
     double m_value { 0 };
 };
 
-TextStream& operator<<(TextStream&, CSSNumberishTime);
+TextStream& operator<<(TextStream&, const CSSNumberishTime&);
 
 } // namespace WebCore

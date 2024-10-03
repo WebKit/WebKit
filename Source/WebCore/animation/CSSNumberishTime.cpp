@@ -38,7 +38,7 @@ CSSNumberishTime::CSSNumberishTime(double value)
 {
 }
 
-CSSNumberishTime::CSSNumberishTime(Seconds value)
+CSSNumberishTime::CSSNumberishTime(const Seconds& value)
     : m_type(Type::Time)
     , m_value(value.seconds())
 {
@@ -50,7 +50,7 @@ CSSNumberishTime::CSSNumberishTime(Type type, double value)
 {
 }
 
-CSSNumberishTime::CSSNumberishTime(CSSNumberish value)
+CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
 {
     if (auto* doubleValue = std::get_if<double>(&value)) {
         m_type = Type::Time;
@@ -99,13 +99,13 @@ bool CSSNumberishTime::isValid() const
     return m_type == Type::Time;
 }
 
-CSSNumberishTime CSSNumberishTime::operator+(CSSNumberishTime other) const
+CSSNumberishTime CSSNumberishTime::operator+(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return { m_type, m_value + other.m_value };
 }
 
-CSSNumberishTime CSSNumberishTime::operator-(CSSNumberishTime other) const
+CSSNumberishTime CSSNumberishTime::operator-(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return { m_type, m_value - other.m_value };
@@ -125,72 +125,72 @@ CSSNumberishTime& CSSNumberishTime::operator-=(const CSSNumberishTime& other)
     return *this;
 }
 
-bool CSSNumberishTime::operator<(CSSNumberishTime other) const
+bool CSSNumberishTime::operator<(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value < other.m_value;
 }
 
-bool CSSNumberishTime::operator<=(CSSNumberishTime other) const
+bool CSSNumberishTime::operator<=(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value <= other.m_value;
 }
 
-bool CSSNumberishTime::operator>(CSSNumberishTime other) const
+bool CSSNumberishTime::operator>(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value > other.m_value;
 }
 
-bool CSSNumberishTime::operator>=(CSSNumberishTime other) const
+bool CSSNumberishTime::operator>=(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value >= other.m_value;
 }
 
-bool CSSNumberishTime::operator==(CSSNumberishTime other) const
+bool CSSNumberishTime::operator==(const CSSNumberishTime& other) const
 {
     return m_type == other.m_type && m_value == other.m_value;
 }
 
-CSSNumberishTime CSSNumberishTime::operator+(Seconds other) const
+CSSNumberishTime CSSNumberishTime::operator+(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return { m_type, m_value + other.seconds() };
 }
 
-CSSNumberishTime CSSNumberishTime::operator-(Seconds other) const
+CSSNumberishTime CSSNumberishTime::operator-(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return { m_type, m_value - other.seconds() };
 }
 
-bool CSSNumberishTime::operator<(Seconds other) const
+bool CSSNumberishTime::operator<(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value < other.seconds();
 }
 
-bool CSSNumberishTime::operator<=(Seconds other) const
+bool CSSNumberishTime::operator<=(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value <= other.seconds();
 }
 
-bool CSSNumberishTime::operator>(Seconds other) const
+bool CSSNumberishTime::operator>(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value > other.seconds();
 }
 
-bool CSSNumberishTime::operator>=(Seconds other) const
+bool CSSNumberishTime::operator>=(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value >= other.seconds();
 }
 
-bool CSSNumberishTime::operator==(Seconds other) const
+bool CSSNumberishTime::operator==(const Seconds& other) const
 {
     return m_type == Type::Time && m_value == other.seconds();
 }
@@ -237,7 +237,7 @@ void CSSNumberishTime::dump(TextStream& ts) const
     return;
 }
 
-TextStream& operator<<(TextStream& ts, CSSNumberishTime value)
+TextStream& operator<<(TextStream& ts, const CSSNumberishTime& value)
 {
     value.dump(ts);
     return ts;
