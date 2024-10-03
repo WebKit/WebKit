@@ -327,7 +327,7 @@ function stringConcatSlowPath()
     "use strict";
 
     var result = @toString(this);
-    for (var i = 0, length = arguments.length; i < length; ++i)
+    for (var i = 0, length = @argumentCount(); i < length; ++i)
         result += @toString(arguments[i]);
     return result;
 }

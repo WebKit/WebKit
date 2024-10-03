@@ -31,7 +31,7 @@ function raw(template)
 
     var rawSegments = @toObject(cookedSegments.raw, "String.raw requires template.raw not be null or undefined");
 
-    var numberOfSubstitutions = arguments.length - 1;
+    var numberOfSubstitutions = @argumentCount() - 1;
 
     var segmentCount = @toLength(rawSegments.length);
 

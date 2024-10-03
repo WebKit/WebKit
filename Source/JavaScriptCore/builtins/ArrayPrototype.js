@@ -350,7 +350,7 @@ function concatSlowPath()
     "use strict";
 
     var currentElement = @toObject(this, "Array.prototype.concat requires that |this| not be null or undefined");
-    var argCount = arguments.length;
+    var argCount = @argumentCount();
 
     var result = @newArrayWithSpecies(0, currentElement);
     var resultIsArray = @isJSArray(result);
@@ -637,12 +637,13 @@ function toSpliced(start, deleteCount /*, ...items */)
     var actualDeleteCount;
 
     // Step 8-10.
-    if (arguments.length === 0)
+    var argCount = @argumentCount();
+    if (argCount === 0)
         actualDeleteCount = 0;
-    else if (arguments.length === 1)
+    else if (argCount === 1)
         actualDeleteCount = length - actualStart;
     else {
-        insertCount = arguments.length - 2;
+        insertCount = argCount - 2;
         var tempDeleteCount = @toIntegerOrInfinity(deleteCount);
         tempDeleteCount = tempDeleteCount > 0 ? tempDeleteCount : 0;
         actualDeleteCount = @min(tempDeleteCount, length - actualStart);
