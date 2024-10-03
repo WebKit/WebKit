@@ -23,7 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+private let largeBufferSize = 32 * 1024 * 1024
 
-public func writeBuffer(queue: WebGPU.Queue, buffer: WebGPU.Buffer, offset: UInt64, data: SpanUInt8) {
-    queue.writeBuffer(buffer.buffer(), offset, data)
+public func writeBuffer(
+    queue: WebGPU.Queue, buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8
+) {
+    queue.writeBuffer(mtlBuffer: buffer.buffer(), bufferOffset: bufferOffset, data: data)
+}
+
+extension WebGPU.Queue {
+    public func writeBuffer(mtlBuffer: any MTLBuffer, bufferOffset: UInt64, data: SpanUInt8) {
+        let device = self.device()
+        guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
+            return
+        }
+        let noCopy = data.size() >= largeBufferSize
+        guard device.device() != nil else {
+            return
+        }
+        guard
+            let tempBuffer =
+                noCopy
+                ? device.newBufferWithBytesNoCopy(
+                    data.__dataUnsafe(), data.size(), MTLResourceOptions.storageModeShared)
+                : device.newBufferWithBytes(
+                    data.__dataUnsafe(), data.size(), MTLResourceOptions.storageModeShared)
+        else {
+            return
+        }
+        blitCommandEncoder.copy(
+            from: tempBuffer, sourceOffset: 0, to: mtlBuffer, destinationOffset: Int(bufferOffset),
+            size: data.size())
+        if noCopy {
+            finalizeBlitCommandEncoder()
+        }
+    }
 }

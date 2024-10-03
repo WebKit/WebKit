@@ -166,6 +166,7 @@ WGPU_EXPORT void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device) WGPU_
 
 #if ENABLE(WEBGPU_SWIFT) && defined(__WEBGPU__)
 #include "Buffer.h"
+#include "Device.h"
 #include "Queue.h"
 #endif
 

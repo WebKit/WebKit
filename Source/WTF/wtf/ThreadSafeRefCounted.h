@@ -154,8 +154,6 @@ protected:
     ThreadSafeRefCounted() = default;
 };
 
-} // namespace WTF
-
 template<typename T>
 inline void retainThreadSafeRefCounted(T* obj)
 {
@@ -171,5 +169,7 @@ inline void releaseThreadSafeRefCounted(T* obj)
     static_assert(std::derived_from<T, WTF::ThreadSafeRefCounted<T>>);
     static_cast<WTF::ThreadSafeRefCounted<T>*>(obj)->deref();
 }
+
+} // namespace WTF
 
 using WTF::ThreadSafeRefCounted;

@@ -36,6 +36,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/ThreadSafeWeakPtr.h>
 #import <wtf/Vector.h>
@@ -241,6 +242,16 @@ private:
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
 #endif
-};
+} SWIFT_SHARED_REFERENCE(retainDevice, releaseDevice);
 
 } // namespace WebGPU
+
+inline void retainDevice(WebGPU::Device* obj)
+{
+    WTF::retainThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr(obj);
+}
+
+inline void releaseDevice(WebGPU::Device* obj)
+{
+    WTF::releaseThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr(obj);
+}

@@ -71,10 +71,10 @@ Queue::~Queue()
         endEncoding(m_blitCommandEncoder, m_commandBuffer);
 }
 
-void Queue::ensureBlitCommandEncoder()
+id<MTLBlitCommandEncoder> Queue::ensureBlitCommandEncoder()
 {
     if (m_blitCommandEncoder && m_blitCommandEncoder == encoderForBuffer(m_commandBuffer))
-        return;
+        return m_blitCommandEncoder;
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
@@ -82,6 +82,7 @@ void Queue::ensureBlitCommandEncoder()
     m_commandBuffer = blitCommandBuffer;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
     setEncoderForBuffer(m_commandBuffer, m_blitCommandEncoder);
+    return m_blitCommandEncoder;
 }
 
 void Queue::finalizeBlitCommandEncoder()
@@ -939,8 +940,7 @@ void Queue::clearTextureViewIfNeeded(TextureView& textureView)
             if (parentTexture.previouslyCleared(parentMipLevel, parentSlice))
                 continue;
 
-            ensureBlitCommandEncoder();
-            CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, m_blitCommandEncoder);
+            CommandEncoder::clearTextureIfNeeded(parentTexture, parentMipLevel, parentSlice, *devicePtr, ensureBlitCommandEncoder());
         }
     }
     finalizeBlitCommandEncoder();

@@ -136,6 +136,7 @@
 		941C1EE52CA328F7004D4220 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 941C1EE42CA328EE004D4220 /* Queue.swift */; };
 		941C1EE62CA33255004D4220 /* Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9C273A426D0095F8D5 /* Queue.h */; };
 		941C1EE72CA46829004D4220 /* Instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA0273A426D0095F8D5 /* Instance.h */; };
+		941C64B72CAB4A0700A63214 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9B273A426D0095F8D5 /* Device.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
 		9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9478714B2C98D314003DB695 /* WebGPUSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
@@ -890,6 +891,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
+				941C64B72CAB4A0700A63214 /* Device.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
 				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,

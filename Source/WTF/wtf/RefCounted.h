@@ -213,8 +213,6 @@ protected:
     }
 };
 
-} // namespace WTF
-
 template<typename T>
 inline void retainRefCounted(T* obj)
 {
@@ -230,5 +228,9 @@ inline void releaseRefCounted(T* obj)
     static_assert(std::derived_from<T, WTF::RefCounted<T>>);
     static_cast<WTF::RefCounted<T>*>(obj)->deref();
 }
+
+} // namespace WTF
+
+
 
 using WTF::RefCounted;

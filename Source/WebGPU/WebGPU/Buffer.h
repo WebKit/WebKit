@@ -157,10 +157,10 @@ private:
 
 inline void retainBuffer(WebGPU::Buffer* obj)
 {
-    retainRefCounted(obj);
+    WTF::retainRefCounted(obj);
 }
 
 inline void releaseBuffer(WebGPU::Buffer* obj)
 {
-    releaseRefCounted(obj);
+    WTF::releaseRefCounted(obj);
 }
