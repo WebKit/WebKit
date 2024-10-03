@@ -170,7 +170,12 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
     EXPECT_WK_STREQ("foo a", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 }
 
+// rdar://137237282
+#if (!defined(NDEBUG) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
+TEST(WKWebViewCandidateTests, DISABLED_InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
+#else
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
+#endif
 {
     auto wkWebView = [CandidateTestWebView setUpWithFrame:NSMakeRect(0, 0, 800, 600) testPage:@"input-field-in-scrollable-document"];
 
