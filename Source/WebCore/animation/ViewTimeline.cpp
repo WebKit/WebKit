@@ -28,9 +28,13 @@
 
 #include "AnimationTimelinesController.h"
 #include "CSSNumericFactory.h"
+#include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParserConsumer+Timeline.h"
+#include "CSSTokenizer.h"
 #include "CSSUnits.h"
+#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
 #include "Document.h"
@@ -74,13 +78,67 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderS
     return adoptRef(*new ViewTimeline(nullAtom(), axis, { startInset, endInset }));
 }
 
-// FIXME: compute offset values from options.
+static std::optional<Length> lengthForInset(std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>> inset)
+{
+    // TODO: Need to test this
+    if (auto* numericInset = std::get_if<RefPtr<CSSNumericValue>>(&inset)) {
+        if (RefPtr insetValue = dynamicDowncast<CSSUnitValue>(*numericInset)) {
+            if (auto length = insetValue->convertTo(CSSUnitType::CSS_PX))
+                return Length(length->value(), LengthType::Fixed);
+            return { };
+        }
+    }
+    ASSERT(std::holds_alternative<RefPtr<CSSKeywordValue>>(inset));
+    return { };
+}
+
+static Length lengthForInsetCSSValue(RefPtr<CSSPrimitiveValue> value)
+{
+    // TODO: Figure out how to make this work when provided calc value
+    if (!value || value->isCalculated())
+        return { };
+    if (value->valueID() == CSSValueAuto)
+        return { };
+    if (value->isPercentage())
+        return Length(value->resolveAsPercentageNoConversionDataRequired(), LengthType::Percent);
+    if (value->isPx())
+        return Length(value->resolveAsLengthNoConversionDataRequired(), LengthType::Fixed);
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+static ViewTimelineInsets insetsFromOptions(const std::variant<String, Vector<std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>>> inset, CSSParserContext context)
+{
+    if (auto* insetString = std::get_if<String>(&inset)) {
+        if (insetString->isEmpty())
+            return { };
+        CSSTokenizer tokenizer(*insetString);
+        auto tokenRange = tokenizer.tokenRange();
+        tokenRange.consumeWhitespace();
+        auto consumedInset = CSSPropertyParserHelpers::consumeViewTimelineInsetListItem(tokenRange, context);
+        if (auto insetPair = dynamicDowncast<CSSValuePair>(consumedInset))
+            return { lengthForInsetCSSValue(dynamicDowncast<CSSPrimitiveValue>(insetPair->protectedFirst())), lengthForInsetCSSValue(dynamicDowncast<CSSPrimitiveValue>(insetPair->protectedSecond())) };
+        return { lengthForInsetCSSValue(dynamicDowncast<CSSPrimitiveValue>(consumedInset)), std::nullopt };
+    }
+    auto insetList = std::get<Vector<std::variant<RefPtr<CSSNumericValue>, RefPtr<CSSKeywordValue>>>>(inset);
+
+    if (!insetList.size())
+        return { };
+    if (insetList.size() == 2)
+        return { lengthForInset(insetList.at(0)), lengthForInset(insetList.at(1)) };
+    return { lengthForInset(insetList.at(0)), std::nullopt };
+}
+
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
 {
-    if (m_subject)
-        m_subject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
+    if (m_subject) {
+        auto document = m_subject->protectedDocument();
+        document->ensureTimelinesController().addTimeline(*this);
+        m_insets = insetsFromOptions(options.inset, document->cssParserContext());
+    }
 }
 
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
@@ -182,7 +240,6 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     //   cover range
     // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
     //   corresponding to the start of the cover range
-    // TODO: take into account view-timeline-inset: https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
     // TODO: take into account animation-range: https://drafts.csswg.org/scroll-animations-1/#animation-range
     // TODO: investigate best way to compute subjectOffset, as offsetTop uses offsetParent(), not the containing scroller
     // TODO: view timeline progress calculation: (currentScrollOffset - coverRangeStart) / (coverRangeEnd - coverRangeStart)
@@ -194,8 +251,11 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
 
     float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
 
-    auto coverRangeStart = subjectOffset - scrollContainerSize;
-    auto coverRangeEnd = subjectOffset + subjectSize;
+    auto insetStart = m_insets.start.value_or(Length());
+    auto insetEnd = m_insets.end.value_or(insetStart);
+
+    auto coverRangeStart = subjectOffset - scrollContainerSize + insetEnd.value();
+    auto coverRangeEnd = subjectOffset + subjectSize - insetStart.value();
 
     return { currentScrollOffset, coverRangeStart, coverRangeEnd };
 }
