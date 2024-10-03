@@ -233,6 +233,7 @@ class Heap;
     v(intlSegmentIteratorSpace, intlSegmentIteratorHeapCellType, IntlSegmentIterator) \
     v(intlSegmenterSpace, intlSegmenterHeapCellType, IntlSegmenter) \
     v(intlSegmentsSpace, intlSegmentsHeapCellType, IntlSegments) \
+    v(iteratorHelperSpace, cellHeapCellType, JSIteratorHelper) \
     v(javaScriptCallFrameSpace, javaScriptCallFrameHeapCellType, Inspector::JSJavaScriptCallFrame) \
     v(jsModuleRecordSpace, jsModuleRecordHeapCellType, JSModuleRecord) \
     v(syntheticModuleRecordSpace, syntheticModuleRecordHeapCellType, SyntheticModuleRecord) \

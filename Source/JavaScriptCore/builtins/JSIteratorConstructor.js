@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +26,14 @@
 
 // https://tc39.es/proposal-iterator-helpers/#sec-getiteratorflattenable
 @linkTimeConstant
-function getIteratorFlattenable(obj)
+function getIteratorFlattenable(obj, rejectStrings)
 {
     "use strict";
 
     // 1. If obj is not an Object, then
     //   a. If stringHandling is reject-strings or obj is not a String, throw a TypeError exception.
-    if (!@isObject(obj) && typeof obj !== "string")
-        @throwTypeError("Iterafor.from requires an object or string");
+    if (!@isObject(obj) && (rejectStrings || typeof obj !== "string"))
+        @throwTypeError("GetIteratorFlattenable expects its first argument to be an object" + (rejectStrings ? "" : " or a string"));
     // 2. Let method be ? GetMethod(obj, @@iterator).
     var method = obj.@@iterator;
     // 3. If method is undefined, then
@@ -47,25 +48,26 @@ function getIteratorFlattenable(obj)
     // 5. If iterator is not an Object, throw a TypeError exception.
     if (!@isObject(iterator))
         @throwTypeError("Iterator is not an object");
-    // 6. Return ? GetIteratorDirect(iterator).
-    return [iterator, iterator.next];
+    // Step 6 isn't performed; raw iterator is returned instead of an Iterator Record.
+    return iterator;
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iterator.from
-function from(o)
+function from(value)
 {
     "use strict";
 
     // 1. Let iteratorRecord be ? GetIteratorFlattenable(O, iterate-strings).
-    var iteratorRecord = @getIteratorFlattenable(o);
+    var iterator = @getIteratorFlattenable(value, /* rejectStrings: */ false);
+    var iteratorNextMethod = iterator.next;
     // 2. Let hasInstance be ? OrdinaryHasInstance(%Iterator%, iteratorRecord.[[Iterator]]).
     // 3. If hasInstance is true, then
     //   a. Return iteratorRecord.[[Iterator]].
-    if (@instanceOf(iteratorRecord[0], @Iterator.prototype))
-        return iteratorRecord[0];
+    if (@instanceOf(iterator, @Iterator.prototype))
+        return iterator;
 
     // 4. Let wrapper be OrdinaryObjectCreate(%WrapForValidIteratorPrototype%, « [[Iterated]] »).
     // 5. Set wrapper.[[Iterated]] to iteratorRecord.
     // 6. Return wrapper.
-    return @wrapForValidIteratorCreate(iteratorRecord[0], iteratorRecord[1])
+    return @wrapForValidIteratorCreate(iterator, iteratorNextMethod);
 }

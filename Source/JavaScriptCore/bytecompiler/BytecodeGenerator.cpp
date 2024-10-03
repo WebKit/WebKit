@@ -3121,6 +3121,12 @@ RegisterID* BytecodeGenerator::emitNewGenerator(RegisterID* dst)
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitNewIteratorHelper(RegisterID* dst, RegisterID* generator, RegisterID* underlyingIterator)
+{
+    OpNewIteratorHelper::emit(this, dst, generator, underlyingIterator);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitCreateAsyncGenerator(RegisterID* dst, RegisterID* newTarget)
 {
     OpCreateAsyncGenerator::emit(this, dst, newTarget);

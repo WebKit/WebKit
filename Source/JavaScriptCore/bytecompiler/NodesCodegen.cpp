@@ -38,6 +38,7 @@
 #include "JSCInlines.h"
 #include "JSGenerator.h"
 #include "JSImmutableButterfly.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSRegExpStringIterator.h"
@@ -1546,6 +1547,17 @@ static JSGenerator::Field generatorInternalFieldIndex(BytecodeIntrinsicNode* nod
     return JSGenerator::Field::State;
 }
 
+static JSIteratorHelper::Field iteratorHelperInternalFieldIndex(BytecodeIntrinsicNode* node)
+{
+    ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_iteratorHelperFieldGenerator)
+        return JSIteratorHelper::Field::Generator;
+    if (node->entry().emitter() == &BytecodeIntrinsicNode::emit_intrinsic_iteratorHelperFieldUnderlyingIterator)
+        return JSIteratorHelper::Field::UnderlyingIterator;
+    RELEASE_ASSERT_NOT_REACHED();
+    return JSIteratorHelper::Field::Generator;
+}
+
 static JSAsyncGenerator::Field asyncGeneratorInternalFieldIndex(BytecodeIntrinsicNode* node)
 {
     ASSERT(node->entry().type() == BytecodeIntrinsicRegistry::Type::Emitter);
@@ -1701,6 +1713,19 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getGeneratorInternalField(Byte
     RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
     unsigned index = static_cast<unsigned>(generatorInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
     ASSERT(index < JSGenerator::numberOfInternalFields);
+    ASSERT(!node->m_next);
+
+    return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getIteratorHelperInternalField(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RELEASE_ASSERT(node->m_expr->isBytecodeIntrinsicNode());
+    unsigned index = static_cast<unsigned>(iteratorHelperInternalFieldIndex(static_cast<BytecodeIntrinsicNode*>(node->m_expr)));
+    ASSERT(index < JSIteratorHelper::numberOfInternalFields);
     ASSERT(!node->m_next);
 
     return generator.emitGetInternalField(generator.finalDestination(dst), base.get(), index);
@@ -2226,6 +2251,7 @@ CREATE_INTRINSIC_FOR_BRAND_CHECK(isJSArray, IsJSArray)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isProxyObject, IsProxyObject)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isDerivedArray, IsDerivedArray)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isGenerator, IsGenerator)
+CREATE_INTRINSIC_FOR_BRAND_CHECK(isIteratorHelper, IsIteratorHelper)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isAsyncGenerator, IsAsyncGenerator)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isPromise, IsPromise)
 CREATE_INTRINSIC_FOR_BRAND_CHECK(isRegExpObject, IsRegExpObject)
@@ -2302,6 +2328,61 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newPromise(JSC::BytecodeGenera
     bool isInternalPromise = false;
     generator.emitNewPromise(finalDestination.get(), isInternalPromise);
     return finalDestination.get();
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newIteratorHelper(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> generatorRegister = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> underlyingIterator = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.emitNewIteratorHelper(generator.finalDestination(dst), generatorRegister.get(), underlyingIterator.get());
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_iteratorGenericClose(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    generator.emitIteratorGenericClose(iterator.get(), this);
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_iteratorGenericNext(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> nextMethod = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.emitIteratorGenericNext(generator.finalDestination(dst), nextMethod.get(), iterator.get(), this);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_ifAbruptCloseIterator(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> iterator = generator.emitNode(node);
+    node = node->m_next;
+    ASSERT(!node->m_next);
+
+    Ref<Label> end = generator.newLabel();
+    auto emitSecondArgumentNode = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        generator.emitNode(node);
+        generator.emitJump(end.get());
+    });
+
+    auto emitIteratorClose = scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        generator.emitIteratorGenericClose(iterator.get(), this);
+    });
+
+    generator.emitTryWithFinallyThatDoesNotShadowException(emitSecondArgumentNode, emitIteratorClose);
+    generator.emitLabel(end.get());
+
+    return dst;
 }
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) \

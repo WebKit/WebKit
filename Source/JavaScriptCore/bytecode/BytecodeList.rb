@@ -1239,6 +1239,13 @@ op :new_generator,
         dst: VirtualRegister,
     }
 
+op :new_iterator_helper,
+    args: {
+        dst: VirtualRegister,
+        generator: VirtualRegister,
+        underlyingIterator: VirtualRegister,
+    }
+
 op :argument_count,
     args: {
         dst: VirtualRegister,

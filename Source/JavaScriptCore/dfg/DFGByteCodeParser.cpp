@@ -67,6 +67,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -6664,6 +6665,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_generator);
         }
             
+        case op_new_iterator_helper: {
+            auto bytecode = currentInstruction->as<OpNewIteratorHelper>();
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            Node* iteratorHelper = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->iteratorHelperStructure())));
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSIteratorHelper::Field::Generator)), iteratorHelper, get(bytecode.m_generator));
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSIteratorHelper::Field::UnderlyingIterator)), iteratorHelper, get(bytecode.m_underlyingIterator));
+            set(bytecode.m_dst, iteratorHelper);
+            NEXT_OPCODE(op_new_iterator_helper);
+        }
+
         case op_new_array: {
             auto bytecode = currentInstruction->as<OpNewArray>();
             int startOperand = bytecode.m_argv.offset();

@@ -929,6 +929,8 @@ runtime/JSInternalPromiseConstructor.cpp
 runtime/JSInternalPromisePrototype.cpp
 runtime/JSIterator.cpp
 runtime/JSIteratorConstructor.cpp
+runtime/JSIteratorHelper.cpp
+runtime/JSIteratorHelperPrototype.cpp
 runtime/JSIteratorPrototype.cpp
 runtime/JSLexicalEnvironment.cpp
 runtime/JSLock.cpp

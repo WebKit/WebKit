@@ -71,6 +71,7 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalProxy.h"
 #include "JSInjectedScriptHost.h"
+#include "JSIteratorHelper.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"

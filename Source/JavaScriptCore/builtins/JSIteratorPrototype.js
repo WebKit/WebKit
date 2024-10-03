@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,6 +23,186 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.map
+function map(mapper)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.map requires that |this| be an Object.");
+
+    if (!@isCallable(mapper))
+        @throwTypeError("Iterator.prototype.map callback must be a function.");
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var counter = 0;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                yield mapper(value, counter++)
+            ));
+        }
+    })();
+
+    return @newIteratorHelper(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.filter
+function filter(predicate)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.filter requires that |this| be an Object.");
+
+    if (!@isCallable(predicate))
+        @throwTypeError("Iterator.prototype.filter callback must be a function.");
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var counter = 0;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                predicate(value, counter++) && (yield value)
+            ));
+        }
+    })();
+
+    return @newIteratorHelper(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.take
+function take(limit)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.take requires that |this| be an Object.");
+
+    var numLimit = @toNumber(limit);
+    if (numLimit !== numLimit)
+        @throwRangeError("Iterator.prototype.take argument must not be NaN.");
+
+    var intLimit = @toIntegerOrInfinity(numLimit);
+    if (intLimit < 0)
+        @throwRangeError("Iterator.prototype.take argument must be non-negative.");
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var remaining = intLimit;
+        for (;;) {
+            if (remaining === 0) {
+                @iteratorGenericClose(iterated);
+                return;
+            }
+
+            if (remaining !== @Infinity)
+                remaining--;
+
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            var value = result.value;
+            @ifAbruptCloseIterator(iterated, (
+                yield value
+            ));
+        }
+    })();
+
+    return @newIteratorHelper(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.drop
+function drop(limit)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.drop requires that |this| be an Object.");
+
+    var numLimit = @toNumber(limit);
+    if (numLimit !== numLimit)
+        @throwRangeError("Iterator.prototype.drop argument must not be NaN.");
+
+    var intLimit = @toIntegerOrInfinity(numLimit);
+    if (intLimit < 0)
+        @throwRangeError("Iterator.prototype.drop argument must be non-negative.");
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+
+    var generator = (function*() {
+        var remaining = intLimit;
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            if (remaining > 0) {
+                if (remaining !== @Infinity)
+                    remaining--;
+            } else {
+                var value = result.value;
+                @ifAbruptCloseIterator(iterated, (
+                    yield value
+                ));
+            }
+        }
+    })();
+
+    return @newIteratorHelper(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.flatmap
+function flatMap(mapper)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.flatMap requires that |this| be an Object.");
+
+    if (!@isCallable(mapper))
+        @throwTypeError("Iterator.prototype.flatMap callback must be a function.");
+
+    var iterated = this;
+    var iteratedNextMethod = iterated.next;
+    var iteratedWrapper = {
+        @@iterator: function() { return this; },
+        next: function() { return iteratedNextMethod.@call(iterated); },
+        return: function() { return iterated.return(@undefined); },
+    };
+
+    var generator = (function*() {
+        var counter = 0;
+        for (var item of iteratedWrapper) {
+            var mapped = mapper(item, counter++);
+            var innerIterator = @getIteratorFlattenable(mapped, /* rejectStrings: */ true);
+
+            for (var innerItem of { @@iterator: function() { return innerIterator; } })
+                yield innerItem;
+        }
+    })();
+
+    return @newIteratorHelper(generator, iterated);
+}
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some
 function some(predicate)

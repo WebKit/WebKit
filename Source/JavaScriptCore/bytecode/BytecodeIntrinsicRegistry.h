@@ -49,6 +49,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getPrototypeOf) \
     macro(getPromiseInternalField) \
     macro(getGeneratorInternalField) \
+    macro(getIteratorHelperInternalField) \
     macro(getAsyncFromSyncIteratorInternalField) \
     macro(getAsyncGeneratorInternalField) \
     macro(getAbstractModuleRecordInternalField) \
@@ -67,6 +68,7 @@ enum class LinkTimeConstant : int32_t;
     macro(isProxyObject) \
     macro(isDerivedArray) \
     macro(isGenerator) \
+    macro(isIteratorHelper) \
     macro(isAsyncGenerator) \
     macro(isPromise) \
     macro(isRegExpObject) \
@@ -111,6 +113,10 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSize) \
     macro(newArrayWithSpecies) \
     macro(newPromise) \
+    macro(newIteratorHelper) \
+    macro(iteratorGenericClose) \
+    macro(iteratorGenericNext) \
+    macro(ifAbruptCloseIterator) \
     macro(createPromise) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
@@ -154,6 +160,9 @@ enum class LinkTimeConstant : int32_t;
     macro(GeneratorResumeModeReturn) \
     macro(GeneratorStateCompleted) \
     macro(GeneratorStateExecuting) \
+    macro(GeneratorStateInit) \
+    macro(iteratorHelperFieldGenerator) \
+    macro(iteratorHelperFieldUnderlyingIterator) \
     macro(arrayIteratorFieldIndex) \
     macro(arrayIteratorFieldIteratedObject) \
     macro(arrayIteratorFieldKind) \
