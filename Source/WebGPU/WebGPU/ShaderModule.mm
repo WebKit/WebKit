@@ -129,7 +129,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     auto library = ShaderModule::createLibrary(device.device(), msl, WTFMove(label), &error);
     if (!library)
         return nullptr;
-    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(result.entryPoints), library, nil, { }, device);
+    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(result.entryPoints), library, device);
 }
 
 static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& features)
@@ -181,7 +181,7 @@ static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& feat
     return result;
 }
 
-static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WGPUShaderModuleDescriptor &descriptor, std::optional<ShaderModuleParameters> &shaderModuleParameters, NSMutableSet<NSString *> * originalOverrideNames, HashMap<String, String>&& originalFunctionNames)
+static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WGPUShaderModuleDescriptor &descriptor, std::optional<ShaderModuleParameters> &shaderModuleParameters)
 {
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (shaderModuleParameters->hints && descriptor.hintCount) {
@@ -190,7 +190,7 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, st
             UNUSED_PARAM(earlyCompileShaderModule);
         }
 
-        return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, originalOverrideNames, WTFMove(originalFunctionNames), object);
+        return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, object);
     }
 
     auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
@@ -212,7 +212,6 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (!shaderModuleParameters)
         return ShaderModule::createInvalid(*this);
 
-    HashMap<String, String> functionNames;
     auto supportedFeatures = buildFeatureSet(m_capabilities.features);
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, WGSL::Configuration {
         .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
@@ -222,7 +221,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         .supportedFeatures = WTFMove(supportedFeatures)
     });
 
-    return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, nil, WTFMove(functionNames));
+    return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModule);
@@ -625,48 +624,43 @@ ShaderModule::FragmentInputs ShaderModule::parseFragmentInputs(const WGSL::AST::
     return result;
 }
 
-ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, NSMutableSet<NSString* >* originalOverrideNames, HashMap<String, String>&& originalFunctionNames, Device& device)
+ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))
     , m_library(library)
     , m_device(device)
-    , m_originalOverrideNames(originalOverrideNames)
-    , m_originalFunctionNames(WTFMove(originalFunctionNames))
 {
     bool allowVertexDefault = true, allowFragmentDefault = true, allowComputeDefault = true;
     if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
         auto& check = std::get<WGSL::SuccessfulCheck>(m_checkResult);
-        for (auto& declaration : check.ast->declarations()) {
-            auto* function = dynamicDowncast<WGSL::AST::Function>(declaration);
-            if (!function || !function->stage())
-                continue;
-            switch (*function->stage()) {
+        for (auto& entryPoint : check.ast->callGraph().entrypoints()) {
+            switch (entryPoint.stage) {
             case WGSL::ShaderStage::Vertex: {
-                m_stageInTypesForEntryPoint.add(function->name(), parseStageIn(*function));
-                if (auto expression = function->maybeReturnType()) {
+                m_stageInTypesForEntryPoint.add(entryPoint.originalName, parseStageIn(entryPoint.function));
+                if (auto expression = entryPoint.function.maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_vertexReturnTypeForEntryPoint.add(function->name(), parseVertexReturnType(*inferredType));
+                        m_vertexReturnTypeForEntryPoint.add(entryPoint.originalName, parseVertexReturnType(*inferredType));
                 }
                 if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
                     allowVertexDefault = false;
                     m_defaultVertexEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultVertexEntryPoint = function->name();
+                m_defaultVertexEntryPoint = entryPoint.originalName;
             } break;
             case WGSL::ShaderStage::Fragment: {
-                m_fragmentInputsForEntryPoint.add(function->name(), parseFragmentInputs(*function));
-                if (auto expression = function->maybeReturnType()) {
+                m_fragmentInputsForEntryPoint.add(entryPoint.originalName, parseFragmentInputs(entryPoint.function));
+                if (auto expression = entryPoint.function.maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_fragmentReturnTypeForEntryPoint.add(function->name(), parseFragmentReturnType(*inferredType, function->name()));
+                        m_fragmentReturnTypeForEntryPoint.add(entryPoint.originalName, parseFragmentReturnType(*inferredType, entryPoint.originalName));
                 }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;
                     m_defaultFragmentEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultFragmentEntryPoint = function->name();
+                m_defaultFragmentEntryPoint = entryPoint.originalName;
             } break;
             case WGSL::ShaderStage::Compute: {
                 if (!allowComputeDefault || m_defaultComputeEntryPoint.length()) {
@@ -674,7 +668,7 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                     m_defaultComputeEntryPoint = emptyString();
                     continue;
                 }
-                m_defaultComputeEntryPoint = function->name();
+                m_defaultComputeEntryPoint = entryPoint.originalName;
             } break;
             default:
                 ASSERT_NOT_REACHED();
@@ -689,24 +683,12 @@ const ShaderModule::FragmentInputs* ShaderModule::fragmentInputsForEntryPoint(co
     if (auto it = m_fragmentInputsForEntryPoint.find(entryPoint); it != m_fragmentInputsForEntryPoint.end())
         return &it->value;
 
-    auto transformed = m_originalFunctionNames.find(entryPoint);
-    if (transformed == m_originalFunctionNames.end())
-        return nullptr;
-    if (auto it = m_fragmentInputsForEntryPoint.find(transformed->value); it != m_fragmentInputsForEntryPoint.end())
-        return &it->value;
-
     return nullptr;
 }
 
 const ShaderModule::FragmentOutputs* ShaderModule::fragmentReturnTypeForEntryPoint(const String& entryPoint) const
 {
     if (auto it = m_fragmentReturnTypeForEntryPoint.find(entryPoint); it != m_fragmentReturnTypeForEntryPoint.end())
-        return &it->value;
-
-    auto transformed = m_originalFunctionNames.find(entryPoint);
-    if (transformed == m_originalFunctionNames.end())
-        return nullptr;
-    if (auto it = m_fragmentReturnTypeForEntryPoint.find(transformed->value); it != m_fragmentReturnTypeForEntryPoint.end())
         return &it->value;
 
     return nullptr;
@@ -717,18 +699,7 @@ const ShaderModule::VertexOutputs* ShaderModule::vertexReturnTypeForEntryPoint(c
     if (auto it = m_vertexReturnTypeForEntryPoint.find(entryPoint); it != m_vertexReturnTypeForEntryPoint.end())
         return &it->value;
 
-    auto transformed = m_originalFunctionNames.find(entryPoint);
-    if (transformed == m_originalFunctionNames.end())
-        return nullptr;
-    if (auto it = m_vertexReturnTypeForEntryPoint.find(transformed->value); it != m_vertexReturnTypeForEntryPoint.end())
-        return &it->value;
-
     return nullptr;
-}
-
-bool ShaderModule::hasOverride(const String& name) const
-{
-    return [m_originalOverrideNames containsObject:name];
 }
 
 const ShaderModule::VertexStageIn* ShaderModule::stageInTypesForEntryPoint(const String& entryPoint) const
@@ -737,12 +708,6 @@ const ShaderModule::VertexStageIn* ShaderModule::stageInTypesForEntryPoint(const
         return nullptr;
 
     if (auto it = m_stageInTypesForEntryPoint.find(entryPoint); it != m_stageInTypesForEntryPoint.end())
-        return &it->value;
-
-    auto transformed = m_originalFunctionNames.find(entryPoint);
-    if (transformed == m_originalFunctionNames.end())
-        return nullptr;
-    if (auto it = m_stageInTypesForEntryPoint.find(transformed->value); it != m_stageInTypesForEntryPoint.end())
         return &it->value;
 
     return nullptr;
@@ -1075,12 +1040,6 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
     auto iterator = m_entryPointInformation.find(name);
     if (iterator != m_entryPointInformation.end())
         return &iterator->value;
-
-    auto transformed = m_originalFunctionNames.find(name);
-    if (transformed == m_originalFunctionNames.end())
-        return nullptr;
-    if (auto it = m_entryPointInformation.find(transformed->value); it != m_entryPointInformation.end())
-        return &it->value;
 
     return nullptr;
 }

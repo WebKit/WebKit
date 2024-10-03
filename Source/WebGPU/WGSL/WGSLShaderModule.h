@@ -251,11 +251,18 @@ public:
         vector.clear();
     }
 
-    void revertReplacements()
+    size_t currentReplacementSize() const
     {
-        for (int i = m_replacements.size() - 1; i >= 0; --i)
+        return m_replacements.size();
+    }
+
+    void revertReplacements(size_t limit)
+    {
+        if (m_replacements.size() == limit)
+            return;
+        for (size_t i = m_replacements.size() - 1; i >= limit; --i)
             m_replacements[i]();
-        m_replacements.clear();
+        m_replacements.shrinkCapacity(limit);
     }
 
     OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
