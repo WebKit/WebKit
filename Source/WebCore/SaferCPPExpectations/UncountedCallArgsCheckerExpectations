@@ -131,7 +131,6 @@ JSCSSTranslate.cpp
 JSCSSUnitValue.cpp
 JSCSSUnknownRule.cpp
 JSCSSUnparsedValue.cpp
-JSCSSViewTransitionRule.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasGradient.cpp
 JSCanvasPattern.cpp
@@ -763,7 +762,6 @@ JSSpeechSynthesisErrorEvent.cpp
 JSSpeechSynthesisEvent.cpp
 JSSpeechSynthesisUtterance.cpp
 JSSpeechSynthesisVoice.cpp
-JSStartViewTransitionOptions.cpp
 JSStaticRange.cpp
 JSStereoPannerNode.cpp
 JSStorage.cpp
@@ -822,8 +820,6 @@ JSVideoTrackConfiguration.cpp
 JSVideoTrackGenerator.cpp
 JSVideoTrackList.cpp
 JSViewTimeline.cpp
-JSViewTransition.cpp
-JSViewTransitionTypeSet.cpp
 JSVisualViewport.cpp
 JSWGSLLanguageFeatures.cpp
 JSWakeLock.cpp
@@ -1447,7 +1443,6 @@ css/CSSToStyleMap.cpp
 css/CSSValueList.cpp
 css/CSSValuePair.cpp
 css/CSSVariableReferenceValue.cpp
-css/CSSViewTransitionRule.h
 css/CSSViewValue.cpp
 css/CSSViewValue.h
 css/ComputedStyleExtractor.cpp
@@ -1611,8 +1606,6 @@ dom/TreeScope.cpp
 dom/TreeWalker.cpp
 dom/TrustedType.cpp
 dom/TypedElementDescendantIteratorInlines.h
-dom/ViewTransition.cpp
-dom/ViewTransitionTypeSet.cpp
 dom/VisitedLinkState.cpp
 dom/WindowEventLoop.cpp
 dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
@@ -2330,7 +2323,6 @@ rendering/RenderTreeAsText.cpp
 rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
-rendering/RenderViewTransitionCapture.cpp
 rendering/RenderWidget.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextAutoSizing.cpp
@@ -2416,7 +2408,6 @@ rendering/updating/RenderTreeBuilderRuby.cpp
 rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
-rendering/updating/RenderTreeUpdaterViewTransition.cpp
 storage/Storage.cpp
 storage/StorageEventDispatcher.cpp
 storage/StorageMap.cpp

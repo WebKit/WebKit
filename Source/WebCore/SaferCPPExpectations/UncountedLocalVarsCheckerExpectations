@@ -312,8 +312,6 @@ JSCSSUnitValue.h
 JSCSSUnknownRule.h
 JSCSSUnparsedValue.cpp
 JSCSSUnparsedValue.h
-JSCSSViewTransitionRule.cpp
-JSCSSViewTransitionRule.h
 JSCacheQueryOptions.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasCaptureMediaStreamTrack.h
@@ -1819,7 +1817,6 @@ JSSpeechSynthesisUtterance.cpp
 JSSpeechSynthesisUtterance.h
 JSSpeechSynthesisVoice.cpp
 JSSpeechSynthesisVoice.h
-JSStartViewTransitionOptions.cpp
 JSStaticRange.cpp
 JSStaticRange.h
 JSStereoPannerNode.cpp
@@ -1953,11 +1950,6 @@ JSVideoTrackList.h
 JSViewTimeline.cpp
 JSViewTimeline.h
 JSViewTimelineOptions.cpp
-JSViewTransition.cpp
-JSViewTransition.h
-JSViewTransitionTypeSet.cpp
-JSViewTransitionTypeSet.h
-JSViewTransitionUpdateCallback.cpp
 JSVisualViewport.cpp
 JSVisualViewport.h
 JSVoidCallback.cpp
@@ -2489,7 +2481,6 @@ css/CSSValue.cpp
 css/CSSValueList.cpp
 css/CSSValueList.h
 css/CSSVariableReferenceValue.cpp
-css/CSSViewTransitionRule.cpp
 css/ComputedStyleExtractor.cpp
 css/DOMCSSPaintWorklet.cpp
 css/DeprecatedCSSOMPrimitiveValue.cpp
