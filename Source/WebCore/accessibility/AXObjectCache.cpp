@@ -380,10 +380,11 @@ void AXObjectCache::updateCurrentModalNode(WillRecomputeFocus willRecomputeFocus
 
         SetForScope retrievingCurrentModalNode(m_isRetrievingCurrentModalNode, true);
         // If any of the modal nodes contains the keyboard focus, we want to pick that one.
-        // If not, we want to pick the last visible dialog in the DOM.
+        // If multiple contain the keyboard focus, we want the deepest.
+        // If no modal contains focus, we want to pick the last visible dialog in the DOM.
         RefPtr<Element> focusedElement = document().focusedElement();
-        bool focusedElementIsOutsideModals = focusedElement;
-        RefPtr<Element> lastVisible;
+        RefPtr<Element> modalElementToReturn;
+        bool foundModalWithFocusInside = false;
         for (auto& element : m_modalElements) {
             // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
             // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
@@ -394,18 +395,29 @@ void AXObjectCache::updateCurrentModalNode(WillRecomputeFocus willRecomputeFocus
             if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
                 continue;
 
-            lastVisible = element.get();
-            if (focusedElement && focusedElement->isDescendantOf(*element)) {
-                focusedElementIsOutsideModals = false;
-                break;
-            }
+            bool focusIsInsideElement = focusedElement && focusedElement->isDescendantOf(*element);
+
+            // If the modal we found previously is a descendant of this one, prefer the descendant and skip this one.
+            if (modalElementToReturn && foundModalWithFocusInside && modalElementToReturn->isDescendantOf(*element))
+                continue;
+
+            // If we already found a modal that focus is inside, and this one doesn't have focus inside, skip in favor of the one with focus inside.
+            if (modalElementToReturn && foundModalWithFocusInside && !focusIsInsideElement)
+                continue;
+
+            modalElementToReturn = element.get();
+            if (focusIsInsideElement)
+                foundModalWithFocusInside = true;
         }
+
+        bool focusedElementIsOutsideModals = focusedElement && !foundModalWithFocusInside;
 
         // If there is a focused element, and it's not inside any of the modals, we should
         // consider all modals inactive to allow the user to freely navigate.
         if (focusedElementIsOutsideModals && willRecomputeFocus == WillRecomputeFocus::No)
             return nullptr;
-        return lastVisible.get();
+
+        return modalElementToReturn.get();
     };
 
     auto* previousModal = m_currentModalElement.get();
@@ -2705,8 +2717,14 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     }
     else if (attrName == aria_invalidAttr)
         postNotification(element, AXInvalidStatusChanged);
-    else if (attrName == aria_modalAttr)
+    else if (attrName == aria_modalAttr) {
+        // aria-modal changed, so the element may have become modal or un-modal.
+        if (isModalElement(*element))
+            m_modalElements.appendIfNotContains(element);
+        else
+            m_modalElements.removeAll(element);
         deferModalChange(*element);
+    }
     else if (attrName == aria_currentAttr)
         postNotification(element, AXCurrentStateChanged);
     else if (attrName == aria_disabledAttr)
