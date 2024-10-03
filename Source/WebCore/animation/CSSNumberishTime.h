@@ -72,12 +72,10 @@ public:
 
 private:
     enum class Type : uint8_t { Unknown, Time, Percentage };
-    enum class Source : uint8_t { Literal, Number, Milliseconds, Seconds, Percentage };
 
-    CSSNumberishTime(Type, Source, double);
+    CSSNumberishTime(Type, double);
 
     Type m_type { Type::Unknown };
-    Source m_source { Source::Literal };
     double m_value { 0 };
 };
 
