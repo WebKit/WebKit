@@ -49,8 +49,12 @@ ExceptionOr<Ref<CustomEffect>> CustomEffect::create(Document& document, Ref<Cust
         } else {
             auto effectTimingOptions = std::get<EffectTiming>(optionsValue);
 
+            auto convertedDuration = effectTimingOptions.durationAsDoubleOrString();
+            if (!convertedDuration)
+                return Exception { ExceptionCode::TypeError };
+
             timing = {
-                effectTimingOptions.duration,
+                *convertedDuration,
                 effectTimingOptions.iterations,
                 effectTimingOptions.delay,
                 effectTimingOptions.endDelay,
