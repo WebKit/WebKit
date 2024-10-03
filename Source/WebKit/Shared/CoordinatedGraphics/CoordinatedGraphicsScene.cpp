@@ -111,7 +111,7 @@ void updateBackingStore(TextureMapperLayer& layer,
     auto& backingStore = *compositionState.backingStore;
 
     layer.setBackingStore(&backingStore);
-    backingStore.setSize(layer.size());
+    backingStore.resize(layer.size());
 
     for (auto& tile : update.tilesToCreate)
         backingStore.createTile(tile.tileID, tile.scale);
@@ -383,7 +383,7 @@ void CoordinatedGraphicsScene::updateSceneState()
     }
 
     for (auto& backingStore : backingStoresWithPendingBuffers)
-        backingStore->commitTileOperations(*m_textureMapper);
+        backingStore->swapBuffers(*m_textureMapper);
 
     for (auto& proxy : proxiesForSwapping)
         proxy->swapBuffer();

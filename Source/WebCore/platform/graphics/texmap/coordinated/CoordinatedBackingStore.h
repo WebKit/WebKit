@@ -34,13 +34,14 @@ namespace WebCore {
 
 class TextureMapper;
 
-class CoordinatedBackingStoreTile : public TextureMapperTile {
+class CoordinatedBackingStoreTile final : public TextureMapperTile {
 public:
     explicit CoordinatedBackingStoreTile(float scale = 1)
         : TextureMapperTile(FloatRect())
         , m_scale(scale)
     {
     }
+    ~CoordinatedBackingStoreTile() = default;
 
     float scale() const { return m_scale; }
 
@@ -56,37 +57,39 @@ public:
 
 private:
     Vector<Update> m_updates;
-    float m_scale;
+    float m_scale { 1. };
 };
 
-class CoordinatedBackingStore : public RefCounted<CoordinatedBackingStore>, public TextureMapperBackingStore {
+class CoordinatedBackingStore final : public RefCounted<CoordinatedBackingStore>, public TextureMapperBackingStore {
 public:
-    void createTile(uint32_t tileID, float);
+    static Ref<CoordinatedBackingStore> create()
+    {
+        return adoptRef(*new CoordinatedBackingStore);
+    }
+    ~CoordinatedBackingStore() = default;
+
+    void resize(const FloatSize&);
+
+    void createTile(uint32_t tileID, float scale);
     void removeTile(uint32_t tileID);
-    void removeAllTiles();
     void updateTile(uint32_t tileID, const IntRect&, const IntRect&, RefPtr<Nicosia::Buffer>&&, const IntPoint&);
-    static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
-    void commitTileOperations(TextureMapper&);
-    void setSize(const FloatSize&);
+
+    void swapBuffers(TextureMapper&);
+
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
     void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
     void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
 
 private:
-    CoordinatedBackingStore()
-        : m_scale(1.)
-    { }
+    CoordinatedBackingStore() = default;
+
     void paintTilesToTextureMapper(Vector<TextureMapperTile*>&, TextureMapper&, const TransformationMatrix&, float, const FloatRect&);
     TransformationMatrix adjustedTransformForRect(const FloatRect&);
     FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
 
-    typedef HashMap<uint32_t, CoordinatedBackingStoreTile> CoordinatedBackingStoreTileMap;
-    CoordinatedBackingStoreTileMap m_tiles;
-    HashSet<uint32_t> m_tilesToRemove;
-    // FIXME: m_pendingSize should be removed after the following bug is fixed: https://bugs.webkit.org/show_bug.cgi?id=108294
-    FloatSize m_pendingSize;
+    HashMap<uint32_t, CoordinatedBackingStoreTile> m_tiles;
     FloatSize m_size;
-    float m_scale;
+    float m_scale { 1. };
 };
 
 } // namespace WebKit
