@@ -1,0 +1,3 @@
+
+NOTRUN Testing BFCache support for page with open WebSocket connection and "Cache-Control: no-store" header. BFCache not supported.
+

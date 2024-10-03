@@ -11058,6 +11058,8 @@
         "web-platform-tests/webmessaging/without-ports/020-1.html",
         "web-platform-tests/websockets/multi-globals/support/incumbent.sub.html",
         "web-platform-tests/websockets/multi-globals/support/relevant.html",
+        "web-platform-tests/websockets/multi-globals/url-parsing/current/current.html",
+        "web-platform-tests/websockets/multi-globals/url-parsing/incumbent/incumbent.html",
         "web-platform-tests/websockets/unload-a-document/001-1.html",
         "web-platform-tests/websockets/unload-a-document/001-2.html",
         "web-platform-tests/websockets/unload-a-document/002-1.html",
