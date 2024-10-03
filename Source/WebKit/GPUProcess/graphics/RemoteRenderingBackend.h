@@ -107,7 +107,6 @@ public:
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
 
-
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
     void setSharedMemoryForGetPixelBuffer(RefPtr<WebCore::SharedMemory> memory) { m_getPixelBufferSharedMemory = WTFMove(memory); }
@@ -182,6 +181,8 @@ private:
 
     void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
     void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
+
+    Ref<ShapeDetection::ObjectHeap> protectedShapeDetectionObjectHeap() const;
 
 #if PLATFORM(COCOA)
     bool shouldUseLockdownFontParser() const;

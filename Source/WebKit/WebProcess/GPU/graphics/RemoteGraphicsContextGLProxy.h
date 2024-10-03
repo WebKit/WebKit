@@ -389,12 +389,12 @@ protected:
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
-        return m_streamConnection->send(std::forward<T>(message), m_identifier);
+        return protectedStreamConnection()->send(std::forward<T>(message), m_identifier);
     }
     template<typename T>
     WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return m_streamConnection->sendSync(std::forward<T>(message), m_identifier);
+        return protectedStreamConnection()->sendSync(std::forward<T>(message), m_identifier);
     }
 
     GraphicsContextGLIdentifier m_identifier { GraphicsContextGLIdentifier::generate() };
@@ -415,6 +415,11 @@ private:
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
+
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const;
+#endif
+    RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
 
     SerialFunctionDispatcher& m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only main thread use.

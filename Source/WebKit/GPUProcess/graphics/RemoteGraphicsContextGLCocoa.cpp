@@ -58,7 +58,7 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::SharedVideoFrame
         return;
     }
     texture = m_objectNames.get(texture);
-    bool result = m_context->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
+    bool result = protectedContext()->copyTextureFromVideoFrame(*videoFrame, texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY);
     completionHandler(result);
 }
 
@@ -109,11 +109,13 @@ void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::Graphics
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSemaphore, CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->prepareForDisplayWithFinishedSignal([finishedSemaphore = WTFMove(finishedSemaphore)]() mutable { 
+    RefPtr context = m_context;
+
+    context->prepareForDisplayWithFinishedSignal([finishedSemaphore = WTFMove(finishedSemaphore)]() mutable {
         finishedSemaphore.signal();
     });
     MachSendRight sendRight;
-    if (WebCore::IOSurface* surface = m_context->displayBufferSurface())
+    if (WebCore::IOSurface* surface = context->displayBufferSurface())
         sendRight = surface->createSendRight();
     completionHandler(WTFMove(sendRight));
 }

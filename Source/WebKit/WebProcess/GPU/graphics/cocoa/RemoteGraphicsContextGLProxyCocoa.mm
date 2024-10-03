@@ -144,6 +144,9 @@ private:
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
     {
     }
+
+    Ref<DisplayBufferDisplayDelegate> protectedLayerContentsDisplayDelegate() const { return m_layerContentsDisplayDelegate; }
+
     void addNewFence(Ref<DisplayBufferFence> newFence);
     static constexpr size_t maxPendingFences = 3;
     size_t m_oldestFenceIndex { 0 };
@@ -168,7 +171,7 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
         return;
     auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
     addNewFence(finishedFence);
-    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
+    protectedLayerContentsDisplayDelegate()->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
 }
 
 void RemoteGraphicsContextGLProxyCocoa::forceContextLost()
