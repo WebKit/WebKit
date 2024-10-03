@@ -34,6 +34,7 @@
 #include "U2fAuthenticator.h"
 #include <WebCore/AuthenticationExtensionsClientOutputs.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/CredentialPropertiesOutput.h>
 #include <WebCore/CryptoKeyAES.h>
 #include <WebCore/CryptoKeyHMAC.h>
 #include <WebCore/DeviceRequestConverter.h>
@@ -61,7 +62,7 @@ static Vector<Vector<PublicKeyCredentialDescriptor>> batchesForCredentials(Vecto
 {
     Vector<Vector<PublicKeyCredentialDescriptor>> batches;
     for (auto credential : credentials) {
-        if (maxCredentialIDLength && credential.id.length() > *maxCredentialIDLength)
+        if (maxCredentialIDLength && BufferSource { credential.id } .length() > *maxCredentialIDLength)
             continue;
         if (!batches.size() || batches.last().size() >= maxBatchSize)
             batches.append({ });
@@ -124,7 +125,7 @@ void CtapAuthenticator::makeCredential()
         if (!m_batches.size())
             return continueMakeCredentialAfterCheckExcludedCredentials();
         m_currentBatch = 0;
-        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(*options.rp.id, requestData().hash, m_batches[m_currentBatch], std::nullopt);
+        Vector<uint8_t> cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, m_batches[m_currentBatch], std::nullopt);
         driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
@@ -151,7 +152,7 @@ void CtapAuthenticator::continueSilentlyCheckCredentials(Vector<uint8_t>&& data,
     }
     Vector<uint8_t> cborCmd;
     WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions& options) {
-        cborCmd = encodeSilentGetAssertion(*options.rp.id, requestData().hash, m_batches[m_currentBatch], std::nullopt);
+        cborCmd = encodeSilentGetAssertion(options.rp.id, requestData().hash, m_batches[m_currentBatch], std::nullopt);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         cborCmd = encodeSilentGetAssertion(options.rpId, requestData().hash, m_batches[m_currentBatch], std::nullopt);
     });
@@ -245,7 +246,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
         
         auto rkSupported = m_info.options().residentKeyAvailability() == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported;
         auto rkRequested = options.authenticatorSelection && ((options.authenticatorSelection->residentKey && options.authenticatorSelection->residentKey != ResidentKeyRequirement::Discouraged) || options.authenticatorSelection->requireResidentKey);
-        extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { rkSupported && rkRequested && !m_isKeyStoreFull };
+        extensionOutputs.credProps = CredentialPropertiesOutput { rkSupported && rkRequested && !m_isKeyStoreFull };
         response->setExtensions(WTFMove(extensionOutputs));
     }
     receiveRespond(response.releaseNonNull());

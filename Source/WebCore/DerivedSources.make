@@ -730,16 +730,31 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webaudio/WaveShaperOptions.idl \
     $(WebCore)/Modules/webauthn/AttestationConveyancePreference.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl \
+    $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputsJSON.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl \
+    $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputsJSON.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAssertionResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAttachment.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorAttestationResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorResponse.idl \
+    $(WebCore)/Modules/webauthn/RegistrationResponseJSON.idl \
+    $(WebCore)/Modules/webauthn/AuthenticationResponseJSON.idl \
+    $(WebCore)/Modules/webauthn/AuthenticatorSelectionCriteria.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorTransport.idl \
+    $(WebCore)/Modules/webauthn/CredentialPropertiesOutput.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredential.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptionsJSON.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialEntity.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialRpEntity.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialParameters.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialUserEntity.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl \
+    $(WebCore)/Modules/webauthn/AuthenticatorSelectionCriteria.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptorJSON.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptionsJSON.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \

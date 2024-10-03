@@ -103,7 +103,7 @@ std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>
         return std::nullopt;
 
     ASSERT(request.rp.id);
-    return constructU2fRegisterCommand(produceRpIdHash(*request.rp.id), clientDataHash);
+    return constructU2fRegisterCommand(produceRpIdHash(request.rp.id), clientDataHash);
 }
 
 std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
@@ -112,7 +112,7 @@ std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uin
         return std::nullopt;
 
     ASSERT(request.rp.id);
-    return constructU2fSignCommand(produceRpIdHash(*request.rp.id), clientDataHash, keyHandle.id, true /* checkOnly */);
+    return constructU2fSignCommand(produceRpIdHash(request.rp.id), clientDataHash, keyHandle.id, true /* checkOnly */);
 }
 
 std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const WebCore::BufferSource& keyHandle, bool isAppId)

@@ -2941,6 +2941,7 @@ inspector/page/archive.html [ WontFix ]
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
+imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 # Digital Crendentials API
 http/wpt/identity/ [ Skip ]

@@ -405,4 +405,14 @@ struct JSConverter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBu
     }
 };
 
+
+template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource> {
+    using Result = ConversionResult<IDLBufferSource>;
+
+    static Result convert(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
+    {
+        return WebCore::convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBufferView>, IDLAllowSharedAdaptor<IDLArrayBuffer>>>(globalObject, value);
+    }
+};
+
 } // namespace WebCore

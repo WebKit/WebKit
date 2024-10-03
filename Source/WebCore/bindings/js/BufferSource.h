@@ -47,6 +47,10 @@ public:
     BufferSource(VariantType&& variant)
         : m_variant(WTFMove(variant))
     { }
+
+    BufferSource(const VariantType& variant)
+        : m_variant(variant)
+    { }
     explicit BufferSource(std::span<const uint8_t> span)
         : m_variant(JSC::ArrayBuffer::tryCreate(span)) { }
 

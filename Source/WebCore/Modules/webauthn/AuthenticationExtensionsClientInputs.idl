@@ -25,21 +25,27 @@
 
  [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsLargeBlobInputs {
     DOMString support;
     boolean read;
-    BufferSource write;
+    [OverrideIDLType=IDLBufferSource] BufferSource write;
 };
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsPRFValues {
-    required BufferSource first;
-    BufferSource second;
+    required [OverrideIDLType=IDLBufferSource] BufferSource first;
+    [OverrideIDLType=IDLBufferSource] BufferSource second;
 };
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsPRFInputs {
     AuthenticationExtensionsPRFValues eval;
     record<USVString, AuthenticationExtensionsPRFValues> evalByCredential;
@@ -47,6 +53,8 @@
 
 [
     Conditional=WEB_AUTHN,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsClientInputs {
     USVString appid;
     // For Google to turn off the legacy AppID support.

@@ -40,10 +40,12 @@
 #import "WebPreferences.h"
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/AuthenticatorSelectionCriteria.h>
 #import <WebCore/AuthenticatorTransport.h>
 #import <WebCore/BufferSource.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
+#import <WebCore/PublicKeyCredentialParameters.h>
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebAuthenticationUtils.h>
@@ -305,7 +307,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
 
     RetainPtr<ASPublicKeyCredentialClientData> clientData = adoptNS([allocASPublicKeyCredentialClientDataInstance() initWithChallenge:toNSData(options.challenge).get() origin:callerOrigin.toString()]);
     if (includePlatformRequest) {
-        RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
+        RetainPtr request = adoptNS([[allocASAuthorizationPlatformPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rp.id] createCredentialRegistrationRequestWithClientData:clientData.get() name:options.user.name userID:toNSData(options.user.id).get()]);
 
         if (m_isConditionalMediation && [request respondsToSelector:@selector(setRequestStyle:)])
             request.get().requestStyle = ASAuthorizationPlatformPublicKeyCredentialRegistrationRequestStyleConditional;
@@ -334,7 +336,7 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForRegistration(con
     }
 #if HAVE(SECURITY_KEY_API)
     if (includeSecurityKeyRequest) {
-        RetainPtr provider = adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:*options.rp.id]);
+        RetainPtr provider = adoptNS([allocASAuthorizationSecurityKeyPublicKeyCredentialProviderInstance() initWithRelyingPartyIdentifier:options.rp.id]);
         RetainPtr<ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest> request;
         if ([provider respondsToSelector:@selector(createCredentialRegistrationRequestWithClientData:displayName:name:userID:)])
             request = adoptNS([provider createCredentialRegistrationRequestWithClientData:clientData.get() displayName:options.user.displayName name:options.user.name userID:toNSData(options.user.id).get()]);
@@ -806,7 +808,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     RetainPtr<NSString> userVerification;
     bool shouldRequireResidentKey = false;
     std::optional<ResidentKeyRequirement> residentKeyRequirement;
-    std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection = options.authenticatorSelection;
+    std::optional<AuthenticatorSelectionCriteria> authenticatorSelection = options.authenticatorSelection;
     if (authenticatorSelection) {
         std::optional<AuthenticatorAttachment> attachment = authenticatorSelection->authenticatorAttachment;
         if (attachment == AuthenticatorAttachment::Platform)
@@ -824,7 +826,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     ASSERT(options.rp.id);
-    [requestContext setRelyingPartyIdentifier:*options.rp.id];
+    [requestContext setRelyingPartyIdentifier:options.rp.id];
     setGlobalFrameIDForContext(requestContext, globalFrameID);
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
@@ -833,7 +835,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     RetainPtr nsClientDataJSON = toNSData(clientDataJson->span());
     [credentialCreationOptions setClientDataJSON:nsClientDataJSON.get()];
 
-    [credentialCreationOptions setRelyingPartyIdentifier:*options.rp.id];
+    [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
     [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
     [credentialCreationOptions setUserDisplayName:options.user.displayName];
@@ -845,7 +847,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     [credentialCreationOptions setAttestationPreference:toNSString(options.attestation).get()];
 
     RetainPtr<NSMutableArray<NSNumber *>> supportedAlgorithmIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:options.pubKeyCredParams.size()]);
-    for (PublicKeyCredentialCreationOptions::Parameters algorithmParameter : options.pubKeyCredParams)
+    for (PublicKeyCredentialParameters algorithmParameter : options.pubKeyCredParams)
         [supportedAlgorithmIdentifiers addObject:@(algorithmParameter.alg)];
 
     [credentialCreationOptions setSupportedAlgorithmIdentifiers:supportedAlgorithmIdentifiers.get()];
@@ -1195,6 +1197,9 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::Secu
         Vector<KeyValuePair<String, bool>> capabilities;
         for (NSString *key in result)
             capabilities.append({ key, result[key].boolValue });
+        std::sort(capabilities.begin(), capabilities.end(), [] (auto& a, auto& b) {
+            return codePointCompareLessThan(a.key, b.key);
+        });
 
         ensureOnMainRunLoop([handler = WTFMove(handler), capabilities = WTFMove(capabilities)] () mutable {
             handler(WTFMove(capabilities));

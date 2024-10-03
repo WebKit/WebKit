@@ -29,6 +29,7 @@
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMWrapperCache.h"
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSTypedArrays.h>
 
@@ -87,11 +88,62 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobal
     return view.wrap(lexicalGlobalObject, globalObject);
 }
 
+template<> struct JSConverter<IDLBufferSource> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const BufferSource& bufferSource)
+    {
+        auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+
+        JSC::JSValue jsValue;
+        WTF::switchOn(bufferSource.variant(), [&](RefPtr<JSC::ArrayBufferView> view) {
+            jsValue = toJS(&lexicalGlobalObject, &lexicalGlobalObject, *view);
+        }, [&](RefPtr<JSC::ArrayBuffer> arrayBuffer) {
+            jsValue = toJS(&lexicalGlobalObject, jsDOMGlobalObject, *arrayBuffer);
+        });
+        return jsValue;
+    }
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const std::optional<BufferSource>& bufferSource)
+    {
+        auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+
+        JSC::JSValue jsValue;
+        if (bufferSource) {
+            WTF::switchOn(bufferSource->variant(), [&](RefPtr<JSC::ArrayBufferView> view) {
+                jsValue = toJS(&lexicalGlobalObject, &lexicalGlobalObject, *view);
+            }, [&](RefPtr<JSC::ArrayBuffer> arrayBuffer) {
+                jsValue = toJS(&lexicalGlobalObject, jsDOMGlobalObject, *arrayBuffer);
+            });
+        }
+        return jsValue;
+    }
+};
+
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
 {
     if (!buffer)
         return JSC::jsNull();
     return toJS(lexicalGlobalObject, globalObject, *buffer);
+}
+
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, BufferSource* bufferSource)
+{
+    JSC::JSValue jsValue;
+    WTF::switchOn(bufferSource->variant(), [&](RefPtr<JSC::ArrayBufferView> view) {
+        jsValue = toJS(lexicalGlobalObject, globalObject, *view);
+    }, [&](RefPtr<JSC::ArrayBuffer> arrayBuffer) {
+        jsValue = toJS(lexicalGlobalObject, globalObject, *arrayBuffer);
+    });
+    return jsValue;
+}
+
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, const std::optional<BufferSource> bufferSource)
+{
+    if (!bufferSource)
+        return JSC::jsNull();
+
+    return toJS(lexicalGlobalObject, globalObject, *bufferSource);
 }
 
 inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView* view)

@@ -1930,6 +1930,7 @@ webkit.org/b/230062 fast/text/FontFaceSet-check-after-style-update.html [ Pass F
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
+imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 # Skip Digital Credentials API
 http/wpt/identity/ [ Skip ]

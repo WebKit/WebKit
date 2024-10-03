@@ -1977,6 +1977,7 @@ imported/w3c/web-platform-tests/content-security-policy [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials [ Skip ]
+imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 imported/w3c/web-platform-tests/css/compositing [ Skip ]
 imported/w3c/web-platform-tests/css/css-align [ Skip ]

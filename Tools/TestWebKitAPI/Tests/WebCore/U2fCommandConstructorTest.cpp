@@ -32,6 +32,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
+#include <WebCore/AuthenticatorSelectionCriteria.h>
 #include <WebCore/FidoConstants.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
@@ -45,17 +46,17 @@ using namespace fido;
 
 PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
 {
-    PublicKeyCredentialCreationOptions::RpEntity rp;
+    PublicKeyCredentialRpEntity rp;
     rp.id = "acme.com"_s;
     rp.name = "acme.com"_s;
 
-    PublicKeyCredentialCreationOptions::UserEntity user;
+    PublicKeyCredentialUserEntity user;
     user.id = WebCore::toBufferSource(TestData::kUserId);
     user.name = "johnpsmith@example.com"_s;
     user.displayName = "John P. Smith"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
 
-    PublicKeyCredentialCreationOptions::Parameters params;
+    PublicKeyCredentialParameters params;
     params.type = PublicKeyCredentialType::PublicKey;
     params.alg = COSE::ES256;
 
@@ -93,7 +94,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySign)
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle).variant();
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -109,7 +110,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
     auto makeCredentialParam = constructMakeCredentialRequest();
     PublicKeyCredentialDescriptor credentialDescriptor;
     credentialDescriptor.type = static_cast<PublicKeyCredentialType>(-1);
-    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle);
+    credentialDescriptor.id = WebCore::toBufferSource(TestData::kU2fSignKeyHandle).variant();
     Vector<PublicKeyCredentialDescriptor> excludeList;
     excludeList.append(credentialDescriptor);
     makeCredentialParam.excludeCredentials = WTFMove(excludeList);
@@ -121,17 +122,17 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
 
 TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
 {
-    PublicKeyCredentialCreationOptions::RpEntity rp;
+    PublicKeyCredentialRpEntity rp;
     rp.id = "acme.com"_s;
     rp.name = "acme.com"_s;
 
-    PublicKeyCredentialCreationOptions::UserEntity user;
+    PublicKeyCredentialUserEntity user;
     user.id = WebCore::toBufferSource(TestData::kUserId);
     user.name = "johnpsmith@example.com"_s;
     user.displayName = "John P. Smith"_s;
     user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
 
-    PublicKeyCredentialCreationOptions::Parameters params;
+    PublicKeyCredentialParameters params;
     params.type = PublicKeyCredentialType::PublicKey;
     params.alg = -257;
 
@@ -146,7 +147,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
 TEST(U2fCommandConstructorTest, TestU2fRegisterUserVerificationRequirement)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection;
+    AuthenticatorSelectionCriteria selection;
     selection.userVerification = UserVerificationRequirement::Required;
     makeCredentialParam.authenticatorSelection = WTFMove(selection);
 
@@ -156,7 +157,7 @@ TEST(U2fCommandConstructorTest, TestU2fRegisterUserVerificationRequirement)
 TEST(U2fCommandConstructorTest, TestU2fRegisterResidentKeyRequirement)
 {
     auto makeCredentialParam = constructMakeCredentialRequest();
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection;
+    AuthenticatorSelectionCriteria selection;
     selection.requireResidentKey = true;
     makeCredentialParam.authenticatorSelection = WTFMove(selection);
 

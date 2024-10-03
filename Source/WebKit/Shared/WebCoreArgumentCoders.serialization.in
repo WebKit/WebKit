@@ -1640,12 +1640,12 @@ struct WebCore::AuthenticatorResponseData {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
-    [NotSerialized] bool credProps;
+    std::optional<bool> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
 }
 
-[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
+struct WebCore::CredentialPropertiesOutput {
     bool rk;
 };
 
@@ -1667,33 +1667,33 @@ struct WebCore::AuthenticatorResponseData {
 
 struct WebCore::AuthenticationExtensionsClientOutputs {
     std::optional<bool> appid;
-    std::optional<WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> credProps;
+    std::optional<WebCore::CredentialPropertiesOutput> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs> prf;
 }
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Parameters {
+[Nested] struct WebCore::PublicKeyCredentialParameters {
     WebCore::PublicKeyCredentialType type;
     int64_t alg;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria {
+struct WebCore::AuthenticatorSelectionCriteria {
     std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
     std::optional<WebCore::ResidentKeyRequirement> residentKey;
     bool requireResidentKey;
     WebCore::UserVerificationRequirement userVerification;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Entity {
+struct WebCore::PublicKeyCredentialEntity {
     String name;
     String icon;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::RpEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
-    std::optional<String> id;
+struct WebCore::PublicKeyCredentialRpEntity : WebCore::PublicKeyCredentialEntity {
+    String id;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::UserEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
+struct WebCore::PublicKeyCredentialUserEntity : WebCore::PublicKeyCredentialEntity {
     WebCore::BufferSource id;
     String displayName;
 };
@@ -1716,15 +1716,15 @@ enum class WebCore::AttestationConveyancePreference : uint8_t {
 
 struct WebCore::PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
-    WebCore::PublicKeyCredentialCreationOptions::RpEntity rp;
-    WebCore::PublicKeyCredentialCreationOptions::UserEntity user;
+    WebCore::PublicKeyCredentialRpEntity rp;
+    WebCore::PublicKeyCredentialUserEntity user;
 
     WebCore::BufferSource challenge;
-    Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> pubKeyCredParams;
+    Vector<WebCore::PublicKeyCredentialParameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
     Vector<WebCore::PublicKeyCredentialDescriptor> excludeCredentials;
-    std::optional<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection;
+    std::optional<WebCore::AuthenticatorSelectionCriteria> authenticatorSelection;
     WebCore::AttestationConveyancePreference attestation;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
@@ -4283,7 +4283,7 @@ enum class WebCore::MediaDecodingType : uint8_t {
 enum class WebCore::MediaEncodingType : bool;
 
 class WebCore::BufferSource {
-    std::span<const uint8_t> span()
+    std::span<const uint8_t> span();
 }
 
 struct WebCore::FontShadow {

@@ -40,6 +40,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/AuthenticatorSelectionCriteria.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/EventRegion.h>
 #include <WebCore/ExceptionCode.h>
@@ -58,7 +59,7 @@ namespace {
 const unsigned maxTimeOutValue = 120000;
 
 // FIXME(188625): Support BLE authenticators.
-static AuthenticatorManager::TransportSet collectTransports(const std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria>& authenticatorSelection)
+static AuthenticatorManager::TransportSet collectTransports(const std::optional<AuthenticatorSelectionCriteria>& authenticatorSelection)
 {
     AuthenticatorManager::TransportSet result;
     if (!authenticatorSelection || !authenticatorSelection->authenticatorAttachment) {
@@ -160,7 +161,7 @@ static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, Pub
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(options);
         ASSERT(creationOptions.rp.id);
-        return *creationOptions.rp.id;
+        return creationOptions.rp.id;
     }
     return std::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }

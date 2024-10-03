@@ -47,6 +47,7 @@
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
+#import <WebCore/AuthenticatorSelectionCriteria.h>
 #import <WebCore/BufferSource.h>
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
@@ -745,9 +746,9 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
 #if ENABLE(WEB_AUTHN)
 
-static WebCore::PublicKeyCredentialCreationOptions::RpEntity publicKeyCredentialRpEntity(_WKPublicKeyCredentialRelyingPartyEntity *rpEntity)
+static WebCore::PublicKeyCredentialRpEntity publicKeyCredentialRpEntity(_WKPublicKeyCredentialRelyingPartyEntity *rpEntity)
 {
-    WebCore::PublicKeyCredentialCreationOptions::RpEntity result;
+    WebCore::PublicKeyCredentialRpEntity result;
     result.name = rpEntity.name;
     result.icon = rpEntity.icon;
     result.id = rpEntity.identifier;
@@ -755,22 +756,22 @@ static WebCore::PublicKeyCredentialCreationOptions::RpEntity publicKeyCredential
     return result;
 }
 
-static WebCore::PublicKeyCredentialCreationOptions::UserEntity publicKeyCredentialUserEntity(_WKPublicKeyCredentialUserEntity *userEntity)
+static WebCore::PublicKeyCredentialUserEntity publicKeyCredentialUserEntity(_WKPublicKeyCredentialUserEntity *userEntity)
 {
-    WebCore::PublicKeyCredentialCreationOptions::UserEntity result;
+    WebCore::PublicKeyCredentialUserEntity result;
     result.name = userEntity.name;
     result.icon = userEntity.icon;
-    result.id = WebCore::toBufferSource(userEntity.identifier);
+    result.id = WebCore::toBufferSource(userEntity.identifier).variant();
     result.displayName = userEntity.displayName;
 
     return result;
 }
 
-static Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> publicKeyCredentialParameters(NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters)
+static Vector<WebCore::PublicKeyCredentialParameters> publicKeyCredentialParameters(NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters)
 {
-    return Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters>(publicKeyCredentialParamaters.count, [publicKeyCredentialParamaters](size_t i) {
+    return Vector<WebCore::PublicKeyCredentialParameters>(publicKeyCredentialParamaters.count, [publicKeyCredentialParamaters](size_t i) {
         _WKPublicKeyCredentialParameters *param = publicKeyCredentialParamaters[i];
-        return WebCore::PublicKeyCredentialCreationOptions::Parameters { WebCore::PublicKeyCredentialType::PublicKey, param.algorithm.longLongValue };
+        return WebCore::PublicKeyCredentialParameters { WebCore::PublicKeyCredentialType::PublicKey, param.algorithm.longLongValue };
     });
 }
 
@@ -806,7 +807,7 @@ static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescrip
 {
     return Vector<WebCore::PublicKeyCredentialDescriptor>(credentials.count, [credentials](size_t i) {
         _WKPublicKeyCredentialDescriptor *credential = credentials[i];
-        return WebCore::PublicKeyCredentialDescriptor { WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier), authenticatorTransports(credential.transports) };
+        return WebCore::PublicKeyCredentialDescriptor { WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier).variant(), authenticatorTransports(credential.transports) };
     });
 }
 
@@ -857,9 +858,9 @@ static std::optional<WebCore::ResidentKeyRequirement> toWebCore(_WKResidentKeyRe
     }
 }
 
-static WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria authenticatorSelectionCriteria(_WKAuthenticatorSelectionCriteria *authenticatorSelection)
+static WebCore::AuthenticatorSelectionCriteria authenticatorSelectionCriteria(_WKAuthenticatorSelectionCriteria *authenticatorSelection)
 {
-    WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
+    WebCore::AuthenticatorSelectionCriteria result;
     result.authenticatorAttachment = authenticatorAttachment(authenticatorSelection.authenticatorAttachment);
     result.residentKey = toWebCore(authenticatorSelection.residentKey);
     result.requireResidentKey = authenticatorSelection.requireResidentKey;

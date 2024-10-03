@@ -1,0 +1,69 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/conditional-mediation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-abort.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-attachment.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-authnrselection.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-challenge.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-rp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-user.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-clientdata.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-cross-origin-iframe.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-excludecredentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-extensions.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-getpublickey.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-hints.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-not-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-minpinlength.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-passing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-prf.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-pubkeycredparams.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-resident-key.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-timeout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/credblob-not-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/credblob-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getclientcapabilities.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-abort.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-allowcredentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-attachment.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-badargs-rpid.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-badargs-userverification.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-extensions.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-hints.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-not-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-supported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-passing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-prf.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-rk-passing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-timeout.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/idlharness-manual.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/public-key-credential-creation-options-from-json.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/public-key-credential-request-options-from-json.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/public-key-credential-to-json.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/remote-desktop-client-override.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/securecontext.http.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/securecontext.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/signal-all-accepted-credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/signal-current-user-details.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/signal-unknown-credential.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/storecredential.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/webauthn-testdriver-basic.https.html
