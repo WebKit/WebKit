@@ -7214,7 +7214,7 @@ class ParseStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
         log_text = self.log_observer.getStdout()
         index = log_text.rfind('Total')
-        self.result_message = log_text[index:]
+        self.result_message = log_text[index:].strip()
 
         return defer.returnValue(rc)
 

@@ -9221,7 +9221,7 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
             + ExpectShell.log('stdio', stdout='Total (24247) WebKit (327) WebCore (23920)\n')
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string=' Issues: Total (24247) WebKit (327) WebCore (23920)\n')
+        self.expectOutcome(result=SUCCESS, state_string=' Issues: Total (24247) WebKit (327) WebCore (23920)')
         return self.runStep()
 
 

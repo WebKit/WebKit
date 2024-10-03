@@ -56,7 +56,7 @@ class Events(service.BuildbotService):
         'run-layout-tests-without-change', 'layout-tests-repeat-failures-without-change',
         'run-layout-tests-in-stress-mode', 'run-layout-tests-in-guard-malloc-stress-mode',
         'run-api-tests', 'run-api-tests-without-change', 're-run-api-tests',
-        'scan-build', 'parse-static-analyzer-results', 'find-unexpected-results',
+        'scan-build', 'find-unexpected-results', 'display-safer-cpp-results',
         'jscore-test', 'jscore-test-without-change',
         'add-reviewer-to-commit-message', 'commit-patch', 'push-commit-to-webkit-repo', 'canonicalize-commit',
         'build-webkit-org-unit-tests', 'buildbot-check-config', 'buildbot-check-config-for-build-webkit', 'buildbot-check-config-for-ews',
