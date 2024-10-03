@@ -266,8 +266,12 @@ const FeatureSchema& colorGamut()
         [](auto& context) {
             // FIXME: At some point we should start detecting displays that support more colors.
             MatchingIdentifiers identifiers { CSSValueSRGB };
-            if (screenSupportsExtendedColor(context.document->protectedFrame()->mainFrame().protectedVirtualView().get()))
+#if HAVE(IOSURFACE_RGB10)
+            if (screenContentsFormat(context.document->protectedFrame()->mainFrame().protectedVirtualView().get()) == ContentsFormat::RGBA10)
                 identifiers.append(CSSValueP3);
+#else
+            UNUSED_PARAM(context);
+#endif
             return identifiers;
         }
     };

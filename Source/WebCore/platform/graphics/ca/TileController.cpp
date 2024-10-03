@@ -231,12 +231,12 @@ void TileController::setAcceleratesDrawing(bool acceleratesDrawing)
     tileGrid().updateTileLayerProperties();
 }
 
-void TileController::setWantsDeepColorBackingStore(bool wantsDeepColorBackingStore)
+void TileController::setContentsFormat(ContentsFormat contentsFormat)
 {
-    if (m_wantsDeepColorBackingStore == wantsDeepColorBackingStore)
+    if (m_contentsFormat == contentsFormat)
         return;
 
-    m_wantsDeepColorBackingStore = wantsDeepColorBackingStore;
+    m_contentsFormat = contentsFormat;
     tileGrid().updateTileLayerProperties();
 }
 
@@ -847,7 +847,7 @@ Ref<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect, Ti
     layer->setName(makeString("tile at "_s, tileRect.location().x(), ',', tileRect.location().y()));
     layer->setContentsScale(m_deviceScaleFactor * temporaryScaleFactor);
     layer->setAcceleratesDrawing(m_acceleratesDrawing);
-    layer->setWantsDeepColorBackingStore(m_wantsDeepColorBackingStore);
+    layer->setContentsFormat(m_contentsFormat);
     layer->setNeedsDisplay();
     return layer;
 }

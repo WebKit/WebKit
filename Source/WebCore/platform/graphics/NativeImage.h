@@ -56,6 +56,7 @@ public:
     bool hasAlpha() const;
     std::optional<Color> singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
+    Headroom headroom() const;
 
     void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
@@ -79,6 +80,7 @@ public:
     virtual IntSize size() const = 0;
     virtual bool hasAlpha() const = 0;
     virtual DestinationColorSpace colorSpace() const = 0;
+    virtual Headroom headroom() const = 0;
     WEBCORE_EXPORT virtual bool isRemoteNativeImageBackendProxy() const;
 };
 
@@ -90,6 +92,7 @@ public:
     WEBCORE_EXPORT IntSize size() const final;
     WEBCORE_EXPORT bool hasAlpha() const final;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const final;
+    WEBCORE_EXPORT Headroom headroom() const final;
 private:
     PlatformImagePtr m_platformImage;
 };

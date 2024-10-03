@@ -332,10 +332,10 @@ bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
     auto result = PlatformCALayerCocoa::create(layerType, owner);
-    
+
     if (result->canHaveBackingStore())
-        result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
-    
+        result->setContentsFormat(screenContentsFormat(nullptr, owner));
+
     return result;
 }
     
@@ -4489,8 +4489,8 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
     if (options & LayerTreeAsTextOptions::IncludeDeviceScale)
         textStream << indent << "(device scale " << deviceScaleFactor() << ")\n";
 
-    if ((options & LayerTreeAsTextOptions::IncludeDeepColor) && m_layer->wantsDeepColorBackingStore())
-        textStream << indent << "(deep color 1)\n";
+    if ((options & LayerTreeAsTextOptions::IncludeExtendedColor) && m_layer->contentsFormat() != ContentsFormat::RGBA8)
+        textStream << indent << "(contentsFormat " << m_layer->contentsFormat() << ")\n";
 
     if (options & LayerTreeAsTextOptions::IncludeContentLayers) {
         OptionSet<PlatformLayerTreeAsTextFlags> platformFlags = { PlatformLayerTreeAsTextFlags::IgnoreChildren };

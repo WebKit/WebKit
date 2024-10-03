@@ -120,7 +120,11 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
         if (orientation == ImageOrientation::Orientation::FromImage)
             orientation = currentFrameOrientation();
 
-        context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation });
+        auto headroom = options.headroom();
+        if (headroom == Headroom::FromImage)
+            headroom = currentFrameHeadroom();
+
+        context.drawNativeImage(*nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
     }
 
     if (auto observer = imageObserver())

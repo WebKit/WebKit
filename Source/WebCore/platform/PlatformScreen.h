@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentsFormat.h"
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
@@ -58,6 +59,7 @@ namespace WebCore {
 class DestinationColorSpace;
 class FloatRect;
 class FloatSize;
+class PlatformCALayerClient;
 class Widget;
 
 using PlatformDisplayID = uint32_t;
@@ -79,7 +81,7 @@ double screenDPI(PlatformDisplayID); // dpi of the display device, corrected for
 FloatRect screenRect(Widget*);
 FloatRect screenAvailableRect(Widget*);
 
-WEBCORE_EXPORT bool screenSupportsExtendedColor(Widget* = nullptr);
+WEBCORE_EXPORT ContentsFormat screenContentsFormat(Widget* = nullptr, PlatformCALayerClient* = nullptr);
 
 enum class DynamicRangeMode : uint8_t {
     None,

@@ -237,6 +237,8 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
             ts.dumpProperty("isDescendentOfSeparatedPortal", layerProperties.isDescendentOfSeparatedPortal);
 #endif
 #endif
+        if (layerProperties.changedProperties & LayerChange::ContentsFormatChanged)
+            ts.dumpProperty("contentsFormat", layerProperties.contentsFormat);
 
         if (layerProperties.changedProperties & LayerChange::VideoGravityChanged)
             ts.dumpProperty("videoGravity", layerProperties.videoGravity);

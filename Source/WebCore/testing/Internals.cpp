@@ -3224,8 +3224,8 @@ static OptionSet<LayerTreeAsTextOptions> toLayerTreeAsTextOptions(unsigned short
         layerTreeFlags.add(LayerTreeAsTextOptions::IncludeRootLayerProperties);
     if (flags & Internals::LAYER_TREE_INCLUDES_EVENT_REGION)
         layerTreeFlags.add(LayerTreeAsTextOptions::IncludeEventRegion);
-    if (flags & Internals::LAYER_TREE_INCLUDES_DEEP_COLOR)
-        layerTreeFlags.add(LayerTreeAsTextOptions::IncludeDeepColor);
+    if (flags & Internals::LAYER_TREE_INCLUDES_EXTENDED_COLOR)
+        layerTreeFlags.add(LayerTreeAsTextOptions::IncludeExtendedColor);
     if (flags & Internals::LAYER_TREE_INCLUDES_DEVICE_SCALE)
         layerTreeFlags.add(LayerTreeAsTextOptions::IncludeDeviceScale);
 

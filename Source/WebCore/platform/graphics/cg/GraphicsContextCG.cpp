@@ -374,6 +374,13 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
+#if HAVE(HDR_SUPPORT)
+    if (auto headroom = options.headroom(); headroom > 1) {
+        stateSaver.save();
+        CGContextSetEDRTargetHeadroom(context, headroom);
+    }
+#endif
+
     // Make the origin be at adjustedDestRect.location()
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint::zero());

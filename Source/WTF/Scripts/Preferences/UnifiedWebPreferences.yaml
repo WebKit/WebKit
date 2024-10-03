@@ -3216,6 +3216,22 @@ GraphicsContextFiltersEnabled:
      WebCore:
        default: true
 
+HDRForImagesEnabled:
+  type: bool
+  status: unstable
+  category: media
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "HDR for Images Support"
+  humanReadableDescription: "HDR for Images Support"
+  condition: HAVE(HDR_SUPPORT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HTTPEquivEnabled:
   type: bool
   status: mature

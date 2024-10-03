@@ -758,6 +758,13 @@ bool RenderLayerCompositor::shouldDumpPropertyForLayer(const GraphicsLayer* laye
     return true;
 }
 
+#if HAVE(HDR_SUPPORT)
+bool RenderLayerCompositor::hdrForImagesEnabled() const
+{
+    return m_renderView.settings().hdrForImagesEnabled();
+}
+#endif
+
 void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer*)
 {
     scheduleRenderingUpdate();

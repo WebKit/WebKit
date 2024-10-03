@@ -591,6 +591,11 @@ public:
     virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
     bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
 
+#if HAVE(HDR_SUPPORT)
+    virtual void setHDRForImagesEnabled(bool b) { m_hdrForImagesEnabled = b; }
+    bool hdrForImagesEnabled() const { return m_hdrForImagesEnabled; }
+#endif
+
     // FIXME: this is really a paint count.
     int repaintCount() const { return m_repaintCount; }
     int incrementRepaintCount() { return ++m_repaintCount; }
@@ -735,7 +740,6 @@ protected:
 #endif
 #endif
 
-
     void dumpProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const;
     virtual void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const { }
 
@@ -813,6 +817,9 @@ protected:
     bool m_isSeparatedPortal : 1;
     bool m_isDescendentOfSeparatedPortal : 1;
 #endif
+#endif
+#if HAVE(HDR_SUPPORT)
+    bool m_hdrForImagesEnabled : 1;
 #endif
 
     int m_repaintCount { 0 };

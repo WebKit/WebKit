@@ -3980,6 +3980,13 @@ bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, 
     return true;
 }
 
+#if HAVE(HDR_SUPPORT)
+bool RenderLayerBacking::hdrForImagesEnabled() const
+{
+    return renderer().settings().hdrForImagesEnabled();
+}
+#endif
+
 bool RenderLayerBacking::shouldAggressivelyRetainTiles(const GraphicsLayer*) const
 {
     // Only the main frame TileController has enough information about in-window state to

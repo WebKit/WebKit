@@ -415,6 +415,9 @@ private:
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
+#if HAVE(HDR_SUPPORT)
+    bool hdrForImagesEnabled() const override;
+#endif
 
     // Copy the accelerated compositing related flags from Settings
     void cacheAcceleratedCompositingFlags();

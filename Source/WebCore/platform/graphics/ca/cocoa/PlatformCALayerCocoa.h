@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentsFormat.h"
 #include "PlatformCALayer.h"
 
 OBJC_CLASS NSObject;
@@ -120,8 +121,8 @@ public:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    bool wantsDeepColorBackingStore() const override;
-    void setWantsDeepColorBackingStore(bool) override;
+    ContentsFormat contentsFormat() const override;
+    void setContentsFormat(ContentsFormat) override;
 
     bool hasContents() const override;
     CFTypeRef contents() const override;
@@ -231,7 +232,7 @@ private:
     ScrollingNodeID m_scrollingNodeID;
 #endif
     EventRegion m_eventRegion;
-    bool m_wantsDeepColorBackingStore { false };
+    ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
     bool m_backingStoreAttached { true };
     bool m_backdropRootIsOpaque { false };
 };

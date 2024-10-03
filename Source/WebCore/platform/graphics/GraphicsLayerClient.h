@@ -115,6 +115,10 @@ public:
 
     virtual bool isTrackingRepaints() const { return false; }
 
+#if HAVE(HDR_SUPPORT)
+    virtual bool hdrForImagesEnabled() const { return false; }
+#endif
+
     virtual bool shouldSkipLayerInDump(const GraphicsLayer*, OptionSet<LayerTreeAsTextOptions>) const { return false; }
     virtual bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral, OptionSet<LayerTreeAsTextOptions>) const { return true; }
 

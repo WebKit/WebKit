@@ -48,6 +48,11 @@ TextStream& operator<<(TextStream& ts, PixelFormat pixelFormat)
     case PixelFormat::RGB10A8:
         ts << "RGB10A8";
         break;
+#if HAVE(HDR_SUPPORT)
+    case PixelFormat::RGBA16F:
+        ts << "RGBA16F";
+        break;
+#endif
     }
     return ts;
 }

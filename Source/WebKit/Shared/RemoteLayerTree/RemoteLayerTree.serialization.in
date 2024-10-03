@@ -76,6 +76,7 @@ header: "RemoteLayerTreeTransaction.h"
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged
 #endif
+    ContentsFormatChanged
 };
 
 header: "SwapBuffersDisplayRequirement.h"
@@ -273,6 +274,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
 #endif
+    [OptionalTupleBit=WebKit::LayerChange::ContentsFormatChanged] WebCore::ContentsFormat contentsFormat;
 };
 
 using WebKit::LayerHostingContextID = uint32_t;

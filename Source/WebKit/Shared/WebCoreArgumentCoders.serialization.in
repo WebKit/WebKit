@@ -1813,6 +1813,16 @@ enum class WebCore::RenderingPurpose : uint8_t {
     MediaPainting,
 };
 
+enum class WebCore::ContentsFormat : uint8_t {
+    RGBA8,
+#if HAVE(IOSURFACE_RGB10)
+    RGBA10,
+#endif
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
+};
+
 enum class WebCore::RotationDirection : bool
 
 #if ENABLE(CONTENT_FILTERING)
@@ -2430,7 +2440,7 @@ header: <WebCore/ScreenProperties.h>
     WebCore::DestinationColorSpace colorSpace;
     int screenDepth;
     int screenDepthPerComponent;
-    bool screenSupportsExtendedColor;
+    WebCore::ContentsFormat screenContentsFormat;
     bool screenHasInvertedColors;
     bool screenSupportsHighDynamicRange;
 #if PLATFORM(MAC)
@@ -2552,6 +2562,9 @@ enum class WebCore::PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
 };
 
 enum class WebCore::ImageBufferPixelFormat : uint8_t {
@@ -2559,6 +2572,9 @@ enum class WebCore::ImageBufferPixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
@@ -4976,12 +4992,18 @@ header: <WebCore/DisplayListItems.h>
     WebCore::ImageOrientation::Orientation orientation()
 };
 
+header: <WebCore/ImageTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Headroom {
+    float headroom;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
-     WebCore::CompositeOperator compositeOperator();
-     WebCore::BlendMode blendMode();
-     WebCore::DecodingMode decodingMode();
-     WebCore::ImageOrientation::Orientation orientation().orientation();
-     WebCore::InterpolationQuality interpolationQuality();
+    WebCore::CompositeOperator compositeOperator();
+    WebCore::BlendMode blendMode();
+    WebCore::DecodingMode decodingMode();
+    WebCore::ImageOrientation::Orientation orientation().orientation();
+    WebCore::InterpolationQuality interpolationQuality();
+    WebCore::Headroom headroom();
 };
 
 struct WebCore::CanvasActivityRecord {

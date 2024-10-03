@@ -25,67 +25,82 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#if PLATFORM(COCOA)
+
+#import "ContentsFormat.h"
 #if HAVE(IOSURFACE)
-#include "IOSurface.h"
+#import "IOSurface.h"
 #endif
-#include "PixelFormat.h"
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 namespace WebCore {
-enum class ImageBufferPixelFormat : uint8_t {
-    BGRX8,
-    BGRA8,
-    RGB10,
-    RGB10A8,
-#if HAVE(HDR_SUPPORT)
-    RGBA16F,
-#endif
-};
-
-constexpr PixelFormat convertToPixelFormat(ImageBufferPixelFormat format)
-{
-    switch (format) {
-    case ImageBufferPixelFormat::BGRX8:
-        return PixelFormat::BGRX8;
-    case ImageBufferPixelFormat::BGRA8:
-        return PixelFormat::BGRA8;
-    case ImageBufferPixelFormat::RGB10:
-        return PixelFormat::RGB10;
-    case ImageBufferPixelFormat::RGB10A8:
-        return PixelFormat::RGB10A8;
-#if HAVE(HDR_SUPPORT)
-    case ImageBufferPixelFormat::RGBA16F:
-        return PixelFormat::RGBA16F;
-#endif
-    }
-
-    ASSERT_NOT_REACHED();
-    return PixelFormat::BGRX8;
-}
 
 #if HAVE(IOSURFACE)
-constexpr IOSurface::Format convertToIOSurfaceFormat(ImageBufferPixelFormat format)
+constexpr IOSurface::Format convertToIOSurfaceFormat(ContentsFormat contentsFormat)
 {
-    switch (format) {
-    case ImageBufferPixelFormat::BGRX8:
-        return IOSurface::Format::BGRX;
-    case ImageBufferPixelFormat::BGRA8:
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
         return IOSurface::Format::BGRA;
 #if HAVE(IOSURFACE_RGB10)
-    case ImageBufferPixelFormat::RGB10:
+    case ContentsFormat::RGBA10:
         return IOSurface::Format::RGB10;
-    case ImageBufferPixelFormat::RGB10A8:
-        return IOSurface::Format::RGB10A8;
 #endif
 #if HAVE(HDR_SUPPORT)
-    case ImageBufferPixelFormat::RGBA16F:
+    case ContentsFormat::RGBA16F:
         return IOSurface::Format::RGBA16F;
 #endif
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return IOSurface::Format::BGRA;
     }
 }
 #endif
 
+constexpr NSString *contentsFormatString(ContentsFormat contentsFormat)
+{
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        return nil;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return kCAContentsFormatRGBA10XR;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return kCAContentsFormatRGBA16Float;
+#endif
+    }
+}
+
+constexpr bool contentsFormatWantsExtendedDynamicRangeContent(ContentsFormat contentsFormat)
+{
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        return false;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return true;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return true;
+#endif
+    }
+}
+
+constexpr bool contentsFormatWantsToneMapMode(ContentsFormat contentsFormat)
+{
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        return false;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return false;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return true;
+#endif
+    }
+}
+
 } // namespace WebCore
+
+#endif // PLATFORM(COCOA)

@@ -23,39 +23,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ContentsFormat.h"
 
-#if ENABLE(GPU_PROCESS)
-
-#include <WebCore/NativeImage.h>
-#include <WebCore/ShareableBitmap.h>
-
-namespace WebKit {
-class RemoteResourceCacheProxy;
-
-class RemoteNativeImageBackendProxy final : public WebCore::NativeImageBackend {
-public:
-    static std::unique_ptr<RemoteNativeImageBackendProxy> create(WebCore::NativeImage&);
-    ~RemoteNativeImageBackendProxy() final;
-
-    const WebCore::PlatformImagePtr& platformImage() const final;
-    WebCore::IntSize size() const final;
-    bool hasAlpha() const final;
-    WebCore::DestinationColorSpace colorSpace() const final;
-    WebCore::Headroom headroom() const final;
-    bool isRemoteNativeImageBackendProxy() const final;
-
-    std::optional<WebCore::ShareableBitmap::Handle> createHandle();
-private:
-    RemoteNativeImageBackendProxy(Ref<WebCore::ShareableBitmap>, WebCore::PlatformImagePtr);
-
-    Ref<WebCore::ShareableBitmap> m_bitmap;
-    WebCore::PlatformImageNativeImageBackend m_platformBackend;
-};
-
-}
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteNativeImageBackendProxy)
-    static bool isType(const WebCore::NativeImageBackend& backend) { return backend.isRemoteNativeImageBackendProxy(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
+#if USE(CG)
+#include "ColorSpaceCG.h"
 #endif
+#include "DestinationColorSpace.h"
+#include <wtf/text/TextStream.h>
+
+namespace WebCore {
+
+std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFormat contentsFormat)
+{
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        return std::nullopt;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return DestinationColorSpace { extendedITUR_2020ColorSpaceRef() };
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+TextStream& operator<<(TextStream& ts, ContentsFormat contentsFormat)
+{
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        ts << "RGBA8";
+        break;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        ts << "RGBA10";
+        break;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        ts << "RGBA16F";
+        break;
+#endif
+    }
+    return ts;
+}
+
+} // namespace WebCore

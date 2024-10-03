@@ -253,9 +253,11 @@ private:
     bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const override { return client().layerContainsBitmapOnly(this); }
     bool platformCALayerShouldPaintUsingCompositeCopy() const override { return shouldPaintUsingCompositeCopy(); }
 
-
     bool isCommittingChanges() const override { return m_isCommittingChanges; }
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override { return m_usesDisplayListDrawing; }
+#if HAVE(HDR_SUPPORT)
+    bool hdrForImagesEnabled() const override { return client().hdrForImagesEnabled(); }
+#endif
 
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
     bool allowsBackingStoreDetaching() const override { return m_allowsBackingStoreDetaching; }

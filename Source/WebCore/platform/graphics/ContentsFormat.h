@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,53 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <QuartzCore/QuartzCore.h>
+#pragma once
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
-class IntRect;
-class PlatformCALayer;
-class TileController;
-class TiledBacking;
+
+class DestinationColorSpace;
+
+enum class ContentsFormat : uint8_t {
+    RGBA8,
+#if HAVE(IOSURFACE_RGB10)
+    RGBA10,
+#endif
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
+};
+
+constexpr unsigned contentsFormatBytesPerPixel(ContentsFormat contentsFormat, bool isOpaque)
+{
+#if !HAVE(IOSURFACE_RGB10)
+    UNUSED_PARAM(isOpaque);
+#endif
+
+    switch (contentsFormat) {
+    case ContentsFormat::RGBA8:
+        return 4;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return isOpaque ? 4 : 5;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return 8;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return 4;
 }
 
-@interface WebTiledBackingLayer : CALayer {
-    std::unique_ptr<WebCore::TileController> _tileController;
-}
+WEBCORE_EXPORT std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFormat);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ContentsFormat);
 
-- (WebCore::TileController*)createTileController:(WebCore::PlatformCALayer*)rootLayer;
-- (WebCore::TiledBacking*)tiledBacking;
-- (void)invalidate;
-
-- (void)setContentsFormat:(WebCore::ContentsFormat)contentsFormat;
-- (WebCore::ContentsFormat)contentsFormat;
-
-@end
-
+} // namespace WebCore

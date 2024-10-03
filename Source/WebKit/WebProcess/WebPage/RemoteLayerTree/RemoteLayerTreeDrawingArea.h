@@ -172,6 +172,11 @@ private:
     };
     RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
 
+    // GraphicsLayerClient
+#if HAVE(HDR_SUPPORT)
+    bool hdrForImagesEnabled() const override;
+#endif
+
     Vector<RootLayerInfo, 1> m_rootLayers;
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;

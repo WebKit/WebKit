@@ -95,6 +95,11 @@ DestinationColorSpace NativeImage::colorSpace() const
     return m_backend->colorSpace();
 }
 
+Headroom NativeImage::headroom() const
+{
+    return m_backend->headroom();
+}
+
 void NativeImage::replaceBackend(UniqueRef<NativeImageBackend> backend)
 {
     m_backend = WTFMove(backend);

@@ -56,6 +56,7 @@ struct AcceleratedEffectValues;
 #endif
 
 enum class MediaPlayerVideoGravity : uint8_t;
+enum class ContentsFormat : uint8_t;
 
 enum class PlatformCALayerFilterType : uint8_t {
     Linear,
@@ -210,8 +211,8 @@ public:
     virtual bool acceleratesDrawing() const = 0;
     virtual void setAcceleratesDrawing(bool) = 0;
 
-    virtual bool wantsDeepColorBackingStore() const = 0;
-    virtual void setWantsDeepColorBackingStore(bool) = 0;
+    virtual ContentsFormat contentsFormat() const = 0;
+    virtual void setContentsFormat(ContentsFormat) = 0;
 
     virtual bool hasContents() const = 0;
     virtual CFTypeRef contents() const = 0;
