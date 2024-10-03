@@ -2522,7 +2522,7 @@ class CheckStatusOfPR(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     flunkOnFailure = False
     haltOnFailure = False
     EMBEDDED_CHECKS = ['ios', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
-    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc', 'jsc-arm64']
+    MACOS_CHECKS = ['mac', 'mac-AS-debug', 'api-mac', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'jsc', 'jsc-arm64']
     LINUX_CHECKS = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'wpe-cairo', 'wpe-wk2', 'api-wpe']
     WINDOWS_CHECKS = ['win']
     EWS_WEBKIT_FAILED = 0
@@ -7383,10 +7383,11 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
 
         if num_failures:
             pluralSuffix = 's' if num_issues > 1 else ''
-            comment = f"Safer CPP Build {formatted_build_link}: Found [{num_issues} new failure{pluralSuffix}]({results_link}), blocking PR #{self.getProperty('github.number')}.\n"
+            comment = f"Safer CPP Build {formatted_build_link}: Found [{num_issues} new failure{pluralSuffix}]({results_link}).\n"
             comment += 'Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)'
             self.setProperty('comment_text', comment)
-            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
+            # FIXME: Add merging blocked after initial deployment period
+            self.build.addStepsAfterCurrentStep([LeaveComment()])
             results_summary = f'Found {num_issues} new failure{pluralSuffix} in {failing_files}'
             if num_failures > self.NUM_TO_DISPLAY:
                 results_summary += ' ...'
@@ -7400,7 +7401,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
             # FIXME: Add link to unexpected passes file
             pluralSuffix = 's' if num_passes > 1 else ''
             comment = f'Safer CPP Build {formatted_build_link}: Found {num_passes} fixed file{pluralSuffix}!\n'
-            comment += 'Please update expectations using `update-safer-cpp-expectations --remove-expected-failures` before landing.'
+            comment += 'Please update expectations manually or by using `update-safer-cpp-expectations --remove-expected-failures` before landing.'
             self.setProperty('comment_text', comment)
             results_summary = f'Found {num_passes} fixed file{pluralSuffix}: {passing_files}'
             if num_passes > self.NUM_TO_DISPLAY:

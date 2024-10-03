@@ -9330,7 +9330,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         rc = self.runStep()
         self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
         expected_comment = "Safer CPP Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 1 fixed file!\n"
-        expected_comment += "Please update expectations using `update-safer-cpp-expectations --remove-expected-failures` before landing."
+        expected_comment += "Please update expectations manually or by using `update-safer-cpp-expectations --remove-expected-failures` before landing."
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
         self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
@@ -9345,11 +9345,11 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.runStep()
-        expected_comment = "Safer CPP Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html), blocking PR #17."
+        expected_comment = "Safer CPP Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html)."
         expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()], next_steps)
+        self.assertEqual([LeaveComment()], next_steps)
 
 
 class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
