@@ -2454,19 +2454,10 @@ webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttpreque
 imported/w3c/web-platform-tests/WebCryptoAPI/ [ Slow ]
 webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Failure ]
 
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.https.any.worker.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.html [ Failure ]
-webkit.org/b/276371 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.https.any.worker.html [ Failure ]
-
 # Needs rebasing.
 imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/getRandomValues-bigint.tentative.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/historical.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.worker.html [ Failure ]
 
 # TODO: This failure exists in the general TestExpectations, I got in a GTK run.
@@ -2475,6 +2466,9 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.any.html [ Failure ]
+
+webkit.org/b/280672 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.html [ Crash ]
+webkit.org/b/280672 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.worker.html [ Crash ]
 
 webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Failure Pass ]
 
@@ -2848,7 +2842,6 @@ media/track/track-paint-on-captions.html [ Skip ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
-webkit.org/b/109570 media/track/w3c [ Skip ]
 
 # Modern-media-controls support expected to pass, excepted for Apple-specific tests.
 media/modern-media-controls [ Pass ]

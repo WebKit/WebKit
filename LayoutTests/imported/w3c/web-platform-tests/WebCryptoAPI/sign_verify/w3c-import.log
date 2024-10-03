@@ -17,8 +17,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/ecdsa_vectors.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_curve25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_curve448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_vectors.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/hmac.js

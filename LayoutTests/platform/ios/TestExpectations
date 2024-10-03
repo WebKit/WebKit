@@ -7396,6 +7396,10 @@ imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenera
 # webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.worker.html [ Failure ]
 
 webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
 
