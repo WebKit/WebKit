@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Tile_h
-#define Tile_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -35,15 +34,15 @@
 
 namespace WebCore {
 
-class TiledBackingStore;
+class CoordinatedBackingStoreProxy;
 
-class Tile {
-    WTF_MAKE_TZONE_ALLOCATED(Tile);
+class CoordinatedBackingStoreProxyTile {
+    WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxyTile);
 public:
     typedef IntPoint Coordinate;
 
-    Tile(TiledBackingStore&, const Coordinate&);
-    ~Tile();
+    CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy&, const Coordinate&);
+    ~CoordinatedBackingStoreProxyTile();
 
     uint32_t tileID() const { return m_ID; }
     void ensureTileID();
@@ -59,7 +58,7 @@ public:
     void resize(const IntSize&);
 
 private:
-    TiledBackingStore& m_tiledBackingStore;
+    CoordinatedBackingStoreProxy& m_tiledBackingStore;
     uint32_t m_ID;
     Coordinate m_coordinate;
     IntRect m_rect;
@@ -70,4 +69,3 @@ private:
 
 #endif // USE(COORDINATED_GRAPHICS)
 
-#endif // Tile_h

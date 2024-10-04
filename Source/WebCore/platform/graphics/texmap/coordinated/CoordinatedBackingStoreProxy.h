@@ -17,15 +17,14 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef TiledBackingStore_h
-#define TiledBackingStore_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CoordinatedBackingStoreProxyTile.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
 #include "IntRect.h"
-#include "Tile.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -33,32 +32,32 @@
 namespace WebCore {
 
 class GraphicsContext;
-class TiledBackingStoreClient;
+class CoordinatedBackingStoreProxyClient;
 
-class TiledBackingStore {
-    WTF_MAKE_TZONE_ALLOCATED(TiledBackingStore);
-    WTF_MAKE_NONCOPYABLE(TiledBackingStore);
+class CoordinatedBackingStoreProxy {
+    WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxy);
+    WTF_MAKE_NONCOPYABLE(CoordinatedBackingStoreProxy);
 public:
-    TiledBackingStore(TiledBackingStoreClient&, float contentsScale = 1.f);
-    ~TiledBackingStore();
+    CoordinatedBackingStoreProxy(CoordinatedBackingStoreProxyClient&, float contentsScale = 1.f);
+    ~CoordinatedBackingStoreProxy();
 
-    TiledBackingStoreClient& client() { return m_client; }
+    CoordinatedBackingStoreProxyClient& client() { return m_client; }
 
     void setTrajectoryVector(const FloatPoint&);
     void createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect);
 
     float contentsScale() const { return m_contentsScale; }
 
-    Vector<std::reference_wrapper<Tile>> dirtyTiles();
+    Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> dirtyTiles();
 
     void invalidate(const IntRect& dirtyRect);
 
     WEBCORE_EXPORT IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
 
-    IntRect tileRectForCoordinate(const Tile::Coordinate&) const;
-    Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
-    double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
+    IntRect tileRectForCoordinate(const CoordinatedBackingStoreProxyTile::Coordinate&) const;
+    CoordinatedBackingStoreProxyTile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
+    double tileDistance(const IntRect& viewport, const CoordinatedBackingStoreProxyTile::Coordinate&) const;
 
     IntRect coverRect() const { return m_coverRect; }
     bool visibleAreaIsCovered() const;
@@ -75,12 +74,12 @@ private:
     float coverageRatio(const IntRect&) const;
     void adjustForContentsRect(IntRect&) const;
 
-    void paintCheckerPattern(GraphicsContext*, const IntRect&, const Tile::Coordinate&);
+    void paintCheckerPattern(GraphicsContext*, const IntRect&, const CoordinatedBackingStoreProxyTile::Coordinate&);
 
 private:
-    TiledBackingStoreClient& m_client;
+    CoordinatedBackingStoreProxyClient& m_client;
 
-    typedef HashMap<Tile::Coordinate, std::unique_ptr<Tile>> TileMap;
+    typedef HashMap<CoordinatedBackingStoreProxyTile::Coordinate, std::unique_ptr<CoordinatedBackingStoreProxyTile>> TileMap;
     TileMap m_tiles;
 
     IntSize m_tileSize;
@@ -99,10 +98,9 @@ private:
 
     bool m_pendingTileCreation;
 
-    friend class Tile;
+    friend class CoordinatedBackingStoreProxyTile;
 };
 
 }
 
-#endif
 #endif

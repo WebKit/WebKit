@@ -26,6 +26,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
@@ -36,7 +37,6 @@
 #include "NicosiaBackingStore.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
-#include "TiledBackingStore.h"
 #include "TransformOperation.h"
 #include <algorithm>
 #ifndef NDEBUG
@@ -1152,15 +1152,15 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     // Address the content scale adjustment.
     if (m_pendingContentsScaleAdjustment) {
         if (layerState.mainBackingStore && layerState.mainBackingStore->contentsScale() != effectiveContentsScale()) {
-            // Discard the TiledBackingStore object to reconstruct it with new content scale.
+            // Discard the CoodinatedBackingStoreProxy object to reconstruct it with new content scale.
             layerState.mainBackingStore = nullptr;
         }
         m_pendingContentsScaleAdjustment = false;
     }
 
-    // Ensure the TiledBackingStore object, and enforce a complete repaint if it's not been present yet.
+    // Ensure the CoordinatedBackingStoreProxy object, and enforce a complete repaint if it's not been present yet.
     if (!layerState.mainBackingStore) {
-        layerState.mainBackingStore = makeUnique<TiledBackingStore>(*m_nicosia.backingStore, effectiveContentsScale());
+        layerState.mainBackingStore = makeUnique<CoordinatedBackingStoreProxy>(*m_nicosia.backingStore, effectiveContentsScale());
         m_pendingVisibleRectAdjustment = true;
     }
 

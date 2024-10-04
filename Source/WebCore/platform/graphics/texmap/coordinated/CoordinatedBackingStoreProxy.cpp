@@ -18,18 +18,18 @@
  */
 
 #include "config.h"
-#include "TiledBackingStore.h"
+#include "CoordinatedBackingStoreProxy.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedBackingStoreProxyClient.h"
 #include "GraphicsContext.h"
-#include "TiledBackingStoreClient.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(TiledBackingStore);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CoordinatedBackingStoreProxy);
 
 static const int defaultTileDimension = 512;
 
@@ -39,7 +39,7 @@ static IntPoint innerBottomRight(const IntRect& rect)
     return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
 }
 
-TiledBackingStore::TiledBackingStore(TiledBackingStoreClient& client, float contentsScale)
+CoordinatedBackingStoreProxy::CoordinatedBackingStoreProxy(CoordinatedBackingStoreProxyClient& client, float contentsScale)
     : m_client(client)
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_coverAreaMultiplier(2.0f)
@@ -48,15 +48,15 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient& client, float cont
 {
 }
 
-TiledBackingStore::~TiledBackingStore() = default;
+CoordinatedBackingStoreProxy::~CoordinatedBackingStoreProxy() = default;
 
-void TiledBackingStore::setTrajectoryVector(const FloatPoint& trajectoryVector)
+void CoordinatedBackingStoreProxy::setTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     m_pendingTrajectoryVector = trajectoryVector;
     m_pendingTrajectoryVector.normalize();
 }
 
-void TiledBackingStore::createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
+void CoordinatedBackingStoreProxy::createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
 {
     IntRect scaledContentsRect = mapFromContents(contentsRect);
     IntRect visibleRect = mapFromContents(unscaledVisibleRect);
@@ -67,7 +67,7 @@ void TiledBackingStore::createTilesIfNeeded(const IntRect& unscaledVisibleRect, 
         createTiles(visibleRect, scaledContentsRect, coverAreaMultiplier);
 }
 
-void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
+void CoordinatedBackingStoreProxy::invalidate(const IntRect& contentsDirtyRect)
 {
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));
     IntRect keepRectFitToTileSize = tileRectForCoordinate(tileCoordinateForPoint(m_keepRect.location()));
@@ -75,12 +75,12 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 
     // Only iterate on the part of the rect that we know we might have tiles.
     IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
-    Tile::Coordinate topLeft = tileCoordinateForPoint(coveredDirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coveredDirtyRect));
+    CoordinatedBackingStoreProxyTile::Coordinate topLeft = tileCoordinateForPoint(coveredDirtyRect.location());
+    CoordinatedBackingStoreProxyTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coveredDirtyRect));
 
     for (int yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (int xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            Tile* currentTile = m_tiles.get(Tile::Coordinate(xCoordinate, yCoordinate));
+            CoordinatedBackingStoreProxyTile* currentTile = m_tiles.get(CoordinatedBackingStoreProxyTile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;
             // Pass the full rect to each tile as coveredDirtyRect might not
@@ -90,9 +90,9 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
     }
 }
 
-Vector<std::reference_wrapper<Tile>> TiledBackingStore::dirtyTiles()
+Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> CoordinatedBackingStoreProxy::dirtyTiles()
 {
-    Vector<std::reference_wrapper<Tile>> tiles;
+    Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> tiles;
     for (auto& tile : m_tiles.values()) {
         if (tile->isDirty())
             tiles.append(*tile);
@@ -101,30 +101,30 @@ Vector<std::reference_wrapper<Tile>> TiledBackingStore::dirtyTiles()
     return tiles;
 }
 
-double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coordinate& tileCoordinate) const
+double CoordinatedBackingStoreProxy::tileDistance(const IntRect& viewport, const CoordinatedBackingStoreProxyTile::Coordinate& tileCoordinate) const
 {
     if (viewport.intersects(tileRectForCoordinate(tileCoordinate)))
         return 0;
 
     IntPoint viewCenter = viewport.location() + IntSize(viewport.width() / 2, viewport.height() / 2);
-    Tile::Coordinate centerCoordinate = tileCoordinateForPoint(viewCenter);
+    CoordinatedBackingStoreProxyTile::Coordinate centerCoordinate = tileCoordinateForPoint(viewCenter);
 
     return std::max(std::abs(centerCoordinate.y() - tileCoordinate.y()), std::abs(centerCoordinate.x() - tileCoordinate.x()));
 }
 
 // Returns a ratio between 0.0f and 1.0f of the surface covered by rendered tiles.
-float TiledBackingStore::coverageRatio(const WebCore::IntRect& dirtyRect) const
+float CoordinatedBackingStoreProxy::coverageRatio(const WebCore::IntRect& dirtyRect) const
 {
     float rectArea = dirtyRect.width() * dirtyRect.height();
     float coverArea = 0.0f;
 
-    Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
+    CoordinatedBackingStoreProxyTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    CoordinatedBackingStoreProxyTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
     for (int yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (int xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
-            Tile* currentTile = m_tiles.get(currentCoordinate);
+            CoordinatedBackingStoreProxyTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
+            CoordinatedBackingStoreProxyTile* currentTile = m_tiles.get(currentCoordinate);
             if (currentTile && currentTile->isReadyToPaint()) {
                 IntRect coverRect = intersection(dirtyRect, currentTile->rect());
                 coverArea += coverRect.width() * coverRect.height();
@@ -134,12 +134,12 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& dirtyRect) const
     return coverArea / rectArea;
 }
 
-bool TiledBackingStore::visibleAreaIsCovered() const
+bool CoordinatedBackingStoreProxy::visibleAreaIsCovered() const
 {
     return coverageRatio(intersection(m_visibleRect, m_rect)) == 1.0f;
 }
 
-void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier)
+void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier)
 {
     // Update our backing store geometry.
     m_rect = scaledContentsRect;
@@ -194,17 +194,17 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
     double shortestDistance = std::numeric_limits<double>::infinity();
-    Vector<Tile::Coordinate> tilesToCreate;
+    Vector<CoordinatedBackingStoreProxyTile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
 
     // Cover areas (in tiles) with minimum distance from the visible rect. If the visible rect is
     // not covered already it will be covered first in one go, due to the distance being 0 for tiles
     // inside the visible rect.
-    Tile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
-    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coverRect));
+    CoordinatedBackingStoreProxyTile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
+    CoordinatedBackingStoreProxyTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coverRect));
     for (int yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (int xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
+            CoordinatedBackingStoreProxyTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
             if (m_tiles.contains(currentCoordinate))
                 continue;
             ++requiredTileCount;
@@ -222,8 +222,8 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
     // Now construct the tile(s) within the shortest distance.
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
-        Tile::Coordinate coordinate = tilesToCreate[n];
-        m_tiles.add(coordinate, makeUnique<Tile>(*this, coordinate));
+        CoordinatedBackingStoreProxyTile::Coordinate coordinate = tilesToCreate[n];
+        m_tiles.add(coordinate, makeUnique<CoordinatedBackingStoreProxyTile>(*this, coordinate));
     }
     requiredTileCount -= tilesToCreateCount;
 
@@ -233,7 +233,7 @@ void TiledBackingStore::createTiles(const IntRect& visibleRect, const IntRect& s
         m_client.tiledBackingStoreHasPendingTileCreation();
 }
 
-void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
+void CoordinatedBackingStoreProxy::adjustForContentsRect(IntRect& rect) const
 {
     IntRect bounds = m_rect;
     IntSize candidateSize = rect.size();
@@ -275,7 +275,7 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
     rect.intersect(bounds);
 }
 
-void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const
+void CoordinatedBackingStoreProxy::computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const
 {
     coverRect = visibleRect;
     keepRect = visibleRect;
@@ -320,11 +320,11 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
     ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
 }
 
-void TiledBackingStore::resizeEdgeTiles()
+void CoordinatedBackingStoreProxy::resizeEdgeTiles()
 {
-    Vector<Tile::Coordinate> tilesToRemove;
+    Vector<CoordinatedBackingStoreProxyTile::Coordinate> tilesToRemove;
     for (auto& tile : m_tiles.values()) {
-        Tile::Coordinate tileCoordinate = tile->coordinate();
+        CoordinatedBackingStoreProxyTile::Coordinate tileCoordinate = tile->coordinate();
         IntRect tileRect = tile->rect();
         IntRect expectedTileRect = tileRectForCoordinate(tileCoordinate);
         if (expectedTileRect.isEmpty())
@@ -337,15 +337,15 @@ void TiledBackingStore::resizeEdgeTiles()
         m_tiles.remove(coordinateToRemove);
 }
 
-void TiledBackingStore::setKeepRect(const IntRect& keepRect)
+void CoordinatedBackingStoreProxy::setKeepRect(const IntRect& keepRect)
 {
     // Drop tiles outside the new keepRect.
 
     FloatRect keepRectF = keepRect;
 
-    Vector<Tile::Coordinate> toRemove;
+    Vector<CoordinatedBackingStoreProxyTile::Coordinate> toRemove;
     for (auto& tile : m_tiles.values()) {
-        Tile::Coordinate coordinate = tile->coordinate();
+        CoordinatedBackingStoreProxyTile::Coordinate coordinate = tile->coordinate();
         FloatRect tileRect = tile->rect();
         if (!tileRect.intersects(keepRectF))
             toRemove.append(coordinate);
@@ -357,13 +357,13 @@ void TiledBackingStore::setKeepRect(const IntRect& keepRect)
     m_keepRect = keepRect;
 }
 
-void TiledBackingStore::removeAllNonVisibleTiles(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
+void CoordinatedBackingStoreProxy::removeAllNonVisibleTiles(const IntRect& unscaledVisibleRect, const IntRect& contentsRect)
 {
     IntRect boundedVisibleRect = mapFromContents(intersection(unscaledVisibleRect, contentsRect));
     setKeepRect(boundedVisibleRect);
 }
 
-IntRect TiledBackingStore::mapToContents(const IntRect& rect) const
+IntRect CoordinatedBackingStoreProxy::mapToContents(const IntRect& rect) const
 {
     return enclosingIntRect(FloatRect(rect.x() / m_contentsScale,
         rect.y() / m_contentsScale,
@@ -371,7 +371,7 @@ IntRect TiledBackingStore::mapToContents(const IntRect& rect) const
         rect.height() / m_contentsScale));
 }
 
-IntRect TiledBackingStore::mapFromContents(const IntRect& rect) const
+IntRect CoordinatedBackingStoreProxy::mapFromContents(const IntRect& rect) const
 {
     return enclosingIntRect(FloatRect(rect.x() * m_contentsScale,
         rect.y() * m_contentsScale,
@@ -379,7 +379,7 @@ IntRect TiledBackingStore::mapFromContents(const IntRect& rect) const
         rect.height() * m_contentsScale));
 }
 
-IntRect TiledBackingStore::tileRectForCoordinate(const Tile::Coordinate& coordinate) const
+IntRect CoordinatedBackingStoreProxy::tileRectForCoordinate(const CoordinatedBackingStoreProxyTile::Coordinate& coordinate) const
 {
     IntRect rect(coordinate.x() * m_tileSize.width(),
         coordinate.y() * m_tileSize.height(),
@@ -390,11 +390,11 @@ IntRect TiledBackingStore::tileRectForCoordinate(const Tile::Coordinate& coordin
     return rect;
 }
 
-Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point) const
+CoordinatedBackingStoreProxyTile::Coordinate CoordinatedBackingStoreProxy::tileCoordinateForPoint(const IntPoint& point) const
 {
     int x = point.x() / m_tileSize.width();
     int y = point.y() / m_tileSize.height();
-    return Tile::Coordinate(std::max(x, 0), std::max(y, 0));
+    return CoordinatedBackingStoreProxyTile::Coordinate(std::max(x, 0), std::max(y, 0));
 }
 
 }

@@ -30,9 +30,9 @@ namespace WebCore {
 class GraphicsContext;
 class SurfaceUpdateInfo;
 
-class TiledBackingStoreClient {
+class CoordinatedBackingStoreProxyClient {
 public:
-    virtual ~TiledBackingStoreClient() = default;
+    virtual ~CoordinatedBackingStoreProxyClient() = default;
     virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;

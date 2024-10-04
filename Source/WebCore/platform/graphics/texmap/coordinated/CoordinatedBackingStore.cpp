@@ -168,7 +168,7 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper,
     }
 
     // targetRect is on the contents coordinate system, so we must compare two rects on the contents coordinate system.
-    // See TiledBackingStore.
+    // See CoodinatedBackingStoreProxy.
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
 
     paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, rect());

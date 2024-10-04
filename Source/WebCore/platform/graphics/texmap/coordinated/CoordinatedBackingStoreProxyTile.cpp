@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "Tile.h"
+#include "CoordinatedBackingStoreProxyTile.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "TiledBackingStore.h"
-#include "TiledBackingStoreClient.h"
+#include "CoordinatedBackingStoreProxy.h"
+#include "CoordinatedBackingStoreProxyClient.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Tile);
 
 static const uint32_t InvalidTileID = 0;
 
-Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinate)
+CoordinatedBackingStoreProxyTile::CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy& tiledBackingStore, const Coordinate& tileCoordinate)
     : m_tiledBackingStore(tiledBackingStore)
     , m_ID(InvalidTileID)
     , m_coordinate(tileCoordinate)
@@ -47,13 +47,13 @@ Tile::Tile(TiledBackingStore& tiledBackingStore, const Coordinate& tileCoordinat
 {
 }
 
-Tile::~Tile()
+CoordinatedBackingStoreProxyTile::~CoordinatedBackingStoreProxyTile()
 {
     if (m_ID != InvalidTileID)
         m_tiledBackingStore.client().removeTile(m_ID);
 }
 
-void Tile::ensureTileID()
+void CoordinatedBackingStoreProxyTile::ensureTileID()
 {
     static uint32_t id = 1;
     if (m_ID == InvalidTileID) {
@@ -65,29 +65,29 @@ void Tile::ensureTileID()
     }
 }
 
-bool Tile::isDirty() const
+bool CoordinatedBackingStoreProxyTile::isDirty() const
 {
     return !m_dirtyRect.isEmpty();
 }
 
-bool Tile::isReadyToPaint() const
+bool CoordinatedBackingStoreProxyTile::isReadyToPaint() const
 {
     return m_ID != InvalidTileID;
 }
 
-void Tile::invalidate(const IntRect& dirtyRect)
+void CoordinatedBackingStoreProxyTile::invalidate(const IntRect& dirtyRect)
 {
     IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
     if (!tileDirtyRect.isEmpty())
         m_dirtyRect.unite(tileDirtyRect);
 }
 
-void Tile::markClean()
+void CoordinatedBackingStoreProxyTile::markClean()
 {
     m_dirtyRect = { };
 }
 
-void Tile::resize(const IntSize& newSize)
+void CoordinatedBackingStoreProxyTile::resize(const IntSize& newSize)
 {
     m_rect = IntRect(m_rect.location(), newSize);
     m_dirtyRect = m_rect;

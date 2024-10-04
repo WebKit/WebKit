@@ -29,14 +29,14 @@
 #pragma once
 
 #include "CoordinatedBackingStore.h"
-#include "TiledBackingStore.h"
-#include "TiledBackingStoreClient.h"
+#include "CoordinatedBackingStoreProxy.h"
+#include "CoordinatedBackingStoreProxyClient.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace Nicosia {
 
-class BackingStore final : public ThreadSafeRefCounted<BackingStore>, public WebCore::TiledBackingStoreClient {
+class BackingStore final : public ThreadSafeRefCounted<BackingStore>, public WebCore::CoordinatedBackingStoreProxyClient {
 public:
     static Ref<BackingStore> create()
     {
@@ -80,7 +80,7 @@ public:
         LayerState(LayerState&&) = delete;
         LayerState& operator=(LayerState&&) = delete;
 
-        std::unique_ptr<WebCore::TiledBackingStore> mainBackingStore;
+        std::unique_ptr<WebCore::CoordinatedBackingStoreProxy> mainBackingStore;
 
         TileUpdate update;
         bool isFlushing { false };
@@ -106,7 +106,7 @@ public:
 
     TileUpdate takeUpdate();
 
-    // TiledBackingStoreClient
+    // CoordinatedBackingStoreProxyClient
     // FIXME: Move these to private once updateTile() is not called from CoordinatedGrahpicsLayer.
     void tiledBackingStoreHasPendingTileCreation() override;
     void createTile(uint32_t, float) override;
