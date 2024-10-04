@@ -8172,8 +8172,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
                 if (!unlinkedTable.m_branchOffsets[i])
                     continue;
@@ -8192,8 +8192,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
                 if (!unlinkedTable.m_branchOffsets[i])
                     continue;
@@ -8213,8 +8213,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
             data.switchTableIndex = m_inlineStackTop->m_stringSwitchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (const auto& entry : unlinkedTable.m_offsetTable) {
                 unsigned target = m_currentIndex.offset() + entry.value.m_branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())

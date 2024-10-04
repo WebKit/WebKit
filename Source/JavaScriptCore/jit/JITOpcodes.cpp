@@ -1259,11 +1259,11 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchImm>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedSimpleJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
     linkedTable.ensureCTITable(unlinkedTable);
@@ -1288,11 +1288,11 @@ void JIT::emit_op_switch_char(const JSInstruction* currentInstruction)
     // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchChar>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedSimpleJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
     linkedTable.ensureCTITable(unlinkedTable);
@@ -1311,11 +1311,11 @@ void JIT::emit_op_switch_string(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchString>();
     size_t tableIndex = bytecode.m_tableIndex;
-    unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
     const UnlinkedStringJumpTable& unlinkedTable = m_unlinkedCodeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     StringJumpTable& linkedTable = m_stringSwitchJumpTables[tableIndex];
     m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::String));
     linkedTable.ensureCTITable(unlinkedTable);

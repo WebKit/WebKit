@@ -892,7 +892,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             SimpleJumpTable& linkedTable = m_switchJumpTables[tableIndex];
             linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
             for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
-                unsigned offset = unlinkedTable.m_branchOffsets[j];
+                int32_t offset = unlinkedTable.m_branchOffsets[j];
                 linkedTable.m_ctiOffsets[j] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : linkedTable.m_ctiDefault;
@@ -905,7 +905,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
             StringJumpTable& linkedTable = m_stringSwitchJumpTables[tableIndex];
             auto ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
             for (auto& location : unlinkedTable.m_offsetTable.values()) {
-                unsigned offset = location.m_branchOffset;
+                int32_t offset = location.m_branchOffset;
                 linkedTable.m_ctiOffsets[location.m_indexInTable] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : ctiDefault;

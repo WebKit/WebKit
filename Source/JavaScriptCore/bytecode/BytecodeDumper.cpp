@@ -185,14 +185,15 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            const auto& switchJumpTable = this->block()->unlinkedSwitchJumpTable(i);
+            const auto& unlinkedTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
-            auto end = switchJumpTable.m_branchOffsets.end();
-            for (auto iter = switchJumpTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            auto end = unlinkedTable.m_branchOffsets.end();
+            for (auto iter = unlinkedTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                this->m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.m_min, *iter);
+                this->m_out.printf("\t\t%4d => %04d\n", entry + unlinkedTable.m_min, *iter);
             }
+            this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
             ++i;
         } while (i < count);
@@ -207,8 +208,10 @@ void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            for (const auto& entry : this->block()->unlinkedStringSwitchJumpTable(i).m_offsetTable)
+            auto& unlinkedTable = this->block()->unlinkedStringSwitchJumpTable(i);
+            for (const auto& entry : unlinkedTable.m_offsetTable)
                 this->m_out.printf("\t\t\"%s\" => %04d\n", entry.key->utf8().data(), entry.value.m_branchOffset);
+            this->m_out.printf("\t\tdefault => %04d\n", unlinkedTable.m_defaultOffset);
             this->m_out.printf("      }\n");
             ++i;
         } while (i < count);

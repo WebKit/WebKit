@@ -1026,7 +1026,6 @@ op_group :SwitchValue,
     ],
     args: {
         tableIndex: unsigned,
-        defaultOffset: BoundLabel,
         scrutinee: VirtualRegister,
     }
 
