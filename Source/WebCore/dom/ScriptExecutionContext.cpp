@@ -121,8 +121,8 @@ public:
     RefPtr<ScriptCallStack> m_callStack;
 };
 
-ScriptExecutionContext::ScriptExecutionContext(Type type, ScriptExecutionContextIdentifier contextIdentifier)
-    : m_identifier(contextIdentifier ? contextIdentifier : ScriptExecutionContextIdentifier::generate())
+ScriptExecutionContext::ScriptExecutionContext(Type type, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
+    : m_identifier(contextIdentifier ? *contextIdentifier : ScriptExecutionContextIdentifier::generate())
     , m_type(type)
 {
 }

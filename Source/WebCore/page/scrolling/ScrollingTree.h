@@ -90,14 +90,14 @@ public:
     WEBCORE_EXPORT OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const PlatformWheelEvent&);
     WEBCORE_EXPORT virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps> = { });
 
-    bool isRubberBandInProgressForNode(ScrollingNodeID);
+    bool isRubberBandInProgressForNode(std::optional<ScrollingNodeID>);
     WEBCORE_EXPORT virtual void setRubberBandingInProgressForNode(ScrollingNodeID, bool);
 
-    bool isUserScrollInProgressForNode(ScrollingNodeID);
+    bool isUserScrollInProgressForNode(std::optional<ScrollingNodeID>);
     void setUserScrollInProgressForNode(ScrollingNodeID, bool);
     WEBCORE_EXPORT virtual void clearNodesWithUserScrollInProgress();
 
-    bool isScrollSnapInProgressForNode(ScrollingNodeID);
+    bool isScrollSnapInProgressForNode(std::optional<ScrollingNodeID>);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
 
     bool isScrollAnimationInProgressForNode(ScrollingNodeID);
@@ -114,7 +114,7 @@ public:
 
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
     
-    WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
+    WEBCORE_EXPORT ScrollingTreeNode* nodeForID(std::optional<ScrollingNodeID>) const;
 
     using VisitorFunction = Function<void(ScrollingNodeID, ScrollingNodeType, std::optional<FloatPoint> scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
     void traverseScrollingTree(VisitorFunction&&);

@@ -130,7 +130,7 @@ private:
     WeakPtr<NetworkResourceLoader> m_loader;
     WeakPtr<WebSWServerToContextConnection> m_serviceWorkerConnection;
     WebCore::FetchIdentifier m_fetchIdentifier;
-    WebCore::SWServerConnectionIdentifier m_serverConnectionIdentifier;
+    Markable<WebCore::SWServerConnectionIdentifier> m_serverConnectionIdentifier;
     Markable<WebCore::ServiceWorkerIdentifier> m_serviceWorkerIdentifier;
     WebCore::ResourceRequest m_currentRequest;
     std::unique_ptr<WebCore::Timer> m_timeoutTimer;

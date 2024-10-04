@@ -160,7 +160,7 @@ public:
             bool visible { false };
         } debugBorder;
 
-        WebCore::ScrollingNodeID scrollingNodeID;
+        Markable<WebCore::ScrollingNodeID> scrollingNodeID;
         WebCore::EventRegion eventRegion;
     };
 

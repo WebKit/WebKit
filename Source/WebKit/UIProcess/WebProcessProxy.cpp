@@ -1091,7 +1091,7 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
 
 void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& mainFrameState)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(mainFrameState->identifier);
+    RefPtr item = mainFrameState->identifier ? WebBackForwardListItem::itemForID(*mainFrameState->identifier) : nullptr;
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;
 

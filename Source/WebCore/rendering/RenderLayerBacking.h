@@ -125,7 +125,7 @@ public:
 
     void detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole>);
 
-    ScrollingNodeID scrollingNodeIDForRole(ScrollCoordinationRole role) const
+    std::optional<ScrollingNodeID> scrollingNodeIDForRole(ScrollCoordinationRole role) const
     {
         switch (role) {
         case ScrollCoordinationRole::Scrolling:
@@ -133,7 +133,7 @@ public:
         case ScrollCoordinationRole::ScrollingProxy:
             // These nodeIDs are stored in m_ancestorClippingStack.
             ASSERT_NOT_REACHED();
-            return { };
+            return std::nullopt;
         case ScrollCoordinationRole::FrameHosting:
             return m_frameHostingNodeID;
         case ScrollCoordinationRole::PluginHosting:
@@ -143,12 +143,10 @@ public:
         case ScrollCoordinationRole::Positioning:
             return m_positioningNodeID;
         }
-        return { };
+        return std::nullopt;
     }
 
     void setScrollingNodeIDForRole(ScrollingNodeID, ScrollCoordinationRole);
-
-    ScrollingNodeID scrollingNodeIDForChildren() const;
 
     bool hasMaskLayer() const { return m_maskLayer; }
 
@@ -446,11 +444,11 @@ private:
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.
     LayoutSize m_compositedBoundsOffsetFromGraphicsLayer; // This is the subpixel distance between the primary graphics layer and the render layer bounds.
 
-    ScrollingNodeID m_viewportConstrainedNodeID;
-    ScrollingNodeID m_scrollingNodeID;
-    ScrollingNodeID m_frameHostingNodeID;
-    ScrollingNodeID m_pluginHostingNodeID;
-    ScrollingNodeID m_positioningNodeID;
+    Markable<ScrollingNodeID> m_viewportConstrainedNodeID;
+    Markable<ScrollingNodeID> m_scrollingNodeID;
+    Markable<ScrollingNodeID> m_frameHostingNodeID;
+    Markable<ScrollingNodeID> m_pluginHostingNodeID;
+    Markable<ScrollingNodeID> m_positioningNodeID;
 
     bool m_artificiallyInflatedBounds { false }; // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer { false };

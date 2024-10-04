@@ -38,7 +38,7 @@ struct ElementContext {
     FloatRect boundingRect;
 
     Markable<PageIdentifier> webPageIdentifier;
-    ScriptExecutionContextIdentifier documentIdentifier;
+    Markable<ScriptExecutionContextIdentifier> documentIdentifier;
     Markable<ElementIdentifier> elementIdentifier;
 
     ~ElementContext() = default;

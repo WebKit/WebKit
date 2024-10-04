@@ -137,7 +137,7 @@ void WorkerFontLoadRequest::didFinishLoading(ScriptExecutionContextIdentifier, s
     }
 }
 
-void WorkerFontLoadRequest::didFail(ScriptExecutionContextIdentifier, const ResourceError&)
+void WorkerFontLoadRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)
 {
     m_errorOccurred = true;
     if (m_fontLoadRequestClient)

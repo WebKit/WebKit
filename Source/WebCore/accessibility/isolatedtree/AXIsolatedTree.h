@@ -31,6 +31,7 @@
 #include "AXTextMarker.h"
 #include "AXTextRun.h"
 #include "AXTreeStore.h"
+#include "ColorHash.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
 #include "RuntimeApplicationChecks.h"

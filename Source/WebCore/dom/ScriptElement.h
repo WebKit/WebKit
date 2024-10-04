@@ -156,7 +156,7 @@ private:
     RefPtr<LoadableScript> m_loadableScript;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#preparation-time-document
-    ScriptExecutionContextIdentifier m_preparationTimeDocumentIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_preparationTimeDocumentIdentifier;
 
     MonotonicTime m_creationTime;
     RefPtr<UserGestureToken> m_userGestureToken;

@@ -116,21 +116,21 @@ public:
     };
 
     struct LaunchOptions {
-        ProcessType processType;
         WebCore::ProcessIdentifier processIdentifier;
-        HashMap<String, String> extraInitializationData;
+        ProcessType processType { ProcessType::Web };
+        HashMap<String, String> extraInitializationData { };
         bool nonValidInjectedCodeAllowed { false };
         bool shouldMakeProcessLaunchFailForTesting { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        HashMap<CString, SandboxPermission> extraSandboxPaths;
+        HashMap<CString, SandboxPermission> extraSandboxPaths { };
 #if ENABLE(DEVELOPER_MODE)
-        String processCmdPrefix;
+        String processCmdPrefix { };
 #endif
 #endif
 
 #if PLATFORM(PLAYSTATION)
-        String processPath;
+        String processPath { };
         int32_t userId { -1 };
 #endif
     };

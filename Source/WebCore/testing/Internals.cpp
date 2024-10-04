@@ -2191,7 +2191,7 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
     if (!scrollingCoordinator)
         return Exception { ExceptionCode::InvalidAccessError };
 
-    scrollingCoordinator->scrollBySimulatingWheelEventForTesting(scrollingNodeID, FloatSize(deltaX, deltaY));
+    scrollingCoordinator->scrollBySimulatingWheelEventForTesting(*scrollingNodeID, FloatSize(deltaX, deltaY));
 
     return { };
 }
@@ -3267,9 +3267,11 @@ ExceptionOr<Vector<uint64_t>> Internals::scrollingNodeIDForNode(Node* node)
     auto areaOrException = scrollableAreaForNode(node);
     if (areaOrException.hasException())
         return areaOrException.releaseException();
-    auto* scrollableArea = areaOrException.releaseReturnValue();
-    Vector<uint64_t> returnNodeID = { scrollableArea->scrollingNodeID().object().toUInt64(), scrollableArea->scrollingNodeID().processIdentifier().toUInt64() };
-    return returnNodeID;
+
+    auto scrollingNodeID = areaOrException.returnValue()->scrollingNodeID();
+    if (!scrollingNodeID)
+        return Vector<uint64_t>({ 0, 0 });
+    return Vector({ scrollingNodeID->object().toUInt64(), scrollingNodeID->processIdentifier().toUInt64() });
 }
 
 ExceptionOr<unsigned> Internals::scrollableAreaWidth(Node& node)

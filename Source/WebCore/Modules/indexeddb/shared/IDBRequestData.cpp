@@ -73,6 +73,7 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
+    : m_serverConnectionIdentifier(that.m_serverConnectionIdentifier)
 {
     isolatedCopy(that, *this);
 }
@@ -98,7 +99,6 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
 
 IDBConnectionIdentifier IDBRequestData::serverConnectionIdentifier() const
 {
-    ASSERT(m_serverConnectionIdentifier);
     return m_serverConnectionIdentifier;
 }
 

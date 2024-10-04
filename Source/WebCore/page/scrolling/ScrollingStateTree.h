@@ -53,10 +53,10 @@ public:
     WEBCORE_EXPORT ~ScrollingStateTree();
 
     WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> rootStateNode() const;
-    WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(ScrollingNodeID) const;
+    WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(std::optional<ScrollingNodeID>) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
-    WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID, size_t childIndex);
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> insertNode(ScrollingNodeType, ScrollingNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex);
     void unparentNode(ScrollingNodeID);
     void unparentChildrenAndDestroyNode(ScrollingNodeID);
     void detachAndDestroySubtree(ScrollingNodeID);
@@ -81,7 +81,7 @@ public:
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
-    void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
+    void reconcileViewportConstrainedLayerPositions(std::optional<ScrollingNodeID>, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
 
     void scrollingNodeAdded()
     {

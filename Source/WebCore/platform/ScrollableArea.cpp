@@ -1015,7 +1015,7 @@ ScrollingNodeID ScrollableArea::scrollingNodeIDForTesting()
     auto testingNodeID = scrollingNodeID();
     if (!testingNodeID)
         m_scrollingNodeIDForTesting = testingNodeID = ScrollingNodeID::generate();
-    return testingNodeID;
+    return *testingNodeID;
 }
 
 } // namespace WebCore

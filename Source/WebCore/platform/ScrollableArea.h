@@ -217,7 +217,7 @@ public:
     void invalidateScrollbars();
     bool useDarkAppearanceForScrollbars() const;
 
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
     ScrollingNodeID scrollingNodeIDForTesting();
 
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;

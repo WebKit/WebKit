@@ -90,7 +90,7 @@ void RTCDataChannelRemoteHandler::readyToSend()
         m_connection->close(m_remoteIdentifier);
 }
 
-void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     m_client = &client;
     m_connection->connectToSource(*this, contextIdentifier, *m_localIdentifier, m_remoteIdentifier);

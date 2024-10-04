@@ -1986,7 +1986,7 @@ protected:
         Synthesized = 1 << 0,
         NonRenderedPlaceholder = 1 << 1
     };
-    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, OptionSet<ConstructionFlag> = { }, ScriptExecutionContextIdentifier = { });
+    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, OptionSet<ConstructionFlag> = { }, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

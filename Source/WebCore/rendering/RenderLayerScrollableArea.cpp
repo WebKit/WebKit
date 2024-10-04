@@ -333,7 +333,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     if (!box)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea [" << scrollingNodeID() << "] scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea [" << (scrollingNodeID() ? scrollingNodeID()->toString() : ""_str) << "] scrollTo " << position << " from " << m_scrollPosition << " (is user scroll " << (currentScrollType() == ScrollType::User) << ")");
 
     ScrollPosition newPosition = position;
     if (!box->isHTMLMarquee()) {
@@ -519,10 +519,10 @@ void RenderLayerScrollableArea::setScrollOffset(const ScrollOffset& offset)
     scrollTo(scrollPositionFromOffset(offset));
 }
 
-ScrollingNodeID RenderLayerScrollableArea::scrollingNodeID() const
+std::optional<ScrollingNodeID> RenderLayerScrollableArea::scrollingNodeID() const
 {
     if (!m_layer.isComposited())
-        return { };
+        return std::nullopt;
 
     return m_layer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
@@ -535,7 +535,7 @@ bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheel
 #if ENABLE(ASYNC_SCROLLING)
     if (usesAsyncScrolling() && scrollingNodeID()) {
         if (RefPtr scrollingCoordinator = m_layer.page().scrollingCoordinator()) {
-            auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
+            auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, *scrollingNodeID(), gestureState);
             if (!result.needsMainThreadProcessing())
                 return result.wasHandled;
         }

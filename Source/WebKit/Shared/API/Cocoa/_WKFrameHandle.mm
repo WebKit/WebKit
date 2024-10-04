@@ -87,15 +87,27 @@
         return nil;
     }
 
+    auto rawFrameID = frameID.unsignedLongLongValue;
+    if (!ObjectIdentifier<WebCore::FrameIdentifierType>::isValidIdentifier(rawFrameID)) {
+        [self release];
+        return nil;
+    }
+
     NSNumber *processID = [decoder decodeObjectOfClass:[NSNumber class] forKey:@"processID"];
     if (![processID isKindOfClass:[NSNumber class]]) {
         [self release];
         return nil;
     }
 
+    auto rawProcessID = processID.unsignedLongLongValue;
+    if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(rawProcessID)) {
+        [self release];
+        return nil;
+    }
+
     API::Object::constructInWrapper<API::FrameHandle>(self, WebCore::FrameIdentifier {
-        ObjectIdentifier<WebCore::FrameIdentifierType>(frameID.unsignedLongLongValue),
-        LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID.unsignedLongLongValue)
+        ObjectIdentifier<WebCore::FrameIdentifierType>(rawFrameID),
+        ObjectIdentifier<WebCore::ProcessIdentifierType>(rawProcessID)
     }, false);
 
     return self;

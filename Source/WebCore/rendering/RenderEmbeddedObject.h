@@ -64,7 +64,7 @@ public:
 
     ScrollableArea* scrollableArea() const;
     bool usesAsyncScrolling() const;
-    ScrollingNodeID scrollingNodeID() const;
+    std::optional<ScrollingNodeID> scrollingNodeID() const;
     void willAttachScrollingNode();
     void didAttachScrollingNode();
 

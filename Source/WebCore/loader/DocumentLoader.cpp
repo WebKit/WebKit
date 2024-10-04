@@ -215,8 +215,8 @@ DocumentLoader::~DocumentLoader()
     clearMainResource();
 
     if (m_resultingClientId) {
-        ASSERT(scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
-        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+        ASSERT(scriptExecutionContextIdentifierToLoaderMap().contains(*m_resultingClientId));
+        scriptExecutionContextIdentifierToLoaderMap().remove(*m_resultingClientId);
     }
 
     if (auto createdCallback = std::exchange(m_whenDocumentIsCreatedCallback, { }))
@@ -576,11 +576,6 @@ bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegist
     ASSERT(!m_gotFirstByte);
     m_serviceWorkerRegistrationData = makeUnique<ServiceWorkerRegistrationData>(WTFMove(data));
     return true;
-}
-
-ScriptExecutionContextIdentifier DocumentLoader::resultingClientId() const
-{
-    return m_resultingClientId;
 }
 
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
@@ -1312,10 +1307,10 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                 document.setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
 
             if (m_resultingClientId) {
-                if (m_resultingClientId != document.identifier())
+                if (*m_resultingClientId != document.identifier())
                     unregisterReservedServiceWorkerClient();
-                scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
-                m_resultingClientId = { };
+                scriptExecutionContextIdentifierToLoaderMap().remove(*m_resultingClientId);
+                m_resultingClientId = std::nullopt;
             }
         }
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
@@ -1417,8 +1412,8 @@ void DocumentLoader::setupForReplace()
 
     unregisterReservedServiceWorkerClient();
     if (m_resultingClientId) {
-        scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
-        m_resultingClientId = { };
+        scriptExecutionContextIdentifierToLoaderMap().remove(*m_resultingClientId);
+        m_resultingClientId = std::nullopt;
     }
 
     stopLoadingSubresources();
@@ -2212,7 +2207,7 @@ void DocumentLoader::unregisterReservedServiceWorkerClient()
         return;
 
     if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
-        serviceWorkerConnection->unregisterServiceWorkerClient(m_resultingClientId);
+        serviceWorkerConnection->unregisterServiceWorkerClient(*m_resultingClientId);
 }
 
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
@@ -2240,14 +2235,14 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
     else {
         // The main navigation load will trigger the registration of the client.
         if (m_resultingClientId) {
-            scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+            scriptExecutionContextIdentifierToLoaderMap().remove(*m_resultingClientId);
             unregisterReservedServiceWorkerClient();
         }
 
         m_resultingClientId = ScriptExecutionContextIdentifier::generate();
-        ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
-        scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
-        mainResourceLoadOptions.resultingClientIdentifier = m_resultingClientId.object();
+        ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(*m_resultingClientId));
+        scriptExecutionContextIdentifierToLoaderMap().add(*m_resultingClientId, this);
+        mainResourceLoadOptions.resultingClientIdentifier = m_resultingClientId->object();
     }
 
     CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);

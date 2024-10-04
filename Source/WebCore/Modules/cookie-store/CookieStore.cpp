@@ -87,12 +87,12 @@ private:
 
     RefPtr<CookieStore> protectedCookieStore() const { return m_cookieStore.get(); }
     WeakPtr<CookieStore, WeakPtrImplWithEventTargetData> m_cookieStore;
-    ScriptExecutionContextIdentifier m_contextIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
 };
 
 CookieStore::MainThreadBridge::MainThreadBridge(CookieStore& cookieStore)
     : m_cookieStore(cookieStore)
-    , m_contextIdentifier(cookieStore.scriptExecutionContext() ? cookieStore.scriptExecutionContext()->identifier() : ScriptExecutionContextIdentifier { })
+    , m_contextIdentifier(cookieStore.scriptExecutionContext() ? std::optional { cookieStore.scriptExecutionContext()->identifier() } : std::nullopt)
 {
 }
 
@@ -115,7 +115,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
 
 void CookieStore::MainThreadBridge::ensureOnContextThread(Function<void(CookieStore&)>&& task)
 {
-    ScriptExecutionContext::ensureOnContextThread(m_contextIdentifier, [protectedThis = Ref { *this }, task = WTFMove(task)](auto&) {
+    ScriptExecutionContext::ensureOnContextThread(*m_contextIdentifier, [protectedThis = Ref { *this }, task = WTFMove(task)](auto&) {
         if (RefPtr cookieStore = protectedThis->m_cookieStore.get())
             task(*cookieStore);
     });

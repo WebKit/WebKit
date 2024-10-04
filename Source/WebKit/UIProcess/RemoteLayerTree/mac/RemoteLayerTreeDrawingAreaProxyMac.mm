@@ -306,7 +306,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     auto transientZoomScale = std::exchange(m_transientZoomScale, { });
     auto transientZoomOrigin = std::exchange(m_transientZoomOrigin, { });
 
-    auto rootScrollingNodeID = m_webPageProxy->scrollingCoordinatorProxy()->rootScrollingNodeID();
+    auto rootScrollingNodeID = *m_webPageProxy->scrollingCoordinatorProxy()->rootScrollingNodeID();
     m_webPageProxy->scrollingCoordinatorProxy()->deferWheelEventTestCompletionForReason(rootScrollingNodeID, WheelEventTestMonitorDeferReason::CommittingTransientZoom);
 
     if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {

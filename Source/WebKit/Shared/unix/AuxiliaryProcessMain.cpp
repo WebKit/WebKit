@@ -56,9 +56,11 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     if (argc < argIndex + 2)
         return false;
 
-    if (auto processIdentifier = parseInteger<uint64_t>(span(argv[argIndex++])))
-        m_parameters.processIdentifier = LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
-    else
+    if (auto processIdentifier = parseInteger<uint64_t>(span(argv[argIndex++]))) {
+        if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*processIdentifier))
+            return false;
+        m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
+    } else
         return false;
 
     if (auto connectionIdentifier = parseInteger<int>(span(argv[argIndex++])))

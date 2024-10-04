@@ -367,8 +367,8 @@ public:
     void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = SetNeedsDisplay);
 
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    virtual void setScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    std::optional<ScrollingNodeID> scrollingNodeID() const { return m_scrollingNodeID; }
+    virtual void setScrollingNodeID(std::optional<ScrollingNodeID> nodeID) { m_scrollingNodeID = nodeID; }
 #endif
 
     // The position of the layer (the location of its top-left corner in its parent)
@@ -779,7 +779,7 @@ protected:
     FilterOperations m_backdropFilters;
     
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID;
+    Markable<ScrollingNodeID> m_scrollingNodeID;
 #endif
 
     BlendMode m_blendMode { BlendMode::Normal };

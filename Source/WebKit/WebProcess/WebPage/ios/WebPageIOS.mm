@@ -4594,9 +4594,9 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         auto& remoteScrollingCoordinator = downcast<RemoteScrollingCoordinator>(*scrollingCoordinator);
         if (auto mainFrameScrollingNodeID = frameView.scrollingNodeID()) {
             if (visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ScrollViewRubberBanding))
-                remoteScrollingCoordinator.addNodeWithActiveRubberBanding(mainFrameScrollingNodeID);
+                remoteScrollingCoordinator.addNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
             else
-                remoteScrollingCoordinator.removeNodeWithActiveRubberBanding(mainFrameScrollingNodeID);
+                remoteScrollingCoordinator.removeNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
         }
     }
 
@@ -5575,7 +5575,7 @@ static CheckedPtr<RenderBox> enclosingScroller(RenderObject* renderer)
     return { };
 }
 
-static void forEachEnclosingScroller(const VisibleSelection& selection, Function<IterationStatus(const ScrollingNodeID&, const IntRect&)>&& callback)
+static void forEachEnclosingScroller(const VisibleSelection& selection, Function<IterationStatus(const std::optional<ScrollingNodeID>&, const IntRect&)>&& callback)
 {
     RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
     if (!ancestor)
@@ -5584,7 +5584,7 @@ static void forEachEnclosingScroller(const VisibleSelection& selection, Function
     for (CheckedPtr scroller = enclosingScroller(ancestor->renderer()); scroller; scroller = enclosingScroller(scroller->container())) {
         Ref view = scroller->checkedView()->frameView();
         IntRect scrollerClipRectInContent;
-        ScrollingNodeID enclosingScrollingNodeID;
+        std::optional<ScrollingNodeID> enclosingScrollingNodeID;
         if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
             if (renderView->protectedDocument()->isTopDocument())
                 break;
@@ -5618,10 +5618,10 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
         return;
     }
 
-    ScrollingNodeID enclosingScrollingNodeID;
+    std::optional<ScrollingNodeID> enclosingScrollingNodeID;
     IntRect enclosingScrollingClipRect;
     IntRect innerScrollingClipRect;
-    forEachEnclosingScroller(selection, [&](const ScrollingNodeID& scrollingNodeID, const IntRect& clipRectInRootView) {
+    forEachEnclosingScroller(selection, [&](const std::optional<ScrollingNodeID>& scrollingNodeID, const IntRect& clipRectInRootView) {
         if (scrollingNodeID) {
             enclosingScrollingClipRect = clipRectInRootView;
             enclosingScrollingNodeID = scrollingNodeID;
@@ -5635,7 +5635,7 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
     });
 
     if (enclosingScrollingNodeID)
-        state.visualData->enclosingScrollingNodeID = { WTFMove(enclosingScrollingNodeID) };
+        state.visualData->enclosingScrollingNodeID = { WTFMove(*enclosingScrollingNodeID) };
 
     if (!innerScrollingClipRect.isEmpty()) {
         // We need to clip the selection to the inner scroller, even if that scroller does not have a

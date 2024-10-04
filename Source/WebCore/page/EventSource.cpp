@@ -250,7 +250,7 @@ void EventSource::didFinishLoading(ScriptExecutionContextIdentifier, std::option
     networkRequestEnded();
 }
 
-void EventSource::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void EventSource::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     ASSERT(m_state != CLOSED);
 

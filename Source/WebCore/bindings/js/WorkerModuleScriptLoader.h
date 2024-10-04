@@ -69,7 +69,7 @@ private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final { }
-    void notifyFinished(ScriptExecutionContextIdentifier) final;
+    void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) final;
 
     void notifyClientFinished();
 

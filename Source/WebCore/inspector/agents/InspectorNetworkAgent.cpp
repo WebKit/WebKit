@@ -152,7 +152,7 @@ public:
         dispose();
     }
 
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError& error) override
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error) override
     {
         m_callback->sendFailure(error.isAccessControl() ? "Loading resource for inspector failed access control check"_s : "Loading resource for inspector failed"_s);
         dispose();

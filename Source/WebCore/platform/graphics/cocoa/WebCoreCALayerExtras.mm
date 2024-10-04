@@ -188,7 +188,7 @@ void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CA
     };
 }
 
-Vector<LayerAndPoint, 16> layersAtPointToCheckForScrolling(std::function<bool(CALayer*, CGPoint)> layerEventRegionContainsPoint, std::function<ScrollingNodeID(CALayer*)> scrollingNodeIDForLayer, CALayer* layer, const FloatPoint& point, bool& hasAnyNonInteractiveScrollingLayers)
+Vector<LayerAndPoint, 16> layersAtPointToCheckForScrolling(std::function<bool(CALayer*, CGPoint)> layerEventRegionContainsPoint, std::function<std::optional<ScrollingNodeID>(CALayer*)> scrollingNodeIDForLayer, CALayer* layer, const FloatPoint& point, bool& hasAnyNonInteractiveScrollingLayers)
 {
     Vector<LayerAndPoint, 16> layersAtPoint;
     collectDescendantLayersAtPoint(layersAtPoint, layer, point, [&] (auto layer, auto point) {

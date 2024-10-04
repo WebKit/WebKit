@@ -139,7 +139,7 @@ public:
 
     WEBCORE_EXPORT void setEventRegion(EventRegion&&) override;
 #if ENABLE(SCROLLING_THREAD)
-    WEBCORE_EXPORT void setScrollingNodeID(ScrollingNodeID) override;
+    WEBCORE_EXPORT void setScrollingNodeID(std::optional<ScrollingNodeID>) override;
 #endif
 
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;

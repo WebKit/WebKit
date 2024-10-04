@@ -115,7 +115,7 @@ bool DocumentWriter::begin()
     return begin(URL());
 }
 
-Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DocumentWriter::createDocument(const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
 {
     Ref frame = *m_frame;
     Ref frameLoader = frame->loader();
@@ -144,7 +144,7 @@ Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionCont
     return DOMImplementation::createDocument(m_mimeType, frame.ptr(), frame->settings(), url, documentIdentifier);
 }
 
-bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument, ScriptExecutionContextIdentifier documentIdentifier, const NavigationAction* triggeringAction)
+bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument, std::optional<ScriptExecutionContextIdentifier> documentIdentifier, const NavigationAction* triggeringAction)
 {
     // We grab a local copy of the URL because it's easy for callers to supply
     // a URL that will be deallocated during the execution of this function.

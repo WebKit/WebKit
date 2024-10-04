@@ -101,7 +101,7 @@ void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdent
         return;
     auto& remoteHandler = iterator->value;
 
-    WebCore::ScriptExecutionContext::postTaskTo(remoteHandler.contextIdentifier, [handler = remoteHandler.handler, function = WTFMove(function)](auto&) mutable {
+    WebCore::ScriptExecutionContext::postTaskTo(*remoteHandler.contextIdentifier, [handler = remoteHandler.handler, function = WTFMove(function)](auto&) mutable {
         if (handler)
             function(*handler);
     });
@@ -181,10 +181,10 @@ RTCDataChannelRemoteManager::RemoteHandlerConnection::RemoteHandlerConnection(Re
 {
 }
 
-void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCore::RTCDataChannelRemoteHandler& handler, WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
+void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCore::RTCDataChannelRemoteHandler& handler, std::optional<WebCore::ScriptExecutionContextIdentifier> contextIdentifier, WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
     m_queue->dispatch([handler = WeakPtr { handler }, contextIdentifier, localIdentifier]() mutable {
-        RTCDataChannelRemoteManager::sharedManager().m_handlers.add(localIdentifier.object(), RemoteHandler { WTFMove(handler), contextIdentifier });
+        RTCDataChannelRemoteManager::sharedManager().m_handlers.add(localIdentifier.object(), RemoteHandler { WTFMove(handler), *contextIdentifier });
     });
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ConnectToRTCDataChannelRemoteSource { localIdentifier, remoteIdentifier }, [localIdentifier](auto&& result) {
         RTCDataChannelRemoteManager::sharedManager().postTaskToHandler(localIdentifier, [result](auto& handler) {

@@ -191,7 +191,7 @@ private:
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
-        IDBConnectionIdentifier identifier() const final { return { }; }
+        std::optional<IDBConnectionIdentifier> identifier() const final { return std::nullopt; }
         void deleteDatabase(const IDBOpenRequestData&) final { }
         void openDatabase(const IDBOpenRequestData&) final { }
         void abortTransaction(const IDBResourceIdentifier&) final { }

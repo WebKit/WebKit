@@ -497,7 +497,7 @@ public:
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
 
     WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
-    WEBCORE_EXPORT ScriptExecutionContextIdentifier resultingClientId() const;
+    std::optional<ScriptExecutionContextIdentifier> resultingClientId() const { return m_resultingClientId; }
 
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
     void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
@@ -726,7 +726,7 @@ private:
 
     Vector<TargetedElementSelectors> m_visibilityAdjustmentSelectors;
 
-    ScriptExecutionContextIdentifier m_resultingClientId;
+    Markable<ScriptExecutionContextIdentifier> m_resultingClientId;
 
     std::unique_ptr<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
 

@@ -2719,8 +2719,11 @@ static std::optional<ItemIdentifiers> coreTextManipulationItemIdentifierFromStri
     if (!processID || !*processID || !frameID || !*frameID || !itemID || !*itemID)
         return std::nullopt;
 
+    if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*processID))
+        return std::nullopt;
+
     return ItemIdentifiers { WebCore::ProcessQualified(ObjectIdentifier<WebCore::FrameIdentifierType>(*frameID),
-        LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
+        ObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
         LegacyNullableObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(*itemID) };
 }
 

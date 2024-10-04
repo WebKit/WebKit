@@ -3765,7 +3765,7 @@ void WebPage::restoreSessionInternal(const Vector<Ref<FrameState>>& frameStates,
     for (const auto& frameState : frameStates) {
         auto historyItem = toHistoryItem(m_historyItemClient, frameState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
-        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(frameState->identifier, WTFMove(historyItem), m_identifier, overwrite);
+        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(*frameState->identifier, WTFMove(historyItem), m_identifier, overwrite);
     }
 }
 
@@ -3783,7 +3783,7 @@ void WebPage::setCurrentHistoryItemForReattach(Ref<FrameState>&& mainFrameState)
 {
     Ref historyItem = toHistoryItem(m_historyItemClient, mainFrameState);
     auto& historyItemRef = historyItem.get();
-    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(mainFrameState->identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
+    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(*mainFrameState->identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
         localMainFrame->checkedHistory()->setCurrentItem(historyItemRef);
 }
@@ -8523,7 +8523,7 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
 #if USE(SYSTEM_PREVIEW)
 void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInfo, const String& message)
 {
-    auto* document = Document::allDocumentsMap().get(previewInfo.element.documentIdentifier);
+    auto* document = Document::allDocumentsMap().get(*previewInfo.element.documentIdentifier);
     if (!document)
         return;
 

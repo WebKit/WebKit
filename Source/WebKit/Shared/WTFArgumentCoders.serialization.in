@@ -63,7 +63,6 @@ header: <wtf/ObjectIdentifier.h>
 template: enum class WebCore::AXIDType
 template: enum class WebCore::MediaSessionGroupIdentifierType
 template: enum class WebCore::MediaUniqueIdentifierType
-template: enum class WebCore::ProcessIdentifierType
 template: enum class WebCore::PushSubscriptionIdentifierType
 template: enum class WebCore::RealtimeMediaSourceIdentifierType
 template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
@@ -137,6 +136,7 @@ template: enum class WebCore::ImageDecoderIdentifierType
 template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
 template: enum class WebCore::InbandGenericCueIdentifierType
 template: enum class WebCore::LayerHostingContextIdentifierType
+template: enum class WebCore::ProcessIdentifierType
 template: enum class WebCore::SWServerToContextConnectionIdentifierType
 template: enum class WebCore::SharedWorkerIdentifierType
 template: enum class WebCore::WindowIdentifierType

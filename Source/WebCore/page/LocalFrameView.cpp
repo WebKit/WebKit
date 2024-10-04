@@ -854,15 +854,15 @@ TiledBacking* LocalFrameView::tiledBacking() const
     return backing->tiledBacking();
 }
 
-ScrollingNodeID LocalFrameView::scrollingNodeID() const
+std::optional<ScrollingNodeID> LocalFrameView::scrollingNodeID() const
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
-        return { };
+        return std::nullopt;
 
     RenderLayerBacking* backing = renderView->layer()->backing();
     if (!backing)
-        return { };
+        return std::nullopt;
 
     return backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
@@ -5518,7 +5518,7 @@ bool LocalFrameView::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 #if ENABLE(ASYNC_SCROLLING)
     if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(*this)) {
-            auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, scrollingNodeID(), gestureState);
+            auto result = scrollingCoordinator->handleWheelEventForScrolling(wheelEvent, *scrollingNodeID(), gestureState);
             if (!result.needsMainThreadProcessing())
                 return result.wasHandled;
         }

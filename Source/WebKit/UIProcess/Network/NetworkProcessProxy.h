@@ -388,7 +388,7 @@ private:
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void notifyBackgroundFetchChange(PAL::SessionID, const String&, BackgroundFetchChange);
     void remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType, WebCore::ProcessIdentifier);
-    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
+    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void reportConsoleMessage(PAL::SessionID, const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier);

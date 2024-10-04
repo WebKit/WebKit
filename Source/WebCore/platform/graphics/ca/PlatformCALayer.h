@@ -282,8 +282,8 @@ public:
     virtual void setEventRegion(const EventRegion&) { }
     
 #if ENABLE(SCROLLING_THREAD)
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
-    virtual void setScrollingNodeID(ScrollingNodeID) { }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
+    virtual void setScrollingNodeID(std::optional<ScrollingNodeID>) { }
 #endif
 
     virtual GraphicsLayer::CustomAppearance customAppearance() const = 0;

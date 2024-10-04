@@ -47,7 +47,7 @@ class IDBConnectionToClientDelegate : public CanMakeThreadSafeCheckedPtr<IDBConn
 public:
     virtual ~IDBConnectionToClientDelegate() = default;
     
-    virtual IDBConnectionIdentifier identifier() const = 0;
+    virtual std::optional<IDBConnectionIdentifier> identifier() const = 0;
 
     virtual void didDeleteDatabase(const IDBResultData&) = 0;
     virtual void didOpenDatabase(const IDBResultData&) = 0;

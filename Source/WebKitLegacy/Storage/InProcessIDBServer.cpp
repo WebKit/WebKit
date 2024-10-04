@@ -86,7 +86,7 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
     });
 }
 
-IDBConnectionIdentifier InProcessIDBServer::identifier() const
+std::optional<IDBConnectionIdentifier> InProcessIDBServer::identifier() const
 {
     // An instance of InProcessIDBServer always has a 1:1 relationship with its instance of IDBServer.
     // Therefore the connection identifier between the two can always be "1".
@@ -446,7 +446,7 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifi
 
 void InProcessIDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, requestIdentifier = requestIdentifier.isolatedCopy(), connectionClosed] {
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, requestIdentifier = crossThreadCopy(requestIdentifier), connectionClosed] {
         Locker locker { m_serverLock };
         m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
     });

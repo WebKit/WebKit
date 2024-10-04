@@ -95,7 +95,7 @@ public:
     void getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&) final;
 
     // IDBConnectionToClient
-    WebCore::IDBConnectionIdentifier identifier() const final;
+    std::optional<WebCore::IDBConnectionIdentifier> identifier() const final;
     void didDeleteDatabase(const WebCore::IDBResultData&) final;
     void didOpenDatabase(const WebCore::IDBResultData&) final;
     void didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;

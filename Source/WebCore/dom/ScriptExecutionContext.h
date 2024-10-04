@@ -111,7 +111,7 @@ class ScriptExecutionContext : public SecurityContext, public TimerAlignment {
 public:
     using Type = ScriptExecutionContextType;
 
-    explicit ScriptExecutionContext(Type, ScriptExecutionContextIdentifier = { });
+    explicit ScriptExecutionContext(Type, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
     virtual ~ScriptExecutionContext();
 
     bool isDocument() const { return m_type == Type::Document; }

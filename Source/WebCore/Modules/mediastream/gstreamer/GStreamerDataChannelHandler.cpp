@@ -156,7 +156,7 @@ String GStreamerDataChannelHandler::label() const
     return String::fromUTF8(label.get());
 }
 
-void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
+void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, std::optional<ScriptExecutionContextIdentifier> contextIdentifier)
 {
     Locker locker { m_clientLock };
     ASSERT(!m_client);
@@ -433,7 +433,7 @@ void GStreamerDataChannelHandler::postTask(Function<void()>&& function)
         callOnMainThread(WTFMove(function));
         return;
     }
-    ScriptExecutionContext::postTaskTo(m_contextIdentifier, WTFMove(function));
+    ScriptExecutionContext::postTaskTo(*m_contextIdentifier, WTFMove(function));
 }
 
 #undef GST_CAT_DEFAULT

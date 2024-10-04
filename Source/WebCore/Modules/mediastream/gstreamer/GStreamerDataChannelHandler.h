@@ -54,7 +54,7 @@ public:
 
 private:
     // RTCDataChannelHandler API
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     std::optional<unsigned short> id() const final;
@@ -80,7 +80,7 @@ private:
     Lock m_clientLock;
     GRefPtr<GstWebRTCDataChannel> m_channel;
     std::optional<WeakPtr<RTCDataChannelHandlerClient>> m_client WTF_GUARDED_BY_LOCK(m_clientLock);
-    ScriptExecutionContextIdentifier m_contextIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
     PendingMessages m_pendingMessages WTF_GUARDED_BY_LOCK(m_clientLock);
 
     std::optional<size_t> m_cachedBufferedAmount;

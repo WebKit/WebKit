@@ -86,7 +86,7 @@ public:
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
     PAL::SessionID sessionID;
     std::optional<ServiceWorkerData> serviceWorkerData;
-    ScriptExecutionContextIdentifier clientIdentifier;
+    Markable<ScriptExecutionContextIdentifier> clientIdentifier;
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections;
     std::optional<uint64_t> noiseInjectionHashSalt;
 

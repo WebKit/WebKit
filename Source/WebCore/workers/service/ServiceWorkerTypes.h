@@ -75,7 +75,7 @@ enum class SWServerToContextConnectionIdentifierType { };
 using SWServerToContextConnectionIdentifier = ObjectIdentifier<SWServerToContextConnectionIdentifierType>;
 
 using SWServerConnectionIdentifierType = ProcessIdentifierType;
-using SWServerConnectionIdentifier = LegacyNullableObjectIdentifier<SWServerConnectionIdentifierType>;
+using SWServerConnectionIdentifier = ObjectIdentifier<SWServerConnectionIdentifierType>;
 
 using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerClientData>;
 

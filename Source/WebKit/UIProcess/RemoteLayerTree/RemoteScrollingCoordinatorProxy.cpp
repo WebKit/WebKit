@@ -73,11 +73,11 @@ Ref<WebPageProxy> RemoteScrollingCoordinatorProxy::protectedWebPageProxy() const
     return m_webPageProxy.get();
 }
 
-ScrollingNodeID RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
+std::optional<ScrollingNodeID> RemoteScrollingCoordinatorProxy::rootScrollingNodeID() const
 {
     // FIXME: Locking
     if (!m_scrollingTree->rootNode())
-        return { };
+        return std::nullopt;
 
     return m_scrollingTree->rootNode()->scrollingNodeID();
 }
@@ -428,7 +428,7 @@ bool RemoteScrollingCoordinatorProxy::overlayScrollbarsEnabled()
     return m_scrollingTree->overlayScrollbarsEnabled();
 }
 
-String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID scrollingNodeID, bool isVertical)
+String RemoteScrollingCoordinatorProxy::scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID> scrollingNodeID, bool isVertical)
 {
     if (auto node = m_scrollingTree->nodeForID(scrollingNodeID)) {
         if (auto* scrollingNode = dynamicDowncast<ScrollingTreeScrollingNode>(*node))

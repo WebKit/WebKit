@@ -844,12 +844,12 @@ void PageClientImpl::scrollingNodeScrollViewDidScroll(ScrollingNodeID)
     [contentView() _didScroll];
 }
 
-void PageClientImpl::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
+void PageClientImpl::scrollingNodeScrollWillStartScroll(std::optional<ScrollingNodeID> nodeID)
 {
     [contentView() _scrollingNodeScrollingWillBegin:nodeID];
 }
 
-void PageClientImpl::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
+void PageClientImpl::scrollingNodeScrollDidEndScroll(std::optional<ScrollingNodeID> nodeID)
 {
     [contentView() _scrollingNodeScrollingDidEnd:nodeID];
 }

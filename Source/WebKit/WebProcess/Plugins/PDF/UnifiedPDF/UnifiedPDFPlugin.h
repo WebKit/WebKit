@@ -471,7 +471,7 @@ private:
     void createScrollbarsController() override;
 
     bool usesAsyncScrolling() const final { return true; }
-    WebCore::ScrollingNodeID scrollingNodeID() const final;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final { return m_scrollingNodeID; }
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
@@ -582,7 +582,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_layerForVerticalScrollbar;
     RefPtr<WebCore::GraphicsLayer> m_layerForScrollCorner;
 
-    WebCore::ScrollingNodeID m_scrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> m_scrollingNodeID;
 
     double m_scaleFactor { 1 };
     double m_scaleNormalizationFactor { 1 };

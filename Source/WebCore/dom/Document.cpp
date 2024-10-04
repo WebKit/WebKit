@@ -601,7 +601,7 @@ static inline IntDegrees currentOrientation(LocalFrame* frame)
     return 0;
 }
 
-Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, ScriptExecutionContextIdentifier identifier)
+Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, std::optional<ScriptExecutionContextIdentifier> identifier)
     : ContainerNode(*this, DOCUMENT_NODE)
     , TreeScope(*this)
     , ScriptExecutionContext(Type::Document, identifier)

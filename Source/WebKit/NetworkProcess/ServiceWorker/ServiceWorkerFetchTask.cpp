@@ -102,7 +102,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
     , m_serviceWorkerRegistrationIdentifier(registration.identifier())
     , m_shouldSoftUpdate(registration.shouldSoftUpdate(loader.parameters().options))
 {
-    SWFETCH_RELEASE_LOG("ServiceWorkerFetchTask: (serverConnectionIdentifier=%" PRIu64 ", serviceWorkerRegistrationIdentifier=%" PRIu64 ", serviceWorkerIdentifier=%" PRIu64 ", %d)", m_serverConnectionIdentifier.toUInt64(), m_serviceWorkerRegistrationIdentifier->toUInt64(), m_serviceWorkerIdentifier->toUInt64(), isWorkerReady);
+    SWFETCH_RELEASE_LOG("ServiceWorkerFetchTask: (serverConnectionIdentifier=%" PRIu64 ", serviceWorkerRegistrationIdentifier=%" PRIu64 ", serviceWorkerIdentifier=%" PRIu64 ", %d)", m_serverConnectionIdentifier->toUInt64(), m_serviceWorkerRegistrationIdentifier->toUInt64(), m_serviceWorkerIdentifier->toUInt64(), isWorkerReady);
 
     // We only do the timeout logic for main document navigations because it is not Web-compatible to do so for subresources.
     if (loader.parameters().request.requester() == WebCore::ResourceRequestRequester::Main) {
@@ -201,7 +201,7 @@ void ServiceWorkerFetchTask::startFetch()
     if (auto& identifier = loader->parameters().options.resultingClientIdentifier)
         resultingClientIdentifier = identifier->toString();
 
-    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier });
+    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier });
     ASSERT_UNUSED(isSent, isSent);
 
     if (m_preloader && m_preloader->didReceiveResponseOrError())
@@ -415,7 +415,7 @@ void ServiceWorkerFetchTask::cancelFromClient()
         return;
     }
 
-    sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
+    sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
 }
 
 void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
@@ -425,7 +425,7 @@ void ServiceWorkerFetchTask::continueDidReceiveFetchResponse()
         loadBodyFromPreloader();
         return;
     }
-    sendToServiceWorker(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
+    sendToServiceWorker(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier });
 }
 
 void ServiceWorkerFetchTask::continueFetchTaskWith(ResourceRequest&& request)
@@ -512,9 +512,9 @@ void ServiceWorkerFetchTask::sendNavigationPreloadUpdate()
     ASSERT(!!m_serviceWorkerConnection);
 
     if (!m_preloader->error().isNull())
-        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() });
+        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadFailed { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->error() });
     else
-        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() });
+        sendToServiceWorker(Messages::WebSWContextManagerConnection::NavigationPreloadIsReady { *m_serverConnectionIdentifier, *m_serviceWorkerIdentifier, m_fetchIdentifier, m_preloader->response() });
 }
 
 void ServiceWorkerFetchTask::loadBodyFromPreloader()
@@ -576,7 +576,7 @@ bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, Downloa
     // FIXME: We might want to keep the service worker alive until the download ends.
     RefPtr<ServiceWorkerDownloadTask> serviceWorkerDownloadTask;
     auto serviceWorkerDownloadLoad = NetworkLoad::create(*protectedLoader(), *session, [&](auto& client) {
-        serviceWorkerDownloadTask =  ServiceWorkerDownloadTask::create(*session, client, *m_serviceWorkerConnection, *m_serviceWorkerIdentifier, m_serverConnectionIdentifier, m_fetchIdentifier, request, response, downloadID);
+        serviceWorkerDownloadTask =  ServiceWorkerDownloadTask::create(*session, client, *m_serviceWorkerConnection, *m_serviceWorkerIdentifier, *m_serverConnectionIdentifier, m_fetchIdentifier, request, response, downloadID);
         return serviceWorkerDownloadTask.copyRef();
     });
 

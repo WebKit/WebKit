@@ -69,7 +69,7 @@ public:
 
 private:
     // RTCDataChannelHandler
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     void close() final;

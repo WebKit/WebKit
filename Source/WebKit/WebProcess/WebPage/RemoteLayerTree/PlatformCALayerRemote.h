@@ -214,8 +214,8 @@ public:
     void setEventRegion(const WebCore::EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID() const override;
-    void setScrollingNodeID(WebCore::ScrollingNodeID) override;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const override;
+    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) override;
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)

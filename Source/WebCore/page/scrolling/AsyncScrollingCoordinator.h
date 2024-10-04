@@ -81,11 +81,11 @@ public:
     WEBCORE_EXPORT void setMouseIsOverContentArea(ScrollableArea&, bool) override;
     WEBCORE_EXPORT void setMouseMovedInContentArea(ScrollableArea&) override;
     WEBCORE_EXPORT void setLayerHostingContextIdentifierForFrameHostingNode(ScrollingNodeID, std::optional<LayerHostingContextIdentifier>) override;
-    LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, ScrollingNodeID) const;
+    LocalFrameView* frameViewForScrollingNode(LocalFrame& localMainFrame, std::optional<ScrollingNodeID>) const;
 
     WEBCORE_EXPORT ScrollingStateTree& ensureScrollingStateTreeForRootFrameID(FrameIdentifier);
     const ScrollingStateTree* existingScrollingStateTreeForRootFrameID(std::optional<FrameIdentifier>) const;
-    ScrollingStateTree* stateTreeForNodeID(ScrollingNodeID) const;
+    ScrollingStateTree* stateTreeForNodeID(std::optional<ScrollingNodeID>) const;
     std::unique_ptr<ScrollingStateTree> commitTreeStateForRootFrameID(FrameIdentifier, LayerRepresentation::Type);
 
     WEBCORE_EXPORT void scrollableAreaWillBeDetached(ScrollableArea&) override;
@@ -107,8 +107,8 @@ protected:
     void scheduleRenderingUpdate();
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
-    WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(ScrollingNodeID) const;
-    RefPtr<ScrollingStateNode> stateNodeForNodeID(ScrollingNodeID) const;
+    WEBCORE_EXPORT LocalFrameView* frameViewForScrollingNode(std::optional<ScrollingNodeID>) const;
+    RefPtr<ScrollingStateNode> stateNodeForNodeID(std::optional<ScrollingNodeID>) const;
     RefPtr<ScrollingStateNode> stateNodeForScrollableArea(const ScrollableArea&) const;
 
 private:
@@ -116,7 +116,7 @@ private:
 
     bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const override { return false; }
 
-    WEBCORE_EXPORT ScrollingNodeID scrollableContainerNodeID(const RenderObject&) const override;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> scrollableContainerNodeID(const RenderObject&) const override;
 
     WEBCORE_EXPORT void frameViewLayoutUpdated(LocalFrameView&) override;
     WEBCORE_EXPORT void frameViewRootLayerDidChange(LocalFrameView&) override;
@@ -133,19 +133,19 @@ private:
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
 
-    WEBCORE_EXPORT ScrollingNodeID createNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID) override;
-    WEBCORE_EXPORT ScrollingNodeID insertNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> createNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID) override;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> insertNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex) override;
     WEBCORE_EXPORT void unparentNode(ScrollingNodeID) override;
     WEBCORE_EXPORT void unparentChildrenAndDestroyNode(ScrollingNodeID) override;
     WEBCORE_EXPORT void detachAndDestroySubtree(ScrollingNodeID) override;
     WEBCORE_EXPORT void clearAllNodes(FrameIdentifier rootFrameID) override;
 
-    WEBCORE_EXPORT ScrollingNodeID parentOfNode(ScrollingNodeID) const override;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> parentOfNode(ScrollingNodeID) const override;
     WEBCORE_EXPORT Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const override;
 
     WEBCORE_EXPORT void setNodeLayers(ScrollingNodeID, const NodeLayers&) override;
 
-    WEBCORE_EXPORT void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) override;
+    WEBCORE_EXPORT void setScrollingNodeScrollableAreaGeometry(std::optional<ScrollingNodeID>, ScrollableArea&) override;
     WEBCORE_EXPORT void setFrameScrollingNodeState(ScrollingNodeID, const LocalFrameView&) override;
     WEBCORE_EXPORT void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) override;
     WEBCORE_EXPORT void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) override;
@@ -156,18 +156,17 @@ private:
 
     WEBCORE_EXPORT void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize) final;
 
-    WEBCORE_EXPORT bool isUserScrollInProgress(ScrollingNodeID) const override;
-    WEBCORE_EXPORT bool isRubberBandInProgress(ScrollingNodeID) const override;
-
-    WEBCORE_EXPORT bool isScrollSnapInProgress(ScrollingNodeID) const override;
+    WEBCORE_EXPORT bool isUserScrollInProgress(std::optional<ScrollingNodeID>) const override;
+    WEBCORE_EXPORT bool isRubberBandInProgress(std::optional<ScrollingNodeID>) const override;
+    WEBCORE_EXPORT bool isScrollSnapInProgress(std::optional<ScrollingNodeID>) const override;
 
     WEBCORE_EXPORT void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
-    WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
+    WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(std::optional<ScrollingNodeID>, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
-    WEBCORE_EXPORT void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) final;
-    WEBCORE_EXPORT OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(ScrollingNodeID) const final;
+    WEBCORE_EXPORT void setSynchronousScrollingReasons(std::optional<ScrollingNodeID>, OptionSet<SynchronousScrollingReason>) final;
+    WEBCORE_EXPORT OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(std::optional<ScrollingNodeID>) const final;
 
     WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond) final;
 

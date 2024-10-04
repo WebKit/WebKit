@@ -183,8 +183,8 @@ public:
     void setEventRegion(const EventRegion&) override;
 
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID scrollingNodeID() const override { return m_scrollingNodeID; }
-    void setScrollingNodeID(ScrollingNodeID nodeID) override { m_scrollingNodeID = nodeID; }
+    std::optional<ScrollingNodeID> scrollingNodeID() const override { return m_scrollingNodeID; }
+    void setScrollingNodeID(std::optional<ScrollingNodeID> nodeID) override { m_scrollingNodeID = nodeID; }
 #endif
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -229,7 +229,7 @@ private:
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID;
+    Markable<ScrollingNodeID> m_scrollingNodeID;
 #endif
     EventRegion m_eventRegion;
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };

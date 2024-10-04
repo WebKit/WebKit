@@ -46,11 +46,9 @@ static uint64_t nextServerResourceNumber()
     return currentNumber += 2;
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier()
-{
-}
+IDBResourceIdentifier::IDBResourceIdentifier() = default;
 
-IDBResourceIdentifier::IDBResourceIdentifier(IDBConnectionIdentifier connectionIdentifier, uint64_t resourceIdentifier)
+IDBResourceIdentifier::IDBResourceIdentifier(std::optional<IDBConnectionIdentifier> connectionIdentifier, uint64_t resourceIdentifier)
     : m_idbConnectionIdentifier(connectionIdentifier)
     , m_resourceNumber(resourceIdentifier)
 {
@@ -79,16 +77,11 @@ IDBResourceIdentifier IDBResourceIdentifier::isolatedCopy() const
     return IDBResourceIdentifier(m_idbConnectionIdentifier, m_resourceNumber);
 }
 
-IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
-{
-    return IDBResourceIdentifier({ }, 0);
-}
-
 #if !LOG_DISABLED
 
 String IDBResourceIdentifier::loggingString() const
 {
-    return makeString('<', m_idbConnectionIdentifier.toUInt64(), ", "_s, m_resourceNumber, '>');
+    return makeString('<', m_idbConnectionIdentifier ? m_idbConnectionIdentifier->toUInt64() : 0, ", "_s, m_resourceNumber, '>');
 }
 
 #endif

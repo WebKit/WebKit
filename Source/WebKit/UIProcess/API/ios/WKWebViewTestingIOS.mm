@@ -299,9 +299,13 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return ts.release();
 }
 
-- (NSString *)_scrollbarState:(unsigned long long)scrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
+- (NSString *)_scrollbarState:(unsigned long long)rawScrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
 {
-    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID))) {
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID;
+    if (ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
+        scrollingNodeID = WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(rawScrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID));
+
+    if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == scrollingNodeID) {
         TextStream ts(TextStream::LineMode::MultipleLine);
         {
             TextStream::GroupScope scope(ts);
@@ -309,7 +313,7 @@ static void dumpUIView(TextStream& ts, UIView *view)
         }
         return ts.release();
     }
-    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
+    return _page->scrollbarStateForScrollingNodeID(scrollingNodeID, isVertical);
 }
 
 - (NSNumber *)_stableStateOverride

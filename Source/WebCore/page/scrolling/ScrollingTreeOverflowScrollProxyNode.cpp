@@ -56,7 +56,7 @@ bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
 
     if (m_overflowScrollingNodeID) {
         auto& relatedNodes = scrollingTree().overflowRelatedNodes();
-        relatedNodes.ensure(m_overflowScrollingNodeID, [] {
+        relatedNodes.ensure(*m_overflowScrollingNodeID, [] {
             return Vector<ScrollingNodeID>();
         }).iterator->value.append(scrollingNodeID());
 

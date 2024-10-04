@@ -264,7 +264,7 @@ void CoordinatedGraphicsLayer::setEventRegion(EventRegion&& eventRegion)
 }
 
 #if ENABLE(SCROLLING_THREAD)
-void CoordinatedGraphicsLayer::setScrollingNodeID(ScrollingNodeID nodeID)
+void CoordinatedGraphicsLayer::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
     if (scrollingNodeID() == nodeID)
         return;

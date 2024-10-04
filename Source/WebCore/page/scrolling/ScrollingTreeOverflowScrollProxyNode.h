@@ -38,7 +38,7 @@ class ScrollingTreeOverflowScrollProxyNode : public ScrollingTreeNode {
 public:
     WEBCORE_EXPORT virtual ~ScrollingTreeOverflowScrollProxyNode();
 
-    ScrollingNodeID overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
+    std::optional<ScrollingNodeID> overflowScrollingNodeID() const { return m_overflowScrollingNodeID; }
 
     virtual ScrollingPlatformLayer* layer() const = 0;
 
@@ -53,7 +53,7 @@ protected:
 
     WEBCORE_EXPORT void dumpProperties(TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
-    ScrollingNodeID m_overflowScrollingNodeID;
+    Markable<ScrollingNodeID> m_overflowScrollingNodeID;
 };
 
 } // namespace WebCore

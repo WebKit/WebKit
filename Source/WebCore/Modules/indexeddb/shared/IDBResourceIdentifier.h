@@ -42,6 +42,7 @@ class IDBConnectionToClient;
 }
 
 using IDBConnectionIdentifier = ProcessIdentifier;
+struct IDBResourceIdentifierHashTraits;
 
 class IDBResourceIdentifier {
 public:
@@ -49,7 +50,6 @@ public:
     IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
-    WEBCORE_EXPORT static IDBResourceIdentifier emptyValue();
     bool isEmpty() const
     {
         return !m_resourceNumber && !m_idbConnectionIdentifier;
@@ -57,7 +57,7 @@ public:
 
     friend bool operator==(const IDBResourceIdentifier&, const IDBResourceIdentifier&) = default;
     
-    IDBConnectionIdentifier connectionIdentifier() const { return m_idbConnectionIdentifier; }
+    std::optional<IDBConnectionIdentifier> connectionIdentifier() const { return m_idbConnectionIdentifier; }
 
     WEBCORE_EXPORT IDBResourceIdentifier isolatedCopy() const;
 
@@ -71,9 +71,9 @@ private:
     friend struct IDBResourceIdentifierHashTraits;
     friend void add(Hasher&, const IDBResourceIdentifier&);
 
-    WEBCORE_EXPORT IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
+    WEBCORE_EXPORT IDBResourceIdentifier(std::optional<IDBConnectionIdentifier>, uint64_t resourceIdentifier);
 
-    IDBConnectionIdentifier m_idbConnectionIdentifier;
+    Markable<IDBConnectionIdentifier> m_idbConnectionIdentifier;
     uint64_t m_resourceNumber { 0 };
 };
 
@@ -89,12 +89,13 @@ struct IDBResourceIdentifierHash {
 };
 
 struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdentifier> {
-    static const bool hasIsEmptyValueFunction = true;
-    static const bool emptyValueIsZero = false;
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr uint64_t resourceNumberDeletedValue = -1;
 
     static IDBResourceIdentifier emptyValue()
     {
-        return IDBResourceIdentifier::emptyValue();
+        return { };
     }
 
     static bool isEmptyValue(const IDBResourceIdentifier& identifier)
@@ -104,12 +105,12 @@ struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdenti
 
     static void constructDeletedValue(IDBResourceIdentifier& identifier)
     {
-        new (NotNull, &identifier.m_idbConnectionIdentifier) IDBConnectionIdentifier(WTF::HashTableDeletedValue);
+        identifier.m_resourceNumber = resourceNumberDeletedValue;
     }
 
     static bool isDeletedValue(const IDBResourceIdentifier& identifier)
     {
-        return identifier.m_idbConnectionIdentifier.isHashTableDeletedValue();
+        return identifier.m_resourceNumber == resourceNumberDeletedValue;
     }
 };
 

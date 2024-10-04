@@ -1021,7 +1021,7 @@ void GraphicsLayerCA::setEventRegion(EventRegion&& eventRegion)
 }
 
 #if ENABLE(SCROLLING_THREAD)
-void GraphicsLayerCA::setScrollingNodeID(ScrollingNodeID nodeID)
+void GraphicsLayerCA::setScrollingNodeID(std::optional<ScrollingNodeID> nodeID)
 {
     if (nodeID == m_scrollingNodeID)
         return;

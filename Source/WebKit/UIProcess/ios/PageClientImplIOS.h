@@ -232,8 +232,8 @@ private:
 
     void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) override;
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollWillStartScroll(std::optional<WebCore::ScrollingNodeID>) override;
+    void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>) override;
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
         

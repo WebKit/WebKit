@@ -615,7 +615,7 @@ struct WebCore::IDBIterateCursorData {
 }
 
 class WebCore::IDBResourceIdentifier {
-    WebCore::IDBConnectionIdentifier m_idbConnectionIdentifier
+    Markable<WebCore::IDBConnectionIdentifier> m_idbConnectionIdentifier
     uint64_t m_resourceNumber
 }
 
@@ -2030,7 +2030,7 @@ class WebCore::HTTPHeaderMap {
 struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
     Markable<WebCore::PageIdentifier> webPageIdentifier;
-    WebCore::ScriptExecutionContextIdentifier documentIdentifier;
+    Markable<WebCore::ScriptExecutionContextIdentifier> documentIdentifier;
     Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
 

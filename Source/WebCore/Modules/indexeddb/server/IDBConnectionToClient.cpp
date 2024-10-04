@@ -45,7 +45,7 @@ IDBConnectionToClient::IDBConnectionToClient(IDBConnectionToClientDelegate& dele
 IDBConnectionIdentifier IDBConnectionToClient::identifier() const
 {
     ASSERT(m_delegate);
-    return m_delegate->identifier();
+    return *m_delegate->identifier();
 }
 
 void IDBConnectionToClient::didDeleteDatabase(const IDBResultData& result)

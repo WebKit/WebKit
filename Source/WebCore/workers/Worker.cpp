@@ -213,7 +213,7 @@ void Worker::didReceiveResponse(ScriptExecutionContextIdentifier mainContextIden
     }
 }
 
-void Worker::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
+void Worker::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContextIdentifier)
 {
     auto clearLoader = makeScopeExit([this] {
         m_scriptLoader = nullptr;
@@ -247,7 +247,7 @@ void Worker::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifi
     m_contextProxy.startWorkerGlobalScope(m_scriptLoader->responseURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
 
     if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
-        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_scriptLoader->identifier(), script = m_scriptLoader->script().isolatedCopy()] (auto& mainContext) {
+        ScriptExecutionContext::ensureOnContextThread(*mainContextIdentifier, [identifier = m_scriptLoader->identifier(), script = m_scriptLoader->script().isolatedCopy()] (auto& mainContext) {
             InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
         });
     }

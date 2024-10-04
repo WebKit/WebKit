@@ -118,7 +118,7 @@ private:
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;
     RTCDataChannelIdentifier m_identifier;
-    ScriptExecutionContextIdentifier m_contextIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
     // FIXME: m_stopped is probably redundant with m_readyState.
     bool m_stopped { false };
     RTCDataChannelState m_readyState { RTCDataChannelState::Connecting };

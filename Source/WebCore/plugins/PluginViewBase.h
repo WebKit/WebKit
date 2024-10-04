@@ -67,7 +67,7 @@ public:
 
     virtual ScrollableArea* scrollableArea() const { return nullptr; }
     virtual bool usesAsyncScrolling() const { return false; }
-    virtual ScrollingNodeID scrollingNodeID() const { return { }; }
+    virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
     virtual void willAttachScrollingNode() { }
     virtual void didAttachScrollingNode() { }
 

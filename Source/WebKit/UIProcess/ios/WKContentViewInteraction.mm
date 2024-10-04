@@ -2659,12 +2659,12 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     [self _cancelInteraction];
 }
 
-- (void)_scrollingNodeScrollingWillBegin:(WebCore::ScrollingNodeID)scrollingNodeID
+- (void)_scrollingNodeScrollingWillBegin:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
     [_textInteractionWrapper willStartScrollingOverflow];
 }
 
-- (void)_scrollingNodeScrollingDidEnd:(WebCore::ScrollingNodeID)scrollingNodeID
+- (void)_scrollingNodeScrollingDidEnd:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
     // If scrolling ends before we've received a selection update,
     // we postpone showing the selection until the update is received.
