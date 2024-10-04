@@ -130,23 +130,25 @@ void RemoteGPU::workQueueUninitialize()
     m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
-    m_objectHeap->clear();
+    Ref { m_objectHeap }->clear();
     m_backing = nullptr;
 }
 
 void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
-    ASSERT(m_backing);
+    RefPtr backing = m_backing;
+    ASSERT(backing);
 
-    auto convertedOptions = m_objectHeap->convertFromBacking(options);
+    Ref objectHeap = m_objectHeap;
+    auto convertedOptions = objectHeap->convertFromBacking(options);
     ASSERT(convertedOptions);
     if (!convertedOptions) {
         callback(std::nullopt);
         return;
     }
 
-    m_backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap = m_objectHeap.copyRef(), streamConnection = Ref { *m_streamConnection }, identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = Ref { *this }] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
+    backing->requestAdapter(*convertedOptions, [callback = WTFMove(callback), objectHeap, streamConnection = Ref { *m_streamConnection }, identifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = Ref { *this }] (RefPtr<WebCore::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             callback(std::nullopt);
             return;
@@ -156,41 +158,41 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
         objectHeap->addObject(identifier, remoteAdapter);
 
         auto name = adapter->name();
-        const auto& features = adapter->features();
-        const auto& limits = adapter->limits();
-        callback({ { WTFMove(name), WebGPU::SupportedFeatures { features.features() }, WebGPU::SupportedLimits {
-            limits.maxTextureDimension1D(),
-            limits.maxTextureDimension2D(),
-            limits.maxTextureDimension3D(),
-            limits.maxTextureArrayLayers(),
-            limits.maxBindGroups(),
-            limits.maxBindGroupsPlusVertexBuffers(),
-            limits.maxBindingsPerBindGroup(),
-            limits.maxDynamicUniformBuffersPerPipelineLayout(),
-            limits.maxDynamicStorageBuffersPerPipelineLayout(),
-            limits.maxSampledTexturesPerShaderStage(),
-            limits.maxSamplersPerShaderStage(),
-            limits.maxStorageBuffersPerShaderStage(),
-            limits.maxStorageTexturesPerShaderStage(),
-            limits.maxUniformBuffersPerShaderStage(),
-            limits.maxUniformBufferBindingSize(),
-            limits.maxStorageBufferBindingSize(),
-            limits.minUniformBufferOffsetAlignment(),
-            limits.minStorageBufferOffsetAlignment(),
-            limits.maxVertexBuffers(),
-            limits.maxBufferSize(),
-            limits.maxVertexAttributes(),
-            limits.maxVertexBufferArrayStride(),
-            limits.maxInterStageShaderComponents(),
-            limits.maxInterStageShaderVariables(),
-            limits.maxColorAttachments(),
-            limits.maxColorAttachmentBytesPerSample(),
-            limits.maxComputeWorkgroupStorageSize(),
-            limits.maxComputeInvocationsPerWorkgroup(),
-            limits.maxComputeWorkgroupSizeX(),
-            limits.maxComputeWorkgroupSizeY(),
-            limits.maxComputeWorkgroupSizeZ(),
-            limits.maxComputeWorkgroupsPerDimension(),
+        Ref features = adapter->features();
+        Ref limits = adapter->limits();
+        callback({ { WTFMove(name), WebGPU::SupportedFeatures { features->features() }, WebGPU::SupportedLimits {
+            limits->maxTextureDimension1D(),
+            limits->maxTextureDimension2D(),
+            limits->maxTextureDimension3D(),
+            limits->maxTextureArrayLayers(),
+            limits->maxBindGroups(),
+            limits->maxBindGroupsPlusVertexBuffers(),
+            limits->maxBindingsPerBindGroup(),
+            limits->maxDynamicUniformBuffersPerPipelineLayout(),
+            limits->maxDynamicStorageBuffersPerPipelineLayout(),
+            limits->maxSampledTexturesPerShaderStage(),
+            limits->maxSamplersPerShaderStage(),
+            limits->maxStorageBuffersPerShaderStage(),
+            limits->maxStorageTexturesPerShaderStage(),
+            limits->maxUniformBuffersPerShaderStage(),
+            limits->maxUniformBufferBindingSize(),
+            limits->maxStorageBufferBindingSize(),
+            limits->minUniformBufferOffsetAlignment(),
+            limits->minStorageBufferOffsetAlignment(),
+            limits->maxVertexBuffers(),
+            limits->maxBufferSize(),
+            limits->maxVertexAttributes(),
+            limits->maxVertexBufferArrayStride(),
+            limits->maxInterStageShaderComponents(),
+            limits->maxInterStageShaderVariables(),
+            limits->maxColorAttachments(),
+            limits->maxColorAttachmentBytesPerSample(),
+            limits->maxComputeWorkgroupStorageSize(),
+            limits->maxComputeInvocationsPerWorkgroup(),
+            limits->maxComputeWorkgroupSizeX(),
+            limits->maxComputeWorkgroupSizeY(),
+            limits->maxComputeWorkgroupSizeZ(),
+            limits->maxComputeWorkgroupsPerDimension(),
         }, adapter->isFallbackAdapter() } });
     });
 }
@@ -198,15 +200,17 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
 void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    ASSERT(m_backing);
+    RefPtr backing = m_backing;
+    ASSERT(backing);
 
-    auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
+    Ref objectHeap = m_objectHeap;
+    auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
     MESSAGE_CHECK(convertedDescriptor);
 
-    auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
+    auto presentationContext = backing->createPresentationContext(*convertedDescriptor);
     MESSAGE_CHECK(presentationContext);
-    auto remotePresentationContext = RemotePresentationContext::create(*m_gpuConnectionToWebProcess.get(), *this, *presentationContext, m_objectHeap, *m_streamConnection, identifier);
-    m_objectHeap->addObject(identifier, remotePresentationContext);
+    auto remotePresentationContext = RemotePresentationContext::create(*m_gpuConnectionToWebProcess.get(), *this, *presentationContext, objectHeap, *m_streamConnection, identifier);
+    objectHeap->addObject(identifier, remotePresentationContext);
 }
 
 RefPtr<GPUConnectionToWebProcess> RemoteGPU::gpuConnectionToWebProcess() const
@@ -217,12 +221,15 @@ RefPtr<GPUConnectionToWebProcess> RemoteGPU::gpuConnectionToWebProcess() const
 void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    ASSERT(m_backing);
+    RefPtr backing = m_backing;
+    ASSERT(backing);
 
-    auto compositorIntegration = m_backing->createCompositorIntegration();
+    auto compositorIntegration = backing->createCompositorIntegration();
     MESSAGE_CHECK(compositorIntegration);
-    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(*compositorIntegration, m_objectHeap, *m_streamConnection, *this, identifier);
-    m_objectHeap->addObject(identifier, remoteCompositorIntegration);
+
+    Ref objectHeap = m_objectHeap;
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(*compositorIntegration, objectHeap, *m_streamConnection, *this, identifier);
+    objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
 void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage, WebCore::RenderingResourceIdentifier imageBufferIdentifier)
@@ -230,9 +237,10 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
     assertIsCurrent(workQueue());
     BinarySemaphore semaphore;
 
-    auto* gpu = m_backing.get();
-    m_renderingBackend->dispatch([&]() mutable {
-        if (auto imageBuffer = m_renderingBackend->imageBuffer(imageBufferIdentifier)) {
+    RefPtr gpu = m_backing.get();
+    Ref renderingBackend = m_renderingBackend;
+    renderingBackend->dispatch([&]() mutable {
+        if (auto imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
             gpu->paintToCanvas(nativeImage, imageBuffer->backendSize(), imageBuffer->context());
             imageBuffer->flushDrawingContext();
         }
@@ -244,7 +252,7 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
 void RemoteGPU::isValid(WebGPUIdentifier identifier, CompletionHandler<void(bool, bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    auto* gpu = static_cast<WebCore::WebGPU::GPU*>(m_backing.get());
+    RefPtr gpu = static_cast<WebCore::WebGPU::GPU*>(m_backing.get());
     if (!gpu) {
         completionHandler(false, false);
         return;

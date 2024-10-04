@@ -60,6 +60,7 @@ private:
     RemoteRenderBundleEncoderProxy& operator=(RemoteRenderBundleEncoderProxy&&) = delete;
 
     WebGPUIdentifier backing() const { return m_backing; }
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
     
     template<typename T>
     WARN_UNUSED_RETURN IPC::Error send(T&& message)
