@@ -283,15 +283,13 @@ function reduce(reducer /*, initialValue */)
 
     var initialValue = @argument(1);
 
-    var iteratedIterator = this;
+    var iterated = this;
     var iteratedNextMethod = this.next;
 
     var accumulator;
     var counter = 0;
     if (initialValue === @undefined) {
-        var result = iteratedNextMethod.@call(iteratedIterator);
-        if (!@isObject(result))
-            @throwTypeError("Iterator result interface is not an object.");
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
         if (result.done)
             @throwTypeError("Iterator.prototype.reduce requires an initial value or an iterator that is not done.");
         accumulator = result.value;
@@ -299,17 +297,15 @@ function reduce(reducer /*, initialValue */)
     } else
         accumulator = initialValue;
 
-    var wrapper = {
-        @@iterator: function()
-            {
-                return {
-                    next: function() { return iteratedNextMethod.@call(iteratedIterator); },
-                    get return() { return iteratedIterator.return; },
-                };
-            },
-    };
-    for (var item of wrapper) {
-        accumulator = reducer(accumulator, item, counter++);
+    for (;;) {
+        var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+        if (result.done)
+            break;
+
+        var value = result.value;
+        @ifAbruptCloseIterator(iterated, (
+            accumulator = reducer(accumulator, value, counter++)
+        ));
     }
 
     return accumulator;
