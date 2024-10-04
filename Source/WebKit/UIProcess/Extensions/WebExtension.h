@@ -298,7 +298,7 @@ public:
     const PermissionsSet& requestedPermissions();
     const PermissionsSet& optionalPermissions();
 
-    bool hasRequestedPermission(String) const;
+    bool hasRequestedPermission(String);
 
     // Match patterns requested by the extension in their manifest.
     // These are not the currently allowed permission patterns.

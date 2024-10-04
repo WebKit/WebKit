@@ -111,9 +111,9 @@ double WebExtension::manifestVersion()
     return 0;
 }
 
-bool WebExtension::hasRequestedPermission(String permission) const
+bool WebExtension::hasRequestedPermission(String permission)
 {
-    // FIXME: <https://webkit.org/b/280101> hasRequestedPermission isn't populating permission properties
+    populatePermissionsPropertiesIfNeeded();
     return m_permissions.contains(permission);
 }
 
