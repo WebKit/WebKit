@@ -53,7 +53,13 @@ enum class PickerDismissalReason : uint8_t;
 - (NSArray<NSString *> *)currentAvailableActionTitles;
 - (NSArray<NSString *> *)acceptedTypeIdentifiers;
 
-+ (std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>>)_copyToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager;
+struct TemporaryFileMoveResults {
+    bool succeeded;
+    RetainPtr<NSURL> maybeMovedURL;
+    RetainPtr<NSURL> temporaryDirectoryURL;
+};
+
++ (TemporaryFileMoveResults)_moveToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager asCopy:(BOOL)asCopy;
 @end
 
 @protocol WKFileUploadPanelDelegate <NSObject>

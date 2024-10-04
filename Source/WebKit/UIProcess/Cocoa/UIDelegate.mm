@@ -877,8 +877,9 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
         RetainPtr<NSFileCoordinator> uploadFileCoordinator = adoptNS([[NSFileCoordinator alloc] init]);
         RetainPtr<NSFileManager> uploadFileManager = adoptNS([[NSFileManager alloc] init]);
         for (NSURL *url in URLs) {
-            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:uploadFileCoordinator.get() fileManager:uploadFileManager.get()];
-            filenames.append(maybeMovedURL.get().path);
+            auto [success, maybeMovedURL, temporaryURL] = [WKFileUploadPanel _moveToNewTemporaryDirectory:url fileCoordinator:uploadFileCoordinator.get() fileManager:uploadFileManager.get() asCopy:YES];
+            if (success)
+                filenames.append(maybeMovedURL.get().path);
         }
 #else
         for (NSURL *url in URLs)
