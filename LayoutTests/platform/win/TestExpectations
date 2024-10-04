@@ -905,6 +905,8 @@ webkit.org/b/206834 http/tests/workers/service/basic-timeout.https.html [ Pass F
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
 
+http/tests/workers/service/service-worker-download-octet-stream-nosniff.https.html [ Failure ]
+
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ DumpJSConsoleLogInStdErr ]
