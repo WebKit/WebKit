@@ -1,4 +1,3 @@
-GPUProcess/graphics/WebGPU/RemoteGPU.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkSession.cpp
@@ -69,7 +68,6 @@ WebProcess/Automation/WebAutomationSessionProxy.cpp
 WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp
 WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
-WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
