@@ -40,6 +40,8 @@ namespace WebKit {
 
 void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+    bool runtimeEnablementCheckFailed = false;
+    UNUSED_VARIABLE(runtimeEnablementCheckFailed);
     auto sharedPreferences = sharedPreferencesForWebProcess();
     UNUSED_VARIABLE(sharedPreferences);
     if (!sharedPreferences || !sharedPreferences->someFeature) {
@@ -48,13 +50,17 @@ void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Deco
             return;
 #endif // ENABLE(IPC_TESTING_API)
         ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver TestWithEnabledIf", IPC::description(decoder.messageName()).characters());
+        connection.markCurrentlyDispatchedMessageAsInvalid();
         return;
     }
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledIf::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledIf::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledIf::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name() && featureEnabled())
-        return IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, decoder, this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
+    if (decoder.messageName() == Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled::name()) {
+        if (featureEnabled())
+            return IPC::handleMessage<Messages::TestWithEnabledIf::OnlyEnabledIfFeatureEnabled>(connection, decoder, this, &TestWithEnabledIf::onlyEnabledIfFeatureEnabled);
+        runtimeEnablementCheckFailed = true;
+    }
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -62,6 +68,8 @@ void TestWithEnabledIf::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    if (runtimeEnablementCheckFailed)
+        connection.markCurrentlyDispatchedMessageAsInvalid();
 }
 
 } // namespace WebKit

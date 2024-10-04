@@ -692,10 +692,14 @@ def async_message_statement(receiver, message):
     result = []
     runtime_enablement = generate_runtime_enablement(receiver, message)
     if runtime_enablement:
-        result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
+        result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
+        result.append('        if (%s)\n' % runtime_enablement)
+        result.append('            return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
+        result.append('        runtimeEnablementCheckFailed = true;\n')
+        result.append('    }\n')
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
+        result.append('        return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
     return result
 
 
@@ -1312,23 +1316,34 @@ def generate_header_includes_from_conditions(header_conditions):
 def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_for_testing, return_value=None):
     enabled_by = receiver.receiver_enabled_by
     enabled_by_conjunction = receiver.receiver_enabled_by_conjunction
+    enablement_check = [
+        '    bool runtimeEnablementCheckFailed = false;\n'
+        '    UNUSED_VARIABLE(runtimeEnablementCheckFailed);\n',
+    ]
     shared_preferences_retrieval = [
         '    auto sharedPreferences = sharedPreferencesForWebProcess(%s);\n' % ('connection' if receiver.shared_preferences_needs_connection else ''),
         '    UNUSED_VARIABLE(sharedPreferences);\n'
     ]
+    result = []
     if not enabled_by:
         if any([message.enabled_by for message in messages]):
-            return shared_preferences_retrieval
-        return []
+            result += enablement_check
+            result += shared_preferences_retrieval
+        elif any([message.enabled_if for message in messages]):
+            result += enablement_check
+        return result
+
     runtime_enablement = generate_enabled_by(receiver, enabled_by, enabled_by_conjunction)
     return_statement_line = 'return %s' % return_value if return_value else 'return'
-    return shared_preferences_retrieval + [
+    mark_message_invalid_line = 'connection.markCurrentlyDispatchedMessageAsInvalid()' if not receiver.has_attribute(STREAM_ATTRIBUTE) else ''
+    return enablement_check + shared_preferences_retrieval + [
         '    if (!sharedPreferences || !%s) {\n' % ('(%s)' % runtime_enablement if len(enabled_by) > 1 else runtime_enablement),
         '#if ENABLE(IPC_TESTING_API)\n',
         '        if (%s)\n' % ignore_invalid_message_for_testing,
         '            %s;\n' % return_statement_line,
         '#endif // ENABLE(IPC_TESTING_API)\n',
         '        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver %s", IPC::description(decoder.messageName()).characters());\n' % ('%s', receiver.name),
+        '        %s;\n' % mark_message_invalid_line if mark_message_invalid_line else '',
         '        %s;\n' % return_statement_line,
         '    }\n',
     ]
@@ -1409,7 +1424,8 @@ def generate_message_handler(receiver):
         else:
             result.append('void %s::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
-        result += generate_enabled_by_for_receiver(receiver, async_messages, 'connection.ignoreInvalidMessageForTesting()')
+        enable_by_statement = generate_enabled_by_for_receiver(receiver, async_messages, 'connection.ignoreInvalidMessageForTesting()')
+        result += enable_by_statement
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
             result.append('    Ref protectedThis { *this };\n')
         result += async_message_statements
@@ -1428,6 +1444,9 @@ def generate_message_handler(receiver):
                 result.append('        return;\n')
                 result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            if enable_by_statement:
+                result.append('    if (runtimeEnablementCheckFailed)\n')
+                result.append('        connection.markCurrentlyDispatchedMessageAsInvalid();\n')
         result.append('}\n')
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
