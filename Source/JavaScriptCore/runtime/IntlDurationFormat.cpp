@@ -393,7 +393,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
 
         // 3.k. If style is "2-digit", then
         //     i. Perform ! CreateDataPropertyOrThrow(nfOpts, "minimumIntegerDigits", 2F).
-        skeletonBuilder.append(" integer-width/"_s, WTF::ICU::majorVersion() >= 67 ? '*' : '+'); // Prior to ICU 67, use the symbol + instead of *.
+        skeletonBuilder.append(" integer-width/*"_s);
         if (style == IntlDurationFormat::UnitStyle::TwoDigit)
             skeletonBuilder.append("00"_s);
         else
