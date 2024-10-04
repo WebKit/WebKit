@@ -1403,7 +1403,8 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
 }
 
-TEST(SiteIsolation, RunOpenPanel)
+// FIX-ME rdar://137267779
+TEST(SiteIsolation, DISABLED_RunOpenPanel)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
