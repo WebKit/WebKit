@@ -36,6 +36,7 @@ class Document;
 
 struct CSSSelectorParserContext {
     CSSParserMode mode { CSSParserMode::HTMLStandardMode };
+    bool cssHasSlottedEnabled : 1 { false };
     bool cssNestingEnabled : 1 { false };
     bool customStateSetEnabled : 1 { false };
     bool grammarAndSpellingPseudoElementsEnabled : 1 { false };
