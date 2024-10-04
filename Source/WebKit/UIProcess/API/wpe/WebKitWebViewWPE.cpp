@@ -50,19 +50,144 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*)
     return FALSE;
 }
 
-void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+struct ToplevelStateEvent {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    enum class Type { Maximize, Minimize, Restore };
+
+    ToplevelStateEvent(Type type, CompletionHandler<void()>&& completionHandler)
+        : type(type)
+        , completionHandler(WTFMove(completionHandler))
+        , completeTimer(RunLoop::main(), this, &ToplevelStateEvent::complete)
+    {
+        // Complete the event if not done after one second.
+        completeTimer.startOneShot(1_s);
+    }
+
+    ~ToplevelStateEvent()
+    {
+        complete();
+    }
+
+    void complete()
+    {
+        if (auto handler = std::exchange(completionHandler, nullptr))
+            handler();
+    }
+
+    Type type;
+    CompletionHandler<void()> completionHandler;
+    RunLoop::Timer completeTimer;
+};
+
+static const char* toplevelStateEventID = "wpe-toplevel-state-event";
+
+static void toplevelStateChangedCallback(WPEView*, WPEToplevelState);
+
+static void finishMonitorToplevelState(WPEView* view)
 {
-    completionHandler();
+    g_signal_handlers_disconnect_by_func(view, reinterpret_cast<gpointer>(toplevelStateChangedCallback), nullptr);
+    g_object_set_data(G_OBJECT(view), toplevelStateEventID, nullptr);
 }
 
-void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+static void toplevelStateChangedCallback(WPEView* view, WPEToplevelState previousState)
 {
-    completionHandler();
+    auto* state = static_cast<ToplevelStateEvent*>(g_object_get_data(G_OBJECT(view), toplevelStateEventID));
+    if (!state) {
+        g_signal_handlers_disconnect_by_func(view, reinterpret_cast<gpointer>(toplevelStateChangedCallback), nullptr);
+        return;
+    }
+
+    WPEToplevelState toplevelState = wpe_view_get_toplevel_state(view);
+    bool eventCompleted = false;
+    switch (state->type) {
+    case ToplevelStateEvent::Type::Maximize:
+        if (toplevelState & WPE_TOPLEVEL_STATE_MAXIMIZED)
+            eventCompleted = true;
+        break;
+    case ToplevelStateEvent::Type::Minimize:
+        if (toplevelState & WPE_TOPLEVEL_STATE_NONE)
+            eventCompleted = true;
+        break;
+    case ToplevelStateEvent::Type::Restore:
+        if ((previousState & WPE_TOPLEVEL_STATE_MAXIMIZED) && !(toplevelState & WPE_TOPLEVEL_STATE_MAXIMIZED))
+            eventCompleted = true;
+        break;
+    }
+
+    if (eventCompleted)
+        finishMonitorToplevelState(view);
 }
 
-void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& completionHandler)
+static void monitorToplevelState(WPEView* view, ToplevelStateEvent::Type type, CompletionHandler<void()>&& completionHandler)
 {
+    g_object_set_data_full(G_OBJECT(view), toplevelStateEventID, new ToplevelStateEvent(type, WTFMove(completionHandler)), [](gpointer userData) {
+        delete static_cast<ToplevelStateEvent*>(userData);
+    });
+    g_signal_connect_after(view, "toplevel-state-changed", G_CALLBACK(toplevelStateChangedCallback), nullptr);
+}
+
+void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (auto* wpeView = webkit_web_view_get_wpe_view(view)) {
+        auto* toplevel = wpe_view_get_toplevel(wpeView);
+        if (!WPE_IS_TOPLEVEL(toplevel) || (wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_MAXIMIZED)) {
+            completionHandler();
+            return;
+        }
+
+        monitorToplevelState(wpeView, ToplevelStateEvent::Type::Maximize, WTFMove(completionHandler));
+        if (!wpe_toplevel_maximize(toplevel))
+            finishMonitorToplevelState(wpeView);
+        return;
+    }
+#endif
+
     completionHandler();
+    return;
+}
+
+void webkitWebViewMinimizeWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (auto* wpeView = webkit_web_view_get_wpe_view(view)) {
+        auto* toplevel = wpe_view_get_toplevel(wpeView);
+        if (!WPE_IS_TOPLEVEL(toplevel)) {
+            completionHandler();
+            return;
+        }
+
+        monitorToplevelState(wpeView, ToplevelStateEvent::Type::Minimize, WTFMove(completionHandler));
+        if (!wpe_toplevel_minimize(toplevel))
+            finishMonitorToplevelState(wpeView);
+        return;
+    }
+#endif
+
+    completionHandler();
+    return;
+}
+
+void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(WPE_PLATFORM)
+    if (auto* wpeView = webkit_web_view_get_wpe_view(view)) {
+        auto* toplevel = wpe_view_get_toplevel(wpeView);
+        if (!WPE_IS_TOPLEVEL(toplevel)) {
+            completionHandler();
+            return;
+        }
+
+        monitorToplevelState(wpeView, ToplevelStateEvent::Type::Restore, WTFMove(completionHandler));
+        if (!(wpe_toplevel_get_state(toplevel) & WPE_TOPLEVEL_STATE_MAXIMIZED) || !wpe_toplevel_unmaximize(toplevel))
+            finishMonitorToplevelState(wpeView);
+        return;
+    }
+#endif
+
+    completionHandler();
+    return;
 }
 
 /**
