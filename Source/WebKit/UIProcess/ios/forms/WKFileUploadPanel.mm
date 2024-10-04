@@ -974,7 +974,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             // If the file hasn't already been imported by UIKit, we must import it into a new temporary directory ourselves
             // and leave the original intact. If it has been imported by UIKit, we must move the imported file into a new temporary
             // directory as a workaround for rdar://136776473.
-            auto [success, maybeMovedURL, temporaryURL] = [WKFileUploadPanel _moveToNewTemporaryDirectory:url fileCoordinator:retainedSelf->_uploadFileCoordinator.get() fileManager:retainedSelf->_uploadFileManager.get() asCopy:!filesImportedByUIKit];
+            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:retainedSelf->_uploadFileCoordinator.get() fileManager:retainedSelf->_uploadFileManager.get()];
 
             if (!filesImportedByUIKit)
                 [url stopAccessingSecurityScopedResource];
@@ -982,7 +982,9 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             // If the selected item was initially imported by UIKit, we have some copy of it to try to upload regardless
             // of whether or not the move operation succeeded. If the file hadn't already been imported and doing so
             // ourselves was unsuccessful, we have no copy to upload.
-            if (maybeMovedURL && (filesImportedByUIKit || success))
+            if (maybeMovedURL && filesImportedByUIKit) {
+                [maybeMovedURLs addObject:maybeMovedURL.get()];
+            } else if (maybeMovedURL && ![maybeMovedURL isEqual:url])
                 [maybeMovedURLs addObject:maybeMovedURL.get()];
 
             if (temporaryURL)
@@ -1142,7 +1144,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
                 return;
             }
 
-            auto [success, maybeMovedURL, temporaryURL] = [WKFileUploadPanel _moveToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get() asCopy:NO];
+            auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get()];
             self->_temporaryUploadedFileURLs.append(WTFMove(temporaryURL));
 
             successBlock(adoptNS([[_WKVideoFileUploadItem alloc] initWithFileURL:maybeMovedURL.get()]).get());
@@ -1173,7 +1175,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
             return;
         }
 
-        auto [success, maybeMovedURL, temporaryURL] = [WKFileUploadPanel _moveToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get() asCopy:NO];
+        auto [maybeMovedURL, temporaryURL] = [WKFileUploadPanel _copyToNewTemporaryDirectory:url fileCoordinator:_uploadFileCoordinator.get() fileManager:_uploadFileManager.get()];
         self->_temporaryUploadedFileURLs.append(WTFMove(temporaryURL));
 
         successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:maybeMovedURL.get()]).get());
@@ -1332,40 +1334,33 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
 #endif
 
-+ (TemporaryFileMoveResults)_moveToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager asCopy:(BOOL)asCopy
++ (std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>>)_copyToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager
 {
     NSError *error = nil;
     NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WKFileUploadPanel");
     if (!temporaryDirectory) {
         LOG_ERROR("WKFileUploadPanel: Failed to make temporary directory");
-        return { false, originalURL, nil };
+        return { originalURL, nil };
     }
     NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:originalURL.lastPathComponent];
     auto destinationFileURL = adoptNS([[NSURL alloc] initFileURLWithPath:filePath isDirectory:NO]);
 
-    __block TemporaryFileMoveResults results;
+    __block std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>> result;
     [fileCoordinator coordinateWritingItemAtURL:originalURL options:NSFileCoordinatorWritingForMoving error:&error byAccessor:^(NSURL *coordinatedOriginalURL) {
         NSError *error = nil;
-        BOOL didMoveOrCopy;
-
-        if (asCopy)
-            didMoveOrCopy = [fileManager copyItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error];
-        else
-            didMoveOrCopy = [fileManager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error];
-
-        if (!didMoveOrCopy || error) {
-            // If moving/copying fails, keep the original URL and our 60 second time limit for file URLs from UIKit before it is deleted. We tried our best to extend it.
-            results = { false, coordinatedOriginalURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
+        if (![fileManager moveItemAtURL:coordinatedOriginalURL toURL:destinationFileURL.get() error:&error] || error) {
+            // If moving fails, keep the original URL and our 60 second time limit before it is deleted. We tried our best to extend it.
+            result = { coordinatedOriginalURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
         } else
-            results = { true, destinationFileURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
+            result = { destinationFileURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
     }];
     if (error) {
         LOG_ERROR("WKFileUploadPanel: Failed to coordinate moving file with error %@", error);
         // If moving fails, keep the original URL and our 60 second time limit before it is deleted. We tried our best to extend it.
-        return { false, originalURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
+        return { originalURL, adoptNS([[NSURL alloc] initFileURLWithPath:temporaryDirectory isDirectory:YES]) };
     }
 
-    return results;
+    return result;
 }
 
 - (BOOL)platformSupportsPickerViewController
