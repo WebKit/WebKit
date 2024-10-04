@@ -73,7 +73,7 @@ static inline bool canReferToParentFrameEncoding(const LocalFrame* frame, const 
 void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const String& source, Document* ownerDocument)
 {
     Ref frame = *m_frame;
-    frame->checkedLoader()->stopAllLoaders();
+    frame->protectedLoader()->stopAllLoaders();
 
     // If we are in the midst of changing the frame's document, don't execute script
     // that modifies the document further:
@@ -118,7 +118,7 @@ bool DocumentWriter::begin()
 Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
 {
     Ref frame = *m_frame;
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
 
     auto useSinkDocument = [&]() {
 #if ENABLE(PDF_PLUGIN)
@@ -156,7 +156,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     Ref document = createDocument(url, documentIdentifier);
     
     Ref frame = *m_frame;
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
 
     // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
     // then replace the document with one whose parser will ignore the incoming data (bug 39323)

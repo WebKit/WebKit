@@ -678,17 +678,17 @@ void ApplicationCacheGroup::didFailLoadingManifest(ApplicationCacheResourceLoade
         cacheUpdateFailed();
         break;
     case ApplicationCacheResourceLoader::Error::NotFound:
-        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->checkedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
+        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->protectedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
         m_frame->protectedDocument()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a "_s, m_manifestLoader->resource()->response().httpStatusCode(), " response."_s));
         manifestNotFound();
         break;
     case ApplicationCacheResourceLoader::Error::NotOK:
-        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->checkedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
+        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->protectedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
         m_frame->protectedDocument()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a "_s, m_manifestLoader->resource()->response().httpStatusCode(), " response."_s));
         cacheUpdateFailed();
         break;
     case ApplicationCacheResourceLoader::Error::RedirectForbidden:
-        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->checkedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
+        InspectorInstrumentation::didFailLoading(m_frame.get(), m_frame->loader().protectedDocumentLoader().get(), *m_currentResourceIdentifier, m_frame->protectedLoader()->cancelledError(m_manifestLoader->resource()->resourceRequest()));
         m_frame->protectedDocument()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, "Application Cache manifest could not be fetched, because a redirection was attempted."_s);
         cacheUpdateFailed();
         break;

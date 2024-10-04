@@ -81,7 +81,7 @@ public:
 #endif
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
-    WEBCORE_EXPORT CheckedPtr<FrameLoader> checkedFrameLoader() const;
+    WEBCORE_EXPORT RefPtr<FrameLoader> protectedFrameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     WEBCORE_EXPORT RefPtr<DocumentLoader> protectedDocumentLoader() const;
     const ResourceRequest& originalRequest() const { return m_originalRequest; }

@@ -805,7 +805,7 @@ void Page::goToItem(Frame& mainFrame, HistoryItem& item, FrameLoadType type, Sho
     ASSERT(mainFrame.isMainFrame());
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame)) {
         if (localMainFrame->checkedHistory()->shouldStopLoadingForHistoryItem(item))
-            localMainFrame->checkedLoader()->stopAllLoadersAndCheckCompleteness();
+            localMainFrame->protectedLoader()->stopAllLoadersAndCheckCompleteness();
     }
     mainFrame.checkedHistory()->goToItem(item, type, shouldTreatAsContinuingLoad);
 }
@@ -1365,7 +1365,7 @@ void Page::setDefersLoading(bool defers)
     m_defersLoading = defers;
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-            localFrame->checkedLoader()->setDefersLoading(defers);
+            localFrame->protectedLoader()->setDefersLoading(defers);
     }
 }
 
@@ -1923,7 +1923,7 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::RestoreScrollPositionAndViewState, [] (Document& document) {
         if (RefPtr frame = document.frame())
-            frame->checkedLoader()->restoreScrollPositionAndViewStateNowIfNeeded();
+            frame->protectedLoader()->restoreScrollPositionAndViewStateNowIfNeeded();
     });
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -2610,7 +2610,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
 
     for (RefPtr frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-            localFrame->checkedLoader()->tellClientAboutPastMemoryCacheLoads();
+            localFrame->protectedLoader()->tellClientAboutPastMemoryCacheLoads();
     }
     m_hasPendingMemoryCacheLoadNotifications = false;
 }
@@ -3393,7 +3393,7 @@ void Page::addRelevantRepaintedObject(const RenderObject& object, const LayoutRe
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
         if (RefPtr frame = dynamicDowncast<LocalFrame>(mainFrame()))
-            frame->checkedLoader()->didReachLayoutMilestone(LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
+            frame->protectedLoader()->didReachLayoutMilestone(LayoutMilestone::DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
 
@@ -4458,12 +4458,12 @@ void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
-        if (localMainFrame->checkedLoader()->client().shouldEnableInAppBrowserPrivacyProtections()) {
+        if (localMainFrame->protectedLoader()->client().shouldEnableInAppBrowserPrivacyProtections()) {
             if (RefPtr document = localMainFrame->document())
                 document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
             return;
         }
-        localMainFrame->checkedLoader()->client().notifyPageOfAppBoundBehavior();
+        localMainFrame->protectedLoader()->client().notifyPageOfAppBoundBehavior();
     }
 #endif
 
@@ -4686,7 +4686,7 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     if (!localMainFrame)
         return;
     // FIXME: <rdar://117922051> Investigate if the correct origins are set here with site isolation enabled.
-    localMainFrame->checkedLoader()->initForSynthesizedDocument({ });
+    localMainFrame->protectedLoader()->initForSynthesizedDocument({ });
     Ref document = Document::createNonRenderedPlaceholder(*localMainFrame, scriptURL);
     document->createDOMWindow();
     document->storageBlockingStateDidChange();
@@ -4696,7 +4696,7 @@ void Page::setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& 
     document->setSiteForCookies(originAsURL);
     document->setFirstPartyForCookies(originAsURL);
 
-    if (RefPtr documentLoader = localMainFrame->checkedLoader()->documentLoader())
+    if (RefPtr documentLoader = localMainFrame->protectedLoader()->documentLoader())
         documentLoader->setAdvancedPrivacyProtections(advancedPrivacyProtections);
 
     if (document->settings().storageBlockingPolicy() != StorageBlockingPolicy::BlockThirdParty)

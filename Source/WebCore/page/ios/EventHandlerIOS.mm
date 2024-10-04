@@ -473,7 +473,7 @@ void EventHandler::mouseDown(WebEvent *event)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // FIXME: Why is this here? EventHandler::handleMousePressEvent() calls it.
-    protectedFrame()->checkedLoader()->resetMultipleFormSubmissionProtection();
+    protectedFrame()->protectedLoader()->resetMultipleFormSubmissionProtection();
 
     m_mouseDownView = nil;
 

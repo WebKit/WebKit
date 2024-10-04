@@ -352,7 +352,7 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<Plat
 {
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
         if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
-            localMainFrame->checkedLoader()->client().prefetchDNS(result.absoluteLinkURL().host().toString());
+            localMainFrame->protectedLoader()->client().prefetchDNS(result.absoluteLinkURL().host().toString());
     }
 
     String toolTip;

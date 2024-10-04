@@ -163,8 +163,8 @@ public:
 
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
-    CheckedRef<const FrameLoader> checkedLoader() const;
-    CheckedRef<FrameLoader> checkedLoader();
+    Ref<const FrameLoader> protectedLoader() const;
+    Ref<FrameLoader> protectedLoader();
 
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }

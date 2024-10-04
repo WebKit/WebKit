@@ -295,7 +295,7 @@ bool DragController::performDragOperation(DragData&& dragData)
     FrameLoadRequest frameLoadRequest { *localMainFrame, resourceRequest };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
-    localMainFrame->checkedLoader()->load(WTFMove(frameLoadRequest));
+    localMainFrame->protectedLoader()->load(WTFMove(frameLoadRequest));
     return true;
 }
 

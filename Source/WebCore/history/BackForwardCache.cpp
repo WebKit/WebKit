@@ -84,7 +84,7 @@ static inline void logBackForwardCacheFailureDiagnosticMessage(Page* page, const
 static bool canCacheFrame(LocalFrame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
 {
     PCLOG("+---"_s);
-    CheckedRef frameLoader = frame.loader();
+    Ref frameLoader = frame.loader();
 
     // Prevent page caching if a subframe is still in provisional load stage.
     // We only do this check for subframes because the main frame is reused when navigating to a new page.
@@ -462,7 +462,7 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
     if (!localMainFrame)
         return nullptr;
 
-    localMainFrame->checkedLoader()->stopForBackForwardCache();
+    localMainFrame->protectedLoader()->stopForBackForwardCache();
 
     if (forceSuspension == ForceSuspension::No && !canCache(page))
         return nullptr;
@@ -483,7 +483,7 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
 
     // Stop all loads again before checking if we can still cache the page after firing the pagehide
     // event, since the page may have started ping loads in its pagehide event handler.
-    localMainFrame->checkedLoader()->stopForBackForwardCache();
+    localMainFrame->protectedLoader()->stopForBackForwardCache();
 
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.

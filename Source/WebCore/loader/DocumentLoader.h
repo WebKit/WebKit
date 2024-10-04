@@ -218,7 +218,7 @@ public:
     WEBCORE_EXPORT virtual void detachFromFrame(LoadWillContinueInAnotherProcess);
 
     WEBCORE_EXPORT FrameLoader* frameLoader() const;
-    CheckedPtr<FrameLoader> checkedFrameLoader() const;
+    RefPtr<FrameLoader> protectedFrameLoader() const;
     WEBCORE_EXPORT SubresourceLoader* mainResourceLoader() const;
     WEBCORE_EXPORT RefPtr<FragmentedSharedBuffer> mainResourceData() const;
     

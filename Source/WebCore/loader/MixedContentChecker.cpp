@@ -133,7 +133,7 @@ static bool frameAndAncestorsCanDisplayInsecureContent(LocalFrame& frame, MixedC
 
     if (allowed) {
         document->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
-        frame.checkedLoader()->client().didDisplayInsecureContent();
+        frame.protectedLoader()->client().didDisplayInsecureContent();
     }
 
     return allowed;
@@ -157,7 +157,7 @@ bool MixedContentChecker::frameAndAncestorsCanRunInsecureContent(LocalFrame& fra
 
     if (allowed) {
         document->setFoundMixedContent(SecurityContext::MixedContentType::Active);
-        frame.checkedLoader()->client().didRunInsecureContent(securityOrigin);
+        frame.protectedLoader()->client().didRunInsecureContent(securityOrigin);
     }
 
     return allowed;
@@ -241,7 +241,7 @@ void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, const URL&
     auto message = makeString("The page at "_s, frame.document()->url().stringCenterEllipsizedToLength(), " contains a form which targets an insecure URL "_s, url.stringCenterEllipsizedToLength(), ".\n"_s);
     frame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, message);
 
-    frame.checkedLoader()->client().didDisplayInsecureContent();
+    frame.protectedLoader()->client().didDisplayInsecureContent();
 }
 
 } // namespace WebCore

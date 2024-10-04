@@ -276,7 +276,7 @@ static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event,
         return;
     newPage->chrome().show();
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(newPage->mainFrame()))
-        localMainFrame->checkedLoader()->loadFrameRequest(WTFMove(frameLoadRequest), event, { });
+        localMainFrame->protectedLoader()->loadFrameRequest(WTFMove(frameLoadRequest), event, { });
 }
 
 #if PLATFORM(GTK)
@@ -425,10 +425,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             page->checkedBackForward()->goBackOrForward(1);
         break;
     case ContextMenuItemTagStop:
-        frame->checkedLoader()->stop();
+        frame->protectedLoader()->stop();
         break;
     case ContextMenuItemTagReload:
-        frame->checkedLoader()->reload();
+        frame->protectedLoader()->reload();
         break;
     case ContextMenuItemTagCut:
         frame->editor().command("Cut"_s).execute();
@@ -1077,7 +1077,7 @@ void ContextMenuController::populate()
     m_context.setSelectedText(selectedText);
 
     if (!m_context.hitTestResult().isContentEditable()) {
-        CheckedRef loader = frame->loader();
+        Ref loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (loader->client().canHandleRequest(ResourceRequest(linkURL))) {
@@ -1315,7 +1315,7 @@ void ContextMenuController::populate()
             }
         }
 
-        CheckedRef loader = frame->loader();
+        Ref loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
         if (!linkURL.isEmpty()) {
             if (loader->client().canHandleRequest(ResourceRequest(linkURL))) {

@@ -486,7 +486,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
 
         localMainFrame->setView(LocalFrameView::create(*localMainFrame));
         localMainFrame->init();
-        CheckedRef loader = localMainFrame->loader();
+        Ref loader = localMainFrame->loader();
         ASSERT(localMainFrame->effectiveSandboxFlags() == SandboxFlags::all());
 
         RefPtr frameView = localMainFrame->view();
