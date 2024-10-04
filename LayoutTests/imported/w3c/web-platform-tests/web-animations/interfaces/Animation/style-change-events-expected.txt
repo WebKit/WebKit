@@ -1,5 +1,5 @@
 
-FAIL All property keys are recognized assert_in_array: Test property 'progress' should be one of the properties on  Animation value "progress" not in array ["id", "effect", "timeline", "startTime", "currentTime", "rangeStart", "rangeEnd", "playbackRate", "frameRate", "playState", "replaceState", "pending", "onfinish", "oncancel", "onremove", "ready", "finished", "cancel", "finish", "play", "pause", "updatePlaybackRate", "reverse", "persist", "commitStyles", "Animation constructor"]
+PASS All property keys are recognized
 PASS Animation.id produces expected style change events
 PASS Animation.effect produces expected style change events
 PASS Animation.timeline produces expected style change events
@@ -8,6 +8,7 @@ PASS Animation.currentTime produces expected style change events
 PASS Animation.rangeStart produces expected style change events
 PASS Animation.rangeEnd produces expected style change events
 PASS Animation.playbackRate produces expected style change events
+PASS Animation.progress produces expected style change events
 FAIL Animation.frameRate produces expected style change events assert_own_property: Should have a test for 'frameRate' property expected property "frameRate" missing
 PASS Animation.playState produces expected style change events
 PASS Animation.replaceState produces expected style change events

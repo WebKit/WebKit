@@ -123,6 +123,7 @@ public:
     void setStartTime(std::optional<CSSNumberishTime>);
     virtual std::optional<CSSNumberishTime> bindingsCurrentTime() const { return currentTime(); };
     virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberishTime>&);
+    std::optional<double> progress() const;
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
