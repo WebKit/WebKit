@@ -32,6 +32,19 @@
 
 namespace WebCore {
 
+CSSNumberishTime::CSSNumberishTime(std::optional<Seconds> time, std::optional<double> percentage)
+{
+    ASSERT(time || percentage);
+    ASSERT(!!time != !!percentage);
+    if (time) {
+        m_type = Type::Time;
+        m_value = time->seconds();
+    } else {
+        m_type = Type::Percentage;
+        m_value = *percentage;
+    }
+}
+
 CSSNumberishTime::CSSNumberishTime(const Seconds& value)
     : m_type(Type::Time)
     , m_value(value.seconds())
@@ -93,6 +106,24 @@ bool CSSNumberishTime::isValid() const
     return m_type == Type::Time;
 }
 
+bool CSSNumberishTime::isInfinity() const
+{
+    return std::isinf(m_value);
+}
+
+bool CSSNumberishTime::isZero() const
+{
+    return !m_value;
+}
+
+bool CSSNumberishTime::approximatelyEqualTo(const CSSNumberishTime& other) const
+{
+    ASSERT(m_type == other.m_type);
+    if (m_type == Type::Time)
+        return std::abs(time()->microseconds() - other.time()->microseconds()) < timeEpsilon.microseconds();
+    return m_value == other.m_value;
+}
+
 CSSNumberishTime CSSNumberishTime::operator+(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);
@@ -103,6 +134,12 @@ CSSNumberishTime CSSNumberishTime::operator-(const CSSNumberishTime& other) cons
 {
     ASSERT(m_type == other.m_type);
     return { m_type, m_value - other.m_value };
+}
+
+double CSSNumberishTime::operator/(const CSSNumberishTime& other) const
+{
+    ASSERT(m_type == other.m_type);
+    return m_value / other.m_value;
 }
 
 CSSNumberishTime& CSSNumberishTime::operator+=(const CSSNumberishTime& other)

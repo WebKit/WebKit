@@ -52,13 +52,13 @@ struct AnimationEffectTiming {
     double iterations { 1 };
     Seconds delay { 0_s };
     Seconds endDelay { 0_s };
-    Seconds iterationDuration { 0_s };
-    Seconds activeDuration { 0_s };
-    Seconds endTime { 0_s };
+    CSSNumberishTime iterationDuration { 0_s };
+    CSSNumberishTime activeDuration { 0_s };
+    CSSNumberishTime endTime { 0_s };
 
     void updateComputedProperties();
-    BasicEffectTiming getBasicTiming(std::optional<Seconds> localTime, double playbackRate) const;
-    ResolvedEffectTiming resolve(std::optional<Seconds> localTime, double playbackRate) const;
+    BasicEffectTiming getBasicTiming(std::optional<CSSNumberishTime> localTime, double playbackRate) const;
+    ResolvedEffectTiming resolve(std::optional<CSSNumberishTime> localTime, double playbackRate) const;
 };
 
 } // namespace WebCore

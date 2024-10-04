@@ -6303,6 +6303,11 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::FilterOperations backdropFilter;
 }
 
+class WebCore::CSSNumberishTime {
+    std::optional<Seconds> time();
+    std::optional<double> percentage();
+};
+
 struct WebCore::AnimationEffectTiming {
     RefPtr<WebCore::TimingFunction> timingFunction;
     WebCore::FillMode fill;
@@ -6311,9 +6316,9 @@ struct WebCore::AnimationEffectTiming {
     double iterations;
     Seconds delay;
     Seconds endDelay;
-    Seconds iterationDuration;
-    Seconds activeDuration;
-    Seconds endTime;
+    WebCore::CSSNumberishTime iterationDuration;
+    WebCore::CSSNumberishTime activeDuration;
+    WebCore::CSSNumberishTime endTime;
 };
 
 header: <WebCore/AcceleratedEffect.h>

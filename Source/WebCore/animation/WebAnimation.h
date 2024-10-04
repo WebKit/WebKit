@@ -178,6 +178,7 @@ protected:
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
     virtual void animationDidFinish();
+    CSSNumberishTime zeroTime() const;
 
 private:
     enum class DidSeek : bool { No, Yes };
@@ -188,7 +189,7 @@ private:
 
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
-    Seconds effectEndTime() const;
+    CSSNumberishTime effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
     std::optional<CSSNumberishTime> currentTime(RespectHoldTime, std::optional<CSSNumberishTime> = std::nullopt) const;

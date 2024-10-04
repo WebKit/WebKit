@@ -329,7 +329,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
             auto iterationBoundary = iteration;
             if (m_previousIteration > iteration)
                 iterationBoundary++;
-            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : 0_s;
+            auto elapsedTime = animationEffect ? animationEffect->iterationDuration() * (iterationBoundary - animationEffect->iterationStart()) : zeroTime();
             enqueueDOMEvent(eventNames().animationiterationEvent, elapsedTime, effectTimeAtIteration(iteration));
         } else if (wasActive && isAfter)
             enqueueDOMEvent(eventNames().animationendEvent, intervalEnd, effectTimeAtEnd());

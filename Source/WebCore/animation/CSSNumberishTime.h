@@ -33,17 +33,22 @@ namespace WebCore {
 class CSSNumberishTime {
 public:
     CSSNumberishTime() = default;
+    WEBCORE_EXPORT CSSNumberishTime(std::optional<Seconds>, std::optional<double>);
 
     CSSNumberishTime(const Seconds&);
     CSSNumberishTime(const CSSNumberish&);
 
-    std::optional<Seconds> time() const;
-    std::optional<double> percentage() const;
+    WEBCORE_EXPORT std::optional<Seconds> time() const;
+    WEBCORE_EXPORT std::optional<double> percentage() const;
 
     bool isValid() const;
+    bool isInfinity() const;
+    bool isZero() const;
+    bool approximatelyEqualTo(const CSSNumberishTime&) const;
 
     CSSNumberishTime operator+(const CSSNumberishTime&) const;
     CSSNumberishTime operator-(const CSSNumberishTime&) const;
+    double operator/(const CSSNumberishTime&) const;
     CSSNumberishTime& operator+=(const CSSNumberishTime&);
     CSSNumberishTime& operator-=(const CSSNumberishTime&);
     bool operator<(const CSSNumberishTime&) const;
