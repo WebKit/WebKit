@@ -385,6 +385,7 @@ public:
     {
         return m_customPlatformData.get();
     }
+    inline RefPtr<const FontCustomPlatformData> protectedCustomPlatformData() const; // Defined in FontCustomPlatformData.h
 
     WEBCORE_EXPORT Attributes attributes() const;
 

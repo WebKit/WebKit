@@ -111,4 +111,9 @@ public:
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 
+inline RefPtr<const FontCustomPlatformData> FontPlatformData::protectedCustomPlatformData() const
+{
+    return m_customPlatformData.get();
+}
+
 } // namespace WebCore
