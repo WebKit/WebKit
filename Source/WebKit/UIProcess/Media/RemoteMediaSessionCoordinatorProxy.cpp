@@ -74,7 +74,8 @@ RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
 
 std::optional<SharedPreferencesForWebProcess> RemoteMediaSessionCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
-    return m_webPageProxy->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_webPageProxy->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandler&& completionHandler)

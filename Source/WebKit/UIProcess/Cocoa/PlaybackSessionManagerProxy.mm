@@ -1044,7 +1044,8 @@ std::optional<SharedPreferencesForWebProcess> PlaybackSessionManagerProxy::share
     if (!m_page)
         return std::nullopt;
 
-    return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -189,7 +189,8 @@ std::optional<SharedPreferencesForWebProcess> RemoteCDMInstanceSessionProxy::sha
     if (!m_cdm)
         return std::nullopt;
 
-    return m_cdm->sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_cdm->sharedPreferencesForWebProcess();
 }
 
 RefPtr<RemoteCDMProxy> RemoteCDMInstanceSessionProxy::protectedCdm() const

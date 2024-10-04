@@ -1704,7 +1704,8 @@ WebProcessProxy* WebProcessPool::webProcessProxyFromConnection(const IPC::Connec
 
 std::optional<SharedPreferencesForWebProcess> WebProcessPool::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    return webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
 void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
