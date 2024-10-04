@@ -2330,17 +2330,6 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newPromise(JSC::BytecodeGenera
     return finalDestination.get();
 }
 
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newIteratorHelper(BytecodeGenerator& generator, RegisterID* dst)
-{
-    ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> generatorRegister = generator.emitNode(node);
-    node = node->m_next;
-    RefPtr<RegisterID> underlyingIterator = generator.emitNode(node);
-    ASSERT(!node->m_next);
-
-    return generator.emitNewIteratorHelper(generator.finalDestination(dst), generatorRegister.get(), underlyingIterator.get());
-}
-
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_iteratorGenericClose(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

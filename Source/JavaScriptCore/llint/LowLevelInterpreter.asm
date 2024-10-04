@@ -2078,7 +2078,6 @@ slowPathOp(typeof_is_object)
 slowPathOp(unreachable)
 slowPathOp(new_promise)
 slowPathOp(new_generator)
-slowPathOp(new_iterator_helper)
 
 macro llintSlowPathOp(opcodeName)
     llintOp(op_%opcodeName%, unused, macro (unused, unused, dispatch)

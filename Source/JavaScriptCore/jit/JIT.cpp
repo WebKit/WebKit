@@ -270,7 +270,6 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(create_generator)
         DEFINE_SLOW_OP(create_async_generator)
         DEFINE_SLOW_OP(new_generator)
-        DEFINE_SLOW_OP(new_iterator_helper)
 
         DEFINE_OP(op_add)
         DEFINE_OP(op_bitnot)

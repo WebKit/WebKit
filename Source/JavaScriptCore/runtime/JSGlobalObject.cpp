@@ -1562,6 +1562,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "wrapForValidIteratorCreate"_s, wrapForValidIteratorPrivateFuncCreate, ImplementationVisibility::Private));
         });
+
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::iteratorHelperCreate)].initLater([](const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "iteratorHelperCreate"_s, iteratorHelperPrivateFuncCreate, ImplementationVisibility::Private, IteratorHelperCreateIntrinsic));
+        });
     }
 
     // Map and Set helpers.

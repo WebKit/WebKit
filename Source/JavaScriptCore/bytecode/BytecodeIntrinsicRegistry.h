@@ -113,7 +113,6 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSize) \
     macro(newArrayWithSpecies) \
     macro(newPromise) \
-    macro(newIteratorHelper) \
     macro(iteratorGenericClose) \
     macro(iteratorGenericNext) \
     macro(ifAbruptCloseIterator) \

@@ -52,7 +52,7 @@ function map(mapper)
         }
     })();
 
-    return @newIteratorHelper(generator, iterated);
+    return @iteratorHelperCreate(generator, iterated);
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.filter
@@ -83,7 +83,7 @@ function filter(predicate)
         }
     })();
 
-    return @newIteratorHelper(generator, iterated);
+    return @iteratorHelperCreate(generator, iterated);
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.take
@@ -127,7 +127,7 @@ function take(limit)
         }
     })();
 
-    return @newIteratorHelper(generator, iterated);
+    return @iteratorHelperCreate(generator, iterated);
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.drop
@@ -168,7 +168,7 @@ function drop(limit)
         }
     })();
 
-    return @newIteratorHelper(generator, iterated);
+    return @iteratorHelperCreate(generator, iterated);
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.flatmap
@@ -201,7 +201,7 @@ function flatMap(mapper)
         }
     })();
 
-    return @newIteratorHelper(generator, iterated);
+    return @iteratorHelperCreate(generator, iterated);
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some

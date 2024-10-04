@@ -269,15 +269,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_generator)
     RETURN(result);
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_iterator_helper)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpNewIteratorHelper>();
-    JSObject* generator = asObject(GET(bytecode.m_generator).jsValue());
-    JSObject* underlyingIterator = asObject(GET(bytecode.m_underlyingIterator).jsValue());
-    RETURN(JSIteratorHelper::create(vm, globalObject->iteratorHelperStructure(), generator, underlyingIterator));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
 {
     BEGIN();
