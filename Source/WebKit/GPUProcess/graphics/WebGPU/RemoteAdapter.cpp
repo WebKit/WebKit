@@ -76,7 +76,7 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = protectedObjectHeap(), streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protectedGPU()] (RefPtr<WebCore::WebGPU::Device>&& devicePtr) mutable {
+    Ref { m_backing }->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = protectedObjectHeap(), streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get(), gpu = protectedGPU()] (RefPtr<WebCore::WebGPU::Device>&& devicePtr) mutable {
         if (!devicePtr.get() || !gpuConnectionToWebProcess) {
             callback({ }, { });
             return;

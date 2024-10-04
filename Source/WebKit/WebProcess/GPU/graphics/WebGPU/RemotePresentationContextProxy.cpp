@@ -49,7 +49,7 @@ RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
 
 bool RemotePresentationContextProxy::configure(const WebCore::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = m_convertToBackingContext->convertToBacking(canvasConfiguration);
+    auto convertedConfiguration = protectedConvertToBackingContext()->convertToBacking(canvasConfiguration);
     if (!convertedConfiguration)
         return false;
 
@@ -72,7 +72,7 @@ RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTextu
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture = RemoteTextureProxy::create(protectedRoot(), m_convertToBackingContext, identifier);
+        m_currentTexture = RemoteTextureProxy::create(protectedRoot(), protectedConvertToBackingContext(), identifier);
     }
 
     return m_currentTexture;
@@ -90,6 +90,11 @@ void RemotePresentationContextProxy::present(bool presentToGPUProcess)
 RefPtr<WebCore::NativeImage> RemotePresentationContextProxy::getMetalTextureAsNativeImage(uint32_t, bool&)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+Ref<ConvertToBackingContext> RemotePresentationContextProxy::protectedConvertToBackingContext() const
+{
+    return m_convertToBackingContext;
 }
 
 } // namespace WebKit::WebGPU
