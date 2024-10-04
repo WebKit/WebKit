@@ -235,7 +235,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
         item->estimatedLength = item->bytesReceived * 2;
     }
 
-    int numPendingOrLoadingRequests = frame->loader().numPendingOrLoadingRequests(true);
+    int numPendingOrLoadingRequests = frame->protectedLoader()->numPendingOrLoadingRequests(true);
     estimatedBytesForPendingRequests = static_cast<long long>(progressItemDefaultEstimatedLength) * numPendingOrLoadingRequests;
     remainingBytes = ((m_totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - m_totalBytesReceived);
     if (remainingBytes > 0)  // Prevent divide by 0.
