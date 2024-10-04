@@ -132,6 +132,8 @@ public:
 
     virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const { return false; }
 
+    virtual void dumpProperties(const GraphicsLayer*, TextStream&, OptionSet<LayerTreeAsTextOptions>) const { }
+
     virtual void logFilledVisibleFreshTile(unsigned) { };
 
     virtual TransformationMatrix transformMatrixForProperty(AnimatedProperty) const { return { }; }

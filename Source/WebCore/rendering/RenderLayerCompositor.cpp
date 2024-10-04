@@ -2786,18 +2786,21 @@ void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
     page().triggerRenderingUpdateForTesting();
 }
 
-String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options)
+String RenderLayerCompositor::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent)
 {
     LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " layerTreeAsText");
 
     updateCompositingForLayerTreeAsTextDump();
 
-    if (!m_rootContentsLayer)
+    // Exclude any implicitly created layers that wrap the root contents layer, unless the caller explicitly requested the true root to be included.
+    RefPtr dumpRootLayer = (options & LayerTreeAsTextOptions::IncludeRootLayers) ? rootGraphicsLayer() : m_rootContentsLayer;
+
+    if (!dumpRootLayer)
         return String();
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    String layerTreeText = m_rootContentsLayer->layerTreeAsText(options);
+    String layerTreeText = dumpRootLayer->layerTreeAsText(options, baseIndent);
 
     // Dump an empty layer tree only if the only composited layer is the main frame's tiled backing,
     // so that tests expecting us to drop out of accelerated compositing when there are no layers succeed.

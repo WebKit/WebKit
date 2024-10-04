@@ -15063,6 +15063,16 @@ void WebPageProxy::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, 
     completionHandler(WTFMove(result));
 }
 
+void WebPageProxy::layerTreeAsTextForTesting(FrameIdentifier frameID, size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::LayerTreeAsTextForTesting(frameID, baseIndent, options));
+    if (!sendResult.succeeded())
+        return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed"_s);
+
+    auto [result] = sendResult.takeReply();
+    completionHandler(WTFMove(result));
+}
+
 void WebPageProxy::frameTextForTesting(WebCore::FrameIdentifier frameID, CompletionHandler<void(String&&)>&& completionHandler)
 {
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::FrameTextForTesting(frameID));

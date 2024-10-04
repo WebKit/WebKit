@@ -653,7 +653,7 @@ public:
 
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
+    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0) const;
 
     // For testing.
     virtual String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }

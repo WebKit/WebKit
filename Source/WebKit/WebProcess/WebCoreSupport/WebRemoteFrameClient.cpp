@@ -95,6 +95,19 @@ String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<Rende
     return result;
 }
 
+String WebRemoteFrameClient::layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options)
+{
+    RefPtr page = m_frame->page();
+    if (!page)
+        return "Test Error - Missing page"_s;
+    options.add(LayerTreeAsTextOptions::IncludeRootLayers);
+    auto sendResult = page->sendSync(Messages::WebPageProxy::LayerTreeAsTextForTesting(m_frame->frameID(), baseIndent, options));
+    if (!sendResult.succeeded())
+        return "Test Error - sending WebPageProxy::LayerTreeAsTextForTesting failed"_s;
+    auto [result] = sendResult.takeReply();
+    return result;
+}
+
 void WebRemoteFrameClient::unbindRemoteAccessibilityFrames(int processIdentifier)
 {
 #if PLATFORM(COCOA)

@@ -47,6 +47,7 @@ public:
     virtual void postMessageToRemote(FrameIdentifier source, const String& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts&) = 0;
     virtual void changeLocation(FrameLoadRequest&&) = 0;
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
+    virtual String layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions>) = 0;
     virtual void closePage() = 0;
     virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&) = 0;
     virtual void updateRemoteFrameAccessibilityOffset(FrameIdentifier target, IntPoint) = 0;

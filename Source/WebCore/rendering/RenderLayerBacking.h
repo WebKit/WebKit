@@ -259,6 +259,8 @@ public:
 
     TransformationMatrix transformMatrixForProperty(AnimatedProperty) const final;
 
+    void dumpProperties(const GraphicsLayer*, TextStream&, OptionSet<LayerTreeAsTextOptions>) const final;
+
 #if PLATFORM(IOS_FAMILY)
     bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
 #endif

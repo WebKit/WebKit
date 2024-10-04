@@ -58,6 +58,7 @@
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
@@ -4430,6 +4431,19 @@ void RenderLayerBacking::markFrontBufferVolatileForTesting()
 {
     if (RefPtr graphicsLayer = m_graphicsLayer)
         graphicsLayer->markFrontBufferVolatileForTesting();
+}
+
+void RenderLayerBacking::dumpProperties(const GraphicsLayer* layer, TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
+{
+    if (!is<RenderWidget>(renderer()))
+        return;
+
+    // If this is the leaf layer for a RemoteFrame, then collect layers from the frame's process.
+    if (auto* remoteFrame = downcast<RenderWidget>(renderer()).remoteFrame(); remoteFrame && layer->children().isEmpty()) {
+        ts << indent << "(children 1\n"_s;
+        ts << remoteFrame->client().layerTreeAsText(ts.indent() + 1, options);
+        ts << indent << ")\n"_s;
+    }
 }
 
 } // namespace WebCore

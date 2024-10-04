@@ -328,7 +328,7 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { });
+    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0);
     WEBCORE_EXPORT std::optional<String> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
     float deviceScaleFactor() const override;

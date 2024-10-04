@@ -6471,6 +6471,25 @@ header: <WebCore/RenderTreeAsText.h>
     ShowLayoutState
 };
 
+header: <WebCore/LayerTreeAsTextOptions.h>
+[OptionSet] enum class WebCore::LayerTreeAsTextOptions : uint16_t {
+    Debug,
+    IncludeVisibleRects
+    IncludeTileCaches,
+    IncludeRepaintRects,
+    IncludePaintingPhases,
+    IncludeContentLayers,
+    IncludePageOverlayLayers,
+    IncludeAcceleratesDrawing,
+    IncludeClipping,
+    IncludeBackingStoreAttached,
+    IncludeRootLayerProperties,
+    IncludeEventRegion,
+    IncludeExtendedColor,
+    IncludeDeviceScale,
+    IncludeRootLayers,
+};
+
 header: <WebCore/TextExtractionTypes.h>
 [CustomHeader] struct WebCore::TextExtraction::Editable {
     String label;

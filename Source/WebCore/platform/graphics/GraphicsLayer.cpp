@@ -1075,6 +1075,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
             ts << indent << ")\n"_s;
         }
     }
+
+    client().dumpProperties(this, ts, options);
 }
 
 TextStream& operator<<(TextStream& ts, const Vector<PlatformLayerIdentifier>& layers)
@@ -1112,9 +1114,10 @@ TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& cu
     return ts;
 }
 
-String GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options) const
+String GraphicsLayer::layerTreeAsText(OptionSet<LayerTreeAsTextOptions> options, uint32_t baseIndent) const
 {
     TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    ts.setIndent(baseIndent);
 
     dumpLayer(ts, options);
     return ts.release();

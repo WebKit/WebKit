@@ -44,6 +44,7 @@ enum class LayerTreeAsTextOptions : uint16_t {
     IncludeEventRegion           = 1 << 11,
     IncludeExtendedColor         = 1 << 12,
     IncludeDeviceScale           = 1 << 13,
+    IncludeRootLayers            = 1 << 14,
 };
 
 static constexpr OptionSet<LayerTreeAsTextOptions> AllLayerTreeAsTextOptions = {

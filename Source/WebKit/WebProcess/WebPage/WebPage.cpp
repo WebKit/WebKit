@@ -271,6 +271,7 @@
 #include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderVideo.h>
@@ -9666,6 +9667,31 @@ void WebPage::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_
     auto ts = WebCore::createTextStream(*renderer);
     ts.setIndent(baseIndent);
     WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
+    completionHandler(ts.release());
+}
+
+void WebPage::layerTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing in web process"_s);
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
+    }
+
+    auto* renderer = coreLocalFrame->contentRenderer();
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
+    }
+
+    auto ts = WebCore::createTextStream(*renderer);
+    ts << coreLocalFrame->contentRenderer()->compositor().layerTreeAsText(options, baseIndent);
     completionHandler(ts.release());
 }
 
