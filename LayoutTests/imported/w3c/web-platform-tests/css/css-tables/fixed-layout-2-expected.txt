@@ -1,20 +1,56 @@
 Fixed Layout
 
-Checks whether fixed layout is implemented properly (width is not definite)
+Checks whether fixed layout is implemented properly
 
-This should be a 100px-wide blue square:
-Table-layout:fixed does not apply to width:auto tables
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:10px tables
 
-This should be a 100px-wide blue square:
-Table-layout:fixed does not apply to width:max-content tables
+10px
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:100% tables
 
-This should be a 100px-wide blue square:
-Table-layout:fixed does apply to width:min-content/fit-content tables
+100%
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc(10px + 100%) tables
 
+calc(10px + 100%)
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:auto tables
 
-PASS Table-layout:fixed is not applied when width is auto
-PASS Table-layout:fixed reports fixed when width is auto
-PASS Table-layout:fixed is not applied when width is max-content
-PASS Table-layout:fixed reports fixed when width is max-content
-FAIL Table-layout:fixed is applied when width is min-content assert_equals: expected 100 but got 0
+auto
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:min-content tables
+
+min-content
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:max-content tables
+
+max-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:fit-content tables
+
+fit-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:-webkit-fill-available tables
+
+-webkit-fill-available
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:intrinsic tables
+
+intrinsic
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:min-intrinsic tables
+
+min-intrinsic
+
+PASS 10px
+PASS 100%
+PASS calc(10px + 100%)
+PASS auto
+PASS min-content
+PASS max-content
+PASS fit-content
+PASS -webkit-fill-available
+PASS intrinsic
+PASS min-intrinsic
 
