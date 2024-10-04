@@ -296,6 +296,16 @@ ArgumentValueList computeCCallArguments(Procedure& procedure, B3::BasicBlock* bl
 
     for (auto type : types) {
         argUnderlyingCounts.append(underlyingArgs.size());
+#if CPU(ARM_THUMB2)
+        if (type == Int64) {
+            // Int64 arguments are passed in even-based register pairs on ARMv7.
+            if ((gpArgumentCount < 4) && (gpArgumentCount % 2))
+                ++gpArgumentCount;
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            continue;
+        }
+#endif
         marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, type);
     }
 
