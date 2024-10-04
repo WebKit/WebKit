@@ -29,6 +29,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RetainReleaseSwift.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakPtr.h>
@@ -84,7 +85,7 @@ public:
     void writeTimestamp(QuerySet&, uint32_t queryIndex);
     void setLabel(String&&);
 
-    Device& device() const { return m_device; }
+    Device& device() const SWIFT_RETURNS_INDEPENDENT_VALUE { return m_device; }
 
     bool isValid() const { return m_commandBuffer; }
     void lock(bool);
@@ -110,13 +111,14 @@ public:
     void addTexture(const Texture&);
     id<MTLCommandBuffer> commandBuffer() const;
     void setExistingEncoder(id<MTLCommandEncoder>);
+    void generateInvalidEncoderStateError();
+    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
 
     NSString* errorValidatingCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     NSString* validateFinishError() const;
     bool validatePopDebugGroup() const;
     NSString* errorValidatingComputePassDescriptor(const WGPUComputePassDescriptor&) const;
@@ -149,6 +151,16 @@ private:
     id<MTLSharedEvent> m_sharedEvent { nil };
     uint64_t m_sharedEventSignalValue { 0 };
     const Ref<Device> m_device;
-};
+} SWIFT_SHARED_REFERENCE(retainCommandEncoder, releaseCommandEncoder);
 
 } // namespace WebGPU
+
+inline void retainCommandEncoder(WebGPU::CommandEncoder* obj)
+{
+    WTF::retainRefCounted(obj);
+}
+
+inline void releaseCommandEncoder(WebGPU::CommandEncoder* obj)
+{
+    WTF::releaseRefCounted(obj);
+}

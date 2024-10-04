@@ -123,7 +123,7 @@ public:
     const HardwareCapabilities::BaseCapabilities& baseCapabilities() const { return m_capabilities.baseCapabilities; }
 
     id<MTLDevice> device() const { return m_device; }
-
+    void generateAValidationError(NSString * message);
     void generateAValidationError(String&& message);
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);

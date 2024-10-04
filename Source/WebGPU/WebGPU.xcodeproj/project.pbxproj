@@ -137,6 +137,9 @@
 		941C1EE62CA33255004D4220 /* Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9C273A426D0095F8D5 /* Queue.h */; };
 		941C1EE72CA46829004D4220 /* Instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA0273A426D0095F8D5 /* Instance.h */; };
 		941C64B72CAB4A0700A63214 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9B273A426D0095F8D5 /* Device.h */; };
+		94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */; };
+		94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94200C502CADBD6B00484401 /* CommandEncoder.swift */; };
+		94200C522CADBE5200484401 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
 		9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9478714B2C98D314003DB695 /* WebGPUSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
@@ -250,7 +253,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		1CA5B4EF2A6F28C400E5F297 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -259,7 +262,7 @@
 		};
 		97FA1A7D29C085740052D650 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -452,6 +455,7 @@
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 		941C1EE42CA328EE004D4220 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		94200C502CADBD6B00484401 /* CommandEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandEncoder.swift; sourceTree = "<group>"; };
 		947871492C98CEC6003DB695 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		9478714B2C98D314003DB695 /* WebGPUSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwift.h; sourceTree = "<group>"; };
 		94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwiftInternal.h; sourceTree = "<group>"; };
@@ -611,6 +615,7 @@
 				1C5ACAE2273A55CD0095F8D5 /* CommandBuffer.mm */,
 				1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */,
 				1C5ACAAB273A426D0095F8D5 /* CommandEncoder.mm */,
+				94200C502CADBD6B00484401 /* CommandEncoder.swift */,
 				1C582FF827E04131009B40F0 /* CommandsMixin.h */,
 				1C582FF727E04131009B40F0 /* CommandsMixin.mm */,
 				1C5ACAAA273A426D0095F8D5 /* ComputePassEncoder.h */,
@@ -891,6 +896,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
+				94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */,
+				94200C522CADBE5200484401 /* CommandsMixin.h in Headers */,
 				941C64B72CAB4A0700A63214 /* Device.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
@@ -1193,6 +1200,7 @@
 				9478714A2C98CECB003DB695 /* Buffer.swift in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
+				94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */,
 				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,

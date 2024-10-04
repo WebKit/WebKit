@@ -35,6 +35,9 @@
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
 #import "Texture.h"
+#if ENABLE(WEBGPU_SWIFT)
+#import "WebGPUSwiftInternal.h"
+#endif
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -58,6 +61,11 @@ if (m_state == EncoderState::Ended) \
     m_device->generateAValidationError([NSString stringWithFormat:@"%s: encoder state is %@", __PRETTY_FUNCTION__, encoderStateName()]); \
 else \
     makeInvalid(m_lastErrorString ?: @"Encoder state is locked");
+
+void CommandEncoder::generateInvalidEncoderStateError()
+{
+    GENERATE_INVALID_ENCODER_STATE_ERROR();
+}
 
 static MTLLoadAction loadAction(WGPULoadOp loadOp)
 {
@@ -1745,6 +1753,7 @@ bool CommandEncoder::validateClearBuffer(const Buffer& buffer, uint64_t offset, 
 void CommandEncoder::clearBuffer(Buffer& buffer, uint64_t offset, uint64_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-clearbuffer
+#if !ENABLE(WEBGPU_SWIFT)
 
     if (!prepareTheEncoderState()) {
         GENERATE_INVALID_ENCODER_STATE_ERROR();
@@ -1774,6 +1783,9 @@ void CommandEncoder::clearBuffer(Buffer& buffer, uint64_t offset, uint64_t size)
     ensureBlitCommandEncoder();
 
     [m_blitCommandEncoder fillBuffer:buffer.buffer() range:range value:0];
+#else
+    WebGPU::clearBuffer(this, &buffer, offset, size);
+#endif
 }
 
 void CommandEncoder::setLastError(NSString* errorString)

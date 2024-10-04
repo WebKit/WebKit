@@ -28,11 +28,11 @@ private let largeBufferSize = 32 * 1024 * 1024
 public func writeBuffer(
     queue: WebGPU.Queue, buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8
 ) {
-    queue.writeBuffer(mtlBuffer: buffer.buffer(), bufferOffset: bufferOffset, data: data)
+    queue.writeBuffer(buffer, bufferOffset: bufferOffset, data: data)
 }
 
 extension WebGPU.Queue {
-    public func writeBuffer(mtlBuffer: any MTLBuffer, bufferOffset: UInt64, data: SpanUInt8) {
+    public func writeBuffer(_ buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8) {
         let device = self.device()
         guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
             return
@@ -52,7 +52,8 @@ extension WebGPU.Queue {
             return
         }
         blitCommandEncoder.copy(
-            from: tempBuffer, sourceOffset: 0, to: mtlBuffer, destinationOffset: Int(bufferOffset),
+            from: tempBuffer, sourceOffset: 0, to: buffer.buffer(),
+            destinationOffset: Int(bufferOffset),
             size: data.size())
         if noCopy {
             finalizeBlitCommandEncoder()
