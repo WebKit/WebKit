@@ -190,7 +190,7 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
     ASSERT(isMainRunLoop());
 
     auto scrollingTree = this->scrollingTree();
-    if (scrollingTree->scrollingPerformanceTestingEnabled()) {
+    if (scrollingTree && scrollingTree->scrollingPerformanceTestingEnabled()) {
         if (wheelEvent.phase() == WebWheelEvent::PhaseBegan)
             startFingerDownSignpostInterval();
 
@@ -697,7 +697,7 @@ void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pa
     ASSERT_UNUSED(pageID, m_pageIdentifier == pageID);
 
     auto scrollingTree = this->scrollingTree();
-    if (scrollingTree->scrollingPerformanceTestingEnabled()) {
+    if (scrollingTree && scrollingTree->scrollingPerformanceTestingEnabled()) {
         if (event.momentumPhase() == WebWheelEvent::PhaseBegan)
             startMomentumSignpostInterval();
 
