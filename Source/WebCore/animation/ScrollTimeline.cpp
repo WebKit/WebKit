@@ -74,8 +74,14 @@ Ref<ScrollTimeline> ScrollTimeline::createFromCSSValue(const CSSScrollValue& css
     return adoptRef(*new ScrollTimeline(scroller, axis));
 }
 
+// https://drafts.csswg.org/web-animations-2/#timelines
+// For a monotonic timeline, there is no upper bound on current time, and
+// timeline duration is unresolved. For a non-monotonic (e.g. scroll) timeline,
+// the duration has a fixed upper bound. In this case, the timeline is a
+// progress-based timeline, and its timeline duration is 100%.
 ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
-    : m_source(WTFMove(options.source))
+    : AnimationTimeline(CSSNumberishTime::fromPercentage(100))
+    , m_source(WTFMove(options.source))
     , m_axis(options.axis)
 {
     if (m_source)
@@ -83,15 +89,17 @@ ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
 }
 
 ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
-    : m_axis(axis)
-    , m_name(name)
+    : ScrollTimeline()
 {
+    m_axis = axis;
+    m_name = name;
 }
 
 ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
-    : m_axis(axis)
-    , m_scroller(scroller)
+    : ScrollTimeline()
 {
+    m_axis = axis;
+    m_scroller = scroller;
 }
 
 void ScrollTimeline::dump(TextStream& ts) const

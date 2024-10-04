@@ -84,6 +84,11 @@ CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
     }
 }
 
+CSSNumberishTime CSSNumberishTime::fromPercentage(double percentage)
+{
+    return { Type::Percentage, percentage };
+}
+
 std::optional<Seconds> CSSNumberishTime::time() const
 {
     if (m_type == Type::Time)

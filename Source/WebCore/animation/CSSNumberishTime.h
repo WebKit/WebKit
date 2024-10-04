@@ -38,6 +38,8 @@ public:
     CSSNumberishTime(const Seconds&);
     CSSNumberishTime(const CSSNumberish&);
 
+    static CSSNumberishTime fromPercentage(double);
+
     WEBCORE_EXPORT std::optional<Seconds> time() const;
     WEBCORE_EXPORT std::optional<double> percentage() const;
 

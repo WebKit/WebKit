@@ -36,7 +36,11 @@
 
 namespace WebCore {
 
-AnimationTimeline::AnimationTimeline() = default;
+AnimationTimeline::AnimationTimeline(std::optional<CSSNumberishTime> duration)
+    : m_duration(duration)
+{
+}
+
 AnimationTimeline::~AnimationTimeline() = default;
 
 void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
