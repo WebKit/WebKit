@@ -60,7 +60,6 @@ html/FormListedElement.cpp
 html/LinkIconCollector.h
 html/MediaElementSession.h
 html/canvas/CanvasRenderingContext.h
-html/canvas/WebGLDefaultFramebuffer.h
 html/canvas/WebGLUtilities.h
 html/parser/HTMLTreeBuilder.h
 html/track/TrackBase.h
