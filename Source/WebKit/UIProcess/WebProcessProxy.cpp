@@ -1168,7 +1168,7 @@ void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& con
         anyPageHasModelProcessEnabled |= page->preferences().modelElementEnabled() && page->preferences().modelProcessEnabled();
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
-    parameters.sharedPreferencesForWebProcess = sharedPreferencesForWebProcess();
+    parameters.sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelElementEnabled);
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelProcessEnabled);
 
