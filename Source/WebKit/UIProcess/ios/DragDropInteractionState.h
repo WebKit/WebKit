@@ -94,7 +94,7 @@ public:
     id<UIDropSession> dropSession() const { return m_dropSession.get(); }
     BlockPtr<void()> takeDragStartCompletionBlock() { return WTFMove(m_dragStartCompletionBlock); }
     BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
-    RetainPtr<UIView> takePreviewViewForDragCancel() { return std::exchange(m_previewViewForDragCancel, { }); }
+    Vector<RetainPtr<UIView>> takePreviewViewsForDragCancel() { return std::exchange(m_previewViewsForDragCancel, { }); }
 
     void addDefaultDropPreview(UIDragItem *, UITargetedDragPreview *);
     UITargetedDragPreview *finalDropPreview(UIDragItem *) const;
@@ -116,7 +116,7 @@ private:
     RetainPtr<id <UIDropSession>> m_dropSession;
     BlockPtr<void()> m_dragStartCompletionBlock;
     BlockPtr<void(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
-    RetainPtr<UIView> m_previewViewForDragCancel;
+    Vector<RetainPtr<UIView>> m_previewViewsForDragCancel;
 
     std::optional<DragSourceState> m_stagedDragSource;
     Vector<DragSourceState> m_activeDragSources;

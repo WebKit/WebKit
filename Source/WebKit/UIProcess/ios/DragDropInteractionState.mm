@@ -290,7 +290,7 @@ UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *i
 UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
 {
     auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes, std::nullopt);
-    m_previewViewForDragCancel = [preview view];
+    m_previewViewsForDragCancel.append([preview view]);
     return preview.autorelease();
 }
 
@@ -377,7 +377,8 @@ void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeAc
 
 void DragDropInteractionState::dragAndDropSessionsDidBecomeInactive()
 {
-    if (auto previewView = takePreviewViewForDragCancel())
+    auto previewViewsToRemove = takePreviewViewsForDragCancel();
+    for (auto& previewView : previewViewsToRemove)
         [previewView removeFromSuperview];
 
     // If any of UIKit's completion blocks are still in-flight when the drag interaction ends, we need to ensure that they are still invoked

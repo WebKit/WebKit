@@ -10759,14 +10759,21 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     _isAnimatingDragCancel = YES;
     RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
-    auto previewView = _dragDropInteractionState.takePreviewViewForDragCancel();
-    [previewView setAlpha:0];
-    [animator addCompletion:[protectedSelf = retainPtr(self), previewView = WTFMove(previewView), page = _page] (UIViewAnimatingPosition finalPosition) {
+    auto previewViews = _dragDropInteractionState.takePreviewViewsForDragCancel();
+    for (auto& previewView : previewViews)
+        [previewView setAlpha:0];
+
+    [animator addCompletion:[protectedSelf = retainPtr(self), previewViews = WTFMove(previewViews), page = _page] (UIViewAnimatingPosition finalPosition) {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
-        [previewView setAlpha:1];
+        for (auto& previewView : previewViews)
+            [previewView setAlpha:1];
+
         page->dragCancelled();
-        page->callAfterNextPresentationUpdate([previewView = WTFMove(previewView), protectedSelf = WTFMove(protectedSelf)] {
-            [previewView removeFromSuperview];
+
+        page->callAfterNextPresentationUpdate([previewViews = WTFMove(previewViews), protectedSelf = WTFMove(protectedSelf)] {
+            for (auto& previewView : previewViews)
+                [previewView removeFromSuperview];
+
             protectedSelf->_isAnimatingDragCancel = NO;
         });
     }];
