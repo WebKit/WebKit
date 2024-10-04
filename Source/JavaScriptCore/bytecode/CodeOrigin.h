@@ -224,7 +224,7 @@ private:
     OutOfLineCodeOrigin* outOfLineCodeOrigin() const
     {
         ASSERT(isOutOfLine());
-        return bitwise_cast<OutOfLineCodeOrigin*>(m_compositeValue & s_maskCompositeValueForPointer);
+        return bitwise_cast<OutOfLineCodeOrigin*>(m_compositeValue & s_maskCompositeValueForOutOfLinePointer);
     }
 #endif
 
@@ -240,7 +240,8 @@ private:
 
 #if CPU(ADDRESS64)
     static constexpr unsigned s_freeBitsAtTop = 64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
-    static constexpr uintptr_t s_maskCompositeValueForPointer = ((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1) & ~(8ULL - 1);
+    static constexpr uintptr_t s_maskCompositeValueForOutOfLinePointer = ~7ULL;
+    static constexpr uintptr_t s_maskCompositeValueForPointer = ((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1) & s_maskCompositeValueForOutOfLinePointer;
     static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, BytecodeIndex bytecodeIndex)
     {
         if (!bytecodeIndex)
