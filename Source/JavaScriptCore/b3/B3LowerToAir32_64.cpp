@@ -134,7 +134,7 @@ public:
                 m_int64ValueToTmps.ensure(value, [&] {
                     auto hi = tmpForType(Int32);
                     auto lo = tmpForType(Int32);
-                    std::tuple<Tmp, Tmp> pair = { hi, lo };
+                    std::tuple<Tmp, Tmp> pair = { lo, hi };
                     return pair;
                 });
             }
@@ -2939,7 +2939,7 @@ private:
         using namespace Air;
         switch (m_value->opcode()) {
         case Const64: {
-            auto [hi, lo] = tmpsForInt64(m_value);
+            auto [lo, hi] = tmpsForInt64(m_value);
             append(Move, Arg::bigImmHi32(m_value->asInt()), hi);
             append(Move, Arg::bigImmLo32(m_value->asInt()), lo);
             return;
@@ -2947,16 +2947,16 @@ private:
         case B3::Add:
         case B3::Sub: {
             ASSERT(isValidForm(Add64, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp));
-            auto [ leftHi, leftLo ] = tmpsForInt64(m_value->child(0));
-            auto [ rightHi, rightLo ] = tmpsForInt64(m_value->child(1));
-            auto [ resultHi, resultLo ] = tmpsForInt64(m_value);
+            auto [ leftLo, leftHi ] = tmpsForInt64(m_value->child(0));
+            auto [ rightLo, rightHi ] = tmpsForInt64(m_value->child(1));
+            auto [ resultLo, resultHi ] = tmpsForInt64(m_value);
             append(m_value->opcode() == B3::Add ? Add64 : Sub64, leftHi, leftLo, rightHi, rightLo, resultHi, resultLo);
             return;
         }
         case B3::Mul: {
-            auto [ leftHi, leftLo ] = tmpsForInt64(m_value->child(0));
-            auto [ rightHi, rightLo ] = tmpsForInt64(m_value->child(1));
-            auto [ resultHi, resultLo ] = tmpsForInt64(m_value);
+            auto [ leftLo, leftHi ] = tmpsForInt64(m_value->child(0));
+            auto [ rightLo, rightHi ] = tmpsForInt64(m_value->child(1));
+            auto [ resultLo, resultHi ] = tmpsForInt64(m_value);
 
             Tmp tmpHiLo = tmpForType(Int32);
             Tmp tmpLoHi = tmpForType(Int32);
@@ -2970,11 +2970,11 @@ private:
         }
         case B3::BitwiseCast: {
             if (m_value->type() == Int64) {
-                auto [ resultHi, resultLo ] = tmpsForInt64(m_value);
+                auto [ resultLo, resultHi ] = tmpsForInt64(m_value);
                 append(Air::MoveDoubleTo64, tmp(m_value->child(0)), resultHi, resultLo);
             } else {
                 ASSERT(m_value->child(0)->type() == Int64);
-                auto [ argHi, argLo ] = tmpsForInt64(m_value->child(0));
+                auto [ argLo, argHi ] = tmpsForInt64(m_value->child(0));
                 append(Move64ToDouble, argHi, argLo, tmp(m_value));
                 return;
             }
@@ -2990,9 +2990,9 @@ private:
             return;
         }
         case Stitch: {
-            auto [resHi, resLo] = tmpsForInt64(m_value);
-            auto hi = tmp(m_value->child(0));
-            auto lo = tmp(m_value->child(1));
+            auto [resLo, resHi] = tmpsForInt64(m_value);
+            auto lo = tmp(m_value->child(0));
+            auto hi = tmp(m_value->child(1));
             append(relaxedMoveForType(Int32), hi, resHi);
             append(relaxedMoveForType(Int32), lo, resLo);
             return;
