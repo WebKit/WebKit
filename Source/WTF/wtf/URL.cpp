@@ -335,6 +335,7 @@ URL URL::truncatedForUseAsBase() const
 
 #if !USE(CF)
 
+#if OS(WINDOWS)
 static inline String fileSystemPathWindows(WTF::StringView host, WTF::StringView path)
 {
     ASSERT(path.containsOnlyASCII());
@@ -346,6 +347,7 @@ static inline String fileSystemPathWindows(WTF::StringView host, WTF::StringView
     }
     return decodedPath;
 }
+#endif
 
 String URL::fileSystemPath() const
 {
