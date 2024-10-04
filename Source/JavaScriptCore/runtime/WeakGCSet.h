@@ -69,7 +69,7 @@ public:
     using const_iterator = typename HashSetType::const_iterator;
 
     inline explicit WeakGCSet(VM&);
-    inline ~WeakGCSet() final;
+    ~WeakGCSet() final;
 
     void clear()
     {
