@@ -80,8 +80,9 @@ void GridMasonryLayout::collectMasonryItems()
     m_itemsWithIndefiniteGridAxisPosition.shrink(0);
 
     auto& grid = m_renderGrid.currentGrid();
-    for (auto* gridItem = grid.orderIterator().first(); gridItem; gridItem = grid.orderIterator().next()) {
-        if (grid.orderIterator().shouldSkipChild(*gridItem))
+    OrderIterator& iterator = grid.orderIterator();
+    for (auto* gridItem : iterator) {
+        if (iterator.shouldSkipChild(*gridItem))
             continue;
 
         if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)

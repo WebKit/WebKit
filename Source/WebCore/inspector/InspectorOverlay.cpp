@@ -2009,7 +2009,7 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
     bool hasCustomOrder = false;
 
     auto childOrderIterator = renderFlex.orderIterator();
-    for (RenderBox* renderChild = childOrderIterator.first(); renderChild; renderChild = childOrderIterator.next()) {
+    for (auto* renderChild : childOrderIterator) {
         if (childOrderIterator.shouldSkipChild(*renderChild))
             continue;
         renderChildrenInFlexOrder.append(renderChild);

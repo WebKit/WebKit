@@ -365,7 +365,7 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
 
     // If collecting the children in reverse order is bad for performance, this Vector could be determined at layout time.
     Vector<RenderBox*> reversedOrderIteratorForHitTesting;
-    for (auto* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem : m_orderIterator) {
         if (flexItem->isOutOfFlowPositioned())
             continue;
         reversedOrderIteratorForHitTesting.append(flexItem);
@@ -463,7 +463,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderFlexibleBox::appendFlexItemFrameRects(FlexItemFrameRects& flexItemFrameRects)
 {
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem : m_orderIterator) {
         if (!flexItem->isOutOfFlowPositioned())
             flexItemFrameRects.append(flexItem->frameRect());
     }
@@ -472,7 +472,7 @@ void RenderFlexibleBox::appendFlexItemFrameRects(FlexItemFrameRects& flexItemFra
 void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemFrameRects& oldFlexItemRects)
 {
     size_t index = 0;
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem : m_orderIterator) {
         if (flexItem->isOutOfFlowPositioned())
             continue;
 
@@ -488,7 +488,7 @@ void RenderFlexibleBox::repaintFlexItemsDuringLayoutIfMoved(const FlexItemFrameR
 
 void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForFlexItem, bool usePrintRect)
 {
-    for (RenderBox* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem : m_orderIterator) {
         if (!paintChild(*flexItem, paintInfo, paintOffset, paintInfoForFlexItem, usePrintRect, PaintAsInlineBlock))
             return;
     }
@@ -1282,8 +1282,7 @@ void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
     // should work off this list of a subset.
     // TODO(cbiesinger): That second part is not yet true.
     FlexLayoutItems allItems;
-    m_orderIterator.first();
-    for (RenderBox* flexItem = m_orderIterator.currentChild(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem : m_orderIterator) {
         if (m_orderIterator.shouldSkipChild(*flexItem)) {
             // Out-of-flow children are not flex items, so we skip them here.
             if (flexItem->isOutOfFlowPositioned())
@@ -2683,7 +2682,7 @@ const RenderBox* RenderFlexibleBox::firstBaselineCandidateOnLine(OrderIterator f
 
     size_t index = 0;
     const RenderBox* baselineFlexItem = nullptr;
-    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
+    for (auto* flexItem : flexItemIterator) {
         if (flexItemIterator.shouldSkipChild(*flexItem))
             continue;
         if (alignmentForFlexItem(*flexItem) == baselinePosition && mainAxisIsFlexItemInlineAxis(*flexItem) && !hasAutoMarginsInCrossAxis(*flexItem))
@@ -2703,7 +2702,7 @@ const RenderBox* RenderFlexibleBox::lastBaselineCandidateOnLine(OrderIterator fl
 
     size_t index = 0;
     RenderBox* baselineFlexItem = nullptr;
-    for (auto* flexItem = flexItemIterator.first(); flexItem; flexItem = flexItemIterator.next()) {
+    for (auto* flexItem : flexItemIterator) {
         if (flexItemIterator.shouldSkipChild(*flexItem))
             continue;
         if (alignmentForFlexItem(*flexItem) == baselinePosition && mainAxisIsFlexItemInlineAxis(*flexItem) && !hasAutoMarginsInCrossAxis(*flexItem))
