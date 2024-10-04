@@ -1181,7 +1181,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     
     jit.negPtr(GPRInfo::regT2);
     jit.addPtr(CCallHelpers::stackPointerRegister, GPRInfo::regT2);
-    CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
+    CCallHelpers::Jump haveStackSpace;
+    if (vm.usingAPI())
+        haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
+    else
+        haveStackSpace = jit.branchPtr(CCallHelpers::Above, GPRInfo::regT2, CCallHelpers::TrustedImmPtr(vm.softStackLimit()));
 
     // Throw Stack Overflow exception
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::regT3);
@@ -1345,7 +1349,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
     jit.negPtr(GPRInfo::regT2);
     jit.addPtr(CCallHelpers::stackPointerRegister, GPRInfo::regT2);
-    CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
+    CCallHelpers::Jump haveStackSpace;
+    if (vm.usingAPI())
+        haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
+    else
+        haveStackSpace = jit.branchPtr(CCallHelpers::Above, GPRInfo::regT2, CCallHelpers::TrustedImmPtr(vm.softStackLimit()));
 
     // Throw Stack Overflow exception
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::regT3);

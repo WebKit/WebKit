@@ -82,7 +82,10 @@ static void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numU
     emitSetVarargsFrame(jit, scratchGPR1, true, numUsedSlotsGPR, scratchGPR2);
 
     slowCase.append(jit.branchPtr(CCallHelpers::Above, scratchGPR2, GPRInfo::callFrameRegister));
-    slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR2));
+    if (vm.usingAPI())
+        slowCase.append(jit.branchPtr(CCallHelpers::Above, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR2));
+    else
+        slowCase.append(jit.branchPtr(CCallHelpers::BelowOrEqual, scratchGPR2, CCallHelpers::TrustedImmPtr(vm.softStackLimit())));
 
     // Before touching stack values, we should update the stack pointer to protect them from signal stack.
     jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), scratchGPR2, CCallHelpers::stackPointerRegister);

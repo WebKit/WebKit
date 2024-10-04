@@ -307,7 +307,10 @@ public:
                 MacroAssembler::JumpList stackOverflow;
                 if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
                     stackOverflow.append(jit.branchPtr(MacroAssembler::Above, scratch, fp));
-                stackOverflow.append(jit.branchPtr(MacroAssembler::Above, CCallHelpers::Address(vmGPR, VM::offsetOfSoftStackLimit()), scratch));
+                if (vm->usingAPI())
+                    stackOverflow.append(jit.branchPtr(MacroAssembler::Above, CCallHelpers::Address(vmGPR, VM::offsetOfSoftStackLimit()), scratch));
+                else
+                    stackOverflow.append(jit.branchPtr(MacroAssembler::BelowOrEqual, scratch, CCallHelpers::TrustedImmPtr(vm->softStackLimit())));
 
                 params.addLatePath([=] (CCallHelpers& jit) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);

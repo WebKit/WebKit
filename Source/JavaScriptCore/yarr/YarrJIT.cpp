@@ -4941,7 +4941,11 @@ public:
             // Create space on stack for matching context data.
             // Note that this stack check cannot clobber m_regs.regT1 as it is needed for the slow path we call if we fail the stack check.
             m_jit.addPtr(MacroAssembler::TrustedImm32(-callFrameSizeInBytes), MacroAssembler::stackPointerRegister, m_regs.regT0);
-            MacroAssembler::Jump stackOk = m_jit.branchPtr(MacroAssembler::BelowOrEqual, MacroAssembler::AbsoluteAddress(const_cast<VM*>(m_vm)->addressOfSoftStackLimit()), m_regs.regT0);
+            MacroAssembler::Jump stackOk;
+            if (m_vm->usingAPI())
+                stackOk = m_jit.branchPtr(MacroAssembler::BelowOrEqual, MacroAssembler::AbsoluteAddress(const_cast<VM*>(m_vm)->addressOfSoftStackLimit()), m_regs.regT0);
+            else
+                stackOk = m_jit.branchPtr(MacroAssembler::Above, m_regs.regT0, MacroAssembler::TrustedImmPtr(m_vm->softStackLimit()));
 
             // Exceeded stack limit, punt to the interpreter.
             m_jit.move(MacroAssembler::TrustedImmPtr((void*)static_cast<size_t>(JSRegExpResult::JITCodeFailure)), m_regs.returnRegister);
