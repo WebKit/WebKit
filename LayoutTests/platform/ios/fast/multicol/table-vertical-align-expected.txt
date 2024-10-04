@@ -6,11 +6,11 @@ layer at (0,0) size 800x1010
 layer at (8,8) size 784x350
   RenderBlock {DIV} at (0,0) size 784x350
     RenderMultiColumnSet at (0,0) size 784x350
-layer at (8,8) size 384x1307 backgroundClip at (0,0) size 1992x1010 clip at (0,0) size 1992x1010
-  RenderMultiColumnFlowThread at (0,0) size 384x1307
-    RenderTable {TABLE} at (0,0) size 384x1307 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 382x1305
-        RenderTableRow {TR} at (0,0) size 382x1305
+layer at (8,8) size 384x1263 backgroundClip at (0,0) size 1992x1010 clip at (0,0) size 1992x1010
+  RenderMultiColumnFlowThread at (0,0) size 384x1263
+    RenderTable {TABLE} at (0,0) size 384x1263 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 382x1261
+        RenderTableRow {TR} at (0,0) size 382x1261
           RenderTableCell {TD} at (0,44) size 146x1261 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,55) size 108x39
               text run at (11,11) width 108: "This cell has lots"

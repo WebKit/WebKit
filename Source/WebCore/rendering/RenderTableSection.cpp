@@ -247,7 +247,6 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
     for (unsigned r = 0; r < totalRows; r++) {
         m_grid[r].baseline = 0;
-        LayoutUnit baselineDescent;
 
         if (m_grid[r].logicalHeight.isSpecified()) {
         // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
@@ -307,18 +306,8 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                 if (cell->isBaselineAligned()) {
                     LayoutUnit baselinePosition = cell->cellBaselinePosition() - cell->intrinsicPaddingBefore();
                     LayoutUnit borderAndComputedPaddingBefore = cell->borderAndPaddingBefore() - cell->intrinsicPaddingBefore();
-                    if (baselinePosition > borderAndComputedPaddingBefore) {
+                    if (baselinePosition > borderAndComputedPaddingBefore)
                         m_grid[cellStartRow].baseline = std::max(m_grid[cellStartRow].baseline, baselinePosition);
-                        // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
-                        // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
-                        // non-spanning cells when computing a spanning cell's extent.
-                        LayoutUnit cellStartRowBaselineDescent;
-                        if (cell->rowSpan() == 1) {
-                            baselineDescent = std::max(baselineDescent, cellLogicalHeight - baselinePosition);
-                            cellStartRowBaselineDescent = baselineDescent;
-                        }
-                        m_rowPos[cellStartRow + 1] = std::max(m_rowPos[cellStartRow + 1], m_rowPos[cellStartRow] + m_grid[cellStartRow].baseline + cellStartRowBaselineDescent);
-                    }
                 }
             }
         }

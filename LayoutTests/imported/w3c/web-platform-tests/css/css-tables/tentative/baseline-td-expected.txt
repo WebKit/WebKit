@@ -29,15 +29,6 @@ FAIL table, .display-table 3 assert_equals:
     </td>
   </tr></tbody></table>
 offsetTop expected 30 but got 0
-FAIL table, .display-table 4 assert_equals:
-<table style="border: 1px solid black" data-expected-height="202">
-  <tbody><tr>
-    <td style="vertical-align:baseline;height:200px">base</td>
-    <td style="vertical-align:baseline">
-      <div style="background:yellow;width:50px;height:100px"></div>
-    </td>
-  </tr>
-</tbody></table>
-height expected 202 but got 288
+PASS table, .display-table 4
 PASS table, .display-table 5
 
