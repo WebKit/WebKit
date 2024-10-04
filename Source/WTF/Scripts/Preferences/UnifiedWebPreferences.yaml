@@ -2716,7 +2716,7 @@ EnumeratingVisibleNetworkInterfacesEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   type: bool
