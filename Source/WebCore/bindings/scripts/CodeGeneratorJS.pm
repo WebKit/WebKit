@@ -7288,12 +7288,13 @@ sub GetFlattenedMemberTypes
 # http://heycam.github.io/webidl/#dfn-number-of-nullable-member-types
 sub GetNumberOfNullableMemberTypes
 {
-    my ($idlUnionType) = @_;
+    my ($idlUnionType, $undefinedAsNull) = @_;
 
     my $count = 0;
 
     foreach my $memberType (@{$idlUnionType->subtypes}) {
         $count++ if $memberType->isNullable;
+        $count++ if $memberType->name eq "undefined" && $undefinedAsNull;
         $count += GetNumberOfNullableMemberTypes($memberType) if $memberType->isUnion;
     }
 
@@ -7304,7 +7305,7 @@ sub GetIDLUnionMemberTypes
 {
     my ($interface, $idlUnionType) = @_;
 
-    my $numberOfNullableMembers = GetNumberOfNullableMemberTypes($idlUnionType);
+    my $numberOfNullableMembers = GetNumberOfNullableMemberTypes($idlUnionType, 1);
     assert("Union types must only have 0 or 1 nullable types.") if $numberOfNullableMembers > 1;
 
     my @idlUnionMemberTypes = ();
@@ -7312,7 +7313,8 @@ sub GetIDLUnionMemberTypes
     push(@idlUnionMemberTypes, "IDLNull") if $numberOfNullableMembers == 1;
 
     foreach my $memberType (GetFlattenedMemberTypes($idlUnionType)) {
-        push(@idlUnionMemberTypes, GetIDLTypeExcludingNullability($interface, $memberType));
+        my $nonnullType = GetIDLTypeExcludingNullability($interface, $memberType);
+        push(@idlUnionMemberTypes, $nonnullType) if $nonnullType ne "IDLUndefined";
     }
 
     return @idlUnionMemberTypes;
