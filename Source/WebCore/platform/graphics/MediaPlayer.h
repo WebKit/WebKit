@@ -736,6 +736,7 @@ public:
 
     const MediaPlayerPrivateInterface* playerPrivate() const;
     MediaPlayerPrivateInterface* playerPrivate();
+    RefPtr<MediaPlayerPrivateInterface> protectedPlayerPrivate();
 
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);

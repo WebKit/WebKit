@@ -204,7 +204,7 @@ void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentTy
     RefPtr player = m_player;
     player->load(url, contentType, *protectedMediaSourceProxy());
     if (reattached)
-        protectedMediaSourceProxy()->setMediaPlayers(*this, player->playerPrivate());
+        protectedMediaSourceProxy()->setMediaPlayers(*this, player->protectedPlayerPrivate().get());
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }
