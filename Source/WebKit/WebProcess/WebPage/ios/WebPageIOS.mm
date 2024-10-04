@@ -5594,7 +5594,7 @@ static void forEachEnclosingScroller(const VisibleSelection& selection, Function
         } else if (CheckedPtr layer = scroller->layer()) {
             CheckedPtr scrollableArea = layer->scrollableArea();
             if (!scrollableArea)
-                break;
+                continue;
 
             scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
             enclosingScrollingNodeID = scrollableArea->scrollingNodeID();

@@ -50,7 +50,7 @@ addEventListener("load", async () => {
         handledClick = true;
     });
 
-    await UIHelper.longPressElement(document.querySelector(".scrollable"));
+    await UIHelper.longPressElement(scroller);
     await UIHelper.waitForSelectionToAppear();
     testPassed("Selected text");
 
