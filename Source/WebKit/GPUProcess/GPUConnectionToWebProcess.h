@@ -150,7 +150,7 @@ public:
 #endif
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    bool isDynamicContentScalingEnabled() const { return sharedPreferencesForWebProcess().useCGDisplayListsForDOMRendering; }
+    bool isDynamicContentScalingEnabled() const { return m_sharedPreferencesForWebProcess.useCGDisplayListsForDOMRendering; }
 #endif
 
     USING_CAN_MAKE_WEAKPTR(WebCore::NowPlayingManagerClient);

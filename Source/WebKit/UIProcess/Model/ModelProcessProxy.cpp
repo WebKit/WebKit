@@ -100,8 +100,8 @@ ModelProcessProxy::~ModelProcessProxy() = default;
 void ModelProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 {
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier)) {
-        MESSAGE_CHECK(process->sharedPreferencesForWebProcess().modelElementEnabled);
-        MESSAGE_CHECK(process->sharedPreferencesForWebProcess().modelProcessEnabled);
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelElementEnabled);
+        MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelProcessEnabled);
         process->requestTermination(ProcessTerminationReason::RequestedByModelProcess);
     }
 }
