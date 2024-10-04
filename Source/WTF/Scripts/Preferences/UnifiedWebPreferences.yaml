@@ -2130,20 +2130,6 @@ CustomPasteboardDataEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WIN)": true
       default: false
 
-CustomStateSetEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "CustomStateSet and :state() pseudo class"
-  humanReadableDescription: "Support for CustomStateSet in custom elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DNSPrefetchingEnabled:
   type: bool
   status: embedder

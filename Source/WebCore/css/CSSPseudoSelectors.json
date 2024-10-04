@@ -216,8 +216,7 @@
             "conditional": "ENABLE(VIDEO)"
         },
         "state": {
-            "argument": "required",
-            "settings-flag": "customStateSetEnabled"
+            "argument": "required"
         },
         "single-button": {
             "comment": "For scrollbar styling.",
