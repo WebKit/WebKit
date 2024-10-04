@@ -61,6 +61,7 @@
 @property (nonatomic, copy) void (^sendMessage)(id message, NSString *applicationIdentifier, void (^)(id replyMessage, NSError *));
 @property (nonatomic, copy) void (^connectUsingMessagePort)(WKWebExtensionMessagePort *);
 
+@property (nonatomic, copy) void (^didUpdateAction)(WKWebExtensionAction *);
 @property (nonatomic, copy) void (^presentPopupForAction)(WKWebExtensionAction *);
 
 @property (nonatomic, copy) void (^presentSidebar)(_WKWebExtensionSidebar *);

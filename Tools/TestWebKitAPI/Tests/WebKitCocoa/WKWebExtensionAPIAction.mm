@@ -567,8 +567,6 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePath)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"await browser.action.setIcon({ path: 'toolbar-48.png' })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *extraLargeToolbarIcon = Util::makePNGData(CGSizeMake(48, 48), @selector(yellowColor));
@@ -582,7 +580,7 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePath)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -597,8 +595,6 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePathRelative)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"await browser.action.setIcon({ path: '../icons/toolbar-48.png' })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *extraLargeToolbarIcon = Util::makePNGData(CGSizeMake(48, 48), @selector(yellowColor));
@@ -636,7 +632,7 @@ TEST(WKWebExtensionAPIAction, SetIconSinglePathRelative)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -651,8 +647,6 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizes)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"await browser.action.setIcon({ path: { '48': 'toolbar-48.png', '96': 'toolbar-96.png', '128': 'toolbar-128.png' } })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *largeToolbarIcon = Util::makePNGData(CGSizeMake(48, 48), @selector(yellowColor));
@@ -670,7 +664,7 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizes)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -694,8 +688,6 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizesRelative)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"await browser.action.setIcon({ path: { '48': '../icons/toolbar-48.png', '96': '../icons/toolbar-96.png', '128': '../icons/toolbar-128.png' } })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *largeToolbarIcon = Util::makePNGData(CGSizeMake(48, 48), @selector(yellowColor));
@@ -737,7 +729,7 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizesRelative)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -766,8 +758,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageData)
 
         @"const imageData = context.getImageData(0, 0, 48, 48)",
         @"await browser.action.setIcon({ imageData })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -778,7 +768,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageData)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
 
         EXPECT_NOT_NULL(icon);
@@ -806,8 +796,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
         @"const imageData128 = createImageData(128, 'red')",
 
         @"await browser.action.setIcon({ imageData: { '48': imageData48, '96': imageData96, '128': imageData128 } })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -818,7 +806,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         auto *icon96 = [action iconForSize:CGSizeMake(96, 96)];
         auto *icon128 = [action iconForSize:CGSizeMake(128, 128)];
@@ -852,8 +840,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithDataURL)
         @"const pngDataURL48 = canvas.toDataURL('image/png')",
 
         @"await browser.action.setIcon({ path: pngDataURL48 })",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -864,7 +850,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithDataURL)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
@@ -899,8 +885,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
         @"const pngDataURL96 = canvas.toDataURL('image/png')",
 
         @"await browser.action.setIcon({ path: { '48': pngDataURL48, '96': pngDataURL96 } })",
-
-        @"browser.action.openPopup();"
     ]);
 
     auto *resources = @{
@@ -911,7 +895,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMultipleDataURLs)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon48 = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon48);
         EXPECT_TRUE(CGSizeEqualToSize(icon48.size, CGSizeMake(48, 48)));
@@ -936,8 +920,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithVariants)
         @"        { 32: 'action-light-32.png', 64: 'action-light-64.png', 'color_schemes': [ 'light' ] }",
         @"    ]",
         @"}))",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *dark32Icon = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
@@ -957,7 +939,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithVariants)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
         EXPECT_NOT_NULL(icon32);
         EXPECT_TRUE(CGSizeEqualToSize(icon32.size, CGSizeMake(32, 32)));
@@ -1004,8 +986,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageDataAndVariants)
         @"        { 32: imageDataLight32, 64: imageDataLight64, 'color_schemes': [ 'light' ] }",
         @"    ]",
         @"}))",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -1016,7 +996,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageDataAndVariants)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
         auto *icon64 = [action iconForSize:CGSizeMake(64, 64)];
 
@@ -1097,8 +1077,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithMixedValidAndInvalidVariants)
         @"        { '32.5': invalidImageData, 'color_schemes': ['dark'] }",
         @"    ]",
         @"}))",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -1109,7 +1087,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithMixedValidAndInvalidVariants)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *icon32 = [action iconForSize:CGSizeMake(32, 32)];
         EXPECT_NOT_NULL(icon32);
         EXPECT_TRUE(CGSizeEqualToSize(icon32.size, CGSizeMake(32, 32)));
@@ -1148,8 +1126,6 @@ TEST(WKWebExtensionAPIAction, SetIconWithAnySizeVariantAndSVGDataURL)
         @"        { any: blackSVGData, 'color_schemes': [ 'light' ] }",
         @"    ]",
         @"}))",
-
-        @"browser.action.openPopup()"
     ]);
 
     auto *resources = @{
@@ -1160,7 +1136,7 @@ TEST(WKWebExtensionAPIAction, SetIconWithAnySizeVariantAndSVGDataURL)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
         auto *iconAnySize = [action iconForSize:CGSizeMake(48, 48)];
 
         EXPECT_NOT_NULL(iconAnySize);

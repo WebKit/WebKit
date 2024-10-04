@@ -81,6 +81,10 @@ public:
     RefPtr<WebExtensionTab> tab() const { return m_tab.value_or(nullptr).get(); }
     RefPtr<WebExtensionWindow> window() const { return m_window.value_or(nullptr).get(); }
 
+    bool isTabAction() const { return !!m_tab; }
+    bool isWindowAction() const { return !!m_window; }
+    bool isDefaultAction() const { return !m_tab && !m_window; }
+
     void clearCustomizations();
     void clearBlockedResourceCount();
 
@@ -186,6 +190,7 @@ private:
     std::optional<bool> m_hasUnreadBadgeText;
     bool m_presentsPopupWhenReady : 1 { false };
     bool m_popupPresented : 1 { false };
+    bool m_updatePending : 1 { false };
 };
 
 } // namespace WebKit
