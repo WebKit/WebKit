@@ -148,9 +148,9 @@ private:
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
-    bool m_isAssociatedWithSelection { false };
-    bool m_didChangeForHighlight { false };
-    bool m_isAssociatedWithHighlight { false };
+    bool m_isAssociatedWithSelection : 1 { false };
+    bool m_didChangeForHighlight : 1 { false };
+    bool m_isAssociatedWithHighlight : 1 { false };
 };
 
 WEBCORE_EXPORT SimpleRange makeSimpleRange(const Range&);
