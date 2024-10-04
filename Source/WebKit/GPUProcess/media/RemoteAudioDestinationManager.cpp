@@ -271,12 +271,12 @@ bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
     return true;
 }
 
-const SharedPreferencesForWebProcess& RemoteAudioDestinationManager::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sharedPreferencesForWebProcess() const
 {
-    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
-    RELEASE_ASSERT(gpuConnectionToWebProcess);
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
 
-    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+    return std::nullopt;
 }
 
 } // namespace WebKit

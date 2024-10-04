@@ -78,7 +78,7 @@ public:
 
     virtual ~RemoteXRProjectionLayer();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_gpu->sharedPreferencesForWebProcess(); }
     void stopListeningForIPC();
 
     WebCore::WebGPU::XRProjectionLayer& backing() { return m_backing; }

@@ -55,7 +55,7 @@ SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, Speec
 {
 }
 
-const SharedPreferencesForWebProcess& SpeechRecognitionServer::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPreferencesForWebProcess() const
 {
     return m_process->sharedPreferencesForWebProcess();
 }

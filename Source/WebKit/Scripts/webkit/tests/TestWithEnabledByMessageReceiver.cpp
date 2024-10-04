@@ -40,16 +40,16 @@ namespace WebKit {
 
 void TestWithEnabledBy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto& sharedPreferences = sharedPreferencesForWebProcess(connection);
+    auto sharedPreferences = sharedPreferencesForWebProcess(connection);
     UNUSED_VARIABLE(sharedPreferences);
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledBy::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledBy::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledBy::alwaysEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences.someFeature)
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabled::name() && sharedPreferences && sharedPreferences->someFeature)
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabled>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabled);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && (sharedPreferences.someFeature && sharedPreferences.otherFeature))
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledAnd::name() && sharedPreferences && (sharedPreferences->someFeature && sharedPreferences->otherFeature))
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledAnd>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledAnd);
-    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && (sharedPreferences.someFeature || sharedPreferences.otherFeature))
+    if (decoder.messageName() == Messages::TestWithEnabledBy::ConditionallyEnabledOr::name() && sharedPreferences && (sharedPreferences->someFeature || sharedPreferences->otherFeature))
         return IPC::handleMessage<Messages::TestWithEnabledBy::ConditionallyEnabledOr>(connection, decoder, this, &TestWithEnabledBy::conditionallyEnabledOr);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

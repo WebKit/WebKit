@@ -53,7 +53,7 @@ public:
     explicit WebLockRegistryProxy(WebProcessProxy&);
     ~WebLockRegistryProxy();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() { return m_process->sharedPreferencesForWebProcess(); }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() { return m_process->sharedPreferencesForWebProcess(); }
 
     void processDidExit();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

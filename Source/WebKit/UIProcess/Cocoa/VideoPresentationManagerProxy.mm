@@ -890,8 +890,11 @@ void VideoPresentationManagerProxy::willRemoveLayerForID(PlaybackSessionContextI
     removeClientForContext(contextId);
 }
 
-const SharedPreferencesForWebProcess& VideoPresentationManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> VideoPresentationManagerProxy::sharedPreferencesForWebProcess() const
 {
+    if (!m_page)
+        return std::nullopt;
+
     return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 

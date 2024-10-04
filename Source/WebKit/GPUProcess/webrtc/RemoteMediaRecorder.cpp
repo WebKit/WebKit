@@ -140,12 +140,12 @@ void RemoteMediaRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handl
     m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
 }
 
-const SharedPreferencesForWebProcess& RemoteMediaRecorder::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteMediaRecorder::sharedPreferencesForWebProcess() const
 {
-    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
-    RELEASE_ASSERT(gpuConnectionToWebProcess);
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
 
-    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+    return std::nullopt;
 }
 
 }

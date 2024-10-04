@@ -116,9 +116,12 @@ void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 #endif
 }
 
-const SharedPreferencesForWebProcess& RemoteCDMProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteCDMProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedFactory()->sharedPreferencesForWebProcess();
+    if (!m_factory)
+        return std::nullopt;
+
+    return m_factory->sharedPreferencesForWebProcess();
 }
 
 }

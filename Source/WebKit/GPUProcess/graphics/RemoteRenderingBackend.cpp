@@ -132,7 +132,7 @@ void RemoteRenderingBackend::stopListeningForIPC()
     });
 }
 
-const SharedPreferencesForWebProcess& RemoteRenderingBackend::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteRenderingBackend::sharedPreferencesForWebProcess() const
 {
     return m_gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
 }

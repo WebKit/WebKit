@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PaymentAuthorizationPresenter.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PaymentHeaders.h>
@@ -86,7 +87,6 @@ namespace WebKit {
 
 class PaymentSetupConfiguration;
 class PaymentSetupFeatures;
-struct SharedPreferencesForWebProcess;
 
 class WebPaymentCoordinatorProxy
     : public IPC::MessageReceiver
@@ -113,7 +113,7 @@ public:
 #endif
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
-        virtual const SharedPreferencesForWebProcess& sharedPreferencesForWebPaymentMessages() const = 0;
+        virtual std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const = 0;
     };
 
     friend class NetworkConnectionToWebProcess;
@@ -121,7 +121,7 @@ public:
     ~WebPaymentCoordinatorProxy();
 
     void webProcessExited();
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_client.sharedPreferencesForWebPaymentMessages(); }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_client.sharedPreferencesForWebPaymentMessages(); }
 
 private:
     Ref<WorkQueue> protectedCanMakePaymentsQueue() const;

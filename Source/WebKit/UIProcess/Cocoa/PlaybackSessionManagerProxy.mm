@@ -1039,8 +1039,11 @@ void PlaybackSessionManagerProxy::updateVideoControlsManager(PlaybackSessionCont
         page->videoControlsManagerDidChange();
 }
 
-const SharedPreferencesForWebProcess& PlaybackSessionManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> PlaybackSessionManagerProxy::sharedPreferencesForWebProcess() const
 {
+    if (!m_page)
+        return std::nullopt;
+
     return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 

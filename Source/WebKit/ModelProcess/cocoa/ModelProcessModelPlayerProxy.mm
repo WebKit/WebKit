@@ -108,11 +108,12 @@ ModelProcessModelPlayerProxy::~ModelProcessModelPlayerProxy()
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy deallocated id=%" PRIu64, this, m_id.toUInt64());
 }
 
-const SharedPreferencesForWebProcess& ModelProcessModelPlayerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> ModelProcessModelPlayerProxy::sharedPreferencesForWebProcess() const
 {
-    RefPtr strongManager = m_manager.get();
-    RELEASE_ASSERT(strongManager);
-    return strongManager->sharedPreferencesForWebProcess();
+    if (RefPtr strongManager = m_manager.get())
+        return strongManager->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 bool ModelProcessModelPlayerProxy::transformSupported(const simd_float4x4& transform)

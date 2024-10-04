@@ -95,9 +95,12 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     return gpuConnectionToWebProcess->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(m_playerId);
 }
 
-const SharedPreferencesForWebProcess& RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedFactory()->sharedPreferencesForWebProcess();
+    if (!m_factory)
+        return std::nullopt;
+
+    return m_factory->sharedPreferencesForWebProcess();
 }
 
 }

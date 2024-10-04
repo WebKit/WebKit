@@ -71,7 +71,7 @@ CocoaWindow *NetworkConnectionToWebProcess::paymentCoordinatorPresentingWindow(c
     return nil;
 }
 
-const SharedPreferencesForWebProcess& NetworkConnectionToWebProcess::sharedPreferencesForWebPaymentMessages() const
+std::optional<SharedPreferencesForWebProcess> NetworkConnectionToWebProcess::sharedPreferencesForWebPaymentMessages() const
 {
     return m_sharedPreferencesForWebProcess;
 }

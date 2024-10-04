@@ -55,7 +55,7 @@ WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
     protectedPage()->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
 }
 
-const SharedPreferencesForWebProcess& WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess() const
 {
     return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }

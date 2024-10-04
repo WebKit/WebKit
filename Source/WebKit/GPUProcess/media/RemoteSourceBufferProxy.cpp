@@ -407,10 +407,12 @@ std::optional<InitializationSegmentInfo> RemoteSourceBufferProxy::createInitiali
     return segmentInfo;
 }
 
-const SharedPreferencesForWebProcess& RemoteSourceBufferProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteSourceBufferProxy::sharedPreferencesForWebProcess() const
 {
-    auto connectionToWebProcess = m_connectionToWebProcess.get();
-    return connectionToWebProcess->sharedPreferencesForWebProcess();
+    if (auto connectionToWebProcess = m_connectionToWebProcess.get())
+        return connectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 #undef MESSAGE_CHECK

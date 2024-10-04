@@ -241,7 +241,7 @@ public:
     void requestControlledElementID();
 
     bool isPaused(PlaybackSessionContextIdentifier) const;
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     // For testing.
     bool wirelessVideoPlaybackDisabled();

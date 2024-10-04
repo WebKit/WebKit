@@ -83,12 +83,12 @@ bool RemoteMediaRecorderManager::allowsExitUnderMemoryPressure() const
     return m_recorders.isEmpty();
 }
 
-const SharedPreferencesForWebProcess& RemoteMediaRecorderManager::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteMediaRecorderManager::sharedPreferencesForWebProcess() const
 {
-    RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
-    RELEASE_ASSERT(gpuConnectionToWebProcess);
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
 
-    return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+    return std::nullopt;
 }
 
 }

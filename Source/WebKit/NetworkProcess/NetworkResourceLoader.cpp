@@ -708,7 +708,8 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
 {
     ASSERT(isMainResource());
 
-    if (connectionToWebProcess().sharedPreferencesForWebProcess().ignoreIframeEmbeddingProtectionsEnabled)
+    auto sharedPreferences = connectionToWebProcess().sharedPreferencesForWebProcess();
+    if (!sharedPreferences || sharedPreferences->ignoreIframeEmbeddingProtectionsEnabled)
         return false;
 
 #if USE(QUICK_LOOK)

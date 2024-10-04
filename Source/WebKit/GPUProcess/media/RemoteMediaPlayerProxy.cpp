@@ -1299,11 +1299,15 @@ WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 }
 #endif
 
-const SharedPreferencesForWebProcess& RemoteMediaPlayerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteMediaPlayerProxy::sharedPreferencesForWebProcess() const
 {
     RefPtr manager = m_manager.get();
-    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = manager ? manager->gpuConnectionToWebProcess() : nullptr;
-    RELEASE_ASSERT(gpuProcessConnectionToWebProcess);
+    if (!m_manager)
+        return std::nullopt;
+
+    RefPtr<GPUConnectionToWebProcess> gpuProcessConnectionToWebProcess = manager->gpuConnectionToWebProcess();
+    if (!gpuProcessConnectionToWebProcess)
+        return std::nullopt;
 
     return gpuProcessConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
