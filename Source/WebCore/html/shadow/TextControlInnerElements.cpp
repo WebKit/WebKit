@@ -244,8 +244,6 @@ static inline bool searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(con
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document& document)
     : HTMLDivElement(divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
-    if (document.quirks().shouldHideSearchFieldResultsButton())
-        setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
 }
 
 Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document& document)

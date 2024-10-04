@@ -234,20 +234,6 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #endif
 }
 
-// google.com https://bugs.webkit.org/show_bug.cgi?id=223700
-// FIXME: Remove after the site is fixed, <rdar://problem/75792913>
-bool Quirks::shouldHideSearchFieldResultsButton() const
-{
-#if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("google."_s))
-        return true;
-#endif
-    return false;
-}
-
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
 bool Quirks::isTouchBarUpdateSuppressedForHiddenContentEditable() const
 {
