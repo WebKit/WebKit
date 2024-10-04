@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestStringifierOperationImplementedAs>;
     static JSTestStringifierOperationImplementedAs* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierOperationImplementedAs>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestStringifierOperationImplementedAs* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAs>(vm)) JSTestStringifierOperationImplementedAs(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

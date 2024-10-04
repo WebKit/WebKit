@@ -95,7 +95,7 @@ template<> ASCIILiteral expectedEnumerationValues<TestCallbackInterface::Enum>()
 
 template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> convertDictionary<TestCallbackInterface::Dictionary>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
@@ -199,7 +199,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -226,7 +226,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -254,7 +254,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -283,7 +283,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -311,7 +311,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -339,7 +339,7 @@ CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -368,7 +368,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -399,7 +399,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -431,7 +431,7 @@ CallbackResult<typename IDLPromise<IDLUndefined>::CallbackReturnType> JSTestCall
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
@@ -463,7 +463,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     Ref<JSTestCallbackInterface> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;
