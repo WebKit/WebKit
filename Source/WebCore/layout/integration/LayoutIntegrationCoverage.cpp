@@ -71,7 +71,7 @@ enum class AvoidanceReason : uint32_t {
     FlexItemIsVertical                  = 1U << 17,
     FlexItemIsRTL                       = 1U << 18,
     FlexItemHasNonFixedHeight           = 1U << 19,
-    FlexItemHasUnsupportedFlexBasis     = 1U << 20,
+    // Unused                           = 1U << 20,
     // Unused                           = 1U << 21,
     // Unused                           = 1U << 22,
     FlexItemHasContainsSize             = 1U << 23,
@@ -166,9 +166,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
 
         if (!flexItemStyle.height().isFixed())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasNonFixedHeight, reasons, includeReasons);
-
-        if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasUnsupportedFlexBasis, reasons, includeReasons);
 
         if (flexItemStyle.containsSize())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasContainsSize, reasons, includeReasons);
@@ -272,9 +269,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexItemHasNonFixedHeight:
         stream << "flex item has non-fixed height value";
-        break;
-    case AvoidanceReason::FlexItemHasUnsupportedFlexBasis:
-        stream << "flex item has unsupported flex-basis value";
         break;
     case AvoidanceReason::FlexItemHasContainsSize:
         stream << "flex item has contains: size";
