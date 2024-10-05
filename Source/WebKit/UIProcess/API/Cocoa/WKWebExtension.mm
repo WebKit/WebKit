@@ -52,7 +52,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
     dispatch_async(dispatch_get_main_queue(), ^{
         NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(appExtensionBundle, &error);
+        Ref result = WebKit::WebExtension::create(appExtensionBundle, nil, &error);
 
         if (error) {
             completionHandler(nil, error);
@@ -66,15 +66,15 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 + (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension *extension, NSError *error))completionHandler
 {
     NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
-    NSParameterAssert([resourceBaseURL isFileURL]);
-    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+    NSParameterAssert(resourceBaseURL.isFileURL);
+    NSParameterAssert(resourceBaseURL.hasDirectoryPath);
 
     // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
     dispatch_async(dispatch_get_main_queue(), ^{
         NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(resourceBaseURL, &error);
+        Ref result = WebKit::WebExtension::create(nil, resourceBaseURL, &error);
 
         if (error) {
             completionHandler(nil, error);
@@ -93,24 +93,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error
 {
-    NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
-
-    if (error)
-        *error = nil;
-
-    if (!(self = [super init]))
-        return nil;
-
-    NSError * __autoreleasing internalError;
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, &internalError);
-
-    if (internalError) {
-        if (error)
-            *error = internalError;
-        return nil;
-    }
-
-    return self;
+    return [self _initWithAppExtensionBundle:appExtensionBundle resourceBaseURL:nil error:error];
 }
 
 // FIXME: Remove after Safari has adopted new methods.
@@ -121,9 +104,21 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
 {
-    NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
-    NSParameterAssert([resourceBaseURL isFileURL]);
-    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
+{
+    NSParameterAssert(appExtensionBundle || resourceBaseURL);
+
+    if (appExtensionBundle)
+        NSParameterAssert([appExtensionBundle isKindOfClass:NSBundle.class]);
+
+    if (resourceBaseURL) {
+        NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
+        NSParameterAssert(resourceBaseURL.isFileURL);
+        NSParameterAssert(resourceBaseURL.hasDirectoryPath);
+    }
 
     if (error)
         *error = nil;
@@ -131,8 +126,8 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    NSError * __autoreleasing internalError;
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL, &internalError);
+    NSError * __autoreleasing internalError = nil;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, resourceBaseURL, &internalError);
 
     if (internalError) {
         if (error)
@@ -357,9 +352,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (instancetype)_initWithAppExtensionBundle:(NSBundle *)bundle error:(NSError **)error
 {
-    if (error)
-        *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];
-    return nil;
+    return [self _initWithAppExtensionBundle:bundle resourceBaseURL:nil error:error];
 }
 
 - (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
@@ -368,6 +361,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 }
 
 - (instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error
+{
+    return [self _initWithAppExtensionBundle:nil resourceBaseURL:resourceBaseURL error:error];
+}
+
+- (instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)bundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error
 {
     if (error)
         *error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSFeatureUnsupportedError userInfo:nil];

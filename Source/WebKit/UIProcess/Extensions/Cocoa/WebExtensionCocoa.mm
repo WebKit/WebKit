@@ -122,36 +122,31 @@ static NSString * const sidePanelPathManifestKey = @"default_path";
 
 static const size_t maximumNumberOfShortcutCommands = 4;
 
-WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
+WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL, NSError **outError)
     : m_bundle(appExtensionBundle)
-    , m_resourceBaseURL(appExtensionBundle.resourceURL.URLByStandardizingPath.absoluteURL)
+    , m_resourceBaseURL(resourceBaseURL)
     , m_manifestJSON(JSON::Value::null())
 {
-    ASSERT(appExtensionBundle);
+    RELEASE_ASSERT(m_bundle || m_resourceBaseURL);
+
+    auto *bundleResourceURL = m_bundle.get().resourceURL.URLByStandardizingPath.absoluteURL;
+    if (!m_resourceBaseURL && bundleResourceURL)
+        m_resourceBaseURL = bundleResourceURL;
+
+#if PLATFORM(MAC)
+    m_shouldValidateResourceData = m_bundle && [m_resourceBaseURL isEqual:bundleResourceURL];
+#endif
+
+    RELEASE_ASSERT(m_resourceBaseURL.get().isFileURL);
+    RELEASE_ASSERT(m_resourceBaseURL.get().hasDirectoryPath);
 
     if (outError)
         *outError = nil;
 
     if (!manifestParsedSuccessfully()) {
         ASSERT(m_errors.get().count);
-        *outError = m_errors.get().lastObject;
-    }
-}
-
-WebExtension::WebExtension(NSURL *resourceBaseURL, NSError **outError)
-    : m_resourceBaseURL(resourceBaseURL.URLByStandardizingPath.absoluteURL)
-    , m_manifestJSON(JSON::Value::null())
-{
-    ASSERT(resourceBaseURL);
-    ASSERT([resourceBaseURL isFileURL]);
-    ASSERT([resourceBaseURL hasDirectoryPath]);
-
-    if (outError)
-        *outError = nil;
-
-    if (!manifestParsedSuccessfully()) {
-        ASSERT(m_errors.get().count);
-        *outError = m_errors.get().lastObject;
+        if (outError)
+            *outError = m_errors.get().lastObject;
     }
 }
 
@@ -159,7 +154,7 @@ WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
     : m_manifestJSON(JSON::Value::null())
     , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
 {
-    ASSERT(manifest);
+    RELEASE_ASSERT(manifest);
 
     NSData *manifestData = encodeJSONData(manifest);
     RELEASE_ASSERT(manifestData);
@@ -288,7 +283,7 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
     ASSERT([resourceURL isFileURL]);
     ASSERT(resourceData);
 
-    if (!m_bundle)
+    if (!m_shouldValidateResourceData)
         return true;
 
     auto staticCode = bundleStaticCode();

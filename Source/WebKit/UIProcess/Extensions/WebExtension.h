@@ -75,8 +75,7 @@ public:
         return adoptRef(*new WebExtension(std::forward<Args>(args)...));
     }
 
-    explicit WebExtension(NSBundle *appExtensionBundle, NSError ** = nullptr);
-    explicit WebExtension(NSURL *resourceBaseURL, NSError ** = nullptr);
+    explicit WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL, NSError ** = nullptr);
     explicit WebExtension(NSDictionary *manifest, NSDictionary *resources);
     explicit WebExtension(NSDictionary *resources);
 
@@ -408,6 +407,9 @@ private:
     String m_optionsPagePath;
     String m_overrideNewTabPagePath;
 
+#if PLATFORM(MAC)
+    bool m_shouldValidateResourceData : 1 { true };
+#endif
     bool m_backgroundContentIsPersistent : 1 { false };
     bool m_backgroundContentUsesModules : 1 { false };
     bool m_parsedManifest : 1 { false };
