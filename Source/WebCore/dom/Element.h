@@ -822,6 +822,7 @@ public:
     bool hasAutoTextDirectionState() const;
 
     void updateEffectiveTextDirection();
+    void updateEffectiveTextDirectionIfNeeded();
 
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
