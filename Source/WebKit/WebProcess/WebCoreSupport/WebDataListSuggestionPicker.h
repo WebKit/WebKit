@@ -28,6 +28,7 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include <WebCore/DataListSuggestionPicker.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
@@ -50,6 +51,7 @@ class WebPage;
 class WebDataListSuggestionPicker final : public WebCore::DataListSuggestionPicker {
 public:
     WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
+    ~WebDataListSuggestionPicker();
 
     void didSelectOption(const String&);
     void didCloseSuggestions();
@@ -59,7 +61,7 @@ private:
     void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
     void close() final;
 
-    WebCore::DataListSuggestionsClient& m_client;
+    CheckedRef<WebCore::DataListSuggestionsClient> m_client;
     WeakRef<WebPage> m_page;
 };
 

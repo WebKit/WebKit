@@ -30,6 +30,7 @@
 #include <WebCore/AuthenticatorCoordinatorClient.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -49,7 +50,9 @@ private:
     void getClientCapabilities(const WebCore::SecurityOrigin&, WebCore::CapabilitiesCompletionHandler&&) final;
     void cancel(CompletionHandler<void()>&&) final;
 
-    WebPage& m_webPage;
+    Ref<WebPage> protectedPage() const;
+
+    WeakRef<WebPage> m_webPage;
 };
 
 } // namespace WebKit

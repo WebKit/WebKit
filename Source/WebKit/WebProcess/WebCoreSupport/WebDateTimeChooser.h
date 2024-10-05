@@ -51,6 +51,7 @@ class WebPage;
 class WebDateTimeChooser final : public WebCore::DateTimeChooser {
 public:
     WebDateTimeChooser(WebPage&, WebCore::DateTimeChooserClient&);
+    ~WebDateTimeChooser();
 
     void didChooseDate(StringView);
     void didEndChooser();
@@ -59,7 +60,7 @@ private:
     void endChooser() final;
     void showChooser(const WebCore::DateTimeChooserParameters&) final;
 
-    WebCore::DateTimeChooserClient& m_client;
+    CheckedRef<WebCore::DateTimeChooserClient> m_client;
     WeakRef<WebPage> m_page;
 };
 

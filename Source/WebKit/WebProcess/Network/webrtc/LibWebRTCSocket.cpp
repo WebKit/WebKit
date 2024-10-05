@@ -51,13 +51,13 @@ LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, WebCore::Scrip
     , m_remoteAddress(remoteAddress)
     , m_contextIdentifier(contextIdentifier)
 {
-    m_factory.addSocket(*this);
+    m_factory->addSocket(*this);
 }
 
 LibWebRTCSocket::~LibWebRTCSocket()
 {
     Close();
-    m_factory.removeSocket(*this);
+    m_factory->removeSocket(*this);
 }
 
 rtc::SocketAddress LibWebRTCSocket::GetLocalAddress() const
@@ -113,7 +113,7 @@ void LibWebRTCSocket::signalUsedInterface(String&& name)
 
 int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
 {
-    RefPtr connection = m_factory.connection();
+    RefPtr connection = m_factory->connection();
     if (!connection)
         return -1;
 
@@ -128,7 +128,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
 
 int LibWebRTCSocket::Close()
 {
-    RefPtr connection = m_factory.connection();
+    RefPtr connection = m_factory->connection();
     if (!connection || m_state == STATE_CLOSED)
         return 0;
 
@@ -155,7 +155,7 @@ int LibWebRTCSocket::SetOption(rtc::Socket::Option option, int value)
 
     m_options[option] = value;
 
-    if (auto* connection = m_factory.connection())
+    if (RefPtr connection = m_factory->connection())
         connection->send(Messages::NetworkRTCProvider::SetSocketOption { identifier(), option, value }, 0);
 
     return 0;
@@ -174,7 +174,7 @@ void LibWebRTCSocket::suspend()
         return;
 
     signalClose(-1);
-    if (auto* connection = m_factory.connection())
+    if (RefPtr connection = m_factory->connection())
         connection->send(Messages::NetworkRTCProvider::CloseSocket { identifier() }, 0);
 }
 

@@ -42,14 +42,16 @@ WebDateTimeChooser::WebDateTimeChooser(WebPage& page, WebCore::DateTimeChooserCl
 {
 }
 
+WebDateTimeChooser::~WebDateTimeChooser() = default;
+
 void WebDateTimeChooser::didChooseDate(StringView date)
 {
-    m_client.didChooseValue(date);
+    m_client->didChooseValue(date);
 }
 
 void WebDateTimeChooser::didEndChooser()
 {
-    m_client.didEndChooser();
+    m_client->didEndChooser();
 }
 
 void WebDateTimeChooser::endChooser()

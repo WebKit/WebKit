@@ -48,7 +48,7 @@ using namespace WebCore;
 std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_RTC)
-    auto* page = m_webPage.corePage();
+    RefPtr page = m_webPage->corePage();
     if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled())
         return makeUnique<MediaRecorderPrivate>(stream, options);
 #endif

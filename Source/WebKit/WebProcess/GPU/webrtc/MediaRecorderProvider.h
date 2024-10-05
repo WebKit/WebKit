@@ -43,7 +43,7 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
-    WebPage& m_webPage;
+    WeakRef<WebPage> m_webPage;
 #endif
 };
 

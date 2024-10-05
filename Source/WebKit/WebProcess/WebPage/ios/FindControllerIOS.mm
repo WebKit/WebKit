@@ -65,14 +65,15 @@ static constexpr auto highlightColor = SRGBA<uint8_t> { 255, 228, 56 };
 
 void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect& dirtyRect)
 {
-    float scaleFactor = m_frame.page()->deviceScaleFactor();
+    Ref frame = m_frame.get();
+    float scaleFactor = frame->page()->deviceScaleFactor();
 
-    if (m_frame.page()->delegatesScaling())
-        scaleFactor *= m_frame.page()->pageScaleFactor();
+    if (frame->page()->delegatesScaling())
+        scaleFactor *= frame->page()->pageScaleFactor();
 
     // If the page scale changed, we need to paint a new TextIndicator.
     if (m_textIndicator->contentImageScaleFactor() != scaleFactor)
-        m_textIndicator = TextIndicator::createWithSelectionInFrame(m_frame, findTextIndicatorOptions(m_frame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
+        m_textIndicator = TextIndicator::createWithSelectionInFrame(frame, findTextIndicatorOptions(frame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
 
     if (!m_textIndicator)
         return;

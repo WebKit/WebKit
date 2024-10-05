@@ -40,9 +40,12 @@
 #include "InputTypeNames.h"
 #include "PlatformLocale.h"
 #include "StepRange.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(DateInputType);
 
 using namespace HTMLNames;
 

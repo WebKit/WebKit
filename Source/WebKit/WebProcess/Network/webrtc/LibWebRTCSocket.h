@@ -99,7 +99,7 @@ private:
     int GetOption(rtc::Socket::Option, int*) final;
     int SetOption(rtc::Socket::Option, int) final;
 
-    LibWebRTCSocketFactory& m_factory;
+    CheckedRef<LibWebRTCSocketFactory> m_factory;
     Type m_type;
     rtc::SocketAddress m_localAddress;
     rtc::SocketAddress m_remoteAddress;

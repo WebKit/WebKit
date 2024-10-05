@@ -193,7 +193,7 @@ void MomentumEventDispatcher::dispatchSyntheticMomentumEvent(WebWheelEvent::Phas
         { },
         WebWheelEvent::MomentumEndType::Unknown);
 
-    m_client.handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
+    m_client->handleSyntheticWheelEvent(*m_currentGesture.pageIdentifier, syntheticEvent, m_lastRubberBandableEdges);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     m_currentLogState.totalGeneratedOffset += appKitAcceleratedDelta.height();
@@ -241,7 +241,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher ending synthetic momentum phase with total offset %.1f %.1f, duration %f (event offset would have been %.1f %.1f) (tail index %d of %zu)", m_currentGesture.currentOffset.width(), m_currentGesture.currentOffset.height(), (MonotonicTime::now() - m_currentGesture.startTime).seconds(), m_currentGesture.accumulatedEventOffset.width(), m_currentGesture.accumulatedEventOffset.height(), m_currentGesture.currentTailDeltaIndex, m_currentGesture.tailDeltaTable.size());
-    m_client.flushMomentumEventLoggingSoon();
+    m_client->flushMomentumEventLoggingSoon();
 #endif
 
     stopDisplayLink();
@@ -289,7 +289,7 @@ void MomentumEventDispatcher::startDisplayLink()
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    m_client.startDisplayDidRefreshCallbacks(displayProperties->displayID);
+    m_client->startDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayProperties->displayID);
 #endif
@@ -306,7 +306,7 @@ void MomentumEventDispatcher::stopDisplayLink()
         return;
     }
 
-    m_client.stopDisplayDidRefreshCallbacks(displayProperties->displayID);
+    m_client->stopDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayProperties->displayID);
 #endif

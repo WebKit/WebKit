@@ -52,6 +52,9 @@ class TextFieldInputType : public InputType, protected SpinButtonOwner, protecte
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(TextFieldInputType);
+#if ENABLE(DATALIST_ELEMENT)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextFieldInputType);
+#endif
 public:
     bool valueMissing(const String&) const final;
 

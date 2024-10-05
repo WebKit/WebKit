@@ -42,6 +42,8 @@ WebDataListSuggestionPicker::WebDataListSuggestionPicker(WebPage& page, WebCore:
 {
 }
 
+WebDataListSuggestionPicker::~WebDataListSuggestionPicker() = default;
+
 void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), m_page.get().identifier());
@@ -49,12 +51,12 @@ void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
 
 void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)
 {
-    m_client.didSelectDataListOption(selectedOption);
+    m_client->didSelectDataListOption(selectedOption);
 }
 
 void WebDataListSuggestionPicker::didCloseSuggestions()
 {
-    m_client.didCloseSuggestions();
+    m_client->didCloseSuggestions();
 }
 
 void WebDataListSuggestionPicker::close()
@@ -64,7 +66,7 @@ void WebDataListSuggestionPicker::close()
 
 void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSuggestionActivationType type)
 {
-    auto suggestions = m_client.suggestions();
+    auto suggestions = m_client->suggestions();
     if (suggestions.isEmpty()) {
         close();
         return;
@@ -72,7 +74,7 @@ void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSug
 
     Ref page { m_page.get() };
 
-    auto elementRectInRootViewCoordinates = m_client.elementRectInRootViewCoordinates();
+    auto elementRectInRootViewCoordinates = m_client->elementRectInRootViewCoordinates();
     if (RefPtr view = page->localMainFrameView()) {
         auto unobscuredRootViewRect = view->contentsToRootView(view->unobscuredContentRect());
         if (!unobscuredRootViewRect.intersects(elementRectInRootViewCoordinates))

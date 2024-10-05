@@ -33,10 +33,13 @@
 #if ENABLE(INPUT_TYPE_TIME)
 
 #include "BaseDateAndTimeInputType.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TimeInputType final : public BaseDateAndTimeInputType {
+    WTF_MAKE_TZONE_ALLOCATED(TimeInputType);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TimeInputType);
 public:
     static Ref<TimeInputType> create(HTMLInputElement& element)
     {
