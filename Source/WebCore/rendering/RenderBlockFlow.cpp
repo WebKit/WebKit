@@ -3846,7 +3846,7 @@ void RenderBlockFlow::layoutInlineContent(bool relayoutChildren, LayoutUnit& rep
 
         if (auto* inlineLevelBox = dynamicDowncast<RenderBox>(renderer)) {
             // FIXME: Move this to where the actual content change happens and call it on the parent IFC.
-            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && (inlineLevelBox->normalChildNeedsLayout() || inlineLevelBox->posChildNeedsLayout()) && inlineLayout();
+            auto shouldTriggerFullLayout = inlineLevelBox->isInline() && (inlineLevelBox->needsSimplifiedNormalFlowLayout() || inlineLevelBox->normalChildNeedsLayout() || inlineLevelBox->posChildNeedsLayout()) && inlineLayout();
             if (shouldTriggerFullLayout)
                 inlineLayout()->boxContentWillChange(*inlineLevelBox);
         }
