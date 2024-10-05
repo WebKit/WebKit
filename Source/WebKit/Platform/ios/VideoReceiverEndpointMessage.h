@@ -45,7 +45,7 @@ public:
     static VideoReceiverEndpointMessage decode(xpc_object_t);
     OSObjectPtr<xpc_object_t> encode() const;
 
-    const std::optional<WebCore::ProcessIdentifier>& processIdentifier() const { return m_processIdentifier; }
+    std::optional<WebCore::ProcessIdentifier> processIdentifier() const { return m_processIdentifier; }
     const WebCore::HTMLMediaElementIdentifier& mediaElementIdentifier() const { return m_mediaElementIdentifier; }
     const WebCore::MediaPlayerIdentifier& playerIdentifier() const { return m_playerIdentifier; }
     const WebCore::VideoReceiverEndpoint& endpoint() const { return m_endpoint; }
