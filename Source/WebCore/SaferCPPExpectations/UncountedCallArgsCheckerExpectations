@@ -133,7 +133,6 @@ JSFullscreenOptions.cpp
 JSGPUBindGroup.cpp
 JSGPUBindGroupLayout.cpp
 JSGPUBuffer.cpp
-JSGPUCanvasConfiguration.cpp
 JSGPUCommandBuffer.cpp
 JSGPUCommandEncoder.cpp
 JSGPUComputePassEncoder.cpp
