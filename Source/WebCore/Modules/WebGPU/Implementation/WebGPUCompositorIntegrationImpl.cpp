@@ -73,12 +73,21 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     constexpr int max2DTextureSize = 16384;
     width = std::max(1, std::min(max2DTextureSize, width));
     height = std::max(1, std::min(max2DTextureSize, height));
-    bool isRGBA = (textureFormat == TextureFormat::Rgba8unorm || textureFormat == TextureFormat::Rgba8unormSRGB);
     IOSurface::Format colorFormat;
-    if (isRGBA)
+    switch (textureFormat) {
+    case TextureFormat::Rgba8unorm:
+    case TextureFormat::Rgba8unormSRGB:
         colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::RGBX : IOSurface::Format::RGBA;
-    else
+        break;
+#if HAVE(HDR_SUPPORT)
+    case TextureFormat::Rgba16float:
+        colorFormat = IOSurface::Format::RGBA16F;
+        break;
+#endif
+    default:
         colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::BGRX : IOSurface::Format::BGRA;
+        break;
+    }
 
     if (auto buffer = WebCore::IOSurface::create(nullptr, WebCore::IntSize(width, height), colorSpace, IOSurface::Name::WebGPU, colorFormat))
         m_renderBuffers.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(buffer)));

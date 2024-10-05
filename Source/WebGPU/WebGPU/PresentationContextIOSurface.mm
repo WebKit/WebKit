@@ -238,7 +238,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     }
 
     textureDescriptor.usage |= MTLTextureUsageRenderTarget;
-    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float;
+    bool needsLuminanceClampFunction = textureDescriptor.pixelFormat == MTLPixelFormatRGBA16Float && m_toneMappingMode == WGPUToneMappingMode_Standard;
     auto existingUsage = textureDescriptor.usage;
     for (IOSurface *iosurface in m_ioSurfaces) {
         RefPtr<Texture> parentLuminanceClampTexture;

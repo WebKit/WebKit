@@ -51,12 +51,14 @@ public:
     {
         layer.setOpaque(m_isOpaque);
         layer.setContentsScale(m_contentsScale);
+        layer.setContentsFormat(m_contentsFormat);
     }
     void display(PlatformCALayer& layer) final
     {
-        if (m_displayBuffer)
+        if (m_displayBuffer) {
+            layer.setContentsFormat(m_contentsFormat);
             layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { }, std::nullopt });
-        else
+        } else
             layer.clearContents();
     }
     GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
@@ -75,6 +77,10 @@ public:
 
         m_displayBuffer = MachSendRight { displayBuffer };
     }
+    void setContentsFormat(ContentsFormat contentsFormat)
+    {
+        m_contentsFormat = contentsFormat;
+    }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
         : m_contentsScale(contentsScale)
@@ -84,6 +90,7 @@ private:
     WTF::MachSendRight m_displayBuffer;
     const float m_contentsScale;
     const bool m_isOpaque;
+    ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 };
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
@@ -242,6 +249,15 @@ static DestinationColorSpace toWebCoreColorSpace(const GPUPredefinedColorSpace& 
     return DestinationColorSpace::SRGB();
 }
 
+static WebGPU::TextureFormat computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
+{
+    // Force Bgra8unorm to both: clamp color values to SDR, and opt out of CALayer HDR.
+    if (format == GPUTextureFormat::Rgba16float && toneMappingMode == GPUCanvasToneMappingMode::Standard)
+        return WebGPU::TextureFormat::Bgra8unorm;
+
+    return WebCore::convertToBacking(format);
+}
+
 ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration, bool dueToReshape)
 {
     if (isConfigured()) {
@@ -263,7 +279,23 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
             return Exception { ExceptionCode::TypeError, "Unsupported texture view format."_s };
     }
 
-    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, WebCore::convertToBacking(configuration.format), configuration.device->backing());
+    if (configuration.toneMapping.mode != GPUCanvasToneMappingMode::Standard) {
+#if HAVE(HDR_SUPPORT)
+        RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+        if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webGPUHDREnabled)
+            configuration.toneMapping.mode = GPUCanvasToneMappingMode::Standard;
+#else
+        configuration.toneMapping.mode = GPUCanvasToneMappingMode::Standard;
+#endif
+    }
+
+    auto textureFormat = computeTextureFormat(configuration.format, configuration.toneMapping.mode);
+#if HAVE(HDR_SUPPORT)
+    // Only use RGBA16F when CALayer HDR is needed.
+    m_layerContentsDisplayDelegate->setContentsFormat(textureFormat != WebGPU::TextureFormat::Rgba16float ? ContentsFormat::RGBA8 : ContentsFormat::RGBA16F);
+#endif
+
+    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height, toWebCoreColorSpace(configuration.colorSpace), configuration.alphaMode == GPUCanvasAlphaMode::Premultiplied ? WebCore::AlphaPremultiplication::Premultiplied : WebCore::AlphaPremultiplication::Unpremultiplied, textureFormat, configuration.device->backing());
     // FIXME: This ASSERT() is wrong. It's totally possible for the IPC to the GPU process to timeout if the GPUP is busy, and return nothing here.
     ASSERT(!renderBuffers.isEmpty());
 

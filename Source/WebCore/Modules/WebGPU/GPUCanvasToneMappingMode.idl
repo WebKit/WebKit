@@ -27,7 +27,7 @@
 // https://gpuweb.github.io/gpuweb/#dictdef-gpucanvastonemappingmode
 
 [
-    EnabledBySetting=WebGPUEnabled&WebGPUHDREnabled
+    EnabledBySetting=WebGPUEnabled
 ]
 enum GPUCanvasToneMappingMode {
     "standard",
