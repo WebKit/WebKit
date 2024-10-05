@@ -340,10 +340,10 @@ OptionSet<Containment> StyleRareNonInheritedData::usedContain() const
     case ContainerType::Normal:
         break;
     case ContainerType::Size:
-        containment.add({ Containment::Layout, Containment::Style, Containment::Size });
+        containment.add({ Containment::Style, Containment::Size });
         break;
     case ContainerType::InlineSize:
-        containment.add({ Containment::Layout, Containment::Style, Containment::InlineSize });
+        containment.add({ Containment::Style, Containment::InlineSize });
         break;
     };
 
