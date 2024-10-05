@@ -367,8 +367,8 @@ void JSTestNamedSetterThrowingException::analyzeHeap(JSCell* cell, HeapAnalyzer&
 {
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

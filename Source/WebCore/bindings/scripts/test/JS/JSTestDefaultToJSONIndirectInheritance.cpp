@@ -170,8 +170,8 @@ void JSTestDefaultToJSONIndirectInheritance::analyzeHeap(JSCell* cell, HeapAnaly
 {
     auto* thisObject = jsCast<JSTestDefaultToJSONIndirectInheritance*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
-    if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
+    if (RefPtr context = thisObject->scriptExecutionContext())
+        analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
     Base::analyzeHeap(cell, analyzer);
 }
 

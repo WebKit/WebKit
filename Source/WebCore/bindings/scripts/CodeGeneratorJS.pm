@@ -5268,8 +5268,8 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
         push(@implContent, "    analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());\n");
-        push(@implContent, "    if (thisObject->scriptExecutionContext())\n");
-        push(@implContent, "        analyzer.setLabelForCell(cell, makeString(\"url \"_s, thisObject->scriptExecutionContext()->url().string()));\n");
+        push(@implContent, "    if (RefPtr context = thisObject->scriptExecutionContext())\n");
+        push(@implContent, "        analyzer.setLabelForCell(cell, makeString(\"url \"_s, context->url().string()));\n");
         push(@implContent, "    Base::analyzeHeap(cell, analyzer);\n");
         push(@implContent, "}\n\n");
     }
