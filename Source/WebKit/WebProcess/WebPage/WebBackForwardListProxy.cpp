@@ -47,9 +47,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-// FIXME <rdar://problem/8819268>: This leaks all HistoryItems that go into these maps.
-// We need to clear up the life time of these objects.
-
 typedef HashMap<BackForwardItemIdentifier, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
