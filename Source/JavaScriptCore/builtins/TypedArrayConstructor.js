@@ -79,10 +79,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         // Since for-of loop once more looks up the @@iterator property of a given iterable,
         // it could be observable if the user defines a getter for @@iterator.
         // To avoid this situation, we define a wrapper object that @@iterator just returns a given iterator.
-        var wrapper = {};
-        wrapper.@@iterator = function() { return iterator; }
-
-        for (var value of wrapper) {
+        for (var value of @wrapIterator(iterator)) {
             @putByValDirect(accumulator, count, value);
             count++;
         }

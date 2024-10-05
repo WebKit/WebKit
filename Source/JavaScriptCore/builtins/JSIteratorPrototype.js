@@ -184,19 +184,18 @@ function flatMap(mapper)
 
     var iterated = this;
     var iteratedNextMethod = iterated.next;
-    var iteratedWrapper = {
-        @@iterator: function() { return this; },
+    var methodForwardingIterator = {
         next: function() { return iteratedNextMethod.@call(iterated); },
         return: function() { return iterated.return(@undefined); },
     };
 
     var generator = (function*() {
         var counter = 0;
-        for (var item of iteratedWrapper) {
+        for (var item of @wrapIterator(methodForwardingIterator)) {
             var mapped = mapper(item, counter++);
             var innerIterator = @getIteratorFlattenable(mapped, /* rejectStrings: */ true);
 
-            for (var innerItem of { @@iterator: function() { return innerIterator; } })
+            for (var innerItem of @wrapIterator(innerIterator))
                 yield innerItem;
         }
     })();
@@ -216,9 +215,7 @@ function some(predicate)
         @throwTypeError("Iterator.prototype.some callback must be a function.");
 
     var count = 0;
-    var iterator = this;
-    var wrapper = { @@iterator: function () { return iterator; }};
-    for (var item of wrapper) {
+    for (var item of @wrapIterator(this)) {
         if (predicate(item, count++))
             return true;
     }
@@ -238,9 +235,7 @@ function every(predicate)
         @throwTypeError("Iterator.prototype.every callback must be a function.");
 
     var count = 0;
-    var iterator = this;
-    var wrapper = { @@iterator: function () { return iterator; }};
-    for (var item of wrapper) {
+    for (var item of @wrapIterator(this)) {
         if (!predicate(item, count++))
             return false;
     }
@@ -260,9 +255,7 @@ function find(predicate)
         @throwTypeError("Iterator.prototype.find callback must be a function.");
 
     var count = 0;
-    var iterator = this;
-    var wrapper = { @@iterator: function () { return iterator; }};
-    for (var item of wrapper) {
+    for (var item of @wrapIterator(this)) {
         if (predicate(item, count++))
             return item;
     }

@@ -154,6 +154,17 @@ namespace JSC {
     public:
         virtual ~Node() { }
 
+        enum class FunctionCallNodeKind : uint8_t {
+            None,
+            Eval,
+            Value,
+            StaticBlock,
+            Resolve,
+            Bracket,
+            Dot,
+            Intrinsic,
+        };
+
         int firstLine() const { return m_position.line; }
         int startOffset() const { return m_position.offset; }
         int endOffset() const { return m_endOffset; }
@@ -212,7 +223,6 @@ namespace JSC {
         virtual bool isImportMeta() const { return false; }
         virtual bool isBytecodeIntrinsicNode() const { return false; }
         virtual bool isBinaryOpNode() const { return false; }
-        virtual bool isFunctionCall() const { return false; }
         virtual bool isDeleteNode() const { return false; }
         virtual bool isOptionalChain() const { return false; }
         virtual bool isOptionalCall() const { return false; }
@@ -223,6 +233,9 @@ namespace JSC {
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label&, Label&, FallThroughMode);
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
+
+        virtual FunctionCallNodeKind functionCallNodeKind() const { return FunctionCallNodeKind::None; }
+        bool isFunctionCall() const { return functionCallNodeKind() != FunctionCallNodeKind::None; }
 
         ResultType resultDescriptor() const { return m_resultType; }
 
@@ -988,19 +1001,21 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::Eval; }
 
         ArgumentsNode* m_args;
     };
 
     class FunctionCallValueNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
+        friend class ForOfNode;
+
         FunctionCallValueNode(const JSTokenLocation&, ExpressionNode*, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall);
 
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::Value; }
         bool isOptionalCall() const final { return m_isOptionalCall; }
 
         ExpressionNode* m_expr;
@@ -1015,7 +1030,7 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::StaticBlock; }
 
         ExpressionNode* m_expr { nullptr };
     };
@@ -1027,7 +1042,7 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::Resolve; }
         bool isOptionalCall() const final { return m_isOptionalCall; }
 
         const Identifier& m_ident;
@@ -1042,7 +1057,7 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::Bracket; }
         bool isOptionalCall() const final { return m_isOptionalCall; }
 
         ExpressionNode* m_base;
@@ -1060,7 +1075,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) override;
 
     protected:
-        bool isFunctionCall() const final { return true; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return FunctionCallNodeKind::Dot; }
         bool isOptionalCall() const final { return m_isOptionalCall; }
 
         ArgumentsNode* m_args;
@@ -1090,7 +1105,7 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        bool isFunctionCall() const final { return m_type == Type::Function; }
+        FunctionCallNodeKind functionCallNodeKind() const final { return m_type == Type::Function ? FunctionCallNodeKind::Intrinsic : FunctionCallNodeKind::None; }
 
         BytecodeIntrinsicRegistry::Entry m_entry;
         const Identifier& m_ident;
