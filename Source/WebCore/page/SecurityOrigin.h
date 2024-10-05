@@ -225,13 +225,14 @@ private:
     SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    bool m_universalAccess { false };
-    bool m_domainWasSetInDOM { false };
-    bool m_canLoadLocalResources { false };
-    bool m_enforcesFilePathSeparation { false };
-    bool m_needsStorageAccessFromFileURLsQuirk { false };
+    bool m_universalAccess : 1 { false };
+    bool m_domainWasSetInDOM : 1 { false };
+    bool m_canLoadLocalResources : 1 { false };
+    bool m_enforcesFilePathSeparation : 1 { false };
+    bool m_needsStorageAccessFromFileURLsQuirk : 1 { false };
+    bool m_isLocal : 1 { false };
     mutable std::optional<bool> m_isPotentiallyTrustworthy;
-    bool m_isLocal { false };
+
 };
 
 WEBCORE_EXPORT bool shouldTreatAsPotentiallyTrustworthy(const URL&);
