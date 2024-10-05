@@ -380,8 +380,8 @@ static WGPULimits mergeLimits(const WGPULimits& previous, const WGPULimits& next
 
 static Vector<WGPUFeatureName> mergeFeatures(const Vector<WGPUFeatureName>& previous, const Vector<WGPUFeatureName>& next)
 {
-    ASSERT(WTF::isSortedConstExpr(previous.begin(), previous.end()));
-    ASSERT(WTF::isSortedConstExpr(next.begin(), next.end()));
+    ASSERT(std::is_sorted(previous.begin(), previous.end()));
+    ASSERT(std::is_sorted(next.begin(), next.end()));
 
     Vector<WGPUFeatureName> result(previous.size() + next.size());
     auto end = mergeDeduplicatedSorted(previous.begin(), previous.end(), next.begin(), next.end(), result.begin());
@@ -511,7 +511,7 @@ bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference)
 
 bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference)
 {
-    ASSERT(WTF::isSortedConstExpr(reference.begin(), reference.end()));
+    ASSERT(std::is_sorted(reference.begin(), reference.end()));
     for (auto feature : target) {
         if (!std::binary_search(reference.begin(), reference.end(), feature))
             return true;

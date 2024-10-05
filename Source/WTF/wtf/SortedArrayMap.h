@@ -159,7 +159,7 @@ template<ASCIISubset subset, typename CharacterType> constexpr std::make_unsigne
 template<ASCIISubset subset> template<unsigned size> constexpr ComparableASCIISubsetLiteral<subset>::ComparableASCIISubsetLiteral(const char (&characters)[size])
     : literal { ASCIILiteral::fromLiteralUnsafe(characters) }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(allOfConstExpr(&characters[0], &characters[size - 1], [] (char character) {
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::all_of(&characters[0], &characters[size - 1], [] (char character) {
         return isInSubset<subset>(character);
     }));
     ASSERT_UNDER_CONSTEXPR_CONTEXT(!characters[size - 1]);
@@ -168,7 +168,7 @@ template<ASCIISubset subset> template<unsigned size> constexpr ComparableASCIISu
 template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap(const ArrayType& array)
     : m_array { array }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(isSortedConstExpr(std::begin(array), std::end(array), [] (auto& a, auto b) {
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(std::begin(array), std::end(array), [] (auto& a, auto b) {
         return a.first < b.first;
     }));
 }
@@ -210,7 +210,7 @@ template<typename ArrayType> template<typename KeyArgument> inline bool SortedAr
 template<typename ArrayType> constexpr SortedArraySet<ArrayType>::SortedArraySet(const ArrayType& array)
     : m_array { array }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(isSortedConstExpr(std::begin(array), std::end(array)));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::is_sorted(std::begin(array), std::end(array)));
 }
 
 template<typename ArrayType> template<typename KeyArgument> inline bool SortedArraySet<ArrayType>::contains(const KeyArgument& key) const
