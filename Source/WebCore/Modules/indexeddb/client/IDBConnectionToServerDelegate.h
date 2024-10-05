@@ -72,7 +72,7 @@ class IDBConnectionToServerDelegate : public CanMakeWeakPtr<IDBConnectionToServe
 public:
     virtual ~IDBConnectionToServerDelegate() = default;
 
-    virtual IDBConnectionIdentifier identifier() const = 0;
+    virtual std::optional<IDBConnectionIdentifier> identifier() const = 0;
     virtual void deleteDatabase(const IDBOpenRequestData&) = 0;
     virtual void openDatabase(const IDBOpenRequestData&) = 0;
     virtual void abortTransaction(const IDBResourceIdentifier&) = 0;

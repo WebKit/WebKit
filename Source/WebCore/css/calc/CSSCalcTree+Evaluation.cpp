@@ -52,6 +52,7 @@ static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> std:
 static auto evaluate(const IndirectNode<Max>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Hypot>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Anchor>&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const IndirectNode<AnchorSize>&, const EvaluationOptions&) -> std::optional<double>;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, const EvaluationOptions&) -> std::optional<double>;
 
@@ -188,6 +189,12 @@ std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const Evaluat
 
     return result;
 
+}
+
+std::optional<double> evaluate(const IndirectNode<AnchorSize>&, const EvaluationOptions&)
+{
+    // FIXME (webkit.org/b/280789): evaluate anchor-size()
+    return 0.0;
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)

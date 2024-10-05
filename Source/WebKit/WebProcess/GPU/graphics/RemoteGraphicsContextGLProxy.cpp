@@ -110,8 +110,8 @@ RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
 
 void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle)
 {
-    m_streamConnection = WTFMove(streamConnection);
-    m_streamConnection->open(*this, *this);
+    m_streamConnection = streamConnection.ptr();
+    streamConnection->open(*this, *this);
     callOnMainRunLoopAndWait([&]() {
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection.createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTFMove(serverHandle));
@@ -208,6 +208,11 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
 #endif
 
 #if ENABLE(VIDEO)
+RefPtr<RemoteVideoFrameObjectHeapProxy> RemoteGraphicsContextGLProxy::protectedVideoFrameObjectHeapProxy() const
+{
+    return m_videoFrameObjectHeapProxy;
+}
+
 bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame& videoFrame, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
 #if PLATFORM(COCOA)
@@ -247,7 +252,7 @@ RefPtr<Image> RemoteGraphicsContextGLProxy::videoFrameToImage(WebCore::VideoFram
     RefPtr<NativeImage> nativeImage;
 #if PLATFORM(COCOA)
     callOnMainRunLoopAndWait([&] {
-        nativeImage = m_videoFrameObjectHeapProxy->getNativeImage(frame);
+        nativeImage = protectedVideoFrameObjectHeapProxy()->getNativeImage(frame);
     });
 #endif
     return BitmapImage::create(WTFMove(nativeImage));
@@ -465,7 +470,7 @@ void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, 
         return;
     }
     ASSERT(!m_didInitialize);
-    m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    protectedStreamConnection()->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     initialize(initializationState.value());
 }
@@ -510,7 +515,7 @@ void RemoteGraphicsContextGLProxy::waitUntilInitialized()
         return;
     if (m_didInitialize)
         return;
-    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_identifier) == IPC::Error::NoError)
+    if (protectedStreamConnection()->waitForAndDispatchImmediately<Messages::RemoteGraphicsContextGLProxy::WasCreated>(m_identifier) == IPC::Error::NoError)
         return;
     markContextLost();
 }
@@ -526,7 +531,7 @@ void RemoteGraphicsContextGLProxy::abandonGpuProcess()
 {
     if (!m_streamConnection)
         return;
-    m_streamConnection->invalidate();
+    protectedStreamConnection()->invalidate();
     m_streamConnection = nullptr;
     m_gpuProcessConnection = nullptr;
 }
@@ -538,7 +543,7 @@ void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
 #endif
     if (!m_streamConnection)
         return;
-    m_streamConnection->invalidate();
+    protectedStreamConnection()->invalidate();
     m_streamConnection = nullptr;
     ensureOnMainRunLoop([identifier = m_identifier, weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
         RefPtr gpuProcessConnection = weakGPUProcessConnection.get();

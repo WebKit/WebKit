@@ -112,8 +112,8 @@ public:
         Type type { Type::Bitmap };
         WebCore::FloatSize size;
         WebCore::DestinationColorSpace colorSpace { WebCore::DestinationColorSpace::SRGB() };
+        WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
         float scale { 1.0f };
-        bool deepColor { false };
         bool isOpaque { false };
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -145,7 +145,7 @@ public:
 
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
-    bool usesDeepColorBackingStore() const;
+    WebCore::ContentsFormat contentsFormat() const { return m_parameters.contentsFormat; }
     WebCore::DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
     WebCore::ImageBufferPixelFormat pixelFormat() const;
     Type type() const { return m_parameters.type; }

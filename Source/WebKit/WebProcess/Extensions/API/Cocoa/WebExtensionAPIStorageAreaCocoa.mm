@@ -116,6 +116,18 @@ void WebExtensionAPIStorageArea::get(WebPage& page, id items, Ref<WebExtensionCa
     }, extensionContext().identifier());
 }
 
+void WebExtensionAPIStorageArea::getKeys(WebPage& page, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::StorageGetKeys(page.webPageProxyIdentifier(), m_type), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<Vector<String>, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error());
+            return;
+        }
+
+        callback->call(createNSArray(result.value()).get());
+    }, extensionContext().identifier());
+}
+
 void WebExtensionAPIStorageArea::getBytesInUse(WebPage& page, id keys, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/getBytesInUse

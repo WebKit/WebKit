@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestNamedDeleterNoIdentifier>;
     static JSTestNamedDeleterNoIdentifier* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterNoIdentifier>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestNamedDeleterNoIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterNoIdentifier>(vm)) JSTestNamedDeleterNoIdentifier(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

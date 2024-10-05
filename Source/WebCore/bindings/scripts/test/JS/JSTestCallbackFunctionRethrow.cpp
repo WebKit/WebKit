@@ -62,7 +62,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     Ref<JSTestCallbackFunctionRethrow> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
-    auto& vm = globalObject.vm();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& lexicalGlobalObject = globalObject;

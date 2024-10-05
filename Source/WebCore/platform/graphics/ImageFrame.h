@@ -80,6 +80,9 @@ public:
     void setOrientation(ImageOrientation orientation) { m_orientation = orientation; };
     ImageOrientation orientation() const { return m_orientation; }
 
+    void setHeadroom(Headroom headroom) { m_headroom = headroom; };
+    Headroom headroom() const { return m_headroom; }
+
     void setDensityCorrectedSize(const IntSize& size) { m_densityCorrectedSize = size; }
     std::optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
 
@@ -103,6 +106,7 @@ private:
     DecodingOptions m_decodingOptions { DecodingMode::Auto };
 
     ImageOrientation m_orientation { ImageOrientation::Orientation::None };
+    Headroom m_headroom { Headroom::None };
     std::optional<IntSize> m_densityCorrectedSize;
     Seconds m_duration;
     bool m_hasAlpha { true };

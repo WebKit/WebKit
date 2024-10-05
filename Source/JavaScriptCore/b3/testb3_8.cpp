@@ -1530,8 +1530,8 @@ void testSShrCompare32(int32_t constantValue)
     auto compile = [&](B3::Opcode opcode, uint32_t shiftAmount, uint32_t constantValue) {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
-        auto* value = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
-        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), value, root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
+        auto arguments = cCallArgumentValues<int32_t>(proc, root);
+        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
         auto* constant = root->appendNew<Const32Value>(proc, Origin(), constantValue);
         auto* comparison = root->appendNew<Value>(proc, opcode, Origin(), shifted, constant);
         root->appendNewControlValue(proc, Return, Origin(), comparison);
@@ -1565,8 +1565,8 @@ void testSShrCompare64(int64_t constantValue)
     auto compile = [&](B3::Opcode opcode, uint64_t shiftAmount, uint64_t constantValue) {
         Procedure proc;
         BasicBlock* root = proc.addBlock();
-        auto* value = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
-        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), value, root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
+        auto arguments = cCallArgumentValues<uint64_t>(proc, root);
+        auto* shifted = root->appendNew<Value>(proc, SShr, Origin(), arguments[0], root->appendNew<Const32Value>(proc, Origin(), shiftAmount));
         auto* constant = root->appendNew<Const64Value>(proc, Origin(), constantValue);
         auto* comparison = root->appendNew<Value>(proc, opcode, Origin(), shifted, constant);
         root->appendNewControlValue(proc, Return, Origin(), comparison);

@@ -94,7 +94,7 @@ void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& 
 {
     if (ownerElement.contentFrame())
         return;
-    protectedFrame()->checkedLoader()->client().createFrame(frameName, ownerElement);
+    protectedFrame()->protectedLoader()->client().createFrame(frameName, ownerElement);
     if (!ownerElement.contentFrame())
         return;
 
@@ -307,7 +307,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
 
     RefPtr subFrame = frame->loader().client().createFrame(name, ownerElement);
     if (!subFrame)  {
-        frame->checkedLoader()->checkCallImplicitClose();
+        frame->protectedLoader()->checkCallImplicitClose();
         document->decrementLoadEventDelayCount();
         return nullptr;
     }
@@ -326,13 +326,13 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // which case, Referrer Policy is applied).
     auto referrerToUse = url.isAboutBlank() ? referrer.string() : SecurityPolicy::generateReferrerHeader(policy, url, referrer, OriginAccessPatternsForWebProcess::singleton());
 
-    frame->checkedLoader()->loadURLIntoChildFrame(url, referrerToUse, subFrame.get());
+    frame->protectedLoader()->loadURLIntoChildFrame(url, referrerToUse, subFrame.get());
 
     document->decrementLoadEventDelayCount();
 
     // The frame's onload handler may have removed it from the document.
     if (!subFrame || !subFrame->tree().parent()) {
-        frame->checkedLoader()->checkCallImplicitClose();
+        frame->protectedLoader()->checkCallImplicitClose();
         return nullptr;
     }
 
@@ -342,7 +342,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // actually completed below. (Note that we set m_isComplete to false even for synchronous
     // loads, so that checkCompleted() below won't bail early.)
     // FIXME: Can we remove this entirely? m_isComplete normally gets set to false when a load is committed.
-    subFrame->checkedLoader()->started();
+    subFrame->protectedLoader()->started();
    
     {
         CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(ownerElement.renderer());
@@ -351,7 +351,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
             renderWidget->setWidget(WTFMove(view));
     }
 
-    frame->checkedLoader()->checkCallImplicitClose();
+    frame->protectedLoader()->checkCallImplicitClose();
 
     // Some loads are performed synchronously (e.g., about:blank and loads
     // cancelled by returning a null ResourceRequest from requestFromDelegate).
@@ -363,7 +363,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     // it's being added to the child list. It would be a good idea to
     // create the child first, then invoke the loader separately.
     if (subFrame->loader().state() == FrameState::Complete && !subFrame->loader().policyDocumentLoader())
-        subFrame->checkedLoader()->checkCompleted();
+        subFrame->protectedLoader()->checkCompleted();
 
     if (!subFrame->tree().parent())
         return nullptr;
@@ -375,7 +375,7 @@ bool FrameLoader::SubframeLoader::shouldUsePlugin(const URL& url, const String& 
 {
     Ref frame = m_frame.get();
 
-    ObjectContentType objectType = frame->checkedLoader()->client().objectContentType(url, mimeType);
+    ObjectContentType objectType = frame->protectedLoader()->client().objectContentType(url, mimeType);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
     useFallback = objectType == ObjectContentType::None && hasFallback;

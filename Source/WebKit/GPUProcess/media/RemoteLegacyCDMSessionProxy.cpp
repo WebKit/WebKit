@@ -197,9 +197,13 @@ WTFLogChannel& RemoteLegacyCDMSessionProxy::logChannel() const
 }
 #endif
 
-const SharedPreferencesForWebProcess& RemoteLegacyCDMSessionProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMSessionProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedFactory()->sharedPreferencesForWebProcess();
+    if (!m_factory)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_factory->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

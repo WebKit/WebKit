@@ -79,6 +79,7 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     RUN_PASS(buildCallGraph, shaderModule);
     CHECK_PASS(validateIO, shaderModule);
     CHECK_PASS(validateVisibility, shaderModule);
+    RUN_PASS(mangleNames, shaderModule);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -104,7 +105,6 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
 
         HashMap<String, Reflection::EntryPointInformation> entryPoints;
 
-        RUN_PASS(mangleNames, shaderModule);
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewritePointers, shaderModule);
         RUN_PASS(rewriteEntryPoints, shaderModule, pipelineLayouts);

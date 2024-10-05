@@ -182,7 +182,7 @@ bool JSTestNamedSetterNoIdentifier::getOwnPropertySlot(JSObject* object, JSGloba
 
 bool JSTestNamedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -202,7 +202,7 @@ bool JSTestNamedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, 
 
 void JSTestNamedSetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -252,7 +252,7 @@ bool JSTestNamedSetterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lex
     auto* thisObject = jsCast<JSTestNamedSetterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto propertyName = Identifier::from(vm, index);
@@ -333,7 +333,7 @@ bool JSTestNamedSetterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobal
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -345,7 +345,7 @@ bool JSTestNamedSetterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobal
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

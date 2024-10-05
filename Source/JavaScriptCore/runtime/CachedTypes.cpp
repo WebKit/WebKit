@@ -881,17 +881,20 @@ public:
     void encode(Encoder& encoder, const UnlinkedSimpleJumpTable& jumpTable)
     {
         m_min = jumpTable.m_min;
+        m_defaultOffset = jumpTable.m_defaultOffset;
         m_branchOffsets.encode(encoder, jumpTable.m_branchOffsets);
     }
 
     void decode(Decoder& decoder, UnlinkedSimpleJumpTable& jumpTable) const
     {
         jumpTable.m_min = m_min;
+        jumpTable.m_defaultOffset = m_defaultOffset;
         m_branchOffsets.decode(decoder, jumpTable.m_branchOffsets);
     }
 
 private:
     int32_t m_min;
+    int32_t m_defaultOffset;
     CachedVector<int32_t> m_branchOffsets;
 };
 
@@ -902,6 +905,7 @@ public:
         m_offsetTable.encode(encoder, jumpTable.m_offsetTable);
         m_minLength = jumpTable.m_minLength;
         m_maxLength = jumpTable.m_maxLength;
+        m_defaultOffset = jumpTable.m_defaultOffset;
     }
 
     void decode(Decoder& decoder, UnlinkedStringJumpTable& jumpTable) const
@@ -909,12 +913,14 @@ public:
         m_offsetTable.decode(decoder, jumpTable.m_offsetTable);
         jumpTable.m_minLength = m_minLength;
         jumpTable.m_maxLength = m_maxLength;
+        jumpTable.m_defaultOffset = m_defaultOffset;
     }
 
 private:
     CachedMemoryCompactLookupOnlyRobinHoodHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable::OffsetLocation> m_offsetTable;
     unsigned m_minLength { 0 };
     unsigned m_maxLength { 0 };
+    int32_t m_defaultOffset { 0 };
 };
 
 class CachedBitVector : public VariableLengthObject<BitVector> {

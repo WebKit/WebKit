@@ -70,7 +70,7 @@ Ref<WebPageProxy> WebAuthenticatorCoordinatorProxy::protectedWebPageProxy() cons
     return m_webPageProxy.get();
 }
 
-const SharedPreferencesForWebProcess& WebAuthenticatorCoordinatorProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
     return protectedWebPageProxy()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }

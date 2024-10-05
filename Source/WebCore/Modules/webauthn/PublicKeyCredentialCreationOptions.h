@@ -28,9 +28,14 @@
 #if ENABLE(WEB_AUTHN)
 #include "AttestationConveyancePreference.h"
 #include "AuthenticationExtensionsClientInputs.h"
+#include "AuthenticatorSelectionCriteria.h"
 #include "BufferSource.h"
+#include "IDLTypes.h"
 #include "PublicKeyCredentialDescriptor.h"
+#include "PublicKeyCredentialParameters.h"
+#include "PublicKeyCredentialRpEntity.h"
 #include "PublicKeyCredentialType.h"
+#include "PublicKeyCredentialUserEntity.h"
 #include "ResidentKeyRequirement.h"
 #include "UserVerificationRequirement.h"
 #include <wtf/Forward.h>
@@ -42,38 +47,11 @@ enum class AuthenticatorAttachment : uint8_t;
 
 struct PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
-    struct Entity {
-        String name;
-        String icon;
-    };
-
-    struct RpEntity : public Entity {
-        mutable std::optional<String> id;
-    };
-
-    struct UserEntity : public Entity {
-        BufferSource id;
-        String displayName;
-    };
-
-    struct Parameters {
-        PublicKeyCredentialType type;
-        int64_t alg;
-    };
-
-    struct AuthenticatorSelectionCriteria {
-        std::optional<AuthenticatorAttachment> authenticatorAttachment;
-        // residentKey replaces requireResidentKey, see: https://www.w3.org/TR/webauthn-2/#dictionary-authenticatorSelection
-        std::optional<ResidentKeyRequirement> residentKey;
-        bool requireResidentKey { false };
-        UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
-    };
-
-    RpEntity rp;
-    UserEntity user;
+    PublicKeyCredentialRpEntity rp;
+    PublicKeyCredentialUserEntity user;
 
     BufferSource challenge;
-    mutable Vector<Parameters> pubKeyCredParams;
+    mutable Vector<PublicKeyCredentialParameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;

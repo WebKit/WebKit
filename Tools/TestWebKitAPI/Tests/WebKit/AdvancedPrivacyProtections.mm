@@ -172,10 +172,10 @@ private:
 };
 #endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
-static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL enabled = YES, RetainPtr<WKWebpagePreferences>&& preferences = { }, WKWebsiteDataStore *dataStore = nil)
+static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL enabled = YES, RetainPtr<WKWebpagePreferences>&& preferences = { }, WKWebsiteDataStore *dataStore = nil, bool enableResourceLoadStatistics = YES)
 {
     auto store = dataStore ?: WKWebsiteDataStore.nonPersistentDataStore;
-    store._resourceLoadStatisticsEnabled = YES;
+    store._resourceLoadStatisticsEnabled = enableResourceLoadStatistics;
 
     auto policies = enabled
         ? _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry | _WKWebsiteNetworkConnectionIntegrityPolicyEnabled | _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation | _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters
@@ -194,12 +194,23 @@ static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
-TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenPrivacyProtectionsAreDisabled)
+TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenPrivacyProtectionsAreDisabled)
 {
     [TestProtocol registerWithScheme:@"https"];
     QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections(NO);
+    auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://bundle-file/simple.html?garply=20", [webView URL].absoluteString);
+}
+
+TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenResourceLoadStatisticsAreDisabled)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections(NO, { }, nil, NO);
     auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
     EXPECT_WK_STREQ("https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40", [webView URL].absoluteString);
@@ -744,63 +755,6 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
     NSString *expectedReferrer = [NSString stringWithFormat:@"http://localhost:%d/", server.port()];
     EXPECT_WK_STREQ(expectedReferrer, result);
 }
-
-#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
-
-TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingParametersAfterReducingPrivacyProtections)
-{
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ], @[ @"" ], @[ @"" ] };
-
-    auto pathAndQuery = "/index2.html?someID=123"_s;
-    HTTPServer server({
-        { pathAndQuery, { "<body>Destination</body>"_s } },
-    }, HTTPServer::Protocol::Http);
-
-    server.addResponse("/index1.html"_s, makeString("<a href='http://127.0.0.1:"_s, server.port(), pathAndQuery, "'>Link</a>"_s));
-
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/index1.html"_s));
-
-    auto checkForExpectedQueryParameters = [](NSURL *url) {
-        auto parameters = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO].queryItems;
-        EXPECT_EQ(1U, parameters.count);
-        EXPECT_WK_STREQ("someID", parameters.firstObject.name);
-        EXPECT_WK_STREQ("123", parameters.firstObject.value);
-    };
-
-    auto documentURLString = [webView stringByEvaluatingJavaScript:@"document.URL"];
-
-    checkForExpectedQueryParameters([NSURL URLWithString:documentURLString]);
-    checkForExpectedQueryParameters([webView URL]);
-}
-
-TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingParametersAfterReducingPrivacyProtectionsWithJSRedirect)
-{
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ], @[ @"" ], @[ @"" ] };
-
-    auto pathAndQuery = "/destination.html?someID=123"_s;
-    HTTPServer server({
-        { pathAndQuery, { "<body>Destination</body>"_s } },
-    }, HTTPServer::Protocol::Http);
-
-    server.addResponse("/source.html"_s, { makeString("<a href='http://127.0.0.1:"_s, server.port(), "/redirect.html'>Link</a>"_s) });
-    server.addResponse("/redirect.html"_s, { makeString("<script>window.location = 'http://localhost:"_s, server.port(), pathAndQuery, "';</script>"_s) });
-
-    auto webView = webViewAfterCrossSiteNavigationWithReducedPrivacy(makeString("http://localhost:"_s, server.port(), "/source.html"_s), true);
-
-    auto checkForExpectedQueryParameters = [](NSURL *url) {
-        auto parameters = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO].queryItems;
-        EXPECT_EQ(1U, parameters.count);
-        EXPECT_WK_STREQ("someID", parameters.firstObject.name);
-        EXPECT_WK_STREQ("123", parameters.firstObject.value);
-    };
-
-    auto documentURLString = [webView stringByEvaluatingJavaScript:@"document.URL"];
-
-    checkForExpectedQueryParameters([NSURL URLWithString:documentURLString]);
-    checkForExpectedQueryParameters([webView URL]);
-}
-
-#endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
 TEST(AdvancedPrivacyProtections, HideScreenMetricsFromBindings)
 {

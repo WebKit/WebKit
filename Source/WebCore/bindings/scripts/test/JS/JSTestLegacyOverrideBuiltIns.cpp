@@ -191,7 +191,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlot(JSObject* object, JSGlobal
 
 bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -211,7 +211,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, J
 
 void JSTestLegacyOverrideBuiltIns::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
@@ -260,7 +260,7 @@ bool JSTestLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexi
     auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     throwScope.assertNoException();
@@ -317,7 +317,7 @@ bool JSTestLegacyOverrideBuiltIns::deletePropertyByIndex(JSCell* cell, JSGlobalO
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
     if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
@@ -329,7 +329,7 @@ bool JSTestLegacyOverrideBuiltIns::deletePropertyByIndex(JSCell* cell, JSGlobalO
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestLegacyOverrideBuiltInsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -339,7 +339,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyOverrideBuiltInsConstructor, (JSGlobalObjec
 
 static inline JSC::EncodedJSValue jsTestLegacyOverrideBuiltInsPrototypeFunction_namedItemBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestLegacyOverrideBuiltIns>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

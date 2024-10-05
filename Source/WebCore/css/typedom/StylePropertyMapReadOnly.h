@@ -63,7 +63,8 @@ public:
     Iterator createIterator(ScriptExecutionContext* context) { return Iterator(*this, context); }
 
     virtual ~StylePropertyMapReadOnly() = default;
-    virtual ExceptionOr<RefPtr<CSSStyleValue>> get(ScriptExecutionContext&, const AtomString& property) const = 0;
+    using CSSStyleValueOrUndefined = std::variant<std::nullptr_t, RefPtr<CSSStyleValue>>;
+    virtual ExceptionOr<CSSStyleValueOrUndefined> get(ScriptExecutionContext&, const AtomString& property) const = 0;
     virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(ScriptExecutionContext&, const AtomString&) const = 0;
     virtual ExceptionOr<bool> has(ScriptExecutionContext&, const AtomString&) const = 0;
     virtual unsigned size() const = 0;

@@ -171,7 +171,7 @@ void ServiceWorkerJob::didReceiveResponse(ScriptExecutionContextIdentifier, std:
     m_client.jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
 }
 
-void ServiceWorkerJob::notifyFinished(ScriptExecutionContextIdentifier)
+void ServiceWorkerJob::notifyFinished(std::optional<ScriptExecutionContextIdentifier>)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(m_scriptLoader);

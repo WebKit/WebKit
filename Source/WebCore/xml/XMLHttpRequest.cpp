@@ -895,7 +895,7 @@ void XMLHttpRequest::handleCancellation()
     }));
 }
 
-void XMLHttpRequest::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)

@@ -102,6 +102,25 @@ enum class AllowImageSubsampling : bool {
     Yes
 };
 
+struct Headroom {
+    constexpr Headroom(float headroom)
+    {
+        this->headroom = headroom;
+    }
+
+    constexpr operator float() const { return headroom; }
+
+    friend constexpr bool operator==(const Headroom&, const Headroom&) = default;
+
+    static const Headroom FromImage;
+    static const Headroom None;
+
+    float headroom;
+};
+
+constexpr const Headroom Headroom::FromImage = { 0 };
+constexpr const Headroom Headroom::None = { 1 };
+
 #if USE(SKIA)
 enum class StrictImageClamping : bool {
     No,

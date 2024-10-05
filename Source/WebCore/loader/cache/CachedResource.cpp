@@ -189,7 +189,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         }
     }
 
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
             if (frameLoader->state() == FrameState::Provisional)

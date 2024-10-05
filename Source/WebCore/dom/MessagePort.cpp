@@ -68,17 +68,17 @@ bool MessagePort::isMessagePortAliveForTesting(const MessagePortIdentifier& iden
 void MessagePort::notifyMessageAvailable(const MessagePortIdentifier& identifier)
 {
     ASSERT(isMainThread());
-    ScriptExecutionContextIdentifier scriptExecutionContextIdentifier;
+    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier;
     ThreadSafeWeakPtr<MessagePort> weakPort;
     {
         Locker locker { allMessagePortsLock };
-        scriptExecutionContextIdentifier = portToContextIdentifier().get(identifier);
+        scriptExecutionContextIdentifier = portToContextIdentifier().getOptional(identifier);
         weakPort = allMessagePorts().get(identifier);
     }
     if (!scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::ensureOnContextThread(scriptExecutionContextIdentifier, [weakPort = WTFMove(weakPort)](auto&) {
+    ScriptExecutionContext::ensureOnContextThread(*scriptExecutionContextIdentifier, [weakPort = WTFMove(weakPort)](auto&) {
         if (RefPtr port = weakPort.get())
             port->messageAvailable();
     });

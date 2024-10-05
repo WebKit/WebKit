@@ -2704,7 +2704,7 @@ Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionWindo
         return defaultAction();
 
     return m_actionWindowMap.ensure(*window, [&] {
-        return WebExtensionAction::create(*this);
+        return WebExtensionAction::create(*this, *window);
     }).iterator->value;
 }
 

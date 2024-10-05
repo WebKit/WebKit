@@ -262,7 +262,7 @@
                   "workernames": ["bot611"]
                   },
                   {
-                    "name": "Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build", "factory": "SmartPointerStaticAnalyzerFactory",
+                    "name": "Apple-Sonoma-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
                     "platform": "mac-sonoma", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot600"]
                   },
@@ -804,7 +804,7 @@
                   "builderNames": ["Apple-Sequoia-Debug-WK2-Site-Isolation-Tree-Tests"]
                   },                  
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sonoma", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build","Apple-Sonoma-Smart-Pointer-Static-Analyzer-Build"]
+                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build","Apple-Sonoma-Safer-CPP-Checks"]
                   },
                   { "type": "Triggerable", "name": "sonoma-release-tests-wk1",
                   "builderNames": ["Apple-Sonoma-Release-WK1-Tests"]

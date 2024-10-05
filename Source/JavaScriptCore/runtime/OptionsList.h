@@ -294,7 +294,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maximumFunctionForCallInlineCandidateBytecodeCostForDFG, 80, Normal, nullptr) \
     v(Unsigned, maximumFunctionForClosureCallInlineCandidateBytecodeCostForDFG, 80, Normal, nullptr) \
     v(Unsigned, maximumFunctionForConstructInlineCandidateBytecodeCostForDFG, 80, Normal, nullptr) \
-    v(Unsigned, maximumFunctionForCallInlineCandidateBytecodeCostForFTL, 125, Normal, nullptr) \
+    v(Unsigned, maximumFunctionForCallInlineCandidateBytecodeCostForFTL, 160, Normal, nullptr) \
     v(Unsigned, maximumFunctionForClosureCallInlineCandidateBytecodeCostForFTL, 100, Normal, nullptr) \
     v(Unsigned, maximumFunctionForConstructInlineCandidateBytecodeCostForFTL, 100, Normal, nullptr) \
     \
@@ -599,7 +599,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmGC, true, Normal, "Allow gc types from the wasm gc proposal."_s) \
     v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
-    v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
+    v(Bool, useWasmTailCalls, !isARM_THUMB2(), Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
 
 
 

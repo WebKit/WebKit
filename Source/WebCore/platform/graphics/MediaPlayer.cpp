@@ -377,6 +377,11 @@ MediaPlayerPrivateInterface* MediaPlayer::playerPrivate()
     return m_private.get();
 }
 
+RefPtr<MediaPlayerPrivateInterface> MediaPlayer::protectedPlayerPrivate()
+{
+    return m_private.get();
+}
+
 const MediaPlayerFactory* MediaPlayer::mediaEngine(MediaPlayerEnums::MediaEngineIdentifier identifier)
 {
     auto& engines = installedMediaEngines();

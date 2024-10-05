@@ -295,7 +295,7 @@
     },
     {
       "name": "macOS-Safer-CPP-Checks-EWS", "shortname": "mac-safer-cpp", "icon": "buildOnly",
-      "factory": "SmartPointerStaticAnalyzerFactory", "platform": "mac-sonoma",
+      "factory": "SaferCPPStaticAnalyzerFactory", "platform": "mac-sonoma",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews237", "ews246", "ews247", "ews248", "ews249", "ews250"]
     },

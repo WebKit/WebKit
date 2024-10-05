@@ -126,11 +126,11 @@ bool RenderEmbeddedObject::usesAsyncScrolling() const
     return pluginViewBase->usesAsyncScrolling();
 }
 
-ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
+std::optional<ScrollingNodeID> RenderEmbeddedObject::scrollingNodeID() const
 {
     RefPtr pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
     if (!pluginViewBase)
-        return { };
+        return std::nullopt;
     return pluginViewBase->scrollingNodeID();
 }
 

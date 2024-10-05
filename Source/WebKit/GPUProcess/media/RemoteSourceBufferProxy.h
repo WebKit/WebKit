@@ -65,7 +65,7 @@ public:
 
     void setMediaPlayer(RemoteMediaPlayerProxy&);
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     RemoteSourceBufferProxy(GPUConnectionToWebProcess&, RemoteSourceBufferIdentifier, Ref<WebCore::SourceBufferPrivate>&&, RemoteMediaPlayerProxy&);

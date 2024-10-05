@@ -466,7 +466,7 @@ void IDBDatabase::dispatchEvent(Event& event)
 
     if (auto* versionChangeEvent = dynamicDowncast<IDBVersionChangeEvent>(event)) {
         if (versionChangeEvent->type() == m_eventNames.versionchangeEvent)
-            m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, versionChangeEvent->requestIdentifier());
+            m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, *versionChangeEvent->requestIdentifier());
     }
 }
 

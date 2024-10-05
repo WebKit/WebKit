@@ -59,6 +59,8 @@ TEST(WKWebExtensionAPIStorage, Errors)
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser?.storage?.local?.get(Date.now()), /'items' value is invalid, because an object or a string or an array of strings or null is expected, but a number was provided/i)",
 
+        @"browser.test.assertThrows(() => browser?.storage?.local?.getKeys('invalid'), /'callback' value is invalid, because a function is expected/i)",
+
         @"browser.test.assertThrows(() => browser?.storage?.local?.getBytesInUse({}), /'keys' value is invalid, because a string or an array of strings or null is expected, but an object was provided/i)",
         @"browser.test.assertThrows(() => browser?.storage?.local?.getBytesInUse([1]), /'keys' value is invalid, because a string or an array of strings or null is expected, but an array of other values was provided/i)",
 
@@ -304,6 +306,36 @@ TEST(WKWebExtensionAPIStorage, GetWithDefaultValue)
         @"result = await browser.storage.local.get({ 'abc': null, 'unrecognized_key': 'default_value' })",
         @"browser.test.assertEq(result?.abc, 123, 'Should return the stored value when the key exists, even if default value is null')",
         @"browser.test.assertEq(result?.unrecognized_key, 'default_value', 'Should return the default value for unrecognized keys')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    Util::loadAndRunExtension(storageManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIStorage, GetKeys)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'], 'null': null }",
+        @"await browser?.storage?.local?.set(data)",
+
+        @"var keys = await browser?.storage?.local?.getKeys()",
+        @"browser.test.assertEq(keys.length, 6, 'Should have 6 keys')",
+        @"browser.test.assertTrue(keys.includes('string'), 'Should include string key')",
+        @"browser.test.assertTrue(keys.includes('number'), 'Should include number key')",
+        @"browser.test.assertTrue(keys.includes('boolean'), 'Should include boolean key')",
+        @"browser.test.assertTrue(keys.includes('dictionary'), 'Should include dictionary key')",
+        @"browser.test.assertTrue(keys.includes('array'), 'Should include array key')",
+        @"browser.test.assertTrue(keys.includes('null'), 'Should include null key')",
+
+        @"await browser?.storage?.local?.remove('number')",
+        @"keys = await browser?.storage?.local?.getKeys()",
+        @"browser.test.assertEq(keys.length, 5, 'Should have 5 keys after removal')",
+        @"browser.test.assertFalse(keys.includes('number'), 'Should not include removed number key')",
+
+        @"await browser?.storage?.local?.clear()",
+        @"keys = await browser?.storage?.local?.getKeys()",
+        @"browser.test.assertEq(keys.length, 0, 'Should have no keys after clear')",
 
         @"browser.test.notifyPass()",
     ]);

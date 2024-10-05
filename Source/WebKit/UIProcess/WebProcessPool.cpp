@@ -588,8 +588,8 @@ ModelProcessProxy& WebProcessPool::ensureModelProcess()
 
 Ref<ModelProcessProxy> WebProcessPool::ensureProtectedModelProcess(WebProcessProxy& requestingWebProcess)
 {
-    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcess().modelElementEnabled);
-    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcess().modelProcessEnabled);
+    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcessValue().modelElementEnabled);
+    RELEASE_ASSERT(requestingWebProcess.sharedPreferencesForWebProcessValue().modelProcessEnabled);
 
     return ensureModelProcess();
 }
@@ -1702,9 +1702,10 @@ WebProcessProxy* WebProcessPool::webProcessProxyFromConnection(const IPC::Connec
     return nullptr;
 }
 
-const SharedPreferencesForWebProcess& WebProcessPool::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+std::optional<SharedPreferencesForWebProcess> WebProcessPool::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    return webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return webProcessProxyFromConnection(connection)->sharedPreferencesForWebProcess();
 }
 
 void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)

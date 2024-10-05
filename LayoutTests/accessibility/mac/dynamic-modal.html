@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<style>
+  *[role="dialog"] { border: 1px solid black; padding: 1em; margin: 1em; }
+  :focus { outline: 3px solid #ccf; outline-offset: 3px; }
+</style>
+<body>
+
+  <p>
+    <button id="show" autofocus>Show</button>
+  </p>
+
+  <div id="wrapper">
+  </div>
+
+<script>
+document.getElementById("show").addEventListener("click", () => {
+    let dialog = document.createElement('div');
+    dialog.role = "dialog";
+    dialog.id = "dynamic_dialog";
+    dialog.ariaModal = true;
+    dialog.innerHTML = "<h2>Inside dialog</h2><button id='dialog_ok'>OK</button>";
+    document.getElementById("wrapper").appendChild(dialog);
+    setTimeout(() => {
+        document.getElementById("dialog_ok").focus();
+    }, 0);
+});
+
+var testOutput = "This tests nested aria-modal dialogs\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async () => {
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus && focus.domIdentifier;
+        });
+
+        focus = accessibilityController.focusedElement;
+        testOutput += `Initial focus: ${focus.domIdentifier}\n`;
+
+        show = accessibilityController.accessibleElementById("show");
+        testOutput += `Show button reachable: ${show != null}\n`;
+
+        testOutput += "\nClicking on show button\n\n";
+        document.getElementById("show").click();
+
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus.domIdentifier != "ok";
+        });
+
+        focus = accessibilityController.focusedElement;
+        testOutput += `New focus: ${focus.domIdentifier}\n`;
+
+        await waitFor(() => {
+            return !accessibilityController.accessibleElementById("show");
+        });
+
+        show = accessibilityController.accessibleElementById("show");
+        testOutput += `Show button reachable: ${show != null}\n`;
+
+        debug(testOutput);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

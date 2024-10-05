@@ -67,7 +67,7 @@ public:
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);
     void removeSource(SpeechRecognitionRemoteRealtimeMediaSource&);
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     // Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager

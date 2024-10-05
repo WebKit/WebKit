@@ -122,7 +122,7 @@ void ProgressTracker::progressStarted(LocalFrame& frame)
 
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
         RefPtr originatingProgressFrame = m_originatingProgressFrame;
-        originatingProgressFrame->checkedLoader()->loadProgressingStatusChanged();
+        originatingProgressFrame->protectedLoader()->loadProgressingStatusChanged();
 
         bool isMainFrame = !originatingProgressFrame->tree().parent();
         auto elapsedTimeSinceMainLoadComplete = MonotonicTime::now() - m_mainLoadCompletionTime;
@@ -183,10 +183,10 @@ void ProgressTracker::finalProgressComplete()
     if (m_isMainLoad)
         m_mainLoadCompletionTime = MonotonicTime::now();
 
-    frame->checkedLoader()->client().setMainFrameDocumentReady(true);
+    frame->protectedLoader()->client().setMainFrameDocumentReady(true);
     m_client->progressFinished(*frame);
     protectedPage()->progressFinished(*frame);
-    frame->checkedLoader()->loadProgressingStatusChanged();
+    frame->protectedLoader()->loadProgressingStatusChanged();
 
     InspectorInstrumentation::frameStoppedLoading(*frame);
 }
@@ -235,7 +235,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
         item->estimatedLength = item->bytesReceived * 2;
     }
 
-    int numPendingOrLoadingRequests = frame->loader().numPendingOrLoadingRequests(true);
+    int numPendingOrLoadingRequests = frame->protectedLoader()->numPendingOrLoadingRequests(true);
     estimatedBytesForPendingRequests = static_cast<long long>(progressItemDefaultEstimatedLength) * numPendingOrLoadingRequests;
     remainingBytes = ((m_totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - m_totalBytesReceived);
     if (remainingBytes > 0)  // Prevent divide by 0.
@@ -312,7 +312,7 @@ void ProgressTracker::progressHeartbeatTimerFired()
     m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
 
     if (RefPtr originatingProgressFrame = m_originatingProgressFrame)
-        originatingProgressFrame->checkedLoader()->loadProgressingStatusChanged();
+        originatingProgressFrame->protectedLoader()->loadProgressingStatusChanged();
 
     if (m_progressValue >= finalProgressValue)
         m_progressHeartbeatTimer.stop();

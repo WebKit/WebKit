@@ -218,7 +218,7 @@ public:
 
     // Returns the ScrollingNodeID for the containing async-scrollable layer that scrolls this renderer's border box.
     // May return 0 for position-fixed content.
-    WEBCORE_EXPORT static ScrollingNodeID asyncScrollableContainerNodeID(const RenderObject&);
+    WEBCORE_EXPORT static std::optional<ScrollingNodeID> asyncScrollableContainerNodeID(const RenderObject&);
 
     // Whether layer's backing needs a graphics layer to clip z-order children of the given layer.
     static bool clipsCompositingDescendants(const RenderLayer&);
@@ -328,7 +328,7 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { });
+    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0);
     WEBCORE_EXPORT std::optional<String> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
     float deviceScaleFactor() const override;
@@ -415,6 +415,9 @@ private:
     void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const override;
     bool shouldDumpPropertyForLayer(const GraphicsLayer*, ASCIILiteral propertyName, OptionSet<LayerTreeAsTextOptions>) const override;
     bool isTrackingRepaints() const override { return m_isTrackingRepaints; }
+#if HAVE(HDR_SUPPORT)
+    bool hdrForImagesEnabled() const override;
+#endif
 
     // Copy the accelerated compositing related flags from Settings
     void cacheAcceleratedCompositingFlags();
@@ -533,21 +536,21 @@ private:
         LayerGeometry   = 1 << 1,
     };
 
-    ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, struct ScrollingTreeState&);
-    ScrollingNodeID registerScrollingNodeID(ScrollingCoordinator&, ScrollingNodeID, ScrollingNodeType, struct ScrollingTreeState&);
+    std::optional<ScrollingNodeID> attachScrollingNode(RenderLayer&, ScrollingNodeType, struct ScrollingTreeState&);
+    std::optional<ScrollingNodeID> registerScrollingNodeID(ScrollingCoordinator&, std::optional<ScrollingNodeID>, ScrollingNodeType, struct ScrollingTreeState&);
 
     OptionSet<ScrollCoordinationRole> coordinatedScrollingRolesForLayer(const RenderLayer&, const RenderLayer* compositingAncestor) const;
 
     // Returns the ScrollingNodeID which acts as the parent for children.
-    ScrollingNodeID updateScrollCoordinationForLayer(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollCoordinationForLayer(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
 
     // These return the ScrollingNodeID which acts as the parent for children.
-    ScrollingNodeID updateScrollingNodeForViewportConstrainedRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID updateScrollingNodeForScrollingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID updateScrollingNodeForScrollingProxyRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID updateScrollingNodeForFrameHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID updateScrollingNodeForPluginHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
-    ScrollingNodeID updateScrollingNodeForPositioningRole(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForViewportConstrainedRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForScrollingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForScrollingProxyRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForFrameHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForPluginHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    std::optional<ScrollingNodeID> updateScrollingNodeForPositioningRole(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
 
     void updateScrollingNodeLayers(ScrollingNodeID, RenderLayer&, ScrollingCoordinator&);
 

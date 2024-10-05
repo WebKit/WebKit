@@ -55,9 +55,10 @@ WebScreenOrientationManagerProxy::~WebScreenOrientationManagerProxy()
     protectedPage()->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::WebScreenOrientationManagerProxy::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
 }
 
-const SharedPreferencesForWebProcess& WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> WebScreenOrientationManagerProxy::sharedPreferencesForWebProcess() const
 {
-    return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 void WebScreenOrientationManagerProxy::currentOrientation(CompletionHandler<void(WebCore::ScreenOrientationType)>&& completionHandler)

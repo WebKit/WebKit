@@ -222,7 +222,7 @@ bool XDGDBusProxy::launch(const ProcessLauncher::LaunchOptions& webProcessLaunch
     // We are purposefully leaving syncFds[0] open here.
     // xdg-dbus-proxy will exit() itself once that is closed on our exit.
 
-    ProcessLauncher::LaunchOptions launchOptions;
+    ProcessLauncher::LaunchOptions launchOptions { WebCore::ProcessIdentifier::generate() };
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
 
 #if USE(ATSPI)

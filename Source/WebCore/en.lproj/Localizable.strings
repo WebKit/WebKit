@@ -1538,7 +1538,7 @@
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
 
 /* Not Secure Connection warning text */
-"This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
+"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people." = "This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.";
 
 /* Malware warning */
 "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards." = "This website may attempt to install dangerous software, which could harm your computer or steal your personal or financial information, like passwords, photos, or credit cards.";

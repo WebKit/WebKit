@@ -258,21 +258,21 @@ WebCore::IntRect RemoteLayerBackingStore::layerBounds() const
     return IntRect { { }, expandedIntSize(m_parameters.size) };
 }
 
-bool RemoteLayerBackingStore::usesDeepColorBackingStore() const
-{
-#if HAVE(IOSURFACE_RGB10)
-    if (m_parameters.type == Type::IOSurface && m_parameters.deepColor)
-        return true;
-#endif
-    return false;
-}
-
 ImageBufferPixelFormat RemoteLayerBackingStore::pixelFormat() const
 {
-    if (usesDeepColorBackingStore())
-        return m_parameters.isOpaque ? ImageBufferPixelFormat::RGB10 : ImageBufferPixelFormat::RGB10A8;
+    switch (contentsFormat()) {
+    case ContentsFormat::RGBA8:
+        return m_parameters.isOpaque ? ImageBufferPixelFormat::BGRX8 : ImageBufferPixelFormat::BGRA8;
 
-    return m_parameters.isOpaque ? ImageBufferPixelFormat::BGRX8 : ImageBufferPixelFormat::BGRA8;
+#if HAVE(IOSURFACE_RGB10)
+    case ContentsFormat::RGBA10:
+        return m_parameters.isOpaque ? ImageBufferPixelFormat::RGB10 : ImageBufferPixelFormat::RGB10A8;
+#endif
+#if HAVE(HDR_SUPPORT)
+    case ContentsFormat::RGBA16F:
+        return ImageBufferPixelFormat::RGBA16F;
+#endif
+    }
 }
 
 unsigned RemoteLayerBackingStore::bytesPerPixel() const
@@ -282,6 +282,9 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
     case ImageBufferPixelFormat::BGRA8: return 4;
     case ImageBufferPixelFormat::RGB10: return 4;
     case ImageBufferPixelFormat::RGB10A8: return 5;
+#if HAVE(HDR_SUPPORT)
+    case ImageBufferPixelFormat::RGBA16F: return 8;
+#endif
     }
     return 4;
 }

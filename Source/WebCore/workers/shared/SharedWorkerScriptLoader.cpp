@@ -65,12 +65,12 @@ void SharedWorkerScriptLoader::didReceiveResponse(ScriptExecutionContextIdentifi
     }
 }
 
-void SharedWorkerScriptLoader::notifyFinished(ScriptExecutionContextIdentifier mainContextIdentifier)
+void SharedWorkerScriptLoader::notifyFinished(std::optional<ScriptExecutionContextIdentifier> mainContextIdentifier)
 {
     auto* scriptExecutionContext = m_worker->scriptExecutionContext();
 
     if (UNLIKELY(InspectorInstrumentation::hasFrontends()) && scriptExecutionContext && !m_loader->failed()) {
-        ScriptExecutionContext::ensureOnContextThread(mainContextIdentifier, [identifier = m_loader->identifier(), script = m_loader->script().isolatedCopy()] (auto& mainContext) {
+        ScriptExecutionContext::ensureOnContextThread(*mainContextIdentifier, [identifier = m_loader->identifier(), script = m_loader->script().isolatedCopy()] (auto& mainContext) {
             InspectorInstrumentation::scriptImported(mainContext, identifier, script.toString());
         });
     }

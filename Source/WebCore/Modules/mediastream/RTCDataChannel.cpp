@@ -86,7 +86,7 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext& context, std::unique_ptr<
     : ActiveDOMObject(&context)
     , m_handler(WTFMove(handler))
     , m_identifier(RTCDataChannelIdentifier::generate())
-    , m_contextIdentifier(context.isDocument() ? ScriptExecutionContextIdentifier { } : context.identifier())
+    , m_contextIdentifier(context.isDocument() ? std::nullopt : std::optional { context.identifier() })
     , m_readyState(readyState)
     , m_label(WTFMove(label))
     , m_options(WTFMove(options))

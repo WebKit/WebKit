@@ -221,6 +221,7 @@ namespace JSC {
     macro(wrapForValidIteratorCreate) \
     macro(asyncFromSyncIteratorCreate) \
     macro(regExpStringIteratorCreate) \
+    macro(iteratorHelperCreate) \
 
 
 namespace Symbols {

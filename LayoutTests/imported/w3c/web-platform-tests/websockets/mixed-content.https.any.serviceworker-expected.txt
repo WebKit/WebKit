@@ -1,0 +1,3 @@
+
+FAIL constructing an insecure WebSocket in a secure context should throw assert_throws_dom: constructor should throw function "() => CreateInsecureWebSocket()" did not throw
+

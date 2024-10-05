@@ -107,10 +107,10 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     if (!connectionPair)
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
-    m_connection = WTFMove(streamConnection);
+    m_connection = streamConnection.ptr();
     // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
     // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
-    m_connection->open(*this, *this);
+    streamConnection->open(*this, *this);
     m_isResponsive = true;
     callOnMainRunLoopAndWait([&, serverHandle = WTFMove(serverHandle)]() mutable {
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
@@ -197,7 +197,7 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_getPixelBufferSharedMemory = nullptr;
     m_renderingUpdateID = { };
     m_didRenderingUpdateID = { };
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
     m_connection = nullptr;
     m_isResponsive = false;
     m_gpuProcessConnection = nullptr;
@@ -557,11 +557,12 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
 
 void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
 {
-    if (!m_connection) {
+    RefPtr connection = m_connection;
+    if (!connection) {
         ASSERT_NOT_REACHED();
         return;
     }
-    m_connection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
+    connection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
 }
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const

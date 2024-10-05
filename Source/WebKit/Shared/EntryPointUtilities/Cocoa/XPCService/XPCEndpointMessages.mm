@@ -57,8 +57,10 @@ static void handleVideoReceiverEndpointMessage(xpc_object_t message)
     RELEASE_ASSERT(WebCore::isInGPUProcess());
 
     auto endpointMessage = VideoReceiverEndpointMessage::decode(message);
+    if (!endpointMessage.processIdentifier())
+        return;
 
-    if (RefPtr webProcessConnection = GPUProcess::singleton().webProcessConnection(endpointMessage.processIdentifier()))
+    if (RefPtr webProcessConnection = GPUProcess::singleton().webProcessConnection(*endpointMessage.processIdentifier()))
         webProcessConnection->remoteMediaPlayerManagerProxy().handleVideoReceiverEndpointMessage(endpointMessage);
 }
 #endif

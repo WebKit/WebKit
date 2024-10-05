@@ -209,6 +209,7 @@ public:
 
     WebCore::SWServer* swServer() { return m_swServer.get(); }
     WebCore::SWServer& ensureSWServer();
+    Ref<WebCore::SWServer> ensureProtectedSWServer();
     WebSWOriginStore* swOriginStore() const; // FIXME: Can be private?
     void registerSWServerConnection(WebSWServerConnection&);
     void unregisterSWServerConnection(WebSWServerConnection&);

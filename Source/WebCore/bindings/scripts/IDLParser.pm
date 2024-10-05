@@ -605,6 +605,9 @@ sub addBuiltinTypedefs()
 
     my $EpochTimeStampType = IDLType->new(name => "unsigned long long");
     $typedefs{"EpochTimeStamp"} = IDLTypedef->new(type => $EpochTimeStampType);
+
+    my $domStringType = IDLType->new(name => "DOMString");
+    $typedefs{"Base64URLString"} = IDLTypedef->new(type => $domStringType);
 }
 
 my $nextOptionallyReadonlyAttribute_1 = '^(readonly|attribute)$';

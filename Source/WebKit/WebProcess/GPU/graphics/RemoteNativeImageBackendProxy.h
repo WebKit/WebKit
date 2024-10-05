@@ -42,6 +42,7 @@ public:
     WebCore::IntSize size() const final;
     bool hasAlpha() const final;
     WebCore::DestinationColorSpace colorSpace() const final;
+    WebCore::Headroom headroom() const final;
     bool isRemoteNativeImageBackendProxy() const final;
 
     std::optional<WebCore::ShareableBitmap::Handle> createHandle();

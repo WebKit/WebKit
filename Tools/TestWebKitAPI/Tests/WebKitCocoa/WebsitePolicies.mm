@@ -778,7 +778,12 @@ TEST(WebpagePreferences, WebsitePoliciesUpdates)
 }
 
 #if PLATFORM(MAC)
+// rdar://137267112
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesAutoplayQuirks)
+#else
 TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

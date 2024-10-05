@@ -376,6 +376,17 @@ struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::Trait
 template<typename... Traits>
 struct HashTraits<std::tuple<Traits...>> : public TupleHashTraits<HashTraits<Traits>...> { };
 
+
+template<typename FirstTrait, typename... Traits>
+struct VariantHashTraits : GenericHashTraits<std::variant<typename FirstTrait::TraitType, typename Traits::TraitType...>> {
+    typedef std::variant<typename FirstTrait::TraitType, typename Traits::TraitType...> TraitType;
+
+    static TraitType emptyValue() { return FirstTrait::emptyValue(); }
+};
+
+template<typename... Traits>
+struct HashTraits<std::variant<Traits...>> : public VariantHashTraits<HashTraits<Traits>...> { };
+
 template<typename KeyTraitsArg, typename ValueTraitsArg>
 struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType>> {
     typedef KeyTraitsArg KeyTraits;

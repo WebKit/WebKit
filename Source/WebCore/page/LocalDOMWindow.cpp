@@ -277,7 +277,7 @@ bool LocalDOMWindow::dispatchAllPendingBeforeUnloadEvents()
         if (!frame)
             continue;
 
-        if (!frame->checkedLoader()->shouldClose())
+        if (!frame->protectedLoader()->shouldClose())
             return false;
 
         window->enableSuddenTermination();
@@ -1141,7 +1141,7 @@ void LocalDOMWindow::stop()
     SetForScope isStopping { m_isStopping, true };
     // We must check whether the load is complete asynchronously, because we might still be parsing
     // the document until the callstack unwinds.
-    frame->checkedLoader()->stopForUserCancel(true);
+    frame->protectedLoader()->stopForUserCancel(true);
 }
 
 void LocalDOMWindow::alert(const String& message)
@@ -1461,7 +1461,7 @@ void LocalDOMWindow::setName(const AtomString& string)
         return;
 
     frame->tree().setSpecifiedName(string);
-    frame->checkedLoader()->client().frameNameChanged(string.string());
+    frame->protectedLoader()->client().frameNameChanged(string.string());
 }
 
 void LocalDOMWindow::setStatus(const String& string)
@@ -2336,7 +2336,7 @@ void LocalDOMWindow::dispatchLoadEvent()
     // Send a separate load event to the element that owns this frame.
     if (RefPtr ownerFrame = frame()) {
         if (is<RemoteFrame>(ownerFrame->tree().parent()))
-            ownerFrame->checkedLoader()->client().dispatchLoadEventToOwnerElementInAnotherProcess();
+            ownerFrame->protectedLoader()->client().dispatchLoadEventToOwnerElementInAnotherProcess();
         else if (RefPtr owner = ownerFrame->ownerElement())
             owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     }
@@ -2665,7 +2665,7 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
     if (!firstWindow.allowPopUp()) {
         // Because FrameTree::findFrameForNavigation() returns true for empty strings, we must check for empty frame names.
         // Otherwise, illegitimate window.open() calls with no name will pass right through the popup blocker.
-        if (frameName.isEmpty() || !frame->checkedLoader()->findFrameForNavigation(frameName, activeDocument.get()))
+        if (frameName.isEmpty() || !frame->protectedLoader()->findFrameForNavigation(frameName, activeDocument.get()))
             return RefPtr<WindowProxy> { nullptr };
     }
 

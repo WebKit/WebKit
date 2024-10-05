@@ -155,6 +155,8 @@ private:
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier) const;
     std::optional<WebCore::SourceImage> sourceImage(WebCore::RenderingResourceIdentifier) const;
 
+    RefPtr<RemoteRenderingBackend> protectedRenderingBackend() const { return m_renderingBackend; }
+
     template<typename T, typename ... AdditionalArgs>
     void handleItem(T&& item, AdditionalArgs&&... args)
     {

@@ -597,6 +597,7 @@ animation/CSSTransitionEvent.cpp
 animation/CompositeOperation.cpp
 animation/CustomEffect.cpp
 animation/DocumentTimeline.cpp
+animation/EffectTiming.cpp
 animation/ElementAnimationRareData.cpp
 animation/FrameRateAligner.cpp
 animation/KeyframeEffect.cpp
@@ -2367,6 +2368,7 @@ platform/graphics/ColorSpace.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
 platform/graphics/ContentTypeUtilities.cpp
+platform/graphics/ContentsFormat.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
 platform/graphics/DecomposedGlyphs.cpp
 platform/graphics/DestinationColorSpace.cpp
@@ -3382,11 +3384,16 @@ JSAudioWorkletNodeOptions.cpp
 JSAudioWorkletProcessor.cpp
 JSAudioWorkletProcessorConstructor.cpp
 JSAuthenticationExtensionsClientInputs.cpp
+JSAuthenticationExtensionsClientInputsJSON.cpp
 JSAuthenticationExtensionsClientOutputs.cpp
+JSAuthenticationExtensionsClientOutputsJSON.cpp
+JSAuthenticationResponseJSON.cpp
+JSRegistrationResponseJSON.cpp
 JSAuthenticatorAssertionResponse.cpp
 JSAuthenticatorAttachment.cpp
 JSAuthenticatorAttestationResponse.cpp
 JSAuthenticatorResponse.cpp
+JSAuthenticatorSelectionCriteria.cpp
 JSAuthenticatorTransport.cpp
 JSAutomationRate.cpp
 JSBarProp.cpp
@@ -3532,6 +3539,7 @@ JSCreateScriptCallback.cpp
 JSCreateScriptURLCallback.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialMediationRequirement.cpp
+JSCredentialPropertiesOutput.cpp
 JSCredentialRequestOptions.cpp
 JSCredentialsContainer.cpp
 JSCrypto.cpp
@@ -4205,8 +4213,16 @@ JSProgressEvent.cpp
 JSPromiseRejectionEvent.cpp
 JSPublicKeyCredential.cpp
 JSPublicKeyCredentialCreationOptions.cpp
+JSPublicKeyCredentialCreationOptionsJSON.cpp
 JSPublicKeyCredentialDescriptor.cpp
+JSPublicKeyCredentialDescriptorJSON.cpp
+JSPublicKeyCredentialEntity.cpp
+JSPublicKeyCredentialRpEntity.cpp
+JSPublicKeyCredentialParameters.cpp
+JSPublicKeyCredentialUserEntity.cpp
+JSPublicKeyCredentialUserEntityJSON.cpp
 JSPublicKeyCredentialRequestOptions.cpp
+JSPublicKeyCredentialRequestOptionsJSON.cpp
 JSPublicKeyCredentialType.cpp
 JSPushEncryptionKeyName.cpp
 JSPushEvent.cpp

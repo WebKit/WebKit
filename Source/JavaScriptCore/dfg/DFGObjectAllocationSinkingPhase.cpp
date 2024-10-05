@@ -42,6 +42,7 @@
 #include "DFGValidate.h"
 #include "JSArrayIterator.h"
 #include "JSInternalPromise.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
 #include "StructureInlines.h"
@@ -974,6 +975,9 @@ private:
                 break;
             case JSSetIteratorType:
                 target = handleInternalFieldClass<JSSetIterator>(node, writes);
+                break;
+            case JSIteratorHelperType:
+                target = handleInternalFieldClass<JSIteratorHelper>(node, writes);
                 break;
             case JSPromiseType:
                 if (node->structure()->classInfoForCells() == JSInternalPromise::info())

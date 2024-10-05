@@ -757,9 +757,6 @@ void Options::notifyOptionsChanged()
 #if !CPU(ARM_THUMB2)
     Options::useBBQJIT() = false;
 #endif
-#if CPU(ARM_THUMB2)
-    Options::useBBQTierUpChecks() = false;
-#endif
 #endif
 
 #if !CPU(ARM64)

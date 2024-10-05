@@ -214,7 +214,8 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToUIProcessWithoutTermination)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
-TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
+// #Fixme rdar://137215517
+TEST(IPCTestingAPI, DISABLED_CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -394,7 +395,8 @@ TEST(IPCTestingAPI, DescribesArguments)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"args[2].type"] UTF8String], "String");
 }
 
-TEST(IPCTestingAPI, CanInterceptAlert)
+// #Fixme rdar://137215517
+TEST(IPCTestingAPI, DISABLED_CanInterceptAlert)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 

@@ -100,9 +100,9 @@ bool ScrollingCoordinator::coordinatesScrollingForOverflowLayer(const RenderLaye
     return layer.hasCompositedScrollableOverflow();
 }
 
-ScrollingNodeID ScrollingCoordinator::scrollableContainerNodeID(const RenderObject&) const
+std::optional<ScrollingNodeID> ScrollingCoordinator::scrollableContainerNodeID(const RenderObject&) const
 {
-    return { };
+    return std::nullopt;
 }
 
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const LocalFrame& frame) const

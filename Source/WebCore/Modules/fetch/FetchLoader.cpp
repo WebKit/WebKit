@@ -166,7 +166,7 @@ void FetchLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::option
     m_client->didSucceed(metrics);
 }
 
-void FetchLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void FetchLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     m_client->didFail(error);
 }

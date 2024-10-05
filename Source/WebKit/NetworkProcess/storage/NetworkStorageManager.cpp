@@ -778,7 +778,7 @@ void NetworkStorageManager::clearStorageForWebPage(WebPageProxyIdentifier pageId
         assertIsCurrent(workQueue());
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto* sessionStorageManager = manager->existingSessionStorageManager())
-                sessionStorageManager->removeNamespace(LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64()));
+                sessionStorageManager->removeNamespace(ObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64()));
         }
     });
 }
@@ -790,7 +790,7 @@ void NetworkStorageManager::cloneSessionStorageForWebPage(WebPageProxyIdentifier
 
     protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, fromIdentifier, toIdentifier]() mutable {
         assertIsCurrent(workQueue());
-        cloneSessionStorageNamespace(LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(fromIdentifier.toUInt64()), LegacyNullableObjectIdentifier<StorageNamespaceIdentifierType>(toIdentifier.toUInt64()));
+        cloneSessionStorageNamespace(ObjectIdentifier<StorageNamespaceIdentifierType>(fromIdentifier.toUInt64()), ObjectIdentifier<StorageNamespaceIdentifierType>(toIdentifier.toUInt64()));
     });
 }
 
@@ -1547,7 +1547,7 @@ void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdenti
 
 void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestData.requestIdentifier().connectionIdentifier());
+    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestData.requestIdentifier().connectionIdentifier());
     originStorageManager(requestData.databaseIdentifier().origin()).idbStorageManager(*m_idbStorageRegistry).openDatabase(connectionToClient, requestData);
 }
 
@@ -1558,7 +1558,7 @@ void NetworkStorageManager::openDBRequestCancelled(const WebCore::IDBOpenRequest
 
 void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestData.requestIdentifier().connectionIdentifier());
+    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestData.requestIdentifier().connectionIdentifier());
     originStorageManager(requestData.databaseIdentifier().origin()).idbStorageManager(*m_idbStorageRegistry).deleteDatabase(connectionToClient, requestData);
 }
 
@@ -1744,7 +1744,7 @@ void NetworkStorageManager::iterateCursor(const WebCore::IDBRequestData& request
 
 void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::ClientOrigin& origin)
 {
-    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestIdentifier.connectionIdentifier());
+    Ref connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), *requestIdentifier.connectionIdentifier());
     auto result = originStorageManager(origin).idbStorageManager(*m_idbStorageRegistry).getAllDatabaseNamesAndVersions();
     connectionToClient->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(result));
 }

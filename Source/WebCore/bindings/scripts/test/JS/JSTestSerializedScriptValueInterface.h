@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestSerializedScriptValueInterface>;
     static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestSerializedScriptValueInterface* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterface>(vm)) JSTestSerializedScriptValueInterface(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

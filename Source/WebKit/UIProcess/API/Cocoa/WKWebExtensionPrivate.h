@@ -39,7 +39,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  */
-- (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)_initWithAppExtensionBundle:(NSBundle *)appExtensionBundle error:(NSError **)error;
 
 /*!
  @abstract Returns a web extension initialized with a specified resource base URL.
@@ -48,7 +48,18 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
  @discussion The URL must be a file URL that points to a directory containing a `manifest.json` file.
  */
-- (nullable instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error;
+
+/*!
+ @abstract Returns a web extension initialized with a specified app extension bundle and resource base URL.
+ @param appExtensionBundle The bundle to use for the new web extension. Can be \c nil if a resource base URL is provided.
+ @param resourceBaseURL The directory URL to use for the new web extension. Can be \c nil if an app extension bundle is provided.
+ @param error Set to \c nil or an error instance if an error occurred.
+ @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
+ @discussion Either the app extension bundle or the resource base URL must be provided. This initializer is useful when the extension resources
+ are in a different location from the app extension bundle used for native messaging.
+ */
+- (nullable instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 
 /*!
  @abstract Returns a web extension initialized with a specified manifest dictionary.

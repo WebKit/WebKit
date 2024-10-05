@@ -42,7 +42,7 @@ public:
     virtual ~WebIDBConnectionToServer();
 
     WebCore::IDBClient::IDBConnectionToServer& coreConnectionToServer();
-    WebCore::IDBConnectionIdentifier identifier() const final;
+    std::optional<WebCore::IDBConnectionIdentifier> identifier() const final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void connectionToServerLost();

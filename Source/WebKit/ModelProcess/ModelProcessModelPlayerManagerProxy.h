@@ -51,7 +51,7 @@ public:
 
     ~ModelProcessModelPlayerManagerProxy();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     ModelConnectionToWebProcess* modelConnectionToWebProcess() { return m_modelConnectionToWebProcess.get(); }
     void clear();

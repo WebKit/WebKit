@@ -27,7 +27,7 @@
 function of(/* items... */)
 {
     "use strict";
-    var len = arguments.length;
+    var len = @argumentCount();
 
     if (!@isConstructor(this))
         @throwTypeError("TypedArray.of requires |this| to be a constructor");

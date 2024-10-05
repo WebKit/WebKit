@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/LayerTreeAsTextOptions.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NowPlayingMetadataObserver.h>
 #include <pal/HysteresisActivity.h>
@@ -628,7 +629,7 @@ public:
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
     Ref<WebsiteDataStore> protectedWebsiteDataStore() const;
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess(IPC::Connection&) const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
     void addPreviouslyVisitedPath(const String&);
 
@@ -2391,7 +2392,7 @@ public:
     bool allowsAnyAnimationToPlay() { return m_allowsAnyAnimationToPlay; }
     void isAnyAnimationAllowedToPlayDidChange(bool anyAnimationCanPlay) { m_allowsAnyAnimationToPlay = anyAnimationCanPlay; }
 #endif
-    String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
+    String scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>, bool isVertical);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     PlatformXRSystem* xrSystem() const;
@@ -3124,6 +3125,7 @@ private:
     void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier);
     void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&);
     void renderTreeAsTextForTesting(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
+    void layerTreeAsTextForTesting(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>, CompletionHandler<void(String&&)>&&);
     void frameTextForTesting(WebCore::FrameIdentifier, CompletionHandler<void(String&&)>&&);
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&);
     void updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint);

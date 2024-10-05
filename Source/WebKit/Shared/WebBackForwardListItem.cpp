@@ -48,17 +48,17 @@ Ref<WebBackForwardListItem> WebBackForwardListItem::create(Ref<FrameState>&& mai
 WebBackForwardListItem::WebBackForwardListItem(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID)
     : m_mainFrameState(WTFMove(mainFrameState))
     , m_pageID(pageID)
-    , m_lastProcessIdentifier(m_mainFrameState->identifier.processIdentifier())
+    , m_lastProcessIdentifier(m_mainFrameState->identifier->processIdentifier())
 {
-    auto result = allItems().add(m_mainFrameState->identifier, *this);
+    auto result = allItems().add(*m_mainFrameState->identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    ASSERT(allItems().get(m_mainFrameState->identifier) == this);
-    allItems().remove(m_mainFrameState->identifier);
+    ASSERT(allItems().get(*m_mainFrameState->identifier) == this);
+    allItems().remove(*m_mainFrameState->identifier);
     removeFromBackForwardCache();
 }
 

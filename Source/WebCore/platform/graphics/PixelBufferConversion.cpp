@@ -62,6 +62,9 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
         case PixelFormat::BGRX8:
         case PixelFormat::RGB10:
         case PixelFormat::RGB10A8:
+#if HAVE(HDR_SUPPORT)
+        case PixelFormat::RGBA16F:
+#endif
             break;
         }
 

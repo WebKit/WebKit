@@ -123,6 +123,7 @@ public:
     void setStartTime(std::optional<CSSNumberishTime>);
     virtual std::optional<CSSNumberishTime> bindingsCurrentTime() const { return currentTime(); };
     virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<CSSNumberishTime>&);
+    std::optional<double> progress() const;
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }
@@ -178,6 +179,7 @@ protected:
     void initialize();
     void enqueueAnimationEvent(Ref<AnimationEventBase>&&);
     virtual void animationDidFinish();
+    CSSNumberishTime zeroTime() const;
 
 private:
     enum class DidSeek : bool { No, Yes };
@@ -188,7 +190,7 @@ private:
 
     void timingDidChange(DidSeek, SynchronouslyNotify, Silently = Silently::No);
     void updateFinishedState(DidSeek, SynchronouslyNotify);
-    Seconds effectEndTime() const;
+    CSSNumberishTime effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
     std::optional<CSSNumberishTime> currentTime(RespectHoldTime, std::optional<CSSNumberishTime> = std::nullopt) const;

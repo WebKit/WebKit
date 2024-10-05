@@ -144,7 +144,7 @@ protected:
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             return;
-        localFrame->checkedLoader()->clientRedirected(URL(m_url), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
+        localFrame->protectedLoader()->clientRedirected(URL(m_url), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
     void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) override
@@ -159,7 +159,7 @@ protected:
         // gesture state will sometimes be set and sometimes not within
         // dispatchDidCancelClientRedirect().
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-            localFrame->checkedLoader()->clientRedirectCancelledOrFinished(newLoadInProgress);
+            localFrame->protectedLoader()->clientRedirectCancelledOrFinished(newLoadInProgress);
     }
 
     Document& initiatingDocument() { return m_initiatingDocument.get(); }
@@ -189,7 +189,7 @@ public:
     bool shouldStartTimer(Frame& frame) override
     {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        return localFrame && localFrame->checkedLoader()->allAncestorsAreComplete();
+        return localFrame && localFrame->protectedLoader()->allAncestorsAreComplete();
     }
 
     void fire(Frame& frame) override
@@ -217,7 +217,7 @@ public:
         frameLoadRequest.disableNavigationToInvalidURL();
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
 
-        localFrame->checkedLoader()->changeLocation(WTFMove(frameLoadRequest));
+        localFrame->protectedLoader()->changeLocation(WTFMove(frameLoadRequest));
     }
 
 private:
@@ -303,7 +303,7 @@ public:
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->checkedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+                localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
         
@@ -354,7 +354,7 @@ public:
 
         if (page->backForward().currentItem() == historyItem.ptr()) {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->checkedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+                localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
 
@@ -409,7 +409,7 @@ public:
         if (localFrame->document() != requestingDocument.ptr())
             navigationHistoryBehavior = NavigationHistoryBehavior::Push;
         frameLoadRequest.setNavigationHistoryBehavior(navigationHistoryBehavior);
-        localFrame->checkedLoader()->loadFrameRequest(WTFMove(frameLoadRequest), submission->protectedEvent().get(), submission->takeState());
+        localFrame->protectedLoader()->loadFrameRequest(WTFMove(frameLoadRequest), submission->protectedEvent().get(), submission->takeState());
     }
 
     void didStartTimer(Frame& frame, Timer& timer) final
@@ -422,7 +422,7 @@ public:
         m_haveToldClient = true;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
-        localFrame->checkedLoader()->clientRedirected(m_submission->requestURL(), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
+        localFrame->protectedLoader()->clientRedirected(m_submission->requestURL(), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
     void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) final
@@ -439,7 +439,7 @@ public:
         // fact unavailable. We need to be consistent with them, otherwise the
         // gesture state will sometimes be set and sometimes not within
         // dispatchDidCancelClientRedirect().
-        localFrame->checkedLoader()->clientRedirectCancelledOrFinished(newLoadInProgress);
+        localFrame->protectedLoader()->clientRedirectCancelledOrFinished(newLoadInProgress);
     }
 
     bool targetIsCurrentFrame() const final
@@ -483,7 +483,7 @@ public:
         frameLoadRequest.setLockBackForwardList(lockBackForwardList());
         frameLoadRequest.setSubstituteData(replacementData);
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
-        localFrame->checkedLoader()->load(WTFMove(frameLoadRequest));
+        localFrame->protectedLoader()->load(WTFMove(frameLoadRequest));
     }
 
 private:
@@ -586,7 +586,7 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
         lockBackForwardList = mustLockBackForwardList(m_frame);
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame.get());
-    CheckedPtr loader = localFrame ? &localFrame->loader() : nullptr;
+    RefPtr loader = localFrame ? &localFrame->loader() : nullptr;
 
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
@@ -735,7 +735,7 @@ void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect
         if (localFrame) {
             if (RefPtr provisionalDocumentLoader = localFrame->loader().provisionalDocumentLoader())
                 provisionalDocumentLoader->stopLoading();
-            localFrame->checkedLoader()->stopLoading(UnloadEventPolicy::UnloadAndPageHide);
+            localFrame->protectedLoader()->stopLoading(UnloadEventPolicy::UnloadAndPageHide);
         }
     }
 
@@ -743,7 +743,7 @@ void NavigationScheduler::schedule(std::unique_ptr<ScheduledNavigation> redirect
     m_redirect = WTFMove(redirect);
 
     if (localFrame && !localFrame->loader().isComplete() && m_redirect->isLocationChange())
-        localFrame->checkedLoader()->completed();
+        localFrame->protectedLoader()->completed();
 
     if (!m_frame->page())
         return;

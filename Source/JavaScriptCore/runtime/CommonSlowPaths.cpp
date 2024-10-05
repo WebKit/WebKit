@@ -44,6 +44,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSPromiseConstructor.h"
 #include "JSPropertyNameEnumerator.h"

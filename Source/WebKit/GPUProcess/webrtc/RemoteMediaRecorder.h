@@ -64,7 +64,7 @@ public:
     unsigned videoBitRate() const { return protectedWriter()->videoBitRate(); }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     RemoteMediaRecorder(GPUConnectionToWebProcess&, MediaRecorderIdentifier, Ref<WebCore::MediaRecorderPrivateWriter>&&, bool recordAudio);

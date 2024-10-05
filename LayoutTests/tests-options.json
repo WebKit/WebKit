@@ -6428,6 +6428,123 @@
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-abort.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-attachment.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-authnrselection.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-challenge.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-rp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-badargs-user.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-cross-origin-iframe.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-excludecredentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-extensions.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-getpublickey.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-hints.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-large-blob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-minpinlength.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-prf.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-pubkeycredparams.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-resident-key.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/createcredential-timeout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/credblob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/credblob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-abort.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-allowcredentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-attachment.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-badargs-rpid.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-badargs-userverification.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-extensions.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-hints.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-not-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-large-blob-supported.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-prf.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-rk-passing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/getcredential-timeout.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/remote-desktop-client-override.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-all-accepted-credentials.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-current-user-details.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/signal-unknown-credential.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webauthn/storecredential.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html": [
         "slow"
     ],

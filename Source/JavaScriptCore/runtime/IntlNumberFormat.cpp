@@ -504,14 +504,10 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
             skeletonBuilder.append(" sign-except-zero"_s);
         break;
     case SignDisplay::Negative:
-        // Only ICU69~ supports negative sign display. Ignore this option if linked ICU does not support it.
-        // https://github.com/unicode-org/icu/commit/1aa0dad8e06ecc99bff442dd37f6daa2d39d9a5a
-        if (WTF::ICU::majorVersion() >= 69) {
-            if (useAccounting)
-                skeletonBuilder.append(" sign-accounting-negative"_s);
-            else
-                skeletonBuilder.append(" sign-negative"_s);
-        }
+        if (useAccounting)
+            skeletonBuilder.append(" sign-accounting-negative"_s);
+        else
+            skeletonBuilder.append(" sign-negative"_s);
         break;
     }
 

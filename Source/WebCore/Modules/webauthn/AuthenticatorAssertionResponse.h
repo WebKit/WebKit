@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticationResponseJSON.h"
 #include "AuthenticatorResponse.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
@@ -65,6 +66,8 @@ public:
     void setLAContext(LAContext *context) { m_laContext = context; }
     void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTFMove(largeBlob); }
     void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
+
+    AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON toJSON();
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);

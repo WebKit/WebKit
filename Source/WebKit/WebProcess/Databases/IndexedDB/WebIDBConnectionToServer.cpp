@@ -61,11 +61,9 @@ WebIDBConnectionToServer::WebIDBConnectionToServer()
 {
 }
 
-WebIDBConnectionToServer::~WebIDBConnectionToServer()
-{
-}
+WebIDBConnectionToServer::~WebIDBConnectionToServer() = default;
 
-IDBConnectionIdentifier WebIDBConnectionToServer::identifier() const
+std::optional<IDBConnectionIdentifier> WebIDBConnectionToServer::identifier() const
 {
     return Process::identifier();
 }

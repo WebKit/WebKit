@@ -58,6 +58,7 @@
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
@@ -2609,19 +2610,19 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
         return;
 
     if (roles.contains(ScrollCoordinationRole::Scrolling) && m_scrollingNodeID) {
-        LOG_WITH_STREAM(Compositing, stream << "Detaching Scrolling node " << m_scrollingNodeID);
-        scrollingCoordinator->unparentChildrenAndDestroyNode(m_scrollingNodeID);
-        m_scrollingNodeID = { };
+        LOG_WITH_STREAM(Compositing, stream << "Detaching Scrolling node " << *m_scrollingNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(*m_scrollingNodeID);
+        m_scrollingNodeID = std::nullopt;
         
 #if ENABLE(SCROLLING_THREAD)
         if (m_scrollContainerLayer)
-            m_scrollContainerLayer->setScrollingNodeID({ });
+            m_scrollContainerLayer->setScrollingNodeID(std::nullopt);
         if (m_layerForHorizontalScrollbar)
-            m_layerForHorizontalScrollbar->setScrollingNodeID({ });
+            m_layerForHorizontalScrollbar->setScrollingNodeID(std::nullopt);
         if (m_layerForVerticalScrollbar)
-            m_layerForVerticalScrollbar->setScrollingNodeID({ });
+            m_layerForVerticalScrollbar->setScrollingNodeID(std::nullopt);
         if (m_layerForScrollCorner)
-            m_layerForScrollCorner->setScrollingNodeID({ });
+            m_layerForScrollCorner->setScrollingNodeID(std::nullopt);
 #endif
     }
 
@@ -2631,29 +2632,29 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
     }
 
     if (roles.contains(ScrollCoordinationRole::FrameHosting) && m_frameHostingNodeID) {
-        LOG_WITH_STREAM(Compositing, stream << "Detaching FrameHosting node " << m_frameHostingNodeID);
-        scrollingCoordinator->unparentChildrenAndDestroyNode(m_frameHostingNodeID);
-        m_frameHostingNodeID = { };
+        LOG_WITH_STREAM(Compositing, stream << "Detaching FrameHosting node " << *m_frameHostingNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(*m_frameHostingNodeID);
+        m_frameHostingNodeID = std::nullopt;
     }
 
     if (roles.contains(ScrollCoordinationRole::PluginHosting) && m_pluginHostingNodeID) {
-        LOG_WITH_STREAM(Compositing, stream << "Detaching PluginHosting node " << m_pluginHostingNodeID);
-        scrollingCoordinator->unparentChildrenAndDestroyNode(m_pluginHostingNodeID);
-        m_pluginHostingNodeID = { };
+        LOG_WITH_STREAM(Compositing, stream << "Detaching PluginHosting node " << *m_pluginHostingNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(*m_pluginHostingNodeID);
+        m_pluginHostingNodeID = std::nullopt;
     }
 
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained) && m_viewportConstrainedNodeID) {
-        LOG_WITH_STREAM(Compositing, stream << "Detaching ViewportConstrained node " << m_viewportConstrainedNodeID);
-        scrollingCoordinator->unparentChildrenAndDestroyNode(m_viewportConstrainedNodeID);
-        m_viewportConstrainedNodeID = { };
+        LOG_WITH_STREAM(Compositing, stream << "Detaching ViewportConstrained node " << *m_viewportConstrainedNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(*m_viewportConstrainedNodeID);
+        m_viewportConstrainedNodeID = std::nullopt;
     }
 
     if (roles.contains(ScrollCoordinationRole::Positioning) && m_positioningNodeID) {
-        LOG_WITH_STREAM(Compositing, stream << "Detaching Positioned node " << m_positioningNodeID);
-        scrollingCoordinator->unparentChildrenAndDestroyNode(m_positioningNodeID);
-        m_positioningNodeID = { };
+        LOG_WITH_STREAM(Compositing, stream << "Detaching Positioned node " << *m_positioningNodeID);
+        scrollingCoordinator->unparentChildrenAndDestroyNode(*m_positioningNodeID);
+        m_positioningNodeID = std::nullopt;
 #if ENABLE(SCROLLING_THREAD)
-        m_graphicsLayer->setScrollingNodeID({ });
+        m_graphicsLayer->setScrollingNodeID(std::nullopt);
 #endif
     }
 }
@@ -2695,25 +2696,6 @@ void RenderLayerBacking::setScrollingNodeIDForRole(ScrollingNodeID nodeID, Scrol
 #endif
         break;
     }
-}
-
-ScrollingNodeID RenderLayerBacking::scrollingNodeIDForChildren() const
-{
-    if (m_frameHostingNodeID)
-        return m_frameHostingNodeID;
-
-    if (m_scrollingNodeID)
-        return m_scrollingNodeID;
-
-    if (m_viewportConstrainedNodeID)
-        return m_viewportConstrainedNodeID;
-
-    if (m_ancestorClippingStack) {
-        if (auto lastOverflowScrollProxyNode = m_ancestorClippingStack->lastOverflowScrollProxyNodeID())
-            return lastOverflowScrollProxyNode;
-    }
-
-    return m_positioningNodeID;
 }
 
 float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
@@ -3980,6 +3962,13 @@ bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, 
     return true;
 }
 
+#if HAVE(HDR_SUPPORT)
+bool RenderLayerBacking::hdrForImagesEnabled() const
+{
+    return renderer().settings().hdrForImagesEnabled();
+}
+#endif
+
 bool RenderLayerBacking::shouldAggressivelyRetainTiles(const GraphicsLayer*) const
 {
     // Only the main frame TileController has enough information about in-window state to
@@ -4423,6 +4412,19 @@ void RenderLayerBacking::markFrontBufferVolatileForTesting()
 {
     if (RefPtr graphicsLayer = m_graphicsLayer)
         graphicsLayer->markFrontBufferVolatileForTesting();
+}
+
+void RenderLayerBacking::dumpProperties(const GraphicsLayer* layer, TextStream& ts, OptionSet<LayerTreeAsTextOptions> options) const
+{
+    if (!is<RenderWidget>(renderer()))
+        return;
+
+    // If this is the leaf layer for a RemoteFrame, then collect layers from the frame's process.
+    if (auto* remoteFrame = downcast<RenderWidget>(renderer()).remoteFrame(); remoteFrame && layer->children().isEmpty()) {
+        ts << indent << "(children 1\n"_s;
+        ts << remoteFrame->client().layerTreeAsText(ts.indent() + 1, options);
+        ts << indent << ")\n"_s;
+    }
 }
 
 } // namespace WebCore

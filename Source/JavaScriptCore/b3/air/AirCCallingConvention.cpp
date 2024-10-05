@@ -219,9 +219,9 @@ Inst buildCCall(Code& code, Value* origin, const Vector<Arg>& arguments)
 }
 
 #if CPU(ARM_THUMB2)
-Value* ArgumentValueList::makeStitch(B3::BasicBlock*, Value* hi, Value* low) const
+Value* ArgumentValueList::makeStitch(B3::BasicBlock*, Value* low, Value* hi) const
 {
-    return block->appendNew<Value>(procedure, Stitch, Origin(), hi, low);
+    return block->appendNew<Value>(procedure, Stitch, Origin(), low, hi);
 }
 #endif
 
@@ -275,8 +275,7 @@ Value* ArgumentValueList::makeCCallValue(B3::BasicBlock* block, size_t idx) cons
     case Int64:
         RELEASE_ASSERT(argCount == sizeof(uint64_t) / sizeof(uintptr_t));
 #if CPU(ARM_THUMB2)
-            return makeStitch(block, makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg + 1]),
-                makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg]));
+            return makeStitch(block, makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg]), makeCCallValue(block, Int32, underlyingArgs[firstUnderlyingArg + 1]));
 #else
         return makeCCallValue(block, types[idx], underlyingArgs[firstUnderlyingArg]);
 #endif
@@ -297,6 +296,16 @@ ArgumentValueList computeCCallArguments(Procedure& procedure, B3::BasicBlock* bl
 
     for (auto type : types) {
         argUnderlyingCounts.append(underlyingArgs.size());
+#if CPU(ARM_THUMB2)
+        if (type == Int64) {
+            // Int64 arguments are passed in even-based register pairs on ARMv7.
+            if ((gpArgumentCount < 4) && (gpArgumentCount % 2))
+                ++gpArgumentCount;
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, Int32);
+            continue;
+        }
+#endif
         marshallCCallArgument(underlyingArgs, gpArgumentCount, fpArgumentCount, stackOffset, type);
     }
 

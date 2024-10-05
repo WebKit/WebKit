@@ -921,6 +921,7 @@ namespace JSC {
 
         RegisterID* emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType);
         RegisterID* emitIsGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSGeneratorType); }
+        RegisterID* emitIsIteratorHelper(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSIteratorHelperType); }
         RegisterID* emitIsAsyncGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSAsyncGeneratorType); }
         RegisterID* emitIsJSArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, ArrayType); }
         RegisterID* emitIsPromise(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSPromiseType); }

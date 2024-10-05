@@ -185,7 +185,7 @@ void JSTestDomainSecurity::destroy(JSC::JSCell* cell)
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestDomainSecurityPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -195,7 +195,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurityConstructor, (JSGlobalObject* lexic
 
 static inline JSValue jsTestDomainSecurity_excitingAttrGetter(JSGlobalObject& lexicalGlobalObject, JSTestDomainSecurity& thisObject)
 {
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);
     EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);
@@ -212,7 +212,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDomainSecurity_excitingAttr, (JSGlobalObject* lex
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_excitingFunctionBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -237,7 +237,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_excitingFunction,
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_postMessageBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -258,7 +258,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestDomainSecurityPrototypeFunction_postMessage, (JSG
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethod1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -273,7 +273,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overload
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethod2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -291,7 +291,7 @@ static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overload
 
 static inline JSC::EncodedJSValue jsTestDomainSecurityPrototypeFunction_overloadedMethodOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestDomainSecurity>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

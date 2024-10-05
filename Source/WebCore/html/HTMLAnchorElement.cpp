@@ -629,7 +629,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     // Thus, URLs should be empty for now.
     ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportClickSourceURL().isNull() && privateClickMeasurement->attributionReportClickDestinationURL().isNull()));
     
-    frame->checkedLoader()->changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
+    frame->protectedLoader()->changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTFMove(privateClickMeasurement));
 
     sendPings(completedURL);
 

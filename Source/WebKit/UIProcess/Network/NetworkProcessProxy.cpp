@@ -316,7 +316,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 #if ENABLE(IPC_TESTING_API)
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
-    parameters.sharedPreferencesForWebProcess = webProcessProxy.sharedPreferencesForWebProcess();
+    parameters.sharedPreferencesForWebProcess = *webProcessProxy.sharedPreferencesForWebProcess();
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "NetworkProcessProxy::getNetworkProcessConnection: NetworkProcessProxy deallocated during connection establishment");
@@ -1471,9 +1471,11 @@ void NetworkProcessProxy::remoteWorkerContextConnectionNoLongerNeeded(RemoteWork
         process->disableRemoteWorkers(workerType);
 }
 
-void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&& completionHandler)
+void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&& completionHandler)
 {
-    WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
+    WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, [completionHandler = WTFMove(completionHandler)](auto processIdentifier) mutable {
+        completionHandler(processIdentifier);
+    });
 }
 
 void NetworkProcessProxy::startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)

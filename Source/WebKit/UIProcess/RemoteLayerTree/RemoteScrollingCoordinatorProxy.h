@@ -113,7 +113,7 @@ public:
 
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
-    WebCore::ScrollingNodeID rootScrollingNodeID() const;
+    std::optional<WebCore::ScrollingNodeID> rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* layerTreeHost() const;
     WebPageProxy& webPageProxy() const;
@@ -180,7 +180,7 @@ public:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
     void viewSizeDidChange();
-    String scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID, bool isVertical);
+    String scrollbarStateForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>, bool isVertical);
     bool overlayScrollbarsEnabled();
 
     void sendScrollingTreeNodeDidScroll();

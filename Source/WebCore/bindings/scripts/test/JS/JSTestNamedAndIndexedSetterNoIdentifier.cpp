@@ -192,7 +192,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlot(JSObject* objec
 
 bool JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -221,7 +221,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlotByIndex(JSObject
 
 void JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
@@ -281,7 +281,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::putByIndex(JSCell* cell, JSGlobalO
     auto* thisObject = jsCast<JSTestNamedAndIndexedSetterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
@@ -387,7 +387,7 @@ bool JSTestNamedAndIndexedSetterNoIdentifier::deletePropertyByIndex(JSCell* cell
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedAndIndexedSetterNoIdentifierConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedAndIndexedSetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))

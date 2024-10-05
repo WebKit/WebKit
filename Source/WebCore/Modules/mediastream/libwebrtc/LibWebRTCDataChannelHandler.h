@@ -69,7 +69,7 @@ public:
 
 private:
     // RTCDataChannelHandler API
-    void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
+    void setClient(RTCDataChannelHandlerClient&, std::optional<ScriptExecutionContextIdentifier>) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(std::span<const uint8_t>) final;
     void close() final;
@@ -98,7 +98,7 @@ private:
     Lock m_clientLock;
     bool m_hasClient WTF_GUARDED_BY_LOCK(m_clientLock)  { false };
     WeakPtr<RTCDataChannelHandlerClient> m_client WTF_GUARDED_BY_LOCK(m_clientLock) { nullptr };
-    ScriptExecutionContextIdentifier m_contextIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_contextIdentifier;
     PendingMessages m_bufferedMessages WTF_GUARDED_BY_LOCK(m_clientLock);
 };
 

@@ -189,7 +189,7 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
 
 void LocalFrame::init()
 {
-    checkedLoader()->init();
+    protectedLoader()->init();
 }
 
 Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, Frame* opener)
@@ -211,7 +211,7 @@ LocalFrame::~LocalFrame()
 {
     setView(nullptr);
 
-    CheckedRef loader = this->loader();
+    Ref loader = this->loader();
     if (!loader->isComplete())
         loader->closeURL();
 
@@ -272,7 +272,7 @@ void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    checkedLoader()->resetMultipleFormSubmissionProtection();
+    protectedLoader()->resetMultipleFormSubmissionProtection();
 }
 
 CheckedRef<Editor> LocalFrame::checkedEditor()
@@ -297,7 +297,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
     if (isMainFrame()) {
         if (RefPtr page = this->page())
             page->didChangeMainDocument(newDocument.get());
-        checkedLoader()->client().dispatchDidChangeMainDocument();
+        protectedLoader()->client().dispatchDidChangeMainDocument();
     }
 
     if (RefPtr previousDocument = m_doc) {
@@ -341,22 +341,22 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 
 void LocalFrame::frameDetached()
 {
-    checkedLoader()->frameDetached();
+    protectedLoader()->frameDetached();
 }
 
 bool LocalFrame::preventsParentFromBeingComplete() const
 {
-    return !checkedLoader()->isComplete() && (!ownerElement() || !ownerElement()->isLazyLoadObserverActive());
+    return !protectedLoader()->isComplete() && (!ownerElement() || !ownerElement()->isLazyLoadObserverActive());
 }
 
 void LocalFrame::changeLocation(FrameLoadRequest&& request)
 {
-    checkedLoader()->changeLocation(WTFMove(request));
+    protectedLoader()->changeLocation(WTFMove(request));
 }
 
 void LocalFrame::didFinishLoadInAnotherProcess()
 {
-    checkedLoader()->provisionalLoadFailedInAnotherProcess();
+    protectedLoader()->provisionalLoadFailedInAnotherProcess();
 }
 
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
@@ -722,7 +722,7 @@ void LocalFrame::injectUserScripts(UserScriptInjectionTime injectionTime)
 
 void LocalFrame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript& script)
 {
-    CheckedRef loader = this->loader();
+    Ref loader = this->loader();
 #if ENABLE(APP_BOUND_DOMAINS)
     if (loader->client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (RefPtr document = this->document())
@@ -788,12 +788,12 @@ void LocalFrame::clearTimers()
     clearTimers(protectedView().get(), protectedDocument().get());
 }
 
-CheckedRef<const FrameLoader> LocalFrame::checkedLoader() const
+Ref<const FrameLoader> LocalFrame::protectedLoader() const
 {
     return m_loader.get();
 }
 
-CheckedRef<FrameLoader> LocalFrame::checkedLoader()
+Ref<FrameLoader> LocalFrame::protectedLoader()
 {
     return m_loader.get();
 }
@@ -811,7 +811,7 @@ CheckedRef<const ScriptController> LocalFrame::checkedScript() const
 void LocalFrame::willDetachPage()
 {
     if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()))
-        parent->checkedLoader()->checkLoadComplete();
+        parent->protectedLoader()->checkLoadComplete();
 
     for (auto& observer : m_destructionObservers)
         observer.willDetachPage();
@@ -1248,7 +1248,7 @@ void LocalFrame::documentURLDidChange(const URL& url)
 {
     if (RefPtr page = this->page(); page && isMainFrame()) {
         page->setMainFrameURL(url);
-        checkedLoader()->client().broadcastMainFrameURLChangeToOtherProcesses(url);
+        protectedLoader()->client().broadcastMainFrameURLChangeToOtherProcesses(url);
     }
 }
 
@@ -1323,7 +1323,7 @@ void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty prope
         return;
 
     m_accessedWindowProxyPropertiesViaOpener.add(property);
-    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(openerMainFrameOrigin), property);
+    protectedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(openerMainFrameOrigin), property);
 }
 
 #endif

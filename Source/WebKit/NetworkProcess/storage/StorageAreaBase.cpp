@@ -72,8 +72,6 @@ void StorageAreaBase::notifyListenersAboutClear()
 
 void StorageAreaBase::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier sourceImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
 {
-    ASSERT(sourceImplIdentifier);
-
     for (auto& [connection, identifier] : m_listeners) {
         std::optional<StorageAreaImplIdentifier> implIdentifier;
         if (connection == sourceConnection)

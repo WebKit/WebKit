@@ -177,7 +177,7 @@ void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecuti
         m_completionHandler(this, WTFMove(m_image));
 }
 
-void NotificationResourcesLoader::ResourceLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError&)
+void NotificationResourcesLoader::ResourceLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)
 {
     m_finished = true;
 

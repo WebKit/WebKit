@@ -104,8 +104,11 @@ Ref<NetworkProcess> WebSWServerConnection::protectedNetworkProcess()
     return networkProcess();
 }
 
-const SharedPreferencesForWebProcess& WebSWServerConnection::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> WebSWServerConnection::sharedPreferencesForWebProcess() const
 {
+    if (!m_networkConnectionToWebProcess)
+        return std::nullopt;
+
     return m_networkConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
 

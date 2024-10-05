@@ -27,7 +27,7 @@ function of(/* items... */)
 {
     "use strict";
 
-    var length = arguments.length;
+    var length = @argumentCount();
     var array = this !== @Array && @isConstructor(this) ? new this(length) : @newArrayWithSize(length);
     for (var k = 0; k < length; ++k)
         @putByValDirect(array, k, arguments[k]);

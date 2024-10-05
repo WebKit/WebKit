@@ -85,7 +85,7 @@ void RemoteScrollingCoordinatorProxyIOS::clearTouchActionsForTouchIdentifier(uns
     m_touchActionsByTouchIdentifier.remove(touchIdentifier);
 }
 
-UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(ScrollingNodeID nodeID) const
+UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(std::optional<ScrollingNodeID> nodeID) const
 {
     auto* treeNode = scrollingTree()->nodeForID(nodeID);
 

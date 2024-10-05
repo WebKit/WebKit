@@ -268,13 +268,13 @@ void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID no
 void WebPageProxy::scrollingNodeScrollWillStartScroll(std::optional<ScrollingNodeID> nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->scrollingNodeScrollWillStartScroll(nodeID.value_or(ScrollingNodeID { }));
+        pageClient->scrollingNodeScrollWillStartScroll(nodeID);
 }
 
 void WebPageProxy::scrollingNodeScrollDidEndScroll(std::optional<ScrollingNodeID> nodeID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->scrollingNodeScrollDidEndScroll(nodeID.value_or(ScrollingNodeID { }));
+        pageClient->scrollingNodeScrollDidEndScroll(nodeID);
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)

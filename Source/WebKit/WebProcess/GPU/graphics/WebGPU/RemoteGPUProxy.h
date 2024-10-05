@@ -143,6 +143,9 @@ private:
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
     bool isCurrent() const final { return m_dispatcher.isCurrent(); }
 
+    RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
+    Ref<WebGPU::ConvertToBackingContext> protectedConvertToBackingContext() const;
+
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
     SerialFunctionDispatcher& m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;

@@ -486,7 +486,7 @@ WebPageProxy::Internals::~Internals() = default;
 
 #if ENABLE(APPLE_PAY)
 
-const SharedPreferencesForWebProcess& WebPageProxy::Internals::sharedPreferencesForWebPaymentMessages() const
+std::optional<SharedPreferencesForWebProcess> WebPageProxy::Internals::sharedPreferencesForWebPaymentMessages() const
 {
     return page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }

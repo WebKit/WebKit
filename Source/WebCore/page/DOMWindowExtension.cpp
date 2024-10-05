@@ -69,7 +69,7 @@ void DOMWindowExtension::suspendForBackForwardCache()
     Ref protectedThis { *this };
 
     Ref frame = *this->frame();
-    frame->checkedLoader()->client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
+    frame->protectedLoader()->client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
 
     m_disconnectedFrame = WTFMove(frame);
 }
@@ -82,7 +82,7 @@ void DOMWindowExtension::resumeFromBackForwardCache()
 
     m_disconnectedFrame = nullptr;
 
-    protectedFrame()->checkedLoader()->client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
+    protectedFrame()->protectedLoader()->client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
 }
 
 void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
@@ -94,7 +94,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
     Ref protectedThis { *this };
 
     if (RefPtr disconnectedFrame = m_disconnectedFrame)
-        disconnectedFrame->checkedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+        disconnectedFrame->protectedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = nullptr;
 
     // DOMWindowExtension lifetime isn't tied directly to the LocalDOMWindow itself so it is important that it unregister
@@ -116,7 +116,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
     if (!m_wasDetached) {
         RefPtr frame = this->frame();
         ASSERT(frame);
-        frame->checkedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+        frame->protectedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     }
 
     // DOMWindowExtension lifetime isn't tied directly to the LocalDOMWindow itself so it is important that it unregister
@@ -138,7 +138,7 @@ void DOMWindowExtension::willDetachGlobalObjectFromFrame()
 
     RefPtr frame = this->frame();
     ASSERT(frame);
-    frame->checkedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+    frame->protectedLoader()->client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
 
     m_wasDetached = true;
 }

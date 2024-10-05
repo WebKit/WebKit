@@ -51,7 +51,7 @@ RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
-const SharedPreferencesForWebProcess& RemoteTextDetector::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteTextDetector::sharedPreferencesForWebProcess() const
 {
     return protectedBackend()->sharedPreferencesForWebProcess();
 }

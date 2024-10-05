@@ -38,21 +38,24 @@ void AnimationEffectTiming::updateComputedProperties()
     // The active duration is calculated as follows:
     // active duration = iteration duration × iteration count
     // If either the iteration duration or iteration count are zero, the active duration is zero.
-    if (!iterationDuration || !iterations)
+    if (iterationDuration.isZero() || !iterations)
         activeDuration = 0_s;
     else
         activeDuration = iterationDuration * iterations;
 
     // 3.5.3 The active interval
     // https://drafts.csswg.org/web-animations-1/#end-time
-
-    // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
-    endTime = delay + activeDuration + endDelay;
-    if (endTime < 0_s)
-        endTime = 0_s;
+    if (iterationDuration.percentage())
+        endTime = activeDuration;
+    else {
+        // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
+        endTime = delay + activeDuration + endDelay;
+        if (endTime < 0_s)
+            endTime = 0_s;
+    }
 }
 
-BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> localTime, double playbackRate) const
+BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<CSSNumberishTime> localTime, double playbackRate) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
@@ -62,28 +65,34 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
         // 3.5.5. Animation effect phases and states
         // https://drafts.csswg.org/web-animations-1/#animation-effect-phases-and-states
 
-        bool animationIsBackwards = playbackRate < 0;
-        auto beforeActiveBoundaryTime = std::max(std::min(delay, endTime), 0_s);
-        auto activeAfterBoundaryTime = std::max(std::min(delay + activeDuration, endTime), 0_s);
-
         // (This should be the last statement, but it's more efficient to cache the local time and return right away if it's not resolved.)
         // Furthermore, it is often convenient to refer to the case when an animation effect is in none of the above phases
         // as being in the idle phase.
         if (!localTime)
             return AnimationEffectPhase::Idle;
 
+        ASSERT(endTime.time());
+        ASSERT(localTime->time());
+        ASSERT(activeDuration.time());
+        auto localTimeSeconds = *localTime->time();
+        auto endTimeSeconds = *endTime.time();
+
+        bool animationIsBackwards = playbackRate < 0;
+        auto beforeActiveBoundaryTime = std::max(std::min(delay, endTimeSeconds), 0_s);
+        auto activeAfterBoundaryTime = std::max(std::min(delay + *activeDuration.time(), endTimeSeconds), 0_s);
+
         // An animation effect is in the before phase if the animation effect’s local time is not unresolved and
         // either of the following conditions are met:
         //     1. the local time is less than the before-active boundary time, or
         //     2. the animation direction is ‘backwards’ and the local time is equal to the before-active boundary time.
-        if ((*localTime + timeEpsilon) < beforeActiveBoundaryTime || (animationIsBackwards && std::abs(localTime->microseconds() - beforeActiveBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
+        if ((localTimeSeconds + timeEpsilon) < beforeActiveBoundaryTime || (animationIsBackwards && std::abs(localTimeSeconds.microseconds() - beforeActiveBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
             return AnimationEffectPhase::Before;
 
         // An animation effect is in the after phase if the animation effect’s local time is not unresolved and
         // either of the following conditions are met:
         //     1. the local time is greater than the active-after boundary time, or
         //     2. the animation direction is ‘forwards’ and the local time is equal to the active-after boundary time.
-        if ((*localTime - timeEpsilon) > activeAfterBoundaryTime || (!animationIsBackwards && std::abs(localTime->microseconds() - activeAfterBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
+        if ((localTimeSeconds - timeEpsilon) > activeAfterBoundaryTime || (!animationIsBackwards && std::abs(localTimeSeconds.microseconds() - activeAfterBoundaryTime.microseconds()) < timeEpsilon.microseconds()))
             return AnimationEffectPhase::After;
 
         // An animation effect is in the active phase if the animation effect’s local time is not unresolved and it is not
@@ -106,7 +115,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
             // If the fill mode is backwards or both, return the result of evaluating
             // max(local time - start delay, 0).
             if (fill == FillMode::Backwards || fill == FillMode::Both)
-                return std::max(*localTime - delay, 0_s);
+                return std::max(*localTime->time() - delay, 0_s);
             // Otherwise, return an unresolved time value.
             return std::nullopt;
         }
@@ -121,7 +130,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
             // If the fill mode is forwards or both, return the result of evaluating
             // max(min(local time - start delay, active duration), 0).
             if (fill == FillMode::Forwards || fill == FillMode::Both)
-                return std::max(std::min(*localTime - delay, activeDuration), 0_s);
+                return std::max(std::min(*localTime->time() - delay, *activeDuration.time()), 0_s);
             // Otherwise, return an unresolved time value.
             return std::nullopt;
         }
@@ -135,7 +144,7 @@ BasicEffectTiming AnimationEffectTiming::getBasicTiming(std::optional<Seconds> l
 
 enum ComputedDirection : uint8_t { Forwards, Reverse };
 
-ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> localTime, double playbackRate) const
+ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<CSSNumberishTime> localTime, double playbackRate) const
 {
     // The Web Animations spec introduces a number of animation effect time-related definitions that refer
     // to each other a fair bit, so rather than implementing them as individual methods, it's more efficient
@@ -156,13 +165,13 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
             return std::nullopt;
 
         // 2. Calculate an initial value for overall progress based on the first matching condition from below,
-        auto overallProgress = [&]() -> double {
+        auto overallProgress = [&]() {
             // If the iteration duration is zero, if the animation effect is in the before phase, let overall progress be zero,
             // otherwise, let it be equal to the iteration count.
-            if (!iterationDuration)
+            if (iterationDuration.isZero())
                 return phase == AnimationEffectPhase::Before ? 0 : iterations;
             // Otherwise, let overall progress be the result of calculating active time / iteration duration.
-            return secondsToWebAnimationsAPITime(*activeTime) / secondsToWebAnimationsAPITime(iterationDuration);
+            return *activeTime / iterationDuration;
         }();
 
         // 3. Return the result of calculating overall progress + iteration start.
@@ -193,7 +202,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
         // the active time is equal to the active duration, and
         // the iteration count is not equal to zero.
         // let the simple iteration progress be 1.0.
-        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && std::abs(activeTime->microseconds() - activeDuration.microseconds()) < timeEpsilon.microseconds() && iterations)
+        if (!simpleIterationProgress && (phase == AnimationEffectPhase::Active || phase == AnimationEffectPhase::After) && activeTime->approximatelyEqualTo(activeDuration) && iterations)
             return 1;
 
         return simpleIterationProgress;
@@ -279,7 +288,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
         if (!directedProgress)
             return { std::nullopt, before };
 
-        if (iterationDuration) {
+        if (!iterationDuration.isZero()) {
             // 2. Calculate the value of the before flag as follows:
             // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
             // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
@@ -291,7 +300,13 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(std::optional<Seconds> local
 
             // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
             //    input progress value and before flag as the before flag.
-            return { timingFunction->transformProgress(*directedProgress, iterationDuration.seconds(), before), before };
+            auto transformProgressDuration = [&]() {
+                if (auto time = iterationDuration.time())
+                    return time->seconds();
+                return 1.0;
+            };
+
+            return { timingFunction->transformProgress(*directedProgress, transformProgressDuration(), before), before };
         }
 
         return { *directedProgress, before };

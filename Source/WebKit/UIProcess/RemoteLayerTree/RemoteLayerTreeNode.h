@@ -113,8 +113,8 @@ public:
     static NSString *appendLayerDescription(NSString *description, CALayer *);
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const { return m_scrollingNodeID; }
+    void setScrollingNodeID(std::optional<WebCore::ScrollingNodeID> nodeID) { m_scrollingNodeID = nodeID; }
 #endif
 
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostingIdentifier() const { return m_remoteContextHostingIdentifier; }
@@ -183,7 +183,7 @@ private:
     WebCore::EventRegion m_eventRegion;
 
 #if ENABLE(SCROLLING_THREAD)
-    WebCore::ScrollingNodeID m_scrollingNodeID;
+    Markable<WebCore::ScrollingNodeID> m_scrollingNodeID;
 #endif
 
     Markable<WebCore::PlatformLayerIdentifier> m_actingScrollContainerID;

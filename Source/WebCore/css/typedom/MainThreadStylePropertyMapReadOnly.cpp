@@ -54,23 +54,34 @@ Document* MainThreadStylePropertyMapReadOnly::documentFromContext(ScriptExecutio
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-get
-ExceptionOr<RefPtr<CSSStyleValue>> MainThreadStylePropertyMapReadOnly::get(ScriptExecutionContext& context, const AtomString& property) const
+ExceptionOr<HashMapStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainThreadStylePropertyMapReadOnly::get(ScriptExecutionContext& context, const AtomString& property) const
 {
     auto* document = documentFromContext(context);
     if (!document)
         return nullptr;
 
-    if (isCustomPropertyName(property))
-        return reifyValue(customPropertyValue(property), std::nullopt, *document);
+    if (isCustomPropertyName(property)) {
+        if (auto value = reifyValue(customPropertyValue(property), std::nullopt, *document))
+            return CSSStyleValueOrUndefined { WTFMove(value) };
+
+        return nullptr;
+    }
 
     auto propertyID = cssPropertyID(property);
     if (!isExposed(propertyID, &document->settings()))
         return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
 
-    if (isShorthand(propertyID))
-        return CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID), { *document });
+    if (isShorthand(propertyID)) {
+        if (auto value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID), { *document }))
+            return CSSStyleValueOrUndefined { WTFMove(value) };
 
-    return reifyValue(propertyValue(propertyID), propertyID, *document);
+        return nullptr;
+    }
+
+    if (auto value = reifyValue(propertyValue(propertyID), propertyID, *document))
+        return CSSStyleValueOrUndefined { WTFMove(value) };
+
+    return nullptr;
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
@@ -102,7 +113,13 @@ ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext
     auto result = get(context, property);
     if (result.hasException())
         return result.releaseException();
-    return !!result.returnValue();
+
+    return WTF::switchOn(result.returnValue(), [](const RefPtr<CSSStyleValue>& value) {
+        ASSERT(value);
+        return !!value;
+    }, [](const auto&) {
+        return false;
+    });
 }
 
 } // namespace WebCore

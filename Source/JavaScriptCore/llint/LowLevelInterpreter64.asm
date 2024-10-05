@@ -2404,19 +2404,21 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + UnlinkedSimpleJumpTableFixedVector::m_storage[t2], t2
     addp (constexpr (UnlinkedSimpleJumpTableFixedVector::Storage::offsetOfData())), t2
     addp t3, t2
+
     bqb t1, numberTag, .opSwitchImmNotInt
     subi UnlinkedSimpleJumpTable::m_min[t2], t1
-    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t2
-    btpz t2, .opSwitchImmFallThrough
-    biaeq t1, Int32FixedVector::Storage::m_size[t2], .opSwitchImmFallThrough
-    loadis (constexpr (Int32FixedVector::Storage::offsetOfData()))[t2, t1, 4], t1
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t3
+    btpz t3, .opSwitchImmFallThrough
+    biaeq t1, Int32FixedVector::Storage::m_size[t3], .opSwitchImmFallThrough
+    loadis (constexpr (Int32FixedVector::Storage::offsetOfData()))[t3, t1, 4], t1
     btiz t1, .opSwitchImmFallThrough
     dispatchIndirect(t1)
 
 .opSwitchImmNotInt:
     btqnz t1, numberTag, .opSwitchImmSlow   # Go slow if it's a double.
 .opSwitchImmFallThrough:
-    jump(m_defaultOffset)
+    loadis UnlinkedSimpleJumpTable::m_defaultOffset[t2], t1
+    dispatchIndirect(t1)
 
 .opSwitchImmSlow:
     callSlowPath(_llint_slow_path_switch_imm)
@@ -2435,6 +2437,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + UnlinkedSimpleJumpTableFixedVector::m_storage[t2], t2
     addp (constexpr (UnlinkedSimpleJumpTableFixedVector::Storage::offsetOfData())), t2
     addp t3, t2
+
     btqnz t1, notCellMask, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t1], StringType, .opSwitchCharFallThrough
     loadp JSString::m_fiber[t1], t0
@@ -2448,15 +2451,16 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadb [t1], t0
 .opSwitchCharReady:
     subi UnlinkedSimpleJumpTable::m_min[t2], t0
-    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t2
-    btpz t2, .opSwitchCharFallThrough
-    biaeq t0, Int32FixedVector::Storage::m_size[t2], .opSwitchCharFallThrough
-    loadis (constexpr (Int32FixedVector::Storage::offsetOfData()))[t2, t0, 4], t1
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + Int32FixedVector::m_storage[t2], t3
+    btpz t3, .opSwitchCharFallThrough
+    biaeq t0, Int32FixedVector::Storage::m_size[t3], .opSwitchCharFallThrough
+    loadis (constexpr (Int32FixedVector::Storage::offsetOfData()))[t3, t0, 4], t1
     btiz t1, .opSwitchCharFallThrough
     dispatchIndirect(t1)
 
 .opSwitchCharFallThrough:
-    jump(m_defaultOffset)
+    loadis UnlinkedSimpleJumpTable::m_defaultOffset[t2], t1
+    dispatchIndirect(t1)
 
 .opSwitchOnRope:
     bineq JSRopeString::m_compactFibers + JSRopeString::CompactFibers::m_length[t1], 1, .opSwitchCharFallThrough

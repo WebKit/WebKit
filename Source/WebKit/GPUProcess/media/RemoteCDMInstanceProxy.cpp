@@ -131,9 +131,13 @@ Ref<WebCore::CDMInstance> RemoteCDMInstanceProxy::protectedInstance() const
     return m_instance;
 }
 
-const SharedPreferencesForWebProcess& RemoteCDMInstanceProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteCDMInstanceProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedCdm()->sharedPreferencesForWebProcess();
+    if (!m_cdm)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_cdm->sharedPreferencesForWebProcess();
 }
 
 RefPtr<RemoteCDMProxy> RemoteCDMInstanceProxy::protectedCdm() const

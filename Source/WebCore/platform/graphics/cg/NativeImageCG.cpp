@@ -52,6 +52,15 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
     return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
+Headroom PlatformImageNativeImageBackend::headroom() const
+{
+#if HAVE(HDR_SUPPORT)
+    return CGImageGetContentHeadroom(m_platformImage.get());
+#else
+    return Headroom::None;
+#endif
+}
+
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!image)
@@ -99,6 +108,7 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
 
 void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
+#if !HAVE(CORE_ANIMATION_FIX_FOR_RADAR_93560567)
     auto isHDRColorSpace = [](CGColorSpaceRef colorSpace) -> bool {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return CGColorSpaceIsHDR(colorSpace);
@@ -153,6 +163,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // FIXME: rdar://105525195 -- Remove this HDR workaround once the system libraries can render images without clipping HDR data.
     if (drawHDRNativeImage(context, destinationRect, sourceRect, options))
         return;
+#endif
 
     context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
 }

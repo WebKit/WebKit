@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestGenerateAddOpaqueRoot>;
     static JSTestGenerateAddOpaqueRoot* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestGenerateAddOpaqueRoot* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateAddOpaqueRoot>(vm)) JSTestGenerateAddOpaqueRoot(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

@@ -661,11 +661,17 @@ auto WebAnimation::playState() const -> PlayState
     return PlayState::Running;
 }
 
-Seconds WebAnimation::effectEndTime() const
+CSSNumberishTime WebAnimation::zeroTime() const
+{
+    // FIXME: once we had support for progress-based timelines, return 0% here.
+    return { 0_s };
+}
+
+CSSNumberishTime WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    return m_effect ? m_effect->endTime() : 0_s;
+    return m_effect ? m_effect->endTime() : zeroTime();
 }
 
 void WebAnimation::cancel(Silently silently)
@@ -819,7 +825,7 @@ ExceptionOr<void> WebAnimation::finish()
     // 3. Set limit as follows:
     // If animation playback rate > 0, let limit be target effect end.
     // Otherwise, let limit be zero.
-    auto limit = m_playbackRate > 0 ? effectEndTime() : 0_s;
+    auto limit = m_playbackRate > 0 ? effectEndTime() : zeroTime();
 
     // 4. Silently set the current time to limit.
     silentlySetCurrentTime(limit);
@@ -884,7 +890,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
     // 1. Let the unconstrained current time be the result of calculating the current time substituting an unresolved time value
     // for the hold time if did seek is false. If did seek is true, the unconstrained current time is equal to the current time.
     auto unconstrainedCurrentTime = currentTime(didSeek == DidSeek::Yes ? RespectHoldTime::Yes : RespectHoldTime::No);
-    CSSNumberishTime endTime { effectEndTime() };
+    auto endTime = effectEndTime();
 
     // 2. If all three of the following conditions are true,
     //    - the unconstrained current time is resolved, and
@@ -1199,8 +1205,8 @@ ExceptionOr<void> WebAnimation::pause()
     if (!localTime) {
         if (m_playbackRate >= 0) {
             // If animation's playback rate is ≥ 0, let animation's hold time be zero.
-            m_holdTime = 0_s;
-        } else if (effectEndTime() == Seconds::infinity()) {
+            m_holdTime = zeroTime();
+        } else if (effectEndTime().isInfinity()) {
             // Otherwise, if target effect end for animation is positive infinity, throw an InvalidStateError and abort these steps.
             return Exception { ExceptionCode::InvalidStateError };
         } else {
@@ -1639,6 +1645,40 @@ bool WebAnimation::isSkippedContentAnimation() const
             return element->element.renderer() && element->element.renderer()->isSkippedContent();
     }
     return false;
+}
+
+std::optional<double> WebAnimation::progress() const
+{
+    // https://drafts.csswg.org/web-animations-2/#the-progress-of-an-animation
+    // An animation’s progress is the ratio of its current time to its associated effect end.
+    //
+    // The progress of an animation, animation, is calculated as follows:
+    //
+    // If any of the following are true:
+    //     - animation does not have an associated effect, or
+    //     - animation’s current time is an unresolved time value,
+    // animation’s progress is null.
+    if (!m_effect)
+        return std::nullopt;
+
+    auto currentTime = this->currentTime();
+    if (!currentTime)
+        return std::nullopt;
+
+    auto endTime = effectEndTime();
+
+    // If animation’s associated effect end is zero,
+    //     - If animation’s current time is negative, animation’s progress is zero.
+    //     - Otherwise, animation’s progress is one.
+    if (endTime.isZero())
+        return *currentTime < zeroTime() ? 0 : 1;
+
+    // If animation’s associated effect end is infinite, animation’s progress is zero.
+    if (endTime.isInfinity())
+        return 0;
+
+    // Otherwise, progress = min(max(current time / animation’s associated effect end, 0), 1)
+    return std::min(std::max(*currentTime / endTime, 0.0), 1.0);
 }
 
 } // namespace WebCore

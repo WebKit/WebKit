@@ -28,9 +28,11 @@
 
 #if PLATFORM(MAC)
 
+#import "ContentsFormat.h"
 #import "FloatRect.h"
 #import "HostWindow.h"
 #import "LocalFrameView.h"
+#import "PlatformCALayerClient.h"
 #import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
 #import <pal/cocoa/OpenGLSoftLinkCocoa.h>
@@ -118,6 +120,20 @@ static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
 }
 #endif
 
+static ContentsFormat screenContentsFormat(NSScreen *screen)
+{
+#if HAVE(IOSURFACE_RGB10)
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+
+    if ([screen canRepresentDisplayGamut:NSDisplayGamutP3])
+        return ContentsFormat::RGBA10;
+#else
+    UNUSED_PARAM(screen);
+#endif
+
+    return ContentsFormat::RGBA8;
+}
+
 ScreenProperties collectScreenProperties()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -159,7 +175,7 @@ ScreenProperties collectScreenProperties()
         screenData.colorSpace = DestinationColorSpace { screen.colorSpace.CGColorSpace };
         screenData.screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         screenData.screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
-        screenData.screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
+        screenData.screenContentsFormat = screenContentsFormat(screen);
         screenData.screenHasInvertedColors = screenHasInvertedColors;
         screenData.screenIsMonochrome = CGDisplayUsesForceToGray();
         screenData.displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
@@ -358,13 +374,26 @@ DestinationColorSpace screenColorSpace(Widget* widget)
     return DestinationColorSpace { screen(widget).colorSpace.CGColorSpace };
 }
 
-bool screenSupportsExtendedColor(Widget* widget)
+ContentsFormat screenContentsFormat(Widget* widget, PlatformCALayerClient* client)
 {
-    if (auto data = screenProperties(widget))
-        return data->screenSupportsExtendedColor;
+#if HAVE(HDR_SUPPORT)
+    if (client && client->hdrForImagesEnabled() && screenSupportsHighDynamicRange(widget))
+        return ContentsFormat::RGBA16F;
+#else
+    UNUSED_PARAM(client);
+#endif
 
+    if (auto data = screenProperties(widget))
+        return data->screenContentsFormat;
+
+#if HAVE(IOSURFACE_RGB10)
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return [screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3];
+
+    if ([screen(widget) canRepresentDisplayGamut:NSDisplayGamutP3])
+        return ContentsFormat::RGBA10;
+#endif
+
+    return ContentsFormat::RGBA8;
 }
 
 bool screenSupportsHighDynamicRange(Widget* widget)

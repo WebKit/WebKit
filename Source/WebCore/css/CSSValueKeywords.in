@@ -1793,5 +1793,10 @@ allow-discrete
 // inline
 -internal-textarea-auto
 
-// anchor()
+// CSS Anchor Positioning
 anchor
+anchor-size
+width
+height
+self-block
+self-inline

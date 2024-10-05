@@ -154,6 +154,7 @@ class JSGlobalObject;
     v(wrapForValidIteratorCreate, nullptr) \
     v(asyncFromSyncIteratorCreate, nullptr) \
     v(regExpStringIteratorCreate, nullptr) \
+    v(iteratorHelperCreate, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

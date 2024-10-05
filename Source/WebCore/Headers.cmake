@@ -606,14 +606,20 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/webauthn/AttestationConveyancePreference.h
     Modules/webauthn/AuthenticationExtensionsClientInputs.h
+    Modules/webauthn/AuthenticationExtensionsClientInputsJSON.h
     Modules/webauthn/AuthenticationExtensionsClientOutputs.h
+    Modules/webauthn/AuthenticationExtensionsClientOutputsJSON.h
     Modules/webauthn/AuthenticatorCoordinator.h
     Modules/webauthn/AuthenticatorCoordinatorClient.h
     Modules/webauthn/AuthenticatorResponseData.h
     Modules/webauthn/AuthenticatorTransport.h
     Modules/webauthn/PublicKeyCredentialCreationOptions.h
+    Modules/webauthn/PublicKeyCredentialCreationOptionsJSON.h
     Modules/webauthn/PublicKeyCredentialDescriptor.h
+    Modules/webauthn/PublicKeyCredentialDescriptorJSON.h
+    Modules/webauthn/PublicKeyCredentialParameters.h
     Modules/webauthn/PublicKeyCredentialRequestOptions.h
+    Modules/webauthn/PublicKeyCredentialRequestOptionsJSON.h
     Modules/webauthn/PublicKeyCredentialType.h
     Modules/webauthn/UserVerificationRequirement.h
     Modules/webauthn/WebAuthenticationConstants.h
@@ -1947,6 +1953,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorTypes.h
     platform/graphics/ColorUtilities.h
     platform/graphics/ComplexTextController.h
+    platform/graphics/ContentsFormat.h
     platform/graphics/ContentTypeUtilities.h
     platform/graphics/Damage.h
     platform/graphics/DashArray.h

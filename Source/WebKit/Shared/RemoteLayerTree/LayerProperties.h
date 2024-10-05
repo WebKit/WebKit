@@ -48,6 +48,7 @@ enum class LayerChangeIndex : size_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged,
 #endif
+    ContentsFormatChanged,
 };
 
 enum class LayerChange : uint64_t {
@@ -105,6 +106,7 @@ enum class LayerChange : uint64_t {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     VisibleRectChanged                  = 1LLU << static_cast<size_t>(LayerChangeIndex::VisibleRectChanged),
 #endif
+    ContentsFormatChanged               = 1LLU << static_cast<size_t>(LayerChangeIndex::ContentsFormatChanged),
 };
 
 struct RemoteLayerBackingStoreOrProperties {
@@ -202,6 +204,7 @@ struct LayerProperties {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     WebCore::FloatRect visibleRect;
 #endif
+    WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
 };
 
 }

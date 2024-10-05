@@ -1842,6 +1842,11 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     return _page.get();
 }
 
+- (RefPtr<WebKit::WebPageProxy>)_protectedPage
+{
+    return _page.get();
+}
+
 - (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
 {
     return _resolutionForShareSheetImmediateCompletionForTesting;
@@ -2714,8 +2719,11 @@ static std::optional<ItemIdentifiers> coreTextManipulationItemIdentifierFromStri
     if (!processID || !*processID || !frameID || !*frameID || !itemID || !*itemID)
         return std::nullopt;
 
+    if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*processID))
+        return std::nullopt;
+
     return ItemIdentifiers { WebCore::ProcessQualified(ObjectIdentifier<WebCore::FrameIdentifierType>(*frameID),
-        LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
+        ObjectIdentifier<WebCore::ProcessIdentifierType>(*processID)),
         LegacyNullableObjectIdentifier<WebCore::TextManipulationItemIdentifierType>(*itemID) };
 }
 

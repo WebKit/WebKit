@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestOperationConditional>;
     static JSTestOperationConditional* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOperationConditional>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestOperationConditional* ptr = new (NotNull, JSC::allocateCell<JSTestOperationConditional>(vm)) JSTestOperationConditional(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

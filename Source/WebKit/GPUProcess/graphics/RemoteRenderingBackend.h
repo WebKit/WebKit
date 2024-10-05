@@ -94,7 +94,7 @@ public:
     virtual ~RemoteRenderingBackend();
     void stopListeningForIPC();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
     RemoteResourceCache& remoteResourceCache() { return m_remoteResourceCache; }
     RemoteSharedResourceCache& sharedResourceCache() { return m_sharedResourceCache; }
@@ -106,7 +106,6 @@ public:
     void dispatch(Function<void()>&&);
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
-
 
     GPUConnectionToWebProcess& gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
@@ -182,6 +181,8 @@ private:
 
     void createDisplayListRecorder(RefPtr<WebCore::ImageBuffer>, WebCore::RenderingResourceIdentifier);
     void releaseDisplayListRecorder(WebCore::RenderingResourceIdentifier);
+
+    Ref<ShapeDetection::ObjectHeap> protectedShapeDetectionObjectHeap() const;
 
 #if PLATFORM(COCOA)
     bool shouldUseLockdownFontParser() const;

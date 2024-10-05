@@ -780,12 +780,12 @@ static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL,
 
     const bool isSameSiteBypassEnabled = (originalURL.isEmpty()
         || RegistrableDomain(newURL) == RegistrableDomain(originalURL))
-        && (advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain) || frame.checkedLoader()->shouldSkipHTTPSUpgradeForSameSiteNavigation() || originalURL.protocolIs("http"_s));
+        && (advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain) || frame.protectedLoader()->shouldSkipHTTPSUpgradeForSameSiteNavigation() || originalURL.protocolIs("http"_s));
 
     return (isHTTPSByDefaultEnabled || httpsByDefaultMode != HTTPSByDefaultMode::Disabled)
         && newURL.protocolIs("http"_s)
         && !isSameSiteBypassEnabled
-        && !frame.checkedLoader()->isHTTPFallbackInProgress();
+        && !frame.protectedLoader()->isHTTPFallbackInProgress();
 }
 
 bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type type, ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site, const URL& preRedirectURL)
@@ -876,7 +876,7 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
         newRequest.setInspectorInitiatorNodeIdentifier(*inspectorInitiatorNodeIdentifier);
     if (request.resourceRequest().hiddenFromInspector())
         newRequest.setHiddenFromInspector(true);
-    protectedFrame()->checkedLoader()->loadedResourceFromMemoryCache(resource, newRequest, error);
+    protectedFrame()->protectedLoader()->loadedResourceFromMemoryCache(resource, newRequest, error);
 
     // FIXME <http://webkit.org/b/113251>: If the delegate modifies the request's
     // URL, it is no longer appropriate to use this CachedResource.
@@ -991,7 +991,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     }
     request.updateUserAgentHeader(frameLoader);
 
-    if (frameLoader.frame().checkedLoader()->loadType() == FrameLoadType::ReloadFromOrigin)
+    if (frameLoader.frame().protectedLoader()->loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
     request.updateAcceptEncodingHeader();
@@ -1125,13 +1125,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         if (forPreload == ForPreload::No)
             FrameLoader::reportBlockedLoadFailed(frame, url);
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource URL has a blocked port", frame.get());
-        return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
+        return makeUnexpected(frame->protectedLoader()->blockedError(request.resourceRequest()));
     }
 
     if (isIPAddressDisallowed(url)) {
         FrameLoader::reportBlockedLoadFailed(frame, url);
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("CachedResourceLoader::requestResource URL has a disallowed address", frame.get());
-        return makeUnexpected(frame->checkedLoader()->blockedError(request.resourceRequest()));
+        return makeUnexpected(frame->protectedLoader()->blockedError(request.resourceRequest()));
     }
 
     request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::Default);
@@ -1175,13 +1175,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             && !frame->loader().isHTTPFallbackInProgress()
             && !(committedDocumentURL.protocolIs("http"_s) && request.resourceRequest().isSameSite());
         if (!madeHTTPS && !request.resourceRequest().url().protocolIs("https"_s) && type == CachedResource::Type::MainResource && isHTTPSOnlyActive)
-            return makeUnexpected(protectedDocumentLoader()->checkedFrameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
+            return makeUnexpected(protectedDocumentLoader()->protectedFrameLoader()->client().httpNavigationWithHTTPSOnlyError(request.resourceRequest()));
 
         if (madeHTTPS
             && type == CachedResource::Type::MainResource
             && m_documentLoader->isLoadingMainResource()) {
             // This is to make sure the correct 'new' URL shows in the location bar.
-            protectedDocumentLoader()->checkedFrameLoader()->client().dispatchDidChangeProvisionalURL();
+            protectedDocumentLoader()->protectedFrameLoader()->client().dispatchDidChangeProvisionalURL();
         }
         url = request.resourceRequest().url(); // The content extension could have changed it from http to https.
         url = MemoryCache::removeFragmentIdentifierIfNeeded(url); // Might need to remove fragment identifier again.
@@ -1213,7 +1213,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     InitiatorContext initiatorContext = request.options().initiatorContext;
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
-        updateHTTPRequestHeaders(frame->checkedLoader().get(), type, request);
+        updateHTTPRequestHeaders(frame->protectedLoader().get(), type, request);
     request.disableCachingIfNeeded();
 
     auto& memoryCache = MemoryCache::singleton();
@@ -1336,7 +1336,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url().string(), resource);
-    frame->checkedLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
+    frame->protectedLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
     return resource;
 }
 
@@ -1642,7 +1642,7 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
         return CachePolicy::Verify;
 
     if (type != CachedResource::Type::MainResource)
-        return frame->checkedLoader()->subresourceCachePolicy(url);
+        return frame->protectedLoader()->subresourceCachePolicy(url);
 
     if (RefPtr page = frame->page()) {
         if (page->isResourceCachingDisabledByWebInspector())
@@ -1676,7 +1676,7 @@ void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformP
     ASSERT(shouldPerformPostLoadActions || type == LoadCompletionType::Cancel);
 
     if (RefPtr frame = this->frame())
-        frame->checkedLoader()->loadDone(type);
+        frame->protectedLoader()->loadDone(type);
 
     if (shouldPerformPostLoadActions)
         performPostLoadActions();

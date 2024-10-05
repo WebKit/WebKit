@@ -37,8 +37,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 
-NSNotificationName const WKWebExtensionActionPropertiesDidChangeNotification = @"WKWebExtensionActionPropertiesDidChange";
-
 #if USE(APPKIT)
 using CocoaMenuItem = NSMenuItem;
 #else

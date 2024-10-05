@@ -243,6 +243,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MediaDocument.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NavigationScheduler.h>
 #include <WebCore/NotImplemented.h>
@@ -270,6 +271,7 @@
 #include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderVideo.h>
@@ -3763,7 +3765,7 @@ void WebPage::restoreSessionInternal(const Vector<Ref<FrameState>>& frameStates,
     for (const auto& frameState : frameStates) {
         auto historyItem = toHistoryItem(m_historyItemClient, frameState);
         historyItem->setWasRestoredFromSession(restoredByAPIRequest == WasRestoredByAPIRequest::Yes);
-        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(frameState->identifier, WTFMove(historyItem), m_identifier, overwrite);
+        static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(*frameState->identifier, WTFMove(historyItem), m_identifier, overwrite);
     }
 }
 
@@ -3781,7 +3783,7 @@ void WebPage::setCurrentHistoryItemForReattach(Ref<FrameState>&& mainFrameState)
 {
     Ref historyItem = toHistoryItem(m_historyItemClient, mainFrameState);
     auto& historyItemRef = historyItem.get();
-    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(mainFrameState->identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
+    static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(*mainFrameState->identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
         localMainFrame->checkedHistory()->setCurrentItem(historyItemRef);
 }
@@ -8521,7 +8523,7 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
 #if USE(SYSTEM_PREVIEW)
 void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInfo, const String& message)
 {
-    auto* document = Document::allDocumentsMap().get(previewInfo.element.documentIdentifier);
+    auto* document = Document::allDocumentsMap().get(*previewInfo.element.documentIdentifier);
     if (!document)
         return;
 
@@ -9665,6 +9667,31 @@ void WebPage::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_
     auto ts = WebCore::createTextStream(*renderer);
     ts.setIndent(baseIndent);
     WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
+    completionHandler(ts.release());
+}
+
+void WebPage::layerTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing in web process"_s);
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
+    }
+
+    auto* renderer = coreLocalFrame->contentRenderer();
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
+    }
+
+    auto ts = WebCore::createTextStream(*renderer);
+    ts << coreLocalFrame->contentRenderer()->compositor().layerTreeAsText(options, baseIndent);
     completionHandler(ts.release());
 }
 

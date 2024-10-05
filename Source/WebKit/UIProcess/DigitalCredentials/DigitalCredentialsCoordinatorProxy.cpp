@@ -51,7 +51,7 @@ DigitalCredentialsCoordinatorProxy::~DigitalCredentialsCoordinatorProxy()
     page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::DigitalCredentialsCoordinatorProxy::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
-const SharedPreferencesForWebProcess& DigitalCredentialsCoordinatorProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> DigitalCredentialsCoordinatorProxy::sharedPreferencesForWebProcess() const
 {
     return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }

@@ -184,9 +184,13 @@ void RemoteCDMInstanceSessionProxy::sessionIdChanged(const String& sessionId)
     gpuConnectionToWebProcess->protectedConnection()->send(Messages::RemoteCDMInstanceSession::SessionIdChanged(sessionId), m_identifier);
 }
 
-const SharedPreferencesForWebProcess& RemoteCDMInstanceSessionProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteCDMInstanceSessionProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedCdm()->sharedPreferencesForWebProcess();
+    if (!m_cdm)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_cdm->sharedPreferencesForWebProcess();
 }
 
 RefPtr<RemoteCDMProxy> RemoteCDMInstanceSessionProxy::protectedCdm() const

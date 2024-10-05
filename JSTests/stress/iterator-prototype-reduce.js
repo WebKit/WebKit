@@ -136,3 +136,27 @@ function shouldThrow(fn, error, message) {
     sameValue(nextGetCount, 1);
     sameValue(returnGetCount, 1);
 }
+
+{
+    let finallyReached = false;
+    let yield3Reached = false;
+    const gen = (function*() {
+        yield 1;
+
+        try { yield 2; }
+        finally { finallyReached = true; }
+
+        yield3Reached = true;
+        yield 3;
+    })();
+
+    shouldThrow(() => {
+        gen.reduce((_, value) => {
+            if (value === 2)
+                throw new Error("my error");
+        });
+    }, Error, "my error");
+
+    assert(finallyReached, "Generator.prototype.return() invoked the generator function");
+    sameValue(yield3Reached, false);
+}

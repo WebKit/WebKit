@@ -151,6 +151,16 @@ WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK_S
 - (void)webExtensionController:(WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <WKWebExtensionTab>)tab forExtensionContext:(WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<WKWebExtensionMatchPattern *> *allowedMatchPatterns, NSDate * _Nullable expirationDate))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
 
 /*!
+ @abstract Called when an action's properties are updated.
+ @param controller The web extension controller initiating the request.
+ @param action The web extension action whose properties are updated.
+ @param context The context within which the web extension is running.
+ @discussion This method is called when an action's properties are updated and should be reflected in the app's user interface.
+ The app should ensure that any visible changes, such as icons and labels, are updated accordingly.
+ */
+- (void)webExtensionController:(WKWebExtensionController *)controller didUpdateAction:(WKWebExtensionAction *)action forExtensionContext:(WKWebExtensionContext *)context NS_SWIFT_NAME(webExtensionController(_:didUpdate:forExtensionContext:));
+
+/*!
  @abstract Called when a popup is requested to be displayed for a specific action.
  @param controller The web extension controller initiating the request.
  @param action The action for which the popup is requested.

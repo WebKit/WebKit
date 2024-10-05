@@ -33,6 +33,7 @@
 #include "CryptoAlgorithmECDH.h"
 #include "CryptoKeyEC.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -181,6 +182,26 @@ RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getPublicKey() const
     }
 
     return nullptr;
+}
+
+RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAttestationResponse::toJSON()
+{
+    Vector<String> transports;
+    for (auto transport : getTransports())
+        transports.append(toString(transport));
+    RegistrationResponseJSON::AuthenticatorAttestationResponseJSON value;
+    if (auto clientData = clientDataJSON())
+        value.clientDataJSON = base64EncodeToString(clientData->span());
+    value.transports = transports;
+    if (auto authData = getAuthenticatorData())
+        value.authenticatorData = base64EncodeToString(authData->span());
+    if (auto publicKey = getPublicKey())
+        value.publicKey = base64EncodeToString(publicKey->span());
+    if (auto attestationObj = attestationObject())
+        value.attestationObject = base64EncodeToString(attestationObj->span());
+    value.publicKeyAlgorithm = getPublicKeyAlgorithm();
+
+    return value;
 }
 
 } // namespace WebCore

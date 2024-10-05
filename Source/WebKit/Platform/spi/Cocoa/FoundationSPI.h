@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <Foundation/NSExtension.h>
+#import <Foundation/NSLocale_Private.h>
 #import <Foundation/NSPrivateDecls.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -57,6 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (copy, NS_NONATOMIC_IOSONLY) void (^requestCompletionBlock)(id <NSCopying>, NSArray *);
 @property (copy, NS_NONATOMIC_IOSONLY) void (^requestCancellationBlock)(id <NSCopying>, NSError *);
 @property (copy, NS_NONATOMIC_IOSONLY) void (^requestInterruptionBlock)(id <NSCopying>);
+@end
+
+@interface NSLocale ()
++ (NSString *)_deviceLanguage;
 @end
 
 NS_ASSUME_NONNULL_END

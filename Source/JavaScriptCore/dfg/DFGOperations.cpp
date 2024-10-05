@@ -59,6 +59,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "JSMapIterator.h"
@@ -2247,6 +2248,16 @@ JSC_DEFINE_JIT_OPERATION(operationNewSetIterator, JSCell*, (VM* vmPointer, Struc
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     OPERATION_RETURN(scope, JSSetIterator::createWithInitialValues(vm, structure));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewIteratorHelper, JSCell*, (VM* vmPointer, Structure* structure))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    OPERATION_RETURN(scope, JSIteratorHelper::createWithInitialValues(vm, structure));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateActivationDirect, JSCell*, (VM* vmPointer, Structure* structure, JSScope* jsScope, SymbolTable* table, EncodedJSValue initialValueEncoded))

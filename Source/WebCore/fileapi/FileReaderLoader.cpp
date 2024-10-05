@@ -251,7 +251,7 @@ void FileReaderLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::o
         m_client->didFinishLoading();
 }
 
-void FileReaderLoader::didFail(ScriptExecutionContextIdentifier, const ResourceError& error)
+void FileReaderLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError& error)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
     if (m_errorCode && m_errorCode.value() == ExceptionCode::AbortError)

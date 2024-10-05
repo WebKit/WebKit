@@ -4250,7 +4250,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
 
     // Our callee could have tail called someone else and changed SP so we need to restore it. Do this after restoring our results so we don't lose them.
     m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
+#if CPU(ARM_THUMB2)
+    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
+    m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
+#else
     m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
+#endif
 
     if (m_info.callCanClobberInstance(functionIndex) || m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex))
         restoreWebAssemblyGlobalStateAfterWasmCall();
@@ -4287,7 +4292,12 @@ void BBQJIT::emitIndirectCall(const char* opcode, const Value& callee, GPRReg ca
 
     // Our callee could have tail called someone else and changed SP so we need to restore it. Do this after restoring our results so we don't lose them.
     m_frameSizeLabels.append(m_jit.moveWithPatch(TrustedImmPtr(nullptr), wasmScratchGPR));
+#if CPU(ARM_THUMB2)
+    m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
+    m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
+#else
     m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
+#endif
 
     restoreWebAssemblyGlobalStateAfterWasmCall();
 

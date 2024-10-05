@@ -61,7 +61,7 @@ public:
         return adoptRef(*new RemoteBarcodeDetector(WTFMove(barcodeDetector), objectHeap, backend, identifier, webProcessIdentifier));
     }
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
     virtual ~RemoteBarcodeDetector();
 
 private:

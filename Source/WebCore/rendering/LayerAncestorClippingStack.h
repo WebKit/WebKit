@@ -78,11 +78,11 @@ public:
 
     GraphicsLayer* firstLayer() const;
     GraphicsLayer* lastLayer() const;
-    ScrollingNodeID lastOverflowScrollProxyNodeID() const;
+    std::optional<ScrollingNodeID> lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {
         CompositedClipData clipData;
-        ScrollingNodeID overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
+        Markable<ScrollingNodeID> overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
         RefPtr<GraphicsLayer> clippingLayer;
         RefPtr<GraphicsLayer> scrollingLayer; // Only present for scrolling entries.
 

@@ -1353,6 +1353,83 @@ private:
                 break;
             }
 
+            case ArithBitAnd: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if ((node->child2()->isInt32Constant() && node->child2()->asInt32() == -1) || (node->child1() == node->child2())) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ArithBitOr: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if ((node->child2()->isInt32Constant() && !node->child2()->asInt32()) || (node->child1() == node->child2())) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ArithBitXor: {
+                if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+                    break;
+
+                if (node->child2()->isInt32Constant() && !node->child2()->asInt32()) {
+                    m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+                    node->convertToIdentityOn(node->child1().node());
+                    changed = true;
+                    break;
+                }
+                break;
+            }
+
+            case ValueBitXor:
+            case ValueBitAnd:
+            case ValueBitOr:
+            case ValueBitRShift:
+            case ValueBitLShift: {
+                if (node->binaryUseKind() == UntypedUse) {
+                    auto& value1 = m_state.forNode(node->child1());
+                    auto& value2 = m_state.forNode(node->child2());
+                    if (value1.isType(SpecInt32Only) && value2.isType(SpecInt32Only)) {
+                        switch (node->op()) {
+                        case ValueBitXor:
+                            node->setOp(ArithBitXor);
+                            break;
+                        case ValueBitOr:
+                            node->setOp(ArithBitOr);
+                            break;
+                        case ValueBitAnd:
+                            node->setOp(ArithBitAnd);
+                            break;
+                        case ValueBitLShift:
+                            node->setOp(ArithBitLShift);
+                            break;
+                        case ValueBitRShift:
+                            node->setOp(ArithBitRShift);
+                            break;
+                        default:
+                            DFG_CRASH(m_graph, node, "Unexpected node");
+                            break;
+                        }
+                        node->child1() = Edge(node->child1().node(), KnownInt32Use);
+                        node->child2() = Edge(node->child2().node(), KnownInt32Use);
+                        changed = true;
+                        break;
+                    }
+                }
+                break;
+            }
+
             case PhantomNewObject:
             case PhantomNewFunction:
             case PhantomNewGeneratorFunction:

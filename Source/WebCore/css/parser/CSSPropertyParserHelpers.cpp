@@ -547,17 +547,18 @@ RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange& range, const 
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeAutoOrLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, AnchorPolicy anchorPolicy = AnchorPolicy::Forbid)
+static RefPtr<CSSValue> consumeAutoOrLengthPercentage(CSSParserTokenRange& range, const CSSParserContext& context, UnitlessQuirk unitless, AnchorPolicy anchorPolicy = AnchorPolicy::Forbid, AnchorSizePolicy anchorSizePolicy = AnchorSizePolicy::Forbid)
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeLengthPercentage(range, context, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, NegativePercentagePolicy::Forbid, anchorPolicy);
+    return consumeLengthPercentage(range, context, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, NegativePercentagePolicy::Forbid, anchorPolicy, anchorSizePolicy);
 }
 
 RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
-    return consumeAutoOrLengthPercentage(range, context, unitless);
+    AnchorSizePolicy anchorSizePolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorSizePolicy::Allow : AnchorSizePolicy::Forbid;
+    return consumeAutoOrLengthPercentage(range, context, unitless, AnchorPolicy::Forbid, anchorSizePolicy);
 }
 
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, const CSSParserContext&)
@@ -588,13 +589,15 @@ RefPtr<CSSValue> consumeSide(CSSParserTokenRange& range, const CSSParserContext&
 {
     UnitlessQuirk unitless = currentShorthand != CSSPropertyInset ? UnitlessQuirk::Allow : UnitlessQuirk::Forbid;
     AnchorPolicy anchorPolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorPolicy::Allow : AnchorPolicy::Forbid;
-    return consumeAutoOrLengthPercentage(range, context, unitless, anchorPolicy);
+    AnchorSizePolicy anchorSizePolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorSizePolicy::Allow : AnchorSizePolicy::Forbid;
+    return consumeAutoOrLengthPercentage(range, context, unitless, anchorPolicy, anchorSizePolicy);
 }
 
 RefPtr<CSSValue> consumeInsetLogicalStartEnd(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     AnchorPolicy anchorPolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorPolicy::Allow : AnchorPolicy::Forbid;
-    return consumeAutoOrLengthPercentage(range, context, UnitlessQuirk::Forbid, anchorPolicy);
+    AnchorSizePolicy anchorSizePolicy = context.propertySettings.cssAnchorPositioningEnabled ? AnchorSizePolicy::Allow : AnchorSizePolicy::Forbid;
+    return consumeAutoOrLengthPercentage(range, context, UnitlessQuirk::Forbid, anchorPolicy, anchorSizePolicy);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeClipComponent(CSSParserTokenRange& range, const CSSParserContext& context)

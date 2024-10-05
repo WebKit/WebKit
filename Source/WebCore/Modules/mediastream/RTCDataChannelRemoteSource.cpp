@@ -42,7 +42,7 @@ RTCDataChannelRemoteSource::RTCDataChannelRemoteSource(RTCDataChannelIdentifier 
     , m_connection(WTFMove(connection))
 {
     // FIXME: We should ask m_handler to call us on its own background thread.
-    m_handler->setClient(*this, { });
+    m_handler->setClient(*this, std::nullopt);
 }
 
 RTCDataChannelRemoteSource::~RTCDataChannelRemoteSource() = default;

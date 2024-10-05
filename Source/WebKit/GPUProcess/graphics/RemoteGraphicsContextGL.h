@@ -93,7 +93,7 @@ public:
     ~RemoteGraphicsContextGL() override;
     void stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection);
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -145,6 +145,10 @@ protected:
     void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type);
     void multiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t>&& firstsCountsInstanceCountsAndBaseInstances);
     void multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t>&& countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type);
+
+#if ENABLE(VIDEO)
+    Ref<RemoteVideoFrameObjectHeap> protectedVideoFrameObjectHeap() const;
+#endif
 
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;

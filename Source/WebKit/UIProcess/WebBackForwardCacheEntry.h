@@ -56,7 +56,7 @@ private:
 
     CheckedRef<WebBackForwardCache> m_backForwardCache;
     WebCore::ProcessIdentifier m_processIdentifier;
-    WebCore::BackForwardItemIdentifier m_backForwardItemID;
+    Markable<WebCore::BackForwardItemIdentifier> m_backForwardItemID;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPage;
     RunLoop::Timer m_expirationTimer;
 };

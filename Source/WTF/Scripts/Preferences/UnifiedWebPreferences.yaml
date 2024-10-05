@@ -2130,20 +2130,6 @@ CustomPasteboardDataEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WIN)": true
       default: false
 
-CustomStateSetEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "CustomStateSet and :state() pseudo class"
-  humanReadableDescription: "Support for CustomStateSet in custom elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DNSPrefetchingEnabled:
   type: bool
   status: embedder
@@ -2716,7 +2702,7 @@ EnumeratingVisibleNetworkInterfacesEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   type: bool
@@ -2887,17 +2873,17 @@ FileSystemAccessEnabled:
 
 FilterLinkDecorationByDefaultEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Filter Link Decoration"
   humanReadableDescription: "Enable Filtering Link Decoration"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 FixedFontFamily:
   type: String
@@ -3215,6 +3201,22 @@ GraphicsContextFiltersEnabled:
        default: true
      WebCore:
        default: true
+
+HDRForImagesEnabled:
+  type: bool
+  status: unstable
+  category: media
+  webcoreOnChange: setNeedsRelayoutAllFrames
+  humanReadableName: "HDR for Images Support"
+  humanReadableDescription: "HDR for Images Support"
+  condition: HAVE(HDR_SUPPORT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 HTTPEquivEnabled:
   type: bool

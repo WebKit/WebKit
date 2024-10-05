@@ -99,9 +99,10 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::Real
 
 #endif
 
-const SharedPreferencesForWebProcess& SpeechRecognitionRemoteRealtimeMediaSourceManager::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> SpeechRecognitionRemoteRealtimeMediaSourceManager::sharedPreferencesForWebProcess() const
 {
-    return m_process->sharedPreferencesForWebProcess();
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_process->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

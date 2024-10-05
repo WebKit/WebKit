@@ -364,13 +364,13 @@ Navigation::Result Navigation::reload(ReloadOptions&& options, Ref<DeferredPromi
 
     RefPtr lexicalFrame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = lexicalFrame && lexicalFrame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
-    ResourceRequest resourceRequest { frame()->protectedDocument()->url(), frame()->checkedLoader()->outgoingReferrer(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };
+    ResourceRequest resourceRequest { frame()->protectedDocument()->url(), frame()->protectedLoader()->outgoingReferrer(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };
     FrameLoadRequest frameLoadRequest { *frame()->document(), frame()->protectedDocument()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };
     frameLoadRequest.setLockHistory(LockHistory::Yes);
     frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(frame()->protectedDocument()->shouldOpenExternalURLsPolicyToPropagate());
 
-    frame()->checkedLoader()->changeLocation(WTFMove(frameLoadRequest));
+    frame()->protectedLoader()->changeLocation(WTFMove(frameLoadRequest));
 
     return apiMethodTrackerDerivedResult(*apiMethodTracker);
 }

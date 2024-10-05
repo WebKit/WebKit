@@ -31,7 +31,7 @@ public:
     using Base = JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>;
     static JSTestDelegateToSharedSyntheticAttribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestDelegateToSharedSyntheticAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttribute>(vm)) JSTestDelegateToSharedSyntheticAttribute(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

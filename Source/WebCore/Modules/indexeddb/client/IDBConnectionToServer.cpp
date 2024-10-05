@@ -61,7 +61,7 @@ IDBConnectionToServer::~IDBConnectionToServer() = default;
 
 IDBConnectionIdentifier IDBConnectionToServer::identifier() const
 {
-    return m_delegate->identifier();
+    return *m_delegate->identifier();
 }
 
 IDBConnectionProxy& IDBConnectionToServer::proxy()

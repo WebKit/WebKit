@@ -749,17 +749,32 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl
+    Modules/webauthn/AuthenticationExtensionsClientInputsJSON.idl
     Modules/webauthn/AuthenticationExtensionsClientOutputs.idl
+    Modules/webauthn/AuthenticationExtensionsClientOutputsJSON.idl
+    Modules/webauthn/AuthenticationResponseJSON.idl
     Modules/webauthn/AuthenticatorAssertionResponse.idl
     Modules/webauthn/AuthenticatorAttachment.idl
     Modules/webauthn/AuthenticatorAttestationResponse.idl
     Modules/webauthn/AuthenticatorResponse.idl
+    Modules/webauthn/AuthenticatorSelectionCriteria.idl
     Modules/webauthn/AuthenticatorTransport.idl
+    Modules/webauthn/CredentialPropertiesOutput.idl
     Modules/webauthn/PublicKeyCredential.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
+    Modules/webauthn/PublicKeyCredentialCreationOptionsJSON.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
+    Modules/webauthn/PublicKeyCredentialDescriptorJSON.idl
+    Modules/webauthn/PublicKeyCredentialEntity.idl
+    Modules/webauthn/PublicKeyCredentialParameters.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl
+    Modules/webauthn/PublicKeyCredentialRequestOptionsJSON.idl
+    Modules/webauthn/PublicKeyCredentialRpEntity.idl
+    Modules/webauthn/PublicKeyCredentialUserEntity.idl
+    Modules/webauthn/PublicKeyCredentialUserEntityJSON.idl
+
     Modules/webauthn/PublicKeyCredentialType.idl
+    Modules/webauthn/RegistrationResponseJSON.idl
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 

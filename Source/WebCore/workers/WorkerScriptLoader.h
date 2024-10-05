@@ -69,9 +69,9 @@ public:
     enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
 
     std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, ScriptExecutionContextIdentifier clientIdentifier = { });
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, std::optional<ScriptExecutionContextIdentifier> clientIdentifier = std::nullopt);
 
-    void notifyError(ScriptExecutionContextIdentifier);
+    void notifyError(std::optional<ScriptExecutionContextIdentifier>);
 
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
@@ -95,7 +95,7 @@ public:
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override;
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) override;
 
     void cancel();
 
@@ -124,7 +124,7 @@ public:
     std::optional<ServiceWorkerData> takeServiceWorkerData();
     WEBCORE_EXPORT static RefPtr<ServiceWorkerDataManager> serviceWorkerDataManagerFromIdentifier(ScriptExecutionContextIdentifier);
 
-    ScriptExecutionContextIdentifier clientIdentifier() const { return m_clientIdentifier; }
+    std::optional<ScriptExecutionContextIdentifier> clientIdentifier() const { return m_clientIdentifier; }
     const String& userAgentForSharedWorker() const { return m_userAgentForSharedWorker; }
 
 private:
@@ -135,7 +135,7 @@ private:
     ~WorkerScriptLoader();
 
     std::unique_ptr<ResourceRequest> createResourceRequest(const String& initiatorIdentifier);
-    void notifyFinished(ScriptExecutionContextIdentifier);
+    void notifyFinished(std::optional<ScriptExecutionContextIdentifier>);
 
     WeakPtr<WorkerScriptLoaderClient> m_client;
     RefPtr<ThreadableLoader> m_threadableLoader;
@@ -158,7 +158,7 @@ private:
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
     ResourceError m_error;
-    ScriptExecutionContextIdentifier m_clientIdentifier;
+    Markable<ScriptExecutionContextIdentifier> m_clientIdentifier;
     bool m_didAddToWorkerScriptLoaderMap { false };
     bool m_isMatchingServiceWorkerRegistration { false };
     std::optional<SecurityOriginData> m_topOriginForServiceWorkerRegistration;

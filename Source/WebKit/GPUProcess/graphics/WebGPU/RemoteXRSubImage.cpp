@@ -82,7 +82,7 @@ RefPtr<IPC::Connection> RemoteXRSubImage::connection() const
 
 void RemoteXRSubImage::destruct()
 {
-    m_objectHeap->removeObject(m_identifier);
+    Ref { m_objectHeap.get() }->removeObject(m_identifier);
 }
 
 void RemoteXRSubImage::getColorTexture(WebGPUIdentifier identifier)

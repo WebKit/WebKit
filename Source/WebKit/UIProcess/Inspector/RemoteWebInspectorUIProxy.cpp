@@ -63,6 +63,13 @@ RefPtr<WebPageProxy> RemoteWebInspectorUIProxy::protectedInspectorPage()
     return m_inspectorPage.get();
 }
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+RefPtr<WebInspectorUIExtensionControllerProxy> RemoteWebInspectorUIProxy::protectedExtensionController()
+{
+    return m_extensionController;
+}
+#endif
+
 void RemoteWebInspectorUIProxy::invalidate()
 {
     closeFrontendPageAndWindow();
@@ -127,7 +134,7 @@ void RemoteWebInspectorUIProxy::sendMessageToFrontend(const String& message)
 void RemoteWebInspectorUIProxy::frontendLoaded()
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController->inspectorFrontendLoaded();
+    protectedExtensionController()->inspectorFrontendLoaded();
 #endif
 }
 
@@ -249,7 +256,7 @@ void RemoteWebInspectorUIProxy::closeFrontendPageAndWindow()
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // This extension controller may be kept alive by the IPC dispatcher beyond the point
     // when m_inspectorPage is cleared below. Notify the controller so it can clean up before then.
-    m_extensionController->inspectorFrontendWillClose();
+    protectedExtensionController()->inspectorFrontendWillClose();
     m_extensionController = nullptr;
 #endif
 

@@ -52,7 +52,7 @@ struct AuthenticationExtensionsClientInputs {
     };
 
     String appid;
-    bool credProps; // Not serialized but probably should be. Don't re-introduce rdar://101057340 though.
+    std::optional<bool> credProps;
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<AuthenticationExtensionsClientInputs::PRFInputs> prf;
 

@@ -73,7 +73,7 @@ static inline bool canReferToParentFrameEncoding(const LocalFrame* frame, const 
 void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const String& source, Document* ownerDocument)
 {
     Ref frame = *m_frame;
-    frame->checkedLoader()->stopAllLoaders();
+    frame->protectedLoader()->stopAllLoaders();
 
     // If we are in the midst of changing the frame's document, don't execute script
     // that modifies the document further:
@@ -115,10 +115,10 @@ bool DocumentWriter::begin()
     return begin(URL());
 }
 
-Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DocumentWriter::createDocument(const URL& url, std::optional<ScriptExecutionContextIdentifier> documentIdentifier)
 {
     Ref frame = *m_frame;
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
 
     auto useSinkDocument = [&]() {
 #if ENABLE(PDF_PLUGIN)
@@ -144,7 +144,7 @@ Ref<Document> DocumentWriter::createDocument(const URL& url, ScriptExecutionCont
     return DOMImplementation::createDocument(m_mimeType, frame.ptr(), frame->settings(), url, documentIdentifier);
 }
 
-bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument, ScriptExecutionContextIdentifier documentIdentifier, const NavigationAction* triggeringAction)
+bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument, std::optional<ScriptExecutionContextIdentifier> documentIdentifier, const NavigationAction* triggeringAction)
 {
     // We grab a local copy of the URL because it's easy for callers to supply
     // a URL that will be deallocated during the execution of this function.
@@ -156,7 +156,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     Ref document = createDocument(url, documentIdentifier);
     
     Ref frame = *m_frame;
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
 
     // If the new document is for a Plugin but we're supposed to be sandboxed from Plugins,
     // then replace the document with one whose parser will ignore the incoming data (bug 39323)

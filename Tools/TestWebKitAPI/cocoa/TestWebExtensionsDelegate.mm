@@ -131,6 +131,12 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"runtime.connectNative() not implemented" }]);
 }
 
+- (void)webExtensionController:(WKWebExtensionController *)controller didUpdateAction:(WKWebExtensionAction *)action forExtensionContext:(WKWebExtensionContext *)context
+{
+    if (_didUpdateAction)
+        _didUpdateAction(action);
+}
+
 - (void)webExtensionController:(WKWebExtensionController *)controller presentPopupForAction:(WKWebExtensionAction *)action forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
 {
     if (_presentPopupForAction) {

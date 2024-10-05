@@ -57,7 +57,7 @@ public:
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
     static HashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& allItems();
 
-    WebCore::BackForwardItemIdentifier itemID() const { return m_mainFrameState->identifier; }
+    WebCore::BackForwardItemIdentifier itemID() const { return *m_mainFrameState->identifier; }
     WebPageProxyIdentifier pageID() const { return m_pageID; }
 
     WebCore::ProcessIdentifier lastProcessIdentifier() const { return m_lastProcessIdentifier; }

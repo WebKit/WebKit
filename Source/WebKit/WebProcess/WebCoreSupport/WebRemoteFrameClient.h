@@ -47,6 +47,7 @@ private:
     void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&) final;
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
+    String layerTreeAsText(size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions>) final;
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, Vector<uint8_t>&&, CompletionHandler<void(Vector<uint8_t>, int)>&&) final;
     void unbindRemoteAccessibilityFrames(int) final;
     void updateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint) final;

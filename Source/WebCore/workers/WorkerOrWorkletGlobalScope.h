@@ -86,7 +86,7 @@ public:
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final { return m_advancedPrivacyProtections; }
 
 protected:
-    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, ScriptExecutionContextIdentifier = { });
+    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>, std::optional<ScriptExecutionContextIdentifier> = std::nullopt);
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;

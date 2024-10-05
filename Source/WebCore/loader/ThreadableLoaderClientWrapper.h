@@ -85,7 +85,7 @@ public:
             m_client->notifyIsDone(isDone);
     }
 
-    void didFail(ScriptExecutionContextIdentifier mainContext, const ResourceError& error)
+    void didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
     {
         m_done = true;
         if (m_client)

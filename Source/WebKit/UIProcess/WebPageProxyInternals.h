@@ -443,7 +443,7 @@ public:
     void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&) final;
     void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName) final;
     void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) final;
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebPaymentMessages() const final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebPaymentMessages() const final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;

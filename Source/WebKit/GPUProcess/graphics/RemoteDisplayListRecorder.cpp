@@ -75,7 +75,7 @@ ControlFactory& RemoteDisplayListRecorder::controlFactory()
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorder::imageBuffer(RenderingResourceIdentifier identifier) const
 {
-    return m_renderingBackend->imageBuffer(identifier);
+    return protectedRenderingBackend()->imageBuffer(identifier);
 }
 
 std::optional<SourceImage> RemoteDisplayListRecorder::sourceImage(RenderingResourceIdentifier identifier) const

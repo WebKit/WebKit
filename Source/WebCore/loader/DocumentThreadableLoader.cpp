@@ -628,7 +628,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
-    CheckedRef frameLoader = frame->loader();
+    Ref frameLoader = frame->loader();
     auto identifier = frameLoader->loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);
 
     loadTiming.markEndTime();

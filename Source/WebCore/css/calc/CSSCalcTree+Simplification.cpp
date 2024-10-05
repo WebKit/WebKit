@@ -1327,6 +1327,12 @@ std::optional<Child> simplify(Anchor& anchor, const SimplificationOptions& optio
     return CanonicalDimension { .value = *result, .dimension = CanonicalDimension::Dimension::Length };
 }
 
+std::optional<Child> simplify(AnchorSize&, const SimplificationOptions&)
+{
+    // FIXME (webkit.org/b/280789): evaluate anchor-size()
+    return CanonicalDimension { .value = 0, .dimension = CanonicalDimension::Dimension::Length };
+}
+
 // MARK: Copy & Simplify.
 
 CSS::NoneRaw copyAndSimplify(const CSS::NoneRaw& root, const SimplificationOptions&)

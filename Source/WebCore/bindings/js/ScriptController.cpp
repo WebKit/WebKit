@@ -318,7 +318,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
         windowProxy.window()->setConsoleClient(page->console());
     }
 
-    protectedFrame()->checkedLoader()->dispatchDidClearWindowObjectInWorld(world);
+    protectedFrame()->protectedLoader()->dispatchDidClearWindowObjectInWorld(world);
 }
 
 Ref<LocalFrame> ScriptController::protectedFrame() const

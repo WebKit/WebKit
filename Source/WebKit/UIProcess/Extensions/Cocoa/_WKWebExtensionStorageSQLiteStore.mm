@@ -71,14 +71,34 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
     return self;
 }
 
+- (void)getAllKeys:(void (^)(NSArray<NSString *> *keys, NSString *errorMessage))completionHandler
+{
+    auto weakSelf = WeakObjCPtr { self };
+    dispatch_async(_databaseQueue, ^{
+        auto *strongSelf = weakSelf.get().get();
+        if (!strongSelf) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve all keys for extension %{private}@.", self->_uniqueIdentifier);
+            completionHandler(nil, @"Failed to retrieve all keys");
+            return;
+        }
+
+        NSString *errorMessage;
+        auto *keysArray = [self _getAllKeysReturningErrorMessage:&errorMessage].allObjects;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(keysArray, errorMessage);
+        });
+    });
+}
+
 - (void)getValuesForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(NSDictionary<NSString *, NSString *> *results, NSString *errorMessage))completionHandler
 {
-    auto weakSelf = WeakObjCPtr<_WKWebExtensionStorageSQLiteStore> { self };
+    auto weakSelf = WeakObjCPtr { self };
     dispatch_async(_databaseQueue, ^{
-        auto strongSelf = weakSelf.get();
+        auto *strongSelf = weakSelf.get().get();
         if (!strongSelf) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve keys: %{private}@ for extension %{private}@.", keys, self->_uniqueIdentifier);
-            completionHandler(nil, [NSString stringWithFormat:@"Failed to retrieve keys %@", keys]);
+            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve values for keys: %{private}@ for extension %{private}@.", keys, self->_uniqueIdentifier);
+            completionHandler(nil, [NSString stringWithFormat:@"Failed to retrieve values for keys %@", keys]);
             return;
         }
 
@@ -93,9 +113,9 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 
 - (void)getStorageSizeForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(size_t storageSize, NSString *errorMessage))completionHandler
 {
-    auto weakSelf = WeakObjCPtr<_WKWebExtensionStorageSQLiteStore> { self };
+    auto weakSelf = WeakObjCPtr { self };
     dispatch_async(_databaseQueue, ^{
-        auto strongSelf = weakSelf.get();
+        auto *strongSelf = weakSelf.get().get();
         if (!strongSelf) {
             RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %{private}@ for extension %{private}@.", keys, self->_uniqueIdentifier);
             completionHandler(0, [NSString stringWithFormat:@"Failed to caluclate storage size for keys: %@", keys]);
@@ -144,9 +164,9 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
             return;
         }
 
-        auto weakSelf = WeakObjCPtr<_WKWebExtensionStorageSQLiteStore> { self };
+        auto weakSelf = WeakObjCPtr { self };
         dispatch_async(self->_databaseQueue, ^{
-            auto strongSelf = weakSelf.get();
+            auto *strongSelf = weakSelf.get().get();
             if (!strongSelf) {
                 RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %{private}@.", self->_uniqueIdentifier);
                 completionHandler(0.0, 0, @{ }, @"Failed to calculate storage size");
@@ -171,9 +191,9 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 
 - (void)setKeyedData:(NSDictionary<NSString *, NSString *> *)keyedData completionHandler:(void (^)(NSArray<NSString *> *keysSuccessfullySet, NSString *errorMessage))completionHandler
 {
-    auto weakSelf = WeakObjCPtr<_WKWebExtensionStorageSQLiteStore> { self };
+    auto weakSelf = WeakObjCPtr { self };
     dispatch_async(_databaseQueue, ^{
-        auto strongSelf = weakSelf.get();
+        auto *strongSelf = weakSelf.get().get();
         if (!strongSelf) {
             completionHandler(nil, [NSString stringWithFormat:@"Failed to set keys %@", keyedData.allKeys]);
             return;
@@ -207,9 +227,9 @@ static NSString *rowFilterStringFromRowKeys(NSArray<NSString *> *keys)
 
 - (void)deleteValuesForKeys:(NSArray<NSString *> *)keys completionHandler:(void (^)(NSString *errorMessage))completionHandler
 {
-    auto weakSelf = WeakObjCPtr<_WKWebExtensionStorageSQLiteStore> { self };
+    auto weakSelf = WeakObjCPtr { self };
     dispatch_async(_databaseQueue, ^{
-        auto strongSelf = weakSelf.get();
+        auto *strongSelf = weakSelf.get().get();
         if (!strongSelf) {
             completionHandler([NSString stringWithFormat:@"Failed to delete keys %@", keys]);
             return;

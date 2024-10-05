@@ -596,8 +596,12 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
             if (setPseudoElementResult.hasException())
                 return setPseudoElementResult.releaseException();
 
+            auto convertedDuration = keyframeEffectOptions.durationAsDoubleOrString();
+            if (!convertedDuration)
+                return Exception { ExceptionCode::TypeError };
+
             timing = {
-                keyframeEffectOptions.duration,
+                *convertedDuration,
                 keyframeEffectOptions.iterations,
                 keyframeEffectOptions.delay,
                 keyframeEffectOptions.endDelay,
@@ -2113,7 +2117,7 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
     // FIXME: The iterationStart and endDelay AnimationEffectTiming properties do not have
     // corresponding Animation properties.
     auto animation = Animation::create();
-    animation->setDuration(iterationDuration().seconds());
+    animation->setDuration(iterationDuration().time()->seconds());
     animation->setDelay(delay().seconds());
     animation->setIterationCount(iterations());
     animation->setTimingFunction(timingFunction()->clone());

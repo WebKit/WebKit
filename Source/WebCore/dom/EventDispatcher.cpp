@@ -127,7 +127,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!localFrame)
         return false;
 
-    if (!localFrame->checkedLoader()->shouldSuppressTextInputFromEditing())
+    if (!localFrame->protectedLoader()->shouldSuppressTextInputFromEditing())
         return false;
 
     if (auto* textEvent = dynamicDowncast<TextEvent>(event))

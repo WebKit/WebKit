@@ -44,9 +44,9 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimat
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
 {
     if (timelineTime)
-        m_timelineTime = timelineTime->milliseconds();
+        m_timelineTime = *timelineTime;
     if (currentTime)
-        m_currentTime = currentTime->milliseconds();
+        m_currentTime = *currentTime;
 }
 
 AnimationPlaybackEvent::~AnimationPlaybackEvent() = default;

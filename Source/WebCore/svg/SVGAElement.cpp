@@ -143,7 +143,7 @@ void SVGAElement::defaultEventHandler(Event& event)
             event.setDefaultHandled();
 
             if (RefPtr frame = document().frame())
-                frame->checkedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+                frame->protectedLoader()->changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
             return;
         }
     }

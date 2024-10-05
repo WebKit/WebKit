@@ -392,8 +392,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     if (isOutOfFlowPositioned() && parent() && parent()->style().isDisplayFlexibleBoxIncludingDeprecatedOrGridBox())
         clearOverridingContentSize();
 
-    if (oldStyle && oldStyle->hasOutOfFlowPosition() != style().hasOutOfFlowPosition())
+    if (oldStyle && oldStyle->hasOutOfFlowPosition() != style().hasOutOfFlowPosition()) {
         clearOverridingContainingBlockContentSize();
+        if (auto* containingBlock = this->containingBlock(); containingBlock && oldStyle->hasOutOfFlowPosition()) {
+            // When going from out-of-flow to inflow, the containing block gains new descendant content and its preferred width becomes invalid.
+            containingBlock->setNeedsLayoutAndPrefWidthsRecalc();
+        }
+    }
 }
 
 static bool gridStyleHasNotChanged(const RenderStyle& style, const RenderStyle* oldStyle)

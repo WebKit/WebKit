@@ -67,6 +67,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
+#include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
@@ -4262,6 +4263,21 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
+        case IteratorHelperCreateIntrinsic: {
+            if (argumentCountIncludingThis < 3)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+            Node* generator = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* underlyingIterator = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+            Node* iteratorHelper  = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->iteratorHelperStructure())));
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSIteratorHelper::Field::Generator)), iteratorHelper, generator);
+            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSIteratorHelper::Field::UnderlyingIterator)), iteratorHelper, underlyingIterator);
+            setResult(iteratorHelper);
+            return CallOptimizationResult::Inlined;
+        }
+
         default:
             return CallOptimizationResult::DidNothing;
         }
@@ -8161,8 +8177,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
                 if (!unlinkedTable.m_branchOffsets[i])
                     continue;
@@ -8181,8 +8197,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
                 if (!unlinkedTable.m_branchOffsets[i])
                     continue;
@@ -8202,8 +8218,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
             data.switchTableIndex = m_inlineStackTop->m_stringSwitchRemap[bytecode.m_tableIndex];
-            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
             const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + unlinkedTable.defaultOffset());
             for (const auto& entry : unlinkedTable.m_offsetTable) {
                 unsigned target = m_currentIndex.offset() + entry.value.m_branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())

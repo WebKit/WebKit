@@ -408,7 +408,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto displayLine = InlineDisplayLineBuilder { *this, constraints }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
     auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
 
-    auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed);
+    auto truncationPolicy = InlineFormattingUtils::lineEndingTruncationPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed, !lineLayoutResult.inlineContent.isEmpty());
     InlineDisplayLineBuilder::applyEllipsisIfNeeded(truncationPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent, isLegacyLineClamp);
     auto lineHasLegacyLineClamp = isLegacyLineClamp && displayLine.hasEllipsis() && truncationPolicy == LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection;
     if (lineHasLegacyLineClamp)

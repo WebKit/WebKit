@@ -893,7 +893,7 @@ WebPageProxyMessageReceiverRegistration& WebPageProxy::messageReceiverRegistrati
     return internals().messageReceiverRegistration;
 }
 
-const SharedPreferencesForWebProcess& WebPageProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
+std::optional<SharedPreferencesForWebProcess> WebPageProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
 {
     return m_browsingContextGroup->ensureProcessForConnection(connection, const_cast<WebPageProxy&>(*this), preferences())->process().sharedPreferencesForWebProcess();
 }
@@ -4650,8 +4650,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         loadedWebArchive,
         replacedDataStoreForWebArchiveLoad
     ] (Ref<WebProcessProxy>&& processNavigatingTo, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
-        // If the navigation has been destroyed, then no need to proceed.
-        if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
+        // If the navigation has been destroyed or the frame has been replaced by PSON, then no need to proceed.
+        if (isClosed()
+            || !navigationState().hasNavigation(navigation->navigationID())
+            || (frame->isMainFrame() && frame.ptr() != m_mainFrame.get())) {
             receivedPolicyDecision(policyAction, navigation.ptr(), navigation->protectedWebsitePolicies().get(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTFMove(message), WTFMove(completionHandler));
             return;
         }
@@ -14752,7 +14754,7 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatPoint& scrollPositio
 #endif
 }
 
-String WebPageProxy::scrollbarStateForScrollingNodeID(ScrollingNodeID nodeID, bool isVertical)
+String WebPageProxy::scrollbarStateForScrollingNodeID(std::optional<ScrollingNodeID> nodeID, bool isVertical)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (!m_scrollingCoordinatorProxy)
@@ -15056,6 +15058,16 @@ void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, const St
 void WebPageProxy::renderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
 {
     auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::RenderTreeAsTextForTesting(frameID, baseIndent, behavior));
+    if (!sendResult.succeeded())
+        return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed"_s);
+
+    auto [result] = sendResult.takeReply();
+    completionHandler(WTFMove(result));
+}
+
+void WebPageProxy::layerTreeAsTextForTesting(FrameIdentifier frameID, size_t baseIndent, OptionSet<LayerTreeAsTextOptions> options, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::LayerTreeAsTextForTesting(frameID, baseIndent, options));
     if (!sendResult.succeeded())
         return completionHandler("Test Error - sending WebPage::RenderTreeAsTextForTesting failed"_s);
 

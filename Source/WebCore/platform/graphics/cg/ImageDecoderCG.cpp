@@ -86,6 +86,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
 #if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
     CFDictionarySetValue(options.get(), kCGImageSourceCreateUnpremultipliedPNG, kCFBooleanTrue);
 #endif
+
     return options;
 }
 
@@ -548,6 +549,9 @@ bool ImageDecoderCG::fetchFrameMetaDataAtIndex(size_t index, SubsamplingLevel su
         frame.m_densityCorrectedSize = densityCorrectedSizeFromProperties(propertiesWithMetadata.get());
     else
         frame.m_densityCorrectedSize = std::nullopt;
+
+    if (frame.hasNativeImage())
+        frame.m_headroom = frame.nativeImage()->headroom();
 
     bool frameIsComplete = frameIsCompleteAtIndex(index);
 

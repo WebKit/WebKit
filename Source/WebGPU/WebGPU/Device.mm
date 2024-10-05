@@ -344,6 +344,11 @@ auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*
     return nullptr;
 }
 
+void Device::generateAValidationError(NSString * message)
+{
+    generateAValidationError(String { message });
+}
+
 void Device::generateAValidationError(String&& message)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error

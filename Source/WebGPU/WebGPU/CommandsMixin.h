@@ -32,8 +32,9 @@ class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandsmixin
 class CommandsMixin {
-protected:
+public:
     bool prepareTheEncoderState() const;
+protected:
     NSString* encoderStateName() const;
     static bool computedSizeOverflows(const Buffer&, uint64_t offset, uint64_t& size);
 

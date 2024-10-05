@@ -72,7 +72,7 @@ public:
     ~LibWebRTCCodecsProxy();
     void stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFromConnection);
     bool allowsExitUnderMemoryPressure() const;
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
 private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&, SharedPreferencesForWebProcess&);

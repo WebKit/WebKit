@@ -32,7 +32,7 @@ public:
     using Base = JSDOMWrapper<TestException>;
     static JSTestException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestException* ptr = new (NotNull, JSC::allocateCell<JSTestException>(vm)) JSTestException(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

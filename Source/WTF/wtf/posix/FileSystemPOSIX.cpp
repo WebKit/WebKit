@@ -62,7 +62,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
     if (fsRep.isNull())
         return invalidPlatformFileHandle;
 
-    int platformFlag = 0;
+    int platformFlag = O_CLOEXEC;
     switch (mode) {
     case FileOpenMode::Read:
         platformFlag |= O_RDONLY;
@@ -271,7 +271,7 @@ std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, Strin
     if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", temporaryFileDirectory(), prefix.utf8().data()) >= PATH_MAX)
         goto end;
 
-    handle = mkstemp(buffer);
+    handle = mkostemp(buffer, O_CLOEXEC);
     if (handle < 0)
         goto end;
 

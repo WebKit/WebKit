@@ -15,11 +15,20 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey_failures_ECDH.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey_failures_ECDSA.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey_failures_fixtures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/importKey_failures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_Ed25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_Ed448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_X25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_X448.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_Ed25519.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_Ed448.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X25519.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_X448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_failures_fixtures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/okp_importKey_fixtures.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/symmetric_importKey.https.any.js

@@ -359,7 +359,7 @@ function try(callback /*, ...args */)
         @throwTypeError("|this| is not an object");
 
     var args = [];
-    for (var i = 1; i < arguments.length; i++)
+    for (var i = 1; i < @argumentCount(); i++)
         @putByValDirect(args, i - 1, arguments[i]);
 
     var promiseCapability = @newPromiseCapability(this);

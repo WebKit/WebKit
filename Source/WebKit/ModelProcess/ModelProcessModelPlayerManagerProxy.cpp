@@ -47,9 +47,11 @@ ModelProcessModelPlayerManagerProxy::~ModelProcessModelPlayerManagerProxy()
     clear();
 }
 
-const SharedPreferencesForWebProcess& ModelProcessModelPlayerManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> ModelProcessModelPlayerManagerProxy::sharedPreferencesForWebProcess() const
 {
-    ASSERT(m_modelConnectionToWebProcess);
+    if (!m_modelConnectionToWebProcess)
+        return std::nullopt;
+
     return m_modelConnectionToWebProcess->sharedPreferencesForWebProcess();
 }
 

@@ -39,7 +39,7 @@ public:
     IDBStorageConnectionToClient(IPC::Connection::UniqueID, WebCore::IDBConnectionIdentifier);
     ~IDBStorageConnectionToClient();
 
-    WebCore::IDBConnectionIdentifier identifier() const final { return m_identifier; }
+    std::optional<WebCore::IDBConnectionIdentifier> identifier() const final { return m_identifier; }
     IPC::Connection::UniqueID ipcConnection() const { return m_connection; }
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
 

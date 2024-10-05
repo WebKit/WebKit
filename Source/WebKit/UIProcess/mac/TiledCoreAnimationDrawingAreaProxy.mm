@@ -138,7 +138,7 @@ void TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry()
 void TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStateChangeID)
 {
     Seconds activityStateUpdateTimeout = Seconds::fromMilliseconds(250);
-    m_webProcessProxy->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(protectedWebPageProxy()->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    protectedWebProcessProxy()->protectedConnection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DidUpdateActivityState>(protectedWebPageProxy()->webPageIDInMainFrameProcess(), activityStateUpdateTimeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
@@ -218,7 +218,7 @@ std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::disp
 {
     if (!m_webPageProxy->displayID())
         return std::nullopt;
-    return m_webProcessProxy->nominalFramesPerSecondForDisplay(*m_webPageProxy->displayID());
+    return protectedWebProcessProxy()->nominalFramesPerSecondForDisplay(*m_webPageProxy->displayID());
 }
 
 } // namespace WebKit

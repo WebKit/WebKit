@@ -57,8 +57,8 @@ static bool isContentfulOrHasDecoration(const InlineItem& inlineItem, const Inli
     if (inlineItem.isFloat() || inlineItem.isOpaque())
         return false;
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
-        auto wouldPorduceEmptyRun = inlineTextItem->isFullyTrimmable() || inlineTextItem->isEmpty() || inlineTextItem->isWordSeparator() || inlineTextItem->isZeroWidthSpaceSeparator() || inlineTextItem->isQuirkNonBreakingSpace();
-        return !wouldPorduceEmptyRun;
+        auto wouldProduceEmptyRun = inlineTextItem->isFullyTrimmable() || inlineTextItem->isEmpty() || inlineTextItem->isWordSeparator() || inlineTextItem->isZeroWidthSpaceSeparator() || inlineTextItem->isQuirkNonBreakingSpace();
+        return !wouldProduceEmptyRun;
     }
 
     if (inlineItem.isInlineBoxStart())
@@ -1263,16 +1263,14 @@ bool LineBuilder::isLastLineWithInlineContent(const LineContent& lineContent, si
         };
         return lineHasNonOutOfFlowRun();
     }
-    // Omit floats to see if this is the last line with inline content.
-    for (auto i = needsLayoutEnd; i--;) {
+    // Look ahead to see if there's more inline type of inline items.
+    for (auto i = lineContent.range.endIndex(); i < needsLayoutEnd && i < m_inlineItemList.size(); ++i) {
         if (isContentfulOrHasDecoration(m_inlineItemList[i], formattingContext())) {
             // InlineItems beyond this line range won't produce any inline content.
-            return i == lineContent.range.endIndex() - 1;
+            return false;
         }
     }
-    // There has to be at least one non-float item.
-    ASSERT_NOT_REACHED();
-    return false;
+    return true;
 }
 
 }

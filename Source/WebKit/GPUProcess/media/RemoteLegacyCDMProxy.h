@@ -45,7 +45,7 @@ public:
     ~RemoteLegacyCDMProxy();
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;

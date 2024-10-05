@@ -598,7 +598,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // This extension controller may be kept alive by the IPC dispatcher beyond the point
     // when m_inspectorPage is cleared below. Notify the controller so it can clean up before then.
-    m_extensionController->inspectorFrontendWillClose();
+    protectedExtensionController()->inspectorFrontendWillClose();
     m_extensionController = nullptr;
 #endif
     
@@ -631,8 +631,8 @@ void WebInspectorUIProxy::frontendLoaded()
         automationSession->inspectorFrontendLoaded(*inspectedPage);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    if (m_extensionController)
-        m_extensionController->inspectorFrontendLoaded();
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->inspectorFrontendLoaded();
 #endif
 
     if (m_inspectorClient)
@@ -684,7 +684,7 @@ void WebInspectorUIProxy::effectiveAppearanceDidChange(InspectorFrontendClient::
     ASSERT(appearance == WebCore::InspectorFrontendClient::Appearance::Dark || appearance == WebCore::InspectorFrontendClient::Appearance::Light);
     auto extensionAppearance = appearance == WebCore::InspectorFrontendClient::Appearance::Dark ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
-    m_extensionController->effectiveAppearanceDidChange(extensionAppearance);
+    protectedExtensionController()->effectiveAppearanceDidChange(extensionAppearance);
 #endif
 }
 

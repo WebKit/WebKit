@@ -175,7 +175,7 @@ private:
 
     WebCore::ScrollableArea* scrollableArea() const final;
     bool usesAsyncScrolling() const final;
-    WebCore::ScrollingNodeID scrollingNodeID() const final;
+    std::optional<WebCore::ScrollingNodeID> scrollingNodeID() const final;
     void willAttachScrollingNode() final;
     void didAttachScrollingNode() final;
 

@@ -39,7 +39,7 @@ static constexpr ASCIILiteral playerIdentifierKey = "video-receiver-player-ident
 static constexpr ASCIILiteral endpointKey = "video-receiver-endpoint"_s;
 static constexpr ASCIILiteral cacheCommandKey = "video-receiver-cache-command"_s;
 
-VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(WebCore::ProcessIdentifier processIdentifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, WebCore::VideoReceiverEndpoint endpoint)
+VideoReceiverEndpointMessage::VideoReceiverEndpointMessage(std::optional<WebCore::ProcessIdentifier> processIdentifier, WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, WebCore::VideoReceiverEndpoint endpoint)
     : m_processIdentifier { WTFMove(processIdentifier) }
     , m_mediaElementIdentifier { WTFMove(mediaElementIdentifier) }
     , m_playerIdentifier { WTFMove(playerIdentifier) }
@@ -56,7 +56,7 @@ VideoReceiverEndpointMessage VideoReceiverEndpointMessage::decode(xpc_object_t m
     auto endpoint = xpc_dictionary_get_value(message, endpointKey.characters());
 
     return {
-        WebCore::ProcessIdentifier(processIdentifier),
+        processIdentifier ? std::optional { WebCore::ProcessIdentifier(processIdentifier) } : std::nullopt,
         WebCore::HTMLMediaElementIdentifier(mediaElementIdentifier),
         WebCore::MediaPlayerIdentifier(playerIdentifier),
         WebCore::VideoReceiverEndpoint(endpoint)
@@ -67,7 +67,7 @@ OSObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
 {
     OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, messageName().characters());
-    xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier.toUInt64());
+    xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier ? m_processIdentifier->toUInt64() : 0);
     xpc_dictionary_set_uint64(message.get(), mediaElementIdentifierKey.characters(), m_mediaElementIdentifier.toUInt64());
     xpc_dictionary_set_uint64(message.get(), playerIdentifierKey.characters(), m_playerIdentifier.toUInt64());
     xpc_dictionary_set_value(message.get(), endpointKey.characters(), m_endpoint.get());

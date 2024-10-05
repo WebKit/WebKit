@@ -115,7 +115,7 @@ bool NetworkProcessConnection::dispatchMessage(IPC::Connection& connection, IPC:
         return true;
     }
     if (decoder.messageReceiverName() == Messages::StorageAreaMap::messageReceiverName()) {
-        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(LegacyNullableObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
+        if (auto storageAreaMap = WebProcess::singleton().storageAreaMap(ObjectIdentifier<StorageAreaMapIdentifierType>(decoder.destinationID())))
             storageAreaMap->didReceiveMessage(connection, decoder);
         return true;
     }

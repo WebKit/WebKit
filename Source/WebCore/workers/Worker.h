@@ -95,7 +95,7 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::Worker; }
 
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
-    void notifyFinished(ScriptExecutionContextIdentifier) final;
+    void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) final;
 
     // ActiveDOMObject.
     void stop() final;

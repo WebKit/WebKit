@@ -55,7 +55,7 @@ PlatformXRSystem::~PlatformXRSystem()
     m_page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::PlatformXRSystem::messageReceiverName(), m_page->webPageIDInMainFrameProcess());
 }
 
-const SharedPreferencesForWebProcess& PlatformXRSystem::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> PlatformXRSystem::sharedPreferencesForWebProcess() const
 {
     return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }

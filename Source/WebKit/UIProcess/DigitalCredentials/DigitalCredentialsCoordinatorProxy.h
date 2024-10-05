@@ -57,7 +57,7 @@ public:
     explicit DigitalCredentialsCoordinatorProxy(WebPageProxy&);
     ~DigitalCredentialsCoordinatorProxy();
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     // IPC::MessageReceiver.

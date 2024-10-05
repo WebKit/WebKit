@@ -33,7 +33,7 @@ public:
     using Base = JSDOMWrapper<TestGlobalObject>;
     static JSTestGlobalObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGlobalObject>&& impl)
     {
-        auto& vm = globalObject->vm();
+        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();
         JSTestGlobalObject* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObject>(vm)) JSTestGlobalObject(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(vm);
         return ptr;

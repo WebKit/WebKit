@@ -53,8 +53,8 @@ private:
     bool acceleratesDrawing() const override;
     void setAcceleratesDrawing(bool) override;
 
-    bool wantsDeepColorBackingStore() const override;
-    void setWantsDeepColorBackingStore(bool) override;
+    WebCore::ContentsFormat contentsFormat() const override;
+    void setContentsFormat(WebCore::ContentsFormat) override;
 
     float contentsScale() const override;
     void setContentsScale(float) override;

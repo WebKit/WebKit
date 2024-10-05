@@ -914,8 +914,8 @@ void WebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)
 void WebInspectorUIProxy::platformStartWindowDrag()
 {
     if (auto* webView = [m_inspectorViewController webView]) {
-        if (webView->_page)
-            webView->_page->startWindowDrag();
+        if (RefPtr page = webView->_page)
+            page->startWindowDrag();
     }
 }
 

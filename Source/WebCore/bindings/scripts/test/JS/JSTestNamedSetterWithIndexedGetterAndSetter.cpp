@@ -203,7 +203,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlot(JSObject* o
 
 bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* thisObject = jsCast<JSTestNamedSetterWithIndexedGetterAndSetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
@@ -232,7 +232,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlotByIndex(JSOb
 
 void JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto* thisObject = jsCast<JSTestNamedSetterWithIndexedGetterAndSetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
@@ -292,7 +292,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::putByIndex(JSCell* cell, JSGlo
     auto* thisObject = jsCast<JSTestNamedSetterWithIndexedGetterAndSetter*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
@@ -398,7 +398,7 @@ bool JSTestNamedSetterWithIndexedGetterAndSetter::deletePropertyByIndex(JSCell* 
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithIndexedGetterAndSetterConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* prototype = jsDynamicCast<JSTestNamedSetterWithIndexedGetterAndSetterPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
@@ -408,7 +408,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithIndexedGetterAndSetterConstructor,
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_namedSetterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -433,7 +433,7 @@ JSC_DEFINE_HOST_FUNCTION(jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFun
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_indexedSetter1Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -451,7 +451,7 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPro
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_indexedSetter2Body(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
@@ -465,7 +465,7 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPro
 
 static inline JSC::EncodedJSValue jsTestNamedSetterWithIndexedGetterAndSetterPrototypeFunction_indexedSetterOverloadDispatcher(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithIndexedGetterAndSetter>::ClassParameter castedThis)
 {
-    auto& vm = JSC::getVM(lexicalGlobalObject);
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);

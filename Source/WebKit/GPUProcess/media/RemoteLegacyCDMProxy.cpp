@@ -95,9 +95,13 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     return gpuConnectionToWebProcess->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(m_playerId);
 }
 
-const SharedPreferencesForWebProcess& RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const
 {
-    return protectedFactory()->sharedPreferencesForWebProcess();
+    if (!m_factory)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_factory->sharedPreferencesForWebProcess();
 }
 
 }

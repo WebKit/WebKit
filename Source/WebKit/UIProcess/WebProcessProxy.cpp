@@ -1091,7 +1091,7 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
 
 void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& mainFrameState)
 {
-    RefPtr item = WebBackForwardListItem::itemForID(mainFrameState->identifier);
+    RefPtr item = mainFrameState->identifier ? WebBackForwardListItem::itemForID(*mainFrameState->identifier) : nullptr;
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;
 
@@ -1168,7 +1168,7 @@ void WebProcessProxy::createModelProcessConnection(IPC::Connection::Handle&& con
         anyPageHasModelProcessEnabled |= page->preferences().modelElementEnabled() && page->preferences().modelProcessEnabled();
     MESSAGE_CHECK(anyPageHasModelProcessEnabled);
 
-    parameters.sharedPreferencesForWebProcess = sharedPreferencesForWebProcess();
+    parameters.sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelElementEnabled);
     MESSAGE_CHECK(parameters.sharedPreferencesForWebProcess.modelProcessEnabled);
 

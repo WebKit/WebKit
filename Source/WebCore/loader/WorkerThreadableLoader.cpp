@@ -210,7 +210,7 @@ void WorkerThreadableLoader::MainThreadBridge::cancel()
     // Note: no more client callbacks will be done after this method -- we clear the client wrapper to ensure that.
     ResourceError error(ResourceError::Type::Cancellation);
     // FIXME: Always get the `ScriptExecutionContextIdentifier` of the `Document`.
-    workerClientWrapper->didFail({ }, error);
+    workerClientWrapper->didFail(std::nullopt, error);
     workerClientWrapper->clearClient();
 }
 
@@ -285,7 +285,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ScriptExecutionC
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFail(ScriptExecutionContextIdentifier mainContext, const ResourceError& error)
+void WorkerThreadableLoader::MainThreadBridge::didFail(std::optional<ScriptExecutionContextIdentifier> mainContext, const ResourceError& error)
 {
     m_loadingFinished = true;
     ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(m_contextIdentifier, [protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, mainContext, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {

@@ -197,7 +197,9 @@ void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBuffer
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
-    if (m_pendingFlush && m_pendingFlush->renderingUpdateID() == renderingUpdateID) {
+    RefPtr pendingFlush = m_pendingFlush;
+
+    if (pendingFlush && pendingFlush->renderingUpdateID() == renderingUpdateID) {
         BufferSetBackendHandle handle;
 
         handle.bufferHandle = WTFMove(outputData.backendHandle);
@@ -212,9 +214,9 @@ void RemoteImageBufferSetProxy::didPrepareForDisplay(ImageBufferSetPrepareBuffer
         handle.backBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.back);
         handle.secondaryBackBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.secondaryBack);
 
-        RefPtr { m_pendingFlush }->setHandles(WTFMove(handle));
-
+        pendingFlush->setHandles(WTFMove(handle));
         m_prepareForDisplayIsPending = false;
+
         if (RefPtr streamConnection = m_streamConnection; m_closed && streamConnection) {
             streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
             m_streamConnection = nullptr;
@@ -228,6 +230,7 @@ void RemoteImageBufferSetProxy::close()
     assertIsMainRunLoop();
     Locker locker { m_lock };
     m_closed = true;
+
     if (RefPtr streamConnection = m_streamConnection; !m_prepareForDisplayIsPending && streamConnection) {
         streamConnection->removeWorkQueueMessageReceiver(Messages::RemoteImageBufferSetProxy::messageReceiverName(), identifier().toUInt64());
         m_streamConnection = nullptr;

@@ -201,10 +201,12 @@ RefPtr<GPUConnectionToWebProcess> RemoteMediaSourceProxy::connectionToWebProcess
     return manager ? manager->gpuConnectionToWebProcess() : nullptr;
 }
 
-const SharedPreferencesForWebProcess& RemoteMediaSourceProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteMediaSourceProxy::sharedPreferencesForWebProcess() const
 {
-    RefPtr connection = connectionToWebProcess();
-    return connection->sharedPreferencesForWebProcess();
+    if (RefPtr connection = connectionToWebProcess())
+        return connection->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
 }
 
 } // namespace WebKit

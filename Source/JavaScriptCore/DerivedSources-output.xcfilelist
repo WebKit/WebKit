@@ -48,6 +48,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSGlobalObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSInternalPromiseConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSIteratorHelperPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSONObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromiseConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h

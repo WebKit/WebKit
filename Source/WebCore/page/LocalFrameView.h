@@ -181,7 +181,7 @@ public:
 
     WEBCORE_EXPORT TiledBacking* tiledBacking() const;
 
-    WEBCORE_EXPORT ScrollingNodeID scrollingNodeID() const override;
+    WEBCORE_EXPORT std::optional<ScrollingNodeID> scrollingNodeID() const override;
     WEBCORE_EXPORT ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
     void setPluginScrollableAreaForScrollingNodeID(ScrollingNodeID nodeID, ScrollableArea& area) { m_scrollingNodeIDToPluginScrollableAreaMap.add(nodeID, &area); }
     void removePluginScrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeIDToPluginScrollableAreaMap.remove(nodeID); }

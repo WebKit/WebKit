@@ -114,6 +114,8 @@ private:
     void setLabelInternal(const String&) final;
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const;
+
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;

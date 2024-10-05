@@ -131,6 +131,10 @@ private:
     RemoteWebInspectorUIProxy();
     RefPtr<WebPageProxy> protectedInspectorPage();
 
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    RefPtr<WebInspectorUIExtensionControllerProxy> protectedExtensionController();
+#endif
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

@@ -1484,7 +1484,7 @@ auto OMGIRGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
                 ASSERT(rep.location.jsr().tagGPR() != InvalidGPRReg);
                 Value* argLo = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.jsr().payloadGPR());
                 Value* argHi = m_currentBlock->appendNew<B3::ArgumentRegValue>(m_proc, Origin(), rep.location.jsr().tagGPR());
-                argument = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), argHi, argLo);
+                argument = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(), argLo, argHi);
             }
         } else if (rep.location.isFPR()) {
             if (type.isVector()) {
@@ -1728,7 +1728,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
                     }
                     auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
                     auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
-                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), hi, lo);
+                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), lo, hi);
                     results.append(push(stitched));
                     continue;
                 }
@@ -5044,7 +5044,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndex, const TypeDefinit
                     }
                     auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
                     auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
-                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), hi, lo);
+                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), lo, hi);
                     results.append(push(stitched));
                     continue;
                 }

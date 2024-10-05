@@ -509,7 +509,7 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (hasOutstandingRenderingResourceUsage())
         return false;
 
-    if (sharedPreferencesForWebProcess().useGPUProcessForDOMRenderingEnabled)
+    if (m_sharedPreferencesForWebProcess.useGPUProcessForDOMRenderingEnabled)
         return false;
 
 #if ENABLE(WEB_AUDIO)
@@ -780,7 +780,7 @@ void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerId
 
 void GPUConnectionToWebProcess::createGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
-    MESSAGE_CHECK(sharedPreferencesForWebProcess().webGPUEnabled);
+    MESSAGE_CHECK(m_sharedPreferencesForWebProcess.webGPUEnabled);
 
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())

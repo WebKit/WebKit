@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeInteractionRegionLayers.h"
 #import "WKVideoView.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/ContentsFormatCocoa.h>
 #import <WebCore/MediaPlayerEnumsCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
@@ -325,6 +326,15 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             [(WebAVPlayerLayer*)playerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
     }
 #endif
+
+    if (properties.changedProperties & LayerChange::ContentsFormatChanged) {
+        auto contentsFormat = properties.contentsFormat;
+        [layer setContentsFormat:contentsFormatString(contentsFormat)];
+#if HAVE(HDR_SUPPORT)
+        [layer setWantsExtendedDynamicRangeContent:contentsFormatWantsExtendedDynamicRangeContent(contentsFormat)];
+        [layer setToneMapMode:contentsFormatWantsToneMapMode(contentsFormat) ? CAToneMapModeIfSupported : CAToneMapModeAutomatic];
+#endif
+    }
 }
 
 void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, LayerContentsType layerContentsType)
@@ -345,7 +355,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 
 #if ENABLE(SCROLLING_THREAD)
     if (properties.changedProperties & LayerChange::ScrollingNodeIDChanged)
-        node.setScrollingNodeID(properties.scrollingNodeID.value_or(ScrollingNodeID { }));
+        node.setScrollingNodeID(properties.scrollingNodeID);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

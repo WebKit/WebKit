@@ -1,0 +1,3 @@
+
+PASS A document timeline does not have a duration
+

@@ -74,6 +74,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-paired-surrogates.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-unicode-data.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-unpaired-surrogates.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection-ccns.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection.window.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-open-websocket-connection-ccns.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/back-forward-cache-with-open-websocket-connection.window.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/basic-auth.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.js
@@ -83,5 +87,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/eventhandlers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/extended-payload-length.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/mixed-content.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/send-many-64K-messages-with-backpressure.any.js

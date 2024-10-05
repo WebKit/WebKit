@@ -283,11 +283,11 @@ class DownloadAndPerfTestFactory(Factory):
             self.addStep(RunBenchmarkTests(timeout=2000))
 
 
-class SmartPointerStaticAnalyzerFactory(Factory):
+class SaferCPPStaticAnalyzerFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(PrintClangVersion())
-        self.addStep(ScanBuildSmartPointer())
+        self.addStep(ScanBuild())
 
 
 class CrossTargetDownloadAndPerfTestFactory(DownloadAndPerfTestFactory):

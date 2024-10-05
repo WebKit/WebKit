@@ -56,7 +56,7 @@ public:
 
 private:
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) final;
-    void notifyFinished(ScriptExecutionContextIdentifier) final;
+    void notifyFinished(std::optional<ScriptExecutionContextIdentifier>) final;
 
     const WorkerOptions m_options;
     const Ref<SharedWorker> m_worker;

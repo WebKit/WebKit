@@ -538,7 +538,7 @@ constexpr bool RenderStyle::isDisplayGridBox(DisplayType display) { return displ
 constexpr bool RenderStyle::isDisplayInlineType() const { return isDisplayInlineType(display()); }
 constexpr bool RenderStyle::isDisplayListItemType(DisplayType display) { return display == DisplayType::ListItem; }
 constexpr bool RenderStyle::isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
-inline bool RenderStyle::isFixedTableLayout() const { return tableLayout() == TableLayoutType::Fixed && (logicalWidth().isSpecified() || logicalWidth().isFitContent() || logicalWidth().isMinContent()); }
+inline bool RenderStyle::isFixedTableLayout() const { return tableLayout() == TableLayoutType::Fixed && (logicalWidth().isSpecified() || logicalWidth().isFitContent() || logicalWidth().isFillAvailable() || logicalWidth().isMinContent()); }
 inline bool RenderStyle::isFlippedBlocksWritingMode() const { return WebCore::isFlippedWritingMode(writingMode()); }
 inline bool RenderStyle::isFlippedLinesWritingMode() const { return WebCore::isFlippedLinesWritingMode(writingMode()); }
 inline bool RenderStyle::isFloating() const { return floating() != Float::None; }

@@ -206,12 +206,12 @@ void WorkerSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifie
 
 SWServerConnectionIdentifier WorkerSWClientConnection::serverConnectionIdentifier() const
 {
-    SWServerConnectionIdentifier identifier;
+    std::optional<SWServerConnectionIdentifier> identifier;
     callOnMainThreadAndWait([&] {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
         identifier = connection.serverConnectionIdentifier();
     });
-    return identifier;
+    return *identifier;
 }
 
 bool WorkerSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const

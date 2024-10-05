@@ -52,7 +52,7 @@ RemoteBarcodeDetector::RemoteBarcodeDetector(Ref<WebCore::ShapeDetection::Barcod
 
 RemoteBarcodeDetector::~RemoteBarcodeDetector() = default;
 
-const SharedPreferencesForWebProcess& RemoteBarcodeDetector::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> RemoteBarcodeDetector::sharedPreferencesForWebProcess() const
 {
     return protectedBackend()->sharedPreferencesForWebProcess();
 }

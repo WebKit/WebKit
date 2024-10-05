@@ -58,7 +58,7 @@ public:
     void setPlayer(WeakPtr<RemoteMediaPlayerProxy>);
 
     RefPtr<ArrayBuffer> getCachedKeyForKeyId(const String&);
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;

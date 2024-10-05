@@ -837,7 +837,7 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
     }
 
     RefPtr mainFrame = m_mainFrame->coreLocalFrame();
-    if (!mainFrame)
+    if (!mainFrame || !WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled())
         return { url, DidFilterLinkDecoration::No };
 
     auto isLinkDecorationFilteringEnabled = [&](const DocumentLoader* loader) {

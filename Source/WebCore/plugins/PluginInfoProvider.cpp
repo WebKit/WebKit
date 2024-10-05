@@ -67,8 +67,8 @@ void PluginInfoProvider::refresh(bool reloadPages)
         }
     }
 
-    for (auto& frame : framesNeedingReload)
-        frame->loader().reload();
+    for (Ref frame : framesNeedingReload)
+        frame->protectedLoader()->reload();
 }
 
 void PluginInfoProvider::addPage(Page& page)

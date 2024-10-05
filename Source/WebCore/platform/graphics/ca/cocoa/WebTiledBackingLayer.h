@@ -40,8 +40,8 @@ class TiledBacking;
 - (WebCore::TiledBacking*)tiledBacking;
 - (void)invalidate;
 
-- (void)setWantsDeepColorBackingStore:(BOOL)wantsDeepColor;
-- (BOOL)wantsDeepColorBackingStore;
+- (void)setContentsFormat:(WebCore::ContentsFormat)contentsFormat;
+- (WebCore::ContentsFormat)contentsFormat;
 
 @end
 

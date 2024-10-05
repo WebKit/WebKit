@@ -890,9 +890,13 @@ void VideoPresentationManagerProxy::willRemoveLayerForID(PlaybackSessionContextI
     removeClientForContext(contextId);
 }
 
-const SharedPreferencesForWebProcess& VideoPresentationManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> VideoPresentationManagerProxy::sharedPreferencesForWebProcess() const
 {
-    return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    if (!m_page)
+        return std::nullopt;
+
+    // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
+    SUPPRESS_UNCOUNTED_ARG return m_page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
 }
 
 #pragma mark Messages from VideoPresentationManager

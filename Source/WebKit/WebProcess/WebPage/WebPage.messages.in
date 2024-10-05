@@ -763,6 +763,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RemotePostMessage(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
     RenderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
+    LayerTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options) -> (String layerTreeDump) Synchronous
     FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
 
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)

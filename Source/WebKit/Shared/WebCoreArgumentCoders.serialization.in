@@ -615,7 +615,7 @@ struct WebCore::IDBIterateCursorData {
 }
 
 class WebCore::IDBResourceIdentifier {
-    WebCore::IDBConnectionIdentifier m_idbConnectionIdentifier
+    Markable<WebCore::IDBConnectionIdentifier> m_idbConnectionIdentifier
     uint64_t m_resourceNumber
 }
 
@@ -1640,12 +1640,12 @@ struct WebCore::AuthenticatorResponseData {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
-    [NotSerialized] bool credProps;
+    std::optional<bool> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::PRFInputs> prf;
 }
 
-[Nested] struct WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput {
+struct WebCore::CredentialPropertiesOutput {
     bool rk;
 };
 
@@ -1667,33 +1667,33 @@ struct WebCore::AuthenticatorResponseData {
 
 struct WebCore::AuthenticationExtensionsClientOutputs {
     std::optional<bool> appid;
-    std::optional<WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput> credProps;
+    std::optional<WebCore::CredentialPropertiesOutput> credProps;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::LargeBlobOutputs> largeBlob;
     std::optional<WebCore::AuthenticationExtensionsClientOutputs::PRFOutputs> prf;
 }
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Parameters {
+[Nested] struct WebCore::PublicKeyCredentialParameters {
     WebCore::PublicKeyCredentialType type;
     int64_t alg;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria {
+struct WebCore::AuthenticatorSelectionCriteria {
     std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
     std::optional<WebCore::ResidentKeyRequirement> residentKey;
     bool requireResidentKey;
     WebCore::UserVerificationRequirement userVerification;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::Entity {
+struct WebCore::PublicKeyCredentialEntity {
     String name;
     String icon;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::RpEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
-    std::optional<String> id;
+struct WebCore::PublicKeyCredentialRpEntity : WebCore::PublicKeyCredentialEntity {
+    String id;
 };
 
-[Nested] struct WebCore::PublicKeyCredentialCreationOptions::UserEntity : WebCore::PublicKeyCredentialCreationOptions::Entity {
+struct WebCore::PublicKeyCredentialUserEntity : WebCore::PublicKeyCredentialEntity {
     WebCore::BufferSource id;
     String displayName;
 };
@@ -1716,15 +1716,15 @@ enum class WebCore::AttestationConveyancePreference : uint8_t {
 
 struct WebCore::PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)
-    WebCore::PublicKeyCredentialCreationOptions::RpEntity rp;
-    WebCore::PublicKeyCredentialCreationOptions::UserEntity user;
+    WebCore::PublicKeyCredentialRpEntity rp;
+    WebCore::PublicKeyCredentialUserEntity user;
 
     WebCore::BufferSource challenge;
-    Vector<WebCore::PublicKeyCredentialCreationOptions::Parameters> pubKeyCredParams;
+    Vector<WebCore::PublicKeyCredentialParameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
     Vector<WebCore::PublicKeyCredentialDescriptor> excludeCredentials;
-    std::optional<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection;
+    std::optional<WebCore::AuthenticatorSelectionCriteria> authenticatorSelection;
     WebCore::AttestationConveyancePreference attestation;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
@@ -1811,6 +1811,16 @@ enum class WebCore::RenderingPurpose : uint8_t {
     ShareableSnapshot,
     ShareableLocalSnapshot,
     MediaPainting,
+};
+
+enum class WebCore::ContentsFormat : uint8_t {
+    RGBA8,
+#if HAVE(IOSURFACE_RGB10)
+    RGBA10,
+#endif
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
 };
 
 enum class WebCore::RotationDirection : bool
@@ -2020,7 +2030,7 @@ class WebCore::HTTPHeaderMap {
 struct WebCore::ElementContext {
     WebCore::FloatRect boundingRect;
     Markable<WebCore::PageIdentifier> webPageIdentifier;
-    WebCore::ScriptExecutionContextIdentifier documentIdentifier;
+    Markable<WebCore::ScriptExecutionContextIdentifier> documentIdentifier;
     Markable<WebCore::ElementIdentifier> elementIdentifier;
 };
 
@@ -2430,7 +2440,7 @@ header: <WebCore/ScreenProperties.h>
     WebCore::DestinationColorSpace colorSpace;
     int screenDepth;
     int screenDepthPerComponent;
-    bool screenSupportsExtendedColor;
+    WebCore::ContentsFormat screenContentsFormat;
     bool screenHasInvertedColors;
     bool screenSupportsHighDynamicRange;
 #if PLATFORM(MAC)
@@ -2552,6 +2562,9 @@ enum class WebCore::PixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
 };
 
 enum class WebCore::ImageBufferPixelFormat : uint8_t {
@@ -2559,6 +2572,9 @@ enum class WebCore::ImageBufferPixelFormat : uint8_t {
     BGRA8,
     RGB10,
     RGB10A8,
+#if HAVE(HDR_SUPPORT)
+    RGBA16F,
+#endif
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PixelBufferFormat {
@@ -4267,7 +4283,7 @@ enum class WebCore::MediaDecodingType : uint8_t {
 enum class WebCore::MediaEncodingType : bool;
 
 class WebCore::BufferSource {
-    std::span<const uint8_t> span()
+    std::span<const uint8_t> span();
 }
 
 struct WebCore::FontShadow {
@@ -4976,12 +4992,18 @@ header: <WebCore/DisplayListItems.h>
     WebCore::ImageOrientation::Orientation orientation()
 };
 
+header: <WebCore/ImageTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Headroom {
+    float headroom;
+};
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
-     WebCore::CompositeOperator compositeOperator();
-     WebCore::BlendMode blendMode();
-     WebCore::DecodingMode decodingMode();
-     WebCore::ImageOrientation::Orientation orientation().orientation();
-     WebCore::InterpolationQuality interpolationQuality();
+    WebCore::CompositeOperator compositeOperator();
+    WebCore::BlendMode blendMode();
+    WebCore::DecodingMode decodingMode();
+    WebCore::ImageOrientation::Orientation orientation().orientation();
+    WebCore::InterpolationQuality interpolationQuality();
+    WebCore::Headroom headroom();
 };
 
 struct WebCore::CanvasActivityRecord {
@@ -6281,6 +6303,11 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::FilterOperations backdropFilter;
 }
 
+class WebCore::CSSNumberishTime {
+    std::optional<Seconds> time();
+    std::optional<double> percentage();
+};
+
 struct WebCore::AnimationEffectTiming {
     RefPtr<WebCore::TimingFunction> timingFunction;
     WebCore::FillMode fill;
@@ -6289,9 +6316,9 @@ struct WebCore::AnimationEffectTiming {
     double iterations;
     Seconds delay;
     Seconds endDelay;
-    Seconds iterationDuration;
-    Seconds activeDuration;
-    Seconds endTime;
+    WebCore::CSSNumberishTime iterationDuration;
+    WebCore::CSSNumberishTime activeDuration;
+    WebCore::CSSNumberishTime endTime;
 };
 
 header: <WebCore/AcceleratedEffect.h>
@@ -6447,6 +6474,25 @@ header: <WebCore/RenderTreeAsText.h>
     PrintingMode,
     DontUpdateLayout,
     ShowLayoutState
+};
+
+header: <WebCore/LayerTreeAsTextOptions.h>
+[OptionSet] enum class WebCore::LayerTreeAsTextOptions : uint16_t {
+    Debug,
+    IncludeVisibleRects
+    IncludeTileCaches,
+    IncludeRepaintRects,
+    IncludePaintingPhases,
+    IncludeContentLayers,
+    IncludePageOverlayLayers,
+    IncludeAcceleratesDrawing,
+    IncludeClipping,
+    IncludeBackingStoreAttached,
+    IncludeRootLayerProperties,
+    IncludeEventRegion,
+    IncludeExtendedColor,
+    IncludeDeviceScale,
+    IncludeRootLayers,
 };
 
 header: <WebCore/TextExtractionTypes.h>

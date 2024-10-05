@@ -82,7 +82,7 @@ Ref<WebPageProxy> WebFullScreenManagerProxy::protectedPage() const
     return m_page.get();
 }
 
-const SharedPreferencesForWebProcess& WebFullScreenManagerProxy::sharedPreferencesForWebProcess() const
+std::optional<SharedPreferencesForWebProcess> WebFullScreenManagerProxy::sharedPreferencesForWebProcess() const
 {
     return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }

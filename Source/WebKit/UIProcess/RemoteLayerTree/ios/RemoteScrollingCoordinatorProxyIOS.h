@@ -48,7 +48,7 @@ public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyIOS() = default;
 
-    UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;
+    UIScrollView *scrollViewForScrollingNodeID(std::optional<WebCore::ScrollingNodeID>) const;
 
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
     void setTouchActionsForTouchIdentifier(OptionSet<WebCore::TouchAction>, unsigned);

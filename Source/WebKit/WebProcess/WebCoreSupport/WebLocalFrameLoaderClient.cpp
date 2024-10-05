@@ -226,7 +226,7 @@ void WebLocalFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderI
         return;
 
     bool pageIsProvisionallyLoading = false;
-    CheckedPtr frameLoader = loader ? loader->frameLoader() : nullptr;
+    RefPtr frameLoader = loader ? loader->frameLoader() : nullptr;
     if (frameLoader)
         pageIsProvisionallyLoading = frameLoader->provisionalDocumentLoader() == loader;
 

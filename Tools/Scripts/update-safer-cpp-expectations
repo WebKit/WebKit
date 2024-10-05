@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import os
+import argparse
+
+EXPECTATIONS_PATH = '../../Source/{project}/SaferCPPExpectations/{checker_type}Expectations'
+CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
+PROJECTS = ['WebCore', 'WebKit']
+
+
+def parser():
+    parser = argparse.ArgumentParser(description='Automated tooling for updating safer CPP expectations')
+    parser.add_argument(
+        '--add-expected-failures', '-a',
+        dest='results_to_add',
+        default=None,
+        help='Path to unexpected results file. Adds unexpected failures to the expectations files in SaferCPPExpectations.'
+    )
+    parser.add_argument(
+        '--remove-expected-failures', '-r',
+        dest='results_to_remove',
+        default=None,
+        help='Path to unexpected results file. Removes unexpected failures from the expectations files in SaferCPPExpectations.'
+    )
+    parser.add_argument(
+        '--project', '-p',
+        choices=['WebKit', 'WebCore'],
+        help='Specify which project expectations you want to update.'
+    )
+    parser.add_argument(
+        '--find-expectations', '-f',
+        dest='expected_file',
+        default=None,
+        help='Check if the given file has expected failures'
+    )
+    return parser.parse_args()
+
+
+def modify_expectations_for_checker(checker_type, unexpected_contents, project, type):
+    path_to_expectations = os.path.join(os.path.dirname(__file__), EXPECTATIONS_PATH.format(project=project, checker_type=checker_type))
+    with open(path_to_expectations) as expectations_file:
+        expectations = expectations_file.readlines()
+        prev_len = len(expectations)
+    for line in unexpected_contents:
+        if '=>' in line:
+            new_checker_type = line.split()[-1]
+            modify_expectations_for_checker(new_checker_type, unexpected_contents, project, type)
+        elif line.strip():
+            if type == 'remove':
+                expectations.remove(line)
+            elif line not in expectations:
+                expectations.append(line)
+            else:
+                print(f'{line.strip()} already in {checker_type}Expectations!\n')
+    with open(path_to_expectations, 'w') as expectations_file:
+        expectations_file.writelines(sorted(expectations))
+    print(f'Updated expectations for {checker_type}!')
+    if type == 'remove':
+        print(f'Removed {prev_len - len(expectations)} fixed files.\n')
+    else:
+        print(f'Added {len(expectations) - prev_len} files with issues.\n')
+
+
+def update_expectations(unexpected_results, project, type):
+    filename = unexpected_results.split('/')[-1]
+    if not project:
+        projects = [p for p in ['WebKit', 'WebCore'] if p in filename]
+        if projects:
+            project = projects[0]
+        else:
+            print(f'Could not find a project to update. Please include the project in the filename or pass in the --project argument.')
+            return
+
+    print(f"{'Adding' if type == 'add' else 'Removing'} unexpected failures in {project}...\n")
+
+    with open(unexpected_results, 'r') as unexpected_contents:
+        for line in unexpected_contents:
+            if '=>' in line:
+                checker_type = line.split()[-1]
+                modify_expectations_for_checker(checker_type, unexpected_contents, project, type)
+
+
+'''
+This currently checks against the files in your local checkout at SaferCPPExpectations.
+Ensure that it is up-to-date before using this script.
+'''
+def is_expected_file(expected_file):
+    print('This checks against local expectations. Ensure your checkout is up-to-date.')
+    line = f'{expected_file}\n'
+    issues = False
+    for project in PROJECTS:
+        for checker in CHECKERS:
+            path_to_expectations = os.path.join(os.path.dirname(__file__), EXPECTATIONS_PATH.format(project=project, checker_type=checker))
+            with open(path_to_expectations, 'r') as f:
+                expectations = f.read()
+                if line in expectations:
+                    if not issues:
+                        print(f'{expected_file} has issues:')
+                    issues = True
+                    print(f'- {project} {checker}')
+    if not issues:
+        print(f'{expected_file} has no known issues!')
+
+
+def main():
+    args = parser()
+    if args.results_to_add:
+        print('WARNING: Adding expected failures. Please only add expected failures when you fix false negatives in our tools.')
+        user_input = input('Are you sure you want to proceed? [y/N]: ') or 'N'
+        if user_input[0].lower() != 'y':
+            return
+        update_expectations(args.results_to_add, args.project, 'add')
+    if args.results_to_remove:
+        update_expectations(args.results_to_remove, args.project, 'remove')
+    if args.expected_file:
+        is_expected_file(args.expected_file)
+
+
+if __name__ == '__main__':
+    main()

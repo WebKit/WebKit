@@ -1892,11 +1892,11 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
     ASSERT(scrutinee.isDouble());
     double value = scrutinee.asDouble();
     int32_t intValue = static_cast<int32_t>(value);
-    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
+    auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
     if (value == intValue)
-        JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(intValue, defaultOffset));
+        JUMP_TO(unlinkedTable.offsetForValue(intValue));
     else
-        JUMP_TO(defaultOffset);
+        JUMP_TO(unlinkedTable.defaultOffset());
     LLINT_END();
 }
 
@@ -1908,9 +1908,9 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     ASSERT(scrutinee.isString());
     JSString* string = asString(scrutinee);
     ASSERT(string->length() == 1);
-    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
+    auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
     auto str = string->value(globalObject);
-    JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(str.data[0], defaultOffset));
+    JUMP_TO(unlinkedTable.offsetForValue(str.data[0]));
     LLINT_END();
 }
 
@@ -1919,11 +1919,11 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchString>();
     JSValue scrutinee = getOperand(callFrame, bytecode.m_scrutinee);
-    int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
+    auto& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex);
+    int32_t defaultOffset = unlinkedTable.defaultOffset();
     if (!scrutinee.isString())
         JUMP_TO(defaultOffset);
     else {
-        auto& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex);
         auto* string = asString(scrutinee);
 
         unsigned length = string->length();
@@ -1933,7 +1933,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
             auto scrutineeString = string->value(globalObject);
             LLINT_CHECK_EXCEPTION();
 
-            JUMP_TO(unlinkedTable.offsetForValue(scrutineeString.data.impl(), defaultOffset));
+            JUMP_TO(unlinkedTable.offsetForValue(scrutineeString.data.impl()));
         }
     }
     LLINT_END();

@@ -905,6 +905,8 @@ webkit.org/b/206834 http/tests/workers/service/basic-timeout.https.html [ Pass F
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure ]
 http/tests/workers/service/service-worker-download.https.html [ Failure ]
 
+http/tests/workers/service/service-worker-download-octet-stream-nosniff.https.html [ Failure ]
+
 webkit.org/b/185254 http/tests/cache/network-error-during-revalidation.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/XMLHttpRequestException.html [ DumpJSConsoleLogInStdErr ]
 webkit.org/b/185254 http/tests/xmlhttprequest/connection-error-sync.html [ DumpJSConsoleLogInStdErr ]
@@ -1977,6 +1979,7 @@ imported/w3c/web-platform-tests/content-security-policy [ Skip ]
 imported/w3c/web-platform-tests/cors [ Skip ]
 imported/w3c/web-platform-tests/credential-management [ Skip ]
 imported/w3c/web-platform-tests/digital-credentials [ Skip ]
+imported/w3c/web-platform-tests/webauthn [ Skip ]
 
 imported/w3c/web-platform-tests/css/compositing [ Skip ]
 imported/w3c/web-platform-tests/css/css-align [ Skip ]

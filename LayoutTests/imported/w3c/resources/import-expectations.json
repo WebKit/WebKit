@@ -339,7 +339,7 @@
     "web-platform-tests/web-otp": "skip",
     "web-platform-tests/web-share": "import",
     "web-platform-tests/webaudio": "import",
-    "web-platform-tests/webauthn": "skip",
+    "web-platform-tests/webauthn": "import",
     "web-platform-tests/webcodecs": "import",
     "web-platform-tests/webdriver": "skip",
     "web-platform-tests/webgl": "skip",

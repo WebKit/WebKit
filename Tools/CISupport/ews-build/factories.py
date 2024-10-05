@@ -32,7 +32,7 @@ from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Cano
                     MapBranchAlias, RemoveAndAddLabels, RetrievePRDataFromLabel, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                     RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests,
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                    ScanBuildSmartPointer, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateClang, UpdateWorkingDirectory, UpdatePullRequest,
+                    ScanBuild, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateClang, UpdateWorkingDirectory, UpdatePullRequest,
                     ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
                     InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
 
@@ -97,7 +97,7 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(ApplyWatchList())
 
 
-class SmartPointerStaticAnalyzerFactory(factory.BuildFactory):
+class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
     findModifiedLayoutTests = False
 
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
@@ -118,7 +118,7 @@ class SmartPointerStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(UpdateClang())
         self.addStep(CheckOutPullRequest())
         self.addStep(KillOldProcesses())
-        self.addStep(ScanBuildSmartPointer())
+        self.addStep(ScanBuild())
 
 
 class BindingsFactory(Factory):

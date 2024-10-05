@@ -330,7 +330,7 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         RefPtr frame = this->document().frame();
         if (!frame)
             return;
-        frame->checkedLoader()->subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
+        frame->protectedLoader()->subframeLoader().requestObject(*this, relativeURL, nameAttribute, mimeType, paramNames, paramValues);
     });
     return true;
 }

@@ -92,7 +92,7 @@ public:
     void willModifyChildren() override;
     void setEventRegion(EventRegion&&) override;
 #if ENABLE(SCROLLING_THREAD)
-    void setScrollingNodeID(ScrollingNodeID) override;
+    void setScrollingNodeID(std::optional<ScrollingNodeID>) override;
 #endif
     void setPosition(const FloatPoint&) override;
     void syncPosition(const FloatPoint&) override;

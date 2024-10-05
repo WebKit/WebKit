@@ -82,6 +82,10 @@ webkit.org/b/277067 http/tests/misc/authentication-redirect-3/authentication-sen
 # webkit.org/b/277432 (REGRESSION (281139@main): [ Ventura iOS18 ] 2 WebCrypto layout tests failing after CryptoKit enablement.)
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.worker.html [ Pass ]
 
 # webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ Pass ]

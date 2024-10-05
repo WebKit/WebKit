@@ -195,7 +195,7 @@ void CachedPage::restore(Page& page)
 
     for (auto& domain : m_loadedSubresourceDomains) {
         if (localMainFrame)
-            localMainFrame->checkedLoader()->client().didLoadFromRegistrableDomain(WTFMove(domain));
+            localMainFrame->protectedLoader()->client().didLoadFromRegistrableDomain(WTFMove(domain));
     }
 
     clear();

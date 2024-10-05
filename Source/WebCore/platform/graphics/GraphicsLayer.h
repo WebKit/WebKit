@@ -367,8 +367,8 @@ public:
     void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = SetNeedsDisplay);
 
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID scrollingNodeID() const { return m_scrollingNodeID; }
-    virtual void setScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
+    std::optional<ScrollingNodeID> scrollingNodeID() const { return m_scrollingNodeID; }
+    virtual void setScrollingNodeID(std::optional<ScrollingNodeID> nodeID) { m_scrollingNodeID = nodeID; }
 #endif
 
     // The position of the layer (the location of its top-left corner in its parent)
@@ -591,6 +591,11 @@ public:
     virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
     bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
 
+#if HAVE(HDR_SUPPORT)
+    virtual void setHDRForImagesEnabled(bool b) { m_hdrForImagesEnabled = b; }
+    bool hdrForImagesEnabled() const { return m_hdrForImagesEnabled; }
+#endif
+
     // FIXME: this is really a paint count.
     int repaintCount() const { return m_repaintCount; }
     int incrementRepaintCount() { return ++m_repaintCount; }
@@ -648,7 +653,7 @@ public:
 
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
-    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
+    WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }, uint32_t baseIndent = 0) const;
 
     // For testing.
     virtual String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
@@ -735,7 +740,6 @@ protected:
 #endif
 #endif
 
-
     void dumpProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const;
     virtual void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const { }
 
@@ -775,7 +779,7 @@ protected:
     FilterOperations m_backdropFilters;
     
 #if ENABLE(SCROLLING_THREAD)
-    ScrollingNodeID m_scrollingNodeID;
+    Markable<ScrollingNodeID> m_scrollingNodeID;
 #endif
 
     BlendMode m_blendMode { BlendMode::Normal };
@@ -813,6 +817,9 @@ protected:
     bool m_isSeparatedPortal : 1;
     bool m_isDescendentOfSeparatedPortal : 1;
 #endif
+#endif
+#if HAVE(HDR_SUPPORT)
+    bool m_hdrForImagesEnabled : 1;
 #endif
 
     int m_repaintCount { 0 };

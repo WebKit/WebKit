@@ -236,7 +236,7 @@ public:
     void addRemoteVideoTrackProxy(WebCore::VideoTrackPrivate&);
     void addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
 
-    const SharedPreferencesForWebProcess& sharedPreferencesForWebProcess() const;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
     RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, WebCore::MediaPlayerClientIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);

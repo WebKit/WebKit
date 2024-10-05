@@ -203,7 +203,7 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
         }
         auto node = scrollingNodeForPoint(position);
 
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : ScrollingNodeID { }) << " for point " << position);
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : std::optional<ScrollingNodeID> { }) << " for point " << position);
 
         return handleWheelEventWithNode(wheelEvent, processingSteps, node.get());
     }();
@@ -464,8 +464,8 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
         return true;
     }
 
-    ScrollingNodeID nodeID = stateNode->scrollingNodeID();
-    ScrollingNodeID parentNodeID = state.frameHostingNode ? state.frameHostingNode->scrollingNodeID() : stateNode->parentNodeID();
+    auto nodeID = stateNode->scrollingNodeID();
+    auto parentNodeID = state.frameHostingNode ? state.frameHostingNode->scrollingNodeID() : stateNode->parentNodeID();
 
     auto it = m_nodeMap.find(nodeID);
 
@@ -493,7 +493,7 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
     }
 
     if (parentNodeID) {
-        auto parentIt = m_nodeMap.find(parentNodeID);
+        auto parentIt = m_nodeMap.find(*parentNodeID);
         ASSERT_WITH_SECURITY_IMPLICATION(parentIt != m_nodeMap.end());
         if (parentIt != m_nodeMap.end()) {
             RefPtr parent = parentIt->value.get();
@@ -602,12 +602,12 @@ void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& node)
         applyLayerPositionsRecursive(child.get());
 }
 
-ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
+ScrollingTreeNode* ScrollingTree::nodeForID(std::optional<ScrollingNodeID> nodeID) const
 {
     if (!nodeID)
         return nullptr;
 
-    return m_nodeMap.get(nodeID);
+    return m_nodeMap.get(*nodeID);
 }
 
 void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode)
@@ -762,13 +762,13 @@ TrackingType ScrollingTree::eventTrackingTypeForPoint(EventTrackingRegions::Even
 }
 
 // Can be called from the main thread.
-bool ScrollingTree::isRubberBandInProgressForNode(ScrollingNodeID nodeID)
+bool ScrollingTree::isRubberBandInProgressForNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return false;
 
     Locker locker { m_treeStateLock };
-    return m_treeState.nodesWithActiveRubberBanding.contains(nodeID);
+    return m_treeState.nodesWithActiveRubberBanding.contains(*nodeID);
 }
 
 void ScrollingTree::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bool isRubberBanding)
@@ -781,13 +781,13 @@ void ScrollingTree::setRubberBandingInProgressForNode(ScrollingNodeID nodeID, bo
 }
 
 // Can be called from the main thread.
-bool ScrollingTree::isUserScrollInProgressForNode(ScrollingNodeID nodeID)
+bool ScrollingTree::isUserScrollInProgressForNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return false;
 
     Locker locker { m_treeStateLock };
-    return m_treeState.nodesWithActiveUserScrolls.contains(nodeID);
+    return m_treeState.nodesWithActiveUserScrolls.contains(*nodeID);
 }
     
 void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool isScrolling)
@@ -810,13 +810,13 @@ void ScrollingTree::clearNodesWithUserScrollInProgress()
 }
 
 // Can be called from the main thread.
-bool ScrollingTree::isScrollSnapInProgressForNode(ScrollingNodeID nodeID)
+bool ScrollingTree::isScrollSnapInProgressForNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return false;
 
     Locker locker { m_treeStateLock };
-    return m_treeState.nodesWithActiveScrollSnap.contains(nodeID);
+    return m_treeState.nodesWithActiveScrollSnap.contains(*nodeID);
 }
 
 void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isScrollSnapping)

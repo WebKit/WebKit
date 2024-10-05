@@ -70,23 +70,23 @@ public:
             m_block = block;
             for (m_index = 0; m_index < m_block->size(); ++m_index) {
                 m_value = m_block->at(m_index);
-                Value* hi;
                 Value* lo;
+                Value* hi;
                 dataLogLnIf(B3LowerInt64Internal::verbose, "B3LowerInt64: prep for ", deepDump(m_value));
                 if ((m_value->type() == Int64) && (m_value->opcode() == Phi)) {
                     // Upsilon expects the target of a ->setPhi() to be a Phi,
                     // not an identity, so do the (trivial) lowering here.
-                    hi = insert<Value>(m_index + 1, Phi, Int32, m_value->origin());
                     lo = insert<Value>(m_index + 1, Phi, Int32, m_value->origin());
+                    hi = insert<Value>(m_index + 1, Phi, Int32, m_value->origin());
                 } else if (m_value->type() == Int64 || (m_value->opcode() == Upsilon && m_value->child(0)->type() == Int64)) {
-                    hi = insert<Value>(m_index + 1, Identity, m_value->origin(), m_zero);
                     lo = insert<Value>(m_index + 1, Identity, m_value->origin(), m_zero);
+                    hi = insert<Value>(m_index + 1, Identity, m_value->origin(), m_zero);
                 } else
                     continue;
-                m_syntheticValues.add(hi);
                 m_syntheticValues.add(lo);
-                dataLogLnIf(B3LowerInt64Internal::verbose, "Map ", *m_value, " -> (", deepDump(hi), ", ", deepDump(lo), ")");
-                m_mapping.add(m_value, std::pair<Value*, Value*> { hi, lo });
+                m_syntheticValues.add(hi);
+                dataLogLnIf(B3LowerInt64Internal::verbose, "Map ", *m_value, " -> (", deepDump(lo), ", ", deepDump(hi), ")");
+                m_mapping.add(m_value, std::pair<Value*, Value*> { lo, hi });
             }
             m_changed |= !m_insertionSet.isEmpty();
             m_insertionSet.execute(m_block);
@@ -118,15 +118,15 @@ public:
         return m_changed;
     }
 private:
-    void setMapping(Value* value, Value* hi, Value* lo)
+    void setMapping(Value* value, Value* lo, Value* hi)
     {
         std::pair<Value*, Value*> m = getMapping(value);
         ASSERT(m.first->opcode() == Identity);
         ASSERT(m.second->opcode() == Identity);
         ASSERT(m.first->child(0) == m_zero);
         ASSERT(m.second->child(0) == m_zero);
-        m.first->child(0) = hi;
-        m.second->child(0) = lo;
+        m.first->child(0) = lo;
+        m.second->child(0) = hi;
     }
 
     std::pair<Value*, Value*> getMapping(Value* value)
@@ -162,12 +162,12 @@ private:
         return insert<ExtractValue>(index, m_origin, Int32, value, ExtractValue::s_int64HighBits);
     }
 
-    Value* valueHiLo(Value* hi, Value* lo, std::optional<size_t> providedIndex = { })
+    Value* valueLoHi(Value* lo, Value* hi, std::optional<size_t> providedIndex = { })
     {
         size_t index = m_index;
         if (providedIndex)
             index = *providedIndex;
-        return insert<Value>(index, Stitch, m_origin, hi, lo);
+        return insert<Value>(index, Stitch, m_origin, lo, hi);
     }
 
     void valueReplaced()
@@ -197,8 +197,8 @@ private:
         Value* outputHi;
         Value* outputLo;
         Value* shiftComplement = appendToBlock<Value>(block, Sub, m_origin, appendToBlock<Const32Value>(block, m_origin, 32), maskedShift);
-        Value* inputHi = input.first;
-        Value* inputLo = input.second;
+        Value* inputHi = input.second;
+        Value* inputLo = input.first;
 
         if (opcode == SShr) {
             Value* shiftedLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, maskedShift);
@@ -217,7 +217,7 @@ private:
             Value* shiftedIntoHiFromLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, shiftComplement);
             outputHi = appendToBlock<Value>(block, BitOr, m_origin, shiftedHi, shiftedIntoHiFromLo);
         }
-        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputLo), appendToBlock<UpsilonValue>(block, m_origin, outputHi) };
         appendToBlock<Value>(block, Jump, m_origin);
         return ret;
     }
@@ -228,17 +228,17 @@ private:
         Value* outputLo;
         Value* shift = appendToBlock<Value>(block, Sub, m_origin, maskedShift, appendToBlock<Const32Value>(block, m_origin, 32));
         if (opcode == SShr) {
-            outputLo = appendToBlock<Value>(block, SShr, m_origin, input.first, shift);
-            outputHi = appendToBlock<Value>(block, SShr, m_origin, input.first, appendToBlock<Const32Value>(block, m_origin, 31));
+            outputLo = appendToBlock<Value>(block, SShr, m_origin, input.second, shift);
+            outputHi = appendToBlock<Value>(block, SShr, m_origin, input.second, appendToBlock<Const32Value>(block, m_origin, 31));
         } else if (opcode == ZShr) {
-            outputLo = appendToBlock<Value>(block, ZShr, m_origin, input.first, shift);
+            outputLo = appendToBlock<Value>(block, ZShr, m_origin, input.second, shift);
             outputHi = appendToBlock<Const32Value>(block, m_origin, 0);
         } else {
             RELEASE_ASSERT(opcode == Shl);
-            outputHi = appendToBlock<Value>(block, Shl, m_origin, input.second, shift);
+            outputHi = appendToBlock<Value>(block, Shl, m_origin, input.first, shift);
             outputLo = appendToBlock<Const32Value>(block, m_origin, 0);
         }
-        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputLo), appendToBlock<UpsilonValue>(block, m_origin, outputHi) };
         appendToBlock<Value>(block, Jump, m_origin);
         return ret;
     }
@@ -248,8 +248,8 @@ private:
         Value* outputHi;
         Value* outputLo;
         Value* rotationComplement = appendToBlock<Value>(block, Sub, m_origin, appendToBlock<Const32Value>(block, m_origin, 32), maskedRotation);
-        Value* inputHi = input.first;
-        Value* inputLo = input.second;
+        Value* inputHi = input.second;
+        Value* inputLo = input.first;
 
         if (opcode == RotR) {
             Value* rotatedLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, maskedRotation);
@@ -267,7 +267,7 @@ private:
             Value* rotatedIntoHiFromLo = appendToBlock<Value>(block, ZShr, m_origin, inputLo, rotationComplement);
             outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedHi, rotatedIntoHiFromLo);
         }
-        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputLo), appendToBlock<UpsilonValue>(block, m_origin, outputHi) };
         appendToBlock<Value>(block, Jump, m_origin);
         return ret;
     }
@@ -276,8 +276,8 @@ private:
     {
         Value* outputHi;
         Value* outputLo;
-        Value* inputHi = input.first;
-        Value* inputLo = input.second;
+        Value* inputHi = input.second;
+        Value* inputLo = input.first;
         Value* rotation = appendToBlock<Value>(block, Sub, m_origin, maskedRotation, appendToBlock<Const32Value>(block, m_origin, 32));
         Value* rotationComplement = appendToBlock<Value>(block, Sub, m_origin, appendToBlock<Const32Value>(block, m_origin, 32), rotation);
         if (opcode == RotR) {
@@ -296,7 +296,7 @@ private:
             Value* rotatedIntoHiFromHi = appendToBlock<Value>(block, ZShr, m_origin, inputHi, rotationComplement);
             outputHi = appendToBlock<Value>(block, BitOr, m_origin, rotatedIntoHiFromLo, rotatedIntoHiFromHi);
         }
-        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputHi), appendToBlock<UpsilonValue>(block, m_origin, outputLo) };
+        auto ret = std::pair { appendToBlock<UpsilonValue>(block, m_origin, outputLo), appendToBlock<UpsilonValue>(block, m_origin, outputHi) };
         appendToBlock<Value>(block, Jump, m_origin);
         return ret;
     }
@@ -308,7 +308,7 @@ private:
         return m_insertionSet.insert<CCallValue>(m_index, type, m_origin, Effects::none(), functionAddress, arg);
     }
 
-    void splitRange(const HeapRange& original, HeapRange&hi, HeapRange&lo)
+    void splitRange(const HeapRange& original, HeapRange&lo, HeapRange&hi)
     {
         if (original.distance() == 1) {
             // XXX: testb3 uses single-byte range for Int64 access.
@@ -321,7 +321,7 @@ private:
             RELEASE_ASSERT(original.distance() == bytesForWidth(Width64));
             hi = HeapRange(original.begin() + bytesForWidth(Width32), original.end());
             lo = HeapRange(original.begin(), original.begin() + bytesForWidth(Width32));
-            RELEASE_ASSERT(!lo.overlaps(hi));
+            RELEASE_ASSERT(!hi.overlaps(lo));
         }
     }
 
@@ -353,16 +353,16 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* hi = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
-            Value* lo = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
-            setMapping(m_value, hi, lo);
+            Value* hi = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* lo = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
+            setMapping(m_value, lo, hi);
             valueReplaced();
             return;
         }
         case Const64: {
             Value* hi = insert<Const32Value>(m_index, m_origin, (m_value->asInt() >> 32) & 0xffffffff);
             Value* lo = insert<Const32Value>(m_index, m_origin, m_value->asInt() & 0xffffffff);
-            setMapping(m_value, hi, lo);
+            setMapping(m_value, lo, hi);
             valueReplaced();
             return;
         }
@@ -374,11 +374,11 @@ private:
                 return;
             auto phi = getMapping(m_value->as<UpsilonValue>()->phi());
             auto input = getMapping(m_value->child(0));
-            UpsilonValue* hi = insert<UpsilonValue>(m_index, m_origin, input.first);
-            hi->setPhi(phi.first);
-            UpsilonValue* lo = insert<UpsilonValue>(m_index, m_origin, input.second);
-            lo->setPhi(phi.second);
-            setMapping(m_value, hi, lo);
+            UpsilonValue* lo = insert<UpsilonValue>(m_index, m_origin, input.first);
+            lo->setPhi(phi.first);
+            UpsilonValue* hi = insert<UpsilonValue>(m_index, m_origin, input.second);
+            hi->setPhi(phi.second);
+            setMapping(m_value, lo, hi);
             valueReplaced();
             return;
         }
@@ -401,8 +401,8 @@ private:
                     else {
                         auto childParts = getMapping(child);
 
-                        args.append(childParts.second);
                         args.append(childParts.first);
+                        args.append(childParts.second);
                     }
                     gprCount += Air::cCallArgumentRegisterCount(child->type());
                 } else {
@@ -418,7 +418,6 @@ private:
             cCall->appendArgs(args);
             if (m_value->type() == Int64) {
                 ASSERT(isARM_THUMB2());
-                // Result registers are allocated lo->hi on ARMv7, so undo that here.
                 setMapping(m_value, valueLo(cCall, m_index + 1), valueHi(cCall, m_index + 1));
                 valueReplaced();
             } else
@@ -430,7 +429,7 @@ private:
                 return;
 
             CheckValue* originalCheck = m_value->as<CheckValue>();
-            // Putting together Int64 values with valueHiLo needs to preceed the
+            // Putting together Int64 values with valueLoHi needs to preceed the
             // insertion of the PatchpointValue.
             Vector<Value*> args;
             for (size_t index = 0; index < m_value->numChildren(); ++index) {
@@ -440,7 +439,7 @@ private:
                     // The rep should have been correctly assigned when the
                     // Patchpoint was created, here we simply piece together the
                     // 64-bit value that it expects.
-                    args.append(valueHiLo(childParts.first, childParts.second));
+                    args.append(valueLoHi(childParts.first, childParts.second));
                 } else
                     args.append(child);
             }
@@ -461,7 +460,7 @@ private:
                 check->append(args[index], reps[index]);
             m_value->replaceWithIdentity(check);
             if (m_value->type() == Int64)
-                setMapping(m_value, valueHi(m_value), valueLo(m_value));
+                setMapping(m_value, valueLo(m_value), valueHi(m_value));
             return;
         }
         case Patchpoint: {
@@ -485,8 +484,8 @@ private:
                         || rep.kind() == ValueRep::SomeRegister
                         || rep.kind() == ValueRep::SomeLateRegister
                         || rep.isAny());
-                    args.append(childParts.second);
-                    highArgs.append(childParts.first);
+                    args.append(childParts.first);
+                    highArgs.append(childParts.second);
 
                     if (rep.isStack())
                         rep = B3::ValueRep::stack(checkedSum<intptr_t>(rep.offsetFromFP(), static_cast<intptr_t>(bytesForWidth(Width32))));
@@ -560,7 +559,7 @@ private:
                 else if (rep.isStackArgument())
                     rep = B3::ValueRep::stackArgument(checkedSum<intptr_t>(rep.offsetFromSP(), static_cast<intptr_t>(bytesForWidth(Width32))));
                 patchpoint->resultConstraints.append(rep);
-                setMapping(m_value, valueHi(patchpoint, m_index + 1), valueLo(patchpoint, m_index + 1));
+                setMapping(m_value, valueLo(patchpoint, m_index + 1), valueHi(patchpoint, m_index + 1));
                 valueReplaced();
                 return;
             }
@@ -575,10 +574,10 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* stitchedLeft = valueHiLo(left.first, left.second, m_index + 1);
-            Value* stitchedRight = valueHiLo(right.first, right.second, m_index + 1);
+            Value* stitchedLeft = valueLoHi(left.first, left.second, m_index + 1);
+            Value* stitchedRight = valueLoHi(right.first, right.second, m_index + 1);
             Value* stitched = insert<Value>(m_index + 1, m_value->opcode(), m_origin, stitchedLeft, stitchedRight);
-            setMapping(m_value, valueHi(stitched, m_index + 1), valueLo(stitched, m_index + 1));
+            setMapping(m_value, valueLo(stitched, m_index + 1), valueHi(stitched, m_index + 1));
             valueReplaced();
             return;
         }
@@ -605,8 +604,8 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
-            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
             Opcode combineOpcode = m_value->opcode() == Equal ? BitAnd : BitOr;
             Value* result = insert<Value>(m_index, combineOpcode, m_origin, highComparison, lowComparison);
             m_value->replaceWithIdentity(result);
@@ -648,9 +647,9 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
-            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.first, right.first);
-            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.second, right.second);
+            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
             Value* result = insert<Value>(m_index, BitOr, m_origin, highComparison, insert<Value>(m_index, BitAnd, m_origin, highEquality, lowComparison));
             m_value->replaceWithIdentity(result);
             return;
@@ -683,9 +682,9 @@ private:
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
             Opcode highComparisonOpcode = m_value->opcode() == BelowEqual ? Below : Above;
-            Value* highComparison = insert<Value>(m_index, highComparisonOpcode, m_origin, left.first, right.first);
-            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.first, right.first);
-            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* highComparison = insert<Value>(m_index, highComparisonOpcode, m_origin, left.second, right.second);
+            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.second, right.second);
+            Value* lowComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
             Value* result = insert<Value>(m_index, BitOr, m_origin, highComparison, insert<Value>(m_index, BitAnd, m_origin, highEquality, lowComparison));
             m_value->replaceWithIdentity(result);
             return;
@@ -718,10 +717,10 @@ private:
                 return;
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
-            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.first, right.first);
-            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.first, right.first);
+            Value* highComparison = insert<Value>(m_index, m_value->opcode(), m_origin, left.second, right.second);
+            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.second, right.second);
             Opcode lowComparisonOpcode = m_value->opcode() == LessThan ? Below : Above;
-            Value* lowComparison = insert<Value>(m_index, lowComparisonOpcode, m_origin, left.second, right.second);
+            Value* lowComparison = insert<Value>(m_index, lowComparisonOpcode, m_origin, left.first, right.first);
             Value* result = insert<Value>(m_index, BitOr, m_origin, highComparison, insert<Value>(m_index, BitAnd, m_origin, highEquality, lowComparison));
             m_value->replaceWithIdentity(result);
             return;
@@ -755,10 +754,10 @@ private:
             auto left = getMapping(m_value->child(0));
             auto right = getMapping(m_value->child(1));
             Opcode highComparisonOpcode = m_value->opcode() == LessEqual ? LessThan : GreaterThan;
-            Value* highComparison = insert<Value>(m_index, highComparisonOpcode, m_origin, left.first, right.first);
-            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.first, right.first);
+            Value* highComparison = insert<Value>(m_index, highComparisonOpcode, m_origin, left.second, right.second);
+            Value* highEquality = insert<Value>(m_index, Equal, m_origin, left.second, right.second);
             Opcode lowComparisonOpcode = m_value->opcode() == LessEqual ? BelowEqual : AboveEqual;
-            Value* lowComparison = insert<Value>(m_index, lowComparisonOpcode, m_origin, left.second, right.second);
+            Value* lowComparison = insert<Value>(m_index, lowComparisonOpcode, m_origin, left.first, right.first);
             Value* result = insert<Value>(m_index, BitOr, m_origin, highComparison, insert<Value>(m_index, BitAnd, m_origin, highEquality, lowComparison));
             m_value->replaceWithIdentity(result);
             return;
@@ -771,8 +770,8 @@ private:
             PatchpointValue* patchpoint = insert<PatchpointValue>(m_index + 1, Void, m_origin);
             patchpoint->effects = Effects::none();
             patchpoint->effects.terminal = true;
-            patchpoint->append(retValue.first, ValueRep::reg(GPRInfo::returnValueGPR2));
-            patchpoint->append(retValue.second, ValueRep::reg(GPRInfo::returnValueGPR));
+            patchpoint->append(retValue.second, ValueRep::reg(GPRInfo::returnValueGPR2));
+            patchpoint->append(retValue.first, ValueRep::reg(GPRInfo::returnValueGPR));
             patchpoint->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 params.context().code->emitEpilogue(jit);
             });
@@ -860,7 +859,7 @@ private:
             appendToBlock<Value>(check32, Branch, m_origin, isRotationBy32);
             check32->setSuccessors(swap, check);
 
-            appendToBlock<Value>(swap, Stitch, m_origin, input.second, input.first);
+            appendToBlock<Value>(swap, Stitch, m_origin, input.first, input.second);
             std::pair<UpsilonValue*, UpsilonValue*> resultRotationBy32 = std::pair {
                 appendToBlock<UpsilonValue>(swap, m_origin, input.second),
                 appendToBlock<UpsilonValue>(swap, m_origin, input.first)
@@ -904,12 +903,12 @@ private:
                 return;
             auto input = getMapping(m_value->child(0));
             Value* thirtyTwo = insert<Const32Value>(m_index, m_origin, 32);
-            Value* clzHi = insert<Value>(m_index, Clz, m_origin, input.first);
+            Value* clzHi = insert<Value>(m_index, Clz, m_origin, input.second);
             Value* useHi = insert<Value>(m_index, Below, m_origin, clzHi, thirtyTwo);
-            Value* clzLo = insert<Value>(m_index, Clz, m_origin, input.second);
+            Value* clzLo = insert<Value>(m_index, Clz, m_origin, input.first);
             Value* clzIfLo = insert<Value>(m_index, Add, m_origin, clzLo, thirtyTwo);
             Value* result = insert<Value>(m_index, Select, m_origin, useHi, clzHi, clzIfLo);
-            setMapping(m_value, insert<Const32Value>(m_index, m_origin, 0), result);
+            setMapping(m_value, result, insert<Const32Value>(m_index, m_origin, 0));
             valueReplaced();
             return;
         }
@@ -918,7 +917,7 @@ private:
             auto index = m_value->as<ExtractValue>()->index();
             if (originalTuple->type() == Int64) {
                 auto input = getMapping(originalTuple);
-                m_value->replaceWithIdentity(index ? input.second : input.first);
+                m_value->replaceWithIdentity(index ? input.first : input.second);
                 return;
             }
             auto originalTupleType = m_proc.tupleForType(originalTuple->type());
@@ -939,7 +938,7 @@ private:
             Value* hi = insert<ExtractValue>(m_index, m_origin, Int32, tuple, m_proc.tupleForType(originalTuple->type()).size() + highBitsIndex);
             Value* lo = insert<ExtractValue>(m_index, m_origin, Int32, tuple, index);
             valueReplaced();
-            setMapping(m_value, hi, lo);
+            setMapping(m_value, lo, hi);
             return;
         }
         case Abs:
@@ -978,10 +977,10 @@ private:
             return;
         case BitwiseCast: {
             if (m_value->type() == Int64) {
-                setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
+                setMapping(m_value, valueLo(m_value, m_index + 1), valueHi(m_value, m_index + 1));
             } else if (m_value->child(0)->type() == Int64) {
                 auto input = getMapping(m_value->child(0));
-                Value* cast = insert<Value>(m_index, BitwiseCast, m_origin, valueHiLo(input.first, input.second));
+                Value* cast = insert<Value>(m_index, BitwiseCast, m_origin, valueLoHi(input.first, input.second));
                 m_value->replaceWithIdentity(cast);
             }
 
@@ -996,14 +995,14 @@ private:
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            m_value->replaceWithIdentity(input.second);
+            m_value->replaceWithIdentity(input.first);
             return;
         }
         case TruncHigh: {
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            m_value->replaceWithIdentity(input.first);
+            m_value->replaceWithIdentity(input.second);
             return;
         }
         case Stitch: {
@@ -1033,22 +1032,22 @@ private:
             }
             auto left = getMapping(m_value->child(1));
             auto right = getMapping(m_value->child(2));
-            Value* selectHi = insert<Value>(m_index, Select, m_origin, selector, left.first, right.first);
-            Value* selectLo = insert<Value>(m_index, Select, m_origin, selector, left.second, right.second);
-            setMapping(m_value, selectHi, selectLo);
+            Value* selectHi = insert<Value>(m_index, Select, m_origin, selector, left.second, right.second);
+            Value* selectLo = insert<Value>(m_index, Select, m_origin, selector, left.first, right.first);
+            setMapping(m_value, selectLo, selectHi);
             valueReplaced();
             return;
         }
         case ZExt32: {
             Value* hi = insert<Const32Value>(m_index, m_origin, 0);
-            setMapping(m_value, hi, m_value->child(0));
+            setMapping(m_value, m_value->child(0), hi);
             valueReplaced();
             return;
         }
         case SExt32: {
             Value* signBit = insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), insert<Const32Value>(m_index, m_origin, 0x80000000));
             Value* hi = insert<Value>(m_index, SShr, m_origin, signBit, insert<Const32Value>(m_index, m_origin, 31));
-            setMapping(m_value, hi, m_value->child(0));
+            setMapping(m_value, m_value->child(0), hi);
             valueReplaced();
             return;
         }
@@ -1067,7 +1066,7 @@ private:
             Value* maskedInput = insert<Value>(m_index, BitAnd, m_origin, m_value->child(0), insert<Const32Value>(m_index, m_origin, inputMask));
             Value* lo = insert<Value>(m_index, BitOr, m_origin, maskedInput, shiftedExtension);
             Value* hi = extension;
-            setMapping(m_value, hi, lo);
+            setMapping(m_value, lo, hi);
             valueReplaced();
             return;
         }
@@ -1089,10 +1088,10 @@ private:
             if (!(m_value->type() == Int64 || (!hasUnalignedFPMemoryAccess() && m_value->type() == Double)))
                 return;
             HeapRange rangeHi, rangeLo;
-            splitRange(memory->range(), rangeHi, rangeLo);
+            splitRange(memory->range(), rangeLo, rangeHi);
 
             HeapRange fenceRangeHi, fenceRangeLo;
-            splitRange(memory->fenceRange(), fenceRangeHi, fenceRangeLo);
+            splitRange(memory->fenceRange(), fenceRangeLo, fenceRangeHi);
 
             // Assumes little-endian arch.
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
@@ -1108,10 +1107,10 @@ private:
             lo->setRange(rangeLo);
             lo->setFenceRange(fenceRangeLo);
             if (m_value->type() == Double) {
-                Value* result = insert<Value>(m_index, BitwiseCast, m_origin, valueHiLo(hi, lo));
+                Value* result = insert<Value>(m_index, BitwiseCast, m_origin, valueLoHi(lo, hi));
                 m_value->replaceWithIdentity(result);
             } else {
-                setMapping(m_value, hi, lo);
+                setMapping(m_value, lo, hi);
                 valueReplaced();
             }
             return;
@@ -1125,7 +1124,7 @@ private:
             std::pair<Value*, Value*> value;
             if (!hasUnalignedFPMemoryAccess() && m_value->child(0)->type() == Double) {
                 Value* asInt64 = insert<Value>(m_index, BitwiseCast, m_origin, m_value->child(0));
-                value = { valueHi(asInt64), valueLo(asInt64) };
+                value = { valueLo(asInt64), valueHi(asInt64) };
             } else if (!hasUnalignedFPMemoryAccess() && m_value->child(0)->type() == Float) {
                 Value* asInt32 = insert<Value>(m_index, BitwiseCast, m_origin, m_value->child(0));
                 MemoryValue* store = insert<MemoryValue>(m_index, Store, m_origin, asInt32, memory->child(1));
@@ -1140,20 +1139,20 @@ private:
                 return;
 
             HeapRange rangeHi, rangeLo;
-            splitRange(memory->range(), rangeHi, rangeLo);
+            splitRange(memory->range(), rangeLo, rangeHi);
 
             HeapRange fenceRangeHi, fenceRangeLo;
-            splitRange(memory->fenceRange(), fenceRangeHi, fenceRangeLo);
+            splitRange(memory->fenceRange(), fenceRangeLo, fenceRangeHi);
 
 
-            MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.first, memory->child(1));
+            MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.second, memory->child(1));
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
             RELEASE_ASSERT(!offsetHi.hasOverflowed());
             hi->setOffset(offsetHi);
             hi->setRange(rangeHi);
             hi->setFenceRange(fenceRangeHi);
 
-            MemoryValue* lo = insert<MemoryValue>(m_index, Store, m_origin, value.second, memory->child(1));
+            MemoryValue* lo = insert<MemoryValue>(m_index, Store, m_origin, value.first, memory->child(1));
             lo->setOffset(memory->offset());
             lo->setRange(rangeLo);
             lo->setFenceRange(fenceRangeLo);
@@ -1164,7 +1163,7 @@ private:
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            Value* arg = valueHiLo(input.first, input.second);
+            Value* arg = valueLoHi(input.first, input.second);
             m_value->replaceWithIdentity(unaryCCall(Math::f64_convert_s_i64, m_value->type(), arg));
             return;
         }
@@ -1172,7 +1171,7 @@ private:
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            Value* arg = valueHiLo(input.first, input.second);
+            Value* arg = valueLoHi(input.first, input.second);
             m_value->replaceWithIdentity(unaryCCall(Math::f32_convert_s_i64, m_value->type(), arg));
             return;
         }
@@ -1181,9 +1180,9 @@ private:
                 return;
             auto input = getMapping(m_value->child(0));
             Value* zero32 = insert<Const32Value>(m_index, m_origin, 0);
-            Value* zero = valueHiLo(zero32, zero32);
-            m_value->replaceWithIdentity(insert<Value>(m_index, Sub, m_origin, zero, valueHiLo(input.first, input.second)));
-            setMapping(m_value, valueHi(m_value, m_index + 1), valueLo(m_value, m_index + 1));
+            Value* zero = valueLoHi(zero32, zero32);
+            m_value->replaceWithIdentity(insert<Value>(m_index, Sub, m_origin, zero, valueLoHi(input.first, input.second)));
+            setMapping(m_value, valueLo(m_value, m_index + 1), valueHi(m_value, m_index + 1));
             return;
         }
         default: {

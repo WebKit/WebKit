@@ -2363,11 +2363,11 @@ static bool encodeArgument(IPC::Encoder& encoder, JSContextRef context, JSValueR
     if (type == "FrameID"_s) {
         uint64_t frameIdentifier = jsValue.get(globalObject, 0u).toBigUInt64(globalObject);
         uint64_t processIdentifier = jsValue.get(globalObject, 1u).toBigUInt64(globalObject);
-        if (!frameIdentifier || !processIdentifier)
+        if (!ObjectIdentifier<WebCore::FrameIdentifierType>::isValidIdentifier(frameIdentifier) || !ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processIdentifier))
             return false;
         encoder << WebCore::FrameIdentifier {
             ObjectIdentifier<WebCore::FrameIdentifierType>(frameIdentifier),
-            LegacyNullableObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
+            ObjectIdentifier<WebCore::ProcessIdentifierType>(processIdentifier)
         };
         return true;
     }

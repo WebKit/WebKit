@@ -693,6 +693,11 @@ SWServer& NetworkSession::ensureSWServer()
     return *m_swServer;
 }
 
+Ref<SWServer> NetworkSession::ensureProtectedSWServer()
+{
+    return ensureSWServer();
+}
+
 bool NetworkSession::hasServiceWorkerDatabasePath() const
 {
     return m_serviceWorkerInfo && !m_serviceWorkerInfo->databasePath.isEmpty();

@@ -206,13 +206,13 @@ void TileGrid::setTileNeedsDisplayInRect(const TileIndex& tileIndex, TileInfo& t
 void TileGrid::updateTileLayerProperties()
 {
     bool acceleratesDrawing = m_controller.acceleratesDrawing();
-    bool deepColor = m_controller.wantsDeepColorBackingStore();
+    auto contentsFormat = m_controller.contentsFormat();
     bool opaque = m_controller.tilesAreOpaque();
     Color tileDebugBorderColor = m_controller.tileDebugBorderColor();
     float tileDebugBorderWidth = m_controller.tileDebugBorderWidth();
     for (auto& tileInfo : m_tiles.values()) {
         tileInfo.layer->setAcceleratesDrawing(acceleratesDrawing);
-        tileInfo.layer->setWantsDeepColorBackingStore(deepColor);
+        tileInfo.layer->setContentsFormat(contentsFormat);
         tileInfo.layer->setOpaque(opaque);
         tileInfo.layer->setBorderColor(tileDebugBorderColor);
         tileInfo.layer->setBorderWidth(tileDebugBorderWidth);

@@ -5880,9 +5880,6 @@ AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
 
 bool Element::hasCustomState(const AtomString& state) const
 {
-    if (!document().settings().customStateSetEnabled())
-        return false;
-
     if (hasRareData()) {
         RefPtr customStates = elementRareData()->customStateSet();
         return customStates && customStates->has(state);

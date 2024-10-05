@@ -77,7 +77,7 @@ public:
     void didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
     void didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&) override;
-    void didFail(ScriptExecutionContextIdentifier, const ResourceError&) override;
+    void didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&) override;
 
     String stringResult();
     WEBCORE_EXPORT RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;

@@ -1,5 +1,6 @@
 WK_NOTIFICATION_COMMENT("These notifyd notifications are forwarded from the UIProcess to the WebProcess on embedded platforms.")
 
+WK_NOTIFICATION("_UUID_.notification")
 WK_NOTIFICATION("CPActiveCountryCodeChanged.Internal")
 WK_NOTIFICATION("MCManagedBooksChanged")
 WK_NOTIFICATION("PINPolicyChangedNotification")

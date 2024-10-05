@@ -69,8 +69,10 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALaye
     RELEASE_ASSERT(m_context.get());
     auto result = PlatformCALayerRemote::create(layerType, owner, *m_context);
 
-    if (result->canHaveBackingStore())
-        result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
+    if (result->canHaveBackingStore()) {
+        auto* localMainFrameView = m_context->webPage().localMainFrameView();
+        result->setContentsFormat(screenContentsFormat(localMainFrameView, owner));
+    }
 
     return WTFMove(result);
 }

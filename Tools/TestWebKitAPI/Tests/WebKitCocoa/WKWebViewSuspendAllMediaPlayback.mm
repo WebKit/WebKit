@@ -48,8 +48,12 @@ TEST(WKWebViewSuspendAllMediaPlayback, BeforeLoading)
     TestWebKitAPI::Util::run(&notPlaying);
 }
 
-
+// rdar://137236225
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
+TEST(WKWebViewSuspendAllMediaPlayback, DISABLED_AfterLoading)
+#else
 TEST(WKWebViewSuspendAllMediaPlayback, AfterLoading)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
