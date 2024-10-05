@@ -1884,3 +1884,7 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/280832 [ Sequoia wk2 ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html is a constant failure.
 [ Sequoia+ ] http/wpt/prefetch/link-prefetch-cross-origin-vary-cookie.html [ Failure ]
+
+# webkit.org/b/280922 REGRESSION(284532@main): [ macOS wk2 ] 2x tiled-drawing/* test are flaky failing. (280922)
+tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed.html [ Pass Failure ]
+tiled-drawing/tile-size-slow-zoomed.html [ Pass Failure ]
