@@ -4650,8 +4650,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         loadedWebArchive,
         replacedDataStoreForWebArchiveLoad
     ] (Ref<WebProcessProxy>&& processNavigatingTo, SuspendedPageProxy* destinationSuspendedPage, ASCIILiteral reason) mutable {
-        // If the navigation has been destroyed, then no need to proceed.
-        if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
+        // If the navigation has been destroyed or the frame has been replaced by PSON, then no need to proceed.
+        if (isClosed()
+            || !navigationState().hasNavigation(navigation->navigationID())
+            || (frame->isMainFrame() && frame.ptr() != m_mainFrame.get())) {
             receivedPolicyDecision(policyAction, navigation.ptr(), navigation->protectedWebsitePolicies().get(), WTFMove(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTFMove(message), WTFMove(completionHandler));
             return;
         }
