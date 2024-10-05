@@ -27,6 +27,7 @@
 
 #include "CSSNumericValue.h"
 #include "ScrollTimeline.h"
+#include "TimelineRange.h"
 #include "ViewTimelineOptions.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -64,11 +65,11 @@ public:
 
 private:
     struct Data {
-        float currentScrollOffset { 0 };
-        float coverRangeStart { 0 };
-        float coverRangeEnd { 0 };
+        float scrollOffset { 0 };
+        float rangeStart { 0 };
+        float rangeEnd { 0 };
     };
-    Data computeViewTimelineData() const;
+    Data computeViewTimelineData(const TimelineRange& = { }) const;
 
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);

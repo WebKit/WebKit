@@ -217,7 +217,7 @@ RenderBox* ViewTimeline::sourceRenderer() const
     return subjectRenderer->enclosingScrollableContainer();
 }
 
-ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
+ViewTimeline::Data ViewTimeline::computeViewTimelineData(const TimelineRange& range) const
 {
     if (!m_subject)
         return { };
@@ -240,7 +240,6 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     //   cover range
     // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
     //   corresponding to the start of the cover range
-    // TODO: take into account animation-range: https://drafts.csswg.org/scroll-animations-1/#animation-range
     // TODO: investigate best way to compute subjectOffset, as offsetTop uses offsetParent(), not the containing scroller
     // TODO: view timeline progress calculation: (currentScrollOffset - coverRangeStart) / (coverRangeEnd - coverRangeStart)
 
@@ -254,22 +253,57 @@ ViewTimeline::Data ViewTimeline::computeViewTimelineData() const
     auto insetStart = m_insets.start.value_or(Length());
     auto insetEnd = m_insets.end.value_or(insetStart);
 
-    auto coverRangeStart = subjectOffset - scrollContainerSize + insetEnd.value();
-    auto coverRangeEnd = subjectOffset + subjectSize - insetStart.value();
+    auto computeRangeStart = [&]() {
+        switch (range.start.name) {
+        case SingleTimelineRange::Name::Normal:
+        case SingleTimelineRange::Name::EntryCrossing:
+        case SingleTimelineRange::Name::Entry:
+        case SingleTimelineRange::Name::Cover:
+            return subjectOffset - scrollContainerSize;
+        case SingleTimelineRange::Name::Contain:
+            return subjectOffset - scrollContainerSize - subjectSize;
+        case SingleTimelineRange::Name::ExitCrossing:
+        case SingleTimelineRange::Name::Exit:
+            return subjectOffset;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0.f;
+        }
+    };
+    auto computeRangeEnd = [&]() {
+        switch (range.end.name) {
+        case SingleTimelineRange::Name::Normal:
+        case SingleTimelineRange::Name::ExitCrossing:
+        case SingleTimelineRange::Name::Exit:
+        case SingleTimelineRange::Name::Cover:
+            return subjectOffset + subjectSize;
+        case SingleTimelineRange::Name::Contain:
+            return subjectOffset;
+        case SingleTimelineRange::Name::Entry:
+        case SingleTimelineRange::Name::EntryCrossing:
+            return subjectOffset - scrollContainerSize - subjectSize;
+        default:
+            ASSERT_NOT_REACHED();
+            return 0.f;
+        }
+    };
 
-    return { currentScrollOffset, coverRangeStart, coverRangeEnd };
+    auto rangeStart = computeRangeStart() + insetEnd.value();
+    auto rangeEnd = computeRangeEnd() - insetStart.value();
+
+    return { currentScrollOffset, rangeStart + floatValueForLength(range.start.offset, rangeEnd - rangeStart), rangeEnd - floatValueForLength(range.end.offset, rangeEnd - rangeStart) };
 }
 
 const CSSNumericValue& ViewTimeline::startOffset() const
 {
     auto data = computeViewTimelineData();
-    return CSSNumericFactory::px(data.coverRangeStart);
+    return CSSNumericFactory::px(data.rangeStart);
 }
 
 const CSSNumericValue& ViewTimeline::endOffset() const
 {
     auto data = computeViewTimelineData();
-    return CSSNumericFactory::px(data.coverRangeEnd);
+    return CSSNumericFactory::px(data.rangeEnd);
 }
 
 } // namespace WebCore

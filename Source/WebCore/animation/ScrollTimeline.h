@@ -28,6 +28,7 @@
 #include "AnimationTimeline.h"
 #include "ScrollAxis.h"
 #include "ScrollTimelineOptions.h"
+#include "TimelineRange.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,11 +67,12 @@ protected:
 
 private:
     struct Data {
-        float maxScrollOffset = 0;
-        float scrollOffset = 0;
+        float scrollOffset { 0 };
+        float rangeStart { 0 };
+        float rangeEnd { 0 };
     };
 
-    Data computeScrollTimelineData() const;
+    Data computeScrollTimelineData(const TimelineRange& = { }) const;
 
     enum class Scroller : uint8_t { Nearest, Root, Self };
 
