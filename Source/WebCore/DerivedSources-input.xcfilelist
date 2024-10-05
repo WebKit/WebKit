@@ -901,6 +901,10 @@ $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.idl
 $(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamSink.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPattern.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternInit.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternOptions.idl
+$(PROJECT_DIR)/Modules/url-pattern/URLPatternResult.idl
 $(PROJECT_DIR)/Modules/web-locks/NavigatorLocks.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLock.idl
 $(PROJECT_DIR)/Modules/web-locks/WebLockGrantedCallback.idl

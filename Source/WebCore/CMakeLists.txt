@@ -65,6 +65,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/storage"
     "${WEBCORE_DIR}/Modules/streams"
+    "${WEBCORE_DIR}/Modules/url-pattern"
     "${WEBCORE_DIR}/Modules/web-locks"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webauthn"
@@ -662,6 +663,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/WritableStreamDefaultController.idl
     Modules/streams/WritableStreamDefaultWriter.idl
     Modules/streams/WritableStreamSink.idl
+
+    Modules/url-pattern/URLPattern.idl
+    Modules/url-pattern/URLPatternInit.idl
+    Modules/url-pattern/URLPatternOptions.idl
+    Modules/url-pattern/URLPatternResult.idl
 
     Modules/web-locks/NavigatorLocks.idl
     Modules/web-locks/WebLock.idl

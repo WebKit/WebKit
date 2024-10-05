@@ -646,6 +646,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.idl \
     $(WebCore)/Modules/streams/WritableStreamSink.idl \
     $(WebCore)/Modules/storage/StorageManager.idl \
+    $(WebCore)/Modules/url-pattern/URLPattern.idl \
+    $(WebCore)/Modules/url-pattern/URLPatternInit.idl \
+    $(WebCore)/Modules/url-pattern/URLPatternOptions.idl \
+    $(WebCore)/Modules/url-pattern/URLPatternResult.idl \
     $(WebCore)/Modules/web-locks/NavigatorLocks.idl \
     $(WebCore)/Modules/web-locks/WebLock.idl \
     $(WebCore)/Modules/web-locks/WebLockGrantedCallback.idl \

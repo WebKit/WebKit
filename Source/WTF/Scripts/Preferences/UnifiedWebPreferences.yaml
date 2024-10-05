@@ -7352,6 +7352,20 @@ UAVisualTransitionDetectionEnabled:
     WebCore:
       default: true
 
+URLPatternAPIEnabled:
+  type: bool
+  category: dom
+  status: unstable
+  humanReadableName: "URL Pattern API"
+  humanReadableDescription: "Enable URL Pattern API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
   type: bool

@@ -368,6 +368,7 @@ Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/streams/TransformStream.cpp
 Modules/streams/WritableStream.cpp
+Modules/url-pattern/URLPattern.cpp
 Modules/web-locks/WebLock.cpp
 Modules/web-locks/WebLockManager.cpp
 Modules/web-locks/WebLockRegistry.cpp
@@ -4608,6 +4609,10 @@ JSFragmentDirective.cpp
 JSFullscreenOptions.cpp
 JSUIEvent.cpp
 JSUIEventInit.cpp
+JSURLPattern.cpp
+JSURLPatternInit.cpp
+JSURLPatternOptions.cpp
+JSURLPatternResult.cpp
 JSURLSearchParams.cpp
 JSUserActivation.cpp
 JSUndoItem.cpp
