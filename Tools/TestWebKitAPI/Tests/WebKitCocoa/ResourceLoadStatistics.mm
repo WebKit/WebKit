@@ -42,6 +42,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -2208,4 +2209,32 @@ TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
     EXPECT_WK_STREQ([uiDelegate waitForAlert], @"true");
     EXPECT_FALSE(didSendSite2CookieHeader);
     didSendSite2CookieHeader = false;
+}
+
+TEST(ResourceLoadStatistics, LoginStatusRequiresPasswordAutoFill)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/index"_s, { @"" } }
+    });
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"LoginStatusAPIEnabled"] || [feature.key isEqualToString:@"LoginStatusAPIRequiresWebAuthnEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView loadRequest:server.request("/index"_s)];
+    [webView _didFillPasswordForUsername:@"example"];
+
+    [webView evaluateJavaScript:@"navigator.setStatus('logged-in');" completionHandler:^(id, NSError *) {
+        [webView evaluateJavaScript:@"navigator.isLoggedIn()" completionHandler:^(id result, NSError *) {
+            EXPECT_TRUE([result boolValue]);
+        }];
+    }];
+
+    [webView evaluateJavaScript:@"navigator.setStatus('logged-out');" completionHandler:^(id, NSError *) {
+        [webView evaluateJavaScript:@"navigator.isLoggedIn()" completionHandler:^(id result, NSError *) {
+            EXPECT_FALSE([result boolValue]);
+        }];
+    }];
 }

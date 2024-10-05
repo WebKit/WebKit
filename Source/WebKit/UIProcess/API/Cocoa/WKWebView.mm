@@ -2445,6 +2445,11 @@ WEBCORE_PRIVATE_COMMAND(pasteAndMatchStyle)
 
 #endif // PLATFORM(MAC)
 
+- (void)_didFillPasswordForUsername:(NSString *)username
+{
+    _page->didFillPasswordForUsername(username);
+}
+
 #pragma mark - iOS WKPrivate
 
 #if PLATFORM(IOS_FAMILY)

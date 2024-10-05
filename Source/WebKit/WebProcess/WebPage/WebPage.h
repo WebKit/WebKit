@@ -219,6 +219,7 @@ class IntRect;
 class KeyboardEvent;
 class LocalFrame;
 class LocalFrameView;
+class LoginStatus;
 class MediaPlaybackTargetContext;
 class MediaSessionCoordinator;
 class Page;
@@ -1488,6 +1489,7 @@ public:
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     void setLoginStatus(WebCore::RegistrableDomain&&, WebCore::IsLoggedIn, CompletionHandler<void()>&&);
     void isLoggedIn(WebCore::RegistrableDomain&&, CompletionHandler<void(bool)>&&);
+    void didFillPasswordForUsername(const String& username);
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
     void addDomainWithPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain);
     void clearPageLevelStorageAccess();
@@ -1825,7 +1827,6 @@ public:
 #endif
 
     void setTopContentInset(float);
-
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
