@@ -103,22 +103,8 @@ JSC_DEFINE_CUSTOM_GETTER(iteratorProtoConstructorGetter, (JSGlobalObject* global
 // https://tc39.es/proposal-iterator-helpers/#sec-set-iteratorprototype-constructor
 JSC_DEFINE_CUSTOM_SETTER(iteratorProtoConstructorSetter, (JSGlobalObject* globalObject, EncodedJSValue encodedThisValue, EncodedJSValue value, PropertyName propertyName))
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = JSValue::decode(encodedThisValue);
-
-    if (!thisValue.isObject())
-        return throwVMTypeError(globalObject, scope, "Iterator.prototype.constructor setter expected |this| to be an object."_s);
-
-    JSObject* thisObject = thisValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (thisObject == globalObject->iteratorPrototype())
-        return throwVMTypeError(globalObject, scope, "Iterator.prototype.constructor setter cannot be applied to Iterator.prototype."_s);
-
-    thisObject->putDirect(vm, propertyName, JSValue::decode(value), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-
+    bool shouldThrow = true;
+    setterThatIgnoresPrototypeProperties(globalObject, JSValue::decode(encodedThisValue), globalObject->iteratorPrototype(), propertyName, JSValue::decode(value), shouldThrow);
     return JSValue::encode(jsUndefined());
 }
 
@@ -132,22 +118,8 @@ JSC_DEFINE_CUSTOM_GETTER(iteratorProtoToStringTagGetter, (JSGlobalObject* global
 // https://tc39.es/proposal-iterator-helpers/#sec-set-iteratorprototype-@@tostringtag
 JSC_DEFINE_CUSTOM_SETTER(iteratorProtoToStringTagSetter, (JSGlobalObject* globalObject, EncodedJSValue encodedThisValue, EncodedJSValue value, PropertyName propertyName))
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = JSValue::decode(encodedThisValue);
-
-    if (!thisValue.isObject())
-        return throwVMTypeError(globalObject, scope, "Iterator.prototype[Symbol.toStringTag] setter expected |this| to be an object."_s);
-
-    JSObject* thisObject = thisValue.toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (thisObject == globalObject->iteratorPrototype())
-        return throwVMTypeError(globalObject, scope, "Iterator.prototype[Symbol.toStringTag] setter cannot be applied to Iterator.prototype."_s);
-
-    thisObject->putDirect(vm, propertyName, JSValue::decode(value), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-
+    bool shouldThrow = true;
+    setterThatIgnoresPrototypeProperties(globalObject, JSValue::decode(encodedThisValue), globalObject->iteratorPrototype(), propertyName, JSValue::decode(value), shouldThrow);
     return JSValue::encode(jsUndefined());
 }
 

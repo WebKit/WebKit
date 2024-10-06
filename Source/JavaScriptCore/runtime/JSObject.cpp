@@ -771,6 +771,32 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
     return true;
 }
 
+bool setterThatIgnoresPrototypeProperties(JSGlobalObject* globalObject, JSValue thisValue, JSObject* homeObject, PropertyName propertyName, JSValue value, bool shouldThrow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!thisValue.isObject())
+        return throwTypeError(globalObject, scope, "SetterThatIgnoresPrototypeProperties expected |this| to be an object."_s);
+
+    JSObject* thisObject = asObject(thisValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (thisObject == homeObject)
+        return throwTypeError(globalObject, scope, "SetterThatIgnoresPrototypeProperties was called on a home object."_s);
+
+    bool hasProperty = thisObject->hasOwnProperty(globalObject, propertyName);
+    RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
+
+    if (hasProperty) {
+        PutPropertySlot slot(thisObject, shouldThrow);
+        return thisObject->methodTable()->put(thisObject, globalObject, propertyName, value, slot);
+    }
+
+    return thisObject->createDataProperty(globalObject, propertyName, value, shouldThrow);
+}
+
 // https://tc39.es/ecma262/#sec-ordinaryset
 bool JSObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
