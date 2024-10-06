@@ -54,10 +54,10 @@ function performIteration(iterable)
 }
 
 @linkTimeConstant
-function wrappedIterator(iterator)
+function wrapIterator(iterator)
 {
     var wrapper = @Object.@create(null);
-    wrapper.@@iterator = function() { return iterator; }
+    wrapper.@@iterator = function() { return iterator; };
     return wrapper;
 }
 
@@ -74,7 +74,7 @@ function builtinSetIterable(set)
     // placed at `Symbol.iterator`.
     var iteratorFunction = set.@values;
     
-    return @wrappedIterator(iteratorFunction.@call(set));
+    return @wrapIterator(iteratorFunction.@call(set));
 }
 
 @linkTimeConstant
@@ -90,5 +90,5 @@ function builtinMapIterable(map)
     // placed at `Symbol.iterator`.
     var iteratorFunction = map.@entries;
 
-    return @wrappedIterator(iteratorFunction.@call(map));
+    return @wrapIterator(iteratorFunction.@call(map));
 }

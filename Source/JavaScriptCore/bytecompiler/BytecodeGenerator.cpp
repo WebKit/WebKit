@@ -4545,15 +4545,20 @@ void BytecodeGenerator::emitTryWithFinallyThatDoesNotShadowException(FinallyCont
     }
 }
 
-void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
+void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable, RegisterID* iteratorPtr)
 {
     bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
     auto shouldEmitAwait = isForAwait ? EmitAwait::Yes : EmitAwait::No;
     ASSERT(!isForAwait || (isAsyncFunctionParseMode(parseMode()) || isModuleParseMode(parseMode())));
 
-    RefPtr<RegisterID> subject = newTemporary();
-    emitNode(subject.get(), subjectNode);
-    RefPtr<RegisterID> iterator = isForAwait ? emitGetAsyncIterator(subject.get(), node) : emitGetGenericIterator(subject.get(), node);
+    RefPtr<RegisterID> iterator;
+    if (iteratorPtr)
+        iterator = iteratorPtr;
+    else {
+        RefPtr<RegisterID> subject = emitNode(newTemporary(), subjectNode);
+        iterator = isForAwait ? emitGetAsyncIterator(subject.get(), node) : emitGetGenericIterator(subject.get(), node);
+    }
+
     RefPtr<RegisterID> nextMethod = emitGetById(newTemporary(), iterator.get(), propertyNames().next);
 
     Ref<Label> loopDone = newLabel();

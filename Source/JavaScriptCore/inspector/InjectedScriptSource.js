@@ -121,7 +121,7 @@ function isPrimitiveValue(value)
     
 function createIterableWithoutPrototypeFromArguments(argumentsObject) {
     let iteratorFunction = argumentsObject.@@iterator;
-    return @wrappedIterator(iteratorFunction.@call(argumentsObject));
+    return @wrapIterator(iteratorFunction.@call(argumentsObject));
 }
 
 function max(a, b) {

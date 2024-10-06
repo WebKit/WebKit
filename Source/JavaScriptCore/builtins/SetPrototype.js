@@ -86,12 +86,8 @@ function union(other)
         @throwTypeError("Set.prototype.union expects other.keys to be callable");
 
     var iterator = keys.@call(other, keys);
-    var wrapper = {
-        @@iterator: function () { return iterator; }
-    };
-
     var result = @setClone(this);
-    for (var key of wrapper)
+    for (var key of @wrapIterator(iterator))
         result.@add(key);
 
     return result;
@@ -132,11 +128,7 @@ function intersection(other)
         } while (true);
     } else {
         var iterator = keys.@call(other, keys);
-        var wrapper = {
-            @@iterator: function () { return iterator; }
-        };
-
-        for (var key of wrapper) {
+        for (var key of @wrapIterator(iterator)) {
             if (this.@has(key))
                 result.@add(key);
         }
@@ -180,11 +172,7 @@ function difference(other)
         }
     } else {
         var iterator = keys.@call(other, keys);
-        var wrapper = {
-            @@iterator: function () { return iterator; }
-        };
-
-        for (var key of wrapper) {
+        for (var key of @wrapIterator(iterator)) {
             if (this.@has(key))
                 result.@delete(key);
         }
@@ -212,12 +200,8 @@ function symmetricDifference(other)
         @throwTypeError("Set.prototype.symmetricDifference expects other.keys to be callable");
 
     var iterator = keys.@call(other, keys);
-    var wrapper = {
-        @@iterator: function () { return iterator; }
-    };
-
     var result = @setClone(this);
-    for (var key of wrapper) {
+    for (var key of @wrapIterator(iterator)) {
         if (this.@has(key))
             result.@delete(key);
         else
@@ -287,11 +271,7 @@ function isSupersetOf(other)
         return false;
 
     var iterator = keys.@call(other, keys);
-    var wrapper = {
-        @@iterator: function () { return iterator; }
-    };
-
-    for (var key of wrapper) {
+    for (var key of @wrapIterator(iterator)) {
         if (!this.@has(key))
             return false;
     }
@@ -332,11 +312,7 @@ function isDisjointFrom(other)
         } while (true);
     } else {
         var iterator = keys.@call(other, keys);
-        var wrapper = {
-            @@iterator: function () { return iterator; }
-        };
-
-        for (var key of wrapper) {
+        for (var key of @wrapIterator(iterator)) {
             if (this.@has(key))
                 return false;
         }

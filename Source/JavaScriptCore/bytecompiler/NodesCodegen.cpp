@@ -4737,7 +4737,16 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitProfileControlFlow(m_statement->startOffset());
         generator.emitNode(dst, m_statement);
     });
-    generator.emitEnumeration(this, m_expr, extractor, this, forLoopSymbolTable);
+
+    if (m_expr->functionCallNodeKind() == FunctionCallNodeKind::Value
+        && static_cast<FunctionCallValueNode*>(m_expr)->m_expr->isBytecodeIntrinsicNode()
+        && static_cast<BytecodeIntrinsicNode*>(static_cast<FunctionCallValueNode*>(m_expr)->m_expr)->entry().linkTimeConstant() == LinkTimeConstant::wrapIterator) {
+        ASSERT(!isForAwait());
+        RefPtr<RegisterID> iterator = generator.emitNode(generator.newTemporary(), static_cast<FunctionCallValueNode*>(m_expr)->m_args->m_listNode);
+        generator.emitGenericEnumeration(this, m_expr, extractor, this, forLoopSymbolTable, iterator.get());
+    } else
+        generator.emitEnumeration(this, m_expr, extractor, this, forLoopSymbolTable);
+
     generator.popLexicalScope(this);
     generator.emitProfileControlFlow(m_statement->endOffset() + (m_statement->isBlock() ? 1 : 0));
 }
