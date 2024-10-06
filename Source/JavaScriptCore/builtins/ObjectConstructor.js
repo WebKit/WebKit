@@ -68,6 +68,8 @@ function groupBy(items, callback)
         @@iterator: function () { return iterator; }
     };
     for (var item of wrapper) {
+        if (k >= @MAX_SAFE_INTEGER)
+            @throwTypeError("The number of iterations exceeds 2**53 - 1");
         var key = @toPropertyKey(callback.@call(@undefined, item, k));
         var group = groups[key];
         if (!group) {
