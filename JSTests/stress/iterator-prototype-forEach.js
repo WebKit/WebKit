@@ -101,6 +101,15 @@ function shouldThrow(fn, error, message) {
 
 {
     const arr = [1, 2, 3, 4, 5];
+    const iter = arr[Symbol.iterator]();
+    assert(iter.forEach === Iterator.prototype.forEach);
+    const result = [];
+    iter.forEach(new Proxy((item, i) => { result.push([item, i]); }, {}));
+    sameArray(result, [[1, 0], [2, 1], [3, 2], [4, 3], [5, 4]]);
+}
+
+{
+    const arr = [1, 2, 3, 4, 5];
     shouldThrow(function () {
         Iterator.prototype.forEach.call(arr, (item, i) => {});
     }, TypeError, "Type error")

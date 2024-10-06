@@ -34,11 +34,8 @@
 #include "IteratorOperations.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
-#include "JSGlobalObject.h"
 #include "JSIteratorConstructor.h"
-#include "JSObject.h"
 #include "VMEntryScopeInlines.h"
-#include <wtf/PlatformCallingConventions.h>
 
 namespace JSC {
 
@@ -65,9 +62,9 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype-@@tostringtag
         putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, CustomGetterSetter::create(vm, iteratorProtoToStringTagGetter, iteratorProtoToStringTagSetter), static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.toarray
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toArray"_s, iteratorProtoFuncToArray, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Private);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toArray, iteratorProtoFuncToArray, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Private);
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.foreach
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("forEach"_s, iteratorProtoFuncForEach, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->forEach, iteratorProtoFuncForEach, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Private);
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.some
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().somePublicName(), jsIteratorPrototypeSomeCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.every
@@ -161,16 +158,30 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject
     if (!callbackArg.isCallable())
         return throwVMTypeError(globalObject, scope, "Iterator.prototype.forEach requires the callback argument to be callable."_s);
 
-    CachedCall cachedCall(globalObject, jsCast<JSFunction*>(asObject(callbackArg)), 2);
-    RETURN_IF_EXCEPTION(scope, { });
-    uint32_t count = 0;
-    forEachInIteratorProtocol(globalObject, thisValue, [&cachedCall, &count](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        cachedCall.callWithArguments(globalObject, jsUndefined(), nextItem, jsNumber(count++));
-        RETURN_IF_EXCEPTION(scope, void());
-    });
-    RETURN_IF_EXCEPTION(scope, { });
+    auto callData = JSC::getCallData(callbackArg);
+    ASSERT(callData.type != CallData::Type::None);
 
+    uint64_t counter = 0;
+
+    if (LIKELY(callData.type == CallData::Type::JS)) {
+        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(callbackArg), 2);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
+            cachedCall.callWithArguments(globalObject, jsUndefined(), nextItem, jsNumber(counter++));
+        });
+    } else {
+        forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
+            MarkedArgumentBuffer args;
+            args.append(nextItem);
+            args.append(jsNumber(counter++));
+            ASSERT(!args.hasOverflowed());
+
+            call(globalObject, callbackArg, callData, jsUndefined(), args);
+        });
+    }
+
+    RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(jsUndefined());
 }
 
