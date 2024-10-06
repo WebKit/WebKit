@@ -84,6 +84,7 @@ private:
     LinesCrossPositionList handleCrossAxisAlignmentForFlexLines(std::optional<LayoutUnit> crossAxisAvailableSpace, const LineRanges&, LinesCrossSizeList& flexLinesCrossSizeList) const;
 
     LayoutUnit maxContentForFlexItem(const LogicalFlexItem&) const;
+    LayoutUnit crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const;
 
     bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
     const ElementBox& flexContainer() const;

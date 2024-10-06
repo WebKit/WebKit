@@ -61,7 +61,7 @@ enum class AvoidanceReason : uint32_t {
     FlexBoxHasUnsupportedOverflow       = 1U << 7,
     // Unused                           = 1U << 8,
     // Unused                           = 1U << 9,
-    FlexBoxHasUnsupportedRowGap         = 1U << 10,
+    // Unused                           = 1U << 10,
     FlexBoxHasUnsupportedColumnGap      = 1U << 11,
     FlexBoxHasUnsupportedTypeOfRenderer = 1U << 12,
     FlexBoxHasMarginTrim                = 1U << 13,
@@ -130,9 +130,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
 
     if (mayHaveScrollbarOrScrollableOverflow(flexBoxStyle))
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
-
-    if (!flexBoxStyle.rowGap().isNormal())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedRowGap, reasons, includeReasons);
 
     if (!flexBoxStyle.columnGap().isNormal())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedColumnGap, reasons, includeReasons);
@@ -232,9 +229,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
         stream << "flex box has non-hidden overflow";
-        break;
-    case AvoidanceReason::FlexBoxHasUnsupportedRowGap:
-        stream << "flex box has unsupported row-gap value";
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedColumnGap:
         stream << "flex box has unsupported column-gap value";

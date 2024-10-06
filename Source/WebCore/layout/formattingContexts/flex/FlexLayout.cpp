@@ -116,11 +116,13 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstrain
 
     auto computeFlexItemRects = [&] {
         auto flexRects = LogicalFlexItemRects { flexItems.size() };
+        auto rowGapValue = FlexFormattingUtils::rowGapValue(flexContainer(), flexContainerConstraints.crossAxis.availableSize.value_or(0_lu));
         for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
             auto lineRange = lineRanges[lineIndex];
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
                 auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position;
-                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position;
+                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position + lineIndex * rowGapValue;
+
                 flexRects[flexItemIndex] = {
                     { flexItemMainPosition, flexItemCrossPosition, flexItemsMainSizeList[flexItemIndex], flexItemsCrossSizeList[flexItemIndex] },
                     { mainPositionAndMargins[flexItemIndex].marginStart, mainPositionAndMargins[flexItemIndex].marginEnd }, { crossPositionAndMargins[flexItemIndex].marginStart, crossPositionAndMargins[flexItemIndex].marginEnd }
@@ -478,10 +480,11 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
             size += flexLinesCrossSizeList[lineIndex];
         return size;
     }();
-    if (*crossAxisAvailableSpace <= linesCrossSize)
+    auto flexContainerUsedCrossSize = crossAxisAvailableSpaceForLineSizingAndAlignment(*crossAxisAvailableSpace, numberOfLines);
+    if (flexContainerUsedCrossSize <= linesCrossSize)
         return;
 
-    auto extraSpace = (*crossAxisAvailableSpace - linesCrossSize) / numberOfLines;
+    auto extraSpace = (flexContainerUsedCrossSize - linesCrossSize) / numberOfLines;
     for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
         flexLinesCrossSizeList[lineIndex] += extraSpace;
 }
@@ -784,7 +787,8 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
         return linesCrossSize;
     }();
     auto isSingleLineFlexContainer = this->isSingleLineFlexContainer() || lineRanges.size() == 1;
-    auto flexContainerUsedCrossSize = crossAxisAvailableSpace.value_or(flexLinesCrossSize);
+    auto flexContainerUsedCrossSize = crossAxisAvailableSpaceForLineSizingAndAlignment(crossAxisAvailableSpace.value_or(0_lu), lineRanges.size());
+
     // Align all flex lines per align-content.
     auto distributableCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
     auto initialOffset = [&]() -> LayoutUnit {
@@ -880,6 +884,13 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
         linesCrossPositionList[lineIndex] = (linesCrossPositionList[lineIndex - 1] + flexLinesCrossSizeList[lineIndex - 1]) + gap;
     return linesCrossPositionList;
+}
+
+LayoutUnit FlexLayout::crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const
+{
+    if (numberOfFlexLines == 1)
+        return crossAxisAvailableSpace;
+    return crossAxisAvailableSpace - (FlexFormattingUtils::rowGapValue(flexContainer(), crossAxisAvailableSpace) * (numberOfFlexLines - 1));
 }
 
 const ElementBox& FlexLayout::flexContainer() const

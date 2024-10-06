@@ -39,24 +39,33 @@ FlexFormattingUtils::FlexFormattingUtils(const FlexFormattingContext& flexFormat
 {
 }
 
-bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& flexBox)
+bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer)
 {
-    ASSERT(flexBox.isFlexBox());
-    auto flexDirection = flexBox.style().flexDirection();
-    return flexDirection == FlexDirection::Row || flexBox.style().flexDirection() == FlexDirection::RowReverse;
+    ASSERT(flexContainer.isFlexBox());
+    auto flexDirection = flexContainer.style().flexDirection();
+    return flexDirection == FlexDirection::Row || flexContainer.style().flexDirection() == FlexDirection::RowReverse;
 }
 
-bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexBox)
+bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)
 {
-    ASSERT(flexBox.isFlexBox());
-    auto flexDirection = flexBox.style().flexDirection();
+    ASSERT(flexContainer.isFlexBox());
+    auto flexDirection = flexContainer.style().flexDirection();
     return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
 }
 
-bool FlexFormattingUtils::areFlexLinesReversedInCrossAxis(const ElementBox& flexBox)
+bool FlexFormattingUtils::areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer)
 {
-    ASSERT(flexBox.isFlexBox());
-    return flexBox.style().flexWrap() == FlexWrap::Reverse;
+    ASSERT(flexContainer.isFlexBox());
+    return flexContainer.style().flexWrap() == FlexWrap::Reverse;
+}
+
+LayoutUnit FlexFormattingUtils::rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxHeight)
+{
+    ASSERT(flexContainer.isFlexBox());
+    auto& rowGap = flexContainer.style().rowGap();
+    if (rowGap.isNormal())
+        return { };
+    return valueForLength(rowGap.length(), flexContainercCntentBoxHeight);
 }
 
 LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const
