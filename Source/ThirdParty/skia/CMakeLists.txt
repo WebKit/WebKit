@@ -771,6 +771,7 @@ add_library(Skia STATIC
     src/sksl/SkSLUtil.cpp
     src/sksl/analysis/SkSLCanExitWithoutReturningValue.cpp
     src/sksl/analysis/SkSLCheckProgramStructure.cpp
+    src/sksl/analysis/SkSLCheckSymbolTableCorrectness.cpp
     src/sksl/analysis/SkSLFinalizationChecks.cpp
     src/sksl/analysis/SkSLGetLoopControlFlowInfo.cpp
     src/sksl/analysis/SkSLGetLoopUnrollInfo.cpp
@@ -937,6 +938,12 @@ target_compile_definitions(Skia PRIVATE
     SK_GAMMA_APPLY_TO_A8
 )
 
+# SK_DEBUG enables consistency checks. Most of the time this will not be
+# useful to develop WebKit, but provide a toggle that developers may flip
+# nevertheless to help catch incorrect Skia API uses when desired.
+option(SKIA_DEBUG "Enable internal Skia consistency checks" OFF)
+mark_as_advanced(SKIA_DEBUG)
+
 target_compile_definitions(Skia PUBLIC
     SK_DISABLE_LEGACY_GL_MAKE_NATIVE_INTERFACE
     SK_DISABLE_LEGACY_IMAGE_READBUFFER
@@ -949,10 +956,7 @@ target_compile_definitions(Skia PUBLIC
 
     SK_R32_SHIFT=16
 
-    # Use SK_RELEASE for all build types, even "Debug". The alternative
-    # is SK_DEBUG, which enables consistency checks useful to develop
-    # Skia itself, but not so much for WebKit development.
-    SK_RELEASE
+    $<IF:$<BOOL:${SKIA_DEBUG}>,SK_DEBUG,SK_RELEASE>
 )
 
 #
