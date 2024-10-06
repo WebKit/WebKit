@@ -56,16 +56,15 @@ void FlexFormattingContext::layout(const ConstraintsForFlexContent& constraints)
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
     auto flexLayout = FlexLayout { *this };
 
-    auto logicalFlexConstraints = [&] {
-        auto flexDirection = root().style().flexDirection();
-        auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        auto logicalVerticalSpace = flexDirectionIsInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
-        auto logicalHorizontalSpace = flexDirectionIsInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
+    auto mainAndCrossAxisGeometry = [&] {
+        auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
+        auto logicalHorizontalSpace = isMainAxisParallelWithInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
+        auto logicalVerticalSpace = isMainAxisParallelWithInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
 
-        return FlexLayout::LogicalConstraints { { logicalHorizontalSpace, { }, { }, { }, { }, { } }, { logicalVerticalSpace, { }, { }, { }, { }, { } } };
+        return FlexLayout::FlexContainerConstraints { { { }, { }, logicalHorizontalSpace }, { { }, { }, logicalVerticalSpace }, constraints.isSizedUnderMinMax() };
     };
 
-    auto flexItemRects = flexLayout.layout(logicalFlexConstraints(), logicalFlexItems);
+    auto flexItemRects = flexLayout.layout(mainAndCrossAxisGeometry(), logicalFlexItems);
     setFlexItemsGeometry(logicalFlexItems, flexItemRects, constraints);
 }
 

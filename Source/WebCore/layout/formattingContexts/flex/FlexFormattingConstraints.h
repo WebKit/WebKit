@@ -31,18 +31,21 @@ namespace WebCore {
 namespace Layout {
 
 struct ConstraintsForFlexContent : public ConstraintsForInFlowContent {
-    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace);
+    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace, bool isSizedUnderMinMax = false);
 
     std::optional<LayoutUnit> availableVerticalSpace() const { return m_availableVerticalSpace; }
     std::optional<LayoutUnit> minimumVerticalSpace() const { return m_minimumVerticalSpace; }
+    bool isSizedUnderMinMax() const { return m_isSizedUnderMinMax; }
 
 private:
+    bool m_isSizedUnderMinMax { false };
     std::optional<LayoutUnit> m_availableVerticalSpace;
     std::optional<LayoutUnit> m_minimumVerticalSpace;
 };
 
-inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace)
+inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace, bool isSizedUnderMinMax)
     : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), FlexContent)
+    , m_isSizedUnderMinMax(isSizedUnderMinMax)
     , m_availableVerticalSpace(availableVerticalSpace)
     , m_minimumVerticalSpace(minimumVerticalSpace)
 {
