@@ -32,6 +32,7 @@
 
 namespace Inspector {
 
+RemoteAutomationTarget::RemoteAutomationTarget() = default;
 RemoteAutomationTarget::~RemoteAutomationTarget() = default;
 
 void RemoteAutomationTarget::setIsPaired(bool paired)

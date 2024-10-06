@@ -38,7 +38,7 @@
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
+class RemoteInspectorSocketEndpoint {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Client {
@@ -64,23 +64,23 @@ public:
         virtual void didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, Status) = 0;
     };
 
-    static RemoteInspectorSocketEndpoint& singleton();
+    JS_EXPORT_PRIVATE static RemoteInspectorSocketEndpoint& singleton();
 
     RemoteInspectorSocketEndpoint();
-    ~RemoteInspectorSocketEndpoint();
+    JS_EXPORT_PRIVATE ~RemoteInspectorSocketEndpoint();
 
     std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort, Client&);
-    std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> listenInet(const char* address, uint16_t port, Listener&);
     void invalidateClient(Client&);
     void invalidateListener(Listener&);
 
-    void send(ConnectionID, std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE void send(ConnectionID, std::span<const uint8_t>);
 
-    std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> createClient(PlatformSocketType, Client&);
 
     std::optional<uint16_t> getPort(ConnectionID) const;
 
-    void disconnect(ConnectionID);
+    JS_EXPORT_PRIVATE void disconnect(ConnectionID);
 
 protected:
     struct BaseConnection {

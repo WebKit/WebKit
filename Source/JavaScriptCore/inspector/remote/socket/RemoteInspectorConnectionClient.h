@@ -39,15 +39,15 @@ namespace Inspector {
 
 class MessageParser;
 
-class JS_EXPORT_PRIVATE RemoteInspectorConnectionClient : public RemoteInspectorSocketEndpoint::Client {
+class RemoteInspectorConnectionClient : public RemoteInspectorSocketEndpoint::Client {
 public:
-    ~RemoteInspectorConnectionClient() override;
+    JS_EXPORT_PRIVATE ~RemoteInspectorConnectionClient() override;
 
-    std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
+    JS_EXPORT_PRIVATE std::optional<ConnectionID> connectInet(const char* serverAddr, uint16_t serverPort);
     std::optional<ConnectionID> createClient(PlatformSocketType);
-    void send(ConnectionID, std::span<const uint8_t>);
+    JS_EXPORT_PRIVATE void send(ConnectionID, std::span<const uint8_t>);
 
-    void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
+    JS_EXPORT_PRIVATE void didReceive(RemoteInspectorSocketEndpoint&, ConnectionID, Vector<uint8_t>&&) final;
 
     struct Event {
         String methodName;
@@ -61,7 +61,7 @@ public:
     virtual HashMap<String, CallHandler>& dispatchMap() = 0;
 
 protected:
-    std::optional<Vector<Ref<JSON::Object>>> parseTargetListJSON(const String&);
+    JS_EXPORT_PRIVATE std::optional<Vector<Ref<JSON::Object>>> parseTargetListJSON(const String&);
 
     static std::optional<Event> extractEvent(ConnectionID, Vector<uint8_t>&&);
 

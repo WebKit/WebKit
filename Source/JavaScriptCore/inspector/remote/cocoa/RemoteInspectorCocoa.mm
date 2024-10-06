@@ -854,6 +854,11 @@ void RemoteInspector::receivedPingSuccessMessage()
     m_shouldReconnectToRelayOnFailure = false;
 }
 
+void RemoteInspector::setNeedMachSandboxExtension(bool needExtension)
+{
+    needMachSandboxExtension = needExtension;
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)

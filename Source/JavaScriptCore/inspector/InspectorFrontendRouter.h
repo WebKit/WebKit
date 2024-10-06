@@ -33,21 +33,21 @@ namespace Inspector {
 
 class FrontendChannel;
 
-class JS_EXPORT_PRIVATE FrontendRouter : public RefCounted<FrontendRouter> {
+class FrontendRouter : public RefCounted<FrontendRouter> {
 public:
-    static Ref<FrontendRouter> create();
+    JS_EXPORT_PRIVATE static Ref<FrontendRouter> create();
 
     bool hasFrontends() const { return !m_connections.isEmpty(); }
-    bool hasLocalFrontend() const;
-    bool hasRemoteFrontend() const;
+    JS_EXPORT_PRIVATE bool hasLocalFrontend() const;
+    JS_EXPORT_PRIVATE bool hasRemoteFrontend() const;
 
     unsigned frontendCount() const { return m_connections.size(); }
 
-    void connectFrontend(FrontendChannel&);
-    void disconnectFrontend(FrontendChannel&);
-    void disconnectAllFrontends();
+    JS_EXPORT_PRIVATE void connectFrontend(FrontendChannel&);
+    JS_EXPORT_PRIVATE void disconnectFrontend(FrontendChannel&);
+    JS_EXPORT_PRIVATE void disconnectAllFrontends();
 
-    void sendEvent(const String& message) const;
+    JS_EXPORT_PRIVATE void sendEvent(const String& message) const;
     void sendResponse(const String& message) const;
 
 private:

@@ -41,12 +41,13 @@ class FrontendChannel;
 
 using TargetID = unsigned;
 
-class JS_EXPORT_PRIVATE RemoteControllableTarget {
+class RemoteControllableTarget {
 public:
-    virtual ~RemoteControllableTarget();
+    JS_EXPORT_PRIVATE RemoteControllableTarget();
+    JS_EXPORT_PRIVATE virtual ~RemoteControllableTarget();
 
-    void init();
-    void update();
+    JS_EXPORT_PRIVATE void init();
+    JS_EXPORT_PRIVATE void update();
 
     virtual void connect(FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) = 0;
     virtual void disconnect(FrontendChannel&) = 0;

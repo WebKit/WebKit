@@ -38,6 +38,10 @@
 
 namespace Inspector {
 
+RemoteInspectionTarget::RemoteInspectionTarget() = default;
+
+RemoteInspectionTarget::~RemoteInspectionTarget() = default;
+
 bool RemoteInspectionTarget::remoteControlAllowed() const
 {
     return allowsInspectionByPolicy() || hasLocalDebugger();

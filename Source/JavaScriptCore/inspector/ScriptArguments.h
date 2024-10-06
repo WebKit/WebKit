@@ -44,18 +44,18 @@ class JSGlobalObject;
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE ScriptArguments : public RefCounted<ScriptArguments> {
+class ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static Ref<ScriptArguments> create(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-    ~ScriptArguments();
+    JS_EXPORT_PRIVATE static Ref<ScriptArguments> create(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    JS_EXPORT_PRIVATE ~ScriptArguments();
 
-    JSC::JSValue argumentAt(size_t) const;
+    JS_EXPORT_PRIVATE JSC::JSValue argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
-    JSC::JSGlobalObject* globalObject() const;
+    JS_EXPORT_PRIVATE JSC::JSGlobalObject* globalObject() const;
 
-    bool getFirstArgumentAsString(String& result) const;
-    Vector<String> getArgumentsAsStrings() const;
+    JS_EXPORT_PRIVATE bool getFirstArgumentAsString(String& result) const;
+    JS_EXPORT_PRIVATE Vector<String> getArgumentsAsStrings() const;
     bool isEqual(const ScriptArguments&) const;
 
     static String truncateStringForConsoleMessage(const String& message)

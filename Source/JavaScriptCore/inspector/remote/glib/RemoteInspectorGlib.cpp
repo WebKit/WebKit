@@ -320,6 +320,16 @@ void RemoteInspector::requestAutomationSession(const char* sessionID, const Clie
     updateClientCapabilities();
 }
 
+void RemoteInspector::setInspectorServerAddress(CString&& address)
+{
+    s_inspectorServerAddress = WTFMove(address);
+}
+
+const CString& RemoteInspector::inspectorServerAddress()
+{
+    return s_inspectorServerAddress;
+}
+
 } // namespace Inspector
 
 #endif // ENABLE(REMOTE_INSPECTOR)
