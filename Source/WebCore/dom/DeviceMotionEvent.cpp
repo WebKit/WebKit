@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,28 +80,6 @@ static std::optional<DeviceMotionEvent::RotationRate> convert(const DeviceMotion
     return DeviceMotionEvent::RotationRate { rotationRate->alpha(), rotationRate->beta(), rotationRate->gamma() };
 }
 
-static RefPtr<DeviceMotionData::Acceleration> convert(std::optional<DeviceMotionEvent::Acceleration>&& acceleration)
-{
-    if (!acceleration)
-        return nullptr;
-
-    if (!acceleration->x && !acceleration->y && !acceleration->z)
-        return nullptr;
-
-    return DeviceMotionData::Acceleration::create(acceleration->x, acceleration->y, acceleration->z);
-}
-
-static RefPtr<DeviceMotionData::RotationRate> convert(std::optional<DeviceMotionEvent::RotationRate>&& rotationRate)
-{
-    if (!rotationRate)
-        return nullptr;
-
-    if (!rotationRate->alpha && !rotationRate->beta && !rotationRate->gamma)
-        return nullptr;
-
-    return DeviceMotionData::RotationRate::create(rotationRate->alpha, rotationRate->beta, rotationRate->gamma);
-}
-
 std::optional<DeviceMotionEvent::Acceleration> DeviceMotionEvent::acceleration() const
 {
     RefPtr acceleration = m_deviceMotionData->acceleration();
@@ -120,18 +98,9 @@ std::optional<DeviceMotionEvent::RotationRate> DeviceMotionEvent::rotationRate()
     return convert(rotationRate.get());
 }
 
-std::optional<double> DeviceMotionEvent::interval() const
+double DeviceMotionEvent::interval() const
 {
     return m_deviceMotionData->interval();
-}
-
-void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<DeviceMotionEvent::Acceleration>&& acceleration, std::optional<DeviceMotionEvent::Acceleration>&& accelerationIncludingGravity, std::optional<DeviceMotionEvent::RotationRate>&& rotationRate, std::optional<double> interval)
-{
-    if (isBeingDispatched())
-        return;
-
-    initEvent(type, bubbles, cancelable);
-    m_deviceMotionData = DeviceMotionData::create(convert(WTFMove(acceleration)), convert(WTFMove(accelerationIncludingGravity)), convert(WTFMove(rotationRate)), interval);
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
