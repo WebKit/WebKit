@@ -455,6 +455,8 @@ for this property.
 
 - (void)_disableURLSchemeCheckInDataDetectors WK_API_AVAILABLE(ios(16.0));
 
+- (BOOL)_gpuProcessHasAccessToMachService:(NSString *)service WK_API_AVAILABLE(macos(13.0), ios(16.0));
+
 /*! @abstract If the WKWebView was created with _shouldAllowUserInstalledFonts = NO,
  the web process will automatically use an in-process font registry, and its sandbox
  will be restricted to forbid access to fontd. Otherwise, the web process will use
