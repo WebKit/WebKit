@@ -26,7 +26,7 @@ enum class WebKit::PreconnectOnly : bool;
 enum class WebKit::NavigatingToAppBoundDomain : bool;
 
 class WebKit::NetworkLoadParameters {
-    WebKit::WebPageProxyIdentifier webPageProxyID;
+    Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::PageIdentifier> webPageID;
     Markable<WebCore::FrameIdentifier> webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;

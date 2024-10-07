@@ -405,7 +405,7 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     else if (NetworkIssueReporter::shouldReport([m_task _incompleteTaskMetrics])) {
         if (auto session = networkSession())
-            session->reportNetworkIssue(m_webPageProxyID, firstRequest().url());
+            session->reportNetworkIssue(*m_webPageProxyID, firstRequest().url());
     }
 #endif
     NetworkDataTask::didReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get())), WTFMove(completionHandler));

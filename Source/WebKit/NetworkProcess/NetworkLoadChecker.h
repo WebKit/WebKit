@@ -63,7 +63,7 @@ public:
     enum class LoadType : bool { MainFrame, Other };
 
     static Ref<NetworkLoadChecker> create(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry,
-        WebCore::FetchOptions&& options, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::HTTPHeaderMap&& originalRequestHeaders,
+        WebCore::FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, WebCore::HTTPHeaderMap&& originalRequestHeaders,
         URL&& url, DocumentURL&& documentURL, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, RefPtr<WebCore::SecurityOrigin>&& topOrigin,
         RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy,
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other)
@@ -123,7 +123,7 @@ public:
     bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
 
 private:
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, WebPageProxyIdentifier, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
+    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
 
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     const WebCore::OriginAccessPatterns& originAccessPatterns() const;
@@ -165,7 +165,7 @@ private:
     OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
-    WebPageProxyIdentifier m_webPageProxyID;
+    Markable<WebPageProxyIdentifier> m_webPageProxyID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
     WebCore::HTTPHeaderMap m_firstRequestHeaders; // Needed for CORS checks.
     URL m_url;

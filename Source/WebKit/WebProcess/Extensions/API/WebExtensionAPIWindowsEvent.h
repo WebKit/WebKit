@@ -68,7 +68,7 @@ private:
         setPropertyPath(toAPIString(type), &parentObject);
     }
 
-    WebPageProxyIdentifier m_pageProxyIdentifier;
+    Markable<WebPageProxyIdentifier> m_pageProxyIdentifier;
     WebExtensionEventListenerType m_type;
     ListenerVector m_listeners;
 };

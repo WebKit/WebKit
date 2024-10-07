@@ -268,7 +268,7 @@ private:
     bool m_firstNetworkProcessCreated { false };
 
     struct StorageAccessRequestRecordValue {
-        WebPageProxyIdentifier webPageProxyID;
+        Markable<WebPageProxyIdentifier> webPageProxyID;
         Markable<WallTime> lastRequestTime;
         WallTime lastLoadTime;
     };

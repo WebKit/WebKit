@@ -880,7 +880,7 @@ void GPUProcessProxy::microphoneMuteStatusChanged(bool isMuting)
     ASSERT(m_lastPageUsingMicrophone);
     if (!m_lastPageUsingMicrophone)
         return;
-    if (RefPtr page = WebProcessProxy::webPage(m_lastPageUsingMicrophone))
+    if (RefPtr page = WebProcessProxy::webPage(*m_lastPageUsingMicrophone))
         page->microphoneMuteStatusChanged(isMuting);
 }
 

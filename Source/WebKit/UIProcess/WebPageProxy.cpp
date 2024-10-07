@@ -10883,6 +10883,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     RefPtr pageClient = this->pageClient();
 
     WebPageCreationParameters parameters {
+        .webPageProxyIdentifier = identifier(),
         .pageGroupData = m_pageGroup->data(),
         .visitedLinkTableID = m_visitedLinkStore->identifier(),
         .userContentControllerParameters = userContentController->parameters(),
@@ -10898,7 +10899,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.activityState = internals().activityState;
     parameters.drawingAreaType = drawingArea.type();
     parameters.drawingAreaIdentifier = drawingArea.identifier();
-    parameters.webPageProxyIdentifier = identifier();
     parameters.store = preferencesStore();
     parameters.isEditable = m_isEditable;
     parameters.underlayColor = internals().underlayColor;

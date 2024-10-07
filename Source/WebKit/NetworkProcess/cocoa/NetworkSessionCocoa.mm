@@ -1529,19 +1529,19 @@ void NetworkSessionCocoa::initializeNSURLSessionsInSet(SessionSet& sessionSet, N
     RELEASE_LOG_IF(cookieAcceptPolicy == NSHTTPCookieAcceptPolicyNever, NetworkSession, "Creating network session with ID %" PRIu64 " that will not accept cookies.", m_sessionID.toUInt64());
 }
 
-SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID)
+SessionSet& NetworkSessionCocoa::sessionSetForPage(std::optional<WebPageProxyIdentifier> webPageProxyID)
 {
-    SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
+    SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(*webPageProxyID) : nullptr;
     return sessionSet ? *sessionSet : m_defaultSessionSet.get();
 }
 
-const SessionSet& NetworkSessionCocoa::sessionSetForPage(WebPageProxyIdentifier webPageProxyID) const
+const SessionSet& NetworkSessionCocoa::sessionSetForPage(std::optional<WebPageProxyIdentifier> webPageProxyID) const
 {
-    SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(webPageProxyID) : nullptr;
+    SessionSet* sessionSet = webPageProxyID ? m_perPageSessionSets.get(*webPageProxyID) : nullptr;
     return sessionSet ? *sessionSet : m_defaultSessionSet.get();
 }
 
-SessionWrapper& NetworkSessionCocoa::initializeEphemeralStatelessSessionIfNeeded(WebPageProxyIdentifier webPageProxyID, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
+SessionWrapper& NetworkSessionCocoa::initializeEphemeralStatelessSessionIfNeeded(std::optional<WebPageProxyIdentifier> webPageProxyID, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     return sessionSetForPage(webPageProxyID).initializeEphemeralStatelessSessionIfNeeded(isNavigatingToAppBoundDomain, *this);
 }
@@ -1572,7 +1572,7 @@ SessionWrapper& SessionSet::initializeEphemeralStatelessSessionIfNeeded(Navigati
     return ephemeralStatelessSession;
 }
 
-SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(std::optional<WebPageProxyIdentifier> webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
@@ -1601,7 +1601,7 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifie
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)
-SessionWrapper& NetworkSessionCocoa::appBoundSession(WebPageProxyIdentifier webPageProxyID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+SessionWrapper& NetworkSessionCocoa::appBoundSession(std::optional<WebPageProxyIdentifier> webPageProxyID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     

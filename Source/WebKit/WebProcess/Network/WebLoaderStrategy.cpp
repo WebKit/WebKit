@@ -194,7 +194,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         .resourceID = identifier
     };
     if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoaderClient))
-        trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
+        trackingParameters.webPageProxyID = webFrameLoaderClient->webPageProxyID();
     else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = workerFrameLoaderClient->webPageProxyID();
 
@@ -712,7 +712,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     auto* page = webPage ? webPage->corePage() : nullptr;
 
-    auto webPageProxyID = webPage ? webPage->webPageProxyIdentifier() : WebPageProxyIdentifier { };
+    auto webPageProxyID = webPage ? std::optional { webPage->webPageProxyIdentifier() } : std::nullopt;
     auto pageID = webPage ? std::optional { webPage->identifier() } : std::nullopt;
     auto frameID = webFrame ? std::optional { webFrame->frameID() } : std::nullopt;
 

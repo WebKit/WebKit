@@ -102,7 +102,7 @@ void WebURLSchemeHandler::taskCompleted(WebPageProxyIdentifier pageID, WebURLSch
 {
     auto takenTask = m_tasks.take({ task.resourceLoaderID(), pageID });
     ASSERT_UNUSED(takenTask, takenTask == &task);
-    removeTaskFromPageMap(task.pageProxyID(), task.resourceLoaderID());
+    removeTaskFromPageMap(*task.pageProxyID(), task.resourceLoaderID());
 
     platformTaskCompleted(task);
 }

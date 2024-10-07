@@ -82,7 +82,7 @@ public:
 
     static ASCIILiteral supplementName();
 
-    void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const WebCore::SecurityOriginData*, const WebCore::AuthenticationChallenge&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
+    void didReceiveAuthenticationChallenge(PAL::SessionID, std::optional<WebPageProxyIdentifier>, const WebCore::SecurityOriginData*, const WebCore::AuthenticationChallenge&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 
     void completeAuthenticationChallenge(AuthenticationChallengeIdentifier, AuthenticationChallengeDisposition, WebCore::Credential&&);
@@ -93,12 +93,12 @@ private:
     Ref<NetworkProcess> protectedProcess() const;
     struct Challenge {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        Challenge(WebPageProxyIdentifier pageID, const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
+        Challenge(std::optional<WebPageProxyIdentifier> pageID, const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
             : pageID(pageID)
             , challenge(challenge)
             , completionHandler(WTFMove(completionHandler)) { }
         
-        WebPageProxyIdentifier pageID;
+        Markable<WebPageProxyIdentifier> pageID;
         WebCore::AuthenticationChallenge challenge;
         ChallengeCompletionHandler completionHandler;
     };
@@ -112,7 +112,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     AuthenticationChallengeIdentifier addChallengeToChallengeMap(UniqueRef<Challenge>&&);
-    bool shouldCoalesceChallenge(WebPageProxyIdentifier, AuthenticationChallengeIdentifier, const WebCore::AuthenticationChallenge&) const;
+    bool shouldCoalesceChallenge(std::optional<WebPageProxyIdentifier>, AuthenticationChallengeIdentifier, const WebCore::AuthenticationChallenge&) const;
 
     Vector<AuthenticationChallengeIdentifier> coalesceChallengesMatching(AuthenticationChallengeIdentifier) const;
 

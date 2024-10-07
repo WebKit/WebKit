@@ -213,7 +213,7 @@ private:
     WebCore::IntDegrees m_orientation { 0 };
     WeakHashSet<WebPageProxy> m_pagesListeningToVoiceActivity;
     bool m_shouldListenToVoiceActivity { false };
-    WebPageProxyIdentifier m_lastPageUsingMicrophone;
+    Markable<WebPageProxyIdentifier> m_lastPageUsingMicrophone;
     bool m_isMicrophoneMuteStatusAPIEnabled { false };
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)

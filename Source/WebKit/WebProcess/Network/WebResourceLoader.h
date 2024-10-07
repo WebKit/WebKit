@@ -60,7 +60,7 @@ enum class PrivateRelayed : bool;
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
     struct TrackingParameters {
-        WebPageProxyIdentifier webPageProxyID { };
+        Markable<WebPageProxyIdentifier> webPageProxyID { };
         Markable<WebCore::PageIdentifier> pageID;
         Markable<WebCore::FrameIdentifier> frameID;
         Markable<WebCore::ResourceLoaderIdentifier> resourceID;

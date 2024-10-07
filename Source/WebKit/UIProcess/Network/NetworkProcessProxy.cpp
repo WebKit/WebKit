@@ -514,11 +514,7 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, connection(), nullptr);
 #endif
 
-    RefPtr<WebPageProxy> page;
-    if (pageID)
-        page = WebProcessProxy::webPage(pageID);
-
-    if (page) {
+    if (RefPtr page = WebProcessProxy::webPage(pageID)) {
         page->didReceiveAuthenticationChallengeProxy(WTFMove(authenticationChallenge), negotiatedLegacyTLS ? NegotiatedLegacyTLS::Yes : NegotiatedLegacyTLS::No);
         return;
     }
@@ -542,29 +538,26 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
 
 void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
 {
-    RefPtr<WebPageProxy> page;
-    if (pageID)
-        page = WebProcessProxy::webPage(pageID);
-    if (page)
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
         page->negotiatedLegacyTLS();
 }
 
 void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, const URL& url)
 {
-    if (auto page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
+    if (auto page = WebProcessProxy::webPage(pageID))
         page->didNegotiateModernTLS(url);
 }
 
 void NetworkProcessProxy::didBlockLoadToKnownTracker(WebPageProxyIdentifier pageID, const URL& url)
 {
-    if (auto page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
+    if (auto page = WebProcessProxy::webPage(pageID))
         page->didBlockLoadToKnownTracker(url);
 }
 
 void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
 {
     RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation: pageID=%" PRIu64 ", navigationID=%" PRIu64 ", browsingContextGroupSwitchDecision=%u, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, this, pageID.toUInt64(), navigationID.toUInt64(), (unsigned)browsingContextGroupSwitchDecision, existingNetworkResourceLoadIdentifierToResume.toUInt64());
-    if (auto page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
+    if (auto page = WebProcessProxy::webPage(pageID))
         page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume, WTFMove(completionHandler));
     else
         completionHandler(false);

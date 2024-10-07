@@ -35,7 +35,7 @@ class WebPageProxy;
 
 @interface WKBrowsingContextHandle ()
 
-@property (nonatomic, readonly, getter=_pageProxyID) WebKit::WebPageProxyIdentifier pageProxyID;
+@property (nonatomic, readonly, getter=_pageProxyID) Markable<WebKit::WebPageProxyIdentifier> pageProxyID;
 @property (nonatomic, readonly, getter=_webPageID) uint64_t webPageID;
 
 - (id)_initWithPageProxy:(NakedRef<WebKit::WebPageProxy>)page;

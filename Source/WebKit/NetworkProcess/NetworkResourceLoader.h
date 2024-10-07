@@ -121,11 +121,12 @@ public:
     WebCore::ResourceLoaderIdentifier coreIdentifier() const { return *m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return *m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return *m_parameters.webPageID; }
+    WebPageProxyIdentifier webPageProxyID() const { return *m_parameters.webPageProxyID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
     NetworkResourceLoadIdentifier identifier() const { return m_resourceLoadID; }
     const URL& firstResponseURL() const { return m_firstResponseURL; }
 
-    NetworkCache::GlobalFrameID globalFrameID() { return { m_parameters.webPageProxyID, pageID(), frameID() }; }
+    NetworkCache::GlobalFrameID globalFrameID() { return { webPageProxyID(), pageID(), frameID() }; }
 
     struct SynchronousLoadData;
 

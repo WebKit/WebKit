@@ -95,7 +95,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
         m_request = request;
     }
 
-    auto page = WebProcessProxy::webPage(m_pageProxyID);
+    RefPtr page = m_pageProxyID ? WebProcessProxy::webPage(*m_pageProxyID) : nullptr;
     if (!page || !m_process)
         return ExceptionType::None;
 
@@ -220,7 +220,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     }
 
     m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_resourceLoaderID, error), *m_webPageID);
-    m_urlSchemeHandler->taskCompleted(pageProxyID(), *this);
+    m_urlSchemeHandler->taskCompleted(*pageProxyID(), *this);
 
     return ExceptionType::None;
 }
@@ -229,7 +229,7 @@ void WebURLSchemeTask::pageDestroyed()
 {
     ASSERT(RunLoop::isMain());
 
-    m_pageProxyID = { };
+    m_pageProxyID = std::nullopt;
     m_webPageID = std::nullopt;
     m_process = nullptr;
     m_stopped = true;

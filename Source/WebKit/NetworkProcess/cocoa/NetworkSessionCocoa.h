@@ -126,7 +126,7 @@ public:
     NetworkSessionCocoa(NetworkProcess&, const NetworkSessionCreationParameters&);
     ~NetworkSessionCocoa();
 
-    SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(WebPageProxyIdentifier, NavigatingToAppBoundDomain);
+    SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(std::optional<WebPageProxyIdentifier>, NavigatingToAppBoundDomain);
 
     const String& boundInterfaceIdentifier() const;
     const String& sourceApplicationBundleIdentifier() const;
@@ -157,7 +157,7 @@ public:
     void clearAppBoundSession() override;
 #endif
 
-    SessionWrapper& sessionWrapperForTask(WebPageProxyIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
+    SessionWrapper& sessionWrapperForTask(std::optional<WebPageProxyIdentifier>, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
     _NSHSTSStorage *hstsStorage() const;
@@ -187,7 +187,7 @@ private:
     SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
 
 #if ENABLE(APP_BOUND_DOMAINS)
-    SessionWrapper& appBoundSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy);
+    SessionWrapper& appBoundSession(std::optional<WebPageProxyIdentifier>, WebCore::StoredCredentialsPolicy);
 #endif
 
     void donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&) final;
@@ -214,8 +214,8 @@ private:
     HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
 
     void initializeNSURLSessionsInSet(SessionSet&, NSURLSessionConfiguration *);
-    SessionSet& sessionSetForPage(WebPageProxyIdentifier);
-    const SessionSet& sessionSetForPage(WebPageProxyIdentifier) const;
+    SessionSet& sessionSetForPage(std::optional<WebPageProxyIdentifier>);
+    const SessionSet& sessionSetForPage(std::optional<WebPageProxyIdentifier>) const;
     void invalidateAndCancelSessionSet(SessionSet&);
     
     String m_boundInterfaceIdentifier;

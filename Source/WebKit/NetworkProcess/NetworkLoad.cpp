@@ -237,7 +237,7 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLega
     }
 
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
-        m_networkProcess->authenticationManager().negotiatedLegacyTLS(m_parameters.webPageProxyID);
+        m_networkProcess->authenticationManager().negotiatedLegacyTLS(*m_parameters.webPageProxyID);
     
     notifyDidReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
 }
@@ -308,7 +308,7 @@ void NetworkLoad::wasBlockedByDisabledFTP()
 void NetworkLoad::didNegotiateModernTLS(const URL& url)
 {
     if (m_parameters.webPageProxyID)
-        m_networkProcess->send(Messages::NetworkProcessProxy::DidNegotiateModernTLS(m_parameters.webPageProxyID, url));
+        m_networkProcess->send(Messages::NetworkProcessProxy::DidNegotiateModernTLS(*m_parameters.webPageProxyID, url));
 }
 
 String NetworkLoad::description() const

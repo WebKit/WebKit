@@ -118,7 +118,6 @@ template: struct WebKit::IPCStreamTesterIdentifierType
 template: struct WebKit::NetworkResourceLoadIdentifierType
 template: struct WebKit::RemoteAudioDestinationIdentifierType
 template: struct WebKit::RemoteImageBufferSetIdentifierType
-template: struct WebKit::WebPageProxyIdentifierType
 template: struct WebKit::WebTransportSessionIdentifierType
 template: struct WebKit::WebTransportStreamIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableObjectIdentifier {
@@ -161,6 +160,7 @@ template: struct WebKit::WebExtensionFrameIdentifierType
 template: struct WebKit::WebExtensionPortChannelIdentifierType
 template: struct WebKit::WebExtensionTabIdentifierType
 template: struct WebKit::WebExtensionWindowIdentifierType
+template: struct WebKit::WebPageProxyIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }

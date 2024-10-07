@@ -50,7 +50,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     : m_sessionID(WTFMove(sessionID))
     , m_client(client)
     , m_request(request.internalRequest)
-    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, WebPageProxyIdentifier { }, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
+    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
 {
     if (!m_request.url().protocolIsInHTTPFamily()) {
         didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });

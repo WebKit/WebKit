@@ -59,7 +59,7 @@ public:
         String referrer;
         String userAgent;
         PAL::SessionID sessionID;
-        WebPageProxyIdentifier webPageProxyID;
+        Markable<WebPageProxyIdentifier> webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;

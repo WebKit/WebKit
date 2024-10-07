@@ -196,7 +196,7 @@ private:
 
     RefPtr<IPC::Connection> m_backendConnection;
 
-    WebPageProxyIdentifier m_inspectedPageIdentifier;
+    Markable<WebPageProxyIdentifier> m_inspectedPageIdentifier;
     bool m_underTest { false };
     DebuggableInfoData m_debuggableInfo;
     bool m_dockingUnavailable { false };
