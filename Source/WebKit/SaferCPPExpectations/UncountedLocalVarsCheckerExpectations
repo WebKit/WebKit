@@ -12,7 +12,6 @@ Shared/API/c/cg/WKImageCG.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
-Shared/SessionState.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebHitTestResultData.cpp
@@ -71,7 +70,6 @@ WebProcess/FullScreen/WebFullScreenManager.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp
 WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
 WebProcess/Geolocation/WebGeolocationManager.cpp
@@ -101,7 +99,6 @@ WebProcess/Network/WebSocketChannel.cpp
 WebProcess/Network/WebTransportSession.cpp
 WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
 WebProcess/Network/webrtc/LibWebRTCProvider.cpp
-WebProcess/Network/webrtc/LibWebRTCSocket.cpp
 WebProcess/Network/webrtc/WebMDNSRegister.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm

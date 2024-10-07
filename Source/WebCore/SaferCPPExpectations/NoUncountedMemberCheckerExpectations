@@ -17,7 +17,6 @@ Modules/screen-wake-lock/NavigatorScreenWakeLock.h
 Modules/screen-wake-lock/WakeLockManager.h
 Modules/storage/StorageManager.cpp
 Modules/webaudio/AudioNodeInput.h
-Modules/webaudio/AudioNodeOutput.h
 Modules/webaudio/AudioWorkletNode.h
 Modules/webaudio/AudioWorkletProcessor.h
 Modules/webdatabase/DatabaseTask.h
