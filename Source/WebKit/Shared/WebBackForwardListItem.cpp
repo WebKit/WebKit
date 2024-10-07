@@ -29,6 +29,7 @@
 #include "SuspendedPageProxy.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardCacheEntry.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebFrameProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
@@ -46,19 +47,19 @@ Ref<WebBackForwardListItem> WebBackForwardListItem::create(Ref<FrameState>&& mai
 }
 
 WebBackForwardListItem::WebBackForwardListItem(Ref<FrameState>&& mainFrameState, WebPageProxyIdentifier pageID)
-    : m_mainFrameState(WTFMove(mainFrameState))
+    : m_rootFrameItem(WebBackForwardListFrameItem::create(this, nullptr, WTFMove(mainFrameState)))
     , m_pageID(pageID)
-    , m_lastProcessIdentifier(m_mainFrameState->identifier->processIdentifier())
+    , m_lastProcessIdentifier(m_rootFrameItem->frameState().identifier->processIdentifier())
 {
-    auto result = allItems().add(*m_mainFrameState->identifier, *this);
+    auto result = allItems().add(*m_rootFrameItem->frameState().identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    ASSERT(allItems().get(*m_mainFrameState->identifier) == this);
-    allItems().remove(*m_mainFrameState->identifier);
+    ASSERT(allItems().get(*m_rootFrameItem->frameState().identifier) == this);
+    allItems().remove(*m_rootFrameItem->frameState().identifier);
     removeFromBackForwardCache();
 }
 
@@ -118,8 +119,8 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
 
     // The following logic must be kept in sync with WebCore::HistoryItem::shouldDoSameDocumentNavigationTo().
 
-    Ref mainFrameState = m_mainFrameState;
-    Ref otherMainFrameState = other.m_mainFrameState;
+    Ref mainFrameState = m_rootFrameItem->frameState();
+    Ref otherMainFrameState = other.m_rootFrameItem->frameState();
 
     if (mainFrameState->stateObjectData || otherMainFrameState->stateObjectData)
         return mainFrameState->documentSequenceNumber == otherMainFrameState->documentSequenceNumber;
@@ -156,10 +157,10 @@ bool WebBackForwardListItem::itemIsClone(const WebBackForwardListItem& other)
     if (this == &other)
         return false;
 
-    const auto& mainFrameState = m_mainFrameState;
-    const auto& otherMainFrameState = other.m_mainFrameState;
+    const auto& mainFrameState = m_rootFrameItem->frameState();
+    const auto& otherMainFrameState = other.m_rootFrameItem->frameState();
 
-    if (mainFrameState->itemSequenceNumber != otherMainFrameState->itemSequenceNumber)
+    if (mainFrameState.itemSequenceNumber != otherMainFrameState.itemSequenceNumber)
         return false;
 
     return hasSameFrames(mainFrameState, otherMainFrameState);
@@ -187,26 +188,45 @@ SuspendedPageProxy* WebBackForwardListItem::suspendedPage() const
     return m_backForwardCacheEntry ? m_backForwardCacheEntry->suspendedPage() : nullptr;
 }
 
-WebBackForwardListItem* WebBackForwardListItem::childItemForFrameID(WebCore::FrameIdentifier frameID) const
+WebCore::BackForwardItemIdentifier WebBackForwardListItem::itemID() const
 {
-    auto* frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return nullptr;
-    auto rootFrameID = frame->rootFrame().frameID();
-    for (auto& child : m_rootChildFrameItems) {
-        if (child->frameID() == rootFrameID)
-            return child.ptr();
-    }
-    return nullptr;
+    return *m_rootFrameItem->frameState().identifier;
 }
 
-WebBackForwardListItem* WebBackForwardListItem::childItemForProcessID(WebCore::ProcessIdentifier processID) const
+void WebBackForwardListItem::setRootFrameState(Ref<FrameState>&& mainFrameState)
 {
-    for (auto& child : m_rootChildFrameItems) {
-        if (child->lastProcessIdentifier() == processID)
-            return child.ptr();
-    }
-    return nullptr;
+    m_rootFrameItem->setFrameState(WTFMove(mainFrameState));
+}
+
+FrameState& WebBackForwardListItem::rootFrameState() const
+{
+    return m_rootFrameItem->frameState();
+}
+
+const String& WebBackForwardListItem::originalURL() const
+{
+    if (m_isRemoteFrameNavigation)
+        return emptyString();
+    return m_rootFrameItem->frameState().originalURLString;
+}
+
+const String& WebBackForwardListItem::url() const
+{
+    if (m_isRemoteFrameNavigation)
+        return emptyString();
+    return m_rootFrameItem->frameState().urlString;
+}
+
+const String& WebBackForwardListItem::title() const
+{
+    if (m_isRemoteFrameNavigation)
+        return emptyString();
+    return m_rootFrameItem->frameState().title;
+}
+
+bool WebBackForwardListItem::wasCreatedByJSWithoutUserInteraction() const
+{
+    return m_rootFrameItem->frameState().wasCreatedByJSWithoutUserInteraction;
 }
 
 #if !LOG_DISABLED

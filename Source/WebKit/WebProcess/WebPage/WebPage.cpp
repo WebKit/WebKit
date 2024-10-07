@@ -2311,8 +2311,16 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     m_pendingNavigationID = parameters.navigationID;
     m_pendingWebsitePolicies = WTFMove(parameters.websitePolicies);
 
-    if (RefPtr mainFrame = m_mainFrame->provisionalFrame() ? m_mainFrame->provisionalFrame() : m_mainFrame->coreFrame())
-        m_page->goToItem(*mainFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
+    Ref targetFrame = m_mainFrame;
+    if (!item->wasRestoredFromSession()) {
+        if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()))
+            targetFrame = historyItemFrame.releaseNonNull();
+    }
+
+    ASSERT(targetFrame == m_mainFrame || m_page->settings().siteIsolationEnabled());
+
+    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreFrame())
+        m_page->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
 }
 
 // GoToBackForwardItemWaitingForProcessLaunch should never be sent to the WebProcess. It must always be converted to a GoToBackForwardItem message.

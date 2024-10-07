@@ -96,6 +96,12 @@ void WebBackForwardListProxy::addItem(FrameIdentifier targetFrameID, Ref<History
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(targetFrameID, toFrameState(item.get())));
 }
 
+void WebBackForwardListProxy::setChildItem(BackForwardItemIdentifier identifier, Ref<HistoryItem>&& item)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::BackForwardSetChildItem(identifier, toFrameState(item)));
+}
+
 void WebBackForwardListProxy::goToItem(HistoryItem& item)
 {
     if (!m_page)
@@ -106,12 +112,12 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     m_cachedBackForwardListCounts = backForwardListCounts;
 }
 
-RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
+RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex, FrameIdentifier frameID)
 {
     if (!m_page)
         return nullptr;
 
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), m_page->identifier());
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex, frameID), m_page->identifier());
     auto [itemID] = sendResult.takeReplyOr(std::nullopt);
     if (!itemID)
         return nullptr;

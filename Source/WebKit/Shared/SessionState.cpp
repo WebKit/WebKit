@@ -125,15 +125,4 @@ void FrameState::setDocumentState(const Vector<AtomString>& documentState, Shoul
         validateDocumentState(m_documentState);
 }
 
-const FrameState* FrameState::stateForFrameID(WebCore::FrameIdentifier frameID) const
-{
-    if (this->frameID == frameID)
-        return this;
-    for (auto& child : children) {
-        if (auto* state = child->stateForFrameID(frameID))
-            return state;
-    }
-    return nullptr;
-}
-
 } // namespace WebKit

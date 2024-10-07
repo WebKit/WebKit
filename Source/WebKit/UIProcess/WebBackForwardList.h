@@ -87,8 +87,6 @@ public:
     Vector<Ref<FrameState>> itemStates() const;
     Vector<Ref<FrameState>> filteredItemStates(Function<bool(WebBackForwardListItem&)>&&) const;
 
-    void addRootChildFrameItem(Ref<WebBackForwardListItem>&&) const;
-
 #if !LOG_DISABLED
     String loggingString();
 #endif

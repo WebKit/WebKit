@@ -199,7 +199,7 @@ unsigned BackForwardList::forwardListCount() const
     return m_current == NoCurrentItemIndex ? 0 : m_entries.size() - m_current - 1;
 }
 
-RefPtr<HistoryItem> BackForwardList::itemAtIndex(int index)
+RefPtr<HistoryItem> BackForwardList::itemAtIndex(int index, WebCore::FrameIdentifier)
 {
     // Do range checks without doing math on index to avoid overflow.
     if (index < -static_cast<int>(m_current))

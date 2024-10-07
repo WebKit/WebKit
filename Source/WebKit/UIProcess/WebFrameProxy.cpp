@@ -40,6 +40,7 @@
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebNavigationState.h"
 #include "WebPageMessages.h"
@@ -674,6 +675,16 @@ WebFrameProxy& WebFrameProxy::rootFrame()
 bool WebFrameProxy::isMainFrame() const
 {
     return m_frameLoadState.isMainFrame() == IsMainFrame::Yes;
+}
+
+void WebFrameProxy::setPendingChildBackForwardItem(WebBackForwardListFrameItem* pendingChildBackForwardItem)
+{
+    m_pendingChildBackForwardItem = pendingChildBackForwardItem;
+}
+
+WebBackForwardListFrameItem* WebFrameProxy::takePendingChildBackForwardItem()
+{
+    return std::exchange(m_pendingChildBackForwardItem, nullptr).get();
 }
 
 } // namespace WebKit

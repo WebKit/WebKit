@@ -1102,7 +1102,7 @@ void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& mainFrameState)
             protectedProcessPool()->checkedBackForwardCache()->removeEntry(*item);
     }
 
-    item->setMainFrameState(WTFMove(mainFrameState));
+    item->setRootFrameState(WTFMove(mainFrameState));
 }
 
 void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)

@@ -3377,7 +3377,7 @@ TEST(SiteIsolation, SandboxFlagsDuringNavigation)
 TEST(SiteIsolation, NavigateNestedRootFramesBackForward)
 {
     HTTPServer server({
-        { "/example"_s, { "<iframe src='https://nested.com/nest'></iframe>"_s } },
+        { "/example"_s, { "<iframe src='https://webkit.org/nest'></iframe>"_s } },
         { "/nest"_s, { "<iframe src='https://a.com/a'></iframe>"_s } },
         { "/a"_s, { "<script> alert('a'); </script>"_s } },
         { "/b"_s, { "<script> alert('b'); </script>"_s } }
@@ -3393,6 +3393,27 @@ TEST(SiteIsolation, NavigateNestedRootFramesBackForward)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "a");
     [webView goForward];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+}
+
+TEST(SiteIsolation, NavigateFrameWithSiblingsBackForward)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/a'></iframe> <iframe src='https://webkit.org/b'></iframe>"_s } },
+        { "/a"_s, { ""_s } },
+        { "/b"_s, { "<script> alert('b'); </script>"_s } },
+        { "/c"_s, { "<script> alert('c'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+
+    RetainPtr<_WKFrameTreeNode> secondRootFrame = [webView mainFrame].childFrames[1];
+    [webView evaluateJavaScript:@"location.href = 'https://webkit.org/c'" inFrame:[secondRootFrame info] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
+    [webView goBack];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
+    [webView goForward];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "c");
 }
 
 TEST(SiteIsolation, RedirectToCSP)

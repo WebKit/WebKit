@@ -120,6 +120,7 @@
 		00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9661818E25AE100CE1F88 /* FindClient.h */; };
 		0201B9522C238F4800227220 /* WebPageProxyTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 0201B9512C238EFE00227220 /* WebPageProxyTesting.h */; };
 		0201B9552C238FA800227220 /* WebPageTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 0201B9532C238F8500227220 /* WebPageTesting.h */; };
+		020E13132CA5F2FE002C616E /* WebBackForwardListFrameItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 020E13112CA5F2F1002C616E /* WebBackForwardListFrameItem.h */; };
 		0237F5EA2C4B40E800AD23EF /* WebExtensionSidebarParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0237F5E92C4B27F500AD23EF /* WebExtensionSidebarParameters.h */; };
 		0237F5EC2C4EC77300AD23EF /* WebExtensionContextAPISidebarCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0237F5EB2C4EC76800AD23EF /* WebExtensionContextAPISidebarCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */; };
@@ -3098,6 +3099,8 @@
 		0201B9542C238F8E00227220 /* WebPageTesting.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageTesting.cpp; sourceTree = "<group>"; };
 		020A179F2C99FCF90012CFA5 /* WebExtensionActionClickBehavior.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionActionClickBehavior.h; sourceTree = "<group>"; };
 		020A17A12C99FD9B0012CFA5 /* WebExtensionActionClickBehavior.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionActionClickBehavior.serialization.in; sourceTree = "<group>"; };
+		020E13112CA5F2F1002C616E /* WebBackForwardListFrameItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListFrameItem.h; sourceTree = "<group>"; };
+		020E13122CA5F2F1002C616E /* WebBackForwardListFrameItem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListFrameItem.cpp; sourceTree = "<group>"; };
 		0214701A2995D2FE0077AFD6 /* DrawingAreaCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawingAreaCocoa.mm; sourceTree = "<group>"; };
 		0214701B2995D3860077AFD6 /* DrawingArea.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		0237C21428C168D10018A851 /* WebGPUSupportedFeatures.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSupportedFeatures.serialization.in; sourceTree = "<group>"; };
@@ -9323,6 +9326,8 @@
 				46C52F892B94366000D9890E /* VisitedLinkTableIdentifier.h */,
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,
 				516BF1D12AE5CD42009A0204 /* WebBackForwardListCounts.serialization.in */,
+				020E13122CA5F2F1002C616E /* WebBackForwardListFrameItem.cpp */,
+				020E13112CA5F2F1002C616E /* WebBackForwardListFrameItem.h */,
 				518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */,
 				518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */,
 				7C4ABECE1AA8E9F00088AA37 /* WebCompiledContentRuleList.cpp */,
@@ -16986,6 +16991,7 @@
 				46F9B26323526EF3006FE5FA /* WebBackForwardCacheEntry.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */,
+				020E13132CA5F2FE002C616E /* WebBackForwardListFrameItem.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
 				512B6792294B8CB8000C0760 /* WebBadgeClient.h in Headers */,

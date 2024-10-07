@@ -110,8 +110,9 @@ class UserMessageHandlerDescriptor;
 
 class EmptyBackForwardClient final : public BackForwardClient {
     void addItem(FrameIdentifier, Ref<HistoryItem>&&) final { }
+    void setChildItem(BackForwardItemIdentifier, Ref<HistoryItem>&&) final { }
     void goToItem(HistoryItem&) final { }
-    RefPtr<HistoryItem> itemAtIndex(int) final { return nullptr; }
+    RefPtr<HistoryItem> itemAtIndex(int, FrameIdentifier) final { return nullptr; }
     unsigned backListCount() const final { return 0; }
     unsigned forwardListCount() const final { return 0; }
     bool containsItem(const HistoryItem&) const final { return false; }

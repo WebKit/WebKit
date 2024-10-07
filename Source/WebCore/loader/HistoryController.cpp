@@ -314,7 +314,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
 {
     LOG(History, "HistoryController %p goToItem %p type=%d", this, &targetItem, static_cast<int>(type));
 
-    ASSERT(!m_frame->tree().parent());
+    ASSERT(m_frame->isRootFrame());
 
     // shouldGoToHistoryItem is a private delegate method. This is needed to fix:
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
@@ -337,7 +337,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     // - plus, it only makes sense for the top level of the operation through the frame tree,
     // as opposed to happening for some/one of the page commits that might happen soon
     CheckedRef backForward = page->backForward();
-    RefPtr currentItem = backForward->currentItem();
+    RefPtr currentItem = backForward->currentItem(m_frame->frameID());
     backForward->setCurrentItem(targetItem);
 
     // First set the provisional item of any frames that are not actually navigating.
@@ -474,8 +474,11 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         RefPtr page = m_frame->page();
         RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
         if (page && parentFrame) {
-            if (RefPtr parentCurrentItem = parentFrame->history().currentItem())
-                parentCurrentItem->setChildItem(createItem(page->historyItemClient()));
+            if (RefPtr parentCurrentItem = parentFrame->history().currentItem()) {
+                Ref item = createItem(page->historyItemClient());
+                parentCurrentItem->setChildItem(item.copyRef());
+                page->checkedBackForward()->setChildItem(parentCurrentItem->identifier(), WTFMove(item));
+            }
         }
     }
 
@@ -877,8 +880,8 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     if (frame->loader().protectedDocumentLoader()->urlForHistory().isEmpty())
         return;
 
-    Ref mainFrame = frame->mainFrame();
-    Ref topItem = mainFrame->checkedHistory()->createItemTree(page->historyItemClient(), *frame, doClip);
+    Ref rootFrame = frame->rootFrame();
+    Ref topItem = rootFrame->checkedHistory()->createItemTree(page->historyItemClient(), *frame, doClip);
     LOG(History, "HistoryController %p updateBackForwardListClippedAtTarget: Adding backforward item %p in frame %p (main frame %d) %s", this, topItem.ptr(), frame.get(), frame->isMainFrame(), frame->loader().documentLoader()->url().string().utf8().data());
 
     page->checkedBackForward()->addItem(frame->frameID(), WTFMove(topItem));

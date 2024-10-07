@@ -219,7 +219,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         WebCore::FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
         
-        BOOL shouldRestoreScrollPosition = targetItem->mainFrameState().shouldRestoreScrollPosition;
+        BOOL shouldRestoreScrollPosition = targetItem->rootFrameState().shouldRestoreScrollPosition;
         WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(m_webPageProxy->viewScrollPosition());
 
         if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor() && (shouldRestoreScrollPosition || (currentScrollPosition == snapshot->viewScrollPosition())))

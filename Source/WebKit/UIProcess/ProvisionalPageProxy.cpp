@@ -508,9 +508,9 @@ void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess
     m_page->logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
 }
 
-void ProvisionalPageProxy::backForwardAddItem(FrameIdentifier targetFrameID, Ref<FrameState>&& mainFrameState)
+void ProvisionalPageProxy::backForwardAddItem(IPC::Connection& connection, FrameIdentifier targetFrameID, Ref<FrameState>&& mainFrameState)
 {
-    m_page->backForwardAddItemShared(protectedProcess(), targetFrameID, WTFMove(mainFrameState), m_replacedDataStoreForWebArchiveLoad ? LoadedWebArchive::Yes : LoadedWebArchive::No);
+    m_page->backForwardAddItemShared(connection, targetFrameID, WTFMove(mainFrameState), m_replacedDataStoreForWebArchiveLoad ? LoadedWebArchive::Yes : LoadedWebArchive::No);
 }
 
 void ProvisionalPageProxy::didDestroyNavigation(WebCore::NavigationIdentifier navigationID)

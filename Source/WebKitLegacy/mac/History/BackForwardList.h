@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/BackForwardClient.h>
+#include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -45,6 +46,7 @@ public:
     WebView *webView() { return m_webView; }
 
     void addItem(WebCore::FrameIdentifier, Ref<WebCore::HistoryItem>&&) override;
+    void setChildItem(WebCore::BackForwardItemIdentifier, Ref<WebCore::HistoryItem>&&) final { }
     void goBack();
     void goForward();
     void goToItem(WebCore::HistoryItem&) override;
@@ -52,7 +54,7 @@ public:
     RefPtr<WebCore::HistoryItem> backItem();
     RefPtr<WebCore::HistoryItem> currentItem();
     RefPtr<WebCore::HistoryItem> forwardItem();
-    RefPtr<WebCore::HistoryItem> itemAtIndex(int) override;
+    RefPtr<WebCore::HistoryItem> itemAtIndex(int, WebCore::FrameIdentifier) override;
 
     void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
     void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
