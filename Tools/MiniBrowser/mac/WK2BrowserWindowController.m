@@ -669,7 +669,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
-    [controller awakeFromNib];
     [controller.window makeKeyAndOrderFront:self];
     
     [[[NSApplication sharedApplication] browserAppDelegate] didCreateBrowserWindowController:controller];
