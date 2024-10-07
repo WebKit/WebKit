@@ -88,7 +88,9 @@
 		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
 		466D69112BA4E433005D43F4 /* SpanCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 466D69102BA4E433005D43F4 /* SpanCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
+		46BEB6EB22FFE24900269868 /* RefTrackerMixin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */; };
 		46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E43647271F10AA00C88C90 /* SafeStrerror.cpp */; };
+		4BF93AD32C8B53C100F0E06C /* RefTrackerMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
 		515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */; };
 		5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 5164042C2AB1D46B0042B1C3 /* NativePromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1195,6 +1197,8 @@
 		466D69102BA4E433005D43F4 /* SpanCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpanCocoa.h; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
 		46BEB6E922FFDDD500269867 /* RefCounted.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCounted.cpp; sourceTree = "<group>"; };
+		46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefTrackerMixin.cpp; sourceTree = "<group>"; };
+		46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RefTrackerMixin.h; sourceTree = "<group>"; };
 		46E43646271F10AA00C88C90 /* SafeStrerror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeStrerror.h; sourceTree = "<group>"; };
 		46E43647271F10AA00C88C90 /* SafeStrerror.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SafeStrerror.cpp; sourceTree = "<group>"; };
 		50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalStringImpl.cpp; sourceTree = "<group>"; };
@@ -2385,6 +2389,8 @@
 				86F46F5F1A2840EE00CCBF22 /* RefCounter.h */,
 				9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */,
 				A8A47303151A825B004123FF /* RefPtr.h */,
+				46BEB6E922FFDDD500269868 /* RefTrackerMixin.cpp */,
+				46BEB6E922FFDDD50026DEAD /* RefTrackerMixin.h */,
 				3A5BCFA2298768E300E0ABB2 /* RefVector.h */,
 				FE3842342325CC80009DD445 /* ResourceUsage.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
@@ -3459,6 +3465,8 @@
 				DD3DC8D927A4BF8E007E5B61 /* RefCounter.h in Headers */,
 				9785729929FAC2BB00350CBA /* ReferenceWrapperVector.h in Headers */,
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
+				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
+				4BF93AD32C8B53C100F0E06C /* RefTrackerMixin.h in Headers */,
 				3A5BCFA3298768E300E0ABB2 /* RefVector.h in Headers */,
 				DD3DC8C727A4BF8E007E5B61 /* ResourceUsage.h in Headers */,
 				DD3DC92127A4BF8E007E5B61 /* RetainPtr.h in Headers */,
@@ -4105,6 +4113,7 @@
 				0FEC3C5E1F368A9700F59B6C /* ReadWriteLock.cpp in Sources */,
 				46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
+				46BEB6EB22FFE24900269868 /* RefTrackerMixin.cpp in Sources */,
 				E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
 				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,

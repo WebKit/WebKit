@@ -68,6 +68,12 @@ template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
     return *this;
 }
 
+template <typename T>
+inline void Weak<T>::set(VM&, T* value)
+{
+    *this = value;
+}
+
 template<typename T> inline T* Weak<T>::operator->() const
 {
     auto* pointer = impl();

@@ -27,28 +27,31 @@
 
 #include "Handle.h"
 #include "HandleSet.h"
+#include "Heap.h"
 #include "JSLock.h"
 #include "StrongForward.h"
-#include <wtf/Assertions.h>
+#include <wtf/RefTrackerMixin.h>
 
 namespace JSC {
 
 class VM;
 
+REFTRACKER_DECL(StrongRefTracker);
+
 // A strongly referenced handle that prevents the object it points to from being garbage collected.
-template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock> class Strong : public Handle<T> {
+template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock> class Strong final : public Handle<T> {
     using Handle<T>::slot;
     using Handle<T>::setSlot;
     template <typename U, ShouldStrongDestructorGrabLock> friend class Strong;
 
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
-    
+
     Strong()
         : Handle<T>()
     {
     }
-    
+
     inline Strong(VM&, ExternalType = ExternalType());
 
     inline Strong(VM&, Handle<T>);
@@ -70,15 +73,24 @@ public:
         setSlot(HandleSet::heapFor(other.slot())->allocate());
         set(other.get());
     }
-    
+
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     bool isHashTableDeletedValue() const { return slot() == hashTableDeletedValue(); }
+
     Strong(HashTableDeletedValueTag)
         : Handle<T>(hashTableDeletedValue())
     {
     }
 
-    ~Strong()
+    enum HashTableEmptyValueTag { HashTableEmptyValue };
+    bool isHashTableEmptyValue() const { return slot() == hashTableEmptyValue(); }
+
+    Strong(HashTableEmptyValueTag)
+        : Handle<T>(hashTableEmptyValue())
+    {
+    }
+
+    ~Strong() override
     {
         clear();
     }
@@ -106,7 +118,7 @@ public:
         set(*HandleSet::heapFor(other.slot())->vm(), other.get());
         return *this;
     }
-    
+
     Strong& operator=(const Strong& other)
     {
         if (!other.slot()) {
@@ -136,6 +148,7 @@ public:
 
 private:
     static HandleSlot hashTableDeletedValue() { return reinterpret_cast<HandleSlot>(-1); }
+    static HandleSlot hashTableEmptyValue() { return reinterpret_cast<HandleSlot>(0); }
 
     void set(ExternalType externalType)
     {
@@ -144,6 +157,8 @@ private:
         HandleSet::heapFor(slot())->template writeBarrier<std::is_base_of_v<JSCell, T>>(slot(), value);
         *slot() = value;
     }
+
+    REFTRACKER_MEMBERS(StrongRefTracker);
 };
 
 template<class T> inline void swap(Strong<T>& a, Strong<T>& b)
@@ -157,8 +172,31 @@ namespace WTF {
 
 template<typename T> struct VectorTraits<JSC::Strong<T>> : SimpleClassVectorTraits {
     static constexpr bool canCompareWithMemcmp = false;
+#if ENABLE(REFTRACKER)
+    static constexpr bool canInitializeWithMemset = false;
+    static constexpr bool canMoveWithMemcpy = false;
+#endif
 };
 
-template<typename P> struct HashTraits<JSC::Strong<P>> : SimpleClassHashTraits<JSC::Strong<P>> { };
+template<typename P> struct HashTraits<JSC::Strong<P>> : SimpleClassHashTraits<JSC::Strong<P>> {
+#if ENABLE(REFTRACKER)
+    using S = JSC::Strong<P>;
+    static constexpr bool emptyValueIsZero = false;
+    static S emptyValue() { return S::HashTableEmptyValue; }
+
+    template <typename>
+    static void constructEmptyValue(S& slot)
+    {
+        new (NotNull, std::addressof(slot)) S(S::HashTableEmptyValue);
+    }
+
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const S& value) { return value.isHashTableEmptyValue(); }
+
+    static void constructDeletedValue(S& slot) { new (NotNull, &slot) S(S::HashTableDeletedValue); }
+    static bool isDeletedValue(const S& value) { return value.isHashTableDeletedValue(); }
+
+#endif
+};
 
 } // namespace WTF

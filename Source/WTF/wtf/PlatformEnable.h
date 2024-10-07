@@ -601,6 +601,16 @@
 #define ENABLE_MALLOC_HEAP_BREAKDOWN 0
 #endif
 
+// See RefTrackerMixin.h
+#if ASSERT_ENABLED
+#undef ENABLE_REFTRACKER
+#define ENABLE_REFTRACKER 1
+#endif
+
+#if !defined(ENABLE_REFTRACKER)
+#define ENABLE_REFTRACKER 0
+#endif
+
 #if !defined(ENABLE_CFPREFS_DIRECT_MODE)
 #define ENABLE_CFPREFS_DIRECT_MODE 0
 #endif

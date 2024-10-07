@@ -50,6 +50,12 @@ const edgeToIdOffset = 1;
 const edgeTypeOffset = 2;
 const edgeDataOffset = 3;
 
+// roots
+// [<0:nodeId>, <1:rootReasonIndex>, <2:reachabilityReasonIndex>]
+const rootFieldCount = 3;
+const rootNodeIdOffset = 0;
+const rootReasonIndexOffset = 1;
+
 // Other constants.
 const rootNodeIndex = 0;
 const rootNodeOrdinal = 0;
@@ -92,7 +98,7 @@ HeapSnapshot = class HeapSnapshot
         let json = JSON.parse(snapshotDataString);
         snapshotDataString = null;
 
-        let {version, type, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
+        let {version, type, nodes, nodeClassNames, edges, edgeTypes, edgeNames, roots, labels} = json;
         console.assert(version === 1 || version === 2, "Expect JavaScriptCore Heap Snapshot version 1 or 2");
         console.assert(!type || (type === "Inspector" || type === "GCDebugging"), "Expect an Inspector / GCDebugging Heap Snapshot");
 
@@ -103,6 +109,9 @@ HeapSnapshot = class HeapSnapshot
 
         this._edges = edges;
         this._edgeCount = edges.length / edgeFieldCount;
+
+        this._roots = roots;
+        this._labels = labels;
 
         this._edgeTypesTable = edgeTypes;
         this._edgeNamesTable = edgeNames;
@@ -298,8 +307,12 @@ HeapSnapshot = class HeapSnapshot
         console.assert("node" in shortestPath[shortestPath.length - 1], "Path should end with a node");
 
         return shortestPath.map((component) => {
-            if (component.node)
-                return this.serializeNode(component.node);
+            if (component.node) {
+                let node = this.serializeNode(component.node);
+                if (component.rootReason)
+                    node.rootReason = component.rootReason;
+                return node;
+            }
             return this.serializeEdge(component.edge);
         });
     }
@@ -461,6 +474,7 @@ HeapSnapshot = class HeapSnapshot
         switch (edgeType) {
         case "Internal":
             // edgeData can be ignored.
+            edgeData = "";
             break;
         case "Property":
         case "Variable":
@@ -761,11 +775,26 @@ HeapSnapshot = class HeapSnapshot
             pathsBeingProcessed[i] = undefined;
 
             if (this._nodeOrdinalIsGCRoot[nodeOrdinal]) {
-                let fullPath = currentPath.slice();
                 let nodeIndex = nodeOrdinal * this._nodeFieldCount;
-                fullPath.push({node: nodeIndex});
-                gcRootPaths.push(fullPath);
-                continue;
+
+                let rootReason = "";
+
+                for (let rootIndex = 0; rootIndex < this._roots.length; rootIndex += rootFieldCount) {
+                    let nodeID = this._roots[rootIndex + rootNodeIdOffset];
+                    let reason = this._labels[this._roots[rootIndex + rootReasonIndexOffset]];
+                    if (this._nodeIdentifierToOrdinal.get(nodeID) !== nodeOrdinal)
+                        continue;
+                    rootReason = reason;
+                    break;
+                }
+
+                currentPath.push({node: nodeIndex, rootReason});
+
+                // These aren't really roots. They will only mark things that are already reachable.
+                if (rootReason !== "WeakHandles") {
+                    gcRootPaths.push(currentPath.slice());
+                    continue;
+                }
             }
 
             if (visited[nodeOrdinal])

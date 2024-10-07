@@ -242,6 +242,7 @@ set(WTF_PUBLIC_HEADERS
     RefCountedLeakCounter.h
     RefCounter.h
     RefPtr.h
+    RefTrackerMixin.h
     RefVector.h
     ReferenceWrapperVector.h
     ResourceUsage.h
@@ -538,6 +539,7 @@ set(WTF_SOURCES
     ReadWriteLock.cpp
     RefCounted.cpp
     RefCountedLeakCounter.cpp
+    RefTrackerMixin.cpp
     RunLoop.cpp
     SHA1.cpp
     SIMDUTF.cpp

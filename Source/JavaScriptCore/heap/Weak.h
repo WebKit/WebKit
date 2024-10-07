@@ -36,6 +36,7 @@ namespace JSC {
 
 class WeakImpl;
 class WeakHandleOwner;
+class VM;
 
 template<typename T> class Weak {
     WTF_MAKE_NONCOPYABLE(Weak);
@@ -48,6 +49,10 @@ public:
     }
 
     Weak(T*, WeakHandleOwner* = nullptr, void* context = nullptr);
+    Weak(VM&, T* t, WeakHandleOwner* owner = nullptr, void* context = nullptr)
+        : Weak(t, owner, context)
+    {
+    }
 
     bool isHashTableDeletedValue() const;
     Weak(WTF::HashTableDeletedValueType);
@@ -68,6 +73,8 @@ public:
     inline T* operator->() const;
     inline T& operator*() const;
     inline T* get() const;
+
+    inline void set(VM&, T*);
 
     inline bool was(T*) const;
 

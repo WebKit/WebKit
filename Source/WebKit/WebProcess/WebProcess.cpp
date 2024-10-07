@@ -447,6 +447,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
             if (m_pagesInWindows.isEmpty() && critical == Critical::No)
                 critical = Critical::Yes;
 
+            if (UNLIKELY(Options::dumpHeapOnLowMemory()))
+                GCController::singleton().dumpHeap();
+
 #if PLATFORM(COCOA)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
             if (m_allowExitOnMemoryPressure && (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended())) {
@@ -470,7 +473,11 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 #if ENABLE(PERIODIC_MEMORY_MONITOR)
         if (auto pollInterval = parameters.memoryFootprintPollIntervalForTesting)
             memoryPressureHandler.setMemoryFootprintPollIntervalForTesting(pollInterval);
-        memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
+#if !USE(SYSTEM_MALLOC)
+        // If we're running with FastMalloc disabled, some kind of testing or debugging is probably happening.
+        // Let's be nice and not enable the memory kill mechanism.
+        memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(isFastMallocEnabled() || JSC::Options::enableStrongRefTracker() || JSC::Options::dumpHeapOnLowMemory());
+#endif
         memoryPressureHandler.setMemoryKillCallback([this] () {
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::OutOfMemoryDeath);
             if (MemoryPressureHandler::singleton().processState() == WebsamProcessState::Active)
