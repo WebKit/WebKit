@@ -1862,7 +1862,6 @@ imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/f
 # These MathML WPT tests fail.
 webkit.org/b/180013 mathml/non-core/lengths-2.html [ ImageOnlyFailure ]
 webkit.org/b/194952 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html [ ImageOnlyFailure ]
-webkit.org/b/187039 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-click-3.html [ Skip ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-mpadded.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-overall-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-bar-002.html [ ImageOnlyFailure ]
@@ -6803,7 +6802,6 @@ imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/com
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setInterval.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setTimeout.html [ Skip ]
 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/toBlob-origin-clean-offscreen.sub.html [ Skip ]
-imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin.html [ Skip ]
