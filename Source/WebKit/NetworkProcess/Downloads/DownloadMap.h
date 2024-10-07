@@ -26,38 +26,12 @@
 #pragma once
 
 #include "DownloadID.h"
-#include "ProcessAssertion.h"
 #include <wtf/HashMap.h>
 
 namespace WebKit {
 
 class Download;
 
-#if !ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
-typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMap;
-#else
-
-class DownloadMap {
-public:
-    typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMapType;
-    DownloadMap();
-    ~DownloadMap();
-
-    Download* get(DownloadID) const;
-    bool isEmpty() const;
-    uint64_t size() const;
-    bool contains(DownloadID) const;
-
-    DownloadMapType::AddResult add(DownloadID, std::unique_ptr<Download>&&);
-    bool remove(DownloadID);
-
-    DownloadMapType::ValuesIteratorRange values();
-
-private:
-    DownloadMapType m_downloads;
-    RefPtr<ProcessAssertion> m_downloadAssertion;
-};
-
-#endif // !ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
+using DownloadMap = HashMap<DownloadID, std::unique_ptr<Download>>;
 
 } // namespace WebKit

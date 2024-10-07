@@ -78,7 +78,6 @@ private:
 
     bool m_shouldTakeAssertion { false };
     RefPtr<ProcessAssertion> m_downloadUIAssertion;
-    RefPtr<ProcessAssertion> m_downloadNetworkingAssertion;
 };
 
 } // namespace WebKit

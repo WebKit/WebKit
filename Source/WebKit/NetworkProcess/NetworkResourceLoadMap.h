@@ -29,10 +29,6 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
-#if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
-#include "ProcessAssertion.h"
-#endif
-
 namespace WebKit {
 
 class NetworkResourceLoader;
