@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+p[contenteditable] {
+    font-size: 24px;
+}
+
+span.rtl {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    color: blue;
+}
+</style>
+</head>
+<body>
+<p contenteditable spellcheck=false>Hello <span class="rtl">dlrow</span></p>
+<script>
+window.testRunner?.dumpAsText();
+description("This test verifies that you can hit-test to the first character in a RTL text run inside bidi text. To manually run the test, click or tap right before the 'w' in 'world' below.");
+
+const editor = document.querySelector("p[contenteditable]");
+const rtlContainer = document.querySelector("span.rtl");
+const rtlBounds = rtlContainer.getBoundingClientRect();
+getSelection().addRange(document.caretRangeFromPoint(rtlBounds.x + 1, rtlBounds.top + (rtlBounds.height / 2)));
+
+const caretOffsetX = internals.absoluteCaretBounds().x;
+distanceFromCaretToLeftEdge = Math.abs(rtlBounds.x - caretOffsetX);
+distanceFromCaretToRightEdge = Math.abs(rtlBounds.x + rtlBounds.width - caretOffsetX);
+shouldBeGreaterThanOrEqual("distanceFromCaretToRightEdge", "distanceFromCaretToLeftEdge");
+</script>
+</body>
+</html>
