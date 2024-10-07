@@ -2236,6 +2236,13 @@ private:
                 break;
             }
 
+            if (m_value->child(0)->isInteger() && m_value->child(0) == m_value->child(1)) {
+                auto* constant = m_proc.addBoolConstant(m_value->origin(), TriState::True);
+                ASSERT(constant);
+                replaceWithNewValue(constant);
+                break;
+            }
+
             // Turn this: Equal(const1, const2)
             // Into this: const1 == const2
             replaceWithNewValue(
@@ -2263,6 +2270,13 @@ private:
                         m_insertionSet.insertIntConstant(m_index, m_value->origin(), Int32, 0));
                     break;
                 }
+            }
+
+            if (m_value->child(0)->isInteger() && m_value->child(0) == m_value->child(1)) {
+                auto* constant = m_proc.addBoolConstant(m_value->origin(), TriState::False);
+                ASSERT(constant);
+                replaceWithNewValue(constant);
+                break;
             }
 
             // Turn this: NotEqual(const1, const2)
@@ -2320,6 +2334,33 @@ private:
 
             if (comparison.opcode != m_value->opcode()) {
                 replaceWithNew<Value>(comparison.opcode, m_value->origin(), comparison.operands[0], comparison.operands[1]);
+                break;
+            }
+
+            if (m_value->child(0)->isInteger() && m_value->child(0) == m_value->child(1)) {
+                switch (m_value->opcode()) {
+                case LessThan:
+                case GreaterThan:
+                case Above:
+                case Below: {
+                    auto* constant = m_proc.addBoolConstant(m_value->origin(), TriState::False);
+                    ASSERT(constant);
+                    replaceWithNewValue(constant);
+                    break;
+                }
+                case LessEqual:
+                case GreaterEqual:
+                case AboveEqual:
+                case BelowEqual: {
+                    auto* constant = m_proc.addBoolConstant(m_value->origin(), TriState::True);
+                    ASSERT(constant);
+                    replaceWithNewValue(constant);
+                    break;
+                }
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
                 break;
             }
 
