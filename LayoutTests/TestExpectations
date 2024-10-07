@@ -3942,23 +3942,23 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/002.html?wpt_flags=
 imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=h2 [ Skip ]
 
 # Flaky WebSocket tests.
-imported/w3c/web-platform-tests/websockets/cookies/005.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/constructor/014.html [ Skip ]
+imported/w3c/web-platform-tests/websockets/cookies/005.html?default [ Skip ]
+imported/w3c/web-platform-tests/websockets/constructor/014.html?default [ Skip ]
 imported/w3c/web-platform-tests/websockets/constructor/014.html?wss [ Skip ]
-imported/w3c/web-platform-tests/websockets/Send-unicode-data.any.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/Send-65K-data.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/Close-undefined.any.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/007.html [ Pass Failure ]
-imported/w3c/web-platform-tests/websockets/cookies/001.html [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/Send-unicode-data.any.html?default [ Skip ]
+imported/w3c/web-platform-tests/websockets/Send-65K-data.any.worker.html?default [ Skip ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/Close-undefined.any.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/007.html?default [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/cookies/001.html?default [ Pass Failure ]
 
 # Timing out WebSocket tests.
-imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.html [ Skip ]
+imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.html?default [ Skip ]
+imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.worker.html?default [ Skip ]
+imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.html?default [ Skip ]
 imported/w3c/web-platform-tests/websockets/Create-on-worker-shutdown.any.html [ Skip ]
 
 # iOS only
