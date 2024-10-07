@@ -93,10 +93,10 @@ public:
     void sendResponse(long requestId, RefPtr<JSON::Object>&& result, bool unused);
     void sendResponse(long requestId, Ref<JSON::Object>&& result);
     JS_EXPORT_PRIVATE void sendResponse(long requestId, Ref<JSON::Object>&& result, bool unused);
-    void sendPendingErrors();
+    JS_EXPORT_PRIVATE void sendPendingErrors();
 
     JS_EXPORT_PRIVATE void reportProtocolError(CommonErrorCode, const String& errorMessage);
-    void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+    JS_EXPORT_PRIVATE void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
     JS_EXPORT_PRIVATE std::optional<bool> getBoolean(JSON::Object*, const String& name, bool required);
     JS_EXPORT_PRIVATE std::optional<int> getInteger(JSON::Object*, const String& name, bool required);
