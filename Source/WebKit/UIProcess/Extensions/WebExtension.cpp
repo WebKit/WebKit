@@ -32,6 +32,14 @@
 
 namespace WebKit {
 
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+static constexpr auto iconVariantsManifestKey = "icon_variants"_s;
+#endif
+
+static constexpr auto actionManifestKey = "action"_s;
+static constexpr auto browserActionManifestKey = "browser_action"_s;
+static constexpr auto pageActionManifestKey = "page_action"_s;
+
 static constexpr auto manifestVersionManifestKey = "manifest_version"_s;
 
 static constexpr auto nameManifestKey = "name"_s;
@@ -235,6 +243,190 @@ void WebExtension::populateWebAccessibleResourcesIfNeeded()
         parseWebAccessibleResourcesVersion3();
     else
         parseWebAccessibleResourcesVersion2();
+}
+
+static int toAPI(WebExtension::Error error)
+{
+    switch (error) {
+    case WebExtension::Error::Unknown:
+        return static_cast<int>(WebExtension::APIError::Unknown);
+    case WebExtension::Error::ResourceNotFound:
+        return static_cast<int>(WebExtension::APIError::ResourceNotFound);
+    case WebExtension::Error::InvalidManifest:
+        return static_cast<int>(WebExtension::APIError::InvalidManifest);
+    case WebExtension::Error::UnsupportedManifestVersion:
+        return static_cast<int>(WebExtension::APIError::UnsupportedManifestVersion);
+    case WebExtension::Error::InvalidDeclarativeNetRequest:
+        return static_cast<int>(WebExtension::APIError::InvalidDeclarativeNetRequestEntry);
+    case WebExtension::Error::InvalidBackgroundPersistence:
+        return static_cast<int>(WebExtension::APIError::InvalidBackgroundPersistence);
+    case WebExtension::Error::InvalidResourceCodeSignature:
+        return static_cast<int>(WebExtension::APIError::InvalidResourceCodeSignature);
+    default:
+        return static_cast<int>(WebExtension::APIError::InvalidManifestEntry);
+    }
+}
+
+Ref<API::Error> WebExtension::createError(Error error, const String& customLocalizedDescription, RefPtr<API::Error> underlyingError)
+{
+    auto errorCode = toAPI(error);
+    String localizedDescription;
+
+    switch (error) {
+    case Error::Unknown:
+        localizedDescription = WEB_UI_STRING("An unknown error has occurred.", "WKWebExtensionErrorUnknown description");
+        break;
+
+    case Error::ResourceNotFound:
+        ASSERT(customLocalizedDescription);
+        break;
+
+    case Error::InvalidManifest:
+        if (underlyingError && !underlyingError->localizedDescription().isEmpty())
+            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse manifest: %s", "WKWebExtensionErrorInvalidManifest description, because of a JSON error", underlyingError->localizedDescription().utf8().data());
+        else
+            localizedDescription = WEB_UI_STRING("Unable to parse manifest because of an unexpected format.", "WKWebExtensionErrorInvalidManifest description");
+        break;
+
+    case Error::UnsupportedManifestVersion:
+        localizedDescription = WEB_UI_STRING("An unsupported `manifest_version` was specified.", "WKWebExtensionErrorUnsupportedManifestVersion description");
+        break;
+
+    case Error::InvalidAction:
+        if (supportsManifestVersion(3))
+            localizedDescription = WEB_UI_STRING("Missing or empty `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for action only");
+        else
+            localizedDescription = WEB_UI_STRING("Missing or empty `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for browser_action or page_action");
+        break;
+
+    case Error::InvalidActionIcon: {
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        RefPtr<JSON::Value> actionManifest;
+        if (supportsManifestVersion(3))
+            actionManifest = manifestObject()->getValue(actionManifestKey);
+        else {
+            actionManifest = manifestObject()->getValue(browserActionManifestKey);
+            if (!actionManifest)
+                actionManifest = manifestObject()->getValue(pageActionManifestKey);
+        }
+
+        if (actionManifest) {
+            if (auto actionObject = actionManifest->asObject(); actionObject->getValue(iconVariantsManifestKey)) {
+                if (supportsManifestVersion(3))
+                    localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only");
+                else
+                    localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants in browser_action or page_action");
+            } else {
+                if (supportsManifestVersion(3))
+                    localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
+                else
+                    localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action");
+            }
+        } else
+#endif
+        if (supportsManifestVersion(3))
+            localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action");
+        break;
+    }
+
+    case Error::InvalidBackgroundContent:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `background` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for background");
+        break;
+
+    case Error::InvalidCommands:
+        localizedDescription = WEB_UI_STRING("Invalid `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for commands");
+        break;
+
+    case Error::InvalidContentScripts:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `content_scripts` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_scripts");
+        break;
+
+    case Error::InvalidContentSecurityPolicy:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `content_security_policy` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for content_security_policy");
+        break;
+
+    case Error::InvalidDeclarativeNetRequest:
+        if (underlyingError && !underlyingError->localizedDescription().isEmpty())
+            localizedDescription = WEB_UI_FORMAT_STRING("Unable to parse `declarativeNetRequest` rules: %s", "WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error", underlyingError->localizedDescription().utf8().data());
+        else
+            localizedDescription = WEB_UI_STRING("Unable to parse `declarativeNetRequest` rules because of an unexpected error.", "WKWebExtensionErrorInvalidDeclarativeNetRequest description");
+        break;
+
+    case Error::InvalidDescription:
+        localizedDescription = WEB_UI_STRING("Missing or empty `description` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for description");
+        break;
+
+    case Error::InvalidExternallyConnectable:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `externally_connectable` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for externally_connectable");
+        break;
+
+    case Error::InvalidIcon:
+#if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
+        if (manifestObject()->getValue(iconVariantsManifestKey))
+            localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants");
+        else
+#endif
+            localizedDescription = WEB_UI_STRING("Missing or empty `icons` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icons");
+        break;
+
+    case Error::InvalidName:
+        localizedDescription = WEB_UI_STRING("Missing or empty `name` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for name");
+        break;
+
+    case Error::InvalidOptionsPage:
+        if (manifestObject()->getValue(optionsUIManifestKey))
+            localizedDescription = WEB_UI_STRING("Empty or invalid `options_ui` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for options UI");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `options_page` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for options page");
+        break;
+
+    case Error::InvalidURLOverrides:
+        if (manifestObject()->getValue(browserURLOverridesManifestKey))
+            localizedDescription = WEB_UI_STRING("Empty or invalid `browser_url_overrides` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for browser URL overrides");
+        else
+            localizedDescription = WEB_UI_STRING("Empty or invalid `chrome_url_overrides` manifest entry", "WKWebExtensionErrorInvalidManifestEntry description for chrome URL overrides");
+        break;
+
+    case Error::InvalidVersion:
+        localizedDescription = WEB_UI_STRING("Missing or empty `version` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for version");
+        break;
+
+    case Error::InvalidWebAccessibleResources:
+        localizedDescription = WEB_UI_STRING("Invalid `web_accessible_resources` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources");
+        break;
+
+    case Error::InvalidBackgroundPersistence:
+        localizedDescription = WEB_UI_STRING("Invalid `persistent` manifest entry.", "WKWebExtensionErrorInvalidBackgroundPersistence description");
+        break;
+
+    case Error::InvalidResourceCodeSignature:
+        ASSERT(customLocalizedDescription);
+        break;
+    }
+
+    if (!customLocalizedDescription.isEmpty())
+        localizedDescription = customLocalizedDescription;
+
+    return API::Error::create({ "WKWebExtensionErrorDomain"_s, errorCode, { }, localizedDescription });
+}
+
+Vector<Ref<API::Error>> WebExtension::errors()
+{
+    populateDisplayStringsIfNeeded();
+    populateActionPropertiesIfNeeded();
+    populateBackgroundPropertiesIfNeeded();
+    populateContentScriptPropertiesIfNeeded();
+    populatePermissionsPropertiesIfNeeded();
+    populatePagePropertiesIfNeeded();
+    populateContentSecurityPolicyStringsIfNeeded();
+    populateWebAccessibleResourcesIfNeeded();
+    populateCommandsIfNeeded();
+    populateDeclarativeNetRequestPropertiesIfNeeded();
+    populateExternallyConnectableIfNeeded();
+
+    return m_errors;
 }
 
 const String& WebExtension::displayName()

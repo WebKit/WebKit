@@ -32,7 +32,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIError.h"
 #import "CocoaHelpers.h"
+#import "WKNSError.h"
 #import "WKWebExtensionContextPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextProxyMessages.h"
@@ -367,14 +369,14 @@ CocoaImage *WebExtensionMenuItem::icon(CGSize idealSize) const
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_iconVariants) {
-        result = extensionContext()->protectedExtension()->bestImageForIconVariants(m_iconVariants.get(), idealSize, [&](auto *error) {
-            extensionContext()->recordError(error);
+        result = extensionContext()->protectedExtension()->bestImageForIconVariants(m_iconVariants.get(), idealSize, [&](Ref<API::Error> error) {
+            extensionContext()->recordError(wrapper(error.get()));
         });
     } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (m_icons) {
-        result = extensionContext()->protectedExtension()->bestImageInIconsDictionary(m_icons.get(), idealSize, [&](auto *error) {
-            extensionContext()->recordError(error);
+        result = extensionContext()->protectedExtension()->bestImageInIconsDictionary(m_icons.get(), idealSize, [&](Ref<API::Error> error) {
+            extensionContext()->recordError(wrapper(error.get()));
         });
     }
 

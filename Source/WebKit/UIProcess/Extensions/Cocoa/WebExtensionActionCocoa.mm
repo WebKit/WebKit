@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKNSError.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKUIDelegatePrivate.h"
@@ -736,14 +737,14 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIconVariants) {
-            result = extensionContext()->extension().bestImageForIconVariants(m_customIconVariants.get(), idealSize, [&](auto *error) {
-                extensionContext()->recordError(error);
+            result = extensionContext()->extension().bestImageForIconVariants(m_customIconVariants.get(), idealSize, [&](Ref<API::Error> error) {
+                extensionContext()->recordError(::WebKit::wrapper(error));
             });
         } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIcons) {
-            result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](auto *error) {
-                extensionContext()->recordError(error);
+            result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](Ref<API::Error> error) {
+                extensionContext()->recordError(::WebKit::wrapper(error));
             });
         }
 

@@ -32,7 +32,9 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIError.h"
 #import "APIFrameInfo.h"
+#import "WKNSError.h"
 #import "WKURLSchemeTaskInternal.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtension.h"
@@ -104,10 +106,10 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             loadingExtensionMainFrame = true;
         }
 
-        NSError *error;
-        auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString(), &error);
+        RefPtr<API::Error> error;
+        auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString(), error);
         if (!fileData) {
-            extensionContext->recordError(error);
+            extensionContext->recordError(wrapper(error));
             task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
         }

@@ -32,8 +32,10 @@
 
 #import "CocoaHelpers.h"
 #import "CocoaImage.h"
+#import "WKNSError.h"
 #import "WKWebExtensionMatchPatternInternal.h"
 #import "WebExtension.h"
+#import <wtf/cocoa/VectorCocoa.h>
 
 NSErrorDomain const WKWebExtensionErrorDomain = @"WKWebExtensionErrorDomain";
 
@@ -51,11 +53,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(appExtensionBundle, nil, &error);
+        RefPtr<API::Error> error;
+        Ref result = WebKit::WebExtension::create(appExtensionBundle, nil, error);
 
         if (error) {
-            completionHandler(nil, error);
+            completionHandler(nil, wrapper(error));
             return;
         }
 
@@ -73,11 +75,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSError * __autoreleasing error;
-        Ref result = WebKit::WebExtension::create(nil, resourceBaseURL, &error);
+        RefPtr<API::Error> error;
+        Ref result = WebKit::WebExtension::create(nil, resourceBaseURL, error);
 
         if (error) {
-            completionHandler(nil, error);
+            completionHandler(nil, wrapper(error));
             return;
         }
 
@@ -126,12 +128,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    NSError * __autoreleasing internalError = nil;
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, resourceBaseURL, &internalError);
+    RefPtr<API::Error> internalError;
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle, resourceBaseURL, internalError);
 
     if (internalError) {
         if (error)
-            *error = internalError;
+            *error = wrapper(internalError);
         return nil;
     }
 
@@ -256,7 +258,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSArray<NSError *> *)errors
 {
-    return self._protectedWebExtension->errors();
+    return createNSArray(self._protectedWebExtension->errors(), [](auto&& child) -> id {
+        return wrapper(child);
+    }).autorelease();
 }
 
 - (BOOL)hasBackgroundContent

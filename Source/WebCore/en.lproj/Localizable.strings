@@ -1625,7 +1625,7 @@
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description, because of a JSON error */
-"Unable to parse `declarativeNetRequest` rules: %@" = "Unable to parse `declarativeNetRequest` rules: %@";
+"Unable to parse `declarativeNetRequest` rules: %s" = "Unable to parse `declarativeNetRequest` rules: %s";
 
 /* WKWebExtensionErrorInvalidManifest description */
 "Unable to parse manifest because of an unexpected format." = "Unable to parse manifest because of an unexpected format.";

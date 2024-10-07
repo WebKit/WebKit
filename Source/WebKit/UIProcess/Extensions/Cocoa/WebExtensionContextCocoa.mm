@@ -43,6 +43,7 @@
 #import "PageLoadStateObserver.h"
 #import "ResourceLoadInfo.h"
 #import "WKNSArray.h"
+#import "WKNSError.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKOpenPanelParametersPrivate.h"
@@ -309,7 +310,10 @@ void WebExtensionContext::clearError(Error error)
 
 NSArray *WebExtensionContext::errors()
 {
-    return [protectedExtension()->errors() arrayByAddingObjectsFromArray:m_errors.get()];
+    auto array = createNSArray(protectedExtension()->errors(), [](Ref<API::Error> error) {
+        return ::WebKit::wrapper(error);
+    });
+    return [array.get() arrayByAddingObjectsFromArray:m_errors.get()];
 }
 
 bool WebExtensionContext::load(WebExtensionController& controller, String storageDirectory, NSError **outError)
@@ -329,7 +333,7 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
     if (extension->backgroundContentIsPersistent()) {
         RELEASE_LOG_ERROR(Extensions, "Cannot load persistent background content on this platform");
         if (outError)
-            *outError = extension->createError(WebExtension::Error::InvalidBackgroundPersistence);
+            *outError = ::WebKit::wrapper(extension->createError(WebExtension::Error::InvalidBackgroundPersistence)).get();
         return false;
     }
 #endif
@@ -4347,10 +4351,10 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         RefPtr extension = m_extension;
 
         for (NSString *scriptPath : injectedContentData.scriptPaths) {
-            NSError *error;
-            auto *scriptString = extension->resourceStringForPath(scriptPath, &error, WebExtension::CacheResult::Yes);
+            RefPtr<API::Error> error;
+            auto *scriptString = extension->resourceStringForPath(scriptPath, error, WebExtension::CacheResult::Yes);
             if (!scriptString) {
-                recordError(error);
+                recordError(::WebKit::wrapper(error));
                 continue;
             }
 
@@ -4371,10 +4375,10 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         }
 
         for (NSString *styleSheetPath : injectedContentData.styleSheetPaths) {
-            NSError *error;
-            auto *styleSheetString = extension->resourceStringForPath(styleSheetPath, &error, WebExtension::CacheResult::Yes);
+            RefPtr<API::Error> error;
+            auto *styleSheetString = extension->resourceStringForPath(styleSheetPath, error, WebExtension::CacheResult::Yes);
             if (!styleSheetString) {
-                recordError(error);
+                recordError(::WebKit::wrapper(error));
                 continue;
             }
 
@@ -4640,10 +4644,10 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             if (!m_enabledStaticRulesetIDs.contains(ruleset.rulesetID))
                 continue;
 
-            NSError *error;
-            auto *jsonData = extension->resourceDataForPath(ruleset.jsonPath, &error);
+            RefPtr<API::Error> error;
+            auto *jsonData = extension->resourceDataForPath(ruleset.jsonPath, error);
             if (!jsonData) {
-                recordError(error);
+                recordError(::WebKit::wrapper(*error));
                 continue;
             }
 
