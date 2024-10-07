@@ -121,8 +121,8 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
 
     RELEASE_ASSERT_WITH_MESSAGE(isMainThread(), "Always create timer on the main thread.");
     auto timeoutTimer = makeUnique<Timer>([resolver, completionHandler]() mutable {
-        nw_resolver_cancel(resolver.get());
         completionHandler->complete(makeUnexpected(DNSError::Cancelled));
+        nw_resolver_cancel(resolver.get()); // This will destroy the timer and this lambda.
     });
     timeoutTimer->startOneShot(timeoutForDNSResolution);
 
