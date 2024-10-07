@@ -1,7 +1,17 @@
 
 
 Verifying the inline SVG:
-PASS
+svg:
+	id:		main_svg
+	actual:		'outermost svg'
+	expected:	''
+
+use:
+	id:		use_without_title
+	actual:		'outermost svg'
+	expected:	''
+
+
 
 Verifying the embedded SVG:
 PASS
