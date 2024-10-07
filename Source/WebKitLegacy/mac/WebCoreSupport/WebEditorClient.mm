@@ -83,6 +83,7 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/Markable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -1196,7 +1197,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 @interface WebEditorSpellCheckResponder : NSObject
 {
     WeakPtr<WebEditorClient> _client;
-    TextCheckingRequestIdentifier _identifier;
+    Markable<TextCheckingRequestIdentifier> _identifier;
     RetainPtr<NSArray> _results;
 }
 - (id)initWithClient:(WeakPtr<WebEditorClient>)client identifier:(TextCheckingRequestIdentifier)identifier results:(NSArray *)results;
@@ -1218,7 +1219,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 - (void)perform
 {
     if (_client)
-        _client->didCheckSucceed(_identifier, _results.get());
+        _client->didCheckSucceed(*_identifier, _results.get());
 }
 
 @end

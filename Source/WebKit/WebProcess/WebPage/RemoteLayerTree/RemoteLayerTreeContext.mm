@@ -84,10 +84,10 @@ LayerHostingMode RemoteLayerTreeContext::layerHostingMode() const
     return m_webPage->layerHostingMode();
 }
 
-DrawingAreaIdentifier RemoteLayerTreeContext::drawingAreaIdentifier() const
+std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifier() const
 {
     if (!m_webPage->drawingArea())
-        return DrawingAreaIdentifier();
+        return std::nullopt;
     return m_webPage->drawingArea()->identifier();
 }
 

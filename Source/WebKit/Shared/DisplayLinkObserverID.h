@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct DisplayLinkObserverIDType;
-using DisplayLinkObserverID = LegacyNullableObjectIdentifier<DisplayLinkObserverIDType>;
+using DisplayLinkObserverID = ObjectIdentifier<DisplayLinkObserverIDType>;
 
 } // namespace WebKit

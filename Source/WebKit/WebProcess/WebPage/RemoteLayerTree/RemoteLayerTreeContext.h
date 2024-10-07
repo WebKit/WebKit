@@ -74,7 +74,7 @@ public:
     
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 
-    DrawingAreaIdentifier drawingAreaIdentifier() const;
+    std::optional<DrawingAreaIdentifier> drawingAreaIdentifier() const;
 
     void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 

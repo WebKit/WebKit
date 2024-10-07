@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class UserScriptIdentifierType { };
-using UserScriptIdentifier = LegacyNullableObjectIdentifier<UserScriptIdentifierType>;
+using UserScriptIdentifier = ObjectIdentifier<UserScriptIdentifierType>;
 
 } // namespace WebKit

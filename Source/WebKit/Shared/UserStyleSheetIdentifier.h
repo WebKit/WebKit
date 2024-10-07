@@ -30,6 +30,6 @@
 namespace WebKit {
 
 enum class UserStyleSheetIdentifierType { };
-using UserStyleSheetIdentifier = LegacyNullableObjectIdentifier<UserStyleSheetIdentifierType>;
+using UserStyleSheetIdentifier = ObjectIdentifier<UserStyleSheetIdentifierType>;
 
 } // namespace WebKit

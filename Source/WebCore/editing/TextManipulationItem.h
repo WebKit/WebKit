@@ -35,7 +35,7 @@ struct TextManipulationItem {
     Markable<FrameIdentifier> frameID;
     bool isSubframe { false };
     bool isCrossSiteSubframe { false };
-    TextManipulationItemIdentifier identifier;
+    Markable<TextManipulationItemIdentifier> identifier;
     Vector<TextManipulationToken> tokens;
 };
 

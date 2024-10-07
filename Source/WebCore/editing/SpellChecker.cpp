@@ -211,7 +211,7 @@ void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vect
 
     protectedDocument()->editor().markAndReplaceFor(*m_processingRequest, results);
 
-    if (m_lastProcessedIdentifier.toUInt64() < identifier.toUInt64())
+    if (!m_lastProcessedIdentifier || *m_lastProcessedIdentifier < identifier)
         m_lastProcessedIdentifier = identifier;
 
     m_processingRequest = nullptr;

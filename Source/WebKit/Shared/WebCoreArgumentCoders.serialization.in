@@ -2718,7 +2718,7 @@ struct WebCore::TextManipulationItem {
     Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;
     bool isCrossSiteSubframe;
-    WebCore::TextManipulationItemIdentifier identifier;
+    Markable<WebCore::TextManipulationItemIdentifier> identifier;
     Vector<WebCore::TextManipulationToken> tokens;
 }
 
@@ -4359,7 +4359,7 @@ header: <WebCore/TextManipulationController.h>
 header: <WebCore/TextManipulationController.h>
 [CustomHeader] struct WebCore::TextManipulationControllerManipulationFailure {
     WebCore::FrameIdentifier frameID;
-    WebCore::TextManipulationItemIdentifier identifier;
+    Markable<WebCore::TextManipulationItemIdentifier> identifier;
     uint64_t index;
     WebCore::TextManipulationControllerManipulationFailure::Type type;
 };

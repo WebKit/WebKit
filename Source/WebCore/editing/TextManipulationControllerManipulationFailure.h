@@ -40,7 +40,7 @@ struct TextManipulationControllerManipulationFailure {
     };
 
     FrameIdentifier frameID;
-    TextManipulationItemIdentifier identifier;
+    Markable<TextManipulationItemIdentifier> identifier;
     uint64_t index;
     Type type;
 };

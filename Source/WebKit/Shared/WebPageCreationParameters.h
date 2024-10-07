@@ -104,7 +104,7 @@ struct WebPageCreationParameters {
     
     WebPreferencesStore store { };
     DrawingAreaType drawingAreaType { };
-    DrawingAreaIdentifier drawingAreaIdentifier { };
+    DrawingAreaIdentifier drawingAreaIdentifier;
     WebPageProxyIdentifier webPageProxyIdentifier;
     WebPageGroupData pageGroupData;
 

@@ -30,6 +30,6 @@
 namespace WebCore {
 
 struct SleepDisablerIdentifierType { };
-using SleepDisablerIdentifier = LegacyNullableObjectIdentifier<SleepDisablerIdentifierType>;
+using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
 
 } // namespace WebCore
