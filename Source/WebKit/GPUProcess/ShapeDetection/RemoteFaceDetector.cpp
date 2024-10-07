@@ -64,7 +64,7 @@ void RemoteFaceDetector::detect(WebCore::RenderingResourceIdentifier renderingRe
         return;
     }
 
-    m_backing->detect(*sourceImage, WTFMove(completionHandler));
+    Ref { m_backing }->detect(*sourceImage, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

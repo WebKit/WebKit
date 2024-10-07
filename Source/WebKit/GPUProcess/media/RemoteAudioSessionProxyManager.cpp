@@ -145,13 +145,13 @@ void RemoteAudioSessionProxyManager::updateSpatialExperience()
 {
     String sceneIdentifier;
     std::optional<AudioSession::SoundStageSize> maxSize;
-    for (auto& proxy : m_proxies) {
-        if (!proxy.isActive())
+    for (Ref proxy : m_proxies) {
+        if (!proxy->isActive())
             continue;
 
-        if (!maxSize || proxy.soundStageSize() > *maxSize) {
-            maxSize = proxy.soundStageSize();
-            sceneIdentifier = proxy.sceneIdentifier();
+        if (!maxSize || proxy->soundStageSize() > *maxSize) {
+            maxSize = proxy->soundStageSize();
+            sceneIdentifier = proxy->sceneIdentifier();
         }
     }
 
@@ -161,8 +161,8 @@ void RemoteAudioSessionProxyManager::updateSpatialExperience()
 
 bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionProxy& proxyToExclude)
 {
-    for (auto& proxy : m_proxies) {
-        if (proxy.isActive() && &proxy != &proxyToExclude)
+    for (Ref proxy : m_proxies) {
+        if (proxy->isActive() && proxy.ptr() != &proxyToExclude)
             return true;
     }
     return false;
@@ -170,8 +170,8 @@ bool RemoteAudioSessionProxyManager::hasOtherActiveProxyThan(RemoteAudioSessionP
 
 bool RemoteAudioSessionProxyManager::hasActiveNotInterruptedProxy()
 {
-    for (auto& proxy : m_proxies) {
-        if (proxy.isActive() && !proxy.isInterrupted())
+    for (Ref proxy : m_proxies) {
+        if (proxy->isActive() && !proxy->isInterrupted())
             return true;
     }
     return false;

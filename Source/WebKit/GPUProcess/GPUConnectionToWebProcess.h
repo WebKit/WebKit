@@ -268,8 +268,6 @@ public:
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
-    Ref<IPC::Connection> protectedConnection() const { return m_connection.copyRef(); }
-
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     Ref<LibWebRTCCodecsProxy> protectedLibWebRTCCodecsProxy() const;
 #endif

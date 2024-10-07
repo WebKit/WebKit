@@ -90,7 +90,7 @@ void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingR
 void RemoteSharedResourceCache::lowMemoryHandler()
 {
 #if HAVE(IOSURFACE)
-    m_ioSurfacePool->discardAllSurfaces();
+    Ref { m_ioSurfacePool }->discardAllSurfaces();
 #endif
 }
 

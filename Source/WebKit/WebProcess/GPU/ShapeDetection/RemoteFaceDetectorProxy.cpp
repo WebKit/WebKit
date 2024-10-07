@@ -56,12 +56,17 @@ RemoteFaceDetectorProxy::RemoteFaceDetectorProxy(Ref<IPC::StreamClientConnection
 
 RemoteFaceDetectorProxy::~RemoteFaceDetectorProxy()
 {
-    m_streamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteFaceDetector(m_backing), m_renderingBackendIdentifier);
+    protectedStreamClientConnection()->send(Messages::RemoteRenderingBackend::ReleaseRemoteFaceDetector(m_backing), m_renderingBackendIdentifier);
 }
 
 void RemoteFaceDetectorProxy::detect(Ref<WebCore::ImageBuffer>&& imageBuffer, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&& completionHandler)
 {
-    m_streamClientConnection->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing);
+    protectedStreamClientConnection()->sendWithAsyncReply(Messages::RemoteFaceDetector::Detect(imageBuffer->renderingResourceIdentifier()), WTFMove(completionHandler), m_backing);
+}
+
+Ref<IPC::StreamClientConnection> RemoteFaceDetectorProxy::protectedStreamClientConnection() const
+{
+    return m_streamClientConnection;
 }
 
 } // namespace WebKit::WebGPU

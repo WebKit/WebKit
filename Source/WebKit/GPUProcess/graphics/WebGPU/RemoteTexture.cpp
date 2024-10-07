@@ -84,7 +84,7 @@ void RemoteTexture::createView(const std::optional<WebGPU::TextureViewDescriptor
     }
     auto textureView = protectedBacking()->createView(convertedDescriptor);
     MESSAGE_CHECK(textureView);
-    auto remoteTextureView = RemoteTextureView::create(textureView.releaseNonNull(), m_objectHeap, m_streamConnection.copyRef(), Ref { m_gpu.get() }, identifier);
+    auto remoteTextureView = RemoteTextureView::create(textureView.releaseNonNull(), objectHeap, m_streamConnection.copyRef(), Ref { m_gpu.get() }, identifier);
     objectHeap->addObject(identifier, remoteTextureView);
 }
 
