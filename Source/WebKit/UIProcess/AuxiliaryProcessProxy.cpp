@@ -327,7 +327,6 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
-    m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
     RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier, Thread::QOS::UserInteractive);
@@ -355,6 +354,9 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
 
 #if USE(RUNNINGBOARD)
     m_throttler.didConnectToProcess(*this);
+#if PLATFORM(MAC)
+    m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
+#endif
 #if USE(EXTENSIONKIT)
     ASSERT(launcher);
     if (launcher)
