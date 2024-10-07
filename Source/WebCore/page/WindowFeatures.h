@@ -29,14 +29,13 @@
 #pragma once
 
 #include "DisabledAdaptations.h"
+#include "FloatRect.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class FloatRect;
 
 struct WindowFeatures {
     bool hasAdditionalFeatures { false };
@@ -53,6 +52,10 @@ struct WindowFeatures {
     std::optional<bool> locationBarVisible;
     std::optional<bool> scrollbarsVisible;
     std::optional<bool> resizable;
+
+#if PLATFORM(GTK)
+    FloatRect oldWindowRect { };
+#endif
 
     std::optional<bool> fullscreen;
     std::optional<bool> dialog;

@@ -250,6 +250,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::FrameIdentifier mainFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier;
     WebCore::SandboxFlags initialSandboxFlags;
+    std::optional<WebCore::WindowFeatures> windowFeatures;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;

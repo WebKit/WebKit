@@ -185,6 +185,7 @@
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
 #include "WindowEventLoop.h"
+#include "WindowFeatures.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/FileSystem.h>
@@ -5084,6 +5085,76 @@ bool Page::requiresScriptTelemetryForURL(const URL& scriptURL) const
         return false;
 
     return chrome().client().requiresScriptTelemetryForURL(scriptURL, mainFrameOrigin());
+}
+
+void Page::applyWindowFeatures(const WindowFeatures& features)
+{
+    Ref frame = mainFrame();
+    chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
+
+    if (!frame->page())
+        return;
+    if (features.statusBarVisible)
+        chrome().setStatusbarVisible(*features.statusBarVisible);
+
+    if (!frame->page())
+        return;
+    if (features.scrollbarsVisible)
+        chrome().setScrollbarsVisible(*features.scrollbarsVisible);
+
+    if (!frame->page())
+        return;
+    if (features.menuBarVisible)
+        chrome().setMenubarVisible(*features.menuBarVisible);
+
+    if (!frame->page())
+        return;
+    if (features.resizable)
+        chrome().setResizable(*features.resizable);
+
+    // 'x' and 'y' specify the location of the window, while 'width' and 'height'
+    // specify the size of the viewport. We can only resize the window, so adjust
+    // for the difference between the window size and the viewport size.
+
+    // FIXME: We should reconcile the initialization of viewport arguments between iOS and non-IOS.
+#if !PLATFORM(IOS_FAMILY)
+    FloatSize viewportSize = chrome().pageRect().size();
+    FloatRect windowRect = chrome().windowRect();
+    if (features.x)
+        windowRect.setX(*features.x);
+    if (features.y)
+        windowRect.setY(*features.y);
+    // Zero width and height mean using default size, not minimum one.
+    if (features.width && *features.width)
+        windowRect.setWidth(*features.width + (windowRect.width() - viewportSize.width()));
+    if (features.height && *features.height)
+        windowRect.setHeight(*features.height + (windowRect.height() - viewportSize.height()));
+
+#if PLATFORM(GTK)
+    // Use the size of the previous window if there is no default size.
+    if (!windowRect.width())
+        windowRect.setWidth(features.oldWindowRect.width());
+    if (!windowRect.height())
+        windowRect.setHeight(features.oldWindowRect.height());
+#endif
+
+    // Ensure non-NaN values, minimum size as well as being within valid screen area.
+    FloatRect newWindowRect = LocalDOMWindow::adjustWindowRect(*this, windowRect);
+
+    if (!frame->page())
+        return;
+    chrome().setWindowRect(newWindowRect);
+#else
+    // On iOS, width and height refer to the viewport dimensions.
+    ViewportArguments arguments;
+    // Zero width and height mean using default size, not minimum one.
+    if (features.width && *features.width)
+        arguments.width = *features.width;
+    if (features.height && *features.height)
+        arguments.height = *features.height;
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
+        localFrame->setViewportArguments(arguments);
+#endif
 }
 
 } // namespace WebCore

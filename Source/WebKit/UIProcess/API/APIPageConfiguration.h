@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/Site.h>
+#include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingToolsTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -119,6 +120,9 @@ public:
 
     WebCore::SandboxFlags initialSandboxFlags() const;
     void setInitialSandboxFlags(WebCore::SandboxFlags);
+
+    const std::optional<WebCore::WindowFeatures>& windowFeatures() const;
+    void setWindowFeatures(WebCore::WindowFeatures&&);
 
     WebKit::WebProcessPool& processPool() const;
     void setProcessPool(RefPtr<WebKit::WebProcessPool>&&);
@@ -503,6 +507,7 @@ private:
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
         std::optional<OpenerInfo> openerInfo;
+        std::optional<WebCore::WindowFeatures> windowFeatures;
         WebCore::SandboxFlags initialSandboxFlags;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
         WeakPtr<WebKit::WebPageProxy> alternateWebViewForNavigationGestures;

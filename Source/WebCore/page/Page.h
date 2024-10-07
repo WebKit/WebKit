@@ -211,6 +211,7 @@ struct AttributedString;
 struct CharacterRange;
 struct SimpleRange;
 struct TextRecognitionResult;
+struct WindowFeatures;
 
 using PlatformDisplayID = uint32_t;
 using SharedStringHash = uint32_t;
@@ -470,6 +471,8 @@ public:
     const ProgressTracker& progress() const { return m_progress.get(); }
     CheckedRef<ProgressTracker> checkedProgress();
     CheckedRef<const ProgressTracker> checkedProgress() const;
+
+    WEBCORE_EXPORT void applyWindowFeatures(const WindowFeatures&);
 
     void progressEstimateChanged(LocalFrame&) const;
     void progressFinished(LocalFrame&) const;

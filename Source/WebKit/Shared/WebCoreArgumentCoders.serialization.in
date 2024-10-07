@@ -2166,6 +2166,10 @@ struct WebCore::WindowFeatures {
     std::optional<bool> scrollbarsVisible;
     std::optional<bool> resizable;
 
+#if PLATFORM(GTK)
+    WebCore::FloatRect oldWindowRect;
+#endif
+
     std::optional<bool> fullscreen;
     std::optional<bool> dialog;
     std::optional<bool> noopener;

@@ -4699,6 +4699,10 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
     if (!oldPage)
         return nullptr;
 
+#if PLATFORM(GTK)
+    features.oldWindowRect = oldPage->chrome().windowRect();
+#endif
+
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request);
     NavigationAction action { request.requester(), request.resourceRequest(), request.initiatedByMainFrame(), request.isRequestFromClientOrUserInput(), NavigationType::Other, shouldOpenExternalURLsPolicy };
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
@@ -4710,73 +4714,6 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
 
     if (!isBlankTargetFrameName(request.frameName()))
         frame->tree().setSpecifiedName(request.frameName());
-
-    page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
-
-    if (!frame->page())
-        return nullptr;
-    if (features.statusBarVisible)
-        page->chrome().setStatusbarVisible(*features.statusBarVisible);
-
-    if (!frame->page())
-        return nullptr;
-    if (features.scrollbarsVisible)
-        page->chrome().setScrollbarsVisible(*features.scrollbarsVisible);
-
-    if (!frame->page())
-        return nullptr;
-    if (features.menuBarVisible)
-        page->chrome().setMenubarVisible(*features.menuBarVisible);
-
-    if (!frame->page())
-        return nullptr;
-    if (features.resizable)
-        page->chrome().setResizable(*features.resizable);
-
-    // 'x' and 'y' specify the location of the window, while 'width' and 'height'
-    // specify the size of the viewport. We can only resize the window, so adjust
-    // for the difference between the window size and the viewport size.
-
-    // FIXME: We should reconcile the initialization of viewport arguments between iOS and non-IOS.
-#if !PLATFORM(IOS_FAMILY)
-    FloatSize viewportSize = page->chrome().pageRect().size();
-    FloatRect windowRect = page->chrome().windowRect();
-    if (features.x)
-        windowRect.setX(*features.x);
-    if (features.y)
-        windowRect.setY(*features.y);
-    // Zero width and height mean using default size, not minimum one.
-    if (features.width && *features.width)
-        windowRect.setWidth(*features.width + (windowRect.width() - viewportSize.width()));
-    if (features.height && *features.height)
-        windowRect.setHeight(*features.height + (windowRect.height() - viewportSize.height()));
-
-#if PLATFORM(GTK)
-    FloatRect oldWindowRect = oldPage->chrome().windowRect();
-    // Use the size of the previous window if there is no default size.
-    if (!windowRect.width())
-        windowRect.setWidth(oldWindowRect.width());
-    if (!windowRect.height())
-        windowRect.setHeight(oldWindowRect.height());
-#endif
-
-    // Ensure non-NaN values, minimum size as well as being within valid screen area.
-    FloatRect newWindowRect = LocalDOMWindow::adjustWindowRect(*page, windowRect);
-
-    if (!frame->page())
-        return nullptr;
-    page->chrome().setWindowRect(newWindowRect);
-#else
-    // On iOS, width and height refer to the viewport dimensions.
-    ViewportArguments arguments;
-    // Zero width and height mean using default size, not minimum one.
-    if (features.width && *features.width)
-        arguments.width = *features.width;
-    if (features.height && *features.height)
-        arguments.height = *features.height;
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-        localFrame->setViewportArguments(arguments);
-#endif
 
     if (!frame->page())
         return nullptr;

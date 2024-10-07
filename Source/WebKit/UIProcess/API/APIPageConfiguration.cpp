@@ -111,6 +111,16 @@ void PageConfiguration::setBrowsingContextGroup(RefPtr<BrowsingContextGroup>&& g
     m_data.browsingContextGroup = WTFMove(group);
 }
 
+const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const
+{
+    return m_data.windowFeatures;
+}
+
+void PageConfiguration::setWindowFeatures(WebCore::WindowFeatures&& windowFeatures)
+{
+    m_data.windowFeatures = WTFMove(windowFeatures);
+}
+
 auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
 {
     return m_data.openerInfo;

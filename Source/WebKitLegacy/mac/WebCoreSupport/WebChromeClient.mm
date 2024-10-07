@@ -252,7 +252,7 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction&)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction&)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
@@ -303,11 +303,12 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& fea
     else
         newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
 
-    auto* newPage = core(newWebView);
+    RefPtr newPage = core(newWebView);
     if (newPage) {
         if (!features.wantsNoOpener()) {
             m_webView.page->protectedStorageNamespaceProvider()->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
             newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+            newPage->applyWindowFeatures(features);
         }
 
         auto effectiveSandboxFlags = frame.effectiveSandboxFlags();

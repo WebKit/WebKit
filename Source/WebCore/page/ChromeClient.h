@@ -187,7 +187,7 @@ public:
     // should not be shown to the user until the ChromeClient of the newly
     // created Page has its show method called.
     // The ChromeClient should not load the request.
-    virtual Page* createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&) = 0;
+    virtual RefPtr<Page> createWindow(LocalFrame&, const WindowFeatures&, const NavigationAction&) = 0;
     virtual void show() = 0;
 
     virtual bool canRunModal() const = 0;

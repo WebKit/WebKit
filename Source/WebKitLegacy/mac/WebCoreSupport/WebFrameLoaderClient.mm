@@ -826,6 +826,7 @@ WebCore::LocalFrame* WebFrameLoaderClient::dispatchCreatePage(const WebCore::Nav
     if (newWebView) {
         if (policy == WebCore::NewFrameOpenerPolicy::Allow)
             core([newWebView mainFrame])->setOpenerForWebKitLegacy(core(m_webFrame.get()));
+        // Note: applyWindowFeatures is intentionally omitted here corresponding to WebLocalFrameLoaderClient::dispatchCreatePage just using the default window features.
 
         if (RefPtr opener = core(m_webFrame.get())) {
             auto effectiveSandboxFlags = opener->effectiveSandboxFlags();
