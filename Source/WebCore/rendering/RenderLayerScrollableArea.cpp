@@ -1049,31 +1049,43 @@ bool RenderLayerScrollableArea::hasOverflowControls() const
     return m_hBar || m_vBar || m_scrollCorner || m_layer.renderer().style().resize() != Resize::None;
 }
 
-void RenderLayerScrollableArea::positionOverflowControls(const IntSize& offsetFromRoot)
+bool RenderLayerScrollableArea::positionOverflowControls(const IntSize& offsetFromRoot)
 {
     if (!m_hBar && !m_vBar && !m_layer.canResize())
-        return;
+        return false;
 
     if (!m_layer.renderBox())
-        return;
+        return false;
 
     auto rects = overflowControlsRects();
+    bool changed = false;
 
     if (m_vBar) {
         rects.verticalScrollbar.move(offsetFromRoot);
-        m_vBar->setFrameRect(rects.verticalScrollbar);
+        if (m_vBar->frameRect() != rects.verticalScrollbar) {
+            m_vBar->setFrameRect(rects.verticalScrollbar);
+            changed = true;
+        }
     }
 
     if (m_hBar) {
         rects.horizontalScrollbar.move(offsetFromRoot);
-        m_hBar->setFrameRect(rects.horizontalScrollbar);
+        if (m_hBar->frameRect() != rects.horizontalScrollbar) {
+            m_hBar->setFrameRect(rects.horizontalScrollbar);
+            changed = true;
+        }
     }
 
-    if (m_scrollCorner)
+    if (m_scrollCorner && m_scrollCorner->frameRect() != rects.scrollCorner) {
         m_scrollCorner->setFrameRect(rects.scrollCorner);
+        changed = true;
+    }
 
-    if (m_resizer)
+    if (m_resizer && m_resizer->frameRect() != rects.resizer) {
         m_resizer->setFrameRect(rects.resizer);
+        changed = true;
+    }
+    return changed;
 }
 
 LayoutUnit RenderLayerScrollableArea::overflowTop() const

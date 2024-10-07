@@ -664,6 +664,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         paintDirtyRect.setWidth(std::max<LayoutUnit>(paintDirtyRect.width(), rootLayer.renderBox()->layoutOverflowRect().maxX()));
         paintDirtyRect.setHeight(std::max<LayoutUnit>(paintDirtyRect.height(), rootLayer.renderBox()->layoutOverflowRect().maxY()));
         layer.setSize(layer.size().expandedTo(snappedIntSize(maxLayoutOverflow(layer.renderBox()), LayoutPoint(0, 0))));
+        layer.setNeedsPositionUpdate();
     }
     
     // Calculate the clip rects we should use.

@@ -1069,24 +1069,6 @@ unsigned RenderView::pageCount() const
     return 0;
 }
 
-void RenderView::layerChildrenChangedDuringStyleChange(RenderLayer& layer)
-{
-    if (!m_styleChangeLayerMutationRoot) {
-        m_styleChangeLayerMutationRoot = layer;
-        return;
-    }
-
-    RenderLayer* commonAncestor = m_styleChangeLayerMutationRoot->commonAncestorWithLayer(layer);
-    m_styleChangeLayerMutationRoot = commonAncestor;
-}
-
-RenderLayer* RenderView::takeStyleChangeLayerTreeMutationRoot()
-{
-    auto* result = m_styleChangeLayerMutationRoot.get();
-    m_styleChangeLayerMutationRoot.clear();
-    return result;
-}
-
 void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.add(box);

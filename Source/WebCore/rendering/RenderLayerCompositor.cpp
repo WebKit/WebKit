@@ -541,7 +541,7 @@ void RenderLayerCompositor::BackingSharingState::issuePendingRepaints()
 {
     for (auto& layer : m_layersPendingRepaint) {
         LOG_WITH_STREAM(Compositing, stream << "Issuing postponed repaint of layer " << &layer);
-        layer.computeRepaintRectsIncludingDescendants();
+        layer.compositingStatusChanged(LayoutUpToDate::Yes);
         layer.compositor().repaintOnCompositingChange(layer);
     }
     
@@ -2273,8 +2273,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
 
             // This layer and all of its descendants have cached repaints rects that are relative to
             // the repaint container, so change when compositing changes; we need to update them here.
-            if (layer.parent())
-                layer.computeRepaintRectsIncludingDescendants();
+            layer.compositingStatusChanged(queryData.layoutUpToDate);
 
             layer.setNeedsCompositingGeometryUpdate();
             layer.setNeedsCompositingConfigurationUpdate();
@@ -2302,7 +2301,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
             // the repaint container, so change when compositing changes; we need to update them here,
             // as long as shared backing isn't going to change our repaint container.
             if (!repaintTargetsSharedBacking(layer))
-                layer.computeRepaintRectsIncludingDescendants();
+                layer.compositingStatusChanged(queryData.layoutUpToDate);
 
             // If we need to repaint, do so now that we've removed the backing.
             repaintLayer(layer);

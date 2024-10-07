@@ -1040,19 +1040,13 @@ private:
     std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
 
     struct UpdateLayerPositions {
-        bool merge(const UpdateLayerPositions& other)
+        void merge(const UpdateLayerPositions& other)
         {
-            // FIXME: If one is an ancestor of the other we can also probably combine them.
-            if (layoutRoot != other.layoutRoot)
-                return false;
-
             needsFullRepaint |= other.needsFullRepaint;
             if (!other.didRunSimplifiedLayout)
                 didRunSimplifiedLayout = false;
-            return true;
         }
 
-        SingleThreadWeakPtr<RenderElement> layoutRoot;
         RenderElement::LayoutIdentifier layoutIdentifier : 12 { 0 };
         bool needsFullRepaint { false };
         bool didRunSimplifiedLayout { true };

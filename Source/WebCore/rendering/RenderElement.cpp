@@ -597,7 +597,7 @@ void RenderElement::didAttachChild(RenderObject& child, RenderObject*)
     // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
     // and stop creating layers at all for these cases - they're not used anyways.
     if (child.hasLayer() && !layerCreationAllowedForSubtree())
-        downcast<RenderLayerModelObject>(child).checkedLayer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::RenderTreeConstruction);
+        downcast<RenderLayerModelObject>(child).checkedLayer()->removeOnlyThisLayer();
 }
 
 RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -2295,6 +2295,7 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
     // LBSE: Instead of repainting the current boundaries, utilize RenderLayer::updateLayerPositionsAfterStyleChange() to repaint
     // the old and the new repaint boundaries, if they differ -- instead of just the new boundaries.
     if (auto layer = useUpdateLayerPositionsLogic()) {
+        (*layer.value()).setSelfAndDescendantsNeedPositionUpdate();
         (*layer.value()).updateLayerPositionsAfterStyleChange();
         return;
     }

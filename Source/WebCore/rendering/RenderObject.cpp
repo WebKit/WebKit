@@ -573,8 +573,12 @@ void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
     setEverHadLayout();
     setHadSkippedLayout(hadSkippedLayout == HadSkippedLayout::Yes);
 
-    if (auto* renderElement = dynamicDowncast<RenderElement>(*this))
+    if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
         renderElement->setLayoutIdentifier(renderElement->view().frameView().layoutContext().layoutIdentifier());
+
+        if (hasLayer())
+            downcast<RenderLayerModelObject>(*this).layer()->setSelfAndChildrenNeedPositionUpdate();
+    }
     m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
@@ -2818,6 +2822,14 @@ bool RenderObject::isSkippedContentForLayout() const
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 {
     ts << renderer.debugDescription();
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const RenderObject::RepaintRects& repaintRects)
+{
+    ts << " (clipped overflow " << repaintRects.clippedOverflowRect << ")";
+    if (repaintRects.outlineBoundsRect && repaintRects.outlineBoundsRect != repaintRects.clippedOverflowRect)
+        ts << " (outline bounds " << repaintRects.outlineBoundsRect << ")";
     return ts;
 }
 

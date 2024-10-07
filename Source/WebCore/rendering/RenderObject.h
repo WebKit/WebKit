@@ -1602,6 +1602,7 @@ inline bool RenderObject::usesBoundaryCaching() const
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
+WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject::RepaintRects&);
 
 #if ENABLE(TREE_DEBUGGING)
 void printPaintOrderTreeForLiveDocuments();

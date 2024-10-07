@@ -82,6 +82,7 @@ public:
 
     void setPostLayoutScrollPosition(std::optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
+    bool hasPostLayoutScrollPosition() { return !!m_postLayoutScrollPosition; }
 
     int scrollWidth() const;
     int scrollHeight() const;
@@ -233,7 +234,7 @@ public:
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
     void updateScrollbarsAfterLayout();
 
-    void positionOverflowControls(const IntSize&);
+    bool positionOverflowControls(const IntSize&);
 
     void updateAllScrollbarRelatedStyle();
 
