@@ -54,7 +54,9 @@ Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContex
 {
     Ref historyItem = other.m_associatedHistoryItem;
     RefPtr state = historyItem->navigationAPIStateObject();
-    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, WTFMove(state), other.m_key, other.m_id));
+    if (!state)
+        state = other.m_state;
+    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, WTFMove(state), other.m_associatedHistoryItem->uuidIdentifier(), other.m_id));
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const

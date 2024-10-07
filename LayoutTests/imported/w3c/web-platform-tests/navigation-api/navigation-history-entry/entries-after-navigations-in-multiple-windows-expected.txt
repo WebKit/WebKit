@@ -1,4 +1,4 @@
 
 
-FAIL navigation.entries() behavior when multiple windows navigate. assert_equals: expected 2 but got 1
+PASS navigation.entries() behavior when multiple windows navigate.
 

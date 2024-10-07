@@ -1,4 +1,3 @@
+FAIL: Timed out waiting for notifyDone to be called
 
-
-FAIL The url of a document is censored by a no-referrer policy dynamically promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.activation.from.url')"
 

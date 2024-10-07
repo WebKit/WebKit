@@ -93,14 +93,12 @@ bool Navigation::canGoForward() const
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#getting-the-navigation-api-entry-index
-static std::optional<size_t> getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item)
+static std::optional<size_t> getEntryIndexOfHistoryItem(const Vector<Ref<NavigationHistoryEntry>>& entries, const HistoryItem& item, size_t start = 0)
 {
-    size_t index = 0;
     // FIXME: We could have a more efficient solution than iterating through a list.
-    for (auto& entry : entries) {
-        if (entry->associatedHistoryItem() == item)
+    for (size_t index = start; index < entries.size(); index++) {
+        if (entries[index]->associatedHistoryItem() == item)
             return index;
-        index++;
     }
 
     return std::nullopt;
@@ -122,14 +120,26 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
     RefPtr currentItem = frame()->history().currentItem();
     if (!currentItem)
         return;
-    if (previousWindow) {
+    // For main frames we can still rely on the page b/f list. However for subframes we need below logic to not lose the bookkeeping done in the previous window.
+    if (previousWindow && !frame()->isMainFrame()) {
         Ref previousNavigation = previousWindow->protectedNavigation();
-        if (previousNavigation->m_entries.size() && navigationType && navigationType == NavigationNavigationType::Reload && frame()->document()->protectedSecurityOrigin()->isSameOriginDomain(previousWindow->document()->protectedSecurityOrigin())) {
+        bool shouldProcessPreviousNavigationEntries = [&]() {
+            if (!previousNavigation->m_entries.size())
+                return false;
+            if (navigationType != NavigationNavigationType::Reload && navigationType != NavigationNavigationType::Push)
+                return false;
+            if (!frame()->document()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->document()->protectedSecurityOrigin()))
+                return false;
+            return true;
+        }();
+        if (shouldProcessPreviousNavigationEntries) {
             for (auto& entry : previousNavigation->m_entries)
                 m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), entry.get()));
             m_currentEntryIndex = previousNavigation->m_currentEntryIndex;
-            updateForActivation(currentItem.get(), navigationType);
-            return;
+            if (navigationType == NavigationNavigationType::Reload) {
+                updateForActivation(currentItem.get(), navigationType);
+                return;
+            }
         }
     }
 
@@ -159,10 +169,12 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
     } else
         items.append(*currentItem);
 
+    size_t start = m_entries.size();
+
     for (Ref item : items)
         m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), WTFMove(item)));
 
-    m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
+    m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem, start);
     updateForActivation(frame()->history().previousItem(), navigationType);
 }
 
