@@ -486,14 +486,14 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (isRedirect) {
         RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: Processing cross-origin redirect");
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
-        protectedFrameLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
+        protectedFrameLoader()->protectedClient()->didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
     }
     m_request = request;
 
     if (isRedirect) {
         auto& redirectURL = request.url();
         if (m_documentLoader && !m_documentLoader->isCommitted())
-            protectedFrameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
+            protectedFrameLoader()->protectedClient()->dispatchDidReceiveServerRedirectForProvisionalLoad();
 
         if (redirectURL.protocolIsData()) {
             // Handle data URL decoding locally.
@@ -748,22 +748,22 @@ ResourceError ResourceLoader::cancelledError()
 
 ResourceError ResourceLoader::blockedError()
 {
-    return protectedFrameLoader()->client().blockedError(m_request);
+    return protectedFrameLoader()->protectedClient()->blockedError(m_request);
 }
 
 ResourceError ResourceLoader::blockedByContentBlockerError()
 {
-    return protectedFrameLoader()->client().blockedByContentBlockerError(m_request);
+    return protectedFrameLoader()->protectedClient()->blockedByContentBlockerError(m_request);
 }
 
 ResourceError ResourceLoader::cannotShowURLError()
 {
-    return protectedFrameLoader()->client().cannotShowURLError(m_request);
+    return protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request);
 }
 
 ResourceError ResourceLoader::httpsUpgradeRedirectLoopError()
 {
-    return protectedFrameLoader()->client().httpsUpgradeRedirectLoopError(m_request);
+    return protectedFrameLoader()->protectedClient()->httpsUpgradeRedirectLoopError(m_request);
 }
 
 void ResourceLoader::willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -836,7 +836,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
     }
 
     Ref protectedThis { *this };
-    return protectedFrameLoader()->client().shouldUseCredentialStorage(protectedDocumentLoader().get(), *identifier());
+    return protectedFrameLoader()->protectedClient()->shouldUseCredentialStorage(protectedDocumentLoader().get(), *identifier());
 }
 
 bool ResourceLoader::isAllowedToAskUserForCredentials() const

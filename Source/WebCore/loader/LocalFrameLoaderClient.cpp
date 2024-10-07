@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 20217-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,26 @@
  */
 
 #include "config.h"
-#include "RemoteWorkerFrameLoaderClient.h"
+#include "LocalFrameLoaderClient.h"
 
-#include "Logging.h"
-#include <WebCore/DocumentLoader.h>
+#include "FrameLoader.h"
 
-namespace WebKit {
+namespace WebCore {
 
-RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebCore::FrameLoader& frameLoader, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const String& userAgent)
-    : WebCore::EmptyFrameLoaderClient(frameLoader)
-    , m_webPageProxyID(webPageProxyID)
-    , m_userAgent(userAgent)
+LocalFrameLoaderClient::LocalFrameLoaderClient(FrameLoader& loader)
+    : m_loader(loader)
+{ }
+
+LocalFrameLoaderClient::~LocalFrameLoaderClient() = default;
+
+void LocalFrameLoaderClient::ref() const
 {
-    RELEASE_LOG(Worker, "RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient webPageProxyID %" PRIu64 ", pageID %" PRIu64, webPageProxyID.toUInt64(), pageID.toUInt64());
+    m_loader->ref();
 }
 
-Ref<WebCore::DocumentLoader> RemoteWorkerFrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& substituteData)
+void LocalFrameLoaderClient::deref() const
 {
-    return WebCore::DocumentLoader::create(request, substituteData);
+    m_loader->deref();
 }
 
-} // namespace WebKit
+} // namespace WebCore

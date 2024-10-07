@@ -102,12 +102,12 @@ WEBCORE_EXPORT bool isReload(FrameLoadType);
 
 using ContentPolicyDecisionFunction = CompletionHandler<void(PolicyAction)>;
 
-class FrameLoader final {
+class FrameLoader final : public CanMakeWeakPtr<FrameLoader> {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     friend class PolicyChecker;
 public:
-    FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
+    FrameLoader(LocalFrame&, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator);
     ~FrameLoader();
 
     WEBCORE_EXPORT void ref() const;
@@ -233,6 +233,8 @@ public:
 
     const LocalFrameLoaderClient& client() const { return m_client.get(); }
     LocalFrameLoaderClient& client() { return m_client.get(); }
+    WEBCORE_EXPORT Ref<const LocalFrameLoaderClient> protectedClient() const;
+    WEBCORE_EXPORT Ref<LocalFrameLoaderClient> protectedClient();
 
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 

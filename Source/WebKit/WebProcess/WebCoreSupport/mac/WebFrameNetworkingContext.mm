@@ -66,7 +66,7 @@ String WebFrameNetworkingContext::sourceApplicationIdentifier() const
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
-    return frame()->loader().client().blockedError(request);
+    return protectedFrame()->protectedLoader()->protectedClient()->blockedError(request);
 }
 
 WebLocalFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const

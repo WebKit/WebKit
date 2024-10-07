@@ -38,6 +38,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -106,6 +107,11 @@ struct StringWithDirection;
 class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
+    ~LocalFrameLoaderClient();
+
+    void ref() const;
+    void deref() const;
+
     // An inline function cannot be the first non-abstract virtual function declared
     // in the class as it results in the vtable being generated as a weak symbol.
     // This hurts performance (in Mac OS X at least, when loading frameworks), so we
@@ -378,6 +384,12 @@ public:
     virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
 
     virtual void frameNameChanged(const String&) { }
+
+protected:
+    explicit LocalFrameLoaderClient(FrameLoader&);
+
+private:
+    WeakRef<FrameLoader> m_loader;
 };
 
 } // namespace WebCore

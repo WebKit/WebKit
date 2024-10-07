@@ -159,7 +159,7 @@ static const LocalFrame& rootFrame(const LocalFrame& frame)
 
 LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags sandboxFlags, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener)
-    , m_loader(makeUniqueRef<FrameLoader>(*this, clientCreator(*this)))
+    , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(clientCreator)))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))

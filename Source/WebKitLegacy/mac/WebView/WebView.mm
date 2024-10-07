@@ -1513,8 +1513,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         WebCore::PageConfiguration::LocalMainFrameCreationParameters {
-            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-                return makeUniqueRef<WebFrameLoaderClient>();
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRef<WebFrameLoaderClient>(frameLoader);
             } },
             WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
         },
@@ -1779,8 +1779,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::CookieJar::create(storageProvider.copyRef()),
         makeUniqueRef<WebProgressTrackerClient>(self),
         WebCore::PageConfiguration::LocalMainFrameCreationParameters {
-            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&)> { [] (auto&) {
-                return makeUniqueRef<WebFrameLoaderClient>();
+            CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
+                return makeUniqueRef<WebFrameLoaderClient>(frameLoader);
             } },
             WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
         },

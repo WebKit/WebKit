@@ -66,7 +66,7 @@ class SharedBuffer;
 
 class WebFrameLoaderClient : public WebCore::LocalFrameLoaderClient, public CanMakeWeakPtr<WebFrameLoaderClient> {
 public:
-    explicit WebFrameLoaderClient(WebFrame* = nullptr);
+    explicit WebFrameLoaderClient(WebCore::FrameLoader&, WebFrame* = nullptr);
     ~WebFrameLoaderClient();
 
     void setWebFrame(WebFrame& webFrame) { m_webFrame = &webFrame; }

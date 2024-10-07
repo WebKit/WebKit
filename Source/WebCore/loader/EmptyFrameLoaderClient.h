@@ -30,6 +30,11 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT EmptyFrameLoaderClient : public LocalFrameLoaderClient {
+public:
+    explicit EmptyFrameLoaderClient(FrameLoader& frameLoader)
+        : LocalFrameLoaderClient(frameLoader)
+    { }
+
 private:
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) override;
 

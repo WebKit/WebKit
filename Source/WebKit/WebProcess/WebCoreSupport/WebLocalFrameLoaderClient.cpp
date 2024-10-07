@@ -124,8 +124,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebLocalFrameLoaderClient::WebLocalFrameLoaderClient(LocalFrame& localFrame, Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& invalidator)
-    : WebFrameLoaderClient(WTFMove(frame), WTFMove(invalidator))
+WebLocalFrameLoaderClient::WebLocalFrameLoaderClient(LocalFrame& localFrame, FrameLoader& loader, Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& invalidator)
+    : LocalFrameLoaderClient(loader)
+    , WebFrameLoaderClient(WTFMove(frame), WTFMove(invalidator))
     , m_localFrame(localFrame)
 {
 }

@@ -72,6 +72,7 @@ class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
 class Frame;
+class FrameLoader;
 class HistoryItemClient;
 class InspectorClient;
 class LocalFrameLoaderClient;
@@ -104,7 +105,7 @@ class PageConfiguration {
 public:
 
     struct LocalMainFrameCreationParameters {
-        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&)> clientCreator;
+        CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)> clientCreator;
         SandboxFlags effectiveSandboxFlags;
     };
     using MainFrameCreationParameters = std::variant<LocalMainFrameCreationParameters, CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>>;

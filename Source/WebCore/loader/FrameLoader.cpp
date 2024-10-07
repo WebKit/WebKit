@@ -361,9 +361,9 @@ private:
     bool m_inProgress { false };
 };
 
-FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& client)
+FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator)
     : m_frame(frame)
-    , m_client(WTFMove(client))
+    , m_client(clientCreator(frame, *this))
     , m_policyChecker(makeUnique<PolicyChecker>(frame))
     , m_notifier(frame)
     , m_subframeLoader(makeUnique<SubframeLoader>(frame))
@@ -483,7 +483,7 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, ContentPo
     }
 
     // FIXME: Validate the policy check identifier.
-    client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), activeDocumentLoader()->downloadAttribute(), WTFMove(function));
+    protectedClient()->dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
 void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, NavigationHistoryBehavior historyBehavior)
@@ -1233,10 +1233,10 @@ void FrameLoader::updateURLAndHistory(const URL& newURL, RefPtr<SerializedScript
 
     if (historyHandling == NavigationHistoryBehavior::Replace) {
         history->replaceState(WTFMove(stateObject), newURL.string());
-        client().dispatchDidReplaceStateWithinPage();
+        protectedClient()->dispatchDidReplaceStateWithinPage();
     } else {
         history->pushState(WTFMove(stateObject), newURL.string());
-        client().dispatchDidPushStateWithinPage();
+        protectedClient()->dispatchDidPushStateWithinPage();
     }
 }
 
@@ -3444,6 +3444,16 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
 #endif
 
     request.setIsSameSite(initiator->isSameSiteForCookies(request.url()));
+}
+
+Ref<const LocalFrameLoaderClient> FrameLoader::protectedClient() const
+{
+    return m_client.get();
+}
+
+Ref<LocalFrameLoaderClient> FrameLoader::protectedClient()
+{
+    return m_client.get();
 }
 
 void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& referrer, FrameLoadType loadType, Event* event, RefPtr<FormState>&& formState, CompletionHandler<void()>&& completionHandler)

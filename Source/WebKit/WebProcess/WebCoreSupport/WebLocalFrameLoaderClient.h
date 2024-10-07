@@ -40,7 +40,7 @@ struct WebsitePoliciesData;
     
 class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, public WebFrameLoaderClient {
 public:
-    explicit WebLocalFrameLoaderClient(WebCore::LocalFrame&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
+    WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }

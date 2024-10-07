@@ -191,8 +191,9 @@ WebDataSource *dataSource(WebCore::DocumentLoader* loader)
     return loader ? static_cast<WebDocumentLoaderMac*>(loader)->dataSource() : nil;
 }
 
-WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
-    : m_webFrame(webFrame)
+WebFrameLoaderClient::WebFrameLoaderClient(WebCore::FrameLoader& loader, WebFrame *webFrame)
+    : WebCore::LocalFrameLoaderClient(loader)
+    , m_webFrame(webFrame)
 {
 }
 

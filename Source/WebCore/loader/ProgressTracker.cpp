@@ -183,7 +183,7 @@ void ProgressTracker::finalProgressComplete()
     if (m_isMainLoad)
         m_mainLoadCompletionTime = MonotonicTime::now();
 
-    frame->protectedLoader()->client().setMainFrameDocumentReady(true);
+    frame->protectedLoader()->protectedClient()->setMainFrameDocumentReady(true);
     m_client->progressFinished(*frame);
     protectedPage()->progressFinished(*frame);
     frame->protectedLoader()->loadProgressingStatusChanged();
@@ -245,7 +245,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
 
     // For documents that use WebCore's layout system, treat first layout as the half-way point.
     // FIXME: The hasHTMLView function is a sort of roundabout way of asking "do you use WebCore's layout system".
-    bool useClampedMaxProgress = frame->loader().client().hasHTMLView()
+    bool useClampedMaxProgress = frame->protectedLoader()->protectedClient()->hasHTMLView()
         && !frame->loader().stateMachine().firstLayoutDone();
     double maxProgressValue = useClampedMaxProgress ? 0.5 : finalProgressValue;
     increment = (maxProgressValue - m_progressValue) * percentOfRemainingBytes;

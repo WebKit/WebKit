@@ -1932,6 +1932,7 @@ loader/LinkLoader.cpp
 loader/LinkPreloadResourceClients.cpp
 loader/LoaderMalloc.cpp
 loader/LoaderStrategy.cpp
+loader/LocalFrameLoaderClient.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp
 loader/NavigationAction.cpp

@@ -269,7 +269,7 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
         // Logging for <rdar://problem/54830233>.
         if (!frameLoader()->provisionalDocumentLoader())
             DOCUMENTLOADER_RELEASE_LOG("DocumentLoader::setRequest: With no provisional document loader");
-        protectedFrameLoader()->client().dispatchDidChangeProvisionalURL();
+        protectedFrameLoader()->protectedClient()->dispatchDidChangeProvisionalURL();
     }
 }
 
@@ -279,7 +279,7 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
         DOCUMENTLOADER_RELEASE_LOG("setMainDocumentError: (type=%d, code=%d)", static_cast<int>(error.type()), error.errorCode());
 
     m_mainDocumentError = error;    
-    protectedFrameLoader()->client().setMainDocumentError(this, error);
+    protectedFrameLoader()->protectedClient()->setMainDocumentError(this, error);
 }
 
 void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
@@ -297,7 +297,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error, LoadWillConti
 
     if (m_identifierForLoadWithoutResourceLoader) {
         ASSERT(!mainResourceLoader());
-        protectedFrameLoader()->client().dispatchDidFailLoading(this, IsMainResourceLoad::Yes, *m_identifierForLoadWithoutResourceLoader, error);
+        protectedFrameLoader()->protectedClient()->dispatchDidFailLoading(this, IsMainResourceLoad::Yes, *m_identifierForLoadWithoutResourceLoader, error);
     }
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -503,8 +503,9 @@ void DocumentLoader::finishedLoading()
 
         if (!frameLoader())
             return;
-        protectedFrameLoader()->client().finishedLoading(this);
-        protectedFrameLoader()->client().loadStorageAccessQuirksIfNeeded();
+        Ref frameLoaderClient = frameLoader()->client();
+        frameLoaderClient->finishedLoading(this);
+        frameLoaderClient->loadStorageAccessQuirksIfNeeded();
     }
 
     m_writer.end();
@@ -724,7 +725,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     FrameLoader::addSameSiteInfoToRequestIfNeeded(newRequest, m_frame->document());
 
     if (!didReceiveRedirectResponse)
-        protectedFrameLoader()->client().dispatchWillChangeDocument(m_frame->document()->url(), newRequest.url());
+        protectedFrameLoader()->protectedClient()->dispatchWillChangeDocument(m_frame->document()->url(), newRequest.url());
 
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
@@ -1018,7 +1019,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     if (m_identifierForLoadWithoutResourceLoader) {
         if (m_mainResource && m_mainResource->wasRedirected()) {
             ASSERT(m_mainResource->status() == CachedResource::Status::Cached);
-            protectedFrameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
+            protectedFrameLoader()->protectedClient()->dispatchDidReceiveServerRedirectForProvisionalLoad();
         }
         addResponse(m_response);
         protectedFrameLoader()->notifier().dispatchDidReceiveResponse(this, *m_identifierForLoadWithoutResourceLoader, m_response, 0);
@@ -1122,7 +1123,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     switch (policy) {
     case PolicyAction::Use: {
-        if (!protectedFrameLoader()->client().canShowMIMEType(m_response.mimeType()) || disallowWebArchive() || disallowDataRequest()) {
+        if (!protectedFrameLoader()->protectedClient()->canShowMIMEType(m_response.mimeType()) || disallowWebArchive() || disallowDataRequest()) {
             protectedFrameLoader()->policyChecker().cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();
@@ -1135,7 +1136,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // m_mainResource can be null, e.g. when loading a substitute resource from application cache.
         if (!m_mainResource) {
             DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
-            mainReceivedError(protectedFrameLoader()->client().cannotShowURLError(m_request));
+            mainReceivedError(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
             return;
         }
 
@@ -1149,9 +1150,9 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
             if (m_request.url().protocolIsData()) {
                 // We decode data URL internally, there is no resource load to convert.
-                protectedFrameLoader()->client().startDownload(m_request);
+                protectedFrameLoader()->protectedClient()->startDownload(m_request);
             } else
-                protectedFrameLoader()->client().convertMainResourceLoadToDownload(this, m_request, m_response);
+                protectedFrameLoader()->protectedClient()->convertMainResourceLoadToDownload(this, m_request, m_response);
         } else if (m_frame && m_frame->document())
             m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to download due to sandboxing"_s);
 
@@ -1236,7 +1237,7 @@ ResourceError DocumentLoader::interruptedForPolicyChangeError() const
         return error;
     }
 
-    auto error = protectedFrameLoader()->client().interruptedForPolicyChangeError(request());
+    auto error = protectedFrameLoader()->protectedClient()->interruptedForPolicyChangeError(request());
     error.setType(ResourceError::Type::Cancellation);
     return error;
 }
@@ -1402,7 +1403,7 @@ void DocumentLoader::setupForReplace()
     if (!mainResourceData())
         return;
 
-    protectedFrameLoader()->client().willReplaceMultipartContent();
+    protectedFrameLoader()->protectedClient()->willReplaceMultipartContent();
     
     maybeFinishLoadingMultipartContent();
     maybeCreateArchive();
@@ -2040,16 +2041,17 @@ bool DocumentLoader::isMultipartReplacingLoad() const
 bool DocumentLoader::maybeLoadEmpty()
 {
     bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isEmpty() || LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol()));
-    if (!shouldLoadEmpty && !protectedFrameLoader()->client().representationExistsForURLScheme(m_request.url().protocol()))
+    Ref frameLoaderClient = frameLoader()->client();
+    if (!shouldLoadEmpty && !frameLoaderClient->representationExistsForURLScheme(m_request.url().protocol()))
         return false;
 
     if (m_request.url().isEmpty() && !protectedFrameLoader()->stateMachine().creatingInitialEmptyDocument()) {
         m_request.setURL(aboutBlankURL());
         if (isLoadingMainResource())
-            protectedFrameLoader()->client().dispatchDidChangeProvisionalURL();
+            frameLoaderClient->dispatchDidChangeProvisionalURL();
     }
 
-    String mimeType = shouldLoadEmpty ? textHTMLContentTypeAtom() : protectedFrameLoader()->client().generatedMIMETypeForURLScheme(m_request.url().protocol());
+    String mimeType = shouldLoadEmpty ? textHTMLContentTypeAtom() : frameLoaderClient->generatedMIMETypeForURLScheme(m_request.url().protocol());
     m_response = ResourceResponse(m_request.url(), mimeType, 0, "UTF-8"_s);
 
     bool isDisplayingInitialEmptyDocument = frameLoader()->stateMachine().isDisplayingInitialEmptyDocument();
@@ -2120,7 +2122,7 @@ void DocumentLoader::startLoadingMainResource()
     Ref<DocumentLoader> protectedThis(*this);
 
     if (shouldCancelLoadingAboutURL(m_request.url())) {
-        cancelMainResourceLoad(protectedFrameLoader()->client().cannotShowURLError(m_request));
+        cancelMainResourceLoad(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
         return;
     }
 
@@ -2270,12 +2272,12 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
         if (!m_request.url().isValid()) {
             DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL is invalid");
-            cancelMainResourceLoad(protectedFrameLoader()->client().cannotShowURLError(m_request));
+            cancelMainResourceLoad(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
             return;
         }
 
         if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)) {
-            if (auto httpNavigationWithHTTPSOnlyError = protectedFrameLoader()->client().httpNavigationWithHTTPSOnlyError(m_request); mainResourceOrError.error().domain() == httpNavigationWithHTTPSOnlyError.domain()
+            if (auto httpNavigationWithHTTPSOnlyError = protectedFrameLoader()->protectedClient()->httpNavigationWithHTTPSOnlyError(m_request); mainResourceOrError.error().domain() == httpNavigationWithHTTPSOnlyError.domain()
                 && mainResourceOrError.error().errorCode() == httpNavigationWithHTTPSOnlyError.errorCode()) {
                 DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL has HTTP scheme with HTTPSOnly enabled");
                 cancelMainResourceLoad(mainResourceOrError.error());
