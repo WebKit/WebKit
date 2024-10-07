@@ -7,7 +7,7 @@ PASS SVGColor interface must be removed
 PASS SVGColorProfileElement interface must be removed
 PASS SVGColorProfileRule interface must be removed
 PASS SVGCursorElement interface must be removed
-FAIL SVGDocument interface must be removed assert_false: expected false got true
+PASS SVGDocument interface must be removed
 PASS SVGElementInstanceList interface must be removed
 PASS SVGExternalResourcesRequired interface must be removed
 PASS SVGFontElement interface must be removed

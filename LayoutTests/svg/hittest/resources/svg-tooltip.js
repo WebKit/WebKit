@@ -11,7 +11,7 @@
 // Returns true if an element can return a title or not
 function canReturnTitle(element)
 {
-  if (!element || element.tagName == "svg" && element.ownerDocument instanceof SVGDocument)
+  if (!element || (element.tagName === "svg" && element.ownerDocument instanceof Document && element.namespaceURI === "http://www.w3.org/2000/svg"))
       return false;
 
   return true;
