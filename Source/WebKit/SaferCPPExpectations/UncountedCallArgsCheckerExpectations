@@ -1,16 +1,9 @@
 AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
-GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/RemoteSharedResourceCache.cpp
-GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.h
 GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
-GPUProcess/graphics/WebGPU/RemoteBuffer.cpp
-GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp
-GPUProcess/graphics/WebGPU/RemoteTexture.cpp
-GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.h
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
@@ -398,7 +391,6 @@ WebProcess/FileAPI/BlobRegistryProxy.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
 WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
-WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp
 WebProcess/GPU/graphics/RemoteNativeImageBackendProxy.cpp
