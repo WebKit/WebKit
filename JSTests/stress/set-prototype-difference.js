@@ -77,5 +77,5 @@ try {
 }
 
 let s = new Set([1]);
-assertArrayContent(Array.from(s.difference({ size:1, has(v) { return s.has(v); }, keys() { return s.keys() } })), []);
-assertArrayContent(Array.from(set2.difference({ size:1, has(v) { return s.has(v); }, keys() { return s.keys() } })), [2, 3]);
+assertArrayContent(Array.from(s.difference({ size:1, has(v) { return s.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return s.keys() } })), []);
+assertArrayContent(Array.from(set2.difference({ size:1, has(v) { return s.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return s.keys() } })), [2, 3]);

@@ -81,5 +81,5 @@ try {
 }
 
 
-assertArrayContent(Array.from(set1.intersection({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), [1]);
-assertArrayContent(Array.from(set4.intersection({ size:1, has(v) { return set1.has(v); }, keys() { return set1.keys() } })), [1]);
+assertArrayContent(Array.from(set1.intersection({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), [1]);
+assertArrayContent(Array.from(set4.intersection({ size:1, has(v) { return set1.has(v); }, keys() { assert(arguments.length, 0, "keys() arguments.length"); return set1.keys() } })), [1]);
