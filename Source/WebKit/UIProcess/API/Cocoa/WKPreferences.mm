@@ -596,6 +596,11 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     [self _setEnabled:value forFeature:feature];
 }
 
+- (void)_disableRichJavaScriptFeatures
+{
+    _preferences->disableRichJavaScriptFeatures();
+}
+
 - (BOOL)_applePayCapabilityDisclosureAllowed
 {
 #if ENABLE(APPLE_PAY)

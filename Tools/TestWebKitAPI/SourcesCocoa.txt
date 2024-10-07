@@ -297,6 +297,7 @@ Tests/WebKitCocoa/WKNavigationResponse.mm
 Tests/WebKitCocoa/WKObject.mm
 Tests/WebKitCocoa/WKPageHasMediaStreamingActivity.mm
 Tests/WebKitCocoa/WKPDFView.mm
+Tests/WebKitCocoa/WKPreferences.mm
 Tests/WebKitCocoa/WKPrinting.mm
 Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
 Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm

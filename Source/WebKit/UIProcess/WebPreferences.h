@@ -73,6 +73,7 @@ public:
     // enableAllExperimentalFeatures() should enable settings for testing based on status, or be replaced with an API that WebKitTestRunner can use to enable arbitrary settings.
     void enableAllExperimentalFeatures();
     void resetAllInternalDebugFeatures();
+    void disableRichJavaScriptFeatures();
 
     // Exposed for WebKitTestRunner use only.
     void setBoolValueForKey(const String&, bool value, bool ephemeral);

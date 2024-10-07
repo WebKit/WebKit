@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "HTTPServer.h"
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
 #import "TestWebExtensionsDelegate.h"

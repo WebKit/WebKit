@@ -606,6 +606,7 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
@@ -3099,6 +3100,7 @@ GamepadsEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
@@ -3128,6 +3130,7 @@ GeolocationAPIEnabled:
     WebCore:
       default: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 GetCoalescedEventsEnabled:
   type: bool
@@ -5479,6 +5482,7 @@ PeerConnectionEnabled:
       default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 PeerConnectionVideoScalingAdaptationDisabled:
   type: bool
@@ -6881,6 +6885,7 @@ SpeechRecognitionEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 SpeechSynthesisAPIEnabled:
   type: bool
@@ -6896,6 +6901,7 @@ SpeechSynthesisAPIEnabled:
       default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 SpringTimingFunctionEnabled:
   type: bool
@@ -8042,6 +8048,7 @@ WebAudioEnabled:
       default: false
   sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
+  richJavaScript: true
 
 WebAuthenticationASEnabled:
   type: bool
@@ -8147,6 +8154,7 @@ WebCodecsVideoEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebCryptoSafeCurvesEnabled:
   type: bool
@@ -8222,6 +8230,7 @@ WebGLEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebGLTimerQueriesEnabled:
   type: bool
@@ -8255,6 +8264,7 @@ WebGPUEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebGPUHDREnabled:
   type: bool
@@ -8304,6 +8314,7 @@ WebLocksAPIEnabled:
       default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebMParserEnabled:
@@ -8654,6 +8665,7 @@ WebXREnabled:
       default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebXRGamepadsModuleEnabled:
   type: bool

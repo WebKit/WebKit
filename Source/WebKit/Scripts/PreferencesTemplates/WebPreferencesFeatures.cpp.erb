@@ -141,4 +141,18 @@ void WebPreferences::resetAllInternalDebugFeatures()
 <%- end -%>
 }
 
+void WebPreferences::disableRichJavaScriptFeatures()
+{
+    UpdateBatch batch(*this);
+<%- for @pref in @exposedPreferences.select(&:richJavaScript) do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
+    set<%= @pref.name %>(false);
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+}
+
 }

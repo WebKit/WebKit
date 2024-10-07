@@ -91,6 +91,7 @@ class Preference
   attr_accessor :defaultValues
   attr_accessor :exposed
   attr_accessor :sharedPreferenceForWebProcess
+  attr_accessor :richJavaScript
 
   def initialize(name, opts, frontend)
     @name = name
@@ -116,6 +117,7 @@ class Preference
     @defaultValues = opts["defaultValue"][frontend]
     @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
     @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
+    @richJavaScript = opts["richJavaScript"] || false
   end
 
   def nameLower

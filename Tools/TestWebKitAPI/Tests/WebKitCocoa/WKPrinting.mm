@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
