@@ -191,6 +191,7 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.mutable-state-flags:5 string BlockOpenDirectoryInWebContentSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:6 string BlockMobileAssetInWebContentSandbox
     plistbuddy Add :com.apple.private.security.mutable-state-flags:7 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:8 string BlockWebInspectorInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags array
     plistbuddy Add :com.apple.private.security.enable-state-flags:0 string EnableExperimentalSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:1 string BlockIOKitInWebContentSandbox
@@ -199,6 +200,7 @@ function webcontent_sandbox_entitlements()
     plistbuddy Add :com.apple.private.security.enable-state-flags:4 string BlockOpenDirectoryInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:5 string BlockMobileAssetInWebContentSandbox
     plistbuddy Add :com.apple.private.security.enable-state-flags:6 string BlockMobileGestaltInWebContentSandbox
+    plistbuddy Add :com.apple.private.security.enable-state-flags:7 string BlockWebInspectorInWebContentSandbox
 }
 
 function extract_notification_names() {

@@ -1351,11 +1351,17 @@
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")))
 
+(with-filter (require-not (state-flag "BlockWebInspectorInWebContentSandbox"))
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name
+                "com.apple.webinspector"))))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.webinspector"
             "com.apple.coreservices.launchservicesd"
             "com.apple.iconservices"
             "com.apple.iconservices.store")))
