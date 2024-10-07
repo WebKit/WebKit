@@ -74,6 +74,7 @@ public:
             RefPtr<MediaDescription> description;
             RefPtr<AudioTrackPrivate> track;
 
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
             RefPtr<AudioTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<AudioTrackInformation> audioTracks;
@@ -82,6 +83,7 @@ public:
             RefPtr<MediaDescription> description;
             RefPtr<VideoTrackPrivate> track;
 
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
             RefPtr<VideoTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<VideoTrackInformation> videoTracks;
@@ -90,6 +92,7 @@ public:
             RefPtr<MediaDescription> description;
             RefPtr<InbandTextTrackPrivate> track;
 
+            RefPtr<MediaDescription> protectedDescription() const { return description; }
             RefPtr<InbandTextTrackPrivate> protectedTrack() const { return track; }
         };
         Vector<TextTrackInformation> textTracks;

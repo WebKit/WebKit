@@ -14,7 +14,6 @@ GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.h
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
-GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.h
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
