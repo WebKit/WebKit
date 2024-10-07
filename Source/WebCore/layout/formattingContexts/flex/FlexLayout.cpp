@@ -850,7 +850,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
             case ContentDistribution::SpaceAround:
                 return distributableCrossSpace / lineRanges.size() / 2;
             case ContentDistribution::SpaceEvenly:
-                return distributableCrossSpace / (lineRanges.size() + 1) / 2;
+                return distributableCrossSpace / (lineRanges.size() + 1);
             default:
                 ASSERT_NOT_REACHED();
                 return { };
