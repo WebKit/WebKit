@@ -74,12 +74,6 @@ Shared/API/glib/WebKitURIRequest.cpp @no-unify
 Shared/API/glib/WebKitURIResponse.cpp @no-unify
 Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
-Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
-Shared/CoordinatedGraphics/SimpleViewportController.cpp
-
-Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
-Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-
 Shared/freetype/WebCoreArgumentCodersFreeType.cpp
 
 Shared/glib/ArgumentCodersGLib.cpp
@@ -333,8 +327,12 @@ WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
 WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
+WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+WebProcess/WebPage/CoordinatedGraphics/SimpleViewportController.cpp
+WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
 
 WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 

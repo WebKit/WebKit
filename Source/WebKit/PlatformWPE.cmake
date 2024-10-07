@@ -388,8 +388,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/generic"
     "${WEBKIT_DIR}/Shared/API/c/wpe"
     "${WEBKIT_DIR}/Shared/API/glib"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/Extensions"
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/libwpe"

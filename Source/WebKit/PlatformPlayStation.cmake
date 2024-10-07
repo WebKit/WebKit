@@ -108,8 +108,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/IPC/unix"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/generic"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
     "${WEBKIT_DIR}/Shared/libwpe"
     "${WEBKIT_DIR}/UIProcess/API/C/playstation"
     "${WEBKIT_DIR}/UIProcess/API/libwpe"
@@ -165,14 +163,12 @@ endif ()
 
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebKit_SOURCES
-        Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
-        Shared/CoordinatedGraphics/SimpleViewportController.cpp
-
-        Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
-        Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-        Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
-
+        WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
+        WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
         WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+        WebProcess/WebPage/CoordinatedGraphics/SimpleViewportController.cpp
+        WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
+        WebProcess/WebPage/CoordinatedGraphics/ThreadedDisplayRefreshMonitor.cpp
     )
 endif ()
 
