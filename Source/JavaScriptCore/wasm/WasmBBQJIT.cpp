@@ -3624,7 +3624,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addThrowRef(Value exception, Stack&)
 
     LOG_INSTRUCTION("ThrowRef", exception);
 
-    emitMove(exception, Location::fromGPR(GPRInfo::argumentGPR1));
+    if constexpr (isARM_THUMB2())
+        emitMove(exception, Location::fromGPR2(wasmScratchGPR, GPRInfo::argumentGPR1));
+    else
+        emitMove(exception, Location::fromGPR(GPRInfo::argumentGPR1));
     consume(exception);
 
     ++m_callSiteIndex;

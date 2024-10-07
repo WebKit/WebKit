@@ -547,11 +547,14 @@ end
     break
 end
 
+if ARMv7
 macro branchIfWasmException(exceptionTarget)
-    loadp JSWebAssemblyInstance::m_vm[cfr], t3
+    loadp CodeBlock[cfr], t3
+    loadp JSWebAssemblyInstance::m_vm[t3], t3
     btpz VM::m_exception[t3], .noException
     jmp exceptionTarget
 .noException:
+end
 end
 
 macro zeroExtend32ToWord(r)
@@ -586,6 +589,13 @@ op(js_to_wasm_wrapper_entry, macro ()
             emit "movz x16, #0xBAD"
             emit "movz x17, #0xBAD"
             emit "movz x18, #0xBAD"
+        elsif ARMv7
+            emit "mov r4, #0xBAD"
+            emit "mov r5, #0xBAD"
+            emit "mov r6, #0xBAD"
+            emit "mov r8, #0xBAD"
+            emit "mov r9, #0xBAD"
+            emit "mov r12, #0xBAD"
         end
     end
 
@@ -681,6 +691,10 @@ if JSVALUE64
     orp (constexpr JSValue::NativeCalleeTag), wa0
 end
     storep wa0, Callee[cfr] # CalleeBits(JSEntrypointCallee*)
+if not JSVALUE64
+    move constexpr JSValue::NativeCalleeTag, wa0
+    storep wa0, TagOffset + Callee[cfr]
+end
 
     # Instance
     loadp WebAssemblyFunction::m_instance[ws0], wasmInstance
@@ -719,12 +733,7 @@ end
     move sp, a0
     cCall3(_operationJSToWasmEntryWrapperBuildFrame)
 
-if ARMv7
-    # CodeBlock slot is not an instance yet, so use JS version.
-    branchIfException(_wasm_throw_from_slow_path_trampoline)
-else
     btpnz r1, _wasm_throw_from_slow_path_trampoline
-end
     move r0, ws0
 
     # Arguments
@@ -900,19 +909,18 @@ end
     muli ImportFunctionInfoSize, ws1
 
     # Store Callee's wasm callee for import function
-    const ImportFunctionInfoBase = constexpr (sizeof(JSWebAssemblyInstance) + 7) & (~7)
-    leap ImportFunctionInfoBase[wasmInstance], ws0
+    leap (constexpr (JSWebAssemblyInstance::offsetOfTail()))[wasmInstance], ws0
     addp ws0, ws1
     # offsetOfBoxedTargetCalleeLoadLocation
     loadp JSWebAssemblyInstance::ImportFunctionInfo::boxedTargetCalleeLoadLocation[ws1], ws0
     loadp [ws0], ws0
 
-    const addressOfCalleeCalleeFromCallerPerspectiveBase = constexpr CallFrameSlot::callee * SlotSize + PayloadOffset
+    const addressOfCalleeCalleeFromCallerPerspectiveBase = constexpr CallFrameSlot::callee * SlotSize
 if JSVALUE64
     storep ws0, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta[sp]
 else
-    storei ws0, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + PayloadOffset[sp]
-    storei constexpr JSValue::NativeCalleeTag, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + TagOffset[sp]
+    storep ws0, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + PayloadOffset[sp]
+    storep constexpr JSValue::NativeCalleeTag, addressOfCalleeCalleeFromCallerPerspectiveBase - PrologueStackPointerDelta + TagOffset[sp]
 end
 
     loadp JSWebAssemblyInstance::ImportFunctionInfo::wasmEntrypointLoadLocation[ws1], ws0

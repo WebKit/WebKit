@@ -2979,7 +2979,10 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     if (target.type == CatchKind::CatchRef || target.type == CatchKind::CatchAllRef) {
         if (target.target->targetLocations().last().isGPR())
             m_jit.move(GPRInfo::returnValueGPR, target.target->targetLocations().last().asGPR());
-        else
+        else if (target.target->targetLocations().last().isGPR2()) {
+            m_jit.move(GPRInfo::returnValueGPR, target.target->targetLocations().last().asGPRlo());
+            m_jit.move(GPRInfo::returnValueGPR2, target.target->targetLocations().last().asGPRhi());
+        } else
             m_jit.storePtr(GPRInfo::returnValueGPR, target.target->targetLocations().last().asAddress());
     }
 
@@ -3560,7 +3563,12 @@ void BBQJIT::emitMoveRegister(TypeKind type, Location src, Location dst)
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
-        ASSERT(dst.asGPRlo() != src.asGPRhi());
+        if (dst.asGPRlo() == src.asGPRhi()) {
+            ASSERT(dst.asGPRhi() != src.asGPRlo());
+            m_jit.move(src.asGPRhi(), dst.asGPRhi());
+            m_jit.move(src.asGPRlo(), dst.asGPRlo());
+            break;
+        }
         m_jit.move(src.asGPRlo(), dst.asGPRlo());
         m_jit.move(src.asGPRhi(), dst.asGPRhi());
         break;

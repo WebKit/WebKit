@@ -1027,18 +1027,17 @@ WASM_SLOW_PATH_DECL(throw_ref)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto instruction = pc->as<WasmThrowRef>();
-    auto exceptionPtr = READ(instruction.m_exception).pointer();
-    EncodedJSValue exception = EncodedJSValue(exceptionPtr);
+    auto exception = READ(instruction.m_exception).jsValue();
 
-    if (JSValue::decode(exception) == jsNull())
+    if (exception == jsNull())
         WASM_THROW(Wasm::ExceptionType::NullExnReference);
 
-    throwException(globalObject, throwScope, reinterpret_cast<JSWebAssemblyException*>(exceptionPtr));
+    throwException(globalObject, throwScope, jsCast<JSWebAssemblyException*>(exception));
 
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
-    WASM_RETURN_TWO(vm.targetMachinePCForThrow, exceptionPtr);
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, jsCast<JSWebAssemblyException*>(exception));
 }
 
 WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)

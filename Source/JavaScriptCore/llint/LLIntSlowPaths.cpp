@@ -1073,17 +1073,16 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
 
     bool result = false;
     JSValue hasInstance = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpInstanceof::getHasInstance), codeBlock, globalObject, constructor, vm.propertyNames->hasInstanceSymbol, metadata.m_hasInstanceModeMetadata);
-    RETURN_IF_EXCEPTION(throwScope, { });
+    LLINT_CHECK_EXCEPTION();
     if (hasInstance != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure()->typeInfo().implementsDefaultHasInstance()) {
         result = constructor.getObject()->hasInstance(globalObject, value, hasInstance);
-        RETURN_IF_EXCEPTION(throwScope, { });
     } else if (!value.isObject())
         result = false;
     else {
         JSValue prototype = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpInstanceof::getPrototype), codeBlock, globalObject, constructor, vm.propertyNames->prototype, metadata.m_prototypeModeMetadata);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        LLINT_CHECK_EXCEPTION();
         bool hasInstanceResult = JSObject::defaultHasInstance(globalObject, value, prototype);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        LLINT_CHECK_EXCEPTION();
         result = hasInstanceResult;
     }
 
