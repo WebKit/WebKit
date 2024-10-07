@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
+#include "EventNames.h"
 #include "FontFace.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -261,7 +262,7 @@ void FontFaceSet::faceFinished(CSSFontFace& face, CSSFontFace::Status newStatus)
 
 void FontFaceSet::startedLoading()
 {
-    // FIXME: Fire a "loading" event asynchronously.
+    dispatchEvent(Event::create(eventNames().loadingEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void FontFaceSet::documentDidFinishLoading()
