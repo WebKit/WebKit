@@ -3172,20 +3172,6 @@ GoogleAntiFlickerOptimizationQuirkEnabled:
     WebCore:
       default: true
 
-GrammarAndSpellingPseudoElementsEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "::grammar-error and ::spelling-error pseudo-elements"
-  humanReadableDescription: "Enable the ::grammar-error and ::spelling-error CSS pseudo-elements"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 GraphicsContextFiltersEnabled:
    type: bool
    status: stable
@@ -3287,20 +3273,6 @@ HiddenPageDOMTimerThrottlingEnabled:
       default: false
     WebCore:
       default: false
-
-HighlightAPIEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "Highlight API"
-  humanReadableDescription: "Highlight API support"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 HyperlinkAuditingEnabled:
   type: bool

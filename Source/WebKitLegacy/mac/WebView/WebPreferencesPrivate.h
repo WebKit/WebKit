@@ -296,7 +296,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @interface WebPreferences (WebPrivatePreferencesConvertedToWebFeature)
 @property (nonatomic) BOOL userGesturePromisePropagationEnabled;
 @property (nonatomic) BOOL requestIdleCallbackEnabled;
-@property (nonatomic) BOOL highlightAPIEnabled;
 @property (nonatomic) BOOL asyncClipboardAPIEnabled;
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewSmoothScrollingEnabled;
@@ -352,6 +351,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL lineHeightUnitsEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
+@property (nonatomic) BOOL highlightAPIEnabled;
 @property (nonatomic) BOOL serverTimingEnabled;
 @property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
 @property (nonatomic) int64_t applicationCacheTotalQuota;

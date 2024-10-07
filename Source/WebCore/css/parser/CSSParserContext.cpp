@@ -102,8 +102,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , popoverAttributeEnabled { document.settings().popoverAttributeEnabled() }
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , cssTextWrapPrettyEnabled { document.settings().cssTextWrapPrettyEnabled() }
-    , highlightAPIEnabled { document.settings().highlightAPIEnabled() }
-    , grammarAndSpellingPseudoElementsEnabled { document.settings().grammarAndSpellingPseudoElementsEnabled() }
     , thumbAndTrackPseudoElementsEnabled { document.settings().thumbAndTrackPseudoElementsEnabled() }
 #if ENABLE(SERVICE_CONTROLS)
     , imageControlsEnabled { document.settings().imageControlsEnabled() }
@@ -140,19 +138,17 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.popoverAttributeEnabled                   << 15
         | context.sidewaysWritingModesEnabled               << 16
         | context.cssTextWrapPrettyEnabled                  << 17
-        | context.highlightAPIEnabled                       << 18
-        | context.grammarAndSpellingPseudoElementsEnabled   << 19
-        | context.thumbAndTrackPseudoElementsEnabled        << 20
+        | context.thumbAndTrackPseudoElementsEnabled        << 18
 #if ENABLE(SERVICE_CONTROLS)
-        | context.imageControlsEnabled                      << 21
+        | context.imageControlsEnabled                      << 19
 #endif
-        | context.colorLayersEnabled                        << 22
-        | context.lightDarkEnabled                          << 23
-        | context.contrastColorEnabled                      << 24
-        | context.targetTextPseudoElementEnabled            << 25
-        | context.viewTransitionTypesEnabled                << 26
-        | context.cssProgressFunctionEnabled                << 27
-        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
+        | context.colorLayersEnabled                        << 20
+        | context.lightDarkEnabled                          << 21
+        | context.contrastColorEnabled                      << 22
+        | context.targetTextPseudoElementEnabled            << 23
+        | context.viewTransitionTypesEnabled                << 24
+        | context.cssProgressFunctionEnabled                << 25
+        | (uint32_t)context.mode                            << 26; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

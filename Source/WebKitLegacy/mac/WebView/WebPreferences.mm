@@ -2816,16 +2816,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitRequestIdleCallbackEnabledPreferenceKey];
 }
 
-- (BOOL)highlightAPIEnabled
-{
-    return [self _boolValueForKey:WebKitHighlightAPIEnabledPreferenceKey];
-}
-
-- (void)setHighlightAPIEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitHighlightAPIEnabledPreferenceKey];
-}
-
 - (BOOL)asyncClipboardAPIEnabled
 {
     return [self _boolValueForKey:WebKitAsyncClipboardAPIEnabledPreferenceKey];
@@ -3283,6 +3273,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)highlightAPIEnabled
+{
+    return YES;
+}
+
+- (void)setHighlightAPIEnabled:(BOOL)flag
 {
 }
 

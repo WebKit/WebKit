@@ -1238,16 +1238,6 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
 
-void WKPreferencesSetHighlightAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setHighlightAPIEnabled(enabled);
-}
-
-bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->highlightAPIEnabled();
-}
-
 void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double size)
 {
     toImpl(preferencesRef)->setMinimumZoomFontSize(size);
@@ -2008,6 +1998,15 @@ void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool)
 bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef)
 {
     return false;
+}
+
+void WKPreferencesSetHighlightAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+}
+
+bool WKPreferencesGetHighlightAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
 }
 
 void WKPreferencesSetWebSQLDisabled(WKPreferencesRef, bool)

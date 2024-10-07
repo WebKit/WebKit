@@ -183,23 +183,22 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
 #endif
-    if (document().settings().highlightAPIEnabled()) {
-        if (auto highlightRegistry = document().highlightRegistryIfExists()) {
-            for (auto& highlight : highlightRegistry->map()) {
-                for (auto& highlightRange : highlight.value->highlightRanges()) {
-                    if (!renderHighlight.setRenderRange(highlightRange))
-                        continue;
+    if (auto highlightRegistry = document().highlightRegistryIfExists()) {
+        for (auto& highlight : highlightRegistry->map()) {
+            for (auto& highlightRange : highlight.value->highlightRanges()) {
+                if (!renderHighlight.setRenderRange(highlightRange))
+                    continue;
 
-                    auto state = renderHighlight.highlightStateForRenderer(*this);
-                    if (!isHighlighted(state, renderHighlight))
-                        continue;
+                auto state = renderHighlight.highlightStateForRenderer(*this);
+                if (!isHighlighted(state, renderHighlight))
+                    continue;
 
-                    if (auto highlightStyle = getCachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
-                        return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
-                }
+                if (auto highlightStyle = getCachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
+                    return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
             }
         }
     }
+
     if (document().settings().scrollToTextFragmentEnabled()) {
         if (auto highlightRegistry = document().fragmentHighlightRegistryIfExists()) {
             for (auto& highlight : highlightRegistry->map()) {

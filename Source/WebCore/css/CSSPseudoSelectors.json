@@ -534,12 +534,9 @@
         "first-line": {
             "supports-single-colon-for-compatibility": true
         },
-        "grammar-error": {
-            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
-        },
+        "grammar-error": {},
         "highlight": {
-            "argument": "required",
-            "settings-flag": "highlightAPIEnabled"
+            "argument": "required"
         },
         "marker": {},
         "part": {
@@ -555,9 +552,7 @@
         "slotted": {
             "argument": "required"
         },
-        "spelling-error": {
-            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
-        },
+        "spelling-error": {},
         "target-text": {
             "settings-flag": "targetTextPseudoElementEnabled"
         },

@@ -478,7 +478,7 @@ void testWebKitFeatures(Test* test, gconstpointer)
         // FIXME: This is enabled in UnifiedWebPreferences.yaml, but the
         // actual value ends up being disabled without an obvious reason.
         // Needs investigating.
-        if (identifier == "GrammarAndSpellingPseudoElements"_s)
+        if (identifier == "TargetTextPseudoElement"_s)
             continue;
 
         g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));

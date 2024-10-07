@@ -93,8 +93,6 @@ struct CSSParserContext {
     bool popoverAttributeEnabled : 1 { false };
     bool sidewaysWritingModesEnabled : 1 { false };
     bool cssTextWrapPrettyEnabled : 1 { false };
-    bool highlightAPIEnabled : 1 { false };
-    bool grammarAndSpellingPseudoElementsEnabled : 1 { false };
     bool thumbAndTrackPseudoElementsEnabled : 1 { false };
 #if ENABLE(SERVICE_CONTROLS)
     bool imageControlsEnabled : 1 { false };

@@ -109,51 +109,49 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 {
     Vector<MarkedText> markedTexts;
     RenderHighlight renderHighlight;
-    if (renderer.document().settings().highlightAPIEnabled()) {
-        auto& parentRenderer = *renderer.parent();
-        auto& parentStyle = parentRenderer.style();
-        if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {
-            for (auto& highlightName : highlightRegistry->highlightNames()) {
-                auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlightName }, &parentStyle);
-                if (!renderStyle)
+    auto& parentRenderer = *renderer.parent();
+    auto& parentStyle = parentRenderer.style();
+    if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {
+        for (auto& highlightName : highlightRegistry->highlightNames()) {
+            auto renderStyle = parentRenderer.getUncachedPseudoStyle({ PseudoId::Highlight, highlightName }, &parentStyle);
+            if (!renderStyle)
+                continue;
+            if (renderStyle->textDecorationsInEffect().isEmpty() && phase == PaintPhase::Decoration)
+                continue;
+            for (auto& highlightRange : highlightRegistry->map().get(highlightName)->highlightRanges()) {
+                if (!renderHighlight.setRenderRange(highlightRange))
                     continue;
-                if (renderStyle->textDecorationsInEffect().isEmpty() && phase == PaintPhase::Decoration)
+                if (auto* staticRange = dynamicDowncast<StaticRange>(highlightRange->range()); staticRange
+                    && (!staticRange->computeValidity() || staticRange->collapsed()))
                     continue;
-                for (auto& highlightRange : highlightRegistry->map().get(highlightName)->highlightRanges()) {
-                    if (!renderHighlight.setRenderRange(highlightRange))
-                        continue;
-                    if (auto* staticRange = dynamicDowncast<StaticRange>(highlightRange->range()); staticRange
-                        && (!staticRange->computeValidity() || staticRange->collapsed()))
-                        continue;
-                    // FIXME: Potentially move this check elsewhere, to where we collect this range information.
-                    auto hasRenderer = [&] {
-                        IntersectingNodeRange nodes(makeSimpleRange(highlightRange->range()));
-                        for (auto& iterator : nodes) {
-                            if (iterator.renderer())
-                                return true;
-                        }
-                        return false;
-                    }();
-                    if (!hasRenderer)
-                        continue;
+                // FIXME: Potentially move this check elsewhere, to where we collect this range information.
+                auto hasRenderer = [&] {
+                    IntersectingNodeRange nodes(makeSimpleRange(highlightRange->range()));
+                    for (auto& iterator : nodes) {
+                        if (iterator.renderer())
+                            return true;
+                    }
+                    return false;
+                }();
+                if (!hasRenderer)
+                    continue;
 
-                    auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
+                auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
 
-                    if (highlightStart < highlightEnd) {
-                        int currentPriority = highlightRegistry->map().get(highlightName)->priority();
-                        // If we can just append it to the end, do that instead.
-                        if (markedTexts.isEmpty() || markedTexts.last().priority <= currentPriority)
-                            markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
-                        else {
-                            // Gets the first place such that it > currentPriority.
-                            auto it = std::upper_bound(markedTexts.begin(), markedTexts.end(), currentPriority, [](const auto targetMarkedTextPriority, const auto& markedText) {
-                                return targetMarkedTextPriority > markedText.priority;
-                            });
+                if (highlightStart < highlightEnd) {
+                    int currentPriority = highlightRegistry->map().get(highlightName)->priority();
+                    // If we can just append it to the end, do that instead.
+                    if (markedTexts.isEmpty() || markedTexts.last().priority <= currentPriority)
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
+                    else {
+                        // Gets the first place such that it > currentPriority.
+                        auto it = std::upper_bound(markedTexts.begin(), markedTexts.end(), currentPriority, [](const auto targetMarkedTextPriority, const auto& markedText) {
+                            return targetMarkedTextPriority > markedText.priority;
+                        });
 
-                            unsigned insertIndex = (it == markedTexts.end() ? 0 : std::distance(markedTexts.begin(), it) - 1);
+                        unsigned insertIndex = (it == markedTexts.end() ? 0 : std::distance(markedTexts.begin(), it) - 1);
 
-                            markedTexts.insert(insertIndex, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
-                        }
+                        markedTexts.insert(insertIndex, { highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
                     }
                 }
             }
@@ -240,9 +238,7 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         switch (marker->type()) {
         case DocumentMarker::Type::Grammar:
         case DocumentMarker::Type::Spelling:
-            if (renderer.settings().grammarAndSpellingPseudoElementsEnabled())
-                break;
-            FALLTHROUGH;
+            break;
         case DocumentMarker::Type::CorrectionIndicator:
 #if ENABLE(WRITING_TOOLS)
         case DocumentMarker::Type::WritingToolsTextSuggestion:
