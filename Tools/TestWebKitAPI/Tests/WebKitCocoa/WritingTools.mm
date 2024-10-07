@@ -3246,7 +3246,7 @@ TEST(WritingTools, CompositionWithOmittedTrailingWhitespaceContent)
 
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
     RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:htmlString]);
-    [webView focusDocumentBodyAndSelectAll];
+    [webView selectAll:nil];
 
     __block bool finished = false;
     [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
