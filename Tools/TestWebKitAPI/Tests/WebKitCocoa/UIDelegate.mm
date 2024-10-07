@@ -235,7 +235,7 @@ TEST(WebKit, GeolocationPermission)
     _validationHandler = WTFMove(validationHandler);
 }
 
-- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
+- (void)webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     if (_validationHandler)
         _validationHandler(origin, frame);
 
