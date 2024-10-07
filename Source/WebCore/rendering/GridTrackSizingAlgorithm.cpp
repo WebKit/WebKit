@@ -31,6 +31,7 @@
 #include "Grid.h"
 #include "GridArea.h"
 #include "GridLayoutFunctions.h"
+#include "GridPositionsResolver.h"
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
@@ -849,8 +850,12 @@ static LayoutUnit computeGridSpanSize(const Vector<GridTrack>& tracks, const Gri
 
 std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForGridItem(const RenderBox& gridItem, GridTrackSizingDirection direction) const
 {
-    if (m_renderGrid->areMasonryColumns())
+    // FIXME: These checks only works if we have precomputed logical width/height of the grid, which is not guaranteed.
+    if (m_renderGrid->areMasonryColumns() && direction == GridTrackSizingDirection::ForColumns)
         return m_renderGrid->contentLogicalWidth();
+
+    if (m_renderGrid->areMasonryRows() && direction == GridTrackSizingDirection::ForRows && !GridLayoutFunctions::isOrthogonalGridItem(*m_renderGrid, gridItem))
+        return m_renderGrid->contentLogicalHeight();
 
     bool addContentAlignmentOffset =
         direction == GridTrackSizingDirection::ForColumns && (m_sizingState == SizingState::RowSizingFirstIteration || m_sizingState == SizingState::RowSizingExtraIterationForSizeContainment);

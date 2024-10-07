@@ -51,12 +51,12 @@ void GridMasonryLayout::initializeMasonry(unsigned gridAxisTracks, GridTrackSizi
     resizeAndResetRunningPositions();
 }
 
-void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
+void GridMasonryLayout::performMasonryPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
 {
     initializeMasonry(gridAxisTracks, masonryAxisDirection);
 
-    m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForColumns);
-    m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForRows);
+    m_renderGrid.populateGridPositionsForDirection(algorithm, GridTrackSizingDirection::ForColumns);
+    m_renderGrid.populateGridPositionsForDirection(algorithm, GridTrackSizingDirection::ForRows);
 
     // 2.3 Masonry Layout Algorithm
     // https://drafts.csswg.org/css-grid-3/#masonry-layout-algorithm
@@ -65,10 +65,10 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_autoFlowNextCursor = 0;
 
     if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
-        placeItemsUsingOrderModifiedDocumentOrder();
+        placeItemsUsingOrderModifiedDocumentOrder(algorithm);
     else {
-        placeItemsWithDefiniteGridAxisPosition();
-        placeItemsWithIndefiniteGridAxisPosition();
+        placeItemsWithDefiniteGridAxisPosition(algorithm);
+        placeItemsWithIndefiniteGridAxisPosition(algorithm);
     }
 }
 
@@ -114,7 +114,7 @@ void GridMasonryLayout::resizeAndResetRunningPositions()
     m_runningPositions.fill(LayoutUnit());
 }
 
-void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder()
+void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder(const GridTrackSizingAlgorithm& algorithm)
 {
     for (auto* gridItem : m_itemsWithDefiniteGridAxisPosition) {
         ASSERT(gridItem);
@@ -122,13 +122,13 @@ void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder()
             continue;
 
         if (hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection()))
-            insertIntoGridAndLayoutItem(*gridItem, gridAreaForDefiniteGridAxisItem(*gridItem));
+            insertIntoGridAndLayoutItem(algorithm, *gridItem, gridAreaForDefiniteGridAxisItem(*gridItem));
         else
-            insertIntoGridAndLayoutItem(*gridItem, gridAreaForIndefiniteGridAxisItem(*gridItem));
+            insertIntoGridAndLayoutItem(algorithm, *gridItem, gridAreaForIndefiniteGridAxisItem(*gridItem));
     }   
 }
 
-void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition()
+void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition(const GridTrackSizingAlgorithm& algorithm)
 {
     for (auto* item : m_itemsWithDefiniteGridAxisPosition) {
         ASSERT(item);
@@ -142,7 +142,7 @@ void GridMasonryLayout::placeItemsWithDefiniteGridAxisPosition()
         itemSpan.translate(m_renderGrid.currentGrid().explicitGridStart(gridAxisDirection()));
         auto gridArea = gridAreaForDefiniteGridAxisItem(*item);
         m_renderGrid.currentGrid().clampAreaToSubgridIfNeeded(gridArea);
-        insertIntoGridAndLayoutItem(*item, gridArea);
+        insertIntoGridAndLayoutItem(algorithm, *item, gridArea);
     }
 }
 
@@ -154,31 +154,31 @@ GridArea GridMasonryLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gri
     return masonryGridAreaFromGridAxisSpan(itemSpan);
 }
 
-void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition()
+void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition(const GridTrackSizingAlgorithm& algorithm)
 {
     for (auto* item : m_itemsWithIndefiniteGridAxisPosition) {
         ASSERT(item);
         if (!item)
             continue;
-        insertIntoGridAndLayoutItem(*item, gridAreaForIndefiniteGridAxisItem(*item));
+        insertIntoGridAndLayoutItem(algorithm, *item, gridAreaForIndefiniteGridAxisItem(*item));
     }
 }
 
-void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(RenderBox& gridItem)
+void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
 {
     if (gridAxisDirection() == GridTrackSizingDirection::ForColumns)
-        gridItem.setOverridingContainingBlockContentLogicalWidth(m_renderGrid.m_trackSizingAlgorithm.gridAreaBreadthForGridItem(gridItem, GridTrackSizingDirection::ForColumns));
+        gridItem.setOverridingContainingBlockContentLogicalWidth(algorithm.gridAreaBreadthForGridItem(gridItem, GridTrackSizingDirection::ForColumns));
     else
-        gridItem.setOverridingContainingBlockContentLogicalHeight(m_renderGrid.m_trackSizingAlgorithm.gridAreaBreadthForGridItem(gridItem, GridTrackSizingDirection::ForRows));
+        gridItem.setOverridingContainingBlockContentLogicalHeight(algorithm.gridAreaBreadthForGridItem(gridItem, GridTrackSizingDirection::ForRows));
     
     // FIXME(249230): Try to cache masonry layout sizes
     gridItem.setChildNeedsLayout(MarkOnlyThis);
 }
 
-void GridMasonryLayout::insertIntoGridAndLayoutItem(RenderBox& gridItem, const GridArea& area)
+void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area)
 {
     m_renderGrid.currentGrid().insert(gridItem, area);
-    setItemGridAxisContainingBlockToGridArea(gridItem);
+    setItemGridAxisContainingBlockToGridArea(algorithm, gridItem);
     gridItem.layoutIfNeeded();
     updateRunningPositions(gridItem, area);
     m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % m_gridAxisTracksCount;

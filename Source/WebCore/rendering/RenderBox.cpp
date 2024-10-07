@@ -2900,8 +2900,12 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
     if (isFloating() || (isInlineBlockOrInlineTable() && !isHTMLMarquee()))
         return true;
 
-    if (isGridItem())
-        return downcast<RenderGrid>(parent())->areMasonryColumns() || !hasStretchedLogicalWidth();
+    if (isGridItem()) {
+        // FIXME: The masonry logic should not be living in RenderBox; it should ideally live in RenderGrid.
+        // This is a temporary solution to prevent regressions.
+        auto* renderGrid = downcast<RenderGrid>(parent());
+        return (renderGrid->areMasonryColumns() && !GridLayoutFunctions::isOrthogonalGridItem(*renderGrid, *this)) || !hasStretchedLogicalWidth();
+    }
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both
     // min-width and width.  max-width is only clamped if it is also intrinsic.

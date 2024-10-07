@@ -198,7 +198,7 @@ private:
     void layoutGridItems(GridLayoutState&);
     void layoutMasonryItems(GridLayoutState&);
 
-    void populateGridPositionsForDirection(GridTrackSizingDirection);
+    void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, GridTrackSizingDirection);
 
     LayoutUnit gridAreaBreadthForOutOfFlowGridItem(const RenderBox&, GridTrackSizingDirection);
     LayoutUnit logicalOffsetForOutOfFlowGridItem(const RenderBox&, GridTrackSizingDirection, LayoutUnit) const;
