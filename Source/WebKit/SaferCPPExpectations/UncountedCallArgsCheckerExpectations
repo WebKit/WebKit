@@ -409,7 +409,6 @@ WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
 WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
-WebProcess/GPU/media/MediaPlayerPrivateRemote.h
 WebProcess/GPU/media/MediaSourcePrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/media/RemoteAudioHardwareListener.cpp
@@ -428,7 +427,6 @@ WebProcess/GPU/media/RemoteLegacyCDMSession.cpp
 WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp
 WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
-WebProcess/GPU/media/RemoteMediaResourceProxy.cpp
 WebProcess/GPU/media/RemoteRemoteCommandListener.cpp
 WebProcess/GPU/media/RemoteVideoCodecFactory.cpp
 WebProcess/GPU/media/RemoteVideoFrameProxy.cpp
