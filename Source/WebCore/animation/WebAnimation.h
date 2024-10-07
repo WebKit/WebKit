@@ -160,7 +160,7 @@ public:
     bool isSuspended() const { return m_isSuspended; }
     bool isReplaceable() const;
     void remove();
-    void enqueueAnimationPlaybackEvent(const AtomString&, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime);
+    void enqueueAnimationPlaybackEvent(const AtomString&, std::optional<CSSNumberishTime> currentTime, std::optional<CSSNumberishTime> scheduledTime);
 
     uint64_t globalPosition() const { return m_globalPosition; }
     void setGlobalPosition(uint64_t globalPosition) { m_globalPosition = globalPosition; }

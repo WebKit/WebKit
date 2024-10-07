@@ -40,7 +40,7 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
 {
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<Seconds> scheduledTime, std::optional<Seconds> timelineTime, std::optional<Seconds> currentTime)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, WebAnimation* animation, std::optional<CSSNumberishTime> scheduledTime, std::optional<CSSNumberishTime> timelineTime, std::optional<CSSNumberishTime> currentTime)
     : AnimationEventBase(EventInterfaceType::AnimationPlaybackEvent, type, animation, scheduledTime)
 {
     if (timelineTime)

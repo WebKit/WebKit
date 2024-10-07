@@ -713,7 +713,7 @@ void WebAnimation::cancel(Silently silently)
             //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
             //    scheduled event time is an unresolved time value.
             // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-            auto scheduledTime = [&]() -> std::optional<Seconds> {
+            auto scheduledTime = [&]() -> std::optional<CSSNumberishTime> {
                 if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
                     if (auto currentTime = documentTimeline->currentTime())
                         return documentTimeline->convertTimelineTimeToOriginRelativeTime(*currentTime);
@@ -744,7 +744,7 @@ void WebAnimation::willChangeRenderer()
         keyframeEffect->willChangeRenderer();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> scheduledTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<CSSNumberishTime> currentTime, std::optional<CSSNumberishTime> scheduledTime)
 {
     auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
     auto event = AnimationPlaybackEvent::create(type, this, scheduledTime, timelineTime, currentTime);
@@ -990,7 +990,7 @@ void WebAnimation::finishNotificationSteps()
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
     if (hasEventListeners(eventNames().finishEvent)) {
-        auto scheduledTime = [&]() -> std::optional<Seconds> {
+        auto scheduledTime = [&]() -> std::optional<CSSNumberishTime> {
             if (auto* documentTimeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
                 if (auto animationEndTime = convertAnimationTimeToTimelineTime(effectEndTime()))
                     return documentTimeline->convertTimelineTimeToOriginRelativeTime(*animationEndTime);
