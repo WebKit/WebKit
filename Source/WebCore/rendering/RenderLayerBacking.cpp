@@ -3389,6 +3389,10 @@ bool RenderLayerBacking::paintsIntoWindow() const
             return false;
 #endif
 
+        // Site-isolated root frames don't have a window to paint into.
+        if (m_isRootFrameRenderViewLayer && !m_isMainFrameRenderViewLayer)
+            return false;
+
         return compositor().rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingFrame;
     }
     

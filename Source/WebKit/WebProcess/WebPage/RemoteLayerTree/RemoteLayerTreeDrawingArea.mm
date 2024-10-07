@@ -194,7 +194,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const LocalFrameView& frameView) const
 {
-    return frameView.frame().isRootFrame()
+    return frameView.frame().isMainFrame()
         || m_webPage->corePage()->settings().asyncFrameScrollingEnabled();
 }
 

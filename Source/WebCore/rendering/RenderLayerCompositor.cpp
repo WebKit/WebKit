@@ -4394,7 +4394,7 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (documentUsesTiledBacking())
         return true;
 
-    if (m_overflowControlsHostLayer && isMainFrameCompositor())
+    if (m_overflowControlsHostLayer && isRootFrameCompositor())
         return true;
 
 #if !USE(COORDINATED_GRAPHICS)
