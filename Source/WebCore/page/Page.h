@@ -675,7 +675,7 @@ public:
 
 #if ENABLE(APPLE_PAY)
     PaymentCoordinator& paymentCoordinator() const { return *m_paymentCoordinator; }
-    WEBCORE_EXPORT void setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&&);
+    WEBCORE_EXPORT void setPaymentCoordinator(Ref<PaymentCoordinator>&&);
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
@@ -1535,7 +1535,7 @@ private:
     std::unique_ptr<PageOverlayController> m_pageOverlayController;
 
 #if ENABLE(APPLE_PAY)
-    std::unique_ptr<PaymentCoordinator> m_paymentCoordinator;
+    RefPtr<PaymentCoordinator> m_paymentCoordinator;
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
