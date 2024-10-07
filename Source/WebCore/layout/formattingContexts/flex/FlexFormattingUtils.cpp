@@ -68,6 +68,15 @@ LayoutUnit FlexFormattingUtils::rowGapValue(const ElementBox& flexContainer, Lay
     return valueForLength(rowGap.length(), flexContainercCntentBoxHeight);
 }
 
+LayoutUnit FlexFormattingUtils::columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxWidth)
+{
+    ASSERT(flexContainer.isFlexBox());
+    auto& columnGap = flexContainer.style().columnGap();
+    if (columnGap.isNormal())
+        return { };
+    return valueForLength(columnGap.length(), flexContainercCntentBoxWidth);
+}
+
 LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const
 {
     if (auto minimumSize = flexItem.mainAxis().minimumSize)

@@ -43,6 +43,7 @@ public:
     static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
 
     static LayoutUnit rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxHeight);
+    static LayoutUnit columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxWidth);
 
     LayoutUnit usedMinimumMainSize(const LogicalFlexItem&) const;
     std::optional<LayoutUnit> usedMaxiumMainSize(const LogicalFlexItem&) const;

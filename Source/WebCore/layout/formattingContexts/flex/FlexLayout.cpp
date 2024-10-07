@@ -116,11 +116,12 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstrain
 
     auto computeFlexItemRects = [&] {
         auto flexRects = LogicalFlexItemRects { flexItems.size() };
+        auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerConstraints.mainAxis.availableSize.value_or(0_lu));
         auto rowGapValue = FlexFormattingUtils::rowGapValue(flexContainer(), flexContainerConstraints.crossAxis.availableSize.value_or(0_lu));
         for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
             auto lineRange = lineRanges[lineIndex];
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position;
+                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position + (flexItemIndex - lineRange.begin()) * columnGapValue;
                 auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position + lineIndex * rowGapValue;
 
                 flexRects[flexItemIndex] = {
@@ -232,13 +233,15 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
     if (isSingleLineFlexContainer())
         return { { 0, flexBaseAndHypotheticalMainSizeList.size() } };
 
+    auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerInnerMainSize);
     auto lineRanges = LineRanges { };
     size_t lastWrapIndex = 0;
     auto flexItemsMainSize = LayoutUnit { };
     for (size_t flexItemIndex = 0; flexItemIndex < flexBaseAndHypotheticalMainSizeList.size(); ++flexItemIndex) {
         auto flexItemHypotheticalOuterMainSize = outerMainSize(flexItems[flexItemIndex], flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
-        auto isFlexLineEmpty = flexItemIndex == lastWrapIndex;
-        if (isFlexLineEmpty || flexItemsMainSize + flexItemHypotheticalOuterMainSize <= flexContainerInnerMainSize) {
+        auto numberOfFlexItemsOnLine = flexItemIndex - lastWrapIndex;
+        auto columnGapSize = columnGapValue * numberOfFlexItemsOnLine;
+        if (!numberOfFlexItemsOnLine || flexItemsMainSize + flexItemHypotheticalOuterMainSize + columnGapSize <= flexContainerInnerMainSize) {
             flexItemsMainSize += flexItemHypotheticalOuterMainSize;
             continue;
         }
@@ -258,6 +261,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
     for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
         auto lineRange = lineRanges[lineIndex];
         auto nonFrozenSet = ListHashSet<size_t> { };
+        auto availableMainSpaceForLineContent = mainAxisAvailableSpaceForItemAlignment(flexContainerInnerMainSize, lineRange.distance());
 
         // 1. Determine the used flex factor. Sum the outer hypothetical main sizes of all items on the line.
         //    If the sum is less than the flex container's inner main size, use the flex grow factor for the rest of this algorithm;
@@ -268,7 +272,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 auto flexItemHypotheticalOuterMainSize = outerMainSize(flexItems[flexItemIndex], flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
                 hypotheticalOuterMainSizes += flexItemHypotheticalOuterMainSize;
             }
-            return hypotheticalOuterMainSizes < flexContainerInnerMainSize;
+            return hypotheticalOuterMainSizes < availableMainSpaceForLineContent;
         }();
 
         // 2. Size inflexible items. Freeze, setting its target main size to its hypothetical main size.
@@ -302,7 +306,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 auto flexItemOuterMainSize = outerMainSize(flexItems[flexItemIndex], nonFrozenSet.contains(flexItemIndex) ? flexBaseAndHypotheticalMainSizeList[flexItemIndex].flexBase : mainSizeList[flexItemIndex]);
                 lineContentMainSize += flexItemOuterMainSize;
             }
-            return flexContainerInnerMainSize - lineContentMainSize;
+            return availableMainSpaceForLineContent - lineContentMainSize;
         };
 
         auto minimumViolationList = Vector<size_t> { };
@@ -533,6 +537,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
     for (auto lineRange : lineRanges) {
         auto lineContentOuterMainSize = LayoutUnit { };
+        auto availableMainSpaceForLineContent = mainAxisAvailableSpaceForItemAlignment(availableMainSpace, lineRange.distance());
 
         auto resolveMarginAuto = [&] {
             // 1. If the remaining free space is positive and at least one main-axis margin on this line is auto, distribute the free space equally among these margins.
@@ -557,11 +562,11 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 lineContentOuterMainSize += outerMainSize(flexItem, flexItemsMainSizeList[flexItemIndex], mainPositionAndMargins[flexItemIndex].margin());
             }
 
-            auto spaceToDistrubute = availableMainSpace - lineContentOuterMainSize;
+            auto spaceToDistrubute = availableMainSpaceForLineContent - lineContentOuterMainSize;
             if (!autoMarginCount || spaceToDistrubute <= 0)
                 return;
 
-            lineContentOuterMainSize = availableMainSpace;
+            lineContentOuterMainSize = availableMainSpaceForLineContent;
             auto extraMarginSpace = spaceToDistrubute / autoMarginCount;
 
             for (auto flexItemIndex : flexItemsWithMarginAuto) {
@@ -581,7 +586,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
         auto setFallbackValuesIfApplicable = [&] {
             auto itemCount = lineRange.distance();
-            auto hasOverflow = lineContentOuterMainSize > availableMainSpace;
+            auto hasOverflow = lineContentOuterMainSize > availableMainSpaceForLineContent;
             if (!hasOverflow && itemCount > 1)
                 return;
 
@@ -610,9 +615,9 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                     case ContentDistribution::SpaceBetween:
                         return LayoutUnit { };
                     case ContentDistribution::SpaceAround:
-                        return (availableMainSpace - lineContentOuterMainSize) / lineRange.distance() / 2;
+                        return (availableMainSpaceForLineContent - lineContentOuterMainSize) / lineRange.distance() / 2;
                     case ContentDistribution::SpaceEvenly:
-                        return (availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() + 1);
+                        return (availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() + 1);
                     default:
                         ASSERT_NOT_IMPLEMENTED_YET();
                         break;
@@ -625,20 +630,20 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 case ContentPosition::FlexStart:
                     return LayoutUnit { };
                 case ContentPosition::FlexEnd:
-                    return availableMainSpace - lineContentOuterMainSize;
+                    return availableMainSpaceForLineContent - lineContentOuterMainSize;
                 case ContentPosition::Center:
-                    return availableMainSpace / 2 - lineContentOuterMainSize / 2;
+                    return availableMainSpaceForLineContent / 2 - lineContentOuterMainSize / 2;
                 // non-logical alignments
                 case ContentPosition::Left:
                 case ContentPosition::Start:
                     if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
-                        return availableMainSpace - lineContentOuterMainSize;
+                        return availableMainSpaceForLineContent - lineContentOuterMainSize;
                     return LayoutUnit { };
                 case ContentPosition::Right:
                 case ContentPosition::End:
                     if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return LayoutUnit { };
-                    return availableMainSpace - lineContentOuterMainSize;
+                    return availableMainSpaceForLineContent - lineContentOuterMainSize;
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -652,11 +657,11 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 case ContentDistribution::Default:
                     return LayoutUnit { };
                 case ContentDistribution::SpaceBetween:
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() - 1);
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() - 1);
                 case ContentDistribution::SpaceAround:
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / lineRange.distance();
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / lineRange.distance();
                 case ContentDistribution::SpaceEvenly:
-                    return std::max(0_lu, availableMainSpace - lineContentOuterMainSize) / (lineRange.distance() + 1);
+                    return std::max(0_lu, availableMainSpaceForLineContent - lineContentOuterMainSize) / (lineRange.distance() + 1);
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
@@ -884,6 +889,13 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
         linesCrossPositionList[lineIndex] = (linesCrossPositionList[lineIndex - 1] + flexLinesCrossSizeList[lineIndex - 1]) + gap;
     return linesCrossPositionList;
+}
+
+LayoutUnit FlexLayout::mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxisAvailableSpace, size_t numberOfFlexItems) const
+{
+    if (numberOfFlexItems == 1)
+        return mainAxisAvailableSpace;
+    return mainAxisAvailableSpace - (FlexFormattingUtils::columnGapValue(flexContainer(), mainAxisAvailableSpace) * (numberOfFlexItems - 1));
 }
 
 LayoutUnit FlexLayout::crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const

@@ -27,7 +27,6 @@
 #include "LayoutIntegrationCoverage.h"
 
 #include "Document.h"
-#include "GapLength.h"
 #include "InlineWalker.h"
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -62,7 +61,7 @@ enum class AvoidanceReason : uint32_t {
     // Unused                           = 1U << 8,
     // Unused                           = 1U << 9,
     // Unused                           = 1U << 10,
-    FlexBoxHasUnsupportedColumnGap      = 1U << 11,
+    // Unused                           = 1U << 11,
     FlexBoxHasUnsupportedTypeOfRenderer = 1U << 12,
     FlexBoxHasMarginTrim                = 1U << 13,
     FlexBoxHasOutOfFlowChild            = 1U << 14,
@@ -130,9 +129,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
 
     if (mayHaveScrollbarOrScrollableOverflow(flexBoxStyle))
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedOverflow, reasons, includeReasons);
-
-    if (!flexBoxStyle.columnGap().isNormal())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasUnsupportedColumnGap, reasons, includeReasons);
 
     if (flexBoxStyle.marginTrim() != RenderStyle::initialMarginTrim())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasMarginTrim, reasons, includeReasons);
@@ -229,9 +225,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
         stream << "flex box has non-hidden overflow";
-        break;
-    case AvoidanceReason::FlexBoxHasUnsupportedColumnGap:
-        stream << "flex box has unsupported column-gap value";
         break;
     case AvoidanceReason::FlexBoxHasUnsupportedTypeOfRenderer:
         stream << "flex box has unsupported flex item renderer e.g. fieldset";
