@@ -38,7 +38,9 @@ G_BEGIN_DECLS
 #define WPE_TYPE_DISPLAY_HEADLESS (wpe_display_headless_get_type())
 WPE_API G_DECLARE_FINAL_TYPE (WPEDisplayHeadless, wpe_display_headless, WPE, DISPLAY_HEADLESS, WPEDisplay)
 
-WPE_API WPEDisplay *wpe_display_headless_new (void);
+WPE_API WPEDisplay *wpe_display_headless_new            (void);
+WPE_API WPEDisplay *wpe_display_headless_new_for_device (const char *name,
+                                                         GError    **error);
 
 G_END_DECLS
 

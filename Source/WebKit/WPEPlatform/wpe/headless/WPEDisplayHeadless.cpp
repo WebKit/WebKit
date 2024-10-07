@@ -219,3 +219,53 @@ WPEDisplay* wpe_display_headless_new(void)
 {
     return WPE_DISPLAY(g_object_new(WPE_TYPE_DISPLAY_HEADLESS, nullptr));
 }
+
+/**
+ * wpe_display_headless_new_for_device: (skip)
+ * @name: the name of the DRM device
+ * @error: return location for error or %NULL to ignore
+ *
+ * Create a new #WPEDisplayHeadless for the DRM device with @name.
+ *
+ * Returns: (nullable) (transfer full): a #WPEDisplay, or %NULL if an error occurred
+ */
+WPEDisplay* wpe_display_headless_new_for_device(const char* name, GError** error)
+{
+#if USE(LIBDRM)
+    auto* display = WPE_DISPLAY_HEADLESS(wpe_display_headless_new());
+    auto* priv = display->priv;
+    drmDevicePtr devices[64];
+    memset(devices, 0, sizeof(devices));
+
+    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    if (numDevices <= 0) {
+        g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "No DRM device found");
+        return nullptr;
+    }
+
+    for (int i = 0; i < numDevices; ++i) {
+        drmDevice* device = devices[i];
+        for (int j = 0; j < DRM_NODE_MAX; ++j) {
+            if (device->available_nodes & (1 << j) && !strcmp(device->nodes[j], name)) {
+                if (device->available_nodes & (1 << DRM_NODE_RENDER))
+                    priv->drmRenderNode = CString(device->nodes[DRM_NODE_RENDER]);
+                else
+                    priv->drmRenderNode = CString();
+                if (device->available_nodes & (1 << DRM_NODE_PRIMARY))
+                    priv->drmDevice = CString(device->nodes[DRM_NODE_PRIMARY]);
+                else
+                    priv->drmDevice = CString();
+                drmFreeDevices(devices, numDevices);
+                return WPE_DISPLAY(display);
+            }
+        }
+    }
+
+    drmFreeDevices(devices, numDevices);
+    g_set_error(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "DRM device \"%s\" not found", name);
+    return nullptr;
+#else
+    g_set_error_literal(error, WPE_DISPLAY_ERROR, WPE_DISPLAY_ERROR_NOT_SUPPORTED, "DRM device not supported");
+    return nullptr;
+#endif
+}
