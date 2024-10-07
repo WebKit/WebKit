@@ -1103,6 +1103,18 @@ IntRect CoordinatedGraphicsLayer::transformedVisibleRect()
     return enclosingIntRect(rect);
 }
 
+IntRect CoordinatedGraphicsLayer::transformedVisibleRectIncludingFuture()
+{
+    auto visibleRectIncludingFuture = transformedVisibleRect();
+    if (m_cachedInverseTransform != m_cachedFutureInverseTransform) {
+        FloatRect rect = m_cachedFutureInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(m_coordinator->visibleContentsRect()));
+        clampToContentsRectIfRectIsInfinite(rect, size());
+        visibleRectIncludingFuture.unite(enclosingIntRect(rect));
+    }
+
+    return visibleRectIncludingFuture;
+}
+
 void CoordinatedGraphicsLayer::requestBackingStoreUpdate()
 {
     setNeedsVisibleRectAdjustment();
@@ -1174,7 +1186,7 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     if (m_pendingVisibleRectAdjustment) {
         m_pendingVisibleRectAdjustment = false;
-        layerState.mainBackingStore->createTilesIfNeeded(transformedVisibleRect(), IntRect(0, 0, m_size.width(), m_size.height()));
+        layerState.mainBackingStore->createTilesIfNeeded(transformedVisibleRectIncludingFuture(), IntRect(0, 0, m_size.width(), m_size.height()));
     }
 
     if (is<CoordinatedAnimatedBackingStoreClient>(m_nicosia.animatedBackingStoreClient)) {
@@ -1359,8 +1371,13 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 
     m_shouldUpdateVisibleRect = false;
     TransformationMatrix currentTransform = transform();
-    if (m_movingVisibleRect)
+    TransformationMatrix futureTransform = currentTransform;
+    if (m_movingVisibleRect) {
         client().getCurrentTransform(this, currentTransform);
+        Nicosia::Animation::ApplicationResult futureApplicationResults;
+        m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, Nicosia::Animation::KeepInternalState::Yes);
+        futureTransform = futureApplicationResults.transform.value_or(currentTransform);
+    }
     m_layerTransform.setLocalTransform(currentTransform);
 
     m_layerTransform.setAnchorPoint(m_adjustedAnchorPoint);
@@ -1372,6 +1389,17 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.combineTransforms(parent() ? downcast<CoordinatedGraphicsLayer>(*parent()).m_layerTransform.combinedForChildren() : TransformationMatrix());
 
     m_cachedInverseTransform = m_layerTransform.combined().inverse().value_or(TransformationMatrix());
+
+    m_layerFutureTransform = m_layerTransform;
+    m_cachedFutureInverseTransform = m_cachedInverseTransform;
+
+    CoordinatedGraphicsLayer* parentLayer = downcast<CoordinatedGraphicsLayer>(parent());
+
+    if (currentTransform != futureTransform || (parentLayer && parentLayer->m_layerTransform.combinedForChildren() != parentLayer->m_layerFutureTransform.combinedForChildren())) {
+        m_layerFutureTransform.setLocalTransform(futureTransform);
+        m_layerFutureTransform.combineTransforms(parentLayer ? parentLayer->m_layerFutureTransform.combinedForChildren() : TransformationMatrix());
+        m_cachedFutureInverseTransform = m_layerFutureTransform.combined().inverse().value_or(TransformationMatrix());
+    }
 
     // The combined transform will be used in tiledBackingStoreVisibleRect.
     setNeedsVisibleRectAdjustment();
