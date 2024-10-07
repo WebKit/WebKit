@@ -135,7 +135,7 @@ MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTimeWithLockHe
         return m_cachedMediaTime;
 
     auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
-    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), m_parent.duration());
+    return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), protectedParent()->duration());
 }
 
 MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::cachedTime() const
@@ -204,7 +204,7 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 #if PLATFORM(COCOA)
     m_videoLayerManager->didDestroyVideoLayer();
 #endif
-    m_manager.deleteRemoteMediaPlayer(m_id);
+    protectedManager()->deleteRemoteMediaPlayer(m_id);
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
     if (m_audioSourceProvider)
@@ -245,7 +245,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
 
         auto createExtension = [&] {
 #if HAVE(AUDIT_TOKEN)
-            if (auto auditToken = m_manager.gpuProcessConnection().auditToken()) {
+            if (auto auditToken = protectedManager()->gpuProcessConnection().auditToken()) {
                 if (auto createdHandle = SandboxExtension::createHandleForReadByAuditToken(fileSystemPath, auditToken.value())) {
                     handle = WTFMove(*createdHandle);
                     return true;
@@ -744,7 +744,7 @@ void MediaPlayerPrivateRemote::addRemoteAudioTrack(AudioTrackPrivateRemoteConfig
 
     m_audioTracks.erase(configuration.trackId);
 
-    auto addResult = m_audioTracks.emplace(configuration.trackId, AudioTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_audioTracks.emplace(configuration.trackId, AudioTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -794,7 +794,7 @@ void MediaPlayerPrivateRemote::addRemoteTextTrack(TextTrackPrivateRemoteConfigur
 
     m_textTracks.erase(configuration.trackId);
 
-    auto addResult = m_textTracks.emplace(configuration.trackId, TextTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_textTracks.emplace(configuration.trackId, TextTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -958,7 +958,7 @@ void MediaPlayerPrivateRemote::addRemoteVideoTrack(VideoTrackPrivateRemoteConfig
 
     m_videoTracks.erase(configuration.trackId);
 
-    auto addResult = m_videoTracks.emplace(configuration.trackId, VideoTrackPrivateRemote::create(m_manager.gpuProcessConnection(), m_id, WTFMove(configuration)));
+    auto addResult = m_videoTracks.emplace(configuration.trackId, VideoTrackPrivateRemote::create(protectedManager()->gpuProcessConnection(), m_id, WTFMove(configuration)));
     ASSERT(addResult.second);
 
 #if ENABLE(MEDIA_SOURCE)
@@ -1033,7 +1033,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             // MediaSource can only be re-opened after RemoteMediaPlayerProxy::LoadMediaSource has been called.
             client.reOpen();
         } else
-            m_mediaSourcePrivate = MediaSourcePrivateRemote::create(m_manager.gpuProcessConnection(), identifier, m_manager.typeCache(m_remoteEngineIdentifier), *this, client);
+            m_mediaSourcePrivate = MediaSourcePrivateRemote::create(protectedManager()->gpuProcessConnection(), identifier, protectedManager()->typeCache(m_remoteEngineIdentifier), *this, client);
         return;
     }
 
@@ -1852,6 +1852,11 @@ bool MediaPlayerPrivateRemote::supportsLinearMediaPlayer() const
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
+}
+
+Ref<RemoteMediaPlayerManager> MediaPlayerPrivateRemote::protectedManager() const
+{
+    return m_manager.get().releaseNonNull();
 }
 
 } // namespace WebKit

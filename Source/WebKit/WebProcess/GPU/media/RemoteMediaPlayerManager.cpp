@@ -66,17 +66,17 @@ public:
 
     Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return m_manager.createRemoteMediaPlayer(player, m_remoteEngineIdentifier);
+        return protectedManager()->createRemoteMediaPlayer(player, m_remoteEngineIdentifier);
     }
 
     void getSupportedTypes(HashSet<String>& types) const final
     {
-        return m_manager.getSupportedTypes(m_remoteEngineIdentifier, types);
+        return protectedManager()->getSupportedTypes(m_remoteEngineIdentifier, types);
     }
 
     MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
     {
-        return m_manager.supportsTypeAndCodecs(m_remoteEngineIdentifier, parameters);
+        return protectedManager()->supportsTypeAndCodecs(m_remoteEngineIdentifier, parameters);
     }
 
     HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
@@ -97,12 +97,14 @@ public:
 
     bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
     {
-        return m_manager.supportsKeySystem(m_remoteEngineIdentifier, keySystem, mimeType);
+        return protectedManager()->supportsKeySystem(m_remoteEngineIdentifier, keySystem, mimeType);
     }
 
 private:
+    Ref<RemoteMediaPlayerManager> protectedManager() const { return m_manager.get().releaseNonNull(); }
+
     MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;
-    RemoteMediaPlayerManager& m_manager;
+    ThreadSafeWeakPtr<RemoteMediaPlayerManager> m_manager; // Cannot be null.
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaPlayerManager);

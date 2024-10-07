@@ -123,7 +123,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
         MediaEngineSupportParameters parameters;
         parameters.isMediaSource = true;
         parameters.type = contentType;
-        if (m_mimeTypeCache.supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
+        if (m_mimeTypeCache->supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
             returnedStatus = AddStatus::NotSupported;
             return;
         }

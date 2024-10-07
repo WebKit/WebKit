@@ -36,6 +36,7 @@
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <atomic>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -115,7 +116,7 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     Ref<MessageReceiver> m_receiver;
     RemoteMediaSourceIdentifier m_identifier;
-    RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
+    CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
     std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
