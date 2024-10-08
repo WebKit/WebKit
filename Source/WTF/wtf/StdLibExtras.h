@@ -752,6 +752,8 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
     return optionalValue ? *std::forward<OptionalType>(optionalValue) : std::remove_reference_t<decltype(*optionalValue)> { };
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-align"
 template<typename T, typename U, std::size_t Extent>
 std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
 {
@@ -766,6 +768,7 @@ std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * 
     using ReturnType = std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)>;
     return ReturnType { reinterpret_cast<T*>(const_cast<std::remove_const_t<U>*>(span.data())), span.size_bytes() / sizeof(T) };
 }
+#pragma GCC diagnostic pop
 
 template<typename T, std::size_t Extent>
 std::span<T, Extent> spanConstCast(std::span<const T, Extent> span)
