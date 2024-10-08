@@ -26,29 +26,25 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
-
-namespace WTF {
-class TaskCancellationGroup;
-class TaskCancellationGroupImpl;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WTF::TaskCancellationGroup> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WTF::TaskCancellationGroupImpl> : std::true_type { };
-}
 
 namespace WTF {
 
 class CancellableTask;
 
-class TaskCancellationGroupImpl : public CanMakeWeakPtr<TaskCancellationGroupImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
+class TaskCancellationGroupImpl final : public RefCountedAndCanMakeWeakPtr<TaskCancellationGroupImpl> {
 public:
+    static Ref<TaskCancellationGroupImpl> create()
+    {
+        return adoptRef(*new TaskCancellationGroupImpl);
+    }
     void cancel() { weakPtrFactory().revokeAll(); }
     bool hasPendingTask() const { return weakPtrFactory().weakPtrCount(); }
+
+private:
+    TaskCancellationGroupImpl() = default;
 };
 
 class TaskCancellationGroupHandle {
@@ -64,10 +60,10 @@ private:
     WeakPtr<TaskCancellationGroupImpl> m_impl;
 };
 
-class TaskCancellationGroup : public CanMakeWeakPtr<TaskCancellationGroup> {
+class TaskCancellationGroup {
 public:
     TaskCancellationGroup()
-        : m_impl(makeUniqueRef<TaskCancellationGroupImpl>())
+        : m_impl(TaskCancellationGroupImpl::create())
     {
     }
     void cancel() { m_impl->cancel(); }
@@ -77,7 +73,7 @@ private:
     friend class CancellableTask;
     TaskCancellationGroupHandle createHandle() { return TaskCancellationGroupHandle { m_impl }; }
 
-    UniqueRef<TaskCancellationGroupImpl> m_impl;
+    Ref<TaskCancellationGroupImpl> m_impl;
 };
 
 class CancellableTask {
