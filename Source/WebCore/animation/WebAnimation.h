@@ -209,6 +209,7 @@ private:
     double effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
+    CSSNumberishTime timeEpsilon() const;
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
@@ -241,6 +242,7 @@ private:
     bool m_isRelevant;
     bool m_shouldSkipUpdatingFinishedStateWhenResolving;
     bool m_hasScheduledEventsDuringTick { false };
+    bool m_autoAlignStartTime { false };
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };
     TimeToRunPendingTask m_timeToRunPendingPauseTask { TimeToRunPendingTask::NotScheduled };
     ReplaceState m_replaceState { ReplaceState::Active };

@@ -1,5 +1,5 @@
 
-FAIL animation.progress reflects the progress of a scroll animation as a number between 0 and 1 assert_equals: The current time remains null while in the pending state. expected (object) null but got (number) 0
+FAIL animation.progress reflects the progress of a scroll animation as a number between 0 and 1 assert_true: Animation is in the pending state. expected true got false
 FAIL animation.progress reflects the overall progress of a scroll animation with multiple iterations. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
 FAIL animation.progress reflects the overall progress of a scroll animation that uses a view-timeline. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createViewTimeline"
 FAIL progresss of a view-timeline is bounded between 0 and 1. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createViewTimeline"

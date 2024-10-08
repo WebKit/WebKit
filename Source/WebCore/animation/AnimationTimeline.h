@@ -44,6 +44,9 @@ public:
     virtual bool isScrollTimeline() const { return false; }
     virtual bool isViewTimeline() const { return false; }
 
+    bool isMonotonic() const { return !m_duration; }
+    bool isProgressBased() const { return !isMonotonic(); }
+
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 
     virtual void animationTimingDidChange(WebAnimation&);
