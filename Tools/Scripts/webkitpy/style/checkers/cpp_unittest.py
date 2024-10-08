@@ -1957,33 +1957,53 @@ class CppStyleTest(CppStyleTestBase):
     def test_softlink_framework(self):
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK(Foundation)''',
-            '')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_OPTIONAL(Foundation)''',
-            '')
-        self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(Foundation)''',
-            '')
-        self.assert_lint(
-            '''SOFT_LINK_FRAMEWORK_FOR_HEADER(Foundation)''',
-            '',
-             file_name='foo.h')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(Foundation)''',
-            '')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(Foundation)''',
-            '')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
-            '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_HEADER(Foundation)''',
-            '',
-             file_name='foo.h')
+            '''SOFT_LINK_FRAMEWORK_IN_UMBRELLA(MyFramework)''',
+            'Please don\'t soft-link MyFramework.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_IN_UMBRELLA_OPTIONAL(MyFramework)''',
+            'Please don\'t soft-link MyFramework.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_FRAMEWORK_IN_UMBRELLA_FOR_SOURCE_WITH_EXPORT(MyFramework)''',
+            'Please don\'t soft-link MyFramework.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK(Foundation)''',
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Foundation)''',
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(Foundation)''',
-            '')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(Foundation)''',
-            '')
+            'Please don\'t soft-link Foundation.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_IN_UMBRELLA_OPTIONAL(MyFramework)''',
+            'Please don\'t soft-link MyFramework.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
 
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK(UIKit)''',
@@ -2003,10 +2023,12 @@ class CppStyleTest(CppStyleTestBase):
              file_name='foo.h')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(UIKit)''',
-            '')
+            'Please don\'t soft-link UIKit.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
         self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(UIKit)''',
-            '')
+            'Please don\'t soft-link UIKit.framework; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
 
     def test_softlink_header(self):
         self.assert_lint(
@@ -2035,6 +2057,10 @@ class CppStyleTest(CppStyleTestBase):
             '',
             file_name='foo.h')
         self.assert_lint(
+            '''SOFT_LINK_PRIVATE_FRAMEWORK_FOR_HEADER(MyFramework)''',
+            '',
+            file_name='foo.h')
+        self.assert_lint(
             '''SOFT_LINK_FRAMEWORK_FOR_SOURCE(MyFramework)''',
             'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
             '  [softlink/header] [5]',
@@ -2044,6 +2070,24 @@ class CppStyleTest(CppStyleTestBase):
             'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create MyFrameworkSoftLink.{cpp,mm} instead.'
             '  [softlink/header] [5]',
             file_name='foo.h')
+
+    def test_softlink_library(self):
+        self.assert_lint(
+            '''SOFT_LINK_LIBRARY(libLibrary)''',
+            'Please don\'t soft-link libLibrary library; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_SYSTEM_LIBRARY(libSystem)''',
+            'Please don\'t soft-link libSystem library; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_LIBRARY_OPTIONAL(libOptional)''',
+            'Please don\'t soft-link libOptional library; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
+        self.assert_lint(
+            '''SOFT_LINK_LIBRARY_FOR_SOURCE(libSource)''',
+            'Please don\'t soft-link libSource library; contact @ddkilzer or @thorton on Slack.'
+            '  [softlink/dynamic_linking] [4]')
 
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):

@@ -3934,14 +3934,25 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
     matched = re.compile(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK.*\((\S+)\)').search(line)
     if matched:
         framework_name = matched.group(2)
-        if file_extension == 'h' and not search(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_HEADER.*\(', line):
-            error(line_number, 'softlink/header', 5,
-                  'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create {framework}SoftLink.{{cpp,mm}} instead.'.format(framework=framework_name))
+        if file_extension == 'h':
+            if not search(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_HEADER.*\(', line):
+                error(line_number, 'softlink/header', 5,
+                      'Never soft-link frameworks in headers. Put the soft-link macros in a source file, or create {framework}SoftLink.{{cpp,mm}} instead.'.format(framework=framework_name))
+        else:
+            frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'LocalAuthentication', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
+            if framework_name in frameworks_with_soft_links and not re.compile(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
+                error(line_number, 'softlink/framework', 5,
+                      'Use {framework}SoftLink.{{cpp,h,mm}} to soft-link to {framework}.framework.'.format(framework=framework_name))
+            else:
+                error(line_number, 'softlink/dynamic_linking', 4,
+                      'Please don\'t soft-link {framework}.framework; contact @ddkilzer or @thorton on Slack.'.format(framework=framework_name))
 
-        frameworks_with_soft_links = ['CoreMedia', 'CoreVideo', 'DataDetectorsCore', 'LocalAuthentication', 'MediaAccessibility', 'MediaRemote', 'PassKit', 'QuickLook', 'UIKit', 'VideoToolbox']
-        if framework_name in frameworks_with_soft_links and not re.compile(r'^\s*SOFT_LINK_(PRIVATE_)?FRAMEWORK_FOR_(HEADER|SOURCE)(_WITH_EXPORT)?\({}\)'.format(framework_name)).search(line):
-            error(line_number, 'softlink/framework', 5,
-                  'Use {framework}SoftLink.{{cpp,h,mm}} to soft-link to {framework}.framework.'.format(framework=framework_name))
+    matched = re.compile(r'^\s*SOFT_LINK_(SYSTEM_)?LIBRARY.*\((\S+)\)').search(line)
+    if matched:
+        library_name = matched.group(2)
+        error(line_number, 'softlink/dynamic_linking', 4,
+              'Please don\'t soft-link {library} library; contact @ddkilzer or @thorton on Slack.'.format(
+                  library=library_name))
 
     # Check for suspicious usage of "if" like
     # } if (a == b) {
@@ -4764,6 +4775,7 @@ class CppChecker(object):
         'security/missing_warn_unused_return',
         'security/printf',
         'security/temp_file',
+        'softlink/dynamic_linking',
         'softlink/framework',
         'softlink/header',
         'whitespace/blank_line',
