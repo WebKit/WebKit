@@ -84,7 +84,7 @@ public:
     void terminateContextConnectionWhenPossible(const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
     void addContextConnection(WebSharedWorkerServerToContextConnection&);
     void removeContextConnection(WebSharedWorkerServerToContextConnection&);
-    void addConnection(std::unique_ptr<WebSharedWorkerServerConnection>&&);
+    void addConnection(Ref<WebSharedWorkerServerConnection>&&);
     void removeConnection(WebCore::ProcessIdentifier);
 
 private:
@@ -95,7 +95,7 @@ private:
     void shutDownSharedWorker(const WebCore::SharedWorkerKey&);
 
     CheckedRef<NetworkSession> m_session;
-    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<WebSharedWorkerServerConnection>> m_connections;
+    HashMap<WebCore::ProcessIdentifier, Ref<WebSharedWorkerServerConnection>> m_connections;
     HashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
     HashMap<WebCore::SharedWorkerKey, std::unique_ptr<WebSharedWorker>> m_sharedWorkers;

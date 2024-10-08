@@ -1338,9 +1338,9 @@ void NetworkConnectionToWebProcess::establishSharedWorkerServerConnection()
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerServerConnection:");
 
     auto& server = session->ensureSharedWorkerServer();
-    auto connection = makeUnique<WebSharedWorkerServerConnection>(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
+    auto connection = WebSharedWorkerServerConnection::create(m_networkProcess, server, m_connection.get(), m_webProcessIdentifier);
 
-    m_sharedWorkerConnection = *connection;
+    m_sharedWorkerConnection = connection;
     server.addConnection(WTFMove(connection));
 }
 

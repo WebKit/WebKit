@@ -252,10 +252,10 @@ void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey&
         contextConnection->terminateSharedWorker(*sharedWorker);
 }
 
-void WebSharedWorkerServer::addConnection(std::unique_ptr<WebSharedWorkerServerConnection>&& connection)
+void WebSharedWorkerServer::addConnection(Ref<WebSharedWorkerServerConnection>&& connection)
 {
     auto processIdentifier = connection->webProcessIdentifier();
-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addConnection(%p): processIdentifier=%" PRIu64, connection.get(), processIdentifier.toUInt64());
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addConnection(%p): processIdentifier=%" PRIu64, connection.ptr(), processIdentifier.toUInt64());
     ASSERT(!m_connections.contains(processIdentifier));
     m_connections.add(processIdentifier, WTFMove(connection));
 }

@@ -48,6 +48,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerConnection);
 
+Ref<WebSharedWorkerServerConnection> WebSharedWorkerServerConnection::create(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    return adoptRef(*new WebSharedWorkerServerConnection(networkProcess, server, connection, webProcessIdentifier));
+}
+
 WebSharedWorkerServerConnection::WebSharedWorkerServerConnection(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_contentConnection(connection)
     , m_networkProcess(networkProcess)
