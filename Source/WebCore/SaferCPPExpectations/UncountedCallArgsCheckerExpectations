@@ -538,7 +538,6 @@ Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
 Modules/mediasession/MediaSessionCoordinator.cpp
 Modules/mediasession/MediaSessionCoordinator.h
-Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediasource/ManagedMediaSource.cpp
 Modules/mediasource/MediaSource.cpp
 Modules/mediasource/MediaSourceHandle.cpp

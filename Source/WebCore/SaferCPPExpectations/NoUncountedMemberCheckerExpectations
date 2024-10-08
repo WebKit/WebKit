@@ -3,10 +3,7 @@ Modules/WebGPU/GPUPresentationContextDescriptor.h
 Modules/encryptedmedia/MediaKeyStatusMap.h
 Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/fetch/FetchBodyOwner.h
-Modules/mediasession/MediaMetadata.h
-Modules/mediasession/NavigatorMediaSession.h
 Modules/mediasource/SourceBuffer.h
-Modules/mediastream/PeerConnectionBackend.h
 Modules/mediastream/RTCPeerConnection.h
 Modules/mediastream/libwebrtc/LibWebRTCObservers.h
 Modules/notifications/NotificationResourcesLoader.h
