@@ -235,7 +235,7 @@ void InlineBoxPainter::paintDecorations()
     GraphicsContext& context = m_paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());
     // Shadow comes first and is behind the background and border.
-    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BackgroundBleedNone, m_inlineBox))
+    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BleedAvoidance::None, m_inlineBox))
         paintBoxShadow(ShadowStyle::Normal, paintRect);
 
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor, m_paintInfo.paintBehavior);
@@ -262,7 +262,7 @@ void InlineBoxPainter::paintDecorations()
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
     if (!hasBorderImage || hasSingleLine) {
         auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
-        borderPainter.paintBorder(paintRect, style, BackgroundBleedNone, hasClosedLeftEdge, hasClosedRightEdge);
+        borderPainter.paintBorder(paintRect, style, BleedAvoidance::None, hasClosedLeftEdge, hasClosedRightEdge);
         return;
     }
 
@@ -312,14 +312,14 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
 
     if (!hasFillImageOrBorderRadious || hasSingleLine || m_isRootInlineBox) {
-        backgroundPainter.paintFillLayer(color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
         return;
     }
 
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
-        backgroundPainter.paintFillLayer(color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
         return;
     }
 
@@ -353,7 +353,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());
     m_paintInfo.context().clip(FloatRect { rect });
-    backgroundPainter.paintFillLayer(color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, backgroundImageStrip, op);
+    backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, backgroundImageStrip, op);
 }
 
 void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect& paintRect)

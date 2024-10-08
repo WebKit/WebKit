@@ -1433,7 +1433,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, LayoutPoi
         painter.setOverrideClip(FillBox::BorderBox);
         painter.setOverrideOrigin(FillBox::BorderBox);
     }
-    painter.paintFillLayers(color, bgLayer, fillRect, BackgroundBleedNone, compositeOp, backgroundObject);
+    painter.paintFillLayers(color, bgLayer, fillRect, BleedAvoidance::None, compositeOp, backgroundObject);
 }
 
 void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

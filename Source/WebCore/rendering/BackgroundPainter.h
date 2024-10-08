@@ -68,17 +68,17 @@ public:
     void setOverrideClip(FillBox overrideClip) { m_overrideClip = overrideClip; }
     void setOverrideOrigin(FillBox overrideOrigin) { m_overrideOrigin = overrideOrigin; }
 
-    void paintBackground(const LayoutRect&, BackgroundBleedAvoidance) const;
+    void paintBackground(const LayoutRect&, BleedAvoidance) const;
 
-    void paintFillLayers(const Color&, const FillLayer&, const LayoutRect&, BackgroundBleedAvoidance, CompositeOperator, RenderElement* backgroundObject = nullptr) const;
-    void paintFillLayer(const Color&, const FillLayer&, const LayoutRect&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
+    void paintFillLayers(const Color&, const FillLayer&, const LayoutRect&, BleedAvoidance, CompositeOperator, RenderElement* backgroundObject = nullptr) const;
+    void paintFillLayer(const Color&, const FillLayer&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
 
     void paintBoxShadow(const LayoutRect&, const RenderStyle&, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
 
     static bool paintsOwnBackground(const RenderBoxModelObject&);
     static BackgroundImageGeometry calculateBackgroundImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const FillLayer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
     static void clipRoundedInnerRect(GraphicsContext&, const FloatRoundedRect& clipRect);
-    static bool boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject&, const LayoutPoint& paintOffset, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&);
+    static bool boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject&, const LayoutPoint& paintOffset, BleedAvoidance, const InlineIterator::InlineBoxIterator&);
 
 private:
     void paintRootBoxFillLayers() const;

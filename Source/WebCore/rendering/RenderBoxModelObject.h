@@ -34,11 +34,11 @@ namespace WebCore {
 enum LinePositionMode { PositionOnContainingLine, PositionOfInteriorLineBoxes };
 enum LineDirectionMode { HorizontalLine, VerticalLine };
 
-enum BackgroundBleedAvoidance {
-    BackgroundBleedNone,
-    BackgroundBleedShrinkBackground,
-    BackgroundBleedUseTransparencyLayer,
-    BackgroundBleedBackgroundOverBorder
+enum class BleedAvoidance : uint8_t {
+    None,
+    ShrinkBackground,
+    UseTransparencyLayer,
+    BackgroundOverBorder
 };
 
 enum class ContentChangeType : uint8_t {

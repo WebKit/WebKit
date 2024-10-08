@@ -675,7 +675,7 @@ protected:
     void clipToPaddingBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
     void clipToContentBoxShape(GraphicsContext&, const LayoutPoint&, float deviceScaleFactor) const;
 
-    BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext&) const;
+    BleedAvoidance determineBleedAvoidance(GraphicsContext&) const;
     bool backgroundHasOpaqueTopLayer() const;
 
     void computePositionedLogicalWidth(LogicalExtentComputedValues&, RenderFragmentContainer* = nullptr) const;

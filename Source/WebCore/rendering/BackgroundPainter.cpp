@@ -68,7 +68,7 @@ BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const Paint
         setOverrideClip(FillBox::BorderBox);
 }
 
-void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance) const
+void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BleedAvoidance bleedAvoidance) const
 {
     if (m_renderer.isDocumentElementRenderer()) {
         paintRootBoxFillLayers();
@@ -101,7 +101,7 @@ void BackgroundPainter::paintRootBoxFillLayers() const
     auto backgroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
-    paintFillLayers(backgroundColor, style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
+    paintFillLayers(backgroundColor, style.backgroundLayers(), view().backgroundRect(), BleedAvoidance::None, compositeOp, rootBackgroundRenderer);
 }
 
 bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer)
@@ -116,7 +116,7 @@ bool BackgroundPainter::paintsOwnBackground(const RenderBoxModelObject& renderer
     return !documentElementRenderer || documentElementRenderer->shouldApplyAnyContainment() || documentElementRenderer->hasBackground() || documentElementRenderer != renderer.parent();
 }
 
-void BackgroundPainter::paintFillLayers(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject) const
+void BackgroundPainter::paintFillLayers(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject) const
 {
     Vector<const FillLayer*, 8> layers;
     bool shouldDrawBackgroundInSeparateBuffer = false;
@@ -167,7 +167,7 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const RenderSt
 }
 
 void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLayer, const LayoutRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const LayoutRect& backgroundImageStrip, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
+    BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const LayoutRect& backgroundImageStrip, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
 {
     GraphicsContext& context = m_paintInfo.context();
 
@@ -236,7 +236,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
 
     auto borderShapeRespectingBleedAvoidance = [&](bool includeLeftEdge, bool includeRightEdge, bool shrinkForBleedAvoidance = true) {
         auto borderRect = rect;
-        if (shrinkForBleedAvoidance && bleedAvoidance == BackgroundBleedShrinkBackground) {
+        if (shrinkForBleedAvoidance && bleedAvoidance == BleedAvoidance::ShrinkBackground) {
             // Ideally we'd use the border rect, but add a device pixel of additional inset to preserve corner shape.
             borderRect = shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, deviceScaleFactor);
         }
@@ -254,14 +254,14 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         if (applyBoxShadowToBackground)
             applyBoxShadowForBackground(context, style);
 
-        if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
+        if (hasRoundedBorder && bleedAvoidance != BleedAvoidance::UseTransparencyLayer) {
             auto borderShape = borderShapeRespectingBleedAvoidance(includeLeftEdge, includeRightEdge);
             auto previousOperator = context.compositeOperation();
             bool saveRestoreCompositeOp = op != previousOperator;
             if (saveRestoreCompositeOp)
                 context.setCompositeOperation(op);
 
-            if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
+            if (bleedAvoidance == BleedAvoidance::BackgroundOverBorder)
                 borderShape.fillInnerShape(context, bgColor, deviceScaleFactor);
             else
                 borderShape.fillOuterShape(context, bgColor, deviceScaleFactor);
@@ -274,8 +274,8 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         return;
     }
 
-    // FillBox::BorderBox radius clipping is taken care of by BackgroundBleedUseTransparencyLayer
-    bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
+    // FillBox::BorderBox radius clipping is taken care of by BleedAvoidance::UseTransparencyLayer
+    bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BleedAvoidance::UseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(context, clipToBorderRadius);
     if (clipToBorderRadius) {
 
@@ -952,9 +952,9 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
     }
 }
 
-bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject& renderer, const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBox)
+bool BackgroundPainter::boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject& renderer, const LayoutPoint& paintOffset, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBox)
 {
-    if (bleedAvoidance != BackgroundBleedNone)
+    if (bleedAvoidance != BleedAvoidance::None)
         return false;
 
     auto& style = renderer.style();

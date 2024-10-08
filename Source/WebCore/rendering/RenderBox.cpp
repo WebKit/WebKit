@@ -1606,21 +1606,21 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
 // --------------------- painting stuff -------------------------------
 
-BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext& context) const
+BleedAvoidance RenderBox::determineBleedAvoidance(GraphicsContext& context) const
 {
     if (context.paintingDisabled())
-        return BackgroundBleedNone;
+        return BleedAvoidance::None;
 
     const RenderStyle& style = this->style();
 
     if (!style.hasBackground() || !style.hasBorder() || !style.hasBorderRadius() || borderImageIsLoadedAndCanBeRendered())
-        return BackgroundBleedNone;
+        return BleedAvoidance::None;
 
     AffineTransform ctm = context.getCTM();
     FloatSize contextScaling(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
 
     // Because RoundedRect uses IntRect internally the inset applied by the 
-    // BackgroundBleedShrinkBackground strategy cannot be less than one integer
+    // BleedAvoidance::ShrinkBackground strategy cannot be less than one integer
     // layout coordinate, even with subpixel layout enabled. To take that into
     // account, we clamp the contextScaling to 1.0 for the following test so
     // that borderObscuresBackgroundEdge can only return true if the border
@@ -1634,11 +1634,11 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
         contextScaling.setHeight(1);
 
     if (borderObscuresBackgroundEdge(contextScaling))
-        return BackgroundBleedShrinkBackground;
+        return BleedAvoidance::ShrinkBackground;
     if (!style.hasUsedAppearance() && borderObscuresBackground() && backgroundHasOpaqueTopLayer())
-        return BackgroundBleedBackgroundOverBorder;
+        return BleedAvoidance::BackgroundOverBorder;
 
-    return BackgroundBleedUseTransparencyLayer;
+    return BleedAvoidance::UseTransparencyLayer;
 }
 
 ControlPart* RenderBox::ensureControlPart()
@@ -1679,7 +1679,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     adjustBorderBoxRectForPainting(paintRect);
 
     paintRect = theme().adjustedPaintRect(*this, paintRect);
-    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());
+    auto bleedAvoidance = determineBleedAvoidance(paintInfo.context());
 
     BackgroundPainter backgroundPainter { *this, paintInfo };
 
@@ -1689,7 +1689,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Normal);
 
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
-    if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
+    if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer) {
         // To avoid the background color bleeding out behind the border, we'll render background and border
         // into a transparency layer, and then clip that in one go (which requires setting up the clip before
         // beginning the layer).
@@ -1712,7 +1712,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     BorderPainter borderPainter { *this, paintInfo };
 
     if (borderOrBackgroundPaintingIsNeeded) {
-        if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
+        if (bleedAvoidance == BleedAvoidance::BackgroundOverBorder)
             borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
         backgroundPainter.paintBackground(paintRect, bleedAvoidance);
@@ -1727,7 +1727,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Inset);
 
-    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder) {
+    if (bleedAvoidance != BleedAvoidance::BackgroundOverBorder) {
         bool paintCSSBorder = false;
 
         if (!style().hasUsedAppearance())
@@ -1744,7 +1744,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
             borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
     }
 
-    if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
+    if (bleedAvoidance == BleedAvoidance::UseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();
 }
 
@@ -1965,7 +1965,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     }
 
     if (allMaskImagesLoaded) {
-        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
+        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BleedAvoidance::None, compositeOp);
         BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBorder(), compositeOp);
     }
     
