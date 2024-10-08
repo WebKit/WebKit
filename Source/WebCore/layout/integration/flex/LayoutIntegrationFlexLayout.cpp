@@ -101,7 +101,6 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 void FlexLayout::layout()
 {
     auto& rootGeometry = layoutState().geometryForBox(flexBox());
-    auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
     auto crossAxisSpaceForFlexItems = [&]() -> std::tuple<std::optional<LayoutUnit>, std::optional<LayoutUnit>> {
         auto& flexBoxStyle = flexBox().style();
 
@@ -123,7 +122,7 @@ void FlexLayout::layout()
         return { crossAxisSpace, heightValue(flexBoxStyle.logicalMinHeight()) };
     };
     auto [availableCrossAxisSpace, minimumCrossAxisSpace] = crossAxisSpaceForFlexItems();
-    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, { }, { minimumCrossAxisSpace, { }, availableCrossAxisSpace, { } }, false };
+    auto constraints = Layout::ConstraintsForFlexContent { { { }, { }, rootGeometry.contentBoxWidth(), rootGeometry.contentBoxLeft() }, { minimumCrossAxisSpace, { }, availableCrossAxisSpace, rootGeometry.contentBoxTop() }, false };
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), layoutState() };
     flexFormattingContext.layout(constraints);
 

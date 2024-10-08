@@ -25,19 +25,17 @@
 
 #pragma once
 
-#include "FormattingConstraints.h"
-
 namespace WebCore {
 namespace Layout {
 
-struct ConstraintsForFlexContent : public ConstraintsForInFlowContent {
+struct ConstraintsForFlexContent {
     struct AxisGeometry {
         std::optional<LayoutUnit> minimumSize;
         std::optional<LayoutUnit> maximumSize;
         std::optional<LayoutUnit> availableSize;
         LayoutUnit startPosition;
     };
-    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax);
+    ConstraintsForFlexContent(const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax);
     const AxisGeometry& mainAxis() const { return m_mainAxisGeometry; }
     const AxisGeometry& crossAxis() const { return m_crossAxisGeometry; }
     bool isSizedUnderMinMax() const { return m_isSizedUnderMinMax; }
@@ -48,9 +46,8 @@ private:
     bool m_isSizedUnderMinMax { false };
 };
 
-inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax)
-    : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), FlexContent)
-    , m_mainAxisGeometry(mainAxis)
+inline ConstraintsForFlexContent::ConstraintsForFlexContent(const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax)
+    : m_mainAxisGeometry(mainAxis)
     , m_crossAxisGeometry(crossAxis)
     , m_isSizedUnderMinMax(isSizedUnderMinMax)
 {
@@ -58,6 +55,4 @@ inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsFor
 
 }
 }
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_FORMATTING_CONSTRAINTS(ConstraintsForFlexContent, isConstraintsForFlexContent())
 
