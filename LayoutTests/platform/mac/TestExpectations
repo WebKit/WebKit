@@ -2423,10 +2423,6 @@ http/tests/media/fairplay/fps-mse-multi-key-renewal.html [ Pass Failure ]
 # webkit.org/b/280424 [ Sequoia ] fast/table/col-and-colgroup-offsets.html is a constant failure.
 [ Sequoia+ ] fast/table/col-and-colgroup-offsets.html [ Failure ]
 
-# webkit.org/b/280490 REGRESSION (284225@main) : [ macOS iOS ] 2x imported/w3c/web-platform-t ests/mathml/presentation-markup/operators/* are constant failures 
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-position-of-stretchy-fences-with-default-font-001.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
-
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
 
 # webkit.org/b/280646 [macOS Debug EWS] media/video-webkit-playsinline.html is a flaky crash

@@ -1884,8 +1884,6 @@ imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/embellished-op-5-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-movablelimits-from-in-flow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-position-of-stretchy-fences-with-default-font-001.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/legacy-mrow-like-elements-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/semantics-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/semantics-003.html [ ImageOnlyFailure ]

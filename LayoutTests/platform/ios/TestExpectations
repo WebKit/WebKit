@@ -7480,10 +7480,6 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-rep
 
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-# webkit.org/b/280490 REGRESSION (284225@main) : [ macOS iOS ] 2x imported/w3c/web-platform-t ests/mathml/presentation-markup/operators/* are constant failures 
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/size-and-position-of-stretchy-fences-with-default-font-001.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/presentation-markup/operators/stretchy-largeop-with-default-font-2.html [ Failure ]
-
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
 
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
