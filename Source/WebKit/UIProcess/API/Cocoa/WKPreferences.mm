@@ -1672,6 +1672,17 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->videoFullscreenRequiresElementFullscreen();
 }
 
+- (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
+{
+    _preferences->setCSSTransformStyleSeparatedEnabled(enabled);
+}
+
+- (BOOL)_cssTransformStyleSeparatedEnabled
+{
+    return _preferences->cssTransformStyleSeparatedEnabled();
+}
+
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

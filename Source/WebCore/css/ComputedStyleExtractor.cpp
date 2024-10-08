@@ -4560,9 +4560,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueFlat);
         case TransformStyle3D::Preserve3D:
             return CSSPrimitiveValue::create(CSSValuePreserve3d);
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        case TransformStyle3D::Optimized3D:
-            return CSSPrimitiveValue::create(CSSValueOptimized3d);
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+        case TransformStyle3D::Separated:
+            return CSSPrimitiveValue::create(CSSValueSeparated);
 #endif
         }
         ASSERT_NOT_REACHED();

@@ -142,7 +142,6 @@ private:
 #if ENABLE(INPUT_TYPE_COLOR)
     String colorInputStyleSheet() const final;
 
-    void adjustColorWellStyle(RenderStyle&, const Element*) const final;
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
 
@@ -200,7 +199,6 @@ private:
 
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
-    void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
     void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
 };
 

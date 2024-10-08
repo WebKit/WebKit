@@ -1487,9 +1487,9 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     m_graphicsLayer->setPosition(primaryLayerPosition);
     m_graphicsLayer->setSize(primaryGraphicsLayerRect.size());
 
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
     // FIXME: Take ancestry into account and remove unnecessary structural layers.
-    m_graphicsLayer->setIsSeparated(style.usedTransformStyle3D() == TransformStyle3D::Optimized3D);
+    m_graphicsLayer->setIsSeparated(style.usedTransformStyle3D() == TransformStyle3D::Separated);
 #endif
 
     // Compute renderer offset from primary graphics layer. Note that primaryGraphicsLayerRect is in parentGraphicsLayer's coordinate system which is not necessarily

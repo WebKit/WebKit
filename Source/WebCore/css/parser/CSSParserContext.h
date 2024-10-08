@@ -76,8 +76,8 @@ struct CSSParserContext {
     // Settings, excluding those affecting properties.
     bool counterStyleAtRuleImageSymbolsEnabled : 1 { false };
     bool springTimingFunctionEnabled : 1 { false };
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    bool transformStyleOptimized3DEnabled : 1 { false };
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    bool cssTransformStyleSeparatedEnabled : 1 { false };
 #endif
     bool masonryEnabled : 1 { false };
     bool cssAppearanceBaseEnabled : 1 { false };

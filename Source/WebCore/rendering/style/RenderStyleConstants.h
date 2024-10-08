@@ -889,8 +889,8 @@ enum class PointerEvents : uint8_t {
 enum class TransformStyle3D : uint8_t {
     Flat,
     Preserve3D,
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    Optimized3D
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    Separated
 #endif
 };
 

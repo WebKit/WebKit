@@ -131,25 +131,8 @@ bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderObject& rendere
 #endif
 }
 
-void RenderThemeIOS::adjustStyleForAlternateFormControlDesignTransition(RenderStyle& style, const Element* element) const
-{
-    if (!element)
-        return;
-
-    if (!element->document().settings().alternateFormControlDesignEnabled())
-        return;
-
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    // FIXME: We need to find a way to not do this for any running transition, only the UA-owned transition.
-    style.setTransformStyle3D(element->hasRunningTransitionForProperty(PseudoId::None, CSSPropertyID::CSSPropertyTranslate) || element->hovered() ? TransformStyle3D::Optimized3D : TransformStyle3D::Flat);
-#else
-    UNUSED_PARAM(style);
-#endif
-}
-
 void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
 {
-    adjustStyleForAlternateFormControlDesignTransition(style, element);
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Checkbox, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
@@ -158,6 +141,8 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
     auto size = std::max(style.computedFontSize(), 10.f);
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
+
+    UNUSED_PARAM(element);
 }
 
 LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
@@ -213,7 +198,6 @@ void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance app
 
 void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
-    adjustStyleForAlternateFormControlDesignTransition(style, element);
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Radio, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
@@ -223,6 +207,8 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
     style.setBorderRadius({ static_cast<int>(size / 2), static_cast<int>(size / 2) });
+
+    UNUSED_PARAM(element);
 }
 
 void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
@@ -466,8 +452,6 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
 void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustStyleForAlternateFormControlDesignTransition(style, element);
-
     // Set the min-height to be at least MenuListMinHeight.
     if (style.logicalHeight().isAuto())
         style.setLogicalMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
@@ -897,8 +881,6 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustStyleForAlternateFormControlDesignTransition(style, element);
-
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
@@ -1792,11 +1774,6 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
 String RenderThemeIOS::colorInputStyleSheet() const
 {
     return "input[type=\"color\"] { appearance: auto; width: 28px; height: 28px; box-sizing: border-box; outline: none; border: initial; border-radius: 50%; } "_s;
-}
-
-void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
-{
-    adjustStyleForAlternateFormControlDesignTransition(style, element);
 }
 
 void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintInfo& paintInfo, const FloatRect& rect)

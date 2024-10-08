@@ -8656,10 +8656,10 @@
                 "flat",
                 "preserve-3d",
                 {
-                    "value": "optimized-3d",
-                    "status": "internal",
-                    "enable-if": "ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D",
-                    "settings-flag": "transformStyleOptimized3DEnabled"
+                    "value": "separated",
+                    "status": "non-standard",
+                    "settings-flag": "cssTransformStyleSeparatedEnabled",
+                    "enable-if": "ENABLE_CSS_TRANSFORM_STYLE_SEPARATED"
                 }
             ],
             "codegen-properties": {

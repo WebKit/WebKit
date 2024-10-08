@@ -1610,13 +1610,13 @@ CSSTextWrapStyleEnabled:
     WebCore:
       default: true
 
-CSSTransformStyleOptimized3DEnabled:
+CSSTransformStyleSeparatedEnabled:
   type: bool
   status: unstable
   category: css
-  humanReadableName: "CSS transform-style: optimized-3d"
-  humanReadableDescription: "Enable transform-style: optimized-3d property to access the separated graphics layer"
-  condition: ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+  humanReadableName: "CSS transform-style: separated"
+  humanReadableDescription: "Enable transform-style: separated property to access the separated graphics layer"
+  condition: ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
   defaultValue:
     WebKitLegacy:
       default: false

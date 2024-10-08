@@ -452,6 +452,10 @@ public:
     bool overlayRegionsEnabled() const { return m_data.overlayRegionsEnabled; }
     void setOverlayRegionsEnabled(bool value) { m_data.overlayRegionsEnabled = value; }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    bool cssTransformStyleSeparatedEnabled() const { return m_data.cssTransformStyleSeparatedEnabled; }
+    void setCSSTransformStyleSeparatedEnabled(bool value) { m_data.cssTransformStyleSeparatedEnabled = value; }
+#endif
 
 #endif // PLATFORM(VISION)
 
@@ -636,6 +640,9 @@ private:
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
         bool overlayRegionsEnabled { false };
+#endif
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+        bool cssTransformStyleSeparatedEnabled { false };
 #endif
 
 #endif // PLATFORM(VISION)

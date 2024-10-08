@@ -1,0 +1,56 @@
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 800 height: 600])
+  (layer anchorPoint [x: 0 y: 0])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 800 height: 600])
+      (layer anchorPoint [x: 0 y: 0])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 800 height: 600])
+          (layer position [x: 400 y: 400])
+          (sublayers
+            (
+              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+              (layer position [x: 400 y: 400])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                  (layer anchorPoint [x: 0 y: 0])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                      (layer anchorPoint [x: 0 y: 0])
+                      (sublayers
+                        (
+                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                          (sublayers
+                            (
+                              (layer bounds [x: 0 y: 0 width: 800 height: 600])
+                              (layer anchorPoint [x: 0 y: 0]))))
+                        (
+                          (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                          (layer anchorPoint [x: 0 y: 0])
+                          (sublayers
+                            (
+                              (layer bounds [x: 0 y: 0 width: 200 height: 200])
+                              (layer position [x: 100 y: 100])
+                              (sublayers
+                                (
+                                  (layer bounds [x: 0 y: 0 width: 200 height: 200])
+                                  (layer anchorPoint [x: 0 y: 0]))))
+                            (
+                              (layer bounds [x: 0 y: 0 width: 200 height: 200])
+                              (layer position [x: 100 y: 100])
+                              (separated 1)
+                              (layer cornerRadius 36)
+                              (sublayers
+                                (
+                                  (layer bounds [x: 0 y: 0 width: 200 height: 200])
+                                  (layer anchorPoint [x: 0 y: 0]))))))))))))))))
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0])
+      (layer position [x: 400 y: 400]))
+    (
+      (layer bounds [x: 0 y: 0 width: 0 height: 0]))))

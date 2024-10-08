@@ -257,6 +257,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
     [coder encodeBool:self._gamepadAccessRequiresExplicitConsent forKey:@"gamepadAccessRequiresExplicitConsent"];
     [coder encodeBool:self._overlayRegionsEnabled forKey:@"overlayRegionsEnabled"];
+    [coder encodeBool:self._cssTransformStyleSeparatedEnabled forKey:@"cssTransformStyleSeparatedEnabled"];
 #endif
 }
 
@@ -308,6 +309,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
     self._gamepadAccessRequiresExplicitConsent = [coder decodeBoolForKey:@"gamepadAccessRequiresExplicitConsent"];
     self._overlayRegionsEnabled = [coder decodeBoolForKey:@"overlayRegionsEnabled"];
+    self._cssTransformStyleSeparatedEnabled = [coder decodeBoolForKey:@"cssTransformStyleSeparatedEnabled"];
 #endif
 
     return self;
@@ -1536,6 +1538,21 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     _pageConfiguration->setOverlayRegionsEnabled(overlayRegionsEnabled);
+#endif
+}
+
+- (BOOL)_cssTransformStyleSeparatedEnabled
+{
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    return _pageConfiguration->cssTransformStyleSeparatedEnabled();
+#else
+    return NO;
+#endif
+}
+- (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
+{
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    _pageConfiguration->setCSSTransformStyleSeparatedEnabled(enabled);
 #endif
 }
 

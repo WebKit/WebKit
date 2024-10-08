@@ -63,9 +63,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         propertySettings.cssCounterStyleAtRulesEnabled = true;
         propertySettings.viewTransitionsEnabled = true;
         thumbAndTrackPseudoElementsEnabled = true;
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        transformStyleOptimized3DEnabled = true;
-#endif
     }
 
     StaticCSSValuePool::init();
@@ -85,8 +82,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    , transformStyleOptimized3DEnabled { document.settings().cssTransformStyleOptimized3DEnabled() }
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    , cssTransformStyleSeparatedEnabled { document.settings().cssTransformStyleSeparatedEnabled() }
 #endif
     , masonryEnabled { document.settings().masonryEnabled() }
     , cssAppearanceBaseEnabled { document.settings().cssAppearanceBaseEnabled() }
@@ -123,8 +120,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
         | context.springTimingFunctionEnabled               << 4
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-        | context.transformStyleOptimized3DEnabled          << 5
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+        | context.cssTransformStyleSeparatedEnabled         << 5
 #endif
         | context.masonryEnabled                            << 6
         | context.cssAppearanceBaseEnabled                  << 7

@@ -1991,9 +1991,9 @@ constexpr CSSValueID toCSSValueID(TransformStyle3D e)
         return CSSValueFlat;
     case TransformStyle3D::Preserve3D:
         return CSSValuePreserve3d;
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    case TransformStyle3D::Optimized3D:
-        return CSSValueOptimized3d;
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    case TransformStyle3D::Separated:
+        return CSSValueSeparated;
 #endif
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
@@ -2007,9 +2007,9 @@ template<> constexpr TransformStyle3D fromCSSValueID(CSSValueID valueID)
         return TransformStyle3D::Flat;
     case CSSValuePreserve3d:
         return TransformStyle3D::Preserve3D;
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-    case CSSValueOptimized3d:
-        return TransformStyle3D::Optimized3D;
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+    case CSSValueSeparated:
+        return TransformStyle3D::Separated;
 #endif
     default:
         break;

@@ -179,6 +179,10 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
         [configuration _setOverlayRegionsEnabled:YES];
 #endif
 
+#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+        [configuration _setCSSTransformStyleSeparatedEnabled:YES];
+#endif
+
         globalWebsiteDataStoreDelegateClient() = adoptNS([[TestWebsiteDataStoreDelegate alloc] init]);
         [[configuration websiteDataStore] set_delegate:globalWebsiteDataStoreDelegateClient().get()];
 

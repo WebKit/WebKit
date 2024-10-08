@@ -1458,6 +1458,16 @@ void WKPreferencesSetApplePayEnabled(WKPreferencesRef preferencesRef, bool enabl
     WebKit::toImpl(preferencesRef)->setApplePayEnabled(enabled);
 }
 
+bool WKPreferencesGetCSSTransformStyleSeparatedEnabled(WKPreferencesRef preferencesRef)
+{
+    return WebKit::toImpl(preferencesRef)->cssTransformStyleSeparatedEnabled();
+}
+
+void WKPreferencesSetCSSTransformStyleSeparatedEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    WebKit::toImpl(preferencesRef)->setCSSTransformStyleSeparatedEnabled(enabled);
+}
+
 bool WKPreferencesGetApplePayCapabilityDisclosureAllowed(WKPreferencesRef preferencesRef)
 {
     return WebKit::toImpl(preferencesRef)->applePayCapabilityDisclosureAllowed();
