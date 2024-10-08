@@ -33,6 +33,7 @@
 #include "RenderLayer.h"
 #include "RenderSVGPath.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
@@ -67,7 +68,8 @@ void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
     if (m_clientRenderer->renderTreeBeingDestroyed())
         return;
 
-    if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled()) {
+    CheckedRef<RenderObject> ro = m_clientRenderer;
+    if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled() && ro->isDescendantOf(&ro->view())) {
         m_clientRenderer->repaint();
         return;
     }
