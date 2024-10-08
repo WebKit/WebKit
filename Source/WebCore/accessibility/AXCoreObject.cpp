@@ -209,10 +209,10 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
     return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].get() : nullptr;
 }
 
-AXCoreObject* AXCoreObject::nextUnignoredSiblingOrParent(bool updateChildrenIfNeeded) const
+AXCoreObject* AXCoreObject::nextUnignoredSiblingOrParent() const
 {
     RefPtr parent = parentObjectUnignored();
-    if (auto* nextSibling = nextUnignoredSibling(updateChildrenIfNeeded, parent.get()))
+    if (auto* nextSibling = nextUnignoredSibling(/* updateChildrenIfNeeded */ true, parent.get()))
         return nextSibling;
     return parent.get();
 }

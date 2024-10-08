@@ -1217,7 +1217,7 @@ public:
     // In some contexts, we may have already computed the unignored parent for `this`, so take that as an optional
     // parameter. If nullptr, we will compute it inside the function.
     AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
-    AXCoreObject* nextUnignoredSiblingOrParent(bool updateChildrenIfNeeded) const;
+    AXCoreObject* nextUnignoredSiblingOrParent() const;
     virtual void detachFromParent() = 0;
     virtual bool isDetachedFromParent() = 0;
 

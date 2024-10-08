@@ -108,6 +108,11 @@ public:
     static bool isAccessibilityIsolatedTreeEnabled() { return shared().m_accessibilityIsolatedTree; }
 #endif
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    static void setAccessibilityThreadTextApisEnabled(bool isEnabled) { shared().m_accessibilityThreadTextApis = isEnabled; }
+    static bool accessibilityThreadTextApisEnabled() { return shared().m_accessibilityThreadTextApis; }
+#endif
+
     static void setArePDFImagesEnabled(bool isEnabled) { shared().m_arePDFImagesEnabled = isEnabled; }
     static bool arePDFImagesEnabled() { return shared().m_arePDFImagesEnabled; }
 
@@ -184,6 +189,10 @@ private:
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
+#endif
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    bool m_accessibilityThreadTextApis { false };
 #endif
 
     bool m_arePDFImagesEnabled { true };

@@ -67,6 +67,7 @@
 #include "AccessibilityTreeItem.h"
 #include "CaretRectComputation.h"
 #include "CustomElementDefaultARIA.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -272,7 +273,7 @@ AXObjectCache::AXObjectCache(Document& document)
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (auto* frame = document.frame(); frame && frame->isMainFrame())
-        gAccessibilityThreadTextApisEnabled = document.settings().accessibilityThreadTextApisEnabled();
+        gAccessibilityThreadTextApisEnabled = DeprecatedGlobalSettings::accessibilityThreadTextApisEnabled();
 #endif
 
     // If loading completed before the cache was created, loading progress will have been reset to zero.

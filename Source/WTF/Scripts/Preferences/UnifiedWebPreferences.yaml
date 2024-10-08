@@ -188,6 +188,8 @@ AccessibilityThreadTextApisEnabled:
   status: embedder
   humanReadableName: "Off Main-Thread Accessibility Text APIs"
   humanReadableDescription: "Serve accessibility text APIs off the main-thread"
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: ENABLE(AX_THREAD_TEXT_APIS)
   defaultValue:
     WebKitLegacy:
       default: false
