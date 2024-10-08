@@ -77,6 +77,12 @@ FrameProcess* BrowsingContextGroup::processForSite(const Site& site)
     return process.get();
 }
 
+void BrowsingContextGroup::processDidTerminate(WebPageProxy& page, WebProcessProxy& process)
+{
+    if (&page.siteIsolatedProcess() == &process)
+        m_pages.remove(page);
+}
+
 void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
 {
     auto& site = process.site();

@@ -10490,9 +10490,12 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     return false;
 }
 
-void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
+void WebPageProxy::dispatchProcessDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
 {
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
+
+    if (m_preferences->siteIsolationEnabled())
+        m_browsingContextGroup->processDidTerminate(*this, process);
 
     bool handledByClient = false;
     if (m_loaderClient)

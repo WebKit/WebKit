@@ -1299,7 +1299,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     }
 
     for (auto& page : pages)
-        page->dispatchProcessDidTerminate(reason);
+        page->dispatchProcessDidTerminate(*this, reason);
 
     for (auto& remotePage : m_remotePages)
         remotePage.processDidTerminate(coreProcessIdentifier());

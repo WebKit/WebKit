@@ -1529,7 +1529,7 @@ public:
     void processDidBecomeResponsive();
     void resetStateAfterProcessTermination(ProcessTerminationReason);
     void provisionalProcessDidTerminate();
-    void dispatchProcessDidTerminate(ProcessTerminationReason);
+    void dispatchProcessDidTerminate(WebProcessProxy&, ProcessTerminationReason);
     void willChangeProcessIsResponsive();
     void didChangeProcessIsResponsive();
 

@@ -53,6 +53,7 @@ public:
     FrameProcess* processForSite(const WebCore::Site&);
     void addFrameProcess(FrameProcess&);
     void removeFrameProcess(FrameProcess&);
+    void processDidTerminate(WebPageProxy&, WebProcessProxy&);
 
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
