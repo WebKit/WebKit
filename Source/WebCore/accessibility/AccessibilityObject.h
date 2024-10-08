@@ -530,7 +530,7 @@ public:
     virtual void addChildren() { }
     enum class DescendIfIgnored : bool { No, Yes };
     void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes);
-    virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
+    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
     virtual bool canHaveChildren() const { return true; }
     void updateChildrenIfNecessary() override;
     virtual void setNeedsToUpdateChildren() { }
