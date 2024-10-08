@@ -1209,8 +1209,10 @@ void KeyframeEffect::computeStackingContextImpact()
     }
 }
 
-void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
+void KeyframeEffect::animationTimelineDidChange(const AnimationTimeline* timeline)
 {
+    AnimationEffect::animationTimelineDidChange(timeline);
+
     auto target = targetStyleable();
     if (!target)
         return;

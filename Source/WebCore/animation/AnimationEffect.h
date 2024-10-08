@@ -66,7 +66,7 @@ public:
     virtual void animationDidChangeTimingProperties() { };
     virtual void animationWasCanceled() { };
     virtual void animationSuspensionStateDidChange(bool) { };
-    virtual void animationTimelineDidChange(AnimationTimeline*) { };
+    virtual void animationTimelineDidChange(const AnimationTimeline*);
     virtual void animationDidFinish() { };
 
     AnimationEffectTiming timing() const { return m_timing; }
@@ -116,9 +116,11 @@ protected:
 private:
     std::optional<CSSNumberishTime> localTime(std::optional<CSSNumberishTime>) const;
     double playbackRate() const;
+    void normalizeSpecifiedTiming(std::variant<double, String>);
 
     AnimationEffectTiming m_timing;
     WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData> m_animation;
+    bool m_hasAutoDuration { true };
 };
 
 } // namespace WebCore

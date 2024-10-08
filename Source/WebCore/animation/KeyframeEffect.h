@@ -273,7 +273,7 @@ private:
     void animationDidChangeTimingProperties() final;
     void animationWasCanceled() final;
     void animationSuspensionStateDidChange(bool) final;
-    void animationTimelineDidChange(AnimationTimeline*) final;
+    void animationTimelineDidChange(const AnimationTimeline*) final;
     void animationDidFinish() final;
     void setAnimation(WebAnimation*) final;
     Seconds timeToNextTick(const BasicEffectTiming&) const final;

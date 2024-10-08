@@ -84,6 +84,11 @@ CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
     }
 }
 
+CSSNumberishTime CSSNumberishTime::fromMilliseconds(double milliseconds)
+{
+    return { Type::Time, milliseconds / 1000 };
+}
+
 CSSNumberishTime CSSNumberishTime::fromPercentage(double percentage)
 {
     return { Type::Percentage, percentage };

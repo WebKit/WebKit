@@ -228,8 +228,10 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optiona
     if (timing->iterations)
         m_timing.iterations = timing->iterations.value();
 
-    if (timing->duration)
-        m_timing.iterationDuration = std::holds_alternative<double>(timing->duration.value()) ? Seconds::fromMilliseconds(std::get<double>(timing->duration.value())) : 0_s;
+    if (auto duration = timing->duration) {
+        m_hasAutoDuration = std::holds_alternative<String>(*duration);
+        normalizeSpecifiedTiming(*duration);
+    }
 
     if (timing->direction)
         m_timing.direction = timing->direction.value();
@@ -240,6 +242,22 @@ ExceptionOr<void> AnimationEffect::updateTiming(Document& document, std::optiona
         m_animation->effectTimingDidChange();
 
     return { };
+}
+
+void AnimationEffect::normalizeSpecifiedTiming(std::variant<double, String> duration)
+{
+    // https://drafts.csswg.org/web-animations-2/#normalize-specified-timing
+    m_timing.iterationDuration = [&]() {
+        if (m_animation) {
+            if (RefPtr timeline = m_animation->timeline()) {
+                if (timeline->duration())
+                    return CSSNumberishTime::fromPercentage(100);
+            }
+        }
+        if (auto* doubleValue = std::get_if<double>(&duration))
+            return CSSNumberishTime::fromMilliseconds(*doubleValue);
+        return CSSNumberishTime::fromMilliseconds(0);
+    }();
 }
 
 void AnimationEffect::updateStaticTimingProperties()
@@ -363,6 +381,21 @@ Seconds AnimationEffect::timeToNextTick(const BasicEffectTiming& timing) const
 
     ASSERT_NOT_REACHED();
     return Seconds::infinity();
+}
+
+void AnimationEffect::animationTimelineDidChange(const AnimationTimeline*)
+{
+    if (!m_hasAutoDuration)
+        return;
+
+    if (auto percentage = iterationDuration().percentage())
+        normalizeSpecifiedTiming(*percentage);
+    else {
+        ASSERT(iterationDuration().time());
+        normalizeSpecifiedTiming(iterationDuration().time()->seconds());
+    }
+
+    updateStaticTimingProperties();
 }
 
 } // namespace WebCore
