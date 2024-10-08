@@ -35,16 +35,12 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Identified.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 class WebSharedWorker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorker> : std::true_type { };
 }
 
 namespace WebCore {
@@ -56,10 +52,11 @@ namespace WebKit {
 class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 
-class WebSharedWorker : public CanMakeWeakPtr<WebSharedWorker>, public Identified<WebCore::SharedWorkerIdentifier> {
+class WebSharedWorker : public RefCountedAndCanMakeWeakPtr<WebSharedWorker>, public Identified<WebCore::SharedWorkerIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(WebSharedWorker);
 public:
-    WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+    static Ref<WebSharedWorker> create(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+
     ~WebSharedWorker();
 
     static WebSharedWorker* fromIdentifier(WebCore::SharedWorkerIdentifier);
@@ -104,6 +101,8 @@ public:
     };
 
 private:
+    WebSharedWorker(WebSharedWorkerServer&, const WebCore::SharedWorkerKey&, const WebCore::WorkerOptions&);
+
     WebSharedWorker(WebSharedWorker&&) = delete;
     WebSharedWorker& operator=(WebSharedWorker&&) = delete;
     WebSharedWorker(const WebSharedWorker&) = delete;
@@ -112,7 +111,7 @@ private:
     void suspendIfNeeded();
     void resumeIfNeeded();
 
-    CheckedRef<WebSharedWorkerServer> m_server;
+    WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
     ListHashSet<Object> m_sharedWorkerObjects;

@@ -40,11 +40,6 @@ namespace WebKit {
 class WebSharedWorkerServer;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServer> : std::true_type { };
-}
-
 namespace PAL {
 class SessionID;
 }
@@ -98,7 +93,7 @@ private:
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<WebSharedWorkerServerConnection>> m_connections;
     HashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
-    HashMap<WebCore::SharedWorkerKey, std::unique_ptr<WebSharedWorker>> m_sharedWorkers;
+    HashMap<WebCore::SharedWorkerKey, Ref<WebSharedWorker>> m_sharedWorkers;
 };
 
 } // namespace WebKit

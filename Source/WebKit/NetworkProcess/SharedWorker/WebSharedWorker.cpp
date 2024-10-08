@@ -45,6 +45,12 @@ static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWo
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorker);
 
+
+Ref<WebSharedWorker> WebSharedWorker::create(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& options)
+{
+    return adoptRef(*new WebSharedWorker(server, key, options));
+}
+
 WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::SharedWorkerKey& key, const WebCore::WorkerOptions& workerOptions)
     : m_server(server)
     , m_key(key)
@@ -175,6 +181,8 @@ std::optional<WebCore::ProcessIdentifier> WebSharedWorker::firstSharedWorkerObje
 
 WebSharedWorkerServerToContextConnection* WebSharedWorker::contextConnection() const
 {
+    if (!m_server)
+        return nullptr;
     return m_server->contextConnectionForRegistrableDomain(topRegistrableDomain());
 }
 
