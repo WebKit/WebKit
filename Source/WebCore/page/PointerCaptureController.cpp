@@ -458,7 +458,8 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
     // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
     // Pointer Capture steps to fire lostpointercapture if necessary.
     // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
-    if (event.type() == eventNames().pointerupEvent) {
+    if (event.type() == eventNames().pointerupEvent || event.type() == eventNames().pointercancelEvent) {
+        capturingData->preventsCompatibilityMouseEvents = false;
         capturingData->pendingTargetOverride = nullptr;
         processPendingPointerCapture(event.pointerId());
     }
