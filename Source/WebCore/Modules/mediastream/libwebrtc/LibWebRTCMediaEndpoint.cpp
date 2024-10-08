@@ -82,11 +82,13 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     ASSERT(isMainThread());
     ASSERT(client.factory());
 
-    String fieldTrials = "WebRTC-Video-H26xPacketBuffer/Enabled/"_s;
+#define WEBKIT_WEBRTC_FIELD_TRIALS "WebRTC-Video-H26xPacketBuffer/Enabled/"
+    auto fieldTrials = WTF_CONCAT(WEBKIT_WEBRTC_FIELD_TRIALS, _s);
     if (peerConnection.shouldEnableWebRTCL4S())
-        fieldTrials = makeString(fieldTrials, "WebRTC-RFC8888CongestionControlFeedback/Enabled,force_send:true/"_s);
+        fieldTrials = WEBKIT_WEBRTC_FIELD_TRIALS "WebRTC-RFC8888CongestionControlFeedback/Enabled,force_send:true/"_s;
+#undef WEBKIT_WEBRTC_FIELD_TRIALS
 
-    webrtc::field_trial::InitFieldTrialsFromString(fieldTrials.utf8().data());
+    webrtc::field_trial::InitFieldTrialsFromString(fieldTrials.characters());
 }
 
 void LibWebRTCMediaEndpoint::restartIce()
