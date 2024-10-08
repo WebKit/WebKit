@@ -94,7 +94,7 @@ private:
 
     friend class GStreamerMediaEndpoint;
     friend class GStreamerRtpSenderBackend;
-    RTCPeerConnection& connection() { return m_peerConnection; }
+    RTCPeerConnection& connection();
 
     void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
 

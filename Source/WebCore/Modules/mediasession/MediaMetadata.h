@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
@@ -42,6 +43,7 @@ namespace WebCore {
 class CachedImage;
 class Document;
 class Image;
+class WeakPtrImplWithEventTargetData;
 struct MediaImage;
 
 using MediaSessionMetadata = MediaMetadataInit;
@@ -61,7 +63,7 @@ protected:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
 
 private:
-    Document& m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const String m_src;
     ArtworkImageLoaderCallback m_callback;
     CachedResourceHandle<CachedImage> m_cachedImage;

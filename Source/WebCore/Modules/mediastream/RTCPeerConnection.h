@@ -133,7 +133,7 @@ public:
     RTCPeerConnectionState connectionState() const { return m_connectionState; }
     std::optional<bool> canTrickleIceCandidates() const;
 
-    void restartIce() { m_backend->restartIce(); }
+    void restartIce() { protectedBackend()->restartIce(); }
     const RTCConfiguration& getConfiguration() const { return m_configuration; }
     ExceptionOr<void> setConfiguration(RTCConfiguration&&);
     void close();
@@ -180,8 +180,8 @@ public:
 
     void scheduleEvent(Ref<Event>&&);
 
-    void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
-    void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
+    void disableICECandidateFiltering() { protectedBackend()->disableICECandidateFiltering(); }
+    void enableICECandidateFiltering() { protectedBackend()->enableICECandidateFiltering(); }
 
     void clearController() { m_controller = nullptr; }
 
@@ -221,7 +221,7 @@ private:
     void unregisterFromController();
 
     friend class Internals;
-    void applyRotationForOutgoingVideoSources() { m_backend->applyRotationForOutgoingVideoSources(); }
+    void applyRotationForOutgoingVideoSources() { protectedBackend()->applyRotationForOutgoingVideoSources(); }
 
     // EventTarget implementation.
     void refEventTarget() final { ref(); }
@@ -240,7 +240,7 @@ private:
     bool doClose();
     void doStop();
 
-    void getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise) { m_backend->getStats(sender, WTFMove(promise)); }
+    void getStats(RTCRtpSender& sender, Ref<DeferredPromise>&& promise) { protectedBackend()->getStats(sender, WTFMove(promise)); }
 
     ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> certificatesFromConfiguration(const RTCConfiguration&);
     void chainOperation(Ref<DeferredPromise>&&, Function<void(Ref<DeferredPromise>&&)>&&);
@@ -253,6 +253,8 @@ private:
     void updateTransceiverTransports();
 
     void setSignalingState(RTCSignalingState);
+
+    WEBCORE_EXPORT RefPtr<PeerConnectionBackend> protectedBackend() const;
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };

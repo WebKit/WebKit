@@ -31,6 +31,7 @@
 #include "LibWebRTCRtpSenderBackend.h"
 #include "RTCRtpReceiver.h"
 #include "Timer.h"
+#include <wtf/WeakRef.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -180,7 +181,9 @@ private:
     Seconds statsLogInterval(int64_t) const;
 #endif
 
-    LibWebRTCPeerConnectionBackend& m_peerConnectionBackend;
+    Ref<LibWebRTCPeerConnectionBackend> protectedPeerConnectionBackend() const;
+
+    WeakRef<LibWebRTCPeerConnectionBackend> m_peerConnectionBackend;
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_peerConnectionFactory;
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> m_backend;
 

@@ -48,11 +48,6 @@ namespace WebCore {
 class PeerConnectionBackend;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::PeerConnectionBackend> : std::true_type { };
-}
-
 namespace WebCore {
 
 class DeferredPromise;
@@ -73,6 +68,7 @@ class RTCSctpTransportBackend;
 class RTCSessionDescription;
 class RTCStatsReport;
 class ScriptExecutionContext;
+class WeakPtrImplWithEventTargetData;
 
 struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
@@ -224,6 +220,9 @@ public:
     virtual void startGatheringStatLogs(Function<void(String&&)>&&) { }
     virtual void stopGatheringStatLogs() { }
 
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
+
 protected:
     void doneGatheringCandidates();
 
@@ -250,7 +249,8 @@ private:
     virtual void doStop() = 0;
 
 protected:
-    RTCPeerConnection& m_peerConnection;
+    Ref<RTCPeerConnection> protectedPeerConnection() const;
+    WeakRef<RTCPeerConnection, WeakPtrImplWithEventTargetData> m_peerConnection;
 
 private:
     CreateCallback m_offerAnswerCallback;

@@ -67,7 +67,7 @@ static std::unique_ptr<PeerConnectionBackend> createLibWebRTCPeerConnectionBacke
     auto& webRTCProvider = static_cast<LibWebRTCProvider&>(page->webRTCProvider());
     webRTCProvider.setEnableWebRTCEncryption(page->settings().webRTCEncryptionEnabled());
 
-    return makeUnique<LibWebRTCPeerConnectionBackend>(peerConnection, webRTCProvider);
+    return makeUniqueWithoutRefCountedCheck<LibWebRTCPeerConnectionBackend>(peerConnection, webRTCProvider);
 }
 
 CreatePeerConnectionBackend PeerConnectionBackend::create = createLibWebRTCPeerConnectionBackend;
@@ -84,7 +84,7 @@ LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend() = default;
 
 bool LibWebRTCPeerConnectionBackend::shouldEnableWebRTCL4S() const
 {
-    RefPtr document = m_peerConnection.document();
+    RefPtr document = protectedPeerConnection()->document();
     return document && document->settings().webRTCL4SEnabled();
 }
 
@@ -187,7 +187,7 @@ void LibWebRTCPeerConnectionBackend::restartIce()
 
 bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
-    auto* page = downcast<Document>(*m_peerConnection.scriptExecutionContext()).page();
+    auto* page = downcast<Document>(*protectedPeerConnection()->scriptExecutionContext()).page();
     if (!page)
         return false;
 
@@ -287,7 +287,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
 
 Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_ptr<LibWebRTCRtpReceiverBackend>&& backend)
 {
-    auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
+    auto& document = downcast<Document>(*protectedPeerConnection()->scriptExecutionContext());
 
     auto source = backend->createSource(document);
 
@@ -322,7 +322,8 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
     if (!m_endpoint->addTrack(*senderBackend, track, mediaStreamIds))
         return Exception { ExceptionCode::TypeError, "Unable to add track"_s };
 
-    if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
+    Ref peerConnection = m_peerConnection.get();
+    if (auto sender = findExistingSender(peerConnection->currentTransceivers(), *senderBackend)) {
         backendFromRTPSender(*sender).takeSource(*senderBackend);
         sender->setTrack(track);
         sender->setMediaStreamIds(mediaStreamIds);
@@ -331,11 +332,11 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
 
     auto transceiverBackend = m_endpoint->transceiverBackendFromSender(*senderBackend);
 
-    auto sender = RTCRtpSender::create(m_peerConnection, track, WTFMove(senderBackend));
+    auto sender = RTCRtpSender::create(peerConnection, track, WTFMove(senderBackend));
     sender->setMediaStreamIds(mediaStreamIds);
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend());
     auto transceiver = RTCRtpTransceiver::create(sender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));
-    m_peerConnection.addInternalTransceiver(WTFMove(transceiver));
+    peerConnection->addInternalTransceiver(WTFMove(transceiver));
     return sender;
 }
 
@@ -347,10 +348,11 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiv
         return result.releaseException();
 
     auto backends = result.releaseReturnValue();
-    auto sender = RTCRtpSender::create(m_peerConnection, std::forward<T>(trackOrKind), WTFMove(backends.senderBackend));
+    Ref peerConnection = m_peerConnection.get();
+    auto sender = RTCRtpSender::create(peerConnection, std::forward<T>(trackOrKind), WTFMove(backends.senderBackend));
     auto receiver = createReceiver(WTFMove(backends.receiverBackend));
     auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver), WTFMove(backends.transceiverBackend));
-    m_peerConnection.addInternalTransceiver(transceiver.copyRef());
+    peerConnection->addInternalTransceiver(transceiver.copyRef());
     return transceiver;
 }
 
@@ -376,7 +378,7 @@ static inline LibWebRTCRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTr
 
 RTCRtpTransceiver* LibWebRTCPeerConnectionBackend::existingTransceiver(Function<bool(LibWebRTCRtpTransceiverBackend&)>&& matchingFunction)
 {
-    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
+    for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
         if (matchingFunction(backendFromRTPTransceiver(*transceiver)))
             return transceiver.get();
     }
@@ -385,10 +387,11 @@ RTCRtpTransceiver* LibWebRTCPeerConnectionBackend::existingTransceiver(Function<
 
 RTCRtpTransceiver& LibWebRTCPeerConnectionBackend::newRemoteTransceiver(std::unique_ptr<LibWebRTCRtpTransceiverBackend>&& transceiverBackend, RealtimeMediaSource::Type type)
 {
-    auto sender = RTCRtpSender::create(m_peerConnection, type == RealtimeMediaSource::Type::Audio ? "audio"_s : "video"_s, transceiverBackend->createSenderBackend(*this, nullptr));
+    Ref peerConnection = m_peerConnection.get();
+    auto sender = RTCRtpSender::create(peerConnection, type == RealtimeMediaSource::Type::Audio ? "audio"_s : "video"_s, transceiverBackend->createSenderBackend(*this, nullptr));
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend());
     auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver), WTFMove(transceiverBackend));
-    m_peerConnection.addInternalTransceiver(transceiver.copyRef());
+    peerConnection->addInternalTransceiver(transceiver.copyRef());
     return transceiver.get();
 }
 
@@ -404,7 +407,7 @@ void LibWebRTCPeerConnectionBackend::removeTrack(RTCRtpSender& sender)
 
 void LibWebRTCPeerConnectionBackend::applyRotationForOutgoingVideoSources()
 {
-    for (auto& transceiver : m_peerConnection.currentTransceivers()) {
+    for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
         if (!transceiver->sender().isStopped()) {
             if (auto* videoSource = backendFromRTPSender(transceiver->sender()).videoSource())
                 videoSource->applyRotation();
