@@ -954,7 +954,7 @@ RenderLayerCompositor& RenderLayer::compositor() const
 
 void RenderLayer::contentChanged(ContentChangeType changeType)
 {
-    if (changeType == CanvasChanged || changeType == VideoChanged || changeType == FullScreenChanged || changeType == ModelChanged || (isComposited() && changeType == ImageChanged)) {
+    if (changeType == ContentChangeType::Canvas || changeType == ContentChangeType::Video || changeType == ContentChangeType::FullScreen || changeType == ContentChangeType::Model || (isComposited() && changeType == ContentChangeType::Image)) {
         setNeedsPostLayoutCompositingUpdate();
         setNeedsCompositingConfigurationUpdate();
     }

@@ -41,21 +41,15 @@ enum BackgroundBleedAvoidance {
     BackgroundBleedBackgroundOverBorder
 };
 
-enum BaseBackgroundColorUsage {
-    BaseBackgroundColorUse,
-    BaseBackgroundColorOnly,
-    BaseBackgroundColorSkip
-};
-
-enum ContentChangeType {
-    ImageChanged,
-    MaskImageChanged,
-    BackgroundImageChanged,
-    CanvasChanged,
-    CanvasPixelsChanged,
-    VideoChanged,
-    FullScreenChanged,
-    ModelChanged
+enum class ContentChangeType : uint8_t {
+    Image,
+    MaskImage,
+    BackgroundIImage,
+    Canvas,
+    CanvasPixels,
+    Video,
+    FullScreen,
+    Model
 };
 
 class BorderEdge;

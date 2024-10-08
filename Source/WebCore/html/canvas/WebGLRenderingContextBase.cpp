@@ -5238,7 +5238,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
             if (auto* htmlCanvas = this->htmlCanvas()) {
                 CheckedPtr renderBox = htmlCanvas->renderBox();
                 if (renderBox && renderBox->hasAcceleratedCompositing())
-                    renderBox->contentChanged(CanvasChanged);
+                    renderBox->contentChanged(ContentChangeType::Canvas);
             }
             return;
         }

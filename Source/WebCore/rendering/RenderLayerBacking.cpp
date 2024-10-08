@@ -3202,7 +3202,7 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
 void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 {
     PaintedContentsInfo contentsInfo(*this);
-    if (changeType == ImageChanged || changeType == CanvasChanged) {
+    if (changeType == ContentChangeType::Image || changeType == ContentChangeType::Canvas) {
         if (contentsInfo.isDirectlyCompositedImage()) {
             updateImageContents(contentsInfo);
             return;
@@ -3213,27 +3213,27 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
         }
     }
 
-    if (changeType == VideoChanged) {
+    if (changeType == ContentChangeType::Video) {
         compositor().scheduleCompositingLayerUpdate();
         return;
     }
 
 #if ENABLE(MODEL_ELEMENT)
-    if (changeType == ModelChanged) {
+    if (changeType == ContentChangeType::Model) {
         compositor().scheduleCompositingLayerUpdate();
         return;
     }
 #endif
 
-    if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer()))
+    if ((changeType == ContentChangeType::BackgroundIImage) && canDirectlyCompositeBackgroundBackgroundImage(renderer()))
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
-    if ((changeType == MaskImageChanged) && m_maskLayer)
+    if ((changeType == ContentChangeType::MaskImage) && m_maskLayer)
         m_owningLayer.setNeedsCompositingConfigurationUpdate();
 
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
-    if ((changeType == CanvasChanged || changeType == CanvasPixelsChanged) && renderer().isRenderHTMLCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
-        if (changeType == CanvasChanged)
+    if ((changeType == ContentChangeType::Canvas || changeType == ContentChangeType::CanvasPixels) && renderer().isRenderHTMLCanvas() && canvasCompositingStrategy(renderer()) == CanvasAsLayerContents) {
+        if (changeType == ContentChangeType::Canvas)
             compositor().scheduleCompositingLayerUpdate();
 
         m_graphicsLayer->setContentsNeedsDisplay();

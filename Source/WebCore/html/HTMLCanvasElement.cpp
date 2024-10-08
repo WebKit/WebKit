@@ -452,7 +452,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
         if (CheckedPtr box = renderBox())
-            box->contentChanged(CanvasChanged);
+            box->contentChanged(ContentChangeType::Canvas);
 #if ENABLE(WEBXR)
         ASSERT(!attrs.xrCompatible || weakContext->isXRCompatible());
 #endif
@@ -557,7 +557,7 @@ void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldAppl
     clearCopiedImage();
     if (CheckedPtr renderer = renderBox()) {
         if (usesContentsAsLayerContents())
-            renderer->contentChanged(CanvasPixelsChanged);
+            renderer->contentChanged(ContentChangeType::CanvasPixels);
         else if (rect) {
             FloatRect destRect;
             if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderer))
@@ -611,7 +611,7 @@ void HTMLCanvasElement::reset()
         if (oldSize != size()) {
             canvasRenderer->canvasSizeChanged();
             if (canvasRenderer->hasAcceleratedCompositing())
-                canvasRenderer->contentChanged(CanvasChanged);
+                canvasRenderer->contentChanged(ContentChangeType::Canvas);
         }
         if (hadImageBuffer)
             canvasRenderer->repaint();
@@ -895,7 +895,7 @@ void HTMLCanvasElement::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
 
         if (CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer())) {
             canvasRenderer->canvasSizeChanged();
-            canvasRenderer->contentChanged(CanvasChanged);
+            canvasRenderer->contentChanged(ContentChangeType::Canvas);
         }
 
         notifyObserversCanvasResized();

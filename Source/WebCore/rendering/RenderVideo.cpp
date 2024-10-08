@@ -303,7 +303,7 @@ void RenderVideo::updatePlayer()
         return;
 
     if (videoElement().inActiveDocument())
-        contentChanged(VideoChanged);
+        contentChanged(ContentChangeType::Video);
 
     videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
 }

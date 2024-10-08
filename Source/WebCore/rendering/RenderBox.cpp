@@ -2040,10 +2040,10 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
         return;
 
     if (layer()->hasCompositedMask() && findLayerUsedImage(image, style().maskLayers()))
-        layer()->contentChanged(MaskImageChanged);
+        layer()->contentChanged(ContentChangeType::MaskImage);
     
     if (auto* styleImage = findLayerUsedImage(image, style().backgroundLayers())) {
-        layer()->contentChanged(BackgroundImageChanged);
+        layer()->contentChanged(ContentChangeType::BackgroundIImage);
         incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
     }
 }
