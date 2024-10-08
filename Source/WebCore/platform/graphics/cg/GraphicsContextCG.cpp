@@ -375,10 +375,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
 #if HAVE(HDR_SUPPORT)
-    if (auto headroom = options.headroom(); headroom > 1) {
-        stateSaver.save();
+    auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
+    if (auto headroom = options.headroom(); headroom > 1)
         CGContextSetEDRTargetHeadroom(context, headroom);
-    }
 #endif
 
     // Make the origin be at adjustedDestRect.location()
@@ -407,6 +406,9 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
+#if HAVE(HDR_SUPPORT)
+        CGContextSetEDRTargetHeadroom(context, oldHeadroom);
+#endif
     }
 
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImageInternal " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
