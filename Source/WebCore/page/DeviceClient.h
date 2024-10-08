@@ -47,6 +47,8 @@ public:
 
     virtual void startUpdating() = 0;
     virtual void stopUpdating() = 0;
+
+    virtual bool isDeviceMotionClient() const { return false; }
 };
 
 } // namespace WebCore
