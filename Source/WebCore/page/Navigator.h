@@ -35,6 +35,7 @@ class Blob;
 class DeferredPromise;
 class DOMMimeTypeArray;
 class DOMPluginArray;
+class Page;
 class ShareDataReader;
 
 class Navigator final
@@ -80,6 +81,9 @@ public:
 #endif
 
     GPU* gpu();
+
+    Page* page();
+    RefPtr<Page> protectedPage();
 
     Document* document();
     RefPtr<Document> protectedDocument();
