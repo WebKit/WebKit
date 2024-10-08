@@ -13,9 +13,9 @@ PASS: operationResult[2] === 'E QUICK BRO'
 PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT2: ThE QUICK BROwn fox jumPS OVER the LAZY dog.'
 PASS: operationResult.length === 3
 PASS: operationResult[0] === 'LAZY'
-FAIL: operationResult[1] !== 'PS OVER', was
-FAIL: operationResult[2] !== 'E QUICK BRO', was
-FAIL: text.stringValue.replace(/\s/g, ' ') !== 'AXValue: TEXT3: Th E QUICK BRO wn fox jum PS OVER the LAZY dog.', was AXValue: TEXT3: The quick brown fox jumps over the LAZY dog.
+PASS: operationResult[1] === 'PS OVER'
+PASS: operationResult[2] === 'E QUICK BRO'
+PASS: text.stringValue.replace(/\s/g, ' ') === 'AXValue: TEXT3: Th E QUICK BRO wn fox jum PS OVER the LAZY dog.'
 
 PASS successfullyParsed is true
 

@@ -575,12 +575,6 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Fa
 
 webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
 
-# webkit.org/b/278928 AX: AXTextOperation over multiple ranges is entirely broken
-[ Debug ] accessibility/mac/text-operation/text-operation-capitalize.html [ Crash ]
-[ Debug ] accessibility/mac/text-operation/text-operation-lowercase.html [ Crash ]
-[ Debug ] accessibility/mac/text-operation/text-operation-smart-replace.html [ Crash ]
-[ Debug ] accessibility/mac/text-operation/text-operation-uppercase.html [ Crash ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

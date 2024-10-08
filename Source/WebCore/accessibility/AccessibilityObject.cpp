@@ -1013,9 +1013,36 @@ Vector<SimpleRange> AccessibilityObject::findTextRanges(const AccessibilitySearc
     return result;
 }
 
+struct TextOperationRange {
+    SimpleRange scope;
+    CharacterRange characterRange;
+};
+
+static std::optional<TextOperationRange> textOperationRangeFromRange(const SimpleRange& range)
+{
+    RefPtr rootEditableElement = range.start.container->rootEditableElement();
+    if (!rootEditableElement)
+        return std::nullopt;
+
+    std::optional<SimpleRange> scope = makeRangeSelectingNode(*rootEditableElement);
+    if (!scope)
+        return std::nullopt;
+
+    return TextOperationRange { *scope, characterRange(*scope, range, { }) };
+}
+
+static SimpleRange rangeFromTextOperationRange(const TextOperationRange& textOperationRange)
+{
+    return resolveCharacterRange(textOperationRange.scope, textOperationRange.characterRange, { });
+}
+
 Vector<String> AccessibilityObject::performTextOperation(const AccessibilityTextOperation& operation)
 {
+    Vector<TextOperationRange> textOperationRanges;
+    textOperationRanges.reserveInitialCapacity(operation.textRanges.size());
+
     Vector<String> result;
+    result.reserveInitialCapacity(operation.textRanges.size());
 
     if (operation.textRanges.isEmpty())
         return result;
@@ -1027,8 +1054,22 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
     size_t replacementStringsCount = operation.replacementStrings.size();
     bool useFirstReplacementStringForAllReplacements = (replacementStringsCount == 1);
 
-    for (size_t i = 0; i < operation.textRanges.size(); ++i) {
-        auto textRange = operation.textRanges[i];
+    // Precompute character ranges with respect to their root editable element because
+    // the SimpleRanges stored in AccessibilityTextOperation may be invalidated after
+    // performing a replacement in the same editable element.
+    for (const auto& range : operation.textRanges) {
+        auto textOperationRange = textOperationRangeFromRange(range);
+        if (!textOperationRange) {
+            ASSERT_NOT_REACHED();
+            return result;
+        }
+
+        textOperationRanges.append(*textOperationRange);
+    }
+
+    for (size_t i = 0; i < textOperationRanges.size(); ++i) {
+        const auto& textOperationRange = textOperationRanges[i];
+        auto textRange = rangeFromTextOperationRange(textOperationRange);
 
         String replacementString;
         if (useFirstReplacementStringForAllReplacements)
@@ -1078,7 +1119,14 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         // A bit obvious, but worth noting the API contract for this method is that we should
         // return the replacement string when replacing, but the selected string if not.
         if (replaceSelection) {
-            frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
+            // Insert text instead of replacing when the selection length is zero, because replacements
+            // aren't performed correctly in certain edge cases like at the the boundary between nodes
+            // separated by spaces <p> foo <i>bar</i>[insert here] baz </p>.
+            if (textOperationRange.characterRange.length)
+                frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
+            else
+                frame->editor().insertText(replacementString, /* triggeringEvent */ nullptr);
+
             result.append(replacementString);
         } else
             result.append(text);
