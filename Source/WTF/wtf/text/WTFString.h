@@ -96,15 +96,15 @@ public:
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || m_impl->isEmpty(); }
 
-    StringImpl* impl() const { return m_impl.get(); }
+    StringImpl* impl() const LIFETIME_BOUND { return m_impl.get(); }
     RefPtr<StringImpl> releaseImpl() { return WTFMove(m_impl); }
 
     unsigned length() const { return m_impl ? m_impl->length() : 0; }
-    std::span<const LChar> span8() const { return m_impl ? m_impl->span8() : std::span<const LChar>(); }
-    std::span<const UChar> span16() const { return m_impl ? m_impl->span16() : std::span<const UChar>(); }
+    std::span<const LChar> span8() const LIFETIME_BOUND { return m_impl ? m_impl->span8() : std::span<const LChar>(); }
+    std::span<const UChar> span16() const LIFETIME_BOUND { return m_impl ? m_impl->span16() : std::span<const UChar>(); }
 
     // Return span8() or span16() depending on CharacterType.
-    template<typename CharacterType> std::span<const CharacterType> span() const;
+    template<typename CharacterType> std::span<const CharacterType> span() const LIFETIME_BOUND;
 
     bool is8Bit() const { return !m_impl || m_impl->is8Bit(); }
 
