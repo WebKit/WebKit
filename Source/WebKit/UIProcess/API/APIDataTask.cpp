@@ -67,7 +67,7 @@ DataTask::DataTask(std::optional<WebKit::DataTaskIdentifier> identifier, WeakPtr
     , m_client(DataTaskClient::create())
 {
     if (RefPtr networkProcess = m_networkProcess.get())
-        m_activity = shouldRunAtForegroundPriority ? networkProcess->throttler().foregroundActivity("WKDataTask"_s).moveToUniquePtr() : networkProcess->throttler().backgroundActivity("WKDataTask"_s).moveToUniquePtr();
+        m_activity = shouldRunAtForegroundPriority ? networkProcess->throttler().foregroundActivity("WKDataTask"_s) : networkProcess->throttler().backgroundActivity("WKDataTask"_s);
 }
 
 void DataTask::didCompleteWithError(WebCore::ResourceError&& error)

@@ -60,7 +60,7 @@ WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
 
 void WebProcessActivityState::takeVisibleActivity()
 {
-    m_isVisibleActivity = process().throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+    m_isVisibleActivity = process().throttler().foregroundActivity("View is visible"_s);
 #if PLATFORM(MAC)
     *m_wasRecentlyVisibleActivity = nullptr;
 #endif
@@ -68,12 +68,12 @@ void WebProcessActivityState::takeVisibleActivity()
 
 void WebProcessActivityState::takeAudibleActivity()
 {
-    m_isAudibleActivity = process().throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+    m_isAudibleActivity = process().throttler().foregroundActivity("View is playing audio"_s);
 }
 
 void WebProcessActivityState::takeCapturingActivity()
 {
-    m_isCapturingActivity = process().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+    m_isCapturingActivity = process().throttler().foregroundActivity("View is capturing media"_s);
 }
 
 void WebProcessActivityState::takeMutedCaptureAssertion()
@@ -158,7 +158,7 @@ bool WebProcessActivityState::hasValidMutedCaptureAssertion() const
 #if PLATFORM(IOS_FAMILY)
 void WebProcessActivityState::takeOpeningAppLinkActivity()
 {
-    m_openingAppLinkActivity = process().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+    m_openingAppLinkActivity = process().throttler().backgroundActivity("Opening AppLink"_s);
 }
 
 void WebProcessActivityState::dropOpeningAppLinkActivity()

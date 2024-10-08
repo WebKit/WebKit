@@ -365,7 +365,7 @@ void WebProcessCache::CachedProcess::startSuspensionTimer()
     // Allow the cached process to run for a while before dropping all assertions. This is useful
     // if the cached process will be reused fairly quickly after it goes into the cache, which
     // occurs in some benchmarks like PLT5.
-    m_backgroundActivity = m_process->throttler().backgroundActivity("Cached process near-suspended"_s).moveToUniquePtr();
+    m_backgroundActivity = m_process->throttler().backgroundActivity("Cached process near-suspended"_s);
     m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);
 }
 

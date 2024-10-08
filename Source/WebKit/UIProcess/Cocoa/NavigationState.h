@@ -294,7 +294,7 @@ private:
     } m_historyDelegateMethods;
 
 #if USE(RUNNINGBOARD)
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_networkActivity;
+    RefPtr<ProcessThrottler::BackgroundActivity> m_networkActivity;
     RunLoop::Timer m_releaseNetworkActivityTimer;
 #endif
 };

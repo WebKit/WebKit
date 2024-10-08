@@ -414,7 +414,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
         else
             webView.get()._textZoomFactor = 1;
 
-        __block Box<UniqueRef<WebKit::ProcessThrottler::Activity>> attributedStringActivity;
+        __block RefPtr<WebKit::ProcessThrottler::Activity> attributedStringActivity;
         auto finish = ^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
             if (finished)
                 return;
@@ -496,7 +496,7 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 
         contentNavigation = loadWebContent(webView.get());
         if (!finished)
-            attributedStringActivity = Box<UniqueRef<WebKit::ProcessThrottler::Activity>>::create([webView _page]->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("NSAttributedString serialization"_s));
+            attributedStringActivity = [webView _page]->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("NSAttributedString serialization"_s);
 
         ASSERT(contentNavigation);
         ASSERT(webView.get().loading);

@@ -80,7 +80,7 @@ void PlatformXRSystem::ensureImmersiveSessionActivity()
     if (m_immersiveSessionActivity && m_immersiveSessionActivity->isValid())
         return;
 
-    m_immersiveSessionActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
+    m_immersiveSessionActivity = m_page->protectedLegacyMainFrameProcess()->throttler().foregroundActivity("XR immersive session"_s);
 }
 
 void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector<XRDeviceInfo>&&)>&& completionHandler)

@@ -122,7 +122,7 @@ private:
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
     RunLoop::Timer m_suspensionTimeoutTimer;
 #if USE(RUNNINGBOARD)
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
+    RefPtr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };

@@ -112,7 +112,7 @@ private:
     RetainPtr<_WKSystemPreviewDataTaskDelegate> m_wkSystemPreviewDataTaskDelegate;
 #endif
 
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
+    RefPtr<ProcessThrottler::BackgroundActivity> m_activity;
     CompletionHandler<void(bool)> m_testingCallback;
     BlockPtr<void(bool)> m_allowPreviewCallback;
     double m_showPreviewDelay { 0 };

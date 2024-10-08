@@ -207,7 +207,7 @@ private:
     void sendBookmarkDataForCacheDirectory();
 #endif
 
-    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+    RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
     WebCore::IntDegrees m_orientation { 0 };

@@ -27,24 +27,13 @@
 
 #include "Logging.h"
 #include "ProcessAssertion.h"
-#include <variant>
 #include <wtf/ProcessID.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class ProcessThrottlerActivity;
-class ProcessThrottler;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProcessThrottlerActivity> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ProcessThrottler> : std::true_type { };
-}
 
 namespace WTF {
 class TextStream;
@@ -67,11 +56,11 @@ enum class IsSuspensionImminent : bool { No, Yes };
 enum class ProcessThrottleState : uint8_t { Suspended, Background, Foreground };
 enum class ProcessThrottlerActivityType : bool { Background, Foreground };
 
-class ProcessThrottlerActivity : public CanMakeWeakPtr<ProcessThrottlerActivity> {
+class ProcessThrottlerActivity : public RefCountedAndCanMakeWeakPtr<ProcessThrottlerActivity> {
     WTF_MAKE_TZONE_ALLOCATED(ProcessThrottlerActivity);
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerActivity);
 public:
-    ProcessThrottlerActivity(ProcessThrottler&, ASCIILiteral name, ProcessThrottlerActivityType, IsQuietActivity);
+    static Ref<ProcessThrottlerActivity> create(ProcessThrottler&, ASCIILiteral name, ProcessThrottlerActivityType, IsQuietActivity);
 
     ~ProcessThrottlerActivity()
     {
@@ -87,6 +76,7 @@ public:
 
 private:
     friend class ProcessThrottler;
+    ProcessThrottlerActivity(ProcessThrottler&, ASCIILiteral name, ProcessThrottlerActivityType, IsQuietActivity);
 
     enum class ForceEnableActivityLogging : bool { No, Yes };
     void invalidate(ForceEnableActivityLogging);
@@ -101,11 +91,10 @@ class ProcessThrottlerTimedActivity {
     WTF_MAKE_TZONE_ALLOCATED(ProcessThrottlerTimedActivity);
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
-    using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
 public:
-    explicit ProcessThrottlerTimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
-    ProcessThrottlerTimedActivity& operator=(ActivityVariant&&);
-    const ActivityVariant& activity() const { return m_activity; }
+    explicit ProcessThrottlerTimedActivity(Seconds timeout, RefPtr<Activity>&& = nullptr);
+    ProcessThrottlerTimedActivity& operator=(RefPtr<Activity>&&);
+    const RefPtr<Activity> activity() const { return m_activity; }
 
 private:
     void activityTimedOut();
@@ -113,7 +102,7 @@ private:
 
     RunLoop::Timer m_timer;
     Seconds m_timeout;
-    ActivityVariant m_activity;
+    RefPtr<Activity> m_activity;
 };
 
 class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
@@ -122,20 +111,19 @@ public:
     ~ProcessThrottler();
 
     using Activity = ProcessThrottlerActivity;
-    using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
 
     void ref() const;
     void deref() const;
 
     using ForegroundActivity = Activity;
-    UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
+    Ref<Activity> foregroundActivity(ASCIILiteral name);
 
     using BackgroundActivity = Activity;
-    UniqueRef<Activity> backgroundActivity(ASCIILiteral name);
-    UniqueRef<Activity> quietBackgroundActivity(ASCIILiteral name);
+    Ref<Activity> backgroundActivity(ASCIILiteral name);
+    Ref<Activity> quietBackgroundActivity(ASCIILiteral name);
 
-    static bool isValidBackgroundActivity(const ActivityVariant&);
-    static bool isValidForegroundActivity(const ActivityVariant&);
+    static bool isValidBackgroundActivity(const Activity*);
+    static bool isValidForegroundActivity(const Activity*);
 
     using TimedActivity = ProcessThrottlerTimedActivity;
 
@@ -200,19 +188,19 @@ private:
     bool m_isConnectedToProcess { false };
 };
 
-inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> UniqueRef<Activity>
+inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> Ref<Activity>
 {
-    return makeUniqueRef<Activity>(*this, name, ProcessThrottlerActivityType::Foreground, IsQuietActivity::No);
+    return Activity::create(*this, name, ProcessThrottlerActivityType::Foreground, IsQuietActivity::No);
 }
 
-inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> UniqueRef<Activity>
+inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> Ref<Activity>
 {
-    return makeUniqueRef<Activity>(*this, name, ProcessThrottlerActivityType::Background, IsQuietActivity::No);
+    return Activity::create(*this, name, ProcessThrottlerActivityType::Background, IsQuietActivity::No);
 }
 
-inline auto ProcessThrottler::quietBackgroundActivity(ASCIILiteral name) -> UniqueRef<Activity>
+inline auto ProcessThrottler::quietBackgroundActivity(ASCIILiteral name) -> Ref<Activity>
 {
-    return makeUniqueRef<Activity>(*this, name, ProcessThrottlerActivityType::Background, IsQuietActivity::Yes);
+    return Activity::create(*this, name, ProcessThrottlerActivityType::Background, IsQuietActivity::Yes);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);

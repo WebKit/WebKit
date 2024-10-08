@@ -110,7 +110,7 @@ private:
     void invalidateImmersiveSessionState(ImmersiveSessionState nextSessionState = ImmersiveSessionState::Idle);
 
     WeakRef<WebPageProxy> m_page;
-    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;
+    RefPtr<ProcessThrottler::ForegroundActivity> m_immersiveSessionActivity;
 };
 
 } // namespace WebKit

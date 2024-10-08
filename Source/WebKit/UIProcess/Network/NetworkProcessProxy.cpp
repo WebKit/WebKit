@@ -1683,13 +1683,13 @@ static bool anyProcessPoolHasBackgroundWebProcesses()
 void NetworkProcessProxy::updateProcessAssertion()
 {
     if (anyProcessPoolHasForegroundWebProcesses()) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
+        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get())) {
             m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("Networking for foreground view(s)"_s);
         }
         return;
     }
     if (anyProcessPoolHasBackgroundWebProcesses()) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
+        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get())) {
             m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("Networking for background view(s)"_s);
         }
         return;

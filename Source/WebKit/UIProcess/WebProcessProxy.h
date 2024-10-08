@@ -732,7 +732,7 @@ private:
 #endif
 
 #if PLATFORM(WATCHOS)
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;
+    RefPtr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;
 #endif
 
 #if PLATFORM(COCOA)
@@ -744,7 +744,7 @@ private:
         WebPageProxyIdentifier remoteWorkerPageProxyID;
         WebCore::PageIdentifier remoteWorkerPageID;
         RemoteWorkerInitializationData initializationData;
-        ProcessThrottler::ActivityVariant activity;
+        RefPtr<ProcessThrottler::Activity> activity;
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
     std::optional<RemoteWorkerInformation> m_serviceWorkerInformation;

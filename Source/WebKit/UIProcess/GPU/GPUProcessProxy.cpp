@@ -686,13 +686,13 @@ void GPUProcessProxy::updateProcessAssertion()
     }
 
     if (hasAnyForegroundWebProcesses) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses)) {
+        if (!ProcessThrottler::isValidForegroundActivity(m_activityFromWebProcesses.get())) {
             m_activityFromWebProcesses = protectedThrottler()->foregroundActivity("GPU for foreground view(s)"_s);
         }
         return;
     }
     if (hasAnyBackgroundWebProcesses) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses)) {
+        if (!ProcessThrottler::isValidBackgroundActivity(m_activityFromWebProcesses.get())) {
             m_activityFromWebProcesses = protectedThrottler()->backgroundActivity("GPU for background view(s)"_s);
         }
         return;

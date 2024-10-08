@@ -69,15 +69,15 @@ private:
 
     std::variant<WeakRef<WebPageProxy>, WeakRef<RemotePageProxy>> m_page;
 
-    std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
+    RefPtr<ProcessThrottlerActivity> m_isVisibleActivity;
 #if PLATFORM(MAC)
     UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
 #endif
-    std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
-    std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
+    RefPtr<ProcessThrottlerActivity> m_isAudibleActivity;
+    RefPtr<ProcessThrottlerActivity> m_isCapturingActivity;
     RefPtr<ProcessAssertion> m_isMutedCaptureAssertion;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
+    RefPtr<ProcessThrottlerActivity> m_openingAppLinkActivity;
 #endif
 };
 

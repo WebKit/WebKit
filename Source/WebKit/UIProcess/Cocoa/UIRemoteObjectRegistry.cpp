@@ -34,9 +34,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UIRemoteObjectRegistry);
 
-std::unique_ptr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
+RefPtr<ProcessThrottler::BackgroundActivity> UIRemoteObjectRegistry::backgroundActivity(ASCIILiteral name)
 {
-    return protectedPage()->protectedLegacyMainFrameProcess()->protectedThrottler()->backgroundActivity(name).moveToUniquePtr();
+    return protectedPage()->protectedLegacyMainFrameProcess()->protectedThrottler()->backgroundActivity(name);
 }
 
 UIRemoteObjectRegistry::UIRemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)

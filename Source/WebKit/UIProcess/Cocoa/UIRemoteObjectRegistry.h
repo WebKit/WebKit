@@ -45,7 +45,7 @@ private:
     Ref<WebPageProxy> protectedPage();
     MessageSender messageSender() final;
     uint64_t messageDestinationID() final;
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
+    RefPtr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
     WeakRef<WebPageProxy> m_page;
 };

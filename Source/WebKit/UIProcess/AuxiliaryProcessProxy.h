@@ -286,7 +286,7 @@ protected:
 #endif
 
     struct InitializationActivityAndGrant {
-        UniqueRef<ProcessThrottler::ForegroundActivity> foregroundActivity;
+        Ref<ProcessThrottler::ForegroundActivity> foregroundActivity;
 #if USE(EXTENSIONKIT)
         RefPtr<LaunchGrant> launchGrant;
 #endif
@@ -320,7 +320,7 @@ private:
     ProcessThrottler m_throttler;
 #if USE(RUNNINGBOARD)
 #if PLATFORM(MAC)
-    std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
+    RefPtr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
 #endif

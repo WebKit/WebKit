@@ -110,7 +110,7 @@ private:
 
     ModelProcessCreationParameters processCreationParameters();
 
-    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+    RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
 };

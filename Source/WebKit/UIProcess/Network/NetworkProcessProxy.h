@@ -428,7 +428,7 @@ private:
     LegacyCustomProtocolManagerProxy m_customProtocolManagerProxy;
 #endif
 
-    ProcessThrottler::ActivityVariant m_activityFromWebProcesses;
+    RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
@@ -467,7 +467,7 @@ private:
     // because the network process is not allowed to talk to talk to runningboardd due
     // to sandboxing. See rdar://112406083 & rdar://112086186 for potential long-term
     // fixes.
-    UniqueRef<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
+    Ref<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

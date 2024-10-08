@@ -565,7 +565,7 @@ void SystemPreviewController::takeActivityToken()
 #if USE(RUNNINGBOARD)
     RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
     ASSERT(!m_activity);
-    m_activity = page().legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
+    m_activity = page().legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s);
 #endif
 }
 

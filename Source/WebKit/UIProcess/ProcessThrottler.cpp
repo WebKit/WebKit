@@ -49,6 +49,11 @@ static constexpr Seconds processSuspensionTimeout { 20_s };
 static constexpr Seconds removeAllAssertionsTimeout { 8_min };
 static constexpr Seconds processAssertionCacheLifetime { 1_s };
 
+Ref<ProcessThrottlerActivity> ProcessThrottlerActivity::create(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type, IsQuietActivity isQuietActivity)
+{
+    return adoptRef(*new ProcessThrottlerActivity(throttler, name, type, isQuietActivity));
+}
+
 class ProcessThrottler::ProcessAssertionCache final : public CanMakeCheckedPtr<ProcessThrottler::ProcessAssertionCache> {
     WTF_MAKE_TZONE_ALLOCATED(ProcessThrottler::ProcessAssertionCache);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProcessAssertionCache);
@@ -429,20 +434,14 @@ void ProcessThrottler::assertionWasInvalidated()
     invalidateAllActivities();
 }
 
-bool ProcessThrottler::isValidBackgroundActivity(const ActivityVariant& variant)
+bool ProcessThrottler::isValidBackgroundActivity(const ProcessThrottler::Activity* activity)
 {
-    if (!std::holds_alternative<UniqueRef<Activity>>(variant))
-        return false;
-    auto& activity = std::get<UniqueRef<Activity>>(variant).get();
-    return activity.isValid() && !activity.isForeground();
+    return activity && activity->isValid() && !activity->isForeground();
 }
 
-bool ProcessThrottler::isValidForegroundActivity(const ActivityVariant& variant)
+bool ProcessThrottler::isValidForegroundActivity(const ProcessThrottler::Activity* activity)
 {
-    if (!std::holds_alternative<UniqueRef<Activity>>(variant))
-        return false;
-    auto& activity = std::get<UniqueRef<Activity>>(variant).get();
-    return activity.isValid() && activity.isForeground();
+    return activity && activity->isValid() && activity->isForeground();
 }
 
 void ProcessThrottler::setAllowsActivities(bool allow)
@@ -530,7 +529,7 @@ Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
 
-ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
+ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity)
     : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
     , m_activity(WTFMove(activity))
@@ -538,7 +537,7 @@ ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, Pr
     updateTimer();
 }
 
-auto ProcessThrottlerTimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> ProcessThrottlerTimedActivity&
+auto ProcessThrottlerTimedActivity::operator=(RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity) -> ProcessThrottlerTimedActivity&
 {
     m_activity = WTFMove(activity);
     updateTimer();
@@ -548,16 +547,15 @@ auto ProcessThrottlerTimedActivity::operator=(ProcessThrottler::ActivityVariant&
 void ProcessThrottlerTimedActivity::activityTimedOut()
 {
     RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut:", this);
-    // Use variant::swap() to make sure that m_activity is in a good state when the underlying
+    // Use std::exchange to make sure that m_activity is in a good state when the underlying
     // ProcessThrottlerActivity gets destroyed. This is important as destroying the activity runs code
     // that may use / modify m_activity.
-    ActivityVariant nullActivity { nullptr };
-    m_activity.swap(nullActivity);
+    std::exchange(m_activity, nullptr);
 }
 
 void ProcessThrottlerTimedActivity::updateTimer()
 {
-    if (std::holds_alternative<std::nullptr_t>(m_activity))
+    if (!m_activity)
         m_timer.stop();
     else
         m_timer.startOneShot(m_timeout);
@@ -587,11 +585,15 @@ ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, 
 void ProcessThrottlerActivity::invalidate(ForceEnableActivityLogging forceEnableActivityLogging)
 {
     ASSERT(isValid());
+    RefPtr throttler = m_throttler.get();
+    if (!throttler)
+        return;
+
     if (!isQuietActivity() || forceEnableActivityLogging == ForceEnableActivityLogging::Yes) {
         PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
             m_type == ProcessThrottlerActivityType::Foreground ? "foreground" : "background", m_name.characters());
     }
-    Ref { *m_throttler }->removeActivity(*this);
+    throttler->removeActivity(*this);
     m_throttler = nullptr;
 }
 

@@ -73,7 +73,7 @@ private:
     WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;
     std::optional<PAL::SessionID> m_sessionID;
     Ref<DataTaskClient> m_client;
-    std::unique_ptr<WebKit::ProcessThrottlerActivity> m_activity;
+    RefPtr<WebKit::ProcessThrottlerActivity> m_activity;
 };
 
 } // namespace API
