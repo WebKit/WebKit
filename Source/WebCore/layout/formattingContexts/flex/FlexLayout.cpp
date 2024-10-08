@@ -57,7 +57,7 @@ FlexLayout::FlexLayout(FlexFormattingContext& flexFormattingContext)
 {
 }
 
-FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstraints& flexContainerConstraints, const LogicalFlexItems& flexItems)
+FlexLayout::LogicalFlexItemRects FlexLayout::layout(const ConstraintsForFlexContent& flexContainerConstraints, const LogicalFlexItems& flexItems)
 {
     // This follows https://www.w3.org/TR/css-flexbox-1/#layout-algorithm
     SizeList flexItemsMainSizeList(flexItems.size());
@@ -71,9 +71,9 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstrain
         while (needsMainAxisLayout) {
             auto performMainAxisSizing = [&] {
                 // 9.2. (#3) Determine the flex base size and hypothetical main size of each item
-                auto flexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeForFlexItems(flexItems, flexContainerConstraints.isSizedUnderMinMaxConstraints);
+                auto flexBaseAndHypotheticalMainSizeList = flexBaseAndHypotheticalMainSizeForFlexItems(flexItems, flexContainerConstraints.isSizedUnderMinMax());
                 // 9.2. (#4) Determine the main size of the flex container
-                auto flexContainerInnerMainSize = this->flexContainerInnerMainSize(flexContainerConstraints.mainAxis);
+                auto flexContainerInnerMainSize = this->flexContainerInnerMainSize(flexContainerConstraints.mainAxis());
                 // 9.3. (#5) Collect flex items into flex lines
                 lineRanges = computeFlexLines(flexItems, flexContainerInnerMainSize, flexBaseAndHypotheticalMainSizeList);
                 // 9.3. (#6) Resolve the flexible lengths of all the flex items to find their used main size
@@ -85,9 +85,9 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstrain
                 // 9.4. (#7) Determine the hypothetical cross size of each item
                 auto hypotheticalCrossSizeList = hypotheticalCrossSizeForFlexItems(flexItems, flexItemsMainSizeList);
                 // 9.4. (#8) Calculate the cross size of each flex line
-                flexLinesCrossSizeList = crossSizeForFlexLines(lineRanges, flexContainerConstraints.crossAxis, flexItems, hypotheticalCrossSizeList);
+                flexLinesCrossSizeList = crossSizeForFlexLines(lineRanges, flexContainerConstraints.crossAxis(), flexItems, hypotheticalCrossSizeList);
                 // 9.4. (#9) Handle 'align-content: stretch
-                stretchFlexLines(flexLinesCrossSizeList, lineRanges.size(), flexContainerConstraints.crossAxis.availableSize);
+                stretchFlexLines(flexLinesCrossSizeList, lineRanges.size(), flexContainerConstraints.crossAxis().availableSize);
                 // 9.4. (#10) Collapse visibility:collapse items
                 auto collapsedContentNeedsSecondLayout = collapseNonVisibleFlexItems();
                 if (collapsedContentNeedsSecondLayout)
@@ -107,17 +107,17 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const FlexContainerConstrain
 
     auto performContentAlignment = [&] {
         // 9.5. (#12) Main-Axis Alignment
-        mainPositionAndMargins = handleMainAxisAlignment(flexContainerInnerMainSize(flexContainerConstraints.mainAxis), lineRanges, flexItems, flexItemsMainSizeList);
+        mainPositionAndMargins = handleMainAxisAlignment(flexContainerInnerMainSize(flexContainerConstraints.mainAxis()), lineRanges, flexItems, flexItemsMainSizeList);
         // 9.6. (#13 - #16) Cross-Axis Alignment
         crossPositionAndMargins = handleCrossAxisAlignmentForFlexItems(flexItems, lineRanges, flexItemsCrossSizeList, flexLinesCrossSizeList);
-        linesCrossPositionList = handleCrossAxisAlignmentForFlexLines(flexContainerConstraints.crossAxis.availableSize, lineRanges, flexLinesCrossSizeList);
+        linesCrossPositionList = handleCrossAxisAlignmentForFlexLines(flexContainerConstraints.crossAxis().availableSize, lineRanges, flexLinesCrossSizeList);
     };
     performContentAlignment();
 
     auto computeFlexItemRects = [&] {
         auto flexRects = LogicalFlexItemRects { flexItems.size() };
-        auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerConstraints.mainAxis.availableSize.value_or(0_lu));
-        auto rowGapValue = FlexFormattingUtils::rowGapValue(flexContainer(), flexContainerConstraints.crossAxis.availableSize.value_or(0_lu));
+        auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerConstraints.mainAxis().availableSize.value_or(0_lu));
+        auto rowGapValue = FlexFormattingUtils::rowGapValue(flexContainer(), flexContainerConstraints.crossAxis().availableSize.value_or(0_lu));
         for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
             auto lineRange = lineRanges[lineIndex];
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
@@ -197,7 +197,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
     return flexBaseAndHypotheticalMainSizeList;
 }
 
-LayoutUnit FlexLayout::flexContainerInnerMainSize(const FlexContainerConstraints::AxisGeometry& mainAxisGeometry) const
+LayoutUnit FlexLayout::flexContainerInnerMainSize(const ConstraintsForFlexContent::AxisGeometry& mainAxisGeometry) const
 {
     // 4. Determine the main size of the flex container using the rules of the formatting context in which it participates.
     // FIXME: above.
@@ -424,7 +424,7 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
     return hypotheticalCrossSizeList;
 }
 
-FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const FlexContainerConstraints::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
+FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const ConstraintsForFlexContent::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
 {
     LinesCrossSizeList flexLinesCrossSizeList(lineRanges.size());
     // If the flex container is single-line and has a definite cross size, the cross size of the flex line is the flex container's inner cross size.

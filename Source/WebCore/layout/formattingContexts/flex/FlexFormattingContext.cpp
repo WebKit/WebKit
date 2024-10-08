@@ -56,15 +56,13 @@ void FlexFormattingContext::layout(const ConstraintsForFlexContent& constraints)
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
     auto flexLayout = FlexLayout { *this };
 
-    auto mainAndCrossAxisGeometry = [&] {
-        auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
-        auto logicalHorizontalSpace = isMainAxisParallelWithInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
-        auto logicalVerticalSpace = isMainAxisParallelWithInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
+    // FIXME: Move this over to integration.
+    auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
+    auto logicalHorizontalSpace = isMainAxisParallelWithInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.crossAxis().availableSize;
+    auto logicalVerticalSpace = isMainAxisParallelWithInlineAxis ? constraints.crossAxis().availableSize : std::make_optional(constraints.horizontal().logicalWidth);
 
-        return FlexLayout::FlexContainerConstraints { { { }, { }, logicalHorizontalSpace }, { { }, { }, logicalVerticalSpace }, constraints.isSizedUnderMinMax() };
-    };
-
-    auto flexItemRects = flexLayout.layout(mainAndCrossAxisGeometry(), logicalFlexItems);
+    auto adjustedConstraints = ConstraintsForFlexContent { { constraints.horizontal(), constraints.logicalTop() }, { { }, { }, logicalHorizontalSpace, { } }, { { }, { }, logicalVerticalSpace, { } }, constraints.isSizedUnderMinMax() };
+    auto flexItemRects = flexLayout.layout(adjustedConstraints, logicalFlexItems);
     setFlexItemsGeometry(logicalFlexItems, flexItemRects, constraints);
 }
 
@@ -133,9 +131,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 if (height.isFixed())
                     crossAxis.definiteSize = height.value();
                 if (style.maxHeight().isSpecified())
-                    crossAxis.maximumSize = valueForLength(style.maxHeight(), constraints.availableVerticalSpace().value_or(0));
+                    crossAxis.maximumSize = valueForLength(style.maxHeight(), constraints.crossAxis().availableSize.value_or(0));
                 if (style.minHeight().isSpecified())
-                    crossAxis.minimumSize = valueForLength(style.minHeight(), constraints.availableVerticalSpace().value_or(0));
+                    crossAxis.minimumSize = valueForLength(style.minHeight(), constraints.crossAxis().availableSize.value_or(0));
                 crossAxis.borderAndPadding = flexItemGeometry.verticalBorderAndPadding();
                 break;
             }
@@ -194,7 +192,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
 
         // Let's use the bottom of the content if flex box does not have a definite height.
-        return constraints.availableVerticalSpace().value_or(constraints.minimumVerticalSpace().value_or(logicalRects.last().bottom()));
+        return constraints.crossAxis().availableSize.value_or(constraints.crossAxis().minimumSize.value_or(logicalRects.last().bottom()));
     }();
 
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
@@ -229,7 +227,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             break;
         }
         case FlexDirection::ColumnReverse: {
-            auto visualBottom = constraints.logicalTop() + constraints.availableVerticalSpace().value_or(logicalWidth);
+            auto visualBottom = constraints.logicalTop() + constraints.crossAxis().availableSize.value_or(logicalWidth);
             borderBoxTopLeft = { constraints.horizontal().logicalLeft + logicalRect.top(), visualBottom - logicalRect.right() };
             break;
         }

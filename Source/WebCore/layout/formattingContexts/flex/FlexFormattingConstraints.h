@@ -31,23 +31,28 @@ namespace WebCore {
 namespace Layout {
 
 struct ConstraintsForFlexContent : public ConstraintsForInFlowContent {
-    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace, bool isSizedUnderMinMax = false);
-
-    std::optional<LayoutUnit> availableVerticalSpace() const { return m_availableVerticalSpace; }
-    std::optional<LayoutUnit> minimumVerticalSpace() const { return m_minimumVerticalSpace; }
+    struct AxisGeometry {
+        std::optional<LayoutUnit> minimumSize;
+        std::optional<LayoutUnit> maximumSize;
+        std::optional<LayoutUnit> availableSize;
+        LayoutUnit startPosition;
+    };
+    ConstraintsForFlexContent(const ConstraintsForInFlowContent&, const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax);
+    const AxisGeometry& mainAxis() const { return m_mainAxisGeometry; }
+    const AxisGeometry& crossAxis() const { return m_crossAxisGeometry; }
     bool isSizedUnderMinMax() const { return m_isSizedUnderMinMax; }
 
 private:
+    AxisGeometry m_mainAxisGeometry;
+    AxisGeometry m_crossAxisGeometry;
     bool m_isSizedUnderMinMax { false };
-    std::optional<LayoutUnit> m_availableVerticalSpace;
-    std::optional<LayoutUnit> m_minimumVerticalSpace;
 };
 
-inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, std::optional<LayoutUnit> availableVerticalSpace, std::optional<LayoutUnit> minimumVerticalSpace, bool isSizedUnderMinMax)
+inline ConstraintsForFlexContent::ConstraintsForFlexContent(const ConstraintsForInFlowContent& genericContraints, const AxisGeometry& mainAxis, const AxisGeometry& crossAxis, bool isSizedUnderMinMax)
     : ConstraintsForInFlowContent(genericContraints.horizontal(), genericContraints.logicalTop(), FlexContent)
+    , m_mainAxisGeometry(mainAxis)
+    , m_crossAxisGeometry(crossAxis)
     , m_isSizedUnderMinMax(isSizedUnderMinMax)
-    , m_availableVerticalSpace(availableVerticalSpace)
-    , m_minimumVerticalSpace(minimumVerticalSpace)
 {
 }
 

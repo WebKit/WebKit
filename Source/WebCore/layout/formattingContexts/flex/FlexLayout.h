@@ -49,18 +49,8 @@ public:
     FlexLayout(FlexFormattingContext&);
 
     using LogicalFlexItems = Vector<LogicalFlexItem>;
-    struct FlexContainerConstraints {
-        struct AxisGeometry {
-            std::optional<LayoutUnit> minimumSize;
-            std::optional<LayoutUnit> maximumSize;
-            std::optional<LayoutUnit> availableSize;
-        };
-        AxisGeometry mainAxis;
-        AxisGeometry crossAxis;
-        bool isSizedUnderMinMaxConstraints { false };
-    };
     using LogicalFlexItemRects = FixedVector<FlexRect>;
-    LogicalFlexItemRects layout(const FlexContainerConstraints&, const LogicalFlexItems&);
+    LogicalFlexItemRects layout(const ConstraintsForFlexContent&, const LogicalFlexItems&);
 
 private:
     using FlexBaseAndHypotheticalMainSizeList = Vector<FlexBaseAndHypotheticalMainSize>;
@@ -71,11 +61,11 @@ private:
     using LinesCrossPositionList = Vector<LayoutUnit>;
 
     FlexBaseAndHypotheticalMainSizeList flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalFlexItems&, bool isSizedUnderMinMaxConstraints) const;
-    LayoutUnit flexContainerInnerMainSize(const FlexContainerConstraints::AxisGeometry&) const;
+    LayoutUnit flexContainerInnerMainSize(const ConstraintsForFlexContent::AxisGeometry&) const;
     LineRanges computeFlexLines(const LogicalFlexItems&, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
     SizeList computeMainSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, LayoutUnit flexContainerInnerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
     SizeList hypotheticalCrossSizeForFlexItems(const LogicalFlexItems&, const SizeList& flexItemsMainSizeList);
-    LinesCrossSizeList crossSizeForFlexLines(const LineRanges&, const FlexContainerConstraints::AxisGeometry& crossAxis, const LogicalFlexItems&, const SizeList& flexItemsHypotheticalCrossSizeList) const;
+    LinesCrossSizeList crossSizeForFlexLines(const LineRanges&, const ConstraintsForFlexContent::AxisGeometry& crossAxis, const LogicalFlexItems&, const SizeList& flexItemsHypotheticalCrossSizeList) const;
     void stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, std::optional<LayoutUnit> crossAxisAvailableSpace) const;
     bool collapseNonVisibleFlexItems();
     SizeList computeCrossSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const;

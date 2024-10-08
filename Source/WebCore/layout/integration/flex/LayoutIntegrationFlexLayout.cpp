@@ -123,7 +123,7 @@ void FlexLayout::layout()
         return { crossAxisSpace, heightValue(flexBoxStyle.logicalMinHeight()) };
     };
     auto [availableCrossAxisSpace, minimumCrossAxisSpace] = crossAxisSpaceForFlexItems();
-    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableCrossAxisSpace, minimumCrossAxisSpace };
+    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, { }, { minimumCrossAxisSpace, { }, availableCrossAxisSpace, { } }, false };
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), layoutState() };
     flexFormattingContext.layout(constraints);
 
