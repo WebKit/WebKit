@@ -27,6 +27,7 @@
 
 #import "Test.h"
 #import <JavaScriptCore/JavaScriptCore.h>
+#import <JavaScriptCore/Options.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
@@ -81,6 +82,7 @@ static void cycleRunLoop()
 
 TEST(JavaScriptCore, IncrementalSweeperMainThread)
 {
+    JSC::Options::AllowUnfinalizedAccessScope scope;
     auto context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::current();
 
@@ -92,6 +94,7 @@ TEST(JavaScriptCore, IncrementalSweeperMainThread)
 
 TEST(JavaScriptCore, IncrementalSweeperSecondaryThread)
 {
+    JSC::Options::AllowUnfinalizedAccessScope scope;
     auto context = adoptNS([JSContext new]);
     s_expectedRunLoop = &RunLoop::current();
 
