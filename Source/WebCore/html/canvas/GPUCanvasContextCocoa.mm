@@ -330,6 +330,24 @@ void GPUCanvasContextCocoa::unconfigure()
     ASSERT(!isConfigured());
 }
 
+std::optional<GPUCanvasConfiguration> GPUCanvasContextCocoa::getConfiguration() const
+{
+    std::optional<GPUCanvasConfiguration> configuration;
+    if (m_configuration) {
+        configuration.emplace(GPUCanvasConfiguration {
+            m_configuration->device.ptr(),
+            m_configuration->format,
+            m_configuration->usage,
+            m_configuration->viewFormats,
+            m_configuration->colorSpace,
+            m_configuration->toneMapping,
+            m_configuration->compositingAlphaMode,
+        });
+    }
+
+    return configuration;
+}
+
 ExceptionOr<RefPtr<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
 {
     if (!isConfigured())

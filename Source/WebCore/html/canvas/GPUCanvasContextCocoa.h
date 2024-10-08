@@ -71,6 +71,7 @@ public:
     CanvasType canvas() override;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&) override;
     void unconfigure() override;
+    std::optional<GPUCanvasConfiguration> getConfiguration() const override;
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
