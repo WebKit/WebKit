@@ -869,6 +869,22 @@ static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(c
     return BrowsingContextGroupSwitchDecision::NewSharedGroup;
 }
 
+bool NetworkResourceLoader::isLikelyStreamingMedia(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
+{
+    auto isFetchOrXHR = [] (WebCore::ResourceRequestRequester requester) {
+        return requester == WebCore::ResourceRequestRequester::Fetch
+            || requester == WebCore::ResourceRequestRequester::XHR;
+    };
+
+    auto isMediaMIMEType = [] (const String& mimeType) {
+        return startsWithLettersIgnoringASCIICase(mimeType, "audio/"_s)
+            || startsWithLettersIgnoringASCIICase(mimeType, "video/"_s)
+            || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream"_s);
+    };
+
+    return isFetchOrXHR(request.requester()) && isMediaMIMEType(response.mimeType());
+}
+
 void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& response)
 {
     if (response.httpStatusCode() != httpStatus103EarlyHints)
@@ -909,21 +925,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     auto resourceLoadInfo = this->resourceLoadInfo();
 
-    auto isFetchOrXHR = [] (const ResourceLoadInfo& info) {
-        return info.type == ResourceLoadInfo::Type::Fetch
-            || info.type == ResourceLoadInfo::Type::XMLHTTPRequest;
-    };
-
-    auto isMediaMIMEType = [] (const String& mimeType) {
-        return startsWithLettersIgnoringASCIICase(mimeType, "audio/"_s)
-            || startsWithLettersIgnoringASCIICase(mimeType, "video/"_s)
-            || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream"_s);
-    };
-
     if (!m_bufferedData
         && m_response.expectedContentLength() > static_cast<long long>(1 * MB)
-        && isFetchOrXHR(resourceLoadInfo)
-        && isMediaMIMEType(m_response.mimeType())) {
+        && isLikelyStreamingMedia(originalRequest(), m_response)) {
         m_bufferedData.empty();
         m_parameters.maximumBufferingTime = WebLoaderStrategy::mediaMaximumBufferingTime;
     }

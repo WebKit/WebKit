@@ -32,6 +32,7 @@
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkCacheStorage.h"
 #include "NetworkProcess.h"
+#include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheValidation.h>
@@ -267,11 +268,6 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     return RetrieveDecision::Yes;
 }
 
-static bool isMediaMIMEType(const String& type)
-{
-    return startsWithLettersIgnoringASCIICase(type, "video/"_s) || startsWithLettersIgnoringASCIICase(type, "audio/"_s);
-}
-
 static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)
 {
     if (!originalRequest.url().protocolIsInHTTPFamily() || !response.isInHTTPFamily())
@@ -321,8 +317,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     // FIXME: We should also make sure make the MSE paths are copy-free so we can use mapped buffers from disk effectively.
     auto requester = originalRequest.requester();
     bool isDefinitelyStreamingMedia = requester == WebCore::ResourceRequestRequester::Media;
-    bool isLikelyStreamingMedia = requester == WebCore::ResourceRequestRequester::XHR && isMediaMIMEType(response.mimeType());
-    if (isLikelyStreamingMedia || isDefinitelyStreamingMedia)
+    if (NetworkResourceLoader::isLikelyStreamingMedia(originalRequest, response) || isDefinitelyStreamingMedia)
         return StoreDecision::NoDueToStreamingMedia;
 
     return StoreDecision::Yes;

@@ -16,9 +16,14 @@ var testMatrix =
   ],
  ];
 
-description("Tests that media resources loaded via XHR is not cached.");
+description("Tests that media resources loaded via XHR or Fetch is not cached.");
 
 var tests = generateTests(testMatrix);
+
+var l = tests.length;
+for (var i = 0; i < l; ++i) {
+    tests.push({ ...tests[i], method: "fetch" });
+}
 
 debug("running " + tests.length + " tests");
 debug("");
