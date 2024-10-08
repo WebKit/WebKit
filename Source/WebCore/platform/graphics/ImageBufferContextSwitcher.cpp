@@ -83,8 +83,8 @@ void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& dest
 void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
 {
     if (!m_filter) {
-        ASSERT(m_sourceImage);
-        destinationContext.drawImageBuffer(*m_sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
+        if (m_sourceImage)
+            destinationContext.drawImageBuffer(*m_sourceImage, m_sourceImageRect, { destinationContext.compositeOperation(), destinationContext.blendMode() });
         return;
     }
 
