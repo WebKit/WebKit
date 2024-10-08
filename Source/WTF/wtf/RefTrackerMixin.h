@@ -37,8 +37,14 @@ namespace WTF {
 template<typename T>
 struct RefTrackerLoggingDisabledScope {
     WTF_MAKE_NONCOPYABLE(RefTrackerLoggingDisabledScope);
-    WTF_EXPORT_PRIVATE RefTrackerLoggingDisabledScope();
-    WTF_EXPORT_PRIVATE ~RefTrackerLoggingDisabledScope();
+    RefTrackerLoggingDisabledScope()
+    {
+        ++T::refTrackerSingleton().loggingDisabledDepth;
+    }
+    ~RefTrackerLoggingDisabledScope()
+    {
+        --T::refTrackerSingleton().loggingDisabledDepth;
+    }
 };
 
 struct RefTracker {
@@ -107,18 +113,6 @@ struct RefTrackerMixin final {
     // This guards against seeing an unconstructed object (say, if we are zero-initialized)
     RefTrackerMixin* originalThis = nullptr;
 };
-
-template<typename T>
-RefTrackerLoggingDisabledScope<T>::RefTrackerLoggingDisabledScope()
-{
-    ++T::refTrackerSingleton().loggingDisabledDepth;
-}
-
-template<typename T>
-RefTrackerLoggingDisabledScope<T>::~RefTrackerLoggingDisabledScope()
-{
-    --T::refTrackerSingleton().loggingDisabledDepth;
-}
 
 #define REFTRACKER_DECL(T) \
     struct T final { \
