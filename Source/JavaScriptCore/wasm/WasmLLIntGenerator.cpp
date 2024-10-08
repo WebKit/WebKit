@@ -1530,6 +1530,7 @@ void LLIntGenerator::endTryTable(ControlType& data)
                 results.append(virtualRegisterForLocal(m_stackSize + i));
         }
 
+        alignWideOpcode32();
         RefPtr<Label> handlerLabel = newEmittedLabel();
 
         switch (target.type) {
