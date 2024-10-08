@@ -179,9 +179,10 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
         preferredWidth += m_radicalOperator.maxPreferredWidth();
         preferredWidth += getBase().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(getBase());
     }
-    preferredWidth += borderAndPaddingLogicalWidth();
-
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
+
     setPreferredLogicalWidthsDirty(false);
 }
 
@@ -236,12 +237,12 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     // We set the logical width.
     if (rootType() == RootType::SquareRoot)
-        setLogicalWidth(m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(m_radicalOperator.width() + m_baseWidth);
     else {
         ASSERT(rootType() == RootType::RootWithIndex);
         LayoutUnit indexWidth = getIndex().logicalWidth() + getIndex().marginLogicalWidth();
         horizontal = horizontalParameters(indexWidth);
-        setLogicalWidth(horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(horizontal.kernBeforeDegree + indexWidth + horizontal.kernAfterDegree + m_radicalOperator.width() + m_baseWidth);
     }
 
     // For <mroot>, we update the metrics to take into account the index.
@@ -251,12 +252,10 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         indexDescent = getIndex().logicalHeight() + getIndex().marginLogicalHeight() - indexAscent;
         ascent = std::max<LayoutUnit>(radicalAscent, indexBottomRaise + indexDescent + indexAscent - descent);
     }
-    ascent += borderAndPaddingBefore();
-    descent += borderAndPaddingAfter();
 
     // We set the final position of children.
     m_radicalOperatorTop = ascent - radicalAscent + vertical.extraAscender;
-    LayoutUnit horizontalOffset = borderAndPaddingStart() + m_radicalOperator.width();
+    LayoutUnit horizontalOffset = m_radicalOperator.width();
     if (rootType() == RootType::RootWithIndex)
         horizontalOffset += horizontal.kernBeforeDegree + getIndex().logicalWidth() + getIndex().marginLogicalWidth() + horizontal.kernAfterDegree;
     if (rootType() == RootType::SquareRoot) {
@@ -267,11 +266,13 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
         ASSERT(rootType() == RootType::RootWithIndex);
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(), getBase()), ascent - baseAscent + getBase().marginBefore());
         getBase().setLocation(baseLocation);
-        LayoutPoint indexLocation(mirrorIfNeeded(borderAndPaddingStart() + horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
+        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
         getIndex().setLocation(indexLocation);
     }
 
     setLogicalHeight(ascent + descent);
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 

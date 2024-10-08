@@ -249,9 +249,7 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
         setLogicalWidth(width);
 
         // We then move the children to take spacing into account.
-        LayoutPoint horizontalShift(style().direction() == TextDirection::LTR ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
-        for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
-            child->setLocation(child->location() + horizontalShift);
+        shiftInFlowChildren(style().direction() == TextDirection::LTR ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
     }
 
     updateScrollInfoAfterLayout();

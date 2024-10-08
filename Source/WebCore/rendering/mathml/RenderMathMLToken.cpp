@@ -511,7 +511,8 @@ void RenderMathMLToken::computePreferredLogicalWidths()
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font) {
-            m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph) + borderAndPaddingLogicalWidth();
+            m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph);
+            adjustPreferredLogicalWidthsForBorderAndPadding();
             setPreferredLogicalWidthsDirty(false);
             return;
         }
@@ -592,8 +593,10 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     recomputeLogicalWidth();
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
         child->layoutIfNeeded();
-    setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)) + borderAndPaddingLogicalWidth());
-    setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()) + borderAndPaddingLogicalHeight());
+    setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)));
+    setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()));
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 

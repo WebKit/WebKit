@@ -49,7 +49,6 @@ protected:
     void stretchVerticalOperatorsAndLayoutChildren();
     void getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascent, LayoutUnit& descent) const;
     void layoutRowItems(LayoutUnit width, LayoutUnit ascent);
-    void shiftRowItems(LayoutUnit left, LayoutUnit top);
     LayoutUnit preferredLogicalWidthOfRowItems();
     void computePreferredLogicalWidths() override;
 

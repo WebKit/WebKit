@@ -204,16 +204,18 @@ void RenderMathMLUnderOver::computePreferredLogicalWidths()
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         preferredWidth = std::max(preferredWidth, over().maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(over()));
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth + borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredWidth;
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
 
 LayoutUnit RenderMathMLUnderOver::horizontalOffset(const RenderBox& child) const
 {
-    LayoutUnit contentBoxInlineSize = logicalWidth() - borderAndPaddingLogicalWidth();
+    LayoutUnit contentBoxInlineSize = logicalWidth();
     LayoutUnit childMarginBoxInlineSize = child.logicalWidth() + child.marginLogicalWidth();
-    return borderLeft() + paddingLeft() + (contentBoxInlineSize - childMarginBoxInlineSize) / 2 + child.marginLeft();
+    return (contentBoxInlineSize - childMarginBoxInlineSize) / 2 + child.marginLeft();
 }
 
 bool RenderMathMLUnderOver::hasAccent(bool accentUnder) const
@@ -327,10 +329,10 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         logicalWidth = std::max(logicalWidth, under().logicalWidth() + under().marginLogicalWidth());
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, over().logicalWidth() + over().marginLogicalWidth());
-    setLogicalWidth(logicalWidth + borderAndPaddingLogicalWidth());
+    setLogicalWidth(logicalWidth);
 
     VerticalParameters parameters = verticalParameters();
-    LayoutUnit verticalOffset = borderAndPaddingBefore();
+    LayoutUnit verticalOffset = 0;
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
         verticalOffset += over().marginBefore();
@@ -367,9 +369,10 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
         verticalOffset += under().marginAfter();
         verticalOffset += parameters.underExtraDescender;
     }
-    verticalOffset += borderAndPaddingAfter();
 
     setLogicalHeight(verticalOffset);
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 

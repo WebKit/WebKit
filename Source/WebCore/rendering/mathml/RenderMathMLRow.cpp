@@ -132,7 +132,9 @@ void RenderMathMLRow::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredLogicalWidthOfRowItems() + borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = preferredLogicalWidthOfRowItems();
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -155,13 +157,6 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
     }
 }
 
-void RenderMathMLRow::shiftRowItems(LayoutUnit left, LayoutUnit top)
-{
-    LayoutPoint shift(left, top);
-    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
-        child->setLocation(child->location() + shift);
-}
-
 void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -182,9 +177,11 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
     stretchVerticalOperatorsAndLayoutChildren();
     getContentBoundingBox(width, ascent, descent);
     layoutRowItems(width, ascent);
-    setLogicalWidth(width + borderAndPaddingLogicalWidth());
-    setLogicalHeight(ascent + descent + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
-    shiftRowItems(borderLeft() + paddingLeft(), borderAndPaddingBefore());
+    setLogicalWidth(width);
+    setLogicalHeight(ascent + descent);
+
+    adjustLayoutForBorderAndPadding();
+
     updateLogicalHeight();
 
     layoutPositionedObjects(relayoutChildren);

@@ -99,7 +99,7 @@ void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogical
         centerChildren(width);
     else
         setLogicalWidth(width);
-    shiftRowItems(0_lu, borderAndPaddingBefore());
+    shiftInFlowChildren(0_lu, borderAndPaddingBefore());
 
     setLogicalHeight(ascent + descent + borderAndPaddingLogicalHeight() + horizontalScrollbarHeight());
     updateLogicalHeight();

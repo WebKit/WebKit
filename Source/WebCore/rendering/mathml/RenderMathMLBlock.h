@@ -77,6 +77,10 @@ protected:
     void insertPositionedChildrenIntoContainingBlock();
     void layoutFloatingChildren();
 
+    void shiftInFlowChildren(LayoutUnit left, LayoutUnit top);
+    void adjustPreferredLogicalWidthsForBorderAndPadding();
+    void adjustLayoutForBorderAndPadding();
+
 private:
     bool isRenderMathMLBlock() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLBlock"_s; }

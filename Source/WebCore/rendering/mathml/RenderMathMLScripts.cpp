@@ -231,8 +231,9 @@ void RenderMathMLScripts::computePreferredLogicalWidths()
     }
     }
 
-    m_maxPreferredLogicalWidth += borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -388,10 +389,10 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit baseAscent = ascentForChild(*reference.base) + reference.base->marginBefore();
     LayoutUnit baseDescent = reference.base->logicalHeight() + reference.base->marginLogicalHeight() - baseAscent;
     LayoutUnit baseItalicCorrection = std::min(reference.base->logicalWidth() + reference.base->marginLogicalWidth(), italicCorrection(reference));
-    LayoutUnit horizontalOffset = borderAndPaddingStart();
+    LayoutUnit horizontalOffset = 0;
 
-    LayoutUnit ascent = std::max(baseAscent, metrics.ascent + metrics.supShift) + borderAndPaddingBefore();
-    LayoutUnit descent = std::max(baseDescent, metrics.descent + metrics.subShift) + borderAndPaddingAfter();
+    LayoutUnit ascent = std::max(baseAscent, metrics.ascent + metrics.supShift);
+    LayoutUnit descent = std::max(baseDescent, metrics.descent + metrics.subShift);
     setLogicalHeight(ascent + descent);
 
     switch (scriptType()) {
@@ -399,7 +400,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     case MathMLScriptsElement::ScriptType::Under: {
         LayoutUnit baseWidth = reference.base->logicalWidth() + reference.base->marginLogicalWidth();
         LayoutUnit contentWidth = baseWidth + std::max(0_lu, reference.firstPostScript->logicalWidth() + reference.firstPostScript->marginLogicalWidth() - baseItalicCorrection + space);
-        setLogicalWidth(contentWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(contentWidth);
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + reference.base->marginStart(), *reference.base), ascent - baseAscent + reference.base->marginBefore());
         reference.base->setLocation(baseLocation);
         horizontalOffset += baseWidth;
@@ -412,7 +413,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     case MathMLScriptsElement::ScriptType::Over: {
         LayoutUnit baseWidth = reference.base->logicalWidth() + reference.base->marginLogicalWidth();
         LayoutUnit contentWidth = baseWidth + std::max(0_lu, reference.firstPostScript->logicalWidth() + reference.firstPostScript->marginLogicalWidth() + space);
-        setLogicalWidth(contentWidth + borderAndPaddingLogicalWidth());
+        setLogicalWidth(contentWidth);
         LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + reference.base->marginStart(), *reference.base), ascent - baseAscent + reference.base->marginBefore());
         reference.base->setLocation(baseLocation);
         horizontalOffset += baseWidth;
@@ -425,7 +426,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     case MathMLScriptsElement::ScriptType::UnderOver:
     case MathMLScriptsElement::ScriptType::Multiscripts: {
         // Calculate the logical width.
-        LayoutUnit logicalWidth = borderAndPaddingLogicalWidth();
+        LayoutUnit logicalWidth = 0;
         auto subScript = reference.firstPreScript;
         while (subScript) {
             auto supScript = subScript->nextInFlowSiblingBox();
@@ -479,6 +480,8 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
         }
     }
     }
+
+    adjustLayoutForBorderAndPadding();
 
     layoutPositionedObjects(relayoutChildren);
 

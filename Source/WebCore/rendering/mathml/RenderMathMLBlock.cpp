@@ -262,6 +262,27 @@ void RenderMathMLBlock::layoutFloatingChildren()
     }
 }
 
+void RenderMathMLBlock::shiftInFlowChildren(LayoutUnit left, LayoutUnit top)
+{
+    LayoutPoint shift(left, top);
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox())
+        child->setLocation(child->location() + shift);
+}
+
+void RenderMathMLBlock::adjustPreferredLogicalWidthsForBorderAndPadding()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+    m_minPreferredLogicalWidth += borderAndPaddingLogicalWidth();
+    m_maxPreferredLogicalWidth += borderAndPaddingLogicalWidth();
+}
+
+void RenderMathMLBlock::adjustLayoutForBorderAndPadding()
+{
+    setLogicalWidth(logicalWidth() + borderAndPaddingLogicalWidth());
+    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
+    shiftInFlowChildren(style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd(), borderAndPaddingBefore());
+}
+
 }
 
 #endif

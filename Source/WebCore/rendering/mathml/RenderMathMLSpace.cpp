@@ -49,7 +49,9 @@ void RenderMathMLSpace::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth() + borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth();
+
+    adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
 }
