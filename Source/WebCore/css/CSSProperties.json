@@ -1185,7 +1185,7 @@
                 "space-all"
             ],
             "codegen-properties": {
-                "settings-flag": "cssTextSpacingEnabled",
+                "settings-flag": "cssTextSpacingTrimEnabled",
                 "font-property": true,
                 "high-priority": true,
                 "sink-priority": true,
