@@ -1893,3 +1893,6 @@ tiled-drawing/tile-size-slow-zoomed.html [ Pass Failure ]
 
 # webkit.org/b/280989 [ Sequoia wk2 x86_64 ] webanimations/frame-rate/document-timeline-maximum-frame-rate.html is a constant failure 
 [ Sequoia x86_64 ] webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Failure ]
+
+# webkit.org/b/281090 REGRESSION(284131@main?):[ macOS wk2 x86_64  ] http/tests/site-isolation/selection-focus.html is a constant ImageOnlyFailure 
+[ x86_64 ] http/tests/site-isolation/selection-focus.html [ ImageOnlyFailure ]
