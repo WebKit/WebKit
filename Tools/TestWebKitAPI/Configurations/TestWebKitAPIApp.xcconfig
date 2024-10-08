@@ -40,6 +40,8 @@ INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=embedded*] = YES;
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad[sdk=embedded*] = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone[sdk=embedded*] = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight;
 
+TARGETED_DEVICE_FAMILY = 1,2,4,7;
+
 CLANG_ENABLE_OBJC_ARC = YES;
 CLANG_ENABLE_OBJC_WEAK = YES;
 
