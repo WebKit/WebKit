@@ -6516,8 +6516,10 @@ void outputLayerPositionTreeRecursive(TextStream& stream, const WebCore::RenderL
     stream << &layer << " "_s << layerRect;
 
     stream << " "_s << layer.name();
+#if ASSERT_ENABLED || ENABLE(CONJECTURE_ASSERT)
     if (layer.m_repaintContainer)
         stream << " (repaint container: " << layer.m_repaintContainer.get() << ")";
+#endif
     if (layer.repaintRects())
         stream << " (repaint rects " << *layer.repaintRects() << ")";
     stream.nextLine();
