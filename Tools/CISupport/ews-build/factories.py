@@ -103,8 +103,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
-        if checkRelevance:
-            self.addStep(CheckChangeRelevance())
+        self.addStep(CheckChangeRelevance())
         self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
@@ -118,6 +117,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(UpdateClang())
         self.addStep(CheckOutPullRequest())
         self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(ScanBuild())
 
 

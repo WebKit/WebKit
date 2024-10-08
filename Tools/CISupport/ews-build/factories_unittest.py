@@ -297,6 +297,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
         ],
         'macOS-Safer-CPP-Checks-EWS': [
             'configure-build',
+            'check-change-relevance',
             'validate-change',
             'configuration',
             'clean-up-git-repo',
@@ -310,6 +311,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'update-clang',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'scan-build'
         ],
         'macOS-Release-WK2-Stress-Tests-EWS': [
