@@ -64,7 +64,7 @@ template<> ConversionResult<IDLDictionary<TestPromiseRejectionEvent::Init>> conv
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestPromiseRejectionEvent::Init result;
+    TestPromiseRejectionEvent::Init result { };
     JSValue bubblesValue;
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();

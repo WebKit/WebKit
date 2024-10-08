@@ -60,7 +60,7 @@ template<> ConversionResult<IDLDictionary<TestEventConstructor::Init>> convertDi
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestEventConstructor::Init result;
+    TestEventConstructor::Init result { };
     JSValue bubblesValue;
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();

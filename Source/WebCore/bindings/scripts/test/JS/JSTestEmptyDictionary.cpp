@@ -39,7 +39,7 @@ template<> ConversionResult<IDLDictionary<TestEmptyDictionary>> convertDictionar
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestEmptyDictionary result;
+    TestEmptyDictionary result { };
     return result;
 }
 

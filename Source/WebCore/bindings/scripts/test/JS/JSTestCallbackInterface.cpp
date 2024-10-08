@@ -103,7 +103,7 @@ template<> ConversionResult<IDLDictionary<TestCallbackInterface::Dictionary>> co
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestCallbackInterface::Dictionary result;
+    TestCallbackInterface::Dictionary result { };
     JSValue optionalMemberValue;
     if (isNullOrUndefined)
         optionalMemberValue = jsUndefined();

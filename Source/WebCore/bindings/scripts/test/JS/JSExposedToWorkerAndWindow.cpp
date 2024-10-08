@@ -61,7 +61,7 @@ template<> ConversionResult<IDLDictionary<ExposedToWorkerAndWindow::Dict>> conve
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    ExposedToWorkerAndWindow::Dict result;
+    ExposedToWorkerAndWindow::Dict result { };
     JSValue objValue;
     if (isNullOrUndefined)
         objValue = jsUndefined();

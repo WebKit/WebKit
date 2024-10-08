@@ -43,7 +43,7 @@ template<> ConversionResult<IDLDictionary<TestDictionaryWithOnlyConditionalMembe
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDictionaryWithOnlyConditionalMembers result;
+    TestDictionaryWithOnlyConditionalMembers result { };
 #if ENABLE(TEST_CONDITIONAL)
     JSValue conditionalMemberValue;
     if (isNullOrUndefined)

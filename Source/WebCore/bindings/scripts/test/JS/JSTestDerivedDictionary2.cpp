@@ -45,7 +45,7 @@ template<> ConversionResult<IDLDictionary<TestDerivedDictionary2>> convertDictio
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDerivedDictionary2 result;
+    TestDerivedDictionary2 result { };
     JSValue boolMemberValue;
     if (isNullOrUndefined)
         boolMemberValue = jsUndefined();
@@ -141,7 +141,7 @@ template<> ConversionResult<IDLDictionary<TestDerivedDictionary2::Dictionary>> c
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDerivedDictionary2::Dictionary result;
+    TestDerivedDictionary2::Dictionary result { };
     JSValue boolMemberValue;
     if (isNullOrUndefined)
         boolMemberValue = jsUndefined();

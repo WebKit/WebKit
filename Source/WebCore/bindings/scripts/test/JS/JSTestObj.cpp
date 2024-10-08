@@ -549,7 +549,7 @@ template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionar
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::Dictionary result;
+    TestObj::Dictionary result { };
     JSValue annotatedTypeInSequenceMemberValue;
     if (isNullOrUndefined)
         annotatedTypeInSequenceMemberValue = jsUndefined();
@@ -1309,7 +1309,7 @@ template<> ConversionResult<IDLDictionary<TestObj::DictionaryThatShouldNotTolera
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::DictionaryThatShouldNotTolerateNull result;
+    TestObj::DictionaryThatShouldNotTolerateNull result { };
     JSValue booleanWithoutDefaultValue;
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
@@ -1381,7 +1381,7 @@ template<> ConversionResult<IDLDictionary<TestObj::DictionaryThatShouldTolerateN
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::DictionaryThatShouldTolerateNull result;
+    TestObj::DictionaryThatShouldTolerateNull result { };
     JSValue booleanWithoutDefaultValue;
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
@@ -1421,7 +1421,7 @@ template<> ConversionResult<IDLDictionary<AlternateDictionaryName>> convertDicti
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    AlternateDictionaryName result;
+    AlternateDictionaryName result { };
     JSValue booleanWithoutDefaultValue;
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
@@ -1461,7 +1461,7 @@ template<> ConversionResult<IDLDictionary<TestObj::ParentDictionary>> convertDic
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::ParentDictionary result;
+    TestObj::ParentDictionary result { };
     JSValue parentMember1Value;
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
@@ -1501,7 +1501,7 @@ template<> ConversionResult<IDLDictionary<TestObj::ChildDictionary>> convertDict
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::ChildDictionary result;
+    TestObj::ChildDictionary result { };
     JSValue parentMember1Value;
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
@@ -1569,7 +1569,7 @@ template<> ConversionResult<IDLDictionary<TestObj::ConditionalDictionaryA>> conv
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::ConditionalDictionaryA result;
+    TestObj::ConditionalDictionaryA result { };
     JSValue stringWithoutDefaultValue;
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
@@ -1600,7 +1600,7 @@ template<> ConversionResult<IDLDictionary<TestObj::ConditionalDictionaryB>> conv
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::ConditionalDictionaryB result;
+    TestObj::ConditionalDictionaryB result { };
     JSValue stringWithoutDefaultValue;
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
@@ -1631,7 +1631,7 @@ template<> ConversionResult<IDLDictionary<TestObj::ConditionalDictionaryC>> conv
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::ConditionalDictionaryC result;
+    TestObj::ConditionalDictionaryC result { };
     JSValue stringWithoutDefaultValue;
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
@@ -1660,7 +1660,7 @@ template<> ConversionResult<IDLDictionary<TestObj::PromisePair>> convertDictiona
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestObj::PromisePair result;
+    TestObj::PromisePair result { };
     JSValue promise1Value;
     if (isNullOrUndefined)
         promise1Value = jsUndefined();

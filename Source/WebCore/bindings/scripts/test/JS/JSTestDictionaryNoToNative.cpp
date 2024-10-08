@@ -55,7 +55,7 @@ template<> ConversionResult<IDLDictionary<TestDictionaryNoToNative::GenerateKeyw
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDictionaryNoToNative::GenerateKeyword result;
+    TestDictionaryNoToNative::GenerateKeyword result { };
     JSValue memberValue;
     if (isNullOrUndefined)
         memberValue = jsUndefined();

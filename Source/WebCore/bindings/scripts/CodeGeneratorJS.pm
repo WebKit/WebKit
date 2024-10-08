@@ -2800,7 +2800,7 @@ sub GenerateDictionaryImplementationContent
         $result .= "    }\n";
 
         # 2. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
-        $result .= "    $className result;\n";
+        $result .= "    $className result { };\n";
 
         # 3. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
         #

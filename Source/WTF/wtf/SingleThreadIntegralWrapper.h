@@ -40,7 +40,10 @@ public:
     SingleThreadIntegralWrapper& operator++();
     SingleThreadIntegralWrapper& operator--();
 
+// https://bugs.webkit.org/show_bug.cgi?id=280710
+IGNORE_GCC_WARNINGS_BEGIN("uninitialized")
     IntegralType valueWithoutThreadCheck() const { return m_value; }
+IGNORE_GCC_WARNINGS_END
 
 private:
 #if ASSERT_ENABLED && !USE(WEB_THREAD)

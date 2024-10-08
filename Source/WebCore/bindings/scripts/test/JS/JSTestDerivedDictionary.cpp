@@ -45,7 +45,7 @@ template<> ConversionResult<IDLDictionary<TestDerivedDictionary>> convertDiction
         throwTypeError(&lexicalGlobalObject, throwScope);
         return ConversionResultException { };
     }
-    TestDerivedDictionary result;
+    TestDerivedDictionary result { };
     JSValue boolMemberValue;
     if (isNullOrUndefined)
         boolMemberValue = jsUndefined();
