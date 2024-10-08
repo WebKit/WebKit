@@ -6803,6 +6803,9 @@
     "imported/w3c/web-platform-tests/websockets/opening-handshake/003.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/websockets/opening-handshake/006.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/websockets/unload-a-document/002.html": [
         "slow"
     ],

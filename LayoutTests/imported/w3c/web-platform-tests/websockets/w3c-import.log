@@ -58,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-before-open.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-65K-arraybuffer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybuffer.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-float16.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-float32.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-float64.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-binary-arraybufferview-int16-offset.any.js

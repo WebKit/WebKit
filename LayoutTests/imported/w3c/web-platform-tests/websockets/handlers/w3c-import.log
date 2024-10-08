@@ -31,11 +31,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/invalid_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/msg_channel_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/origin_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/passive-close-abort_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_array_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/receive-backpressure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/receive-many-with-backpressure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/referrer_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/remote-close_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/send-backpressure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie-secure_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/set-cookie_http_wsh.py

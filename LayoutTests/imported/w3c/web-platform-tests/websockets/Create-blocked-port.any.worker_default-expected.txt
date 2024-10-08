@@ -68,6 +68,7 @@ PASS WebSocket blocked port test 1723
 PASS WebSocket blocked port test 2049
 PASS WebSocket blocked port test 3659
 PASS WebSocket blocked port test 4045
+PASS WebSocket blocked port test 4190
 PASS WebSocket blocked port test 6000
 PASS WebSocket blocked port test 6566
 PASS WebSocket blocked port test 6665
@@ -75,6 +76,7 @@ PASS WebSocket blocked port test 6666
 PASS WebSocket blocked port test 6667
 PASS WebSocket blocked port test 6668
 PASS WebSocket blocked port test 6669
+PASS WebSocket blocked port test 6679
 PASS WebSocket blocked port test 6697
 PASS WebSocket blocked port test 10080
 
