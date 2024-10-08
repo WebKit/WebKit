@@ -1202,7 +1202,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier 
     }
 
     auto repaintIfNecessary = [&](bool checkForRepaint) {
-        if (!m_hasVisibleContent || !isSelfPaintingLayer()) {
+        if (isVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer()) {
             LAYER_POSITIONS_ASSERT_IMPLIES(mode == Verify, !repaintRects());
             clearRepaintRects();
             return;
@@ -1394,7 +1394,7 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    if (!m_hasVisibleContent || !isSelfPaintingLayer())
+    if (isVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer())
         clearRepaintRects();
     else
         setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
@@ -5757,6 +5757,11 @@ bool RenderLayer::hasVisibleBoxDecorations() const
         return false;
 
     return hasVisibleBoxDecorationsOrBackground() || (m_scrollableArea && m_scrollableArea->hasOverflowControls());
+}
+
+bool RenderLayer::isVisibilityHiddenOrOpacityZero() const
+{
+    return !hasVisibleContent() || !renderer().style().opacity();
 }
 
 bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const

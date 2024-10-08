@@ -575,6 +575,8 @@ public:
         RequestState hasPaintedContent { RequestState::Unknown };
     };
 
+    bool isVisibilityHiddenOrOpacityZero() const;
+
     // Returns true if this layer has visible content (ignoring any child layers).
     bool isVisuallyNonEmpty(PaintedContentRequest* = nullptr) const;
     // True if this layer container renderers that paint.

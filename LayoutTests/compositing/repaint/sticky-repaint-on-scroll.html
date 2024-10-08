@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 4000px;
+        }
+        
+        .sticky {
+            position: sticky;
+            top: 200px;
+            height: 1000px;
+        }
+
+        .layer.child {
+            position: relative;
+            margin: 20px;
+        }
+        
+        #layout-trigger {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>    
+    <script>
+        var jsTestIsAsync = true;
+
+        window.addEventListener('load', async () => {
+            window.onscroll = () => {
+                document.getElementById('layout-trigger').style.left = `${window.scrollY / 4}px`;
+            }
+            
+            await UIHelper.renderingUpdate();
+            await UIHelper.statelessMouseWheelScrollAt(10, 10, 0, -1);
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                window.internals.startTrackingRepaints();
+
+            await Promise.all([
+                UIHelper.waitForEvent(window, 'scroll'),
+                UIHelper.statelessMouseWheelScrollAt(10, 10, 0, -1)
+            ]);
+
+            const layerTree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            repaintCount = (layerTree.match(/\(rect 0\.00 0\.00 769\.00 1000\.00\)/g) || []).length
+            shouldBe('repaintCount', '1');
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="layout-trigger"></div>
+    <div class="sticky">
+        <div class="layer child">A</div>
+        <div class="layer child">A</div>
+        <div class="layer child">A</div>
+    </div>
+<div id="console"></div>
+</body>
+</html>
