@@ -39,14 +39,14 @@ namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
 
-void ArgumentCoder<GRefPtr<GtkPrintSettings>>::encode(Encoder& encoder, const GRefPtr<GtkPrintSettings>& argument)
+void ArgumentCoder<GtkPrintSettings*>::encode(Encoder& encoder, GtkPrintSettings* argument)
 {
     GRefPtr<GtkPrintSettings> printSettings = argument ? argument : adoptGRef(gtk_print_settings_new());
     GRefPtr<GVariant> variant = adoptGRef(gtk_print_settings_to_gvariant(printSettings.get()));
     encoder << variant;
 }
 
-std::optional<GRefPtr<GtkPrintSettings>> ArgumentCoder<GRefPtr<GtkPrintSettings>>::decode(Decoder& decoder)
+std::optional<GtkPrintSettings*> ArgumentCoder<GtkPrintSettings*>::decode(Decoder& decoder)
 {
     auto variant = decoder.decode<GRefPtr<GVariant>>();
     if (UNLIKELY(!variant))
@@ -55,14 +55,14 @@ std::optional<GRefPtr<GtkPrintSettings>> ArgumentCoder<GRefPtr<GtkPrintSettings>
     return gtk_print_settings_new_from_gvariant(variant->get());
 }
 
-void ArgumentCoder<GRefPtr<GtkPageSetup>>::encode(Encoder& encoder, const GRefPtr<GtkPageSetup>& argument)
+void ArgumentCoder<GtkPageSetup*>::encode(Encoder& encoder, GtkPageSetup* argument)
 {
     GRefPtr<GtkPageSetup> pageSetup = argument ? argument : adoptGRef(gtk_page_setup_new());
     GRefPtr<GVariant> variant = adoptGRef(gtk_page_setup_to_gvariant(pageSetup.get()));
     encoder << variant;
 }
 
-std::optional<GRefPtr<GtkPageSetup>> ArgumentCoder<GRefPtr<GtkPageSetup>>::decode(Decoder& decoder)
+std::optional<GtkPageSetup*> ArgumentCoder<GtkPageSetup*>::decode(Decoder& decoder)
 {
     auto variant = decoder.decode<GRefPtr<GVariant>>();
     if (UNLIKELY(!variant))
