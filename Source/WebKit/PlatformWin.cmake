@@ -76,7 +76,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/WebPage/AcceleratedSurface.cpp
 
-    WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
     WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp

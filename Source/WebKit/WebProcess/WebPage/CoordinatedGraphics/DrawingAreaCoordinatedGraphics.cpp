@@ -52,6 +52,10 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
+#include "LayerTreeHostTextureMapper.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

@@ -326,7 +326,6 @@ WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
-WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
 WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
