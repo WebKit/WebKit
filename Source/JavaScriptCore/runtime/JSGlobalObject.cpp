@@ -1698,9 +1698,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isArraySlow)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "isArraySlow"_s, arrayConstructorPrivateFuncIsArraySlow, ImplementationVisibility::Private));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::concatMemcpy)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "concatMemcpy"_s, arrayProtoPrivateFuncConcatMemcpy, ImplementationVisibility::Private));
-        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::appendMemcpy)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "appendMemcpy"_s, arrayProtoPrivateFuncAppendMemcpy, ImplementationVisibility::Private));
         });
@@ -1943,6 +1940,14 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_arrayPrototypeNegativeOneMissWatchpoint->install(vm);
         m_objectPrototypeNegativeOneMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceObjectPrototype, m_arrayNegativeOneWatchpointSet);
         m_objectPrototypeNegativeOneMissWatchpoint->install(vm);
+    }
+    {
+        auto absenceArrayPrototype = setupAbsenceAdaptiveWatchpoint(this, m_arrayPrototype.get(), vm.propertyNames->isConcatSpreadableSymbol, objectPrototype());
+        auto absenceObjectPrototype = setupAbsenceAdaptiveWatchpoint(this, m_objectPrototype.get(), vm.propertyNames->isConcatSpreadableSymbol, nullptr);
+        m_arrayPrototypeIsConcatSpreadableMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceArrayPrototype, m_arrayIsConcatSpreadableWatchpointSet);
+        m_arrayPrototypeIsConcatSpreadableMissWatchpoint->install(vm);
+        m_objectPrototypeIsConcatSpreadableMissWatchpoint = makeUnique<ObjectAdaptiveStructureWatchpoint>(this, absenceObjectPrototype, m_arrayIsConcatSpreadableWatchpointSet);
+        m_objectPrototypeIsConcatSpreadableMissWatchpoint->install(vm);
     }
 
     installArraySpeciesWatchpoint();

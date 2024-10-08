@@ -82,7 +82,6 @@ class JSGlobalObject;
     v(repeatCharacter, nullptr) \
     v(isArray, nullptr) \
     v(isArraySlow, nullptr) \
-    v(concatMemcpy, nullptr) \
     v(appendMemcpy, nullptr) \
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
