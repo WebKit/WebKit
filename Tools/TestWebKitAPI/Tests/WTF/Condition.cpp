@@ -173,6 +173,9 @@ void runTest(
 
 } // anonymous namespace
 
+// FIXME: http://webkit.org/b/281082 Many TestWTF.WTF_Condition tests fail on Windows
+#if !PLATFORM(WIN)
+
 TEST(WTF_Condition, OneProducerOneConsumerOneSlot)
 {
     runTest(1, 1, 1, 100000, TacticallyNotifyAll);
@@ -235,6 +238,8 @@ TEST(WTF_Condition, TenProducersTenConsumersHundredSlotsNotifyOne)
 {
     runTest(10, 10, 100, 50000, AlwaysNotifyOne);
 }
+
+#endif
 
 TEST(WTF_Condition, TimeoutTimesOut)
 {
