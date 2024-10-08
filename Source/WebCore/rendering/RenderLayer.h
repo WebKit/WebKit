@@ -1293,7 +1293,7 @@ private:
                                  // we ended up painting this layer or any descendants (and therefore need to
                                  // blend).
     bool m_paintingInsideReflection : 1;  // A state bit tracking if we are painting inside a replica.
-    RepaintStatus m_repaintStatus : 2 { RepaintStatus::NeedsNormalRepaint };
+    RepaintStatus m_repaintStatus { RepaintStatus::NeedsNormalRepaint };
 
     bool m_visibleContentStatusDirty : 1;
     bool m_hasVisibleContent : 1;
