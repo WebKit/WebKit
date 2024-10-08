@@ -1857,7 +1857,7 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_remove_setcapture_node.html [ Pass Failure ]
 
 # webkit.org/b/280378 [ Sequoia arm64 ] 14x http/tests/media/fairplay/* are constant failures
-[ Sequoia arm64 Release ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure ] 
+[ Sequoia arm64 ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure ] 
 
 # webkit.org/b/280413 [ macOS wk2 arm64 ] fast/forms/password-scrolled-after-caps-lock-toggled.html is a flaky failure 
 [ arm64 ] fast/forms/password-scrolled-after-caps-lock-toggled.html  [ Pass Failure ]
