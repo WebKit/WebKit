@@ -168,6 +168,10 @@ public:
     }
 #endif
 
+    bool hasValidAtom() const { return !m_atom.isNull(); }
+    const String& atom() const { return m_atom; }
+    void setAtom(String&& atom) { m_atom = WTFMove(atom); }
+
 private:
     friend class RegExpCache;
     RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
@@ -215,6 +219,7 @@ private:
     };
 
     String m_patternString;
+    String m_atom;
     RegExpState m_state { NotCompiled };
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };

@@ -720,6 +720,7 @@ struct YarrPattern {
     // duplicateNamedGroupId. Subsequent vector entries are the subpatternId's for that duplicateNamedGroupId.
     HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
     Vector<unsigned> m_duplicateNamedGroupForSubpatternId;
+    String m_atom;
 
 private:
     ErrorCode compile(StringView patternString);
