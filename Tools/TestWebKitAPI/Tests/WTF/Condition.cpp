@@ -36,6 +36,9 @@
 
 namespace TestWebKitAPI {
 
+// FIXME: http://webkit.org/b/281082 Many TestWTF.WTF_Condition tests time out on Windows
+#if !PLATFORM(WIN)
+
 namespace {
 
 static Lock lock;
@@ -172,9 +175,6 @@ void runTest(
 }
 
 } // anonymous namespace
-
-// FIXME: http://webkit.org/b/281082 Many TestWTF.WTF_Condition tests fail on Windows
-#if !PLATFORM(WIN)
 
 TEST(WTF_Condition, OneProducerOneConsumerOneSlot)
 {
