@@ -416,6 +416,15 @@ bool anyItemsExceedQuota(NSDictionary *items, size_t quota, NSString **outKeyWit
     return itemExceededQuota;
 }
 
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
+{
+    RefPtr coreFrame = frame.coreLocalFrame();
+    RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+    if (!document)
+        return { };
+    return document->identifier().object();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -56,6 +56,7 @@ static NSString * const originKey = @"origin";
 static NSString * const nameKey = @"name";
 static NSString * const reasonKey = @"reason";
 static NSString * const previousVersionKey = @"previousVersion";
+static NSString * const documentIdKey = @"documentId";
 
 namespace WebKit {
 
@@ -304,6 +305,12 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID,
         return;
     }
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return;
+    }
+
     // No options are supported currently.
 
     WebExtensionMessageSenderParameters senderParameters {
@@ -313,6 +320,7 @@ void WebExtensionAPIRuntime::sendMessage(WebFrame& frame, NSString *extensionID,
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeSendMessage(extensionID, messageJSON, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
@@ -329,6 +337,12 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return nullptr;
+    }
+
     std::optional<String> name;
     if (!parseConnectOptions(options, name, @"options", outExceptionString))
         return nullptr;
@@ -342,6 +356,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebFrame& frame, JSC
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::Main, resolvedName);
@@ -397,6 +412,12 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebFrame& frame, NSString *exten
         return;
     }
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return;
+    }
+
     // No options are supported currently.
 
     WebExtensionMessageSenderParameters senderParameters {
@@ -406,6 +427,7 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebFrame& frame, NSString *exten
         frame.page()->webPageProxyIdentifier(),
         WebExtensionContentWorldType::WebPage,
         frame.url(),
+        documentIdentifier.value(),
     };
 
     Ref page = *frame.page();
@@ -437,6 +459,12 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebFrame& fra
     if (!WebExtensionAPIRuntime::parseConnectOptions(options, name, @"options", outExceptionString))
         return nullptr;
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return nullptr;
+    }
+
     String resolvedName = name.value_or(nullString());
 
     WebExtensionMessageSenderParameters senderParameters {
@@ -446,6 +474,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebFrame& fra
         frame.page()->webPageProxyIdentifier(),
         WebExtensionContentWorldType::WebPage,
         frame.url(),
+        documentIdentifier.value(),
     };
 
     Ref page = *frame.page();
@@ -552,6 +581,9 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
         result[urlKey] = (NSString *)parameters.url.string();
         result[originKey] = (NSString *)WebCore::SecurityOrigin::create(parameters.url)->toString();
     }
+
+    if (parameters.documentIdentifier.isValid())
+        result[documentIdKey] = (NSString *)parameters.documentIdentifier.toString();
 
     return [result copy];
 }

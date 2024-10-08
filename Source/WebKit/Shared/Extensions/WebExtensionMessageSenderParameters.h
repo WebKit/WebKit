@@ -41,6 +41,7 @@ struct WebExtensionMessageSenderParameters {
     WebPageProxyIdentifier pageProxyIdentifier;
     WebExtensionContentWorldType contentWorldType { WebExtensionContentWorldType::ContentScript };
     URL url;
+    WTF::UUID documentIdentifier { 0 };
 };
 
 } // namespace WebKit

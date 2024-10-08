@@ -31,6 +31,8 @@
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Markable.h>
+#include <wtf/UUID.h>
 #include <wtf/Vector.h>
 
 #ifdef __OBJC__
@@ -39,6 +41,8 @@
 #endif
 
 namespace WebKit {
+
+class WebFrame;
 
 Ref<JSON::Array> filterObjects(const JSON::Array&, WTF::Function<bool(const JSON::Value&)>&& lambda);
 
@@ -117,6 +121,8 @@ Unexpected<WebExtensionError> toWebExtensionError(NSString *callingAPIName, NSSt
 }
 
 #endif // __OBJC__
+
+Markable<WTF::UUID> toDocumentIdentifier(WebFrame&);
 
 } // namespace WebKit
 

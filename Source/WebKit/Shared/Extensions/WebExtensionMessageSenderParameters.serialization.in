@@ -29,6 +29,7 @@ struct WebKit::WebExtensionMessageSenderParameters {
     WebKit::WebPageProxyIdentifier pageProxyIdentifier;
     WebKit::WebExtensionContentWorldType contentWorldType;
     URL url;
+    WTF::UUID documentIdentifier;
 };
 
 #endif

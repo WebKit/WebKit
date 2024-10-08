@@ -940,6 +940,12 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         return;
     }
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(@"runtime.sendMessage()", nil, @"an unexpected error occured");
+        return;
+    }
+
     std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
     if (!parseSendMessageOptions(options, targetFrameIdentifier, @"options", outExceptionString))
         return;
@@ -951,6 +957,7 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::TabsSendMessage(tabIdentifer.value(), messageJSON, targetFrameIdentifier, senderParameters), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<String, WebExtensionError>&& result) {
@@ -971,6 +978,12 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
     if (!isValid(tabIdentifer, outExceptionString))
         return nullptr;
 
+    auto documentIdentifier = toDocumentIdentifier(frame);
+    if (!documentIdentifier) {
+        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        return nullptr;
+    }
+
     std::optional<String> name;
     std::optional<WebExtensionFrameIdentifier> targetFrameIdentifier;
     if (!parseConnectOptions(options, name, targetFrameIdentifier, @"options", outExceptionString))
@@ -985,6 +998,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
         frame.page()->webPageProxyIdentifier(),
         contentWorldType(),
         frame.url(),
+        documentIdentifier.value(),
     };
 
     auto port = WebExtensionAPIPort::create(*this, *frame.page(), WebExtensionContentWorldType::ContentScript, resolvedName);
