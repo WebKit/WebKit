@@ -619,7 +619,7 @@ void RenderTable::layout()
     }
 
     bool paginated = layoutState && layoutState->isPaginated();
-    if (sectionMoved && paginated) {
+    if (sectionCount && sectionMoved && paginated) {
         // FIXME: Table layout should always stabilize even when section moves (see webkit.org/b/174412).
         if (m_recursiveSectionMovedWithPaginationLevel < sectionCount) {
             SetForScope recursiveSectionMovedWithPaginationLevel(m_recursiveSectionMovedWithPaginationLevel, m_recursiveSectionMovedWithPaginationLevel + 1);

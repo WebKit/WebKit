@@ -5638,8 +5638,6 @@ webkit.org/b/139128 imported/w3c/web-platform-tests/css/css-will-change/will-cha
 
 webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
 
-webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]
-
 # Needs display box support.
 fast/layoutformattingcontext/ [ Skip ]
 
