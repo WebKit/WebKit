@@ -866,6 +866,7 @@ static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
 {
     switch (viewDimension) {
     case WGPUTextureViewDimension_Cube:
+        return WGSL::TextureViewDimension::Cube;
     case WGPUTextureViewDimension_1D:
         return WGSL::TextureViewDimension::OneDimensional;
     case WGPUTextureViewDimension_2D:

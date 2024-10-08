@@ -78,7 +78,7 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
         return returnInvalidComputePipeline(*this, isAsync);
 
     ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
-    if (!shaderModule.isValid() || &shaderModule.device() != this)
+    if (!shaderModule.isValid() || &shaderModule.device() != this || !descriptor.layout)
         return returnInvalidComputePipeline(*this, isAsync);
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
