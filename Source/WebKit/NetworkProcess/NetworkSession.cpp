@@ -809,12 +809,12 @@ void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier w
     m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
 }
 
-std::unique_ptr<SWRegistrationStore> NetworkSession::createUniqueRegistrationStore(WebCore::SWServer& server)
+RefPtr<SWRegistrationStore> NetworkSession::createRegistrationStore(WebCore::SWServer& server)
 {
     if (m_sessionID.isEphemeral())
         return nullptr;
 
-    return makeUnique<WebSWRegistrationStore>(server, m_storageManager.get());
+    return WebSWRegistrationStore::create(server, m_storageManager.get());
 }
 
 RefPtr<BackgroundFetchRecordLoader> NetworkSession::createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const WebCore::BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)

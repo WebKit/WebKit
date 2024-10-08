@@ -35,11 +35,6 @@ namespace WebKit {
 class WebSWRegistrationStore;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSWRegistrationStore> : std::true_type { };
-}
-
 namespace WebCore {
 class SWServer;
 }
@@ -48,12 +43,14 @@ namespace WebKit {
 
 class NetworkStorageManager;
 
-class WebSWRegistrationStore final : public WebCore::SWRegistrationStore, public CanMakeWeakPtr<WebSWRegistrationStore> {
+class WebSWRegistrationStore final : public WebCore::SWRegistrationStore {
     WTF_MAKE_TZONE_ALLOCATED(WebSWRegistrationStore);
 public:
-    WebSWRegistrationStore(WebCore::SWServer&, NetworkStorageManager&);
+    static Ref<WebSWRegistrationStore> create(WebCore::SWServer&, NetworkStorageManager&);
 
 private:
+    WebSWRegistrationStore(WebCore::SWServer&, NetworkStorageManager&);
+
     // WebCore::SWRegistrationStore
     void clearAll(CompletionHandler<void()>&&);
     void flushChanges(CompletionHandler<void()>&&);

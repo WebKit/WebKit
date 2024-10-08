@@ -34,6 +34,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWRegistrationStore);
 
+Ref<WebSWRegistrationStore> WebSWRegistrationStore::create(WebCore::SWServer& server, NetworkStorageManager& manager)
+{
+    return adoptRef(*new WebSWRegistrationStore(server, manager));
+}
+
 WebSWRegistrationStore::WebSWRegistrationStore(WebCore::SWServer& server, NetworkStorageManager& manager)
     : m_server(server)
     , m_manager(manager)

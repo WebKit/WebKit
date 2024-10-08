@@ -260,8 +260,8 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     }
 
     m_originStore->remove(registration->key().topOrigin());
-    if (m_registrationStore)
-        m_registrationStore->removeRegistration(registration->key());
+    if (RefPtr store = m_registrationStore)
+        store->removeRegistration(registration->key());
 
     backgroundFetchEngine().remove(*registration);
 }
@@ -286,10 +286,11 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
 
 void SWServer::storeRegistrationsOnDisk(CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_registrationStore)
+    RefPtr store = m_registrationStore;
+    if (!store)
         return completionHandler();
 
-    m_registrationStore->closeFiles(WTFMove(completionHandler));
+    store->closeFiles(WTFMove(completionHandler));
 }
 
 void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
@@ -307,10 +308,12 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
         m_registrations.begin()->value->clear();
     m_pendingContextDatas.clear();
     m_originStore->clearAll();
-    if (!m_registrationStore)
+
+    RefPtr store = m_registrationStore;
+    if (!store)
         return completionHandler();
 
-    m_registrationStore->clearAll(WTFMove(completionHandler));
+    store->clearAll(WTFMove(completionHandler));
 }
 
 void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
@@ -362,10 +365,11 @@ void SWServer::clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>
     for (auto& registration : registrationsToRemove)
         registration->clear(); // Will destroy the registration.
 
-    if (!m_registrationStore)
+    RefPtr store = m_registrationStore;
+    if (!store)
         return completionHandler();
 
-    m_registrationStore->flushChanges(WTFMove(completionHandler));
+    store->flushChanges(WTFMove(completionHandler));
 }
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
@@ -405,9 +409,9 @@ SWServer::SWServer(SWServerDelegate& delegate, UniqueRef<SWOriginStore>&& origin
 {
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
 
-    m_registrationStore = m_delegate->createUniqueRegistrationStore(*this);
-    if (m_registrationStore) {
-        m_registrationStore->importRegistrations([weakThis = WeakPtr { *this }](auto&& result) mutable {
+    if (RefPtr store = m_delegate->createRegistrationStore(*this)) {
+        m_registrationStore = store;
+        store->importRegistrations([weakThis = WeakPtr { *this }](auto&& result) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
@@ -724,8 +728,8 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
 
 void SWServer::storeRegistrationForWorker(SWServerWorker& worker)
 {
-    if (m_registrationStore)
-        m_registrationStore->updateRegistration(worker.contextData());
+    if (RefPtr store = m_registrationStore)
+        store->updateRegistration(worker.contextData());
 }
 
 // https://w3c.github.io/ServiceWorker/#clients-getall
