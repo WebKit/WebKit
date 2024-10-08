@@ -863,13 +863,6 @@ void Options::notifyOptionsChanged()
         if (Options::forceAllFunctionsToUseSIMD() && !Options::useWasmSIMD())
             Options::forceAllFunctionsToUseSIMD() = false;
 
-#if USE(JSVALUE32_64)
-        if (Options::useWasmTailCalls()) {
-            Options::useBBQJIT() = false;
-            Options::useWasmLLInt() = true;
-        }
-#endif
-
         if (Options::useWasmSIMD() && !(Options::useWasmLLInt() || Options::useWasmIPInt())) {
             // The LLInt is responsible for discovering if functions use SIMD.
             // If we can't run using it, then we should be conservative.

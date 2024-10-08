@@ -4144,10 +4144,9 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister), callerFramePointer);
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(ARM_THUMB2)
     m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
 #else
-    // FIXME: add support for armv7
     UNUSED_PARAM(callerFramePointer);
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -4164,14 +4163,15 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
         consume(arguments[i]);
     }
 
-    for (const auto& param : callInfo.params) {
+    for (size_t i = 0; i < callInfo.params.size(); ++i) {
+        auto param = callInfo.params[i];
         switch (param.location.kind()) {
         case ValueLocation::Kind::GPRRegister:
-            parameterLocations.append(Location::fromGPR(param.location.jsr().payloadGPR()));
+        case ValueLocation::Kind::FPRRegister: {
+            auto type = signature.as<FunctionSignature>()->argumentType(i);
+            parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
             break;
-        case ValueLocation::Kind::FPRRegister:
-            parameterLocations.append(Location::fromFPR(param.location.fpr()));
-            break;
+        }
         case ValueLocation::Kind::StackArgument:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -4194,7 +4194,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
 
     // Fix SP and FP
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int32_t>(prologueStackPointerDelta())), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
-    m_jit.move(scratches.gpr(0), MacroAssembler::framePointerRegister);
+    m_jit.move(callerFramePointer, MacroAssembler::framePointerRegister);
 
     // Nothing should refer to FP after this point.
 
@@ -4354,11 +4354,15 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
     resolvedArguments.append(Value::pinned(pointerType(), Location::fromStack(sizeof(Register))));
     parameterLocations.append(Location::fromStack(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))));
-#elif CPU(ARM64)
-    ScratchScope<1, 0> scratches(*this, RegisterSetBuilder::argumentGPRs(), calleeCode, callingConvention.prologueScratchGPRs[0]);
-    m_jit.loadPairPtr(MacroAssembler::framePointerRegister, scratches.gpr(0), MacroAssembler::linkRegister);
+#elif CPU(ARM64) || CPU(ARM_THUMB2)
+    auto preserved = callingConvention.argumentGPRs();
+    preserved.add(calleeCode, IgnoreVectors);
+    if constexpr (isARM64E())
+        preserved.add(callingConvention.prologueScratchGPRs[0], IgnoreVectors);
+    ScratchScope<1, 0> scratches(*this, WTFMove(preserved));
+    GPRReg callerFramePointer = scratches.gpr(0);
+    m_jit.loadPairPtr(MacroAssembler::framePointerRegister, callerFramePointer, MacroAssembler::linkRegister);
 #else
-    // FIXME: Add support for armv7
     UNREACHABLE_FOR_PLATFORM();
 #endif
 
@@ -4372,14 +4376,15 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         consume(arguments[i]);
     }
 
-    for (const auto& param : callInfo.params) {
+    for (size_t i = 0; i < callInfo.params.size(); ++i) {
+        auto param = callInfo.params[i];
         switch (param.location.kind()) {
         case ValueLocation::Kind::GPRRegister:
-            parameterLocations.append(Location::fromGPR(param.location.jsr().payloadGPR()));
+        case ValueLocation::Kind::FPRRegister: {
+            auto type = signature.as<FunctionSignature>()->argumentType(i);
+            parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
             break;
-        case ValueLocation::Kind::FPRRegister:
-            parameterLocations.append(Location::fromFPR(param.location.fpr()));
-            break;
+        }
         case ValueLocation::Kind::StackArgument:
             RELEASE_ASSERT_NOT_REACHED();
             break;
@@ -4405,11 +4410,10 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
     m_jit.loadPtr(Address(MacroAssembler::framePointerRegister, tailCallStackOffsetFromFP), wasmScratchGPR);
     m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(Register))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     m_jit.move(wasmScratchGPR, MacroAssembler::framePointerRegister);
-#elif CPU(ARM64)
-    m_jit.add64(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(CallerFrameAndPC))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
-    m_jit.move(scratches.gpr(0), MacroAssembler::framePointerRegister);
+#elif CPU(ARM64) || CPU(ARM_THUMB2)
+    m_jit.addPtr(TrustedImm32(tailCallStackOffsetFromFP + Checked<int>(sizeof(CallerFrameAndPC))), MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
+    m_jit.move(callerFramePointer, MacroAssembler::framePointerRegister);
 #else
-    // FIXME: Add support for armv7
     UNREACHABLE_FOR_PLATFORM();
 #endif
 
