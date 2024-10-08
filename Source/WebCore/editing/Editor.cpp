@@ -1324,7 +1324,8 @@ void Editor::reappliedEditing(EditCommandComposition& composition)
     updateEditorUINowIfScheduled();
 
 #if ENABLE(WRITING_TOOLS)
-    protectedDocument()->page()->respondToReappliedWritingToolsEditing(&composition);
+    if (RefPtr page = document().page())
+        page->respondToReappliedWritingToolsEditing(&composition);
 #endif
 
     m_lastEditCommand = nullptr;

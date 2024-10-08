@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
+
+This test passes if it does not crash.
