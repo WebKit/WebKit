@@ -265,8 +265,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
     auto& pageConfiguration = _page->configuration();
-    auto& openerInfo = pageConfiguration.openerInfo();
-    _page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
+    _page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 
     [self _updateRuntimeProtocolConformanceIfNeeded];
 

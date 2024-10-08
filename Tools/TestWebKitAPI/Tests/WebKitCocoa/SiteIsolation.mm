@@ -3428,4 +3428,19 @@ TEST(SiteIsolation, RedirectToCSP)
     [navigationDelegate waitForDidFinishNavigation];
 }
 
+TEST(SiteIsolation, MultipleWebViewsWithSameOpenedConfiguration)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='/iframe'></iframe>"_s } },
+        { "/iframe"_s, {
+            "<script>onload = () => { document.getElementById('mylink').click() }</script>"
+            "<a href='/popup' target='_blank' id='mylink'>link</a>"_s
+        } },
+        { "/popup"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:opened.webView.get().configuration]);
+    [opened.navigationDelegate waitForDidFinishNavigation];
+}
+
 }

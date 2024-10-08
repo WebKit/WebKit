@@ -58,8 +58,7 @@ PlayStationWebView::PlayStationWebView(struct wpe_view_backend* backend, const A
     wpe_view_backend_initialize(m_backend);
 
     auto& pageConfiguration = m_page->configuration();
-    auto& openerInfo = pageConfiguration.openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
+    m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 }
 
 #else
@@ -78,8 +77,7 @@ PlayStationWebView::PlayStationWebView(const API::PageConfiguration& conf)
     m_page = pool.createWebPage(*m_pageClient, WTFMove(configuration));
 
     auto& pageConfiguration = m_page->configuration();
-    auto& openerInfo = pageConfiguration.openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : WebCore::Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
+    m_page->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 }
 
 #endif // USE(WPE_BACKEND_PLAYSTATION)

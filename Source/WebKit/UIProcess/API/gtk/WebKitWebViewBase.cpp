@@ -2541,8 +2541,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<AP
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
 
     auto& pageConfiguration = priv->pageProxy->configuration();
-    auto& openerInfo = pageConfiguration.openerInfo();
-    priv->pageProxy->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()), pageConfiguration.initialSandboxFlags());
+    priv->pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
 
     if (priv->displayID)
         priv->pageProxy->windowScreenDidChange(priv->displayID);

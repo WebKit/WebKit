@@ -239,8 +239,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
     m_page = processPool.createWebPage(*m_pageClient, WTFMove(pageConfiguration));
 
     auto& configurationFromPage = m_page->configuration();
-    auto& openerInfo = configurationFromPage.openerInfo();
-    m_page->initializeWebPage(openerInfo ? openerInfo->site : Site(aboutBlankURL()), configurationFromPage.initialSandboxFlags());
+    m_page->initializeWebPage(configurationFromPage.openedSite(), configurationFromPage.initialSandboxFlags());
 
     m_page->setIntrinsicDeviceScaleFactor(deviceScaleFactorForWindow(m_window));
 

@@ -111,12 +111,14 @@ public:
 
     struct OpenerInfo {
         Ref<WebKit::WebProcessProxy> process;
-        WebCore::Site site;
         WebCore::FrameIdentifier frameID;
         bool operator==(const OpenerInfo&) const;
     };
     const std::optional<OpenerInfo>& openerInfo() const;
     void setOpenerInfo(std::optional<OpenerInfo>&&);
+
+    const WebCore::Site& openedSite() const;
+    void setOpenedSite(const WebCore::Site&);
 
     WebCore::SandboxFlags initialSandboxFlags() const;
     void setInitialSandboxFlags(WebCore::SandboxFlags);
@@ -462,6 +464,8 @@ public:
 
 private:
     struct Data {
+        Data();
+
         template<typename T, Ref<T>(*initializer)()> class LazyInitializedRef {
         public:
             LazyInitializedRef() = default;
@@ -507,6 +511,7 @@ private:
         RefPtr<WebKit::WebPageGroup> pageGroup;
         WeakPtr<WebKit::WebPageProxy> relatedPage;
         std::optional<OpenerInfo> openerInfo;
+        WebCore::Site openedSite;
         std::optional<WebCore::WindowFeatures> windowFeatures;
         WebCore::SandboxFlags initialSandboxFlags;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
