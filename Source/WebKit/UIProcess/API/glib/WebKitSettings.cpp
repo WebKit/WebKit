@@ -1071,7 +1071,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-fullscreen",
             _("Enable Fullscreen"),
             _("Whether to enable the Javascript Fullscreen API"),
+#if ENABLE(FULLSCREEN_API)
             FEATURE_DEFAULT(FullScreenEnabled),
+#else
+            FALSE,
+#endif
             readWriteConstructParamFlags);
 
     /**

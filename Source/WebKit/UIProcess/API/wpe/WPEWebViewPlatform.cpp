@@ -252,6 +252,8 @@ bool ViewPlatform::activityStateChanged(WebCore::ActivityState state, bool value
 void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPEToplevelState state)
 {
     uint32_t changedMask = state ^ previousState;
+
+#if ENABLE(FULLSCREEN_API)
     if (changedMask & WPE_TOPLEVEL_STATE_FULLSCREEN) {
         switch (m_fullscreenState) {
         case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
@@ -270,6 +272,7 @@ void ViewPlatform::toplevelStateChanged(WPEToplevelState previousState, WPETople
             break;
         }
     }
+#endif
 
     if (changedMask & WPE_TOPLEVEL_STATE_ACTIVE)
         activityStateChanged(WebCore::ActivityState::WindowIsActive, state & WPE_TOPLEVEL_STATE_ACTIVE);
