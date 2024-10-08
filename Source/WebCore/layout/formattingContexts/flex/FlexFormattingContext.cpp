@@ -54,15 +54,7 @@ FlexFormattingContext::FlexFormattingContext(const ElementBox& flexBox, LayoutSt
 void FlexFormattingContext::layout(const ConstraintsForFlexContent& constraints)
 {
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
-    auto flexLayout = FlexLayout { *this };
-
-    // FIXME: Move this over to integration.
-    auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
-    auto logicalHorizontalSpace = isMainAxisParallelWithInlineAxis ? constraints.mainAxis().availableSize : constraints.crossAxis().availableSize;
-    auto logicalVerticalSpace = isMainAxisParallelWithInlineAxis ? constraints.crossAxis().availableSize : constraints.mainAxis().availableSize;
-
-    auto adjustedConstraints = ConstraintsForFlexContent { { { }, { }, logicalHorizontalSpace, constraints.mainAxis().startPosition }, { { }, { }, logicalVerticalSpace, constraints.crossAxis().startPosition }, constraints.isSizedUnderMinMax() };
-    auto flexItemRects = flexLayout.layout(adjustedConstraints, logicalFlexItems);
+    auto flexItemRects = FlexLayout { *this }.layout(constraints, logicalFlexItems);
     setFlexItemsGeometry(logicalFlexItems, flexItemRects, constraints);
 }
 
