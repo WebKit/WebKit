@@ -1896,3 +1896,6 @@ tiled-drawing/tile-size-slow-zoomed.html [ Pass Failure ]
 
 # webkit.org/b/281090 REGRESSION(284131@main?):[ macOS wk2 x86_64  ] http/tests/site-isolation/selection-focus.html is a constant ImageOnlyFailure 
 [ x86_64 ] http/tests/site-isolation/selection-focus.html [ ImageOnlyFailure ]
+
+# webkit.org/b/281089 REGRESSION(284750@main): [macOS iOS Debug] ASSERTION FAILED: !child->frameID() in http/tests/site-isolation/draw-after-cross-origin-navigation-between-two-remote-frames.html
+[ Debug ] http/tests/site-isolation/draw-after-cross-origin-navigation-between-two-remote-frames.html [ Pass Timeout ImageOnlyFailure ]
