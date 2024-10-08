@@ -73,10 +73,10 @@ bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
     auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), { });
-    auto [identifier, configuration] = sendResult.takeReplyOr(RemoteCDMIdentifier { }, RemoteCDMConfiguration { });
+    auto [identifier, configuration] = sendResult.takeReplyOr(std::nullopt, RemoteCDMConfiguration { });
     if (!identifier)
         return nullptr;
-    return RemoteCDM::create(*this, WTFMove(identifier), WTFMove(configuration));
+    return RemoteCDM::create(*this, WTFMove(*identifier), WTFMove(configuration));
 }
 
 void RemoteCDMFactory::addSession(RemoteCDMInstanceSession& session)
@@ -99,8 +99,10 @@ void RemoteCDMFactory::removeInstance(RemoteCDMInstanceIdentifier identifier)
 
 void RemoteCDMFactory::didReceiveSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+            session->didReceiveMessage(connection, decoder);
+    }
 }
 
 }

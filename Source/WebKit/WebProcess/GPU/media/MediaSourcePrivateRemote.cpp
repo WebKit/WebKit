@@ -111,14 +111,13 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
         return AddStatus::NotSupported;
 
     AddStatus returnedStatus;
-    RemoteSourceBufferIdentifier returnedIdentifier;
     RefPtr<SourceBufferPrivate> returnedSourceBuffer;
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 
     // the sendSync() call requires us to run on the connection's dispatcher, which is the main thread.
     // FIXME: Uses a new Connection for remote playback, and not the main GPUProcessConnection's one.
     // FIXME: m_mimeTypeCache is a main-thread only object.
-    callOnMainRunLoopAndWait([this, &returnedStatus, &returnedIdentifier, contentTypeString = contentType.raw().isolatedCopy(), &returnedSourceBuffer, gpuProcessConnection] {
+    callOnMainRunLoopAndWait([this, &returnedStatus, contentTypeString = contentType.raw().isolatedCopy(), &returnedSourceBuffer, gpuProcessConnection] {
         ContentType contentType { contentTypeString };
         MediaEngineSupportParameters parameters;
         parameters.isMediaSource = true;
@@ -133,7 +132,6 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
 
         if (status == AddStatus::Ok) {
             ASSERT(remoteSourceBufferIdentifier.has_value());
-            returnedIdentifier = * remoteSourceBufferIdentifier;
             returnedSourceBuffer = SourceBufferPrivateRemote::create(*gpuProcessConnection, *remoteSourceBufferIdentifier, *this);
         }
         returnedStatus = status;

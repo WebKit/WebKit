@@ -67,17 +67,17 @@ static CDMFactory* factoryForKeySystem(const String& keySystem)
     return factories[foundIndex];
 }
 
-void RemoteCDMFactoryProxy::createCDM(const String& keySystem, CompletionHandler<void(RemoteCDMIdentifier&&, RemoteCDMConfiguration&&)>&& completion)
+void RemoteCDMFactoryProxy::createCDM(const String& keySystem, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&& completion)
 {
     auto factory = factoryForKeySystem(keySystem);
     if (!factory) {
-        completion({ }, { });
+        completion(std::nullopt, { });
         return;
     }
 
     auto privateCDM = factory->createCDM(keySystem, *this);
     if (!privateCDM) {
-        completion({ }, { });
+        completion(std::nullopt, { });
         return;
     }
 
@@ -95,40 +95,52 @@ void RemoteCDMFactoryProxy::supportsKeySystem(const String& keySystem, Completio
 
 void RemoteCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (RefPtr proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
-        proxy->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteCDMIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (RefPtr proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
+            proxy->didReceiveMessage(connection, decoder);
+    }
 }
 
 void RemoteCDMFactoryProxy::didReceiveCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* instance = m_instances.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
-        instance->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteCDMInstanceIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
+            instance->didReceiveMessage(connection, decoder);
+    }
 }
 
 void RemoteCDMFactoryProxy::didReceiveCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+            session->didReceiveMessage(connection, decoder);
+    }
 }
 
 bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (RefPtr proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
-        return proxy->didReceiveSyncMessage(connection, decoder, encoder);
+    if (ObjectIdentifier<RemoteCDMIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (RefPtr proxy = m_proxies.get(ObjectIdentifier<RemoteCDMIdentifierType>(decoder.destinationID())))
+            return proxy->didReceiveSyncMessage(connection, decoder, encoder);
+    }
     return false;
 }
 
 bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* instance = m_instances.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
-        return instance->didReceiveSyncMessage(connection, decoder, encoder);
+    if (ObjectIdentifier<RemoteCDMInstanceIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
+            return instance->didReceiveSyncMessage(connection, decoder, encoder);
+    }
     return false;
 }
 
 bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
-        return session->didReceiveSyncMessage(connection, decoder, encoder);
+    if (ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* session = m_sessions.get(ObjectIdentifier<RemoteCDMInstanceSessionIdentifierType>(decoder.destinationID())))
+            return session->didReceiveSyncMessage(connection, decoder, encoder);
+    }
     return false;
 }
 

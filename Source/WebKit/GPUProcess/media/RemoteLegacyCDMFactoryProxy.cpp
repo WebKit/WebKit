@@ -70,11 +70,11 @@ void RemoteLegacyCDMFactoryProxy::clear()
         connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), proxy.key.toUInt64());
 }
 
-void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&& completion)
+void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::optional<MediaPlayerIdentifier>&& optionalPlayerId, CompletionHandler<void(std::optional<RemoteLegacyCDMIdentifier>&&)>&& completion)
 {
     auto privateCDM = LegacyCDM::create(keySystem);
     if (!privateCDM) {
-        completion({ });
+        completion(std::nullopt);
         return;
     }
 
@@ -98,27 +98,35 @@ void RemoteLegacyCDMFactoryProxy::supportsKeySystem(const String& keySystem, std
 
 void RemoteLegacyCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMIdentifierType>(decoder.destinationID())))
-        proxy->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteLegacyCDMIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteLegacyCDMIdentifierType>(decoder.destinationID())))
+            proxy->didReceiveMessage(connection, decoder);
+    }
 }
 
 void RemoteLegacyCDMFactoryProxy::didReceiveCDMSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
-        session->didReceiveMessage(connection, decoder);
+    if (ObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* session = m_sessions.get(ObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
+            session->didReceiveMessage(connection, decoder);
+    }
 }
 
 bool RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* proxy = m_proxies.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMIdentifierType>(decoder.destinationID())))
-        return proxy->didReceiveSyncMessage(connection, decoder, encoder);
+    if (ObjectIdentifier<RemoteLegacyCDMIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* proxy = m_proxies.get(ObjectIdentifier<RemoteLegacyCDMIdentifierType>(decoder.destinationID())))
+            return proxy->didReceiveSyncMessage(connection, decoder, encoder);
+    }
     return false;
 }
 
 bool RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
-    if (auto* session = m_sessions.get(LegacyNullableObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
-        return session->didReceiveSyncMessage(connection, decoder, encoder);
+    if (ObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        if (auto* session = m_sessions.get(ObjectIdentifier<RemoteLegacyCDMSessionIdentifierType>(decoder.destinationID())))
+            return session->didReceiveSyncMessage(connection, decoder, encoder);
+    }
     return false;
 }
 

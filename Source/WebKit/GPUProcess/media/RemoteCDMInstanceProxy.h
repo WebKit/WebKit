@@ -85,7 +85,7 @@ private:
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
     void setServerCertificate(Ref<WebCore::SharedBuffer>&&, CompletionHandler<void(SuccessValue)>&&);
     void setStorageDirectory(const String&);
-    void createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&&);
+    void createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&&);
 
     RefPtr<RemoteCDMProxy> protectedCdm() const;
 

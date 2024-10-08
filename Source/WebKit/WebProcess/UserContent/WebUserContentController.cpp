@@ -106,7 +106,6 @@ InjectedBundleScriptWorld* WebUserContentController::worldForIdentifier(ContentW
 
 InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const std::pair<ContentWorldIdentifier, String>& world)
 {
-    ASSERT(world.first);
     if (world.first == pageContentWorldIdentifier())
         return nullptr;
     
@@ -150,7 +149,6 @@ void WebUserContentController::addContentWorlds(const Vector<std::pair<ContentWo
 void WebUserContentController::removeContentWorlds(const Vector<ContentWorldIdentifier>& worldIdentifiers)
 {
     for (auto& worldIdentifier : worldIdentifiers) {
-        ASSERT(worldIdentifier);
         ASSERT(worldIdentifier != pageContentWorldIdentifier());
 
         auto it = worldMap().find(worldIdentifier);

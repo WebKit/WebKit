@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct RemoteImageBufferSetIdentifierType;
-using RemoteImageBufferSetIdentifier = LegacyNullableObjectIdentifier<RemoteImageBufferSetIdentifierType>;
+using RemoteImageBufferSetIdentifier = ObjectIdentifier<RemoteImageBufferSetIdentifierType>;
 
 }

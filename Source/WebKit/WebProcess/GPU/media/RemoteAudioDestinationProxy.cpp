@@ -161,7 +161,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
             frameCountHandle = m_frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
         }
         RELEASE_ASSERT(frameCountHandle.has_value());
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
@@ -171,7 +171,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
         auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { *m_destinationID, WTFMove(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(maxAudioBufferListSampleCount);
 #endif
@@ -190,7 +190,7 @@ IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
     if (auto gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && m_destinationID)
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(*m_destinationID), 0);
     stopRenderingThread();
 }
 
@@ -205,7 +205,7 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(isPlaying);
     });
@@ -222,7 +222,7 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });
@@ -261,7 +261,7 @@ void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 {
     stopRenderingThread();
     m_gpuProcessConnection = nullptr;
-    m_destinationID = { };
+    m_destinationID = std::nullopt;
 
     if (isPlaying())
         startRendering([](bool) { });

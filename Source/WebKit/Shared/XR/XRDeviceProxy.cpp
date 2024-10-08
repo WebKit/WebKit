@@ -42,9 +42,9 @@ Ref<XRDeviceProxy> XRDeviceProxy::create(XRDeviceInfo&& deviceInfo, PlatformXRSy
 }
 
 XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& xrSystem)
-    : m_xrSystem(xrSystem)
+    : m_identifier(deviceInfo.identifier)
+    , m_xrSystem(xrSystem)
 {
-    m_identifier = deviceInfo.identifier;
     m_supportsStereoRendering = deviceInfo.supportsStereoRendering;
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
     m_recommendedResolution = deviceInfo.recommendedResolution;

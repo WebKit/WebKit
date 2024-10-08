@@ -27,7 +27,7 @@
 
 [EnabledBy=EncryptedMediaAPIEnabled]
 messages -> RemoteCDMFactoryProxy NotRefCounted {
-    CreateCDM(String keySystem) -> (WebKit::RemoteCDMIdentifier identifier, struct WebKit::RemoteCDMConfiguration configuration) Synchronous
+    CreateCDM(String keySystem) -> (std::optional<WebKit::RemoteCDMIdentifier> identifier, struct WebKit::RemoteCDMConfiguration configuration) Synchronous
     SupportsKeySystem(String keySystem) -> (bool result) Synchronous
     RemoveInstance(WebKit::RemoteCDMInstanceIdentifier identifier)
     RemoveSession(WebKit::RemoteCDMInstanceSessionIdentifier identifier)

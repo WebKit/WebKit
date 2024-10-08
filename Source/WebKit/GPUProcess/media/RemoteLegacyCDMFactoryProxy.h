@@ -87,7 +87,7 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
-    void createCDM(const String& keySystem, std::optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(RemoteLegacyCDMIdentifier&&)>&&);
+    void createCDM(const String& keySystem, std::optional<WebCore::MediaPlayerIdentifier>&&, CompletionHandler<void(std::optional<RemoteLegacyCDMIdentifier>&&)>&&);
     void supportsKeySystem(const String& keySystem, std::optional<String> mimeType, CompletionHandler<void(bool)>&&);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

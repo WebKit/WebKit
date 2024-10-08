@@ -108,11 +108,11 @@ void RemoteCDMInstanceProxy::setStorageDirectory(const String& directory)
         protectedInstance()->setStorageDirectory(directory);
 }
 
-void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&& completion)
+void RemoteCDMInstanceProxy::createSession(uint64_t logIdentifier, CompletionHandler<void(std::optional<RemoteCDMInstanceSessionIdentifier>)>&& completion)
 {
     auto privSession = protectedInstance()->createSession();
     if (!privSession || !m_cdm || !m_cdm->factory()) {
-        completion({ });
+        completion(std::nullopt);
         return;
     }
 

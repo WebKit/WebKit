@@ -1227,7 +1227,7 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
 
     auto& streamConnection = jsStreamConnection->connection();
     enum JSIPCStreamTesterIdentifierType { };
-    auto destination = LegacyNullableObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
+    auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
     auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination);
     if (!sendResult.succeeded()) {

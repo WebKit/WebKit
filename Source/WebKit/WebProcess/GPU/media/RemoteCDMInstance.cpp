@@ -110,10 +110,10 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
 #endif
 
     auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
-    auto [identifier] = sendResult.takeReplyOr(RemoteCDMInstanceSessionIdentifier { });
+    auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(identifier));
+    auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(*identifier));
     m_factory->addSession(session.copyRef());
     return session;
 }

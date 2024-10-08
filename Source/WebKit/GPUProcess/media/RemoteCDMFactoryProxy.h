@@ -96,7 +96,7 @@ private:
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     // Messages
-    void createCDM(const String& keySystem, CompletionHandler<void(RemoteCDMIdentifier&&, RemoteCDMConfiguration&&)>&&);
+    void createCDM(const String& keySystem, CompletionHandler<void(std::optional<RemoteCDMIdentifier>&&, RemoteCDMConfiguration&&)>&&);
     void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;

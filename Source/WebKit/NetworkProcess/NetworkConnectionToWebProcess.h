@@ -120,7 +120,7 @@ struct CoreIPCAuditToken;
 struct NetworkProcessConnectionParameters;
 struct WebTransportSessionIdentifierType;
 
-using WebTransportSessionIdentifier = LegacyNullableObjectIdentifier<WebTransportSessionIdentifierType>;
+using WebTransportSessionIdentifier = ObjectIdentifier<WebTransportSessionIdentifierType>;
 
 enum class PrivateRelayed : bool;
 

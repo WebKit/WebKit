@@ -80,7 +80,7 @@ private:
 
     // Messages
     void getSupportedConfiguration(WebCore::CDMKeySystemConfiguration&&, WebCore::CDMPrivate::LocalStorageAccess, CompletionHandler<void(std::optional<WebCore::CDMKeySystemConfiguration>)>&&);
-    void createInstance(CompletionHandler<void(RemoteCDMInstanceIdentifier, RemoteCDMInstanceConfiguration&&)>&&);
+    void createInstance(CompletionHandler<void(std::optional<RemoteCDMInstanceIdentifier>, RemoteCDMInstanceConfiguration&&)>&&);
     void loadAndInitialize();
     void setLogIdentifier(uint64_t);
 

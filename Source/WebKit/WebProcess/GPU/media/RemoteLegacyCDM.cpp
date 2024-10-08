@@ -73,10 +73,10 @@ std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCor
 #endif
 
     auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), m_identifier);
-    auto [identifier] = sendResult.takeReplyOr(RemoteLegacyCDMSessionIdentifier { });
+    auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    return RemoteLegacyCDMSession::create(m_factory, WTFMove(identifier), client);
+    return RemoteLegacyCDMSession::create(m_factory, WTFMove(*identifier), client);
 }
 
 void RemoteLegacyCDM::setPlayerId(MediaPlayerIdentifier identifier)

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct RemoteAudioDestinationIdentifierType;
-using RemoteAudioDestinationIdentifier = LegacyNullableObjectIdentifier<RemoteAudioDestinationIdentifierType>;
+using RemoteAudioDestinationIdentifier = ObjectIdentifier<RemoteAudioDestinationIdentifierType>;
 
 } // namespace WebKit
 

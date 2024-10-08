@@ -37,7 +37,7 @@
 
 namespace WebKit {
 struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 }
 
 namespace WebKit {

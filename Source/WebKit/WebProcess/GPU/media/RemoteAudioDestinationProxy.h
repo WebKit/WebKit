@@ -79,7 +79,7 @@ private:
 
     uint32_t totalFrameCount() const;
 
-    RemoteAudioDestinationIdentifier m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
+    Markable<RemoteAudioDestinationIdentifier> m_destinationID; // Call destinationID() getter to make sure the destinationID is valid.
 
     static uint8_t s_realtimeThreadCount;
     static constexpr uint8_t s_maximumConcurrentRealtimeThreads { 3 };

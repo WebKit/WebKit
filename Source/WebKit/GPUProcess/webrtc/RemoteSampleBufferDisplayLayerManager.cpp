@@ -76,10 +76,10 @@ void RemoteSampleBufferDisplayLayerManager::close()
 
 bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (!decoder.destinationID())
+    if (!ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>::isValidIdentifier(decoder.destinationID()))
         return false;
 
-    auto identifier = LegacyNullableObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
+    auto identifier = ObjectIdentifier<SampleBufferDisplayLayerIdentifierType>(decoder.destinationID());
     Locker lock(m_layersLock);
     if (RefPtr layer = m_layers.get(identifier))
         layer->didReceiveMessage(connection, decoder);

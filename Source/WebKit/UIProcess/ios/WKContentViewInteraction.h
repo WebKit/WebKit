@@ -294,7 +294,7 @@ enum class DynamicImageAnalysisContextMenuState : uint8_t {
 };
 
 enum class ImageAnalysisRequestIdentifierType { };
-using ImageAnalysisRequestIdentifier = LegacyNullableObjectIdentifier<ImageAnalysisRequestIdentifierType>;
+using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
 
 struct ImageAnalysisContextMenuActionData {
     bool hasSelectableText { false };

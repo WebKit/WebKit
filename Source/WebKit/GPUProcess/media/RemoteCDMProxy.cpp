@@ -86,11 +86,11 @@ void RemoteCDMProxy::getSupportedConfiguration(WebCore::CDMKeySystemConfiguratio
     m_private->getSupportedConfiguration(WTFMove(configuration), access, WTFMove(callback));
 }
 
-void RemoteCDMProxy::createInstance(CompletionHandler<void(RemoteCDMInstanceIdentifier, RemoteCDMInstanceConfiguration&&)>&& completion)
+void RemoteCDMProxy::createInstance(CompletionHandler<void(std::optional<RemoteCDMInstanceIdentifier>, RemoteCDMInstanceConfiguration&&)>&& completion)
 {
     auto privateInstance = m_private->createInstance();
     if (!privateInstance || !m_factory) {
-        completion({ }, { });
+        completion(std::nullopt, { });
         return;
     }
     auto identifier = RemoteCDMInstanceIdentifier::generate();

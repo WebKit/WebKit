@@ -77,15 +77,13 @@ WebExtensionController::~WebExtensionController()
 
 WebExtensionControllerParameters WebExtensionController::parameters() const
 {
-    WebExtensionControllerParameters parameters;
-
-    parameters.identifier = identifier();
-    parameters.testingMode = inTestingMode();
-    parameters.contextParameters = WTF::map(extensionContexts(), [](auto& context) {
-        return context->parameters();
-    });
-
-    return parameters;
+    return {
+        .identifier = identifier(),
+        .testingMode = inTestingMode(),
+        .contextParameters = WTF::map(extensionContexts(), [](auto& context) {
+            return context->parameters();
+        })
+    };
 }
 
 WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const

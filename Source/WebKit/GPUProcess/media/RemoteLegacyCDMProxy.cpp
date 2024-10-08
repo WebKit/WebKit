@@ -65,7 +65,7 @@ void RemoteLegacyCDMProxy::createSession(const String& keySystem, uint64_t logId
 {
     RefPtr factory = m_factory.get();
     if (!m_cdm || !factory) {
-        callback({ });
+        callback(std::nullopt);
         return;
     }
 

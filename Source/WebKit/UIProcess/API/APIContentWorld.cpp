@@ -51,8 +51,7 @@ ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier id
     return sharedWorldIdentifierMap().get(identifier);
 }
 
-ContentWorld::ContentWorld(const WTF::String& name)
-    : m_name(name)
+static WebKit::ContentWorldIdentifier generateIdentifier()
 {
     static std::once_flag once;
     std::call_once(once, [] {
@@ -61,8 +60,13 @@ ContentWorld::ContentWorld(const WTF::String& name)
         auto identifier = WebKit::ContentWorldIdentifier::generate();
         ASSERT_UNUSED(identifier, identifier.toUInt64() >= WebKit::pageContentWorldIdentifier().toUInt64());
     });
+    return WebKit::ContentWorldIdentifier::generate();
+}
 
-    m_identifier = WebKit::ContentWorldIdentifier::generate();
+ContentWorld::ContentWorld(const WTF::String& name)
+    : m_identifier(generateIdentifier())
+    , m_name(name)
+{
     auto addResult = sharedWorldIdentifierMap().add(m_identifier, *this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

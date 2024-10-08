@@ -32,7 +32,7 @@ namespace WebKit {
 class WebTransportSession;
 
 struct WebTransportStreamIdentifierType;
-using WebTransportStreamIdentifier = LegacyNullableObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportSendStreamSink : public WebCore::WritableStreamSink {
 public:

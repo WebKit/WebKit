@@ -71,7 +71,6 @@ private:
     void createRemoteUnit();
 
     Client& m_client;
-    AudioMediaStreamTrackRendererInternalUnitIdentifier m_identifier;
 
     Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
 

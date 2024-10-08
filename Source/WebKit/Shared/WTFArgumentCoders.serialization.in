@@ -66,29 +66,6 @@ template: enum class WebCore::MediaUniqueIdentifierType
 template: enum class WebCore::PushSubscriptionIdentifierType
 template: enum class WebCore::RealtimeMediaSourceIdentifierType
 template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
-template: enum class WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifierType
-template: enum class WebKit::ContentWorldIdentifierType
-template: enum class WebKit::ImageAnalysisRequestIdentifierType
-template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
-template: enum class WebKit::MediaRecorderIdentifierType
-template: enum class WebKit::RemoteAudioHardwareListenerIdentifierType
-template: enum class WebKit::RemoteAudioSessionIdentifierType
-template: enum class WebKit::RemoteCDMIdentifierType
-template: enum class WebKit::RemoteCDMInstanceIdentifierType
-template: enum class WebKit::RemoteCDMInstanceSessionIdentifierType
-template: enum class WebKit::RemoteLegacyCDMIdentifierType
-template: enum class WebKit::RemoteLegacyCDMSessionIdentifierType
-template: enum class WebKit::RemoteMediaResourceIdentifierType
-template: enum class WebKit::RemoteMediaSourceIdentifierType
-template: enum class WebKit::RemoteRemoteCommandListenerIdentifierType
-template: enum class WebKit::RemoteSourceBufferIdentifierType
-template: enum class WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
-template: enum class WebKit::SampleBufferDisplayLayerIdentifierType
-template: enum class WebKit::ScriptMessageHandlerIdentifierType
-template: enum class WebKit::ShapeDetectionIdentifierType
-template: enum class WebKit::WCLayerTreeHostIdentifierType
-template: enum class WebKit::WebExtensionControllerIdentifierType
-template: enum class WebKit::XRDeviceIdentifierType
 template: struct WebCore::AttributedStringTextListIDType
 #if PLATFORM(COCOA)
 template: struct WebCore::AttributedStringTextTableBlockIDType
@@ -103,12 +80,6 @@ template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::UserMediaRequestIdentifierType
 template: struct WebCore::ScrollingNodeIDType
-template: struct WebKit::IPCConnectionTesterIdentifierType
-template: struct WebKit::IPCStreamTesterIdentifierType
-template: struct WebKit::RemoteAudioDestinationIdentifierType
-template: struct WebKit::RemoteImageBufferSetIdentifierType
-template: struct WebKit::WebTransportSessionIdentifierType
-template: struct WebKit::WebTransportStreamIdentifierType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
@@ -129,13 +100,36 @@ template: enum class WebCore::TextManipulationItemIdentifierType
 template: enum class WebCore::TextManipulationTokenIdentifierType
 template: enum class WebCore::WindowIdentifierType
 template: enum class WebCore::WorkletGlobalScopeIdentifierType
+template: enum class WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifierType
+template: enum class WebKit::ContentWorldIdentifierType
 template: enum class WebKit::DownloadIdentifierType
+template: enum class WebKit::ImageAnalysisRequestIdentifierType
+template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
+template: enum class WebKit::MediaRecorderIdentifierType
+template: enum class WebKit::RemoteAudioHardwareListenerIdentifierType
+template: enum class WebKit::RemoteAudioSessionIdentifierType
+template: enum class WebKit::RemoteCDMIdentifierType
+template: enum class WebKit::RemoteCDMInstanceIdentifierType
+template: enum class WebKit::RemoteCDMInstanceSessionIdentifierType
+template: enum class WebKit::RemoteLegacyCDMIdentifierType
+template: enum class WebKit::RemoteLegacyCDMSessionIdentifierType
+template: enum class WebKit::RemoteMediaResourceIdentifierType
+template: enum class WebKit::RemoteMediaSourceIdentifierType
+template: enum class WebKit::RemoteRemoteCommandListenerIdentifierType
+template: enum class WebKit::RemoteSourceBufferIdentifierType
+template: enum class WebKit::RetrieveRecordResponseBodyCallbackIdentifierType
+template: enum class WebKit::SampleBufferDisplayLayerIdentifierType
+template: enum class WebKit::ScriptMessageHandlerIdentifierType
+template: enum class WebKit::ShapeDetectionIdentifierType
 template: enum class WebKit::StorageAreaImplIdentifierType
 template: enum class WebKit::StorageAreaMapIdentifierType
 template: enum class WebKit::StorageNamespaceIdentifierType
 template: enum class WebKit::UserScriptIdentifierType
 template: enum class WebKit::UserStyleSheetIdentifierType
 template: enum class WebKit::VisitedLinkTableIdentifierType
+template: enum class WebKit::WCLayerTreeHostIdentifierType
+template: enum class WebKit::WebExtensionControllerIdentifierType
+template: enum class WebKit::XRDeviceIdentifierType
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::FrameIdentifierType
 template: struct WebCore::NavigationIdentifierType
@@ -148,10 +142,14 @@ template: struct WebKit::DataTaskIdentifierType
 template: struct WebKit::DisplayLinkObserverIDType
 template: struct WebKit::DrawingAreaIdentifierType
 template: struct WebKit::GeolocationIdentifierType
+template: struct WebKit::IPCConnectionTesterIdentifierType
+template: struct WebKit::IPCStreamTesterIdentifierType
 template: struct WebKit::MarkSurfacesAsVolatileRequestIdentifierType
 template: struct WebKit::NetworkResourceLoadIdentifierType
 template: struct WebKit::PDFPluginIdentifierType
 template: struct WebKit::PageGroupIdentifierType
+template: struct WebKit::RemoteAudioDestinationIdentifierType
+template: struct WebKit::RemoteImageBufferSetIdentifierType
 template: struct WebKit::TapIdentifierType
 template: struct WebKit::TextCheckerRequestType
 template: struct WebKit::UserContentControllerIdentifierType
@@ -161,6 +159,8 @@ template: struct WebKit::WebExtensionPortChannelIdentifierType
 template: struct WebKit::WebExtensionTabIdentifierType
 template: struct WebKit::WebExtensionWindowIdentifierType
 template: struct WebKit::WebPageProxyIdentifierType
+template: struct WebKit::WebTransportSessionIdentifierType
+template: struct WebKit::WebTransportStreamIdentifierType
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::ObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
