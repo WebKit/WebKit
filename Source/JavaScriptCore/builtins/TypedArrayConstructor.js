@@ -60,7 +60,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     var arrayLike = @toObject(items, "TypedArray.from requires an array-like object - not null or undefined");
 
-    if (!mapFn) {
+    if (mapFn === @undefined) {
         var fastResult = @typedArrayFromFast(this, arrayLike);
         if (fastResult)
             return fastResult;
@@ -93,10 +93,10 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
         for (var k = 0; k < count; k++) {
             var value = accumulator[k];
-            if (mapFn)
-                result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
-            else
+            if (mapFn === @undefined)
                 result[k] = value;
+            else
+                result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
         }
 
         return result;
@@ -110,10 +110,10 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     for (var k = 0; k < arrayLikeLength; k++) {
         var value = arrayLike[k];
-        if (mapFn)
-            result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
-        else
+        if (mapFn === @undefined)
             result[k] = value;
+        else
+            result[k] = thisArg === @undefined ? mapFn(value, k) : mapFn.@call(thisArg, value, k);
     }
 
     return result;
