@@ -85,6 +85,11 @@ static WeakHashSet<Database>& allDatabases()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Database);
 
+Ref<Database> Database::create(const String& storageDirectory)
+{
+    return adoptRef(*new Database(storageDirectory));
+}
+
 Database::Database(const String& storageDirectory)
     : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
 {

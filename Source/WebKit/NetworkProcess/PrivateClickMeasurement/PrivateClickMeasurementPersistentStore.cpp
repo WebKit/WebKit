@@ -58,7 +58,7 @@ PersistentStore::PersistentStore(const String& databaseDirectory)
 {
     if (!databaseDirectory.isEmpty()) {
         postTask([this, protectedThis = Ref { *this }, databaseDirectory = databaseDirectory.isolatedCopy()] () mutable {
-            m_database = makeUnique<Database>(WTFMove(databaseDirectory));
+            m_database = Database::create(WTFMove(databaseDirectory));
         });
     }
 }
@@ -80,8 +80,8 @@ void PersistentStore::postTaskReply(WTF::Function<void()>&& reply) const
 void PersistentStore::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType, CompletionHandler<void()>&& completionHandler)
 {
     postTask([this, protectedThis = Ref { *this }, attribution = WTFMove(attribution), attributionType, completionHandler = WTFMove(completionHandler)] () mutable {
-        if (m_database)
-            m_database->insertPrivateClickMeasurement(WTFMove(attribution), attributionType);
+        if (RefPtr database = m_database)
+            database->insertPrivateClickMeasurement(WTFMove(attribution), attributionType);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -89,8 +89,8 @@ void PersistentStore::insertPrivateClickMeasurement(WebCore::PrivateClickMeasure
 void PersistentStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
 {
     postTask([this, protectedThis = Ref { *this }] {
-        if (m_database)
-            m_database->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
+        if (RefPtr database = m_database)
+            database->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
     });
 }
 
@@ -115,8 +115,8 @@ void PersistentStore::privateClickMeasurementToStringForTesting(CompletionHandle
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         String result;
-        if (m_database)
-            result = m_database->privateClickMeasurementToStringForTesting();
+        if (RefPtr database = m_database)
+            result = database->privateClickMeasurementToStringForTesting();
         postTaskReply([result = WTFMove(result).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(result);
         });
@@ -127,8 +127,8 @@ void PersistentStore::allAttributedPrivateClickMeasurement(CompletionHandler<voi
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<WebCore::PrivateClickMeasurement> convertedAttributions;
-        if (m_database)
-            convertedAttributions = m_database->allAttributedPrivateClickMeasurement();
+        if (RefPtr database = m_database)
+            convertedAttributions = database->allAttributedPrivateClickMeasurement();
         postTaskReply([convertedAttributions = crossThreadCopy(WTFMove(convertedAttributions)), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(convertedAttributions));
         });
@@ -138,8 +138,8 @@ void PersistentStore::allAttributedPrivateClickMeasurement(CompletionHandler<voi
 void PersistentStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        if (m_database)
-            m_database->markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+        if (RefPtr database = m_database)
+            database->markAttributedPrivateClickMeasurementsAsExpiredForTesting();
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -147,8 +147,8 @@ void PersistentStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting(
 void PersistentStore::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
 {
     postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        if (m_database)
-            m_database->clearPrivateClickMeasurement(std::nullopt);
+        if (RefPtr database = m_database)
+            database->clearPrivateClickMeasurement(std::nullopt);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -156,8 +156,8 @@ void PersistentStore::clearPrivateClickMeasurement(CompletionHandler<void()>&& c
 void PersistentStore::clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
     postTask([this, protectedThis = Ref { *this }, domain = WTFMove(domain).isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        if (m_database)
-            m_database->clearPrivateClickMeasurement(domain);
+        if (RefPtr database = m_database)
+            database->clearPrivateClickMeasurement(domain);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -165,16 +165,16 @@ void PersistentStore::clearPrivateClickMeasurementForRegistrableDomain(WebCore::
 void PersistentStore::clearExpiredPrivateClickMeasurement()
 {
     postTask([this, protectedThis = Ref { *this }]() {
-        if (m_database)
-            m_database->clearExpiredPrivateClickMeasurement();
+        if (RefPtr database = m_database)
+            database->clearExpiredPrivateClickMeasurement();
     });
 }
 
 void PersistentStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint attributionReportEndpoint)
 {
     postTask([this, protectedThis = Ref { *this }, attributionToClear = WTFMove(attributionToClear).isolatedCopy(), attributionReportEndpoint]() mutable {
-        if (m_database)
-            m_database->clearSentAttribution(WTFMove(attributionToClear), attributionReportEndpoint);
+        if (RefPtr database = m_database)
+            database->clearSentAttribution(WTFMove(attributionToClear), attributionReportEndpoint);
     });
 }
 
