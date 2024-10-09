@@ -586,6 +586,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     /* Feature Flags */\
     \
+    v(Bool, useErrorIsError, false, Normal, "Expose Error.isError feature."_s) \
     v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
     v(Bool, useIteratorHelpers, false, Normal, "Expose the Iterator Helpers."_s) \
     v(Bool, useMathSumPreciseMethod, false, Normal, "Expose the Math.sumPrecise() method."_s) \
