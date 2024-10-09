@@ -75,7 +75,7 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(Peer);
         WTF_MAKE_NONCOPYABLE(Peer);
     public:
-        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&);
+        static Ref<Peer> create(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&);
         ~Peer();
 
         ConnectStatus connect(const URL&, const String& protocol);
@@ -100,7 +100,9 @@ public:
         void didUpgradeURL() final;
 
     private:
-        Ref<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
+        Peer(Ref<ThreadableWebSocketChannelClientWrapper>&&, ScriptExecutionContext&, ScriptExecutionContextIdentifier, const String& taskMode, SocketProvider&);
+
+        ThreadSafeWeakPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         RefPtr<ThreadableWebSocketChannel> m_mainWebSocketChannel;
         String m_taskMode;
         ScriptExecutionContextIdentifier m_workerContextIdentifier;
@@ -154,7 +156,7 @@ private:
         RefPtr<WorkerGlobalScope> m_workerGlobalScope;
         WorkerLoaderProxy& m_loaderProxy;
         String m_taskMode;
-        Peer* m_peer { nullptr };
+        ThreadSafeWeakPtr<Peer> m_peer;
         Ref<SocketProvider> m_socketProvider;
     };
 

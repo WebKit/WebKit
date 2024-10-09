@@ -108,7 +108,7 @@ private:
     const WebCore::ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
     WeakPtr<WebCore::Document, WebCore::WeakPtrImplWithEventTargetData> m_document;
-    WeakPtr<WebCore::WebSocketChannelClient> m_client;
+    ThreadSafeWeakPtr<WebCore::WebSocketChannelClient> m_client;
     URL m_url;
     String m_subprotocol;
     String m_extensions;
