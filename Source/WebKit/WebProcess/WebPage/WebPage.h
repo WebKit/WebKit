@@ -1040,6 +1040,7 @@ public:
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
     void updateFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
+    void frameCompositedBoundsChanged(WebCore::FrameIdentifier, WebCore::IntPoint);
 
     void markLayersVolatile(CompletionHandler<void(bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();

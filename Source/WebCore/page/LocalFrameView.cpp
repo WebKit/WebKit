@@ -2793,6 +2793,17 @@ void LocalFrameView::delegatedScrollingModeDidChange()
     }
 }
 
+void LocalFrameView::compositedBoundsChanged(const IntPoint& contentsOffset)
+{
+    CheckedPtr renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayerCompositor& compositor = renderView->compositor();
+    compositor.frameViewDidChangeSize();
+    compositor.frameViewDidChangeLocation(contentsOffset);
+}
+
 #if USE(COORDINATED_GRAPHICS)
 void LocalFrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
 {

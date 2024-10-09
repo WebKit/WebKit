@@ -65,6 +65,12 @@ void WebRemoteFrameClient::sizeDidChange(IntSize size)
     m_frame->updateRemoteFrameSize(size);
 }
 
+void WebRemoteFrameClient::compositedBoundsChanged(const IntPoint& contentsOffset)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::FrameCompositedBoundsChanged(m_frame->frameID(), contentsOffset));
+}
+
 void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const String& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts& message)
 {
     if (auto* page = m_frame->page())

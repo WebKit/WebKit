@@ -68,6 +68,7 @@ private:
     void updateCompositingLayersAfterScrolling() final;
 
     void setFrameRect(const IntRect&) final;
+    void compositedBoundsChanged(const IntPoint& contentsOffset) final;
 
     const Ref<RemoteFrame> m_frame;
 };
