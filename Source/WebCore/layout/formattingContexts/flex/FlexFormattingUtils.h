@@ -42,8 +42,8 @@ public:
     static bool isMainReversedToContentDirection(const ElementBox& flexContainer);
     static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
 
-    static LayoutUnit rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxHeight);
-    static LayoutUnit columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxWidth);
+    static LayoutUnit rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight);
+    static LayoutUnit columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth);
 
     LayoutUnit usedMinimumMainSize(const LogicalFlexItem&) const;
     std::optional<LayoutUnit> usedMaxiumMainSize(const LogicalFlexItem&) const;

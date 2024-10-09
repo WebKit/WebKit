@@ -59,22 +59,22 @@ bool FlexFormattingUtils::areFlexLinesReversedInCrossAxis(const ElementBox& flex
     return flexContainer.style().flexWrap() == FlexWrap::Reverse;
 }
 
-LayoutUnit FlexFormattingUtils::rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxHeight)
+LayoutUnit FlexFormattingUtils::rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight)
 {
     ASSERT(flexContainer.isFlexBox());
     auto& rowGap = flexContainer.style().rowGap();
     if (rowGap.isNormal())
         return { };
-    return valueForLength(rowGap.length(), flexContainercCntentBoxHeight);
+    return valueForLength(rowGap.length(), flexContainerContentBoxHeight);
 }
 
-LayoutUnit FlexFormattingUtils::columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainercCntentBoxWidth)
+LayoutUnit FlexFormattingUtils::columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth)
 {
     ASSERT(flexContainer.isFlexBox());
     auto& columnGap = flexContainer.style().columnGap();
     if (columnGap.isNormal())
         return { };
-    return valueForLength(columnGap.length(), flexContainercCntentBoxWidth);
+    return valueForLength(columnGap.length(), flexContainerContentBoxWidth);
 }
 
 LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const
