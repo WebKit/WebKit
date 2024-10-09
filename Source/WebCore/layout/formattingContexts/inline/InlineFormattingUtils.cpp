@@ -88,7 +88,7 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
         ASSERT_NOT_REACHED();
         return { };
     };
-    if (auto firstAvailableVerticalPosition = intrusiveFloatBottom())
+    if (auto firstAvailableVerticalPosition = intrusiveFloatBottom(); firstAvailableVerticalPosition && *firstAvailableVerticalPosition > lineLogicalRect.top())
         return *firstAvailableVerticalPosition;
     // Do not get stuck on the same vertical position even when we find ourselves in this unexpected state.
     return ceil(nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
