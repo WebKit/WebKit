@@ -85,7 +85,7 @@ enum class MediaProducerMutedState : uint8_t {
     VideoCaptureIsMuted = 1 << 2,
     ScreenCaptureIsMuted = 1 << 3,
     WindowCaptureIsMuted = 1 << 4,
-    SystemAudioCaptureIsMuted = 1 << 4,
+    SystemAudioCaptureIsMuted = 1 << 5,
 };
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 

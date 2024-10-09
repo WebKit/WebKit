@@ -134,6 +134,13 @@
     return _createdWebViews.last().get();
 }
 
+- (void)_webView:(WKWebView *)webView decidePolicyForScreenCaptureUnmutingForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL authorized))decisionHandler
+{
+    ++_numberOfPrompts;
+    _wasPrompted = true;
+    decisionHandler(_getDisplayMediaDecision != WKDisplayCapturePermissionDecisionDeny);
+}
+
 #if PLATFORM(IOS_FAMILY)
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
