@@ -27,8 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from mod_pywebsocket import common
-from mod_pywebsocket import stream
+from pywebsocket3 import common
+from pywebsocket3 import stream
 import zlib
 
 

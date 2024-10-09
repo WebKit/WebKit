@@ -20,8 +20,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import time
-from mod_pywebsocket import stream
-from mod_pywebsocket.handshake.hybi import compute_accept_from_unicode
+from pywebsocket3 import stream
+from pywebsocket3.handshake.hybi import compute_accept_from_unicode
 
 def web_socket_do_extra_handshake(request):
 

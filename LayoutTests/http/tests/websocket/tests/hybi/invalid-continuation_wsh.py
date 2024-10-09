@@ -1,5 +1,5 @@
-from mod_pywebsocket import common
-from mod_pywebsocket import stream
+from pywebsocket3 import common
+from pywebsocket3 import stream
 
 def web_socket_do_extra_handshake(request):
     pass

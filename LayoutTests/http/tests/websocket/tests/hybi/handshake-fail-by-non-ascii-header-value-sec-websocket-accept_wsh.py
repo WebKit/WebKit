@@ -1,4 +1,4 @@
-from mod_pywebsocket import handshake
+from pywebsocket3 import handshake
 
 def web_socket_do_extra_handshake(request):
     message = 'HTTP/1.1 101 Switching Protocols\r\n'

@@ -1,4 +1,4 @@
-from mod_pywebsocket import msgutil
+from pywebsocket3 import msgutil
 from time import sleep
 
 

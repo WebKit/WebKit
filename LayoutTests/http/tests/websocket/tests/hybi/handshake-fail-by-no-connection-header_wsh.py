@@ -1,5 +1,5 @@
-from mod_pywebsocket import handshake
-from mod_pywebsocket.handshake.hybi import compute_accept_from_unicode
+from pywebsocket3 import handshake
+from pywebsocket3.handshake.hybi import compute_accept_from_unicode
 
 
 def web_socket_do_extra_handshake(request):

@@ -2,9 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from mod_pywebsocket import common
-from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
-from mod_pywebsocket.stream import create_header
+from pywebsocket3 import common
+from pywebsocket3.extensions import PerMessageDeflateExtensionProcessor
+from pywebsocket3.stream import create_header
 
 
 def _get_permessage_deflate_extension_processor(request):

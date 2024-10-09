@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from mod_pywebsocket import common, msgutil
+from pywebsocket3 import common, msgutil
 
 
 def web_socket_do_extra_handshake(request):
