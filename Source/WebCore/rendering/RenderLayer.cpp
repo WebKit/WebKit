@@ -1270,7 +1270,7 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderElement::LayoutIdentifier 
         dest = source; \
     else \
         LAYER_POSITIONS_ASSERT(dest == source);
-    UPDATE_OR_VERIFY_STATE_BIT(m_repaintStatus, RepaintStatus::NeedsNormalRepaint);
+    UPDATE_OR_VERIFY_STATE_BIT(this->m_repaintStatus, RepaintStatus::NeedsNormalRepaint);
     UPDATE_OR_VERIFY_STATE_BIT(m_hasFixedContainingBlockAncestor, flags.contains(SeenFixedContainingBlockLayer));
     UPDATE_OR_VERIFY_STATE_BIT(m_hasTransformedAncestor, flags.contains(SeenTransformedLayer));
     UPDATE_OR_VERIFY_STATE_BIT(m_has3DTransformedAncestor, flags.contains(Seen3DTransformedLayer));
