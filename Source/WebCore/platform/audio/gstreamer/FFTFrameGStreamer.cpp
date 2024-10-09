@@ -32,11 +32,6 @@ namespace {
 const int kMinFFTPow2Size = 2;
 const int kMaxFFTPow2Size = 24;
 
-size_t unpackedFFTDataSize(unsigned fftSize)
-{
-    return fftSize / 2 + 1;
-}
-
 } // anonymous namespace
 
 namespace WebCore {
@@ -45,10 +40,14 @@ namespace WebCore {
 FFTFrame::FFTFrame(unsigned fftSize)
     : m_FFTSize(fftSize)
     , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
-    , m_complexData(makeUniqueArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize)))
-    , m_realData(unpackedFFTDataSize(m_FFTSize))
-    , m_imagData(unpackedFFTDataSize(m_FFTSize))
+    , m_complexData(makeUniqueArray<GstFFTF32Complex>(m_FFTSize))
 {
+    // We only allow power of two.
+    ASSERT(1UL << m_log2FFTSize == m_FFTSize);
+
+    m_realData.resize(m_FFTSize);
+    m_imagData.resize(m_FFTSize);
+
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
     m_inverseFft.reset(gst_fft_f32_new(fftLength, TRUE));
@@ -68,9 +67,9 @@ FFTFrame::FFTFrame()
 FFTFrame::FFTFrame(const FFTFrame& frame)
     : m_FFTSize(frame.m_FFTSize)
     , m_log2FFTSize(frame.m_log2FFTSize)
-    , m_complexData(makeUniqueArray<GstFFTF32Complex>(unpackedFFTDataSize(m_FFTSize)))
-    , m_realData(unpackedFFTDataSize(frame.m_FFTSize))
-    , m_imagData(unpackedFFTDataSize(frame.m_FFTSize))
+    , m_complexData(makeUniqueArray<GstFFTF32Complex>(m_FFTSize))
+    , m_realData(frame.m_FFTSize)
+    , m_imagData(frame.m_FFTSize)
 {
     int fftLength = gst_fft_next_fast_length(m_FFTSize);
     m_fft.reset(gst_fft_f32_new(fftLength, FALSE));
@@ -93,7 +92,7 @@ void FFTFrame::doFFT(const float* data)
 
     float* imagData = m_imagData.data();
     float* realData = m_realData.data();
-    for (unsigned i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
+    for (unsigned i = 0; i < m_FFTSize; ++i) {
         imagData[i] = m_complexData[i].i;
         realData[i] = m_complexData[i].r;
     }
@@ -105,7 +104,7 @@ void FFTFrame::doInverseFFT(float* data)
     float* realData = m_realData.data();
     float* imagData = m_imagData.data();
 
-    for (size_t i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
+    for (size_t i = 0; i < m_FFTSize; ++i) {
         m_complexData[i].i = imagData[i];
         m_complexData[i].r = realData[i];
     }
