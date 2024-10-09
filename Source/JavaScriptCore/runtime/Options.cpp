@@ -570,7 +570,7 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
-#if OS(DARWIN)
+#if OS(DARWIN) && CPU(ARM64)
     Options::numberOfGCMarkers() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
     Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
