@@ -72,7 +72,6 @@
 #include "RenderElement.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceTiming.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
@@ -85,6 +84,7 @@
 #include "UserContentController.h"
 #include "UserStyleSheet.h"
 #include <pal/SessionID.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>

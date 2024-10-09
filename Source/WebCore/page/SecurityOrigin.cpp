@@ -33,13 +33,13 @@
 #include "LegacySchemeRegistry.h"
 #include "OriginAccessEntry.h"
 #include "PublicSuffixStore.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityPolicy.h"
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>

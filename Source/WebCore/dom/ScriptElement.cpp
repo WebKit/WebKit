@@ -49,7 +49,6 @@
 #include "ModuleFetchParameters.h"
 #include "Page.h"
 #include "PendingScript.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGScriptElement.h"
 #include "ScriptController.h"
@@ -61,6 +60,7 @@
 #include "TextNodeTraversal.h"
 #include "TrustedType.h"
 #include <JavaScriptCore/ImportMap.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/MakeString.h>

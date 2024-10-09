@@ -44,10 +44,10 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderWidget.h"
-#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include "StorageMap.h"
 #include <limits>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 

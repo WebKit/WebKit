@@ -51,7 +51,6 @@
 #import "Page.h"
 #import "Range.h"
 #import "RenderView.h"
-#import "RuntimeApplicationChecks.h"
 #import "SVGElementInlines.h"
 #import "SVGNames.h"
 #import "SelectionGeometry.h"
@@ -63,6 +62,7 @@
 #import "WebCoreThread.h"
 #import "VisibleUnits.h"
 #import <CoreText/CoreText.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 @interface NSObject (AccessibilityPrivate)
@@ -1815,7 +1815,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     // The parentView should have an accessibilityContainer, if the UIKit accessibility bundle was loaded.
     // The exception is DRT, which tests accessibility without the entire system turning accessibility on. Hence,
     // this check should be valid for everything except DRT.
-    ASSERT([parentView accessibilityContainer] || IOSApplication::isDumpRenderTree());
+    ASSERT([parentView accessibilityContainer] || WTF::IOSApplication::isDumpRenderTree());
 
     return [parentView accessibilityContainer];
 }

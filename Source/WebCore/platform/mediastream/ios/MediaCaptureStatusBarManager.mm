@@ -29,12 +29,12 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
 
 #include "Logging.h"
-#include "RuntimeApplicationChecks.h"
-#include <pal/cocoa/AVFoundationSoftLink.h>
 #include <pal/spi/ios/SBSStatusBarSPI.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#include <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(SpringBoardServices)
 SOFT_LINK_CLASS_OPTIONAL(SpringBoardServices, SBSStatusBarStyleOverridesAssertion)

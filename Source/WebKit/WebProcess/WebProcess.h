@@ -180,7 +180,7 @@ public:
     using SubResourceDomain = WebCore::RegistrableDomain;
 
     static WebProcess& singleton();
-    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::WebContent;
+    static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::WebContent;
 
     template <typename T>
     T* supplement()

@@ -45,7 +45,6 @@
 #import <WebCore/AudioSession.h>
 #import <WebCore/MediaPlayerEnums.h>
 #import <WebCore/NetworkStorageSession.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -56,6 +55,7 @@
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 using namespace WebCore;

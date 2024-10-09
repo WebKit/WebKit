@@ -29,7 +29,6 @@
 #include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
 #include "Path.h"
-#include "RuntimeApplicationChecks.h"
 #include "TextSpacing.h"
 #include <optional>
 #include <wtf/CheckedRef.h>
@@ -38,6 +37,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 // "X11/X.h" defines Complex to 0 and conflicts
 // with Complex value in CodePath enum.
@@ -279,7 +282,7 @@ public:
             return false;
 #if PLATFORM(COCOA)
         // We make an exception for Books because some already available books when converted to EPUBS might contain object replacement character that should not be visible to the user.
-        return CocoaApplication::isIBooks();
+        return WTF::CocoaApplication::isIBooks();
 #else
         return false;
 #endif

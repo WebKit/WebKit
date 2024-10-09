@@ -94,7 +94,6 @@
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderStyle.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
@@ -103,6 +102,7 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -126,7 +126,7 @@ void WebPage::platformInitializeAccessibility()
     [NSApplication _accessibilityInitialize];
 
     // Get the pid for the starting process.
-    pid_t pid = WebCore::presentingApplicationPID();
+    pid_t pid = presentingApplicationPID();
     createMockAccessibilityElement(pid);
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (localMainFrame)

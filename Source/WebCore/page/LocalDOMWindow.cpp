@@ -99,7 +99,6 @@
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "ScrollAnimator.h"
@@ -136,6 +135,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>

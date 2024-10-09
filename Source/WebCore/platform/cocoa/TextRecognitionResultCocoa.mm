@@ -27,13 +27,15 @@
 #import "TextRecognitionResult.h"
 
 #import "CharacterRange.h"
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 #if USE(APPKIT)
 #import <AppKit/NSAttributedString.h>
 #else
 #import <UIKit/NSAttributedString.h>
 #endif
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 namespace WebCore {
 

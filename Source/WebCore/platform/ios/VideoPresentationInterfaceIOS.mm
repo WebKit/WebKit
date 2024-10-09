@@ -30,7 +30,6 @@
 
 #import "Logging.h"
 #import "PictureInPictureSupport.h"
-#import "RuntimeApplicationChecks.h"
 #import "TimeRanges.h"
 #import "UIViewControllerUtilities.h"
 #import "WebAVPlayerLayer.h"
@@ -44,6 +43,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/CString.h>

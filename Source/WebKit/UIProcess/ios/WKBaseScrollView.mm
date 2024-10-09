@@ -31,9 +31,9 @@
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
 #import "WKContentView.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
@@ -79,7 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (std::exchange(hasOverridenAddGestureRecognizer, true))
         return;
 
-    if (WebCore::IOSApplication::isHimalaya() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScrollViewSubclassImplementsAddGestureRecognizer)) {
+    if (WTF::IOSApplication::isHimalaya() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScrollViewSubclassImplementsAddGestureRecognizer)) {
         // This check can be removed and -_wk_addGestureRecognizer: can be renamed to -addGestureRecognizer: once the 喜马拉雅 app updates to a version of
         // the iOS 17 SDK with this WKBaseScrollView refactoring. Otherwise, the call to `-[super addGestureRecognizer:]` below will fail, due to how this
         // app uses `class_getInstanceMethod` and `method_setImplementation` to intercept and override all calls to `-[UIView addGestureRecognizer:]`.

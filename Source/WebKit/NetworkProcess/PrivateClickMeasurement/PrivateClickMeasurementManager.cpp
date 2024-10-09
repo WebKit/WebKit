@@ -38,9 +38,9 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>

@@ -43,7 +43,6 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/WKProcessPool.h>
@@ -1412,11 +1411,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setShouldRelaxThirdPartyCookieBlocking:(BOOL)relax
 {
-    bool allowed = WebCore::applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
+    bool allowed = applicationBundleIdentifier() == "com.apple.WebKit.TestWebKitAPI"_s;
 #if PLATFORM(MAC)
-    allowed |= WebCore::MacApplication::isSafari();
+    allowed |= WTF::MacApplication::isSafari();
 #elif PLATFORM(IOS_FAMILY)
-    allowed |= WebCore::IOSApplication::isMobileSafari() || WebCore::IOSApplication::isSafariViewService();
+    allowed |= WTF::IOSApplication::isMobileSafari() || WTF::IOSApplication::isSafariViewService();
 #endif
 #if ENABLE(WK_WEB_EXTENSIONS)
     allowed |= _pageConfiguration->requiredWebExtensionBaseURL().isValid();

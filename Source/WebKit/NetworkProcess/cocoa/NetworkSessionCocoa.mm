@@ -1374,7 +1374,7 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
     auto isFullBrowser = isParentProcessAFullWebBrowser(networkSession.networkProcess());
 #if PLATFORM(MAC)
-    isFullBrowser = WebCore::MacApplication::isSafari();
+    isFullBrowser = WTF::MacApplication::isSafari();
 #endif
     if (!configuration._sourceApplicationSecondaryIdentifier && isFullBrowser)
         configuration._sourceApplicationSecondaryIdentifier = @"com.apple.WebKit.InAppBrowser";
@@ -2348,7 +2348,7 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
         return;
     }
 
-    auto bundleID = WebCore::applicationBundleIdentifier();
+    auto bundleID = applicationBundleIdentifier();
     // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
     if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
         return completionHandler();

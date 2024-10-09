@@ -29,8 +29,9 @@
 #if USE(PASSKIT) && PLATFORM(IOS_FAMILY)
 
 #import "WKPaymentAuthorizationDelegate.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
 #import <pal/cocoa/PassKitSoftLink.h>
 
 @interface WKPaymentAuthorizationControllerDelegate : WKPaymentAuthorizationDelegate <PKPaymentAuthorizationControllerDelegate, PKPaymentAuthorizationControllerPrivateDelegate>
@@ -125,7 +126,7 @@
 - (NSString *)presentationSceneBundleIdentifierForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
 {
     if (!_presenter)
-        return WebCore::applicationBundleIdentifier();
+        return applicationBundleIdentifier();
     return nsStringNilIfEmpty(_presenter->bundleIdentifier());
 }
 #endif

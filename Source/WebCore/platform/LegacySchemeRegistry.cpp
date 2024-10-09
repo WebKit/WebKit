@@ -26,11 +26,11 @@
 #include "config.h"
 #include "LegacySchemeRegistry.h"
 
-#include "RuntimeApplicationChecks.h"
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/URLParser.h>
 
 #if ENABLE(CONTENT_FILTERING)

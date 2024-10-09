@@ -54,7 +54,6 @@
 #import "PlatformStrategies.h"
 #import "RenderBlock.h"
 #import "RenderImage.h"
-#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
@@ -62,6 +61,7 @@
 #import <AppKit/AppKit.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {

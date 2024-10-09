@@ -35,8 +35,8 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "XPCEndpoint.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/EnumTraits.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
@@ -134,7 +134,7 @@ void NetworkProcessProxy::setBackupExclusionPeriodForTesting(PAL::SessionID sess
 void NetworkProcessProxy::getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier webPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&& completionHandler)
 {
     auto sceneIdentifier = nullString();
-    auto bundleIdentifier = WebCore::applicationBundleIdentifier();
+    auto bundleIdentifier = applicationBundleIdentifier();
     auto page = WebProcessProxy::webPage(webPageProxyIdentifier);
     if (!page || !page->pageClient()) {
         completionHandler(sceneIdentifier, bundleIdentifier);

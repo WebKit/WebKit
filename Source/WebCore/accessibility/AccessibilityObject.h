@@ -35,12 +35,12 @@
 #include "FloatQuad.h"
 #include "LayoutRect.h"
 #include "Path.h"
-#include "RuntimeApplicationChecks.h"
 #include "TextIterator.h"
 #include <iterator>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)

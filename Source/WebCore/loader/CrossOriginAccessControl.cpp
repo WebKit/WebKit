@@ -38,11 +38,11 @@
 #include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>

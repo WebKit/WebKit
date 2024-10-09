@@ -30,9 +30,9 @@
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
 #include "Logging.h"
-#include "RuntimeApplicationChecks.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 #include <pal/spi/cf/CoreTextSPI.h>
 

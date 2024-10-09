@@ -42,9 +42,9 @@
 #include "Navigator.h"
 #include "Page.h"
 #include "PermissionsPolicy.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include <wtf/Ref.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>

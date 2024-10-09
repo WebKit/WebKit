@@ -59,7 +59,6 @@
 #import "RenderListBox.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScreenProperties.h"
 #import "ScrollAnimator.h"
 #import "ScrollLatchingController.h"
@@ -76,6 +75,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)

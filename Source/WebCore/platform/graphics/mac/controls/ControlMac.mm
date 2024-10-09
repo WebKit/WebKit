@@ -34,7 +34,6 @@
 #import "GraphicsContextCG.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
-#import "RuntimeApplicationChecks.h"
 #import "WebControlView.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
@@ -43,6 +42,7 @@
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

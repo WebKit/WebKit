@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "FontCache.h"
 #include "FontCascade.h"
+#include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "LocaleCocoa.h"
 #include "Logging.h"

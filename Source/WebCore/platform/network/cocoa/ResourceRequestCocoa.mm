@@ -32,11 +32,11 @@
 #import "HTTPHeaderNames.h"
 #import "RegistrableDomain.h"
 #import "ResourceRequestCFNet.h"
-#import "RuntimeApplicationChecks.h"
 #import <Foundation/Foundation.h>
 #import <Foundation/NSURLRequest.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>

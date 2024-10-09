@@ -33,8 +33,8 @@
 #import "RemoteMediaPlayerManagerProxy.h"
 #import "VideoReceiverEndpointMessage.h"
 #import "XPCEndpoint.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -54,7 +54,7 @@ static void handleLaunchServiceDatabaseMessage(xpc_object_t message)
 static void handleVideoReceiverEndpointMessage(xpc_object_t message)
 {
     ASSERT(isMainRunLoop());
-    RELEASE_ASSERT(WebCore::isInGPUProcess());
+    RELEASE_ASSERT(isInGPUProcess());
 
     auto endpointMessage = VideoReceiverEndpointMessage::decode(message);
     if (!endpointMessage.processIdentifier())

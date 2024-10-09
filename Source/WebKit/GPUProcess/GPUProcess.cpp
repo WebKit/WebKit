@@ -48,7 +48,6 @@
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/Language.h>
@@ -57,6 +56,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
@@ -269,7 +269,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters,
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 
-    WebCore::setPresentingApplicationPID(parameters.parentPID);
+    setPresentingApplicationPID(parameters.parentPID);
 
     if (!parameters.overrideLanguages.isEmpty())
         overrideUserPreferredLanguages(parameters.overrideLanguages);

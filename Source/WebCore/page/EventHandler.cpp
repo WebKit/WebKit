@@ -106,7 +106,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGDocument.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
@@ -133,6 +132,7 @@
 #include "WindowsKeyboardCodes.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>

@@ -49,7 +49,6 @@
 #include <WebCore/DisplayCapturePromptType.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScreenProperties.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
@@ -69,6 +68,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/BlockPtr.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -171,7 +171,7 @@ GPUProcessProxy::GPUProcessProxy()
     parameters.useMockCaptureDevices = m_useMockCaptureDevices;
 #if PLATFORM(MAC)
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (MacApplication::isSafari()) {
+    if (WTF::MacApplication::isSafari()) {
         if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
             parameters.microphoneSandboxExtensionHandle = WTFMove(*handle);
         m_hasSentMicrophoneSandboxExtension = true;

@@ -30,9 +30,9 @@
 #include "MessageArgumentDescriptions.h"
 #include "MessageNames.h"
 #include "StreamServerConnection.h"
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {
@@ -62,10 +62,10 @@ inline TextStream textStreamForLogging(const C& connection, MessageName messageN
 
     switch (forReply) {
     case ForReply::No:
-        stream << "-> "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << " receiver "_s << object << "] "_s << description(messageName);
+        stream << "-> "_s << processTypeDescription(processType()) << ' ' << getCurrentProcessID() << " receiver "_s << object << "] "_s << description(messageName);
         break;
     case ForReply::Yes:
-        stream << "<- "_s << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] "_s << description(messageName) << " Reply"_s;
+        stream << "<- "_s << processTypeDescription(processType()) << ' ' << getCurrentProcessID() << "] "_s << description(messageName) << " Reply"_s;
         break;
     }
 

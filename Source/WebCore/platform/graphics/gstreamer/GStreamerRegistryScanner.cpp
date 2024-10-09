@@ -25,11 +25,11 @@
 #include "ContentType.h"
 #include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
-#include "RuntimeApplicationChecks.h"
 #include <fnmatch.h>
 #include <gst/pbutils/codec-utils.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>

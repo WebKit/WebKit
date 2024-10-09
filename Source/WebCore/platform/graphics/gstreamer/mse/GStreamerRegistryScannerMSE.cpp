@@ -21,8 +21,8 @@
 #include "GStreamerRegistryScannerMSE.h"
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
-#include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 

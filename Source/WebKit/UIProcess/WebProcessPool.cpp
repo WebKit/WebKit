@@ -102,7 +102,6 @@
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/Site.h>
 #include <pal/SessionID.h>
 #include <wtf/CallbackAggregator.h>
@@ -260,9 +259,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if PLATFORM(COCOA)
         // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
 #if PLATFORM(IOS_FAMILY)
-        bool isSafari = WebCore::IOSApplication::isMobileSafari();
+        bool isSafari = WTF::IOSApplication::isMobileSafari();
 #elif PLATFORM(MAC)
-        bool isSafari = WebCore::MacApplication::isSafari();
+        bool isSafari = WTF::MacApplication::isSafari();
 #endif
         if (isSafari)
             enableAllSDKAlignedBehaviors();
@@ -307,7 +306,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     updateBackForwardCacheCapacity();
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    if (WebCore::IOSApplication::isLutron() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SharedNetworkProcess)) {
+    if (WTF::IOSApplication::isLutron() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SharedNetworkProcess)) {
         callOnMainRunLoop([] {
             if (WebsiteDataStore::defaultDataStoreExists())
                 WebsiteDataStore::defaultDataStore()->terminateNetworkProcess();
@@ -1254,7 +1253,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     bool enableProcessSwapOnCrossSiteNavigation = pagePreference->processSwapOnCrossSiteNavigationEnabled();
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ProcessSwapOnCrossSiteNavigation))
+    if (WTF::IOSApplication::isFirefox() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ProcessSwapOnCrossSiteNavigation))
         enableProcessSwapOnCrossSiteNavigation = false;
 #endif
 

@@ -34,7 +34,6 @@
 #import "WKWebView.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <mach/task.h>
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -42,6 +41,7 @@
 #import <pal/spi/cocoa/NotifySPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
@@ -100,7 +100,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
-    WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
+    setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
 
 #if PLATFORM(MAC)

@@ -83,7 +83,7 @@ public:
     ~GPUProcess();
 
     static GPUProcess& singleton();
-    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::GPU;
+    static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::GPU;
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
 

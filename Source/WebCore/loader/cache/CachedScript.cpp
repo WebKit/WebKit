@@ -29,9 +29,12 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+
+#if PLATFORM(MAC)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 namespace WebCore {
 
@@ -154,7 +157,7 @@ bool CachedScript::shouldIgnoreHTTPStatusCodeErrors() const
     // The installer in question tries to load .js file that doesn't exist, causing the server to
     // return a 404 response. Normally, this would trigger an error event to be dispatched, but the
     // installer expects a load event instead so we work around it here.
-    if (MacApplication::isSolidStateNetworksDownloader())
+    if (WTF::MacApplication::isSolidStateNetworksDownloader())
         return true;
 #endif
 

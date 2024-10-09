@@ -33,10 +33,10 @@
 #include "NotImplemented.h"
 #include "PublicSuffixStore.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

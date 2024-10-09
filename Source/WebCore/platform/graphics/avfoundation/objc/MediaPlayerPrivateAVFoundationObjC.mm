@@ -60,7 +60,6 @@
 #import "PlatformTextTrack.h"
 #import "PlatformTimeRanges.h"
 #import "QueuedVideoOutput.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScriptDisallowedScope.h"
 #import "SecurityOrigin.h"
 #import "SerializedPlatformDataCueMac.h"
@@ -107,6 +106,7 @@
 #import <wtf/NativePromise.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>

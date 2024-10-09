@@ -34,7 +34,6 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/RegistrableDomain.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
@@ -45,6 +44,7 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -131,15 +131,15 @@ static bool subFrameReceivedScriptSource = false;
 
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
+    clearApplicationBundleIdentifierTestingOverride();
+    setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
     WTF::initializeMainThread();
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
+    clearApplicationBundleIdentifierTestingOverride();
+    setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
 }
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)

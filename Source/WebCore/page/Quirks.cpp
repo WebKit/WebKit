@@ -53,7 +53,6 @@
 #include "PlatformMouseEvent.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -688,7 +687,7 @@ bool Quirks::needsFullscreenObjectFitQuirk() const
 bool Quirks::needsWeChatScrollingQuirk() const
 {
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && IOSApplication::isWechat();
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && WTF::IOSApplication::isWechat();
 #else
     return false;
 #endif
@@ -1464,7 +1463,7 @@ bool Quirks::shouldDisableLazyIframeLoadingQuirk() const
 
     if (!m_shouldDisableLazyIframeLoadingQuirk) {
 #if PLATFORM(IOS_FAMILY)
-        m_shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && IOSApplication::isUNIQLOApp();
+        m_shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && WTF::IOSApplication::isUNIQLOApp();
 #else
         m_shouldDisableLazyIframeLoadingQuirk = false;
 #endif
@@ -1488,7 +1487,7 @@ bool Quirks::shouldDisablePushStateFilePathRestrictions() const
         return false;
 
 #if PLATFORM(MAC)
-    return MacApplication::isMimeoPhotoProject();
+    return WTF::MacApplication::isMimeoPhotoProject();
 #else
     return false;
 #endif
@@ -1549,7 +1548,7 @@ String Quirks::advancedPrivacyProtectionSubstituteDataURLForScriptWithFeatures(c
 bool Quirks::needsResettingTransitionCancelsRunningTransitionQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && IOSApplication::isDOFUSTouch();
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ResettingTransitionCancelsRunningTransitionQuirk) && WTF::IOSApplication::isDOFUSTouch();
 #else
     return false;
 #endif

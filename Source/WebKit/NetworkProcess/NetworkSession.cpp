@@ -55,9 +55,9 @@
 #include "WebSocketTask.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SWServer.h>
 #include <numeric>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(COCOA)
@@ -401,7 +401,7 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
     String appBundleID = WTFMove(attributedBundleIdentifier);
 #if PLATFORM(COCOA)
     if (appBundleID.isEmpty())
-        appBundleID = WebCore::applicationBundleIdentifier();
+        appBundleID = applicationBundleIdentifier();
 #endif
 
     if (!m_ephemeralMeasurement && m_sessionID.isEphemeral())
@@ -535,10 +535,10 @@ void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::C
 void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& appBundleIDForTesting)
 {
 #if PLATFORM(COCOA)
-    auto appBundleID = WebCore::applicationBundleIdentifier();
+    auto appBundleID = applicationBundleIdentifier();
     if (!isRunningTest(appBundleID))
         WTFLogAlways("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty" : appBundleID.utf8().data());
-    RELEASE_ASSERT(isRunningTest(WebCore::applicationBundleIdentifier()));
+    RELEASE_ASSERT(isRunningTest(applicationBundleIdentifier()));
 #endif
     privateClickMeasurement().setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
 }

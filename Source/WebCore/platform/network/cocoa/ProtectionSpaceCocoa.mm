@@ -27,7 +27,7 @@
 #import "ProtectionSpaceCocoa.h"
 
 #import <pal/spi/cf/CFNetworkSPI.h>
-#include <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 

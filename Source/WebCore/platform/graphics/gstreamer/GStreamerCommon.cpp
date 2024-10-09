@@ -33,7 +33,6 @@
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
 #include "PlatformDisplay.h"
-#include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "WebKitAudioSinkGStreamer.h"
 #include <gst/audio/audio-info.h>
@@ -44,6 +43,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RecursiveLockAdapter.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>

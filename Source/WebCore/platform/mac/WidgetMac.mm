@@ -37,12 +37,12 @@
 #import "LocalFrameView.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
-#import "RuntimeApplicationChecks.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 @interface NSWindow (WebWindowDetails)
 - (BOOL)_needsToResetDragMargins;
@@ -190,7 +190,7 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     if (view.layer) {
 #if PLATFORM(MAC)
         // However, Quicken Essentials has a plug-in that depends on drawing to update the layer (see <rdar://problem/15221231>).
-        if (!MacApplication::isQuickenEssentials())
+        if (!WTF::MacApplication::isQuickenEssentials())
 #endif
         return;
     }

@@ -60,7 +60,6 @@
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/UniversalAccessZoom.h>
@@ -70,6 +69,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
@@ -120,7 +120,7 @@ using namespace WebCore;
 
 static inline bool expectsLegacyImplicitRubberBandControl()
 {
-    if (MacApplication::isSafari()) {
+    if (WTF::MacApplication::isSafari()) {
         const int32_t firstVersionOfSafariNotExpectingImplicitRubberBandControl = 0x021A0F00; // 538.15.0
         bool linkedAgainstSafariExpectingImplicitRubberBandControl = NSVersionOfLinkTimeLibrary("Safari") < firstVersionOfSafariNotExpectingImplicitRubberBandControl;
         return linkedAgainstSafariExpectingImplicitRubberBandControl;

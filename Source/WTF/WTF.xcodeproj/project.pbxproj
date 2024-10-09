@@ -65,7 +65,7 @@
 		1C97FF7A297CD119006422AA /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C97FF79297CD110006422AA /* IOSurfaceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1CA6FBA92A1D75B9001D4402 /* ContextualizedNSString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6FBA82A1D75B9001D4402 /* ContextualizedNSString.mm */; };
 		1CA6FBAB2A1D75D8001D4402 /* ContextualizedNSString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA6FBAA2A1D75CD001D4402 /* ContextualizedNSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */; };
+		1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.mm */; };
 		1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CF18F3926BB579E004B1722 /* LogChannels.cpp */; };
 		1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
@@ -146,6 +146,8 @@
 		9785729929FAC2BB00350CBA /* ReferenceWrapperVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 9785729829FAC2BB00350CBA /* ReferenceWrapperVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BC70F05176C379D00101DEC /* AtomStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomStringTable.cpp */; };
 		9BD8464C2980B6C100FAE3BD /* WeakListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8464B2980B6C100FAE3BD /* WeakListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1657D3F2CB46E25003579FC /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = A1657D3D2CB46E25003579FC /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1657D402CB46E25003579FC /* RuntimeApplicationChecks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1657D3E2CB46E25003579FC /* RuntimeApplicationChecks.cpp */; };
 		A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */; };
 		A331D95B21F24992009F02AA /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95A21F24992009F02AA /* FileSystem.cpp */; };
 		A331D95D21F249E4009F02AA /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95C21F249E4009F02AA /* FileSystemCF.cpp */; };
@@ -1148,7 +1150,7 @@
 		1CA6FBA82A1D75B9001D4402 /* ContextualizedNSString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextualizedNSString.mm; sourceTree = "<group>"; };
 		1CA6FBAA2A1D75CD001D4402 /* ContextualizedNSString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextualizedNSString.h; sourceTree = "<group>"; };
 		1CA85CA7241B0B110071C2F5 /* RuntimeApplicationChecksCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecksCocoa.h; sourceTree = "<group>"; };
-		1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecksCocoa.cpp; sourceTree = "<group>"; };
+		1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecksCocoa.mm; sourceTree = "<group>"; };
 		1CCDB1491E566626006C73C0 /* TextBreakIteratorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCF.h; sourceTree = "<group>"; };
 		1CCDB14D1E566898006C73C0 /* TextBreakIteratorICU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorICU.h; sourceTree = "<group>"; };
 		1CF18F3926BB579E004B1722 /* LogChannels.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogChannels.cpp; sourceTree = "<group>"; };
@@ -1349,6 +1351,8 @@
 		9BE153352671F00F00C7D096 /* WeakHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakHashMap.h; sourceTree = "<group>"; };
 		9BF00134267C4CCF00DCFB3F /* CheckedRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedRef.h; sourceTree = "<group>"; };
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
+		A1657D3D2CB46E25003579FC /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
+		A1657D3E2CB46E25003579FC /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
 		A30D412C1F0DE0BA00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A30D412D1F0DE13F00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadingPOSIX.cpp; sourceTree = "<group>"; };
@@ -2400,6 +2404,8 @@
 				E31CF0A5261058580036E673 /* RobinHoodHashTable.h */,
 				2CDED0F118115C85004DBA70 /* RunLoop.cpp */,
 				2CDED0F218115C85004DBA70 /* RunLoop.h */,
+				A1657D3E2CB46E25003579FC /* RuntimeApplicationChecks.cpp */,
+				A1657D3D2CB46E25003579FC /* RuntimeApplicationChecks.h */,
 				46E43647271F10AA00C88C90 /* SafeStrerror.cpp */,
 				46E43646271F10AA00C88C90 /* SafeStrerror.h */,
 				14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */,
@@ -3080,8 +3086,8 @@
 				5CC0EE872162BC2200A1A842 /* NSURLExtras.h */,
 				5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */,
 				E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */,
-				1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */,
 				1CA85CA7241B0B110071C2F5 /* RuntimeApplicationChecksCocoa.h */,
+				1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.mm */,
 				7AC314222C6FCF18002CBAFD /* SchedulePairCocoa.mm */,
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				466D69102BA4E433005D43F4 /* SpanCocoa.h */,
@@ -3475,6 +3481,7 @@
 				DD3DC88D27A4BF8E007E5B61 /* RobinHoodHashSet.h in Headers */,
 				DD3DC91A27A4BF8E007E5B61 /* RobinHoodHashTable.h in Headers */,
 				DD3DC94A27A4BF8E007E5B61 /* RunLoop.h in Headers */,
+				A1657D3F2CB46E25003579FC /* RuntimeApplicationChecks.h in Headers */,
 				DDF3072227C086CC006A526F /* RuntimeApplicationChecksCocoa.h in Headers */,
 				DD3DC86327A4BF8E007E5B61 /* SafeStrerror.h in Headers */,
 				DDF306E527C08654006A526F /* SandboxSPI.h in Headers */,
@@ -4117,7 +4124,8 @@
 				E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
 				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,
-				1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp in Sources */,
+				A1657D402CB46E25003579FC /* RuntimeApplicationChecks.cpp in Sources */,
+				1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.mm in Sources */,
 				46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */,
 				A3EE5C3D21FFAC7D00FABD61 /* SchedulePairCF.cpp in Sources */,
 				7AC314232C6FCF18002CBAFD /* SchedulePairCocoa.mm in Sources */,

@@ -68,7 +68,6 @@
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/PowerSourceNotifier.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UTIUtilities.h>
 #import <objc/runtime.h>
@@ -241,7 +240,7 @@ static AccessibilityPreferences accessibilityPreferences()
 {
     AccessibilityPreferences preferences;
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    auto appId = WebCore::applicationBundleIdentifier().createCFString();
+    auto appId = applicationBundleIdentifier().createCFString();
 
     preferences.reduceMotionEnabled = toWebKitAXValueState(_AXSReduceMotionEnabledApp(appId.get()));
     preferences.increaseButtonLegibility = toWebKitAXValueState(_AXSIncreaseButtonLegibilityApp(appId.get()));
@@ -1078,7 +1077,7 @@ static bool isLockdownModeEnabledBySystemIgnoringCaching()
 #endif
     
 #if PLATFORM(MAC)
-    if (!WebCore::MacApplication::isSafari() && !WebCore::MacApplication::isMiniBrowser())
+    if (!WTF::MacApplication::isSafari() && !WTF::MacApplication::isMiniBrowser())
         return false;
 #endif
     

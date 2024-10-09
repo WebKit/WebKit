@@ -34,11 +34,11 @@
 #include "ColorHash.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 

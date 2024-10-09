@@ -30,7 +30,7 @@
 
 #import "UIKitSPI.h"
 #import "WebIOSEventFactory.h"
-#import <WebCore/RuntimeApplicationChecks.h>
+#import <wtf/RuntimeApplicationChecks.h>
 
 namespace WebKit {
 

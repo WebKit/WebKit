@@ -44,10 +44,10 @@
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/LogInitialization.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())

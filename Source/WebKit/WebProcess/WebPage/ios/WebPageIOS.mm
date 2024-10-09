@@ -148,7 +148,6 @@
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderedDocumentMarker.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/SharedBuffer.h>
@@ -165,6 +164,7 @@
 #import <wtf/IterationStatus.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/cocoa/Entitlements.h>

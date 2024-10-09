@@ -217,7 +217,6 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoadObserver.h>
 #import <WebCore/ResourceRequest.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
@@ -273,6 +272,7 @@
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
@@ -1334,7 +1334,7 @@ static RetainPtr<CFMutableSetRef>& allWebViewsSet()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static bool needsLaBanquePostaleQuirks()
 {
-    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
+    static bool needsQuirks = WTF::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
     return needsQuirks;
 }
 
@@ -1487,7 +1487,7 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 
 
 #if PLATFORM(IOS_FAMILY)
-        if (WebCore::IOSApplication::isMobileSafari())
+        if (WTF::IOSApplication::isMobileSafari())
             WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 

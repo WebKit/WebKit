@@ -52,7 +52,7 @@ class ModelProcess final : public AuxiliaryProcess, public ThreadSafeRefCounted<
 public:
     explicit ModelProcess(AuxiliaryProcessInitializationParameters&&);
     ~ModelProcess();
-    static constexpr WebCore::AuxiliaryProcessType processType = WebCore::AuxiliaryProcessType::Model;
+    static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::Model;
 
     void removeModelConnectionToWebProcess(ModelConnectionToWebProcess&);
 

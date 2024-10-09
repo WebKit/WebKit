@@ -54,7 +54,6 @@
 #include "Quirks.h"
 #include "RenderMedia.h"
 #include "RenderView.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
@@ -63,6 +62,7 @@
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -76,7 +76,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "AudioSession.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -902,7 +901,7 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (CocoaApplication::isIBooks())
+    if (WTF::CocoaApplication::isIBooks())
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr) && !m_element.hasAttributeWithoutSynchronization(HTMLNames::playsinlineAttr);
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UnprefixedPlaysInlineAttribute))
         return !m_element.hasAttributeWithoutSynchronization(HTMLNames::webkit_playsinlineAttr);

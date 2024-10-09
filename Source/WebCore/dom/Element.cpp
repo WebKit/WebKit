@@ -166,6 +166,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
+#if PLATFORM(MAC)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Element);
@@ -519,7 +523,7 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (RefPtr frame = document().frame())
         isParentProcessAFullWebBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
 #elif PLATFORM(MAC)
-    isParentProcessAFullWebBrowser = MacApplication::isSafari();
+    isParentProcessAFullWebBrowser = WTF::MacApplication::isSafari();
 #endif
     if (Quirks::StorageAccessResult::ShouldCancelEvent == protectedDocument()->quirks().triggerOptionalStorageAccessQuirk(*this, platformEvent, eventType, detail, relatedTarget, isParentProcessAFullWebBrowser, isSyntheticClick))
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };

@@ -119,7 +119,6 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/StyleScope.h>
@@ -151,6 +150,7 @@
 #import <wtf/NakedPtr.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>

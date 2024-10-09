@@ -82,7 +82,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "ResizeObserverSize.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "ScrollAnimator.h"
@@ -96,6 +95,7 @@
 #include <algorithm>
 #include <math.h>
 #include <wtf/Assertions.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -3537,7 +3537,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeight(std::optional<LayoutUnit>) co
 static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 {
 #if PLATFORM(COCOA)
-    return CocoaApplication::isIBooks();
+    return WTF::CocoaApplication::isIBooks();
 #else
     return false;
 #endif

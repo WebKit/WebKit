@@ -30,7 +30,6 @@
 #import "Logging.h"
 #import "WebPreferencesDefaultValues.h"
 #import "XPCUtilities.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/mach_error.h>
@@ -45,6 +44,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Threading.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -395,7 +395,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
-    xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", applicationBundleIdentifier().utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     RetainPtr processName = [&] {
 #if PLATFORM(MAC)

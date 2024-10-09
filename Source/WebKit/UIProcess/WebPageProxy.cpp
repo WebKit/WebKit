@@ -234,7 +234,6 @@
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/RunJavaScriptParameters.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
@@ -9113,7 +9112,7 @@ void WebPageProxy::backForwardAddItemShared(IPC::Connection& connection, FrameId
 #if PLATFORM(COCOA)
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
 #if PLATFORM(MAC)
-        && !MacApplication::isMimeoPhotoProject() // rdar://112445672.
+        && !WTF::MacApplication::isMimeoPhotoProject() // rdar://112445672.
 #endif // PLATFORM(MAC)
     ) {
 #endif // PLATFORM(COCOA)

@@ -74,7 +74,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
 
 namespace WebCore {
@@ -306,7 +306,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 {
     // Some document types force synchronous decoding.
 #if PLATFORM(IOS_FAMILY)
-    if (IOSApplication::isIBooksStorytime())
+    if (WTF::IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
 

@@ -33,12 +33,12 @@
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
 #import "PlatformMediaSession.h"
-#import "RuntimeApplicationChecks.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {

@@ -37,9 +37,9 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "NotImplemented.h"
-#include "RuntimeApplicationChecks.h"
 #include <algorithm>
 #include <cstring>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

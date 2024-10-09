@@ -30,10 +30,10 @@
 #include "MessageSender.h"
 #include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/UserActivity.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -211,7 +211,7 @@ struct AuxiliaryProcessInitializationParameters {
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
-    WebCore::AuxiliaryProcessType processType;
+    WTF::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)
     SDKAlignedBehaviors clientSDKAlignedBehaviors;
 #endif

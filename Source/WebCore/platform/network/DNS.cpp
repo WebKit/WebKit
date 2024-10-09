@@ -28,9 +28,9 @@
 #include "DNS.h"
 
 #include "DNSResolveQueue.h"
-#include "RuntimeApplicationChecks.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/URL.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -74,7 +74,7 @@ void stopResolveDNS(uint64_t identifier)
 bool isIPAddressDisallowed(const URL& url)
 {
 #if PLATFORM(IOS_FAMILY)
-    static bool shouldDisallowAddressWithOnlyZeros = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros) || !IOSApplication::isMyRideK12();
+    static bool shouldDisallowAddressWithOnlyZeros = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros) || !WTF::IOSApplication::isMyRideK12();
 #else
     static constexpr auto shouldDisallowAddressWithOnlyZeros = true;
 #endif

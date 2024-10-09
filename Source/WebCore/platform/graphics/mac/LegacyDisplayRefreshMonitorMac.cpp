@@ -29,9 +29,9 @@
 #if PLATFORM(MAC)
 
 #include "Logging.h"
-#include "RuntimeApplicationChecks.h"
 #include <CoreVideo/CVDisplayLink.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

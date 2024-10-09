@@ -43,7 +43,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <WebCore/RuntimeApplicationChecks.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 // Match the parallel connection count used by the networking layer.
@@ -285,7 +285,7 @@ void WebResourceLoadScheduler::servePendingRequests(CheckedRef<HostInformation>&
             requestsPending.removeFirst();
             host->addLoadInProgress(resourceLoader.get());
 #if PLATFORM(IOS_FAMILY)
-            if (!IOSApplication::isWebProcess()) {
+            if (!WTF::IOSApplication::isWebProcess()) {
                 resourceLoader->startLoading();
                 return;
             }

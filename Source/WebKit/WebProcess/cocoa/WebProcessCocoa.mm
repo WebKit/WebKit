@@ -91,7 +91,6 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ProcessCapabilities.h>
 #import <WebCore/PublicSuffixStore.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
 #import <WebCore/SystemSoundManager.h>
@@ -121,6 +120,7 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -361,7 +361,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
-    WebCore::setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
+    setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);

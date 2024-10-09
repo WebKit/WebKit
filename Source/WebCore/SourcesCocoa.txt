@@ -312,7 +312,6 @@ platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/PublicSuffixStoreCocoa.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
-platform/cocoa/RuntimeApplicationChecksCocoa.mm
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SerializedPlatformDataCueValue.mm @no-unify
 platform/cocoa/SharedBufferCocoa.mm

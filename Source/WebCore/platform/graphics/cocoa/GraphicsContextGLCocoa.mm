@@ -37,12 +37,12 @@
 #import "Logging.h"
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
-#import "RuntimeApplicationChecks.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 

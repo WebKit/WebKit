@@ -51,7 +51,6 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
-#include "RuntimeApplicationChecks.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
@@ -59,6 +58,7 @@
 #include "Settings.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/MakeString.h>

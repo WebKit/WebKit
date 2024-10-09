@@ -94,7 +94,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
+#include <wtf/RuntimeApplicationChecks.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -583,7 +583,7 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 #if PLATFORM(IOS_FAMILY)
 bool RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer& layer) const
 {
-    if (m_isMainFrameRenderViewLayer && IOSApplication::isDumpRenderTree()) {
+    if (m_isMainFrameRenderViewLayer && WTF::IOSApplication::isDumpRenderTree()) {
         // In iOS WebKit1 the main frame's RenderView layer is always transparent. We lie that it is opaque so that
         // internals.layerTreeAsText() tests succeed.
         ASSERT_UNUSED(layer, !layer.contentsOpaque());

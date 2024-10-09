@@ -72,7 +72,7 @@ class GraphicsContextGLCocoaTest : public ::testing::Test {
 protected:
     void SetUp() override // NOLINT
     {
-        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
+        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WTF::AuxiliaryProcessType::GPU };
     }
     void TearDown() override // NOLINT
     {
@@ -91,7 +91,7 @@ protected:
 
     void SetUp() override // NOLINT
     {
-        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
+        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WTF::AuxiliaryProcessType::GPU };
     }
     void TearDown() override // NOLINT
     {

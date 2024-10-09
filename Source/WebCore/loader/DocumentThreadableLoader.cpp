@@ -56,7 +56,6 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceTiming.h"
-#include "RuntimeApplicationChecks.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -65,6 +64,7 @@
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -202,7 +202,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
 #if PLATFORM(IOS_FAMILY)
-    bool needsPreflightQuirk = IOSApplication::isMoviStarPlus() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoMoviStarPlusCORSPreflightQuirk) && (m_options.preflightPolicy == PreflightPolicy::Consider || m_options.preflightPolicy == PreflightPolicy::Force);
+    bool needsPreflightQuirk = WTF::IOSApplication::isMoviStarPlus() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoMoviStarPlusCORSPreflightQuirk) && (m_options.preflightPolicy == PreflightPolicy::Consider || m_options.preflightPolicy == PreflightPolicy::Force);
 #else
     bool needsPreflightQuirk = false;
 #endif

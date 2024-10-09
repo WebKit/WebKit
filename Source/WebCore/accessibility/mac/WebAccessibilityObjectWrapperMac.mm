@@ -75,12 +75,12 @@
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
-#import "RuntimeApplicationChecks.h"
 #import "ScrollView.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>

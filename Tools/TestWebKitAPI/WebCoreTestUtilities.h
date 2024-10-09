@@ -29,7 +29,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
-#include <WebCore/RuntimeApplicationChecks.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
@@ -39,8 +39,8 @@ namespace TestWebKitAPI {
 
 class ScopedSetAuxiliaryProcessTypeForTesting {
 public:
-    explicit ScopedSetAuxiliaryProcessTypeForTesting(WebCore::AuxiliaryProcessType type)
-        : m_oldType(WebCore::processType())
+    explicit ScopedSetAuxiliaryProcessTypeForTesting(WTF::AuxiliaryProcessType type)
+        : m_oldType(processType())
     {
         setAuxiliaryProcessTypeForTesting(type);
     }
@@ -49,7 +49,7 @@ public:
         setAuxiliaryProcessTypeForTesting(m_oldType);
     }
 private:
-    std::optional<WebCore::AuxiliaryProcessType> m_oldType;
+    std::optional<WTF::AuxiliaryProcessType> m_oldType;
 };
 
 }

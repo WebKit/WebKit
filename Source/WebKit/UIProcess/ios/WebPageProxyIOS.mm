@@ -72,13 +72,13 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ShareableResource.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/TextStream.h>

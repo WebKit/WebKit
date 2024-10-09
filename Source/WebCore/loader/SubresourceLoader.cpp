@@ -59,7 +59,7 @@
 #include <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <RuntimeApplicationChecks.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -146,7 +146,7 @@ void SubresourceLoader::create(LocalFrame& frame, CachedResource& resource, Reso
 {
     Ref subloader = adoptRef(*new SubresourceLoader(frame, resource, options));
 #if PLATFORM(IOS_FAMILY)
-    if (!IOSApplication::isWebProcess()) {
+    if (!WTF::IOSApplication::isWebProcess()) {
         // On iOS, do not invoke synchronous resource load delegates while resource load scheduling
         // is disabled to avoid re-entering style selection from a different thread (see <rdar://problem/9121719>).
         // FIXME: This should be fixed for all ports in <https://bugs.webkit.org/show_bug.cgi?id=56647>.
@@ -165,7 +165,7 @@ void SubresourceLoader::create(LocalFrame& frame, CachedResource& resource, Reso
 void SubresourceLoader::startLoading()
 {
     // FIXME: this should probably be removed.
-    ASSERT(!IOSApplication::isWebProcess());
+    ASSERT(!WTF::IOSApplication::isWebProcess());
     init(ResourceRequest(m_iOSOriginalRequest), [this, protectedThis = Ref { *this }] (bool success) {
         if (!success)
             return;

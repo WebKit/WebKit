@@ -58,8 +58,8 @@
 #import <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "RuntimeApplicationChecks.h"
 #import "WebCoreThreadRun.h"
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
 using namespace WebCore;
@@ -98,7 +98,7 @@ ResourceHandle::~ResourceHandle()
 
 static bool synchronousWillSendRequestEnabled()
 {
-    static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"] || CocoaApplication::isIBooks();
+    static bool disabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisableSynchronousWillSendRequestPreferenceKey"] || WTF::CocoaApplication::isIBooks();
     return !disabled;
 }
 

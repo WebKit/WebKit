@@ -87,7 +87,6 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SWServer.h>
 #include <WebCore/SecurityOrigin.h>
@@ -100,6 +99,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
@@ -338,7 +338,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     updateStorageAccessPromptQuirks(WTFMove(parameters.storageAccessPromptQuirksData));
 
-    RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, WebCore::presentingApplicationPID());
+    RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, presentingApplicationPID());
 }
 
 void NetworkProcess::initializeConnection(IPC::Connection* connection)
@@ -2913,8 +2913,8 @@ void NetworkProcess::broadcastConsoleMessage(PAL::SessionID sessionID, JSC::Mess
 void NetworkProcess::updateBundleIdentifier(String&& bundleIdentifier, CompletionHandler<void()>&& completionHandler)
 {
 #if PLATFORM(COCOA)
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifierOverride(bundleIdentifier);
+    clearApplicationBundleIdentifierTestingOverride();
+    setApplicationBundleIdentifierOverride(bundleIdentifier);
 #endif
     completionHandler();
 }
@@ -2922,7 +2922,7 @@ void NetworkProcess::updateBundleIdentifier(String&& bundleIdentifier, Completio
 void NetworkProcess::clearBundleIdentifier(CompletionHandler<void()>&& completionHandler)
 {
 #if PLATFORM(COCOA)
-    WebCore::clearApplicationBundleIdentifierTestingOverride();
+    clearApplicationBundleIdentifierTestingOverride();
 #endif
     completionHandler();
 }

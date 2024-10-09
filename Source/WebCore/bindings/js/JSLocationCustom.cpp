@@ -27,10 +27,10 @@
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
-#include "RuntimeApplicationChecks.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 namespace WebCore {
 using namespace JSC;

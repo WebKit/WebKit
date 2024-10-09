@@ -131,7 +131,6 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformTextAlternatives.h>
 #import <WebCore/PromisedAttachmentInfo.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/ShareData.h>
@@ -162,6 +161,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/StdLibExtras.h>
@@ -9721,7 +9721,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_focusedElementInformation.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation)
         return NO;
 
-    return WebCore::IOSApplication::isDataActivation();
+    return WTF::IOSApplication::isDataActivation();
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -11559,28 +11559,28 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     // check them before the linked-on-or-after.
 
     // <rdar://problem/59521967> iAd Video does not respond to mouse events, only touch events
-    if (WebCore::IOSApplication::isNews() || WebCore::IOSApplication::isStocks()) {
+    if (WTF::IOSApplication::isNews() || WTF::IOSApplication::isStocks()) {
         warningVersion = nullptr;
         return YES;
     }
 
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsiOSAppsOnMacOS)) {
-        if (WebCore::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
-            || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
-            || WebCore::IOSApplication::isOKCupid() // <rdar://problem/65698496>
-            || WebCore::IOSApplication::isJWLibrary() // <rdar://problem/68104852>
-            || WebCore::IOSApplication::isPaperIO() // <rdar://problem/68738585>
-            || WebCore::IOSApplication::isCrunchyroll()) { // <rdar://problem/66362029>
+        if (WTF::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
+            || WTF::IOSApplication::isNoggin() // <rdar://problem/64830335>
+            || WTF::IOSApplication::isOKCupid() // <rdar://problem/65698496>
+            || WTF::IOSApplication::isJWLibrary() // <rdar://problem/68104852>
+            || WTF::IOSApplication::isPaperIO() // <rdar://problem/68738585>
+            || WTF::IOSApplication::isCrunchyroll()) { // <rdar://problem/66362029>
             warningVersion = "14.2";
             return YES;
         }
     }
 
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SendsNativeMouseEvents)) {
-        if (WebCore::IOSApplication::isPocketCity() // <rdar://problem/62273077>
-            || WebCore::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
-            || WebCore::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>
-            || WebCore::IOSApplication::isDoubleDown()) { // <rdar://problem/64668138>
+        if (WTF::IOSApplication::isPocketCity() // <rdar://problem/62273077>
+            || WTF::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
+            || WTF::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>
+            || WTF::IOSApplication::isDoubleDown()) { // <rdar://problem/64668138>
             warningVersion = "13.4";
             return YES;
         }

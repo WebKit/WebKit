@@ -92,7 +92,6 @@
 #include <WebCore/Quirks.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
@@ -103,6 +102,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/RuntimeApplicationChecks.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullscreenManager.h>

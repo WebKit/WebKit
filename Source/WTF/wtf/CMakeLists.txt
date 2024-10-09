@@ -251,6 +251,7 @@ set(WTF_PUBLIC_HEADERS
     RobinHoodHashSet.h
     RobinHoodHashTable.h
     RunLoop.h
+    RuntimeApplicationChecks.h
     SHA1.h
     SIMDHelpers.h
     SIMDUTF.h
@@ -541,6 +542,7 @@ set(WTF_SOURCES
     RefCountedLeakCounter.cpp
     RefTrackerMixin.cpp
     RunLoop.cpp
+    RuntimeApplicationChecks.cpp
     SHA1.cpp
     SIMDUTF.cpp
     SafeStrerror.cpp

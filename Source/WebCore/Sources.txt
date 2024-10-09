@@ -2242,7 +2242,6 @@ platform/PublicSuffixStore.cpp
 platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RunLoopObserver.cpp
-platform/RuntimeApplicationChecks.cpp
 platform/ScreenOrientationManager.cpp
 platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp

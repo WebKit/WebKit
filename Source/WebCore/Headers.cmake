@@ -1823,7 +1823,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ReferrerPolicy.h
     platform/RegistrableDomain.h
     platform/RemoteCommandListener.h
-    platform/RuntimeApplicationChecks.h
     platform/ScreenOrientationManager.h
     platform/ScreenProperties.h
     platform/ScriptExecutionContextIdentifier.h

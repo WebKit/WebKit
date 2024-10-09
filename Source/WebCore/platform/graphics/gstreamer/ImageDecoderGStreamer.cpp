@@ -26,10 +26,10 @@
 #include "GStreamerRegistryScanner.h"
 #include "ImageGStreamer.h"
 #include "MediaSampleGStreamer.h"
-#include "RuntimeApplicationChecks.h"
 #include "VideoFrameGStreamer.h"
 #include <gst/base/gsttypefindhelper.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>

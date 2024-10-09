@@ -41,10 +41,10 @@
 #import <CoreText/CTFontDescriptor.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FontCocoa.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashSet.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>

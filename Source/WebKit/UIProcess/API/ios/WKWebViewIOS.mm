@@ -70,7 +70,6 @@
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/UserInterfaceLayoutDirection.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -80,6 +79,7 @@
 #import <wtf/FixedVector.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefCounted.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -3631,7 +3631,7 @@ static bool isLockdownModeWarningNeeded()
 {
     // Only present the alert if the app is not Safari
     // and we've never presented the alert before
-    if (WebCore::IOSApplication::isMobileSafari())
+    if (WTF::IOSApplication::isMobileSafari())
         return false;
 
     if (![WKProcessPool _lockdownModeEnabledGloballyForTesting] || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitLockdownModeAlertShownKey])
@@ -3858,7 +3858,7 @@ static bool isLockdownModeWarningNeeded()
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PCM::SourceSite(attribution.reportEndpoint),
             WebCore::PCM::AttributionDestinationSite(attribution.destinationURL),
-            WebCore::applicationBundleIdentifier(),
+            applicationBundleIdentifier(),
             WallTime::now(),
             WebCore::PCM::AttributionEphemeral::No
         );

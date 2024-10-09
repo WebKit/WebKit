@@ -33,7 +33,6 @@
 #import "FloatingPointEnvironment.h"
 #import "GraphicsContextGLANGLE.h"
 #import "Logging.h"
-#import "RuntimeApplicationChecks.h"
 #import "ThreadGlobalData.h"
 #import "WAKWindow.h"
 #import "WKUtilities.h"
@@ -51,6 +50,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/ThreadSpecific.h>
 #import <wtf/Threading.h>
 #import <wtf/WorkQueue.h>
@@ -946,8 +946,8 @@ WebThreadContext* WebThreadCurrentContext(void)
 
 void WebThreadEnable(void)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
-    if (WebCore::IOSApplication::isAppleApplication()) {
+    RELEASE_ASSERT_WITH_MESSAGE(!WTF::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
+    if (WTF::IOSApplication::isAppleApplication()) {
         using WebCore::LogThreading;
         RELEASE_LOG_FAULT(Threading, "WebThread enabled");
     }

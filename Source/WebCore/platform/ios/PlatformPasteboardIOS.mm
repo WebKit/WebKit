@@ -33,7 +33,6 @@
 #import "Image.h"
 #import "NSURLUtilities.h"
 #import "Pasteboard.h"
-#import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebItemProviderPasteboard.h"
@@ -44,6 +43,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -242,7 +242,7 @@ std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(
 #endif
     if (!CGSizeEqualToSize(itemProvider.preferredPresentationSize, CGSizeZero)) {
         auto adjustedPreferredPresentationHeight = [](auto height) -> std::optional<double> {
-            if (!IOSApplication::isMobileMail() && !IOSApplication::isMailCompositionService())
+            if (!WTF::IOSApplication::isMobileMail() && !WTF::IOSApplication::isMailCompositionService())
                 return { height };
             // Mail's max-width: 100%; default style is in conflict with the preferred presentation size and can lead to unexpectedly stretched images. Not setting the height forces layout to preserve the aspect ratio.
             return { };

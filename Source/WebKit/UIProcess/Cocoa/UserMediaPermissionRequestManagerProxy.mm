@@ -31,10 +31,10 @@
 #import "UserMediaCaptureManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/VideoFrame.h>
 #import <pal/spi/cocoa/TCCSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>

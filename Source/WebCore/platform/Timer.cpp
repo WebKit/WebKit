@@ -27,13 +27,13 @@
 #include "config.h"
 #include "Timer.h"
 
-#include "RuntimeApplicationChecks.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
 #include <limits>
 #include <math.h>
 #include <wtf/MainThread.h>
+#include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 

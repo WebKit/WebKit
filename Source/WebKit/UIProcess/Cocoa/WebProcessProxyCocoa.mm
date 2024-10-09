@@ -39,10 +39,10 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
-#import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -220,7 +220,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 #endif
 
     // WebKitTestRunner does not pass the isPlatformBinary check, we should return early in this case.
-    if (isRunningTest(WebCore::applicationBundleIdentifier()))
+    if (isRunningTest(applicationBundleIdentifier()))
         return true;
 
     // Confirm that the connection is from a WebContent process:
