@@ -1,0 +1,31 @@
+
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 1
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 2
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 3
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 4
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 5
+PASS
+    Cross-Origin-Opener-Policy: noopener-allow-popups means that the opener
+    has no access to the openee.
+ 6
+PASS noopener-allow-popups ensures that the opener cannot script the openee, even after a navigation: unsafe-none
+
