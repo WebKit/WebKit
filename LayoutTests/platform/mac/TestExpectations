@@ -2432,3 +2432,6 @@ webkit.org/b/280792 inspector/worker/debugger-pause-subworker.html [ Skip ]
 
 # webkit.org/b/280985 [macOS Debug]: media/track/track-text-track-destructor-crash.html is a flaky crash (failure in EWS)
 [ Debug ] media/track/track-text-track-destructor-crash.html [ Pass Crash ]
+
+# webkit.org/b/281097 [ Sequoia ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html is a constant failure. 
+[ Sequoia+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
