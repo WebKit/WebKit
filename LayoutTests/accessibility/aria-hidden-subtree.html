@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+    
+<div id="container" aria-hidden="true">
+    <h1 id="heading">Heading</h1>
+    <div>
+        <p id="paragraph">This is a nested paragraph</p>
+        <button id="button" href="#">Done</button>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures that the entire subtree of an aria-hidden object is hidden.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "DIV is aria-hidden=true:\n"
+    var headingElement = accessibilityController.accessibleElementById("heading");
+    output += expect("!headingElement", "true");
+    var paragraphElement = accessibilityController.accessibleElementById("paragraph");
+    output += expect("!paragraphElement", "true");
+    var buttonElement = accessibilityController.accessibleElementById("button");
+    output += expect("!buttonElement", "true");
+
+    output += "DIV has aria-hidden unset:\n";
+    document.getElementById("container").removeAttribute("aria-hidden");
+    setTimeout(async function() {
+        headingElement = accessibilityController.accessibleElementById("heading");
+        output += await expectAsync("!!headingElement", "true");
+        paragraphElement = accessibilityController.accessibleElementById("paragraph");
+        output += await expectAsync("!!paragraphElement", "true");
+        buttonElement = accessibilityController.accessibleElementById("button");
+        output += await expectAsync("!!buttonElement", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -73,6 +73,7 @@ if (window.accessibilityController) {
 
         output += "\nSet the date via JavaScript.\n";
         dateInput.value = "2023-12-31";
+        await waitFor(() => axDateInput.childAtIndex(0).childAtIndex(0).children[4] != null);
         await expectAsync("axDateInput.childAtIndex(0).childAtIndex(0).children[4].intValue", "2023");
         getAndLogSubfields(axDateInput);
 

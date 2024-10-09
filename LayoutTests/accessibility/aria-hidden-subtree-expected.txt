@@ -1,0 +1,19 @@
+This test ensures that the entire subtree of an aria-hidden object is hidden.
+
+DIV is aria-hidden=true:
+PASS: !headingElement === true
+PASS: !paragraphElement === true
+PASS: !buttonElement === true
+DIV has aria-hidden unset:
+PASS: !!headingElement === true
+PASS: !!paragraphElement === true
+PASS: !!buttonElement === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Heading
+
+This is a nested paragraph
+
+Done

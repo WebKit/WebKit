@@ -352,7 +352,8 @@ bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
                 // When using ATSPI, an accessibility object with 'StaticText' role is ignored.
                 // Its content is exposed by its parent.
                 // Treat such elements as having accessible content.
-                if (axObject->roleValue() == AccessibilityRole::StaticText)
+                // FIXME: This may not be sufficient for visibility:hidden or inert (https://bugs.webkit.org/show_bug.cgi?id=280914).
+                if (axObject->roleValue() == AccessibilityRole::StaticText && !axObject->isAXHidden())
                     return true;
 #endif
             }
@@ -435,7 +436,8 @@ void AXObjectCache::updateCurrentModalNode(WillRecomputeFocus willRecomputeFocus
 
 bool AXObjectCache::isNodeVisible(Node* node) const
 {
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
     RenderObject* renderer = node->renderer();
@@ -459,10 +461,7 @@ bool AXObjectCache::isNodeVisible(Node* node) const
     }
 
     // We also need to consider aria hidden status.
-    if (!isNodeAriaVisible(*node))
-        return false;
-
-    return true;
+    return !equalLettersIgnoringASCIICase(element->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s) || element->focused();
 }
 
 // This function returns the valid aria modal node.
@@ -895,7 +894,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isP
         auto* element = dynamicDowncast<Element>(node);
         bool hasDisplayContents = element && element->hasDisplayContents();
         bool isPopover = element && element->hasAttributeWithoutSynchronization(popoverAttr);
-        if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isPopover && !isNodeAriaVisible(node))
+        if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isPopover && !isNodeFocused(node))
             return nullptr;
     }
 
@@ -4693,44 +4692,9 @@ void AXObjectCache::deferTextReplacementNotificationForTextControl(HTMLTextFormC
     m_deferredTextFormControlValue.add(formControlElement, previousValue);
 }
 
-bool isNodeAriaVisible(Node* node)
+bool isNodeFocused(Node& node)
 {
-    return node ? isNodeAriaVisible(*node) : false;
-}
-
-bool isNodeAriaVisible(Node& node)
-{
-    // If an element is focused, it should not be hidden.
-    if (RefPtr element = dynamicDowncast<Element>(node); element && element->focused())
-        return true;
-
-    // ARIA Node visibility is controlled by aria-hidden
-    //  1) if aria-hidden=true, the whole subtree is hidden
-    //  2) if aria-hidden=false, and the object is rendered, there's no effect
-    //  3) if aria-hidden=false, and the object is NOT rendered, then it must have
-    //     aria-hidden=false on each parent until it gets to a rendered object
-    //  3b) a text node inherits a parents aria-hidden value
-    bool requiresAriaHiddenFalse = !node.renderer();
-    bool ariaHiddenFalsePresent = false;
-    for (auto* testNode = &node; testNode; testNode = testNode->parentNode()) {
-        if (RefPtr element = dynamicDowncast<Element>(*testNode)) {
-            const auto& ariaHiddenValue = element->attributeWithoutSynchronization(aria_hiddenAttr);
-            if (equalLettersIgnoringASCIICase(ariaHiddenValue, "true"_s))
-                return false;
-
-            // We should break early when it gets to the body.
-            if (testNode->hasTagName(bodyTag))
-                break;
-
-            bool ariaHiddenFalse = equalLettersIgnoringASCIICase(ariaHiddenValue, "false"_s);
-            if (!testNode->renderer() && !ariaHiddenFalse)
-                return false;
-            if (!ariaHiddenFalsePresent && ariaHiddenFalse)
-                ariaHiddenFalsePresent = true;
-        }
-    }
-    
-    return !requiresAriaHiddenFalse || ariaHiddenFalsePresent;
+    return is<Element>(node) && uncheckedDowncast<Element>(node).focused();
 }
 
 // DOM component of hidden definition.

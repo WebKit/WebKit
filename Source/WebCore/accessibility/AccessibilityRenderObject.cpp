@@ -2404,7 +2404,7 @@ void AccessibilityRenderObject::updateAttachmentViewParents()
 #endif
 
 // Some elements don't have an associated render object, meaning they won't be picked up by a walk of the render tree.
-// For example, nodes that are `aria-hidden="false"` and `hidden`, or elements with `display: contents`.
+// For example, elements with `display: contents`, or aria-hidden=true elements that are focused.
 // This function will find and add these elements to the AX tree.
 void AccessibilityRenderObject::addNodeOnlyChildren()
 {
@@ -2423,7 +2423,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
         if (child->renderer())
             continue;
 
-        if (nodeHasDisplayContents(*child) || isNodeAriaVisible(*child)) {
+        if (nodeHasDisplayContents(*child) || isNodeFocused(*child)) {
             hasNodeOnlyChildren = true;
             break;
         }
@@ -2456,7 +2456,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
             continue;
         }
 
-        if (!nodeHasDisplayContents(*child) && !isNodeAriaVisible(*child))
+        if (!nodeHasDisplayContents(*child))
             continue;
 
         unsigned previousSize = m_children.size();

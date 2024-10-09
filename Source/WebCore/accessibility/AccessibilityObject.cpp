@@ -4048,13 +4048,8 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (auto* style = this->style()) {
         if (style->effectiveInert())
             return AccessibilityObjectInclusion::IgnoreObject;
-        if (style->usedVisibility() != Visibility::Visible) {
-            // aria-hidden is meant to override visibility as the determinant in AX hierarchy inclusion.
-            if (equalLettersIgnoringASCIICase(getAttribute(aria_hiddenAttr), "false"_s))
-                return AccessibilityObjectInclusion::DefaultBehavior;
-
+        if (style->usedVisibility() != Visibility::Visible)
             return AccessibilityObjectInclusion::IgnoreObject;
-        }
     }
 
     bool useParentData = !m_isIgnoredFromParentData.isNull();

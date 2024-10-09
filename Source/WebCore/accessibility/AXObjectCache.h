@@ -907,9 +907,7 @@ bool nodeHasTableRole(Node*);
 // https://www.w3.org/TR/accname-1.2/
 bool hasAccNameAttribute(Element&);
 
-// This will let you know if aria-hidden was explicitly set to false.
-bool isNodeAriaVisible(Node&);
-bool isNodeAriaVisible(Node*);
+bool isNodeFocused(Node&);
 
 bool isDOMHidden(const RenderStyle*);
 
