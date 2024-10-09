@@ -1024,6 +1024,9 @@ webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Sk
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
+webkit.org/b/281041 [ Debug ] animations/animation-direction-reverse-hardware-opacity.html [ Skip ] # Crash
+webkit.org/b/281041 [ Debug ] animations/animation-followed-by-two-transitions.html [ Skip ] # Crash
+webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-view-functional-notation.tentative.html [ Skip ] # Crash
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Compositing
