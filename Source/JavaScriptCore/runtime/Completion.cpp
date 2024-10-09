@@ -132,9 +132,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
     RELEASE_ASSERT(vm.atomStringTable() == Thread::current().atomStringTable());
     RELEASE_ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
-    if (!thisValue || thisValue.isUndefinedOrNull())
-        thisValue = globalObject;
-    JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
+    JSObject* thisObj = thisValue ? thisValue.toSloppyModeThis(globalObject) : globalObject->globalThis();
     JSValue result = vm.interpreter.executeProgram(source, globalObject, thisObj);
 
     if (UNLIKELY(scope.exception())) {
@@ -162,7 +160,7 @@ JSValue evaluateWithScopeExtension(JSGlobalObject* globalObject, const SourceCod
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue returnValue = JSC::evaluate(globalObject, source, globalObject, returnedException);
+    JSValue returnValue = JSC::evaluate(globalObject, source, globalObject->globalThis(), returnedException);
 
     if (scopeExtensionObject)
         globalObject->clearGlobalScopeExtension();

@@ -112,8 +112,12 @@ shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set");
 // __proto__ shorthand should not modify the prototype.
 shouldThrow("this.__proto__ = []");
 shouldBeFalse("({__proto__: this.__proto__}) instanceof Array");
-shouldThrow("__proto__ = []", '"TypeError: Object.prototype.__proto__ called on null or undefined"');
-shouldThrow("({__proto__: __proto__}) instanceof Array", '"TypeError: undefined is not an object (evaluating \'__proto__\')"');
+
+// __proto__ getter / setter called on global object
+shouldThrow("__proto__ = []", '"TypeError: Cannot set prototype of immutable prototype object"');
+shouldBeFalse("({__proto__: __proto__}) instanceof Array");
+shouldBe("__proto__", "Object.getPrototypeOf(globalThis)");
+shouldBe("__proto__ = __proto__", "Object.getPrototypeOf(globalThis)");
 
 // Keywords - Syntax Errors
 debug("SyntaxErrors");

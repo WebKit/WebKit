@@ -1595,20 +1595,16 @@ public:
         return op() == IsCellWithType;
     }
 
-    JSType queriedType()
+    JSTypeRange queriedType()
     {
-        static_assert(std::is_same<uint8_t, std::underlying_type<JSType>::type>::value, "Ensure that uint8_t is the underlying type for JSType.");
-        return static_cast<JSType>(m_opInfo.as<uint32_t>());
-    }
-
-    bool hasSpeculatedTypeForQuery()
-    {
-        return op() == IsCellWithType;
+        ASSERT(hasQueriedType());
+        return JSTypeRange::fromBits(m_opInfo.as<uint32_t>());
     }
 
     std::optional<SpeculatedType> speculatedTypeForQuery()
     {
-        return speculationFromJSType(queriedType());
+        ASSERT(hasQueriedType());
+        return speculationFromJSTypeRange(queriedType());
     }
 
     bool hasStructureFlags()
@@ -2609,7 +2605,6 @@ public:
         case PutByValWithThis:
         case EnumeratorPutByVal:
         case PutDynamicVar:
-        case ToThis:
             return true;
         default:
             return false;
@@ -2622,7 +2617,6 @@ public:
         switch (op()) {
         case DeleteByVal:
         case PutByValWithThis:
-        case ToThis:
             return ECMAMode::fromByte(m_opInfo.as<uint8_t>());
         case DeleteById:
         case PutById:

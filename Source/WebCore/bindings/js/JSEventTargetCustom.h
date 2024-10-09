@@ -65,7 +65,8 @@ public:
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        auto thisValue = callFrame.thisValue().toThis(&lexicalGlobalObject, JSC::ECMAMode::strict());
+        // Just like castThisValue(), this implements step 2.1.2.1 of https://webidl.spec.whatwg.org/#dfn-create-operation-function
+        auto thisValue = callFrame.thisValue();
         auto thisObject = jsEventTargetCast(vm, thisValue.isUndefinedOrNull() ? JSC::JSValue(&lexicalGlobalObject) : thisValue);
         if (UNLIKELY(thisObject.isNull()))
             return throwThisTypeError(lexicalGlobalObject, throwScope, "EventTarget", operationName);

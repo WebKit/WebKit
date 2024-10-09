@@ -179,26 +179,6 @@ ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm
     return base->get(globalObject, propertyName);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationToThis, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedOp))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    OPERATION_RETURN(scope, JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, ECMAMode::sloppy())));
-}
-
-JSC_DEFINE_JIT_OPERATION(operationToThisStrict, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedOp))
-{
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    OPERATION_RETURN(scope, JSValue::encode(JSValue::decode(encodedOp).toThis(globalObject, ECMAMode::strict())));
-}
-
 JSC_DEFINE_JIT_OPERATION(operationObjectKeys, JSArray*, (JSGlobalObject* globalObject, EncodedJSValue encodedObject))
 {
     VM& vm = globalObject->vm();
@@ -369,8 +349,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectToStringUntyped, JSString*, (JSGlobalObj
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = JSValue::decode(encodedValue).toThis(globalObject, ECMAMode::strict());
-    OPERATION_RETURN(scope, objectPrototypeToString(globalObject, thisValue));
+    OPERATION_RETURN(scope, objectPrototypeToString(globalObject, JSValue::decode(encodedValue)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobalObject* globalObject, JSObject* object))
@@ -380,8 +359,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobal
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = JSValue(object).toThis(globalObject, ECMAMode::strict());
-    OPERATION_RETURN(scope, objectPrototypeToString(globalObject, thisValue));
+    OPERATION_RETURN(scope, objectPrototypeToString(globalObject, object));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationReflectOwnKeys, JSArray*, (JSGlobalObject* globalObject, EncodedJSValue encodedObject))
@@ -4129,7 +4107,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetDynamicVar, EncodedJSValue, (JSGlobalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Identifier ident = Identifier::fromUid(vm, impl);
-    OPERATION_RETURN(scope, JSValue::encode(jsScope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+    PropertySlot slot(wrapGlobalObject(jsScope), PropertySlot::InternalMethodType::Get);
+    OPERATION_RETURN(scope, JSValue::encode(jsScope->getPropertySlot(globalObject, ident, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             GetPutInfo getPutInfo(getPutInfoBits);
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
@@ -4176,7 +4155,7 @@ ALWAYS_INLINE static void putDynamicVar(JSGlobalObject* globalObject, VM& vm, JS
         return;
     }
 
-    PutPropertySlot slot(scope, isStrictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
+    PutPropertySlot slot(wrapGlobalObject(scope), isStrictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     throwScope.release();
     scope->methodTable()->put(scope, globalObject, ident, JSValue::decode(value), slot);
 }

@@ -728,8 +728,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncMakeTypeError, (JSGlobalObject* globalObject,
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncProtoGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
-    return JSValue::encode(thisValue.getPrototype(globalObject));
+    return JSValue::encode(callFrame->thisValue().getPrototype(globalObject));
 }
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncProtoSetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -737,7 +736,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncProtoSetter, (JSGlobalObject* globalObject, C
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+    JSValue thisValue = callFrame->thisValue();
     if (thisValue.isUndefinedOrNull())
         return throwVMTypeError(globalObject, scope, ObjectProtoCalledOnNullOrUndefinedError);
 
@@ -1167,9 +1166,9 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncToLength, (JSGlobalObject* globalObject, Call
     return JSValue::encode(jsNumber(argument.toLength(globalObject)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(globalFuncSpeciesGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(globalFuncSpeciesGetter, (JSGlobalObject*, CallFrame* callFrame))
 {
-    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
+    return JSValue::encode(callFrame->thisValue());
 }
 
 } // namespace JSC

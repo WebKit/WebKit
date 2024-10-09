@@ -766,7 +766,6 @@ namespace JSC {
         RegisterID* emitToNumeric(RegisterID* dst, RegisterID* src);
         RegisterID* emitToString(RegisterID* dst, RegisterID* src);
         RegisterID* emitToObject(RegisterID* dst, RegisterID* src, const Identifier& message);
-        RegisterID* emitToThis(RegisterID* srcDst);
         RegisterID* emitInc(RegisterID* srcDst);
         RegisterID* emitDec(RegisterID* srcDst);
 
@@ -886,6 +885,7 @@ namespace JSC {
         RegisterID* emitResolveConstantLocal(RegisterID* dst, const Variable&);
         RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
+        RegisterID* emitGetFunctionFromScope(RegisterID* dst, const Variable&, RegisterID* thisValueForCall, RegisterID* temp);
         RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode, InitializationMode);
         RegisterID* emitPutToScopeDynamic(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode, InitializationMode);
 
@@ -918,6 +918,7 @@ namespace JSC {
         void emitEnumeratorNext(RegisterID* propertyName, RegisterID* mode, RegisterID* index, RegisterID* base, RegisterID* enumerator);
         RegisterID* emitEnumeratorHasOwnProperty(RegisterID* dst, RegisterID* base, RegisterID* mode, RegisterID* propertyName, RegisterID* index, RegisterID* enumerator);
 
+        RegisterID* emitIsCellWithType(RegisterID* dst, RegisterID* src, JSTypeRange);
         RegisterID* emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType);
         RegisterID* emitIsGenerator(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSGeneratorType); }
         RegisterID* emitIsIteratorHelper(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSIteratorHelperType); }
@@ -1106,7 +1107,8 @@ namespace JSC {
         bool isNewTargetUsedInInnerArrowFunction();
         bool isArgumentsUsedInInnerArrowFunction();
 
-        void emitToThis() { emitToThis(&m_thisRegister); }
+        void emitToThis();
+        bool isTaintedByWithScope(const Variable&) const;
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 

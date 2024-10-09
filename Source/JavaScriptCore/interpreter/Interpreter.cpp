@@ -935,6 +935,8 @@ NEVER_INLINE JSValue Interpreter::checkVMEntryPermission()
 
 JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, JSObject* thisObj)
 {
+    ASSERT_WITH_MESSAGE(!thisObj->inherits<JSScope>(), "thisObj shouldn't be JSScope");
+
     VM& vm = this->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSScope* scope = thisObj->globalObject()->globalScope();
@@ -1177,6 +1179,8 @@ JSValue Interpreter::executeBoundCall(VM& vm, JSBoundFunction* function, const A
 
 ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
+    ASSERT_WITH_MESSAGE(!thisValue.inherits<JSScope>(), "thisValue shouldn't be JSScope");
+
     auto clobberizeValidator = makeScopeExit([&] {
         vm.didEnterVM = true;
     });
@@ -1373,6 +1377,8 @@ CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction*
 
 JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScope* scope)
 {
+    ASSERT_WITH_MESSAGE(!thisValue || !thisValue.inherits<JSScope>(), "thisValue shouldn't be JSScope");
+
     VM& vm = this->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 

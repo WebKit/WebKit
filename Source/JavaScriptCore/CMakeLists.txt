@@ -655,7 +655,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h
     bytecode/SuperSampler.h
-    bytecode/ToThisStatus.h
     bytecode/TypeLocation.h
     bytecode/UnlinkedCodeBlock.h
     bytecode/UnlinkedEvalCodeBlock.h

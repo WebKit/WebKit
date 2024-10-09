@@ -817,18 +817,9 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* 
         vm, globalObject, string, searchValue, callData, replacementString, replaceValue));
 }
 
-static inline bool checkObjectCoercible(JSValue thisValue)
+static ALWAYS_INLINE bool checkObjectCoercible(JSValue thisValue)
 {
-    if (thisValue.isString())
-        return true;
-
-    if (thisValue.isUndefinedOrNull())
-        return false;
-
-    if (thisValue.isObject() && asObject(thisValue)->isEnvironment())
-        return false;
-
-    return true;
+    return thisValue.isString() || !thisValue.isUndefinedOrNull();
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* globalObject, CallFrame* callFrame))
