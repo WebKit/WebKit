@@ -851,6 +851,7 @@ void RenderBundleEncoder::endCurrentICB()
     RELEASE_ASSERT(!commandCount || !!m_icbDescriptor.commandTypes);
 
     m_icbDescriptor.maxVertexBufferBindCount = m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
+    m_icbDescriptor.maxFragmentBufferBindCount = m_device->maxBuffersForFragmentStage() + 1;
     if (m_vertexBuffers.size() < m_icbDescriptor.maxVertexBufferBindCount)
         m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
     if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount)
