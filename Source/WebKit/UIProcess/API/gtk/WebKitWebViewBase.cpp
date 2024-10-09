@@ -3502,7 +3502,13 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
     RELEASE_ASSERT(tokens.size() == 2);
 
     GUniqueOutPtr<GError> error;
-    GUniquePtr<char> busName(g_strdup_printf(":%s", tokens[0].utf8().data()));
+
+    auto plugBusName = tokens[0].utf8();
+    RELEASE_ASSERT(g_dbus_is_name(plugBusName.data()));
+
+    auto* busNamePrefix = !g_dbus_is_unique_name(plugBusName.data()) ? "" : ":";
+
+    GUniquePtr<char> busName(g_strdup_printf("%s%s", busNamePrefix, plugBusName.data()));
 
     priv->socketAccessible = adoptGRef(gtk_at_spi_socket_new(busName.get(), tokens[1].utf8().data(), &error.outPtr()));
 

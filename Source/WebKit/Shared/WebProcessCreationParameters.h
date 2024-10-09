@@ -269,6 +269,7 @@ struct WebProcessCreationParameters {
 
 #if USE(ATSPI)
     String accessibilityBusAddress;
+    String accessibilityBusName;
 #endif
 
     String timeZoneOverride;

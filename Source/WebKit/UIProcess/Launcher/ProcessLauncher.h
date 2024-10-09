@@ -55,6 +55,10 @@ OBJC_CLASS BERenderingProcess;
 #include <wtf/glib/GSocketMonitor.h>
 #endif
 
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+#include "glib/XDGDBusProxy.h"
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -63,6 +67,40 @@ enum class SandboxPermission {
     ReadWrite,
 };
 #endif
+
+enum class ProcessLaunchType {
+    Web,
+    Network,
+#if ENABLE(GPU_PROCESS)
+    GPU,
+#endif
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    DBusProxy,
+#endif
+#if ENABLE(MODEL_PROCESS)
+    Model,
+#endif
+};
+
+struct ProcessLaunchOptions {
+    WebCore::ProcessIdentifier processIdentifier;
+    ProcessLaunchType processType { ProcessLaunchType::Web };
+    HashMap<String, String> extraInitializationData { };
+    bool nonValidInjectedCodeAllowed { false };
+    bool shouldMakeProcessLaunchFailForTesting { false };
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    HashMap<CString, SandboxPermission> extraSandboxPaths { };
+#if ENABLE(DEVELOPER_MODE)
+    String processCmdPrefix { };
+#endif
+#endif
+
+#if PLATFORM(PLAYSTATION)
+    String processPath { };
+    int32_t userId { -1 };
+#endif
+};
 
 #if USE(EXTENSIONKIT)
 class LaunchGrant : public ThreadSafeRefCounted<LaunchGrant> {
@@ -79,6 +117,9 @@ private:
 
 class ProcessLauncher : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ProcessLauncher> {
 public:
+    using ProcessType = ProcessLaunchType;
+    using LaunchOptions = ProcessLaunchOptions;
+
     class Client {
     public:
         virtual ~Client() { }
@@ -91,40 +132,6 @@ public:
         virtual bool shouldDisableJITCage() const { return false; }
 #if PLATFORM(COCOA)
         virtual RefPtr<XPCEventHandler> xpcEventHandler() const { return nullptr; }
-#endif
-    };
-    
-    enum class ProcessType {
-        Web,
-        Network,
-#if ENABLE(GPU_PROCESS)
-        GPU,
-#endif
-#if ENABLE(BUBBLEWRAP_SANDBOX)
-        DBusProxy,
-#endif
-#if ENABLE(MODEL_PROCESS)
-        Model,
-#endif
-    };
-
-    struct LaunchOptions {
-        ProcessType processType;
-        WebCore::ProcessIdentifier processIdentifier;
-        HashMap<String, String> extraInitializationData;
-        bool nonValidInjectedCodeAllowed { false };
-        bool shouldMakeProcessLaunchFailForTesting { false };
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-        HashMap<CString, SandboxPermission> extraSandboxPaths;
-#if ENABLE(DEVELOPER_MODE)
-        String processCmdPrefix;
-#endif
-#endif
-
-#if PLATFORM(PLAYSTATION)
-        String processPath;
-        int32_t userId { -1 };
 #endif
     };
 
@@ -183,6 +190,10 @@ private:
     const LaunchOptions m_launchOptions;
     bool m_isLaunching { true };
     ProcessID m_processID { 0 };
+
+#if ENABLE(BUBBLEWRAP_SANDBOX)
+    XDGDBusProxy m_dbusProxy;
+#endif
 
 #if USE(GLIB) && OS(LINUX)
     GSocketMonitor m_socketMonitor;

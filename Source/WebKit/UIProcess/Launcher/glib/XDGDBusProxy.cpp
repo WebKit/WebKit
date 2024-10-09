@@ -92,7 +92,7 @@ std::optional<CString> XDGDBusProxy::dbusSessionProxy(const char* baseDirectory,
 }
 
 #if USE(ATSPI)
-std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const String& accessibilityBusAddress)
+std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirectory, const String& accessibilityBusAddress, const String& accessibilityBusName)
 {
     if (!m_accessibilityProxyPath.isNull())
         return m_accessibilityProxyPath;
@@ -100,6 +100,8 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
     m_accessibilityProxyPath = makeProxy(baseDirectory, "a11y-proxy-XXXXXX");
     if (m_accessibilityProxyPath.isNull())
         return std::nullopt;
+
+    auto webProcessA11yOwnArg = makeString("--own="_s, accessibilityBusName);
 
     m_args.appendVector(Vector<CString> {
         accessibilityBusAddress.utf8(), m_accessibilityProxyPath,
@@ -114,6 +116,7 @@ std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* baseDirector
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
         "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
+        webProcessA11yOwnArg.utf8(),
     });
 
     if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"))
@@ -172,13 +175,10 @@ static void waitUntilSyncedOrDie(GSubprocess* subprocess, int syncFd)
         g_error("Failed to fully launch dbus-proxy: %s", data.error->message);
 }
 
-bool XDGDBusProxy::launch(const ProcessLauncher::LaunchOptions& webProcessLaunchOptions)
+void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
 {
-    if (m_syncFD)
-        return true;
-
     if (m_args.isEmpty())
-        return false;
+        return;
 
     int syncFds[2];
     if (pipe(syncFds) == -1)
@@ -227,17 +227,17 @@ bool XDGDBusProxy::launch(const ProcessLauncher::LaunchOptions& webProcessLaunch
 
 #if USE(ATSPI)
     launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, webProcessLaunchOptions.extraInitializationData.get("accessibilityBusAddress"_s));
+    launchOptions.extraInitializationData.set("accessibilityBusName"_s, webProcessLaunchOptions.extraInitializationData.get("accessibilityBusName"_s));
 #else
     UNUSED_PARAM(webProcessLaunchOptions);
 #endif
 
     GUniqueOutPtr<GError> error;
-    GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
+    GRefPtr<GSubprocess> subprocess = bubblewrapSpawn(launcher.get(), launchOptions, *this, argv, &error.outPtr());
     if (!subprocess)
         g_error("Failed to start dbus proxy: %s", error->message);
 
     waitUntilSyncedOrDie(subprocess.get(), syncFds[0]);
-    return true;
 }
 
 } // namespace WebKit

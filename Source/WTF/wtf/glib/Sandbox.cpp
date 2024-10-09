@@ -26,9 +26,11 @@
 #include "config.h"
 #include <wtf/glib/Sandbox.h>
 
+#include <gio/gio.h>
 #include <glib.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WTF {
@@ -95,6 +97,24 @@ bool shouldUsePortal()
         return usePortal && usePortal[0] != '0';
     }();
     return returnValue;
+}
+
+bool checkFlatpakPortalVersion(int version)
+{
+    static int flatpakPortalVersion = -1;
+    static std::once_flag onceFlag;
+
+    std::call_once(onceFlag, [] {
+        GRefPtr<GDBusProxy> proxy = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.portal.Flatpak", "/org/freedesktop/portal/Flatpak", "org.freedesktop.portal.Flatpak", nullptr, nullptr));
+        if (!proxy)
+            return;
+        GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_get_cached_property(proxy.get(), "version"));
+        if (!result)
+            return;
+        flatpakPortalVersion = g_variant_get_uint32(result.get());
+    });
+
+    return flatpakPortalVersion != -1 && flatpakPortalVersion >= version;
 }
 
 const CString& sandboxedUserRuntimeDirectory()

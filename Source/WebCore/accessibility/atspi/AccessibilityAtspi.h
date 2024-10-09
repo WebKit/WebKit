@@ -48,7 +48,7 @@ class AccessibilityAtspi {
 public:
     WEBCORE_EXPORT static AccessibilityAtspi& singleton();
 
-    void connect(const String&);
+    void connect(const String&, const String&);
 
     const char* uniqueName() const;
     GVariant* nullReference() const;
@@ -101,6 +101,7 @@ private:
     };
 
     void didConnect(GRefPtr<GDBusConnection>&&);
+    void didOwnName();
     void initializeRegistry();
     void addEventListener(const char* dbusName, const char* eventName);
     void removeEventListener(const char* dbusName, const char* eventName);
@@ -128,6 +129,7 @@ private:
 
     static GDBusInterfaceVTable s_cacheFunctions;
 
+    String m_busName;
     bool m_isConnecting { false };
     GRefPtr<GDBusConnection> m_connection;
     GRefPtr<GDBusProxy> m_registry;

@@ -30,6 +30,7 @@
 
 #include <gio/gio.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/Sandbox.h>
 
 namespace WebKit {
 
@@ -67,6 +68,15 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
             GUniquePtr<gchar> pathArg(g_strdup_printf(formatString, pathAndPermission.key.data()));
             flatpakArgs.append(pathArg.get());
         }
+
+#if USE(ATSPI)
+        RELEASE_ASSERT(isInsideFlatpak());
+        if (checkFlatpakPortalVersion(7)) {
+            auto busName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s);
+            GUniquePtr<gchar> a11yOwnNameArg(g_strdup_printf("--sandbox-a11y-own-name=%s", busName.utf8().data()));
+            flatpakArgs.append(a11yOwnNameArg.get());
+        }
+#endif
     }
 
     // We need to pass our full environment to the subprocess.

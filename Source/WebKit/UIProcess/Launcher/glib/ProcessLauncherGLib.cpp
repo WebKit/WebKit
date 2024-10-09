@@ -235,7 +235,7 @@ void ProcessLauncher::launchProcess()
     // You cannot use bubblewrap within Flatpak or some containers so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
     else if (sandboxEnabled && shouldUseBubblewrap())
-        process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
+        process = bubblewrapSpawn(launcher.get(), m_launchOptions, m_dbusProxy, argv, &error.outPtr());
 #endif // ENABLE(BUBBLEWRAP_SANDBOX)
     else
 #endif // OS(LINUX)
