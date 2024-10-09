@@ -86,7 +86,6 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Web Audio Disabled", result.get());
 
-
     [webView evaluateJavaScript:@"log(window.RTCPeerConnection ? 'Web RTC Enabled' : 'Web RTC Disabled');" completionHandler:^(id, NSError *error) {
         EXPECT_NULL(error);
     }];
@@ -116,4 +115,10 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     }];
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Geolocation Disabled", result.get());
+
+    [webView evaluateJavaScript:@"log(window.ApplePaySession ? 'ApplePay Enabled' : 'ApplePay Disabled');" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+    result = (NSString *)[getNextMessage() body];
+    EXPECT_WK_STREQ(@"ApplePay Disabled", result.get());
 }

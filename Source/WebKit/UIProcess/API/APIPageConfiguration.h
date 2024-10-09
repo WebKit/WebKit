@@ -321,8 +321,8 @@ public:
 #endif
 
 #if ENABLE(APPLE_PAY)
-    bool applePayEnabled() const { return m_data.applePayEnabled; }
-    void setApplePayEnabled(bool enabled) { m_data.applePayEnabled = enabled; }
+    bool applePayEnabled() const;
+    void setApplePayEnabled(bool);
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -599,7 +599,7 @@ private:
         WebCore::UserInterfaceDirectionPolicy userInterfaceDirectionPolicy { WebCore::UserInterfaceDirectionPolicy::Content };
 #endif
 #if ENABLE(APPLE_PAY)
-        bool applePayEnabled { DEFAULT_VALUE_FOR_ApplePayEnabled };
+        std::optional<bool> applePayEnabledOverride;
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
         bool appHighlightsEnabled { DEFAULT_VALUE_FOR_AppHighlightsEnabled };

@@ -376,4 +376,21 @@ void PageConfiguration::setApplicationManifest(RefPtr<ApplicationManifest>&& app
 }
 #endif
 
+#if ENABLE(APPLE_PAY)
+
+bool PageConfiguration::applePayEnabled() const
+{
+    if (auto applePayEnabledOverride = m_data.applePayEnabledOverride)
+        return *applePayEnabledOverride;
+
+    return preferences().applePayEnabled();
+}
+
+void PageConfiguration::setApplePayEnabled(bool enabled)
+{
+    m_data.applePayEnabledOverride = enabled;
+}
+
+#endif
+
 } // namespace API
