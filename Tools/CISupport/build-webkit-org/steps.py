@@ -1959,11 +1959,9 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '15': 'Sequoia',
             '14': 'Sonoma',
             '13': 'Ventura',
-            '12': 'Monterey',
-            '11': 'Big Sur',
-            '10.15': 'Catalina',
         }
 
         for key, value in build_to_name_mapping.items():

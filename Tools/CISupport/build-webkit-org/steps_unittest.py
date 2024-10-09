@@ -1204,8 +1204,8 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_mac(self):
         self.setupStep(PrintConfiguration())
-        self.setProperty('buildername', 'macOS-Ventura-Release-WK2-Tests-EWS')
-        self.setProperty('platform', 'mac-ventura')
+        self.setProperty('buildername', 'macOS-Sequoia-Release-WK2-Tests')
+        self.setProperty('platform', 'mac-sequoia')
 
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
@@ -1219,35 +1219,36 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
             ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-ProductVersion:	12.0.1
-BuildVersion:	21A558'''),
+ProductVersion:	15.0
+BuildVersion:	24A335'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
             ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-            + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
-SDKVersion: 12.0
-Path: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk
-PlatformVersion: 12.0
+            + ExpectShell.log('stdio', stdout='''MacOSX15.sdk - macOS 15.0 (macosx15.0)
+SDKVersion: 15.0
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.sdk
+PlatformVersion: 15.0
 PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform
-ProductBuildVersion: 21A344
-ProductCopyright: 1983-2021 Apple Inc.
+BuildID: E7931D9A-726E-11EF-B57C-DCEFEEF80074
+ProductBuildVersion: 24A336
+ProductCopyright: 1983-2024 Apple Inc.
 ProductName: macOS
-ProductUserVisibleVersion: 12.0
-ProductVersion: 12.0
-iOSSupportVersion: 15.0
+ProductUserVisibleVersion: 15.0
+ProductVersion: 15.0
+iOSSupportVersion: 18.0
 
-Xcode 13.1
-Build version 13A1030d''')
+Xcode 16.0
+Build version 16A242d''')
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
+        self.expectOutcome(result=SUCCESS, state_string='OS: Sequoia (15.0), Xcode: 16.0')
         return self.runStep()
 
     def test_success_ios_simulator(self):
         self.setupStep(PrintConfiguration())
-        self.setProperty('buildername', 'Apple-iOS-15-Simulator-Release-WK2-Tests')
-        self.setProperty('platform', 'ios-simulator-15')
+        self.setProperty('buildername', 'Apple-iOS-17-Simulator-Release-WK2-Tests')
+        self.setProperty('platform', 'ios-simulator-17')
 
         self.expectRemoteCommands(
             ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
@@ -1261,28 +1262,28 @@ Build version 13A1030d''')
             + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
             ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-ProductVersion:	11.6
-BuildVersion:	20G165'''),
+ProductVersion:	14.5
+BuildVersion:	23F79'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
-            + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
-SDKVersion: 15.0
-Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator15.0.sdk
-PlatformVersion: 15.0
+            + ExpectShell.log('stdio', stdout='''iPhoneSimulator17.5.sdk - Simulator - iOS 17.5 (iphonesimulator17.5)
+SDKVersion: 17.5
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk
+PlatformVersion: 17.5
 PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform
-BuildID: 84856584-0587-11EC-B99C-6807972BB3D4
-ProductBuildVersion: 19A339
-ProductCopyright: 1983-2021 Apple Inc.
+BuildID: 8EFDDFDC-08C7-11EF-A0A9-DD3864AEFA1C
+ProductBuildVersion: 21F77
+ProductCopyright: 1983-2024 Apple Inc.
 ProductName: iPhone OS
-ProductVersion: 15.0
+ProductVersion: 17.5
 
-Xcode 13.0
-Build version 13A233''')
+Xcode 15.4
+Build version 15F31d''')
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
+        self.expectOutcome(result=SUCCESS, state_string='OS: Sonoma (14.5), Xcode: 15.4')
         return self.runStep()
 
     def test_success_webkitpy(self):
@@ -1295,15 +1296,15 @@ Build version 13A233''')
             ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
-ProductVersion:	11.6
-BuildVersion:	20G165'''),
+ProductVersion:	14.5
+BuildVersion:	23F79'''),
             ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
+            + ExpectShell.log('stdio', stdout='''Xcode 15.4\nBuild version 15F31d'''),
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
+        self.expectOutcome(result=SUCCESS, state_string='OS: Sonoma (14.5), Xcode: 15.4')
         return self.runStep()
 
     def test_success_linux_wpe(self):
