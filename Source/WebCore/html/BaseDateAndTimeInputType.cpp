@@ -346,8 +346,8 @@ void BaseDateAndTimeInputType::showPicker()
 
     if (auto* chrome = this->chrome()) {
         m_dateTimeChooser = chrome->createDateTimeChooser(*this);
-        if (m_dateTimeChooser)
-            m_dateTimeChooser->showChooser(parameters);
+        if (RefPtr dateTimeChooser = m_dateTimeChooser)
+            dateTimeChooser->showChooser(parameters);
     }
 }
 
@@ -549,8 +549,8 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
     if (!setupDateTimeChooserParameters(parameters))
         return;
 
-    if (m_dateTimeChooser)
-        m_dateTimeChooser->showChooser(parameters);
+    if (RefPtr dateTimeChooser = m_dateTimeChooser)
+        dateTimeChooser->showChooser(parameters);
 }
 
 bool BaseDateAndTimeInputType::isEditControlOwnerDisabled() const
@@ -575,11 +575,6 @@ void BaseDateAndTimeInputType::didChooseValue(StringView value)
 {
     ASSERT(element());
     element()->setValue(value.toString(), DispatchInputAndChangeEvent);
-}
-
-void BaseDateAndTimeInputType::didEndChooser()
-{
-    m_dateTimeChooser = nullptr;
 }
 
 bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
@@ -645,8 +640,8 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
 
 void BaseDateAndTimeInputType::closeDateTimeChooser()
 {
-    if (m_dateTimeChooser)
-        m_dateTimeChooser->endChooser();
+    if (RefPtr dateTimeChooser = m_dateTimeChooser)
+        dateTimeChooser->endChooser();
 }
 
 } // namespace WebCore

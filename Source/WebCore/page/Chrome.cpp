@@ -469,7 +469,7 @@ std::unique_ptr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-std::unique_ptr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserClient& client)
+RefPtr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserClient& client)
 {
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(client);

@@ -28,16 +28,8 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include <WebCore/DateTimeChooser.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakRef.h>
-
-namespace WebKit {
-class WebDateTimeChooser;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebDateTimeChooser> : std::true_type { };
-}
 
 namespace WebCore {
 class DateTimeChooserClient;
@@ -48,20 +40,30 @@ namespace WebKit {
 
 class WebPage;
 
-class WebDateTimeChooser final : public WebCore::DateTimeChooser {
+class WebDateTimeChooser final : public RefCounted<WebDateTimeChooser>, public WebCore::DateTimeChooser {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WebDateTimeChooser);
 public:
-    WebDateTimeChooser(WebPage&, WebCore::DateTimeChooserClient&);
+    static Ref<WebDateTimeChooser> create(WebPage& page, WebCore::DateTimeChooserClient& client)
+    {
+        return adoptRef(*new WebDateTimeChooser(page, client));
+    }
+
     ~WebDateTimeChooser();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void didChooseDate(StringView);
     void didEndChooser();
 
 private:
+    WebDateTimeChooser(WebPage&, WebCore::DateTimeChooserClient&);
+
     void endChooser() final;
     void showChooser(const WebCore::DateTimeChooserParameters&) final;
 
     CheckedRef<WebCore::DateTimeChooserClient> m_client;
-    WeakRef<WebPage> m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

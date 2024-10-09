@@ -56,12 +56,19 @@ void WebDateTimeChooser::didEndChooser()
 
 void WebDateTimeChooser::endChooser()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDateTimePicker(), m_page.get().identifier());
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDateTimePicker(), page->identifier());
 }
 
 void WebDateTimeChooser::showChooser(const WebCore::DateTimeChooserParameters& params)
 {
-    Ref page { m_page.get() };
+    RefPtr page  = m_page.get();
+    if (!page)
+        return;
+
     page->setActiveDateTimeChooser(*this);
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowDateTimePicker(params), page->identifier());
 }

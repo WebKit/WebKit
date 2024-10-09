@@ -712,7 +712,7 @@ std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggest
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
+RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

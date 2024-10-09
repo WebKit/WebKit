@@ -201,7 +201,7 @@ public:
 #endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
+    RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
 #endif
 
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
