@@ -366,7 +366,7 @@ public:
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
     bool isLayerForPluginWithScrollCoordinatedContents(const RenderLayer&) const;
 
-    ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
+    ScrollableArea* scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID>) const;
 
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 

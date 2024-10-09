@@ -465,9 +465,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID isVertical:(bool)isVertical
 {
-    if (!_page || !ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
+    if (!_page || !ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID) || !ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(scrollingNodeID))
         return @"";
-    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
+    return _page->scrollbarStateForScrollingNodeID(WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)), isVertical);
 }
 
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus

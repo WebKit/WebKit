@@ -353,9 +353,9 @@ using PlaybackTargetClientContextIdentifier = LegacyNullableObjectIdentifier<Pla
 using PointerID = uint32_t;
 using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoader>;
 using SandboxFlags = OptionSet<SandboxFlag>;
-using ScrollingNodeID = ProcessQualified<LegacyNullableObjectIdentifier<ScrollingNodeIDType>>;
+using ScrollingNodeID = ProcessQualified<ObjectIdentifier<ScrollingNodeIDType>>;
 using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
-using UserMediaRequestIdentifier = LegacyNullableObjectIdentifier<UserMediaRequestIdentifierType>;
+using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
 } // namespace WebCore
 

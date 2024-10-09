@@ -162,8 +162,8 @@ public:
     bool scrollingPerformanceTestingEnabled() const;
     
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase);
-    void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
-    void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason);
+    void deferWheelEventTestCompletionForReason(std::optional<WebCore::ScrollingNodeID>, WebCore::WheelEventTestMonitor::DeferReason);
+    void removeWheelEventTestCompletionDeferralForReason(std::optional<WebCore::ScrollingNodeID>, WebCore::WheelEventTestMonitor::DeferReason);
 
     virtual void windowScreenWillChange() { }
     virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) { }

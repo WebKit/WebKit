@@ -100,8 +100,8 @@ public:
     bool isScrollSnapInProgressForNode(std::optional<ScrollingNodeID>);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);
 
-    bool isScrollAnimationInProgressForNode(ScrollingNodeID);
-    void setScrollAnimationInProgressForNode(ScrollingNodeID, bool);
+    bool isScrollAnimationInProgressForNode(std::optional<ScrollingNodeID>);
+    void setScrollAnimationInProgressForNode(std::optional<ScrollingNodeID>, bool);
 
     WEBCORE_EXPORT bool hasNodeWithActiveScrollAnimations();
 

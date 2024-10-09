@@ -27,7 +27,7 @@ additional_forward_declaration: namespace WebCore { using FrameIdentifierID = Ob
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifierID = ObjectIdentifier<PlatformLayerIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using RTCDataChannelLocalIdentifier =  AtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>; }
-additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = LegacyNullableObjectIdentifier<ScrollingNodeIDType>; }
+additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = ObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
 

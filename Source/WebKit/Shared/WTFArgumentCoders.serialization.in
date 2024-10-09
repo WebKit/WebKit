@@ -78,8 +78,6 @@ template: struct WebCore::MediaPlayerClientIdentifierType
 template: struct WebCore::MediaSessionIdentifierType
 template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::PlaybackTargetClientContextIdentifierType
-template: struct WebCore::UserMediaRequestIdentifierType
-template: struct WebCore::ScrollingNodeIDType
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableObjectIdentifier {
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
@@ -135,8 +133,10 @@ template: struct WebCore::FrameIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
+template: struct WebCore::ScrollingNodeIDType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType
+template: struct WebCore::UserMediaRequestIdentifierType
 template: struct WebKit::AuthenticationChallengeIdentifierType
 template: struct WebKit::DataTaskIdentifierType
 template: struct WebKit::DisplayLinkObserverIDType

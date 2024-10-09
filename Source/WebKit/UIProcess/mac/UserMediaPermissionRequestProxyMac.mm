@@ -33,12 +33,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestProxy::create(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
 {
     return adoptRef(*new UserMediaPermissionRequestProxyMac(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler)));
 }
 
-UserMediaPermissionRequestProxyMac::UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy& manager, UserMediaRequestIdentifier userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
+UserMediaPermissionRequestProxyMac::UserMediaPermissionRequestProxyMac(UserMediaPermissionRequestManagerProxy& manager, std::optional<UserMediaRequestIdentifier> userMediaID, FrameIdentifier mainFrameID, FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, MediaStreamRequest&& request, CompletionHandler<void(bool)>&& decisionCompletionHandler)
     : UserMediaPermissionRequestProxy(manager, userMediaID, mainFrameID, frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(request), WTFMove(decisionCompletionHandler))
 {
 }

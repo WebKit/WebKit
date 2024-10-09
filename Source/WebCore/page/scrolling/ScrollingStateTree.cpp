@@ -186,7 +186,6 @@ ScrollingNodeID ScrollingStateTree::createUnparentedNode(ScrollingNodeType nodeT
 std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex)
 {
     LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " insertNode " << newNodeID << " in parent " << parentID << " at " << childIndex);
-    ASSERT(newNodeID);
 
     if (auto node = stateNodeForID(newNodeID)) {
         auto parent = stateNodeForID(parentID);
@@ -264,15 +263,15 @@ std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType 
     return newNodeID;
 }
 
-void ScrollingStateTree::unparentNode(ScrollingNodeID nodeID)
+void ScrollingStateTree::unparentNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentNode " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentNode " << *nodeID);
 
     // The node may not be found if clear() was recently called.
-    RefPtr protectedNode = m_stateNodeMap.get(nodeID);
+    RefPtr protectedNode = m_stateNodeMap.get(*nodeID);
     if (!protectedNode)
         return;
 
@@ -280,18 +279,18 @@ void ScrollingStateTree::unparentNode(ScrollingNodeID nodeID)
         m_rootStateNode = nullptr;
 
     protectedNode->removeFromParent();
-    m_unparentedNodes.add(nodeID, WTFMove(protectedNode));
+    m_unparentedNodes.add(*nodeID, WTFMove(protectedNode));
 }
 
-void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
+void ScrollingStateTree::unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentChildrenAndDestroyNode " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " unparentChildrenAndDestroyNode " << *nodeID);
 
     // The node may not be found if clear() was recently called.
-    RefPtr protectedNode = m_stateNodeMap.take(nodeID);
+    RefPtr protectedNode = m_stateNodeMap.take(*nodeID);
     if (!protectedNode)
         return;
 
@@ -305,24 +304,24 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     }
     
     protectedNode->removeFromParent();
-    m_unparentedNodes.remove(nodeID);
+    m_unparentedNodes.remove(*nodeID);
     willRemoveNode(*protectedNode);
 }
 
-void ScrollingStateTree::detachAndDestroySubtree(ScrollingNodeID nodeID)
+void ScrollingStateTree::detachAndDestroySubtree(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return;
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " detachAndDestroySubtree " << nodeID);
+    LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStateTree " << this << " detachAndDestroySubtree " << *nodeID);
 
     // The node may not be found if clear() was recently called.
-    auto node = m_stateNodeMap.take(nodeID);
+    auto node = m_stateNodeMap.take(*nodeID);
     if (!node)
         return;
 
     // If the node was unparented, remove it from m_unparentedNodes (keeping it alive until this function returns).
-    auto unparentedNode = m_unparentedNodes.take(nodeID);
+    auto unparentedNode = m_unparentedNodes.take(*nodeID);
     removeNodeAndAllDescendants(*node);
 }
 
@@ -401,7 +400,7 @@ bool ScrollingStateTree::isValid() const
         case ScrollingNodeType::Positioned: {
             auto& positionedNode = downcast<ScrollingStatePositionedNode>(node);
             for (auto relatedNodeID : positionedNode.relatedOverflowScrollingNodes()) {
-                if (!relatedNodeID || !nodeMap().contains(relatedNodeID)) {
+                if (!nodeMap().contains(relatedNodeID)) {
                     LOG_WITH_STREAM(ScrollingTree, stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
                     isValid = false;
                 }

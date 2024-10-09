@@ -302,8 +302,8 @@ static void dumpUIView(TextStream& ts, UIView *view)
 - (NSString *)_scrollbarState:(unsigned long long)rawScrollingNodeID processID:(unsigned long long)processID isVertical:(bool)isVertical
 {
     std::optional<WebCore::ScrollingNodeID> scrollingNodeID;
-    if (ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
-        scrollingNodeID = WebCore::ScrollingNodeID(LegacyNullableObjectIdentifier<WebCore::ScrollingNodeIDType>(rawScrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID));
+    if (ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID) && ObjectIdentifier<WebCore::ScrollingNodeIDType>::isValidIdentifier(rawScrollingNodeID))
+        scrollingNodeID = WebCore::ScrollingNodeID(ObjectIdentifier<WebCore::ScrollingNodeIDType>(rawScrollingNodeID), ObjectIdentifier<WebCore::ProcessIdentifierType>(processID));
 
     if (_page->scrollingCoordinatorProxy()->rootScrollingNodeID() == scrollingNodeID) {
         TextStream ts(TextStream::LineMode::MultipleLine);

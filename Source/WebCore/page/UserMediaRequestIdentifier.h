@@ -35,6 +35,6 @@
 namespace WebCore {
 
 struct UserMediaRequestIdentifierType;
-using UserMediaRequestIdentifier = LegacyNullableObjectIdentifier<UserMediaRequestIdentifierType>;
+using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
 } // namespace WebCore

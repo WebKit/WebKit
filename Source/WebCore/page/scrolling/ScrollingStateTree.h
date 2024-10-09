@@ -57,9 +57,9 @@ public:
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
     WEBCORE_EXPORT std::optional<ScrollingNodeID> insertNode(ScrollingNodeType, ScrollingNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex);
-    void unparentNode(ScrollingNodeID);
-    void unparentChildrenAndDestroyNode(ScrollingNodeID);
-    void detachAndDestroySubtree(ScrollingNodeID);
+    void unparentNode(std::optional<ScrollingNodeID>);
+    void unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID>);
+    void detachAndDestroySubtree(std::optional<ScrollingNodeID>);
     void clear();
 
     // Copies the current tree state and clears the changed properties mask in the original.

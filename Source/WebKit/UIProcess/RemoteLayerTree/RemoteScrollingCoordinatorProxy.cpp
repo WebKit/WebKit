@@ -396,16 +396,16 @@ void RemoteScrollingCoordinatorProxy::receivedWheelEventWithPhases(PlatformWheel
     m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::ReceivedWheelEventWithPhases(phase, momentumPhase), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-void RemoteScrollingCoordinatorProxy::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+void RemoteScrollingCoordinatorProxy::deferWheelEventTestCompletionForReason(std::optional<ScrollingNodeID> nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (isMonitoringWheelEvents() && nodeID)
-        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StartDeferringScrollingTestCompletionForNode(nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
+        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StartDeferringScrollingTestCompletionForNode(*nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
+void RemoteScrollingCoordinatorProxy::removeWheelEventTestCompletionDeferralForReason(std::optional<ScrollingNodeID> nodeID, WheelEventTestMonitor::DeferReason reason)
 {
     if (isMonitoringWheelEvents() && nodeID)
-        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
+        m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::StopDeferringScrollingTestCompletionForNode(*nodeID, reason), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
 void RemoteScrollingCoordinatorProxy::viewWillStartLiveResize()

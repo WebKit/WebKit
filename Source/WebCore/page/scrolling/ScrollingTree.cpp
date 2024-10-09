@@ -792,7 +792,6 @@ bool ScrollingTree::isUserScrollInProgressForNode(std::optional<ScrollingNodeID>
     
 void ScrollingTree::setUserScrollInProgressForNode(ScrollingNodeID nodeID, bool isScrolling)
 {
-    ASSERT(nodeID);
     Locker locker { m_treeStateLock };
     if (isScrolling) {
         m_treeState.nodesWithActiveUserScrolls.add(nodeID);
@@ -821,7 +820,6 @@ bool ScrollingTree::isScrollSnapInProgressForNode(std::optional<ScrollingNodeID>
 
 void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isScrollSnapping)
 {
-    ASSERT(nodeID);
     Locker locker { m_treeStateLock };
 
     if (isScrollSnapping) {
@@ -833,16 +831,16 @@ void ScrollingTree::setNodeScrollSnapInProgress(ScrollingNodeID nodeID, bool isS
     }
 }
 
-bool ScrollingTree::isScrollAnimationInProgressForNode(ScrollingNodeID nodeID)
+bool ScrollingTree::isScrollAnimationInProgressForNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (!nodeID)
         return false;
 
     Locker locker { m_treeStateLock };
-    return m_treeState.nodesWithActiveScrollAnimations.contains(nodeID);
+    return m_treeState.nodesWithActiveScrollAnimations.contains(*nodeID);
 }
 
-void ScrollingTree::setScrollAnimationInProgressForNode(ScrollingNodeID nodeID, bool isScrollAnimationInProgress)
+void ScrollingTree::setScrollAnimationInProgressForNode(std::optional<ScrollingNodeID> nodeID, bool isScrollAnimationInProgress)
 {
     if (!nodeID)
         return;
@@ -852,9 +850,9 @@ void ScrollingTree::setScrollAnimationInProgressForNode(ScrollingNodeID nodeID, 
     bool hadAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveScrollAnimations.isEmpty();
     
     if (isScrollAnimationInProgress)
-        m_treeState.nodesWithActiveScrollAnimations.add(nodeID);
+        m_treeState.nodesWithActiveScrollAnimations.add(*nodeID);
     else
-        m_treeState.nodesWithActiveScrollAnimations.remove(nodeID);
+        m_treeState.nodesWithActiveScrollAnimations.remove(*nodeID);
 
     bool hasAnyAnimatedScrollingNodes = !m_treeState.nodesWithActiveScrollAnimations.isEmpty();
     if (hasAnyAnimatedScrollingNodes != hadAnyAnimatedScrollingNodes)

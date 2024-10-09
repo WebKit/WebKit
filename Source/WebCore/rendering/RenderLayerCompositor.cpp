@@ -5753,15 +5753,15 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     clearSynchronousReasonsOnNonRootNodes();
 }
 
-ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) const
+ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(std::optional<ScrollingNodeID> nodeID) const
 {
     if (!nodeID)
         return nullptr;
 
-    if (nodeID == m_renderView.frameView().scrollingNodeID())
+    if (*nodeID == m_renderView.frameView().scrollingNodeID())
         return &m_renderView.frameView();
 
-    if (auto weakLayer = m_scrollingNodeToLayerMap.get(nodeID))
+    if (auto weakLayer = m_scrollingNodeToLayerMap.get(*nodeID))
         return weakLayer->scrollableArea();
 
     return nullptr;
