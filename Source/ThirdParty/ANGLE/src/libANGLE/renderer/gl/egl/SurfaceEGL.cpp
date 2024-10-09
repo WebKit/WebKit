@@ -119,7 +119,7 @@ egl::Error SurfaceEGL::releaseTexImage(const gl::Context *context, EGLint buffer
     return egl::NoError();
 }
 
-void SurfaceEGL::setSwapInterval(EGLint interval)
+void SurfaceEGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     EGLBoolean success = mEGL->swapInterval(interval);
     if (success == EGL_FALSE)

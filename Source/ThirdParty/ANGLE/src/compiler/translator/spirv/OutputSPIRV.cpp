@@ -2784,16 +2784,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             extendedInst         = spv::GLSLstd450UnpackSnorm4x8;
             extendScalarToVector = false;
             break;
-        case EOpPackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
-            break;
-
-        case EOpUnpackDouble2x32:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
-            extendScalarToVector = false;
-            break;
 
         case EOpLength:
             extendedInst = spv::GLSLstd450Length;
@@ -2830,11 +2820,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
         case EOpRefract:
             extendedInst         = spv::GLSLstd450Refract;
             extendScalarToVector = false;
-            break;
-
-        case EOpFtransform:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
             break;
 
         case EOpOuterProduct:
@@ -2912,38 +2897,6 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
             break;
         case EOpFwidth:
             writeUnaryOp = spirv::WriteFwidth;
-            break;
-        case EOpDFdxFine:
-            writeUnaryOp = spirv::WriteDPdxFine;
-            break;
-        case EOpDFdyFine:
-            writeUnaryOp = spirv::WriteDPdyFine;
-            break;
-        case EOpDFdxCoarse:
-            writeUnaryOp = spirv::WriteDPdxCoarse;
-            break;
-        case EOpDFdyCoarse:
-            writeUnaryOp = spirv::WriteDPdyCoarse;
-            break;
-        case EOpFwidthFine:
-            writeUnaryOp = spirv::WriteFwidthFine;
-            break;
-        case EOpFwidthCoarse:
-            writeUnaryOp = spirv::WriteFwidthCoarse;
-            break;
-
-        case EOpNoise1:
-        case EOpNoise2:
-        case EOpNoise3:
-        case EOpNoise4:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
-            break;
-
-        case EOpAnyInvocation:
-        case EOpAllInvocations:
-        case EOpAllInvocationsEqual:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
             break;
 
         default:
@@ -3451,10 +3404,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     {
         case EOpTexture2D:
         case EOpTextureCube:
-        case EOpTexture1D:
         case EOpTexture3D:
-        case EOpShadow1D:
-        case EOpShadow2D:
         case EOpShadow2DEXT:
         case EOpTexture2DRect:
         case EOpTextureVideoWEBGL:
@@ -3463,9 +3413,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         case EOpTexture2DBias:
         case EOpTextureCubeBias:
         case EOpTexture3DBias:
-        case EOpTexture1DBias:
-        case EOpShadow1DBias:
-        case EOpShadow2DBias:
         case EOpTextureBias:
 
             // For shadow cube arrays, the compare value is specified through an additional
@@ -3481,22 +3428,22 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
                     biasIndex = 2;
                 }
             }
+            else if (function->getParamCount() == 4 &&
+                     samplerBasicType == EbtSamplerCubeArrayShadow)
+            {
+                compareIndex = 2;
+                biasIndex    = 3;
+            }
             break;
 
         case EOpTexture2DProj:
-        case EOpTexture1DProj:
         case EOpTexture3DProj:
-        case EOpShadow1DProj:
-        case EOpShadow2DProj:
         case EOpShadow2DProjEXT:
         case EOpTexture2DRectProj:
         case EOpTextureProj:
 
         case EOpTexture2DProjBias:
         case EOpTexture3DProjBias:
-        case EOpTexture1DProjBias:
-        case EOpShadow1DProjBias:
-        case EOpShadow2DProjBias:
         case EOpTextureProjBias:
 
             isProj = true;
@@ -3506,11 +3453,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
             }
             break;
 
-        case EOpTexture2DLod:
-        case EOpTextureCubeLod:
-        case EOpTexture1DLod:
-        case EOpShadow1DLod:
-        case EOpShadow2DLod:
         case EOpTexture3DLod:
 
         case EOpTexture2DLodVS:
@@ -3520,14 +3462,19 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         case EOpTextureCubeLodEXTFS:
         case EOpTextureLod:
 
-            ASSERT(function->getParamCount() == 3);
-            lodIndex = 2;
+            if (samplerBasicType == EbtSamplerCubeArrayShadow)
+            {
+                ASSERT(function->getParamCount() == 4);
+                compareIndex = 2;
+                lodIndex     = 3;
+            }
+            else
+            {
+                ASSERT(function->getParamCount() == 3);
+                lodIndex = 2;
+            }
             break;
 
-        case EOpTexture2DProjLod:
-        case EOpTexture1DProjLod:
-        case EOpShadow1DProjLod:
-        case EOpShadow2DProjLod:
         case EOpTexture3DProjLod:
 
         case EOpTexture2DProjLodVS:
@@ -3758,31 +3705,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
             isDref = false;
             break;
 
-        case EOpTextureSamples:
-        case EOpImageSamples:
-            extractImageFromSampledImage = true;
-            spirvOp                      = spv::OpImageQuerySamples;
-            // No coordinates parameter.
-            coordinatesIndex = 0;
-            // No dref parameter.
-            isDref = false;
-            break;
-
-        case EOpTextureQueryLevels:
-            extractImageFromSampledImage = true;
-            spirvOp                      = spv::OpImageQueryLevels;
-            // No coordinates parameter.
-            coordinatesIndex = 0;
-            // No dref parameter.
-            isDref = false;
-            break;
-
-        case EOpTextureQueryLod:
-            spirvOp = spv::OpImageQueryLod;
-            // No dref parameter.
-            isDref = false;
-            break;
-
         default:
             UNREACHABLE();
     }
@@ -3952,26 +3874,19 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         uint8_t requiredChannelCount = coordinatesChannelCount;
         // texture*Proj* operate on the following parameters:
         //
-        // - sampler1D, vec2 P
-        // - sampler1D, vec4 P
         // - sampler2D, vec3 P
         // - sampler2D, vec4 P
         // - sampler2DRect, vec3 P
         // - sampler2DRect, vec4 P
         // - sampler3D, vec4 P
-        // - sampler1DShadow, vec4 P
         // - sampler2DShadow, vec4 P
         // - sampler2DRectShadow, vec4 P
         //
-        // Of these cases, only (sampler1D*, vec4 P) and (sampler2D*, vec4 P) require moving the
-        // proj channel from .w to the appropriate location (.y for 1D and .z for 2D).
+        // Of these cases, only (sampler2D*, vec4 P) requires moving the proj channel from .w to the
+        // appropriate location (.y for 1D and .z for 2D).
         if (IsSampler2D(samplerBasicType))
         {
             requiredChannelCount = 3;
-        }
-        else if (IsSampler1D(samplerBasicType))
-        {
-            requiredChannelCount = 2;
         }
         if (requiredChannelCount != coordinatesChannelCount)
         {
@@ -4137,12 +4052,6 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
         default:
             UNREACHABLE();
     }
-
-    // In Desktop GLSL, the legacy shadow* built-ins produce a vec4, while SPIR-V
-    // OpImageSample*Dref* instructions produce a scalar.  EXT_shadow_samplers in ESSL introduces
-    // similar functions but which return a scalar.
-    //
-    // TODO: For desktop GLSL, the result must be turned into a vec4.  http://anglebug.com/42264721.
 
     return result;
 }
@@ -4320,8 +4229,7 @@ spirv::IdRef OutputSPIRVTraverser::castBasicType(spirv::IdRef value,
             break;
 
         default:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
+            UNREACHABLE();
     }
 
     if (writeUnaryOp)
@@ -5920,12 +5828,6 @@ bool OutputSPIRVTraverser::visitAggregate(Visit visit, TIntermAggregate *node)
             break;
         case EOpEndPrimitive:
             spirv::WriteEndPrimitive(mBuilder.getSpirvCurrentFunctionBlock());
-            break;
-
-        case EOpEmitStreamVertex:
-        case EOpEndStreamPrimitive:
-            // TODO: support desktop GLSL.  http://anglebug.com/42264721
-            UNIMPLEMENTED();
             break;
 
         case EOpBeginInvocationInterlockARB:

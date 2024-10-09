@@ -50,6 +50,7 @@
     OP(OES_tessellation_shader,                        310, 320) \
     OP(EXT_texture_buffer,                             310, 320) \
     OP(EXT_texture_cube_map_array,                     310, 320) \
+    OP(EXT_texture_shadow_lod,                         300, 320) \
     OP(EXT_YUV_target,                                 300, 320) \
     OP(KHR_blend_equation_advanced,                    100, 320) \
     OP(NV_EGL_stream_consumer_external,                100, 320) \

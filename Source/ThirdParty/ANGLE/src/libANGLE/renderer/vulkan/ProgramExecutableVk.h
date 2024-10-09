@@ -96,25 +96,7 @@ class ProgramInfo final : angle::NonCopyable
     gl::ShaderMap<vk::RefCounted<vk::ShaderModule>> mShaders;
 };
 
-// State for the default uniform blocks.
-struct DefaultUniformBlockVk final : private angle::NonCopyable
-{
-    DefaultUniformBlockVk();
-    ~DefaultUniformBlockVk();
-
-    // Shadow copies of the shader uniform data.
-    angle::MemoryBuffer uniformData;
-
-    // Since the default blocks are laid out in std140, this tells us where to write on a call
-    // to a setUniform method. They are arranged in uniform location order.
-    std::vector<sh::BlockMemberInfo> uniformLayout;
-};
-
-// Performance and resource counters.
-using DescriptorSetCountList   = angle::PackedEnumMap<DescriptorSetIndex, uint32_t>;
 using ImmutableSamplerIndexMap = angle::HashMap<vk::YcbcrConversionDesc, uint32_t>;
-
-using DefaultUniformBlockMap = gl::ShaderMap<std::shared_ptr<DefaultUniformBlockVk>>;
 
 class ProgramExecutableVk : public ProgramExecutableImpl
 {
@@ -293,7 +275,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         return roundUp(mDefaultUniformBlocks[shaderType]->uniformData.size(), alignment);
     }
 
-    std::shared_ptr<DefaultUniformBlockVk> &getSharedDefaultUniformBlock(gl::ShaderType shaderType)
+    std::shared_ptr<BufferAndLayout> &getSharedDefaultUniformBlock(gl::ShaderType shaderType)
     {
         return mDefaultUniformBlocks[shaderType];
     }
@@ -404,9 +386,6 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     friend class ProgramPipelineVk;
 
     void reset(ContextVk *contextVk);
-
-    template <class T>
-    void getUniformImpl(GLint location, T *v, GLenum entryPointType) const;
 
     void addInterfaceBlockDescriptorSetDesc(const std::vector<gl::InterfaceBlock> &blocks,
                                             gl::ShaderBitSet shaderTypes,

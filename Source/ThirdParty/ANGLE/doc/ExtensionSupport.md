@@ -187,6 +187,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_texture_norm16](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_norm16.txt) |  | &#x2714; |  | &#x2714; |  |  |  |
 | [GL_OES_texture_npot](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_npot.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_rg](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_rg.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_EXT_texture_shadow_lod](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_shadow_lod.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_texture_sRGB_decode](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_sRGB_decode.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_sRGB_R8](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_sRGB_R8.txt) | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_sRGB_RG8](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_sRGB_RG8.txt) |  |  |  |  | &#x2714; | &#x2714; | &#x2714; |
@@ -214,6 +215,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_base_vertex_base_instance_shader_builtin](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_base_vertex_base_instance_shader_builtin.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_CHROMIUM_bind_generates_resource](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_bind_generates_resource.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_CHROMIUM_bind_uniform_location](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_bind_uniform_location.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_ANGLE_blob_cache](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_blob_cache.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_client_arrays](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_client_arrays.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_clip_cull_distance](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_clip_cull_distance.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |  |
 | [GL_CHROMIUM_color_buffer_float_rgb](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_color_buffer_float_rgb.txt) |  |  |  |  |  |  |  |

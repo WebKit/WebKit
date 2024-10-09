@@ -52,21 +52,6 @@ TEST_F(VersionTest, Valid)
     preprocess(str, expected);
 }
 
-// Test for Desktop GL Shaders
-TEST_F(VersionTest, GLSpec)
-{
-    const char *str      = "#version 330 core\n";
-    const char *expected = "\n";
-
-    using testing::_;
-    EXPECT_CALL(mDirectiveHandler,
-                handleVersion(pp::SourceLocation(0, 1), 330, SH_GL_COMPATIBILITY_SPEC, _));
-    // No error or warning.
-    EXPECT_CALL(mDiagnostics, print(_, _, _)).Times(0);
-
-    preprocess(str, expected, SH_GL_COMPATIBILITY_SPEC);
-}
-
 TEST_F(VersionTest, CommentsIgnored)
 {
     const char *str =

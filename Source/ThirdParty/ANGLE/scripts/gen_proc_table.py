@@ -12,8 +12,6 @@ import sys
 import registry_xml
 
 out_file_name_gles = "../src/libGLESv2/proc_table_egl_autogen.cpp"
-out_file_name_wgl = "../src/libGLESv2/proc_table_wgl_autogen.cpp"
-out_file_name_glx = "../src/libGLESv2/proc_table_glx_autogen.cpp"
 out_file_name_cl = "../src/libGLESv2/proc_table_cl_autogen.cpp"
 out_file_name_cl_map = "../src/libOpenCL/libOpenCL_autogen.map"
 
@@ -32,7 +30,6 @@ template_cpp = """// GENERATED FILE - DO NOT EDIT.
 
 {includes}
 #define P(FUNC) reinterpret_cast<{cast}>(FUNC)
-{desktop_only_macro_definition}
 
 namespace {namespace}
 {{
@@ -43,14 +40,6 @@ const ProcEntry g_procTable[] = {{
 // clang-format on
 const size_t g_numProcs = {num_procs};
 }}  // namespace {namespace}
-"""
-
-desktop_only_macro_definition = """
-#if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
-#   define DESKTOP_ONLY(func, angleFunc) {func, P(angleFunc)},
-#else
-#   define DESKTOP_ONLY(func, angleFunc)
-#endif
 """
 
 # FOR OPENCL
@@ -106,51 +95,6 @@ includes_gles = """#include "libGLESv2/proc_table_egl.h"
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
 #include "platform/PlatformMethods.h"
 
-#if defined(ANGLE_ENABLE_GL_DESKTOP_FRONTEND)
-#   include "libGLESv2/entry_points_gl_1_autogen.h"
-#   include "libGLESv2/entry_points_gl_2_autogen.h"
-#   include "libGLESv2/entry_points_gl_3_autogen.h"
-#   include "libGLESv2/entry_points_gl_4_autogen.h"
-#endif
-
-#include <iterator>
-"""
-
-includes_wgl = """#include "libGLESv2/proc_table_wgl.h"
-
-#include "libGLESv2/entry_points_egl_ext_autogen.h"
-#include "libGLESv2/entry_points_gles_1_0_autogen.h"
-#include "libGLESv2/entry_points_gles_2_0_autogen.h"
-#include "libGLESv2/entry_points_gles_3_0_autogen.h"
-#include "libGLESv2/entry_points_gles_3_1_autogen.h"
-#include "libGLESv2/entry_points_gles_3_2_autogen.h"
-#include "libGLESv2/entry_points_gles_ext_autogen.h"
-#include "platform/PlatformMethods.h"
-#include "libGLESv2/entry_points_gl_1_autogen.h"
-#include "libGLESv2/entry_points_gl_2_autogen.h"
-#include "libGLESv2/entry_points_gl_3_autogen.h"
-#include "libGLESv2/entry_points_gl_4_autogen.h"
-#include "libGLESv2/entry_points_wgl.h"
-
-#include <iterator>
-"""
-
-includes_glx = """#include "libGLESv2/proc_table_glx.h"
-
-#include "libGLESv2/entry_points_egl_ext_autogen.h"
-#include "libGLESv2/entry_points_gles_1_0_autogen.h"
-#include "libGLESv2/entry_points_gles_2_0_autogen.h"
-#include "libGLESv2/entry_points_gles_3_0_autogen.h"
-#include "libGLESv2/entry_points_gles_3_1_autogen.h"
-#include "libGLESv2/entry_points_gles_3_2_autogen.h"
-#include "libGLESv2/entry_points_gles_ext_autogen.h"
-#include "platform/PlatformMethods.h"
-#include "libGLESv2/entry_points_gl_1_autogen.h"
-#include "libGLESv2/entry_points_gl_2_autogen.h"
-#include "libGLESv2/entry_points_gl_3_autogen.h"
-#include "libGLESv2/entry_points_gl_4_autogen.h"
-#include "libGLESv2/entry_points_glx.h"
-
 #include <iterator>
 """
 
@@ -177,10 +121,7 @@ def main():
     # auto_script parameters.
     if len(sys.argv) > 1:
         inputs = [source for source in registry_xml.xml_inputs]
-        outputs = [
-            out_file_name_gles, out_file_name_wgl, out_file_name_glx, out_file_name_cl,
-            out_file_name_cl_map
-        ]
+        outputs = [out_file_name_gles, out_file_name_cl, out_file_name_cl_map]
         if sys.argv[1] == 'inputs':
             print(','.join(inputs))
         elif sys.argv[1] == 'outputs':
@@ -227,17 +168,8 @@ def main():
     gles_data.append("ANGLEResetDisplayPlatform")
     gles_data = set(gles_data)
 
-    glxml = registry_xml.RegistryXML('gl.xml')
-    for annotation in _get_annotations(registry_xml.DESKTOP_GL_VERSIONS):
-        name_prefix = "GL_VERSION_"
-        feature_name = "{}{}".format(name_prefix, annotation)
-        glxml.AddCommands(feature_name, annotation)
-
-    gl_data = set([cmd for cmd in glxml.all_cmd_names.get_all_commands()])
-
-    all_gl_data = list(set(gles_data).union(gl_data))
     all_functions = {}
-    for function in all_gl_data:
+    for function in gles_data:
         if function.startswith("gl"):
             all_functions[function] = "GL_" + function[2:]
         elif function.startswith("egl"):
@@ -246,12 +178,8 @@ def main():
             all_functions[function] = function
 
     proc_data = []
-    gl_only_data = gl_data.difference(gles_data)
     for func, angle_func in sorted(all_functions.items()):
-        if func in gl_only_data:
-            proc_data.append('    DESKTOP_ONLY("%s", %s)' % (func, angle_func))
-        else:
-            proc_data.append('    {"%s", P(%s)},' % (func, angle_func))
+        proc_data.append('    {"%s", P(%s)},' % (func, angle_func))
 
     with open(out_file_name_gles, 'w') as out_file:
         output_cpp = template_cpp.format(
@@ -261,50 +189,9 @@ def main():
             cast="__eglMustCastToProperFunctionPointerType",
             namespace="egl",
             proc_data="\n".join(proc_data),
-            num_procs="std::size(g_procTable)",
-            desktop_only_macro_definition=desktop_only_macro_definition)
+            num_procs="std::size(g_procTable)")
         out_file.write(output_cpp)
         out_file.close()
-
-    def WriteWindowingProcTable(api_name, out_file_name, includes, cast):
-        xml_file_name = '{}.xml'.format(api_name)
-        xml = registry_xml.RegistryXML(xml_file_name)
-        annotations = _get_annotations(
-            getattr(registry_xml, '{}_VERSIONS'.format(api_name.upper())))
-        for annotation in annotations:
-            name_prefix = "{}_VERSION_".format(api_name.upper())
-            feature_name = "{}{}".format(name_prefix, annotation)
-            xml.AddCommands(feature_name, annotation)
-
-        commands = [
-            # Some WGL EP's need to have "wgl" appended to their names
-            cmd if api_name != 'wgl' or cmd.startswith(api_name) else api_name + cmd
-            for cmd in xml.all_cmd_names.get_all_commands()
-        ]
-
-        # Start with all of the GLES + Desktop entry points, filtering out the EGL ones
-        proc_data = [
-            '    {"%s", P(%s)},' % (func, angle_func)
-            for func, angle_func in sorted(all_functions.items())
-            if not func.startswith('egl')
-        ]
-        proc_data.extend(['    {"%s", P(%s)},' % (cmd, cmd) for cmd in sorted(commands)])
-
-        with open(out_file_name, 'w') as out_file:
-            output_cpp = template_cpp.format(
-                script_name=os.path.basename(sys.argv[0]),
-                data_source_name="gl.xml, gl_angle_ext.xml, {}".format(xml_file_name),
-                includes=includes,
-                cast=cast,
-                namespace=api_name,
-                proc_data="\n".join(proc_data),
-                num_procs="std::size(g_procTable)",
-                desktop_only_macro_definition='')
-            out_file.write(output_cpp)
-            out_file.close()
-
-    WriteWindowingProcTable('wgl', out_file_name_wgl, includes_wgl, "PROC")
-    WriteWindowingProcTable('glx', out_file_name_glx, includes_glx, "__GLXextFuncPtr")
 
     # libCL proc table
     clxml = registry_xml.RegistryXML('cl.xml')

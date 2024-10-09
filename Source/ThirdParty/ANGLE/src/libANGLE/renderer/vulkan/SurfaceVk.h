@@ -73,7 +73,7 @@ class OffscreenSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
@@ -310,7 +310,7 @@ class WindowSurfaceVk : public SurfaceVk
     egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
-    void setSwapInterval(EGLint interval) override;
+    void setSwapInterval(const egl::Display *display, EGLint interval) override;
 
     // Note: windows cannot be resized on Android.  The approach requires
     // calling vkGetPhysicalDeviceSurfaceCapabilitiesKHR.  However, that is
@@ -410,6 +410,8 @@ class WindowSurfaceVk : public SurfaceVk
     virtual angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)      = 0;
     virtual angle::Result getCurrentWindowSize(vk::Context *context, gl::Extents *extentsOut) = 0;
 
+    void setSwapInterval(DisplayVk *displayVk, EGLint interval);
+
     angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
     angle::Result recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents);
     angle::Result createSwapChain(vk::Context *context,
@@ -486,10 +488,10 @@ class WindowSurfaceVk : public SurfaceVk
     VkColorSpaceKHR mSurfaceColorSpace;
 
     // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
-    // in this list, mode switch can happen without the need to recreate the swapchain.  Fast
-    // vector's size is 6, as there are currently only 6 possible present modes.
-    static constexpr uint32_t kMaxCompatiblePresentModes = 6;
-    angle::FixedVector<VkPresentModeKHR, kMaxCompatiblePresentModes> mCompatiblePresentModes;
+    // in this list, mode switch can happen without the need to recreate the swapchain.
+    // There are currently only 6 possible present modes but vector is bigger for a workaround.
+    static constexpr uint32_t kCompatiblePresentModesSize = 10;
+    angle::FixedVector<VkPresentModeKHR, kCompatiblePresentModesSize> mCompatiblePresentModes;
 
     // A circular buffer that stores the serial of the submission fence of the context on every
     // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should

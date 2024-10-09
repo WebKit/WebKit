@@ -47,9 +47,9 @@ void RenderTargetWgpu::reset()
     mFormat      = nullptr;
 }
 
-angle::Result RenderTargetWgpu::flushStagedUpdates(ContextWgpu *contextWgpu,
-                                                   webgpu::ClearValuesArray *deferredClears,
-                                                   uint32_t deferredClearIndex)
+angle::Result RenderTargetWgpu::flushImageStagedUpdates(ContextWgpu *contextWgpu,
+                                                        webgpu::ClearValuesArray *deferredClears,
+                                                        uint32_t deferredClearIndex)
 {
     gl::LevelIndex targetLevel = mImage->toGlLevel(mLevelIndex);
     ANGLE_TRY(mImage->flushSingleLevelUpdates(contextWgpu, targetLevel, deferredClears,

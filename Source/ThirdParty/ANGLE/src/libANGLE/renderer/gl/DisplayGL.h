@@ -59,7 +59,6 @@ class DisplayGL : public DisplayImpl
                            gl::Context *context) override;
 
     gl::Version getMaxConformantESVersion() const override;
-    Optional<gl::Version> getMaxSupportedDesktopVersion() const override;
 
     virtual RendererGL *getRenderer() const = 0;
 

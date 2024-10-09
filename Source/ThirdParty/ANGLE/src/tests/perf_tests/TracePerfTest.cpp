@@ -223,9 +223,12 @@ class TracePerfTest : public ANGLERenderTest
     std::vector<TimeSample> mTimeline;
 
     bool mUseTimestampQueries                                           = false;
+    // Note: more than 2 offscreen buffers can cause races, surface is double buffered so real-world
+    // apps can rely on (now broken) assumptions about GPU completion of a previous frame
     static constexpr int mMaxOffscreenBufferCount                       = 2;
     std::array<GLuint, mMaxOffscreenBufferCount> mOffscreenFramebuffers = {0, 0};
     std::array<GLuint, mMaxOffscreenBufferCount> mOffscreenTextures     = {0, 0};
+    std::array<GLsync, mMaxOffscreenBufferCount> mOffscreenSyncs        = {0, 0};
     GLuint mOffscreenDepthStencil                                       = 0;
     int mWindowWidth                                                    = 0;
     int mWindowHeight                                                   = 0;
@@ -929,17 +932,6 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
 
     if (traceNameIs("cod_mobile"))
     {
-        // TODO: http://anglebug.com/42263541 Vulkan: GL_EXT_color_buffer_float not supported on
-        // Pixel 2 The COD:Mobile trace uses a framebuffer attachment with:
-        //   format = GL_RGB
-        //   type = GL_UNSIGNED_INT_10F_11F_11F_REV
-        // That combination is only renderable if GL_EXT_color_buffer_float is supported.
-        // It happens to not be supported on Pixel 2's Vulkan driver.
-        addExtensionPrerequisite("GL_EXT_color_buffer_float");
-
-        // TODO: http://anglebug.com/40096702 This extension is missing on older Intel drivers.
-        addExtensionPrerequisite("GL_OES_EGL_image_external");
-
         if (isIntelWin)
         {
             skipTest("http://anglebug.com/42265065 Flaky on Intel/windows");
@@ -1834,6 +1826,14 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         }
     }
 
+    if (traceNameIs("dota_underlords"))
+    {
+        if (isNVIDIALinuxANGLE)
+        {
+            skipTest("https://anglebug.com/369533074 Flaky on Linux Nvidia");
+        }
+    }
+
     if (IsGalaxyS22())
     {
         if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||
@@ -2105,6 +2105,19 @@ void TracePerfTest::drawBenchmark()
         // ping pong between them for each frame.
         glBindFramebuffer(GL_FRAMEBUFFER,
                           mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
+
+        GLsync sync = mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount];
+        if (sync)
+        {
+            constexpr GLuint64 kTimeout = 2'000'000'000;  // 2 seconds
+            GLenum result = glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, kTimeout);
+            if (result != GL_CONDITION_SATISFIED && result != GL_ALREADY_SIGNALED)
+            {
+                failTest(std::string("glClientWaitSync unexpected result: ") +
+                         std::to_string(result));
+            }
+            glDeleteSync(sync);
+        }
     }
 
     char frameName[32];
@@ -2112,6 +2125,7 @@ void TracePerfTest::drawBenchmark()
     beginInternalTraceEvent(frameName);
 
     startGpuTimer();
+    atraceCounter("TraceFrameIndex", mCurrentFrame);
     mTraceReplay->replayFrame(mCurrentFrame);
     stopGpuTimer();
 
@@ -2132,9 +2146,8 @@ void TracePerfTest::drawBenchmark()
             glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadFBO);
 
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBindFramebuffer(
-                GL_READ_FRAMEBUFFER,
-                mOffscreenFramebuffers[mOffscreenFrameCount % mMaxOffscreenBufferCount]);
+            glBindFramebuffer(GL_READ_FRAMEBUFFER,
+                              mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
 
             uint32_t frameX  = (mOffscreenFrameCount % kFramesPerXY) % kFramesPerX;
             uint32_t frameY  = (mOffscreenFrameCount % kFramesPerXY) / kFramesPerX;
@@ -2148,6 +2161,9 @@ void TracePerfTest::drawBenchmark()
             {
                 glDisable(GL_SCISSOR_TEST);
             }
+
+            mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount] =
+                glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
             glBlitFramebuffer(0, 0, mWindowWidth, mWindowHeight, windowX, windowY,
                               windowX + kOffscreenFrameWidth, windowY + kOffscreenFrameHeight,

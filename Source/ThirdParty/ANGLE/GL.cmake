@@ -35,8 +35,6 @@ set(gl_backend_sources
     "src/libANGLE/renderer/gl/ImageGL.h"
     "src/libANGLE/renderer/gl/MemoryObjectGL.cpp"
     "src/libANGLE/renderer/gl/MemoryObjectGL.h"
-    "src/libANGLE/renderer/gl/PLSProgramCache.cpp"
-    "src/libANGLE/renderer/gl/PLSProgramCache.h"
     "src/libANGLE/renderer/gl/ProgramExecutableGL.cpp"
     "src/libANGLE/renderer/gl/ProgramExecutableGL.h"
     "src/libANGLE/renderer/gl/ProgramGL.cpp"

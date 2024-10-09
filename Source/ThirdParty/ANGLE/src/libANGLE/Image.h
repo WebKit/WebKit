@@ -194,6 +194,7 @@ class Image final : public ThreadSafeRefCountObject, public LabeledObject
     size_t getSamples() const;
     GLuint getLevelCount() const;
     bool hasProtectedContent() const;
+    EGLenum getColorspaceAttribute() const { return mState.colorspace; }
 
     Error initialize(const Display *display, const gl::Context *context);
 

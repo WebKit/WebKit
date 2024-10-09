@@ -4,24 +4,28 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_TRANSLATOR_TREEOPS_MSL_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_
-#define COMPILER_TRANSLATOR_TREEOPS_MSL_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_
+#ifndef COMPILER_TRANSLATOR_TREEOPS_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_
+#define COMPILER_TRANSLATOR_TREEOPS_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_
 
 #include "common/angleutils.h"
 #include "compiler/translator/Compiler.h"
-#include "compiler/translator/msl/IdGen.h"
+
+#include <functional>
+
 namespace sh
 {
 class TSymbolTable;
+
+using StructNameGenerator = std::function<ImmutableString()>;
 
 // Example:
 //  struct Foo { int x; } foo;
 // Becomes:
 //  struct Foo {int x; }; Foo foo;
 [[nodiscard]] bool SeparateCompoundStructDeclarations(TCompiler &compiler,
-                                                      IdGen &idGen,
+                                                      StructNameGenerator nameGenerator,
                                                       TIntermBlock &root);
 
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_TREEOPS_MSL_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_
+#endif  // COMPILER_TRANSLATOR_TREEOPS_SEPARATECOMPOUNDSTRUCTDECLARATIONS_H_

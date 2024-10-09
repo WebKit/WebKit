@@ -132,6 +132,8 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
         FAIL() << reason;
     }
 
+    void atraceCounter(const char *counterName, int64_t counterValue);
+
     std::string mName;
     std::string mBackend;
     std::string mStory;

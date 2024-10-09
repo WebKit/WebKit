@@ -203,7 +203,7 @@ egl::Error SurfaceMtl::getMscRate(EGLint *numerator, EGLint *denominator)
     return egl::EglBadAccess();
 }
 
-void SurfaceMtl::setSwapInterval(EGLint interval) {}
+void SurfaceMtl::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
 void SurfaceMtl::setFixedWidth(EGLint width)
 {
@@ -504,7 +504,7 @@ egl::Error WindowSurfaceMtl::swap(const gl::Context *context)
     return egl::NoError();
 }
 
-void WindowSurfaceMtl::setSwapInterval(EGLint interval)
+void WindowSurfaceMtl::setSwapInterval(const egl::Display *display, EGLint interval)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     mMetalLayer.get().displaySyncEnabled = interval != 0;

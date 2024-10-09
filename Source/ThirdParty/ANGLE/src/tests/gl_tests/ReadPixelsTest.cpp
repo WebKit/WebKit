@@ -443,6 +443,42 @@ TEST_P(ReadPixelsPBOTest, Snorm)
     }
 }
 
+// Test read pixel to PBO of an sRGB unorm renderbuffer
+TEST_P(ReadPixelsPBOTest, SrgbUnorm)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_pack_reverse_row_order"));
+
+    constexpr GLsizei kSize = 1;
+    constexpr angle::GLColor clearColor(64, 0, 0, 255);
+    constexpr angle::GLColor encodedToSrgbColor(136, 0, 0, 255);
+
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_SRGB8_ALPHA8, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(clearColor[0] / 255.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glPixelStorei(GL_PACK_REVERSE_ROW_ORDER_ANGLE, GL_TRUE);
+    glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+    GLColor result;
+    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, kSize * kSize * 4, GL_MAP_READ_BIT);
+    memcpy(result.data(), mappedPtr, kSize * kSize * 4);
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_NEAR(result[0], encodedToSrgbColor[0], 1);
+}
+
 // Test an error is generated when the PBO is too small.
 TEST_P(ReadPixelsPBOTest, PBOTooSmall)
 {

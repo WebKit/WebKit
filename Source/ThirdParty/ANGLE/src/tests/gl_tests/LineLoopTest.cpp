@@ -140,7 +140,7 @@ void main()
 
 TEST_P(LineLoopTest, LineLoopUByteIndices)
 {
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     // On Win7, the D3D SDK Layers emits a false warning for these tests.
     // This doesn't occur on Windows 10 (Version 1511) though.
     ignoreD3D11SDKLayersWarnings();
@@ -151,7 +151,7 @@ TEST_P(LineLoopTest, LineLoopUByteIndices)
 
 TEST_P(LineLoopTest, LineLoopUShortIndices)
 {
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
@@ -165,7 +165,7 @@ TEST_P(LineLoopTest, LineLoopUIntIndices)
         return;
     }
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
@@ -174,7 +174,7 @@ TEST_P(LineLoopTest, LineLoopUIntIndices)
 
 TEST_P(LineLoopTest, LineLoopUByteIndexBuffer)
 {
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
@@ -188,7 +188,7 @@ TEST_P(LineLoopTest, LineLoopUByteIndexBuffer)
 
 TEST_P(LineLoopTest, LineLoopUShortIndexBuffer)
 {
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
@@ -207,7 +207,7 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
         return;
     }
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
@@ -225,7 +225,7 @@ class LineLoopTestES3 : public LineLoopTest
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
 TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUByteIndexBuffer)
 {
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
@@ -252,7 +252,7 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUShortIndexBuffer)
     // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
@@ -284,7 +284,7 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
     // http://anglebug.com/42264370
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
     static const GLuint indices[] = {0, 7, 6, 9, 8, 0};
@@ -484,137 +484,173 @@ void main()
 class LineLoopIndirectTest : public LineLoopTest
 {
   protected:
-    void runTest(GLenum indexType,
-                 const void *indices,
-                 GLuint indicesSize,
-                 GLuint firstIndex,
-                 bool useBuffersAsUboFirst)
+    struct DrawCommand
     {
-        struct DrawCommand
-        {
-            GLuint count;
-            GLuint primCount;
-            GLuint firstIndex;
-            GLint baseVertex;
-            GLuint reservedMustBeZero;
-        };
+        GLuint count;
+        GLuint primCount;
+        GLuint firstIndex;
+        GLint baseVertex;
+        GLuint reservedMustBeZero;
+    };
 
-        glClear(GL_COLOR_BUFFER_BIT);
+    void initUpdateBuffers(GLuint vertexArray,
+                           GLuint vertexBuffer,
+                           GLuint indexBuffer,
+                           const void *positions,
+                           uint32_t positionsSize,
+                           const void *indices,
+                           uint32_t indicesSize)
+    {
+        glBindVertexArray(vertexArray);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-        static const GLfloat loopPositions[] = {0.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f,
-                                                0.0f,  0.0f, 0.0f, 0.0f, 0.0f, -0.5f, -0.5f,
-                                                -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
+        glBufferData(GL_ARRAY_BUFFER, positionsSize, positions, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+    }
 
-        static const GLfloat stripPositions[] = {-0.5f, -0.5f, -0.5f, 0.5f,
-                                                 0.5f,  0.5f,  0.5f,  -0.5f};
-        static const GLubyte stripIndices[]   = {1, 0, 3, 2, 1};
-
-        glUseProgram(mProgram);
-
-        GLVertexArray vertexArray;
-
-        ASSERT_GL_NO_ERROR();
-
-        GLFramebuffer arrayUpdateFbo, elementUpdateFbo;
-        GLTexture arrayUpdateTex, elementUpdateTex;
-
-        GLBuffer vertBuffer;
-        GLBuffer buf;
-
-        if (useBuffersAsUboFirst)
-        {
-            preTestUpdateBuffer(arrayUpdateFbo, arrayUpdateTex, vertBuffer, sizeof(loopPositions));
-            preTestUpdateBuffer(elementUpdateFbo, elementUpdateTex, buf, indicesSize);
-        }
+    void preTestUBOAndInitUpdateBuffers(GLuint vertexArray,
+                                        GLuint vertexBuffer,
+                                        GLuint indexBuffer,
+                                        const void *positions,
+                                        GLsizei positionsSize,
+                                        const void *indices,
+                                        GLsizei indicesSize,
+                                        GLuint arrayUpdateFbo,
+                                        GLuint arrayUpdateTexture,
+                                        GLuint elementUpdateFbo,
+                                        GLuint elementUpdateTexture)
+    {
+        preTestUpdateBuffer(arrayUpdateFbo, arrayUpdateTexture, vertexBuffer, positionsSize);
+        preTestUpdateBuffer(elementUpdateFbo, elementUpdateTexture, indexBuffer, indicesSize);
 
         glBindVertexArray(vertexArray);
-        glBindBuffer(GL_ARRAY_BUFFER, vertBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-        if (useBuffersAsUboFirst)
-        {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(loopPositions), loopPositions);
-            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize, indices);
-        }
-        else
-        {
-            glBufferData(GL_ARRAY_BUFFER, sizeof(loopPositions), loopPositions, GL_STATIC_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
-        }
-        glEnableVertexAttribArray(mPositionLocation);
-        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-        glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
-
-        ASSERT_GL_NO_ERROR();
-
-        DrawCommand cmdBuffer = {};
-        cmdBuffer.count       = 4;
-        cmdBuffer.firstIndex  = firstIndex;
-        cmdBuffer.primCount   = 1;
-        GLBuffer indirectBuf;
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuf);
-        glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &cmdBuffer, GL_STATIC_DRAW);
-
-        ASSERT_GL_NO_ERROR();
-
-        glEnable(GL_BLEND);
-        glDrawElementsIndirect(GL_LINE_LOOP, indexType, nullptr);
-        ASSERT_GL_NO_ERROR();
-
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        glBindVertexArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        glEnableVertexAttribArray(mPositionLocation);
-        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, stripPositions);
-        glUniform4f(mColorLocation, 0, 1, 0, 1);
-        glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, stripIndices);
-
-        checkPixels();
-
-        if (useBuffersAsUboFirst)
-        {
-            glBindFramebuffer(GL_FRAMEBUFFER, arrayUpdateFbo);
-            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-
-            glBindFramebuffer(GL_FRAMEBUFFER, elementUpdateFbo);
-            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-        }
+        glBufferSubData(GL_ARRAY_BUFFER, 0, positionsSize, positions);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indicesSize, indices);
     }
+
+    void initIndirectBuffer(GLuint indirectBuffer, GLuint firstIndex)
+    {
+        DrawCommand indirectData = {};
+        indirectData.count       = 4;
+        indirectData.firstIndex  = firstIndex;
+        indirectData.primCount   = 1;
+
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, indirectBuffer);
+        glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(DrawCommand), &indirectData, GL_STATIC_DRAW);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void setVertexAttribs(const void *positions)
+    {
+        glEnableVertexAttribArray(mPositionLocation);
+        glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, positions);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    static constexpr GLfloat kLoopPositions[]  = {0.0f,  0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  0.0f,
+                                                  0.0f,  0.0f, 0.0f, 0.0f, 0.0f, -0.5f, -0.5f,
+                                                  -0.5f, 0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
+    static constexpr GLfloat kStripPositions[] = {-0.5f, -0.5f, -0.5f, 0.5f,
+                                                  0.5f,  0.5f,  0.5f,  -0.5f};
+    static constexpr GLubyte kStripIndices[]   = {1, 0, 3, 2, 1};
 };
 
+// Test that drawing a line loop using an index buffer of unsigned bytes works.
 TEST_P(LineLoopIndirectTest, UByteIndexIndirectBuffer)
 {
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
     // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
-    static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
-
     // Start at index 1.
-    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1, false);
+    GLuint firstIndex       = 1;
+    const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    initUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, kLoopPositions,
+                      sizeof(kLoopPositions), indices, sizeof(indices));
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    setVertexAttribs(kStripPositions);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, kStripIndices);
+    ASSERT_GL_NO_ERROR();
+
+    checkPixels();
 }
 
+// Test that drawing a line loop using an index buffer of unsigned short values works.
 TEST_P(LineLoopIndirectTest, UShortIndexIndirectBuffer)
 {
     // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
     // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
-    static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
-
     // Start at index 1.
-    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1, false);
+    GLuint firstIndex        = 1;
+    const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    initUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, kLoopPositions,
+                      sizeof(kLoopPositions), indices, sizeof(indices));
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    setVertexAttribs(kStripPositions);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, kStripIndices);
+    ASSERT_GL_NO_ERROR();
+
+    checkPixels();
 }
 
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
@@ -627,13 +663,53 @@ TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUByteIndexIndirectBuffer)
     // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
-    static const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
-
     // Start at index 1.
-    runTest(GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(indices), sizeof(indices), 1, true);
+    GLuint firstIndex       = 1;
+    const GLubyte indices[] = {0, 7, 6, 9, 8, 0};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLFramebuffer arrayUpdateFbo, elementUpdateFbo;
+    GLTexture arrayUpdateTex, elementUpdateTex;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    preTestUBOAndInitUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, kLoopPositions,
+                                   sizeof(kLoopPositions), indices, sizeof(indices), arrayUpdateFbo,
+                                   arrayUpdateTex, elementUpdateFbo, elementUpdateTex);
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    setVertexAttribs(kStripPositions);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, kStripIndices);
+    ASSERT_GL_NO_ERROR();
+
+    checkPixels();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, arrayUpdateFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, elementUpdateFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that uploading data to buffer that's in use then using it for line loop elements works.
@@ -646,13 +722,183 @@ TEST_P(LineLoopIndirectTest, UseAsUBOThenUpdateThenUShortIndexIndirectBuffer)
     // http://anglebug.com/40096699
     ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
 
-    // Disable D3D11 SDK Layers warnings checks, see ANGLE issue 667 for details
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
     ignoreD3D11SDKLayersWarnings();
 
-    static const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+    // Start at index 1.
+    GLuint firstIndex       = 1;
+    const GLshort indices[] = {0, 7, 6, 9, 8, 0};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLFramebuffer arrayUpdateFbo, elementUpdateFbo;
+    GLTexture arrayUpdateTex, elementUpdateTex;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    preTestUBOAndInitUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, kLoopPositions,
+                                   sizeof(kLoopPositions), indices, sizeof(indices), arrayUpdateFbo,
+                                   arrayUpdateTex, elementUpdateFbo, elementUpdateTex);
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    setVertexAttribs(kStripPositions);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, kStripIndices);
+    ASSERT_GL_NO_ERROR();
+
+    checkPixels();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, arrayUpdateFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, elementUpdateFbo);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that two indirect draws drawing lineloop and sharing same index buffer works.
+TEST_P(LineLoopIndirectTest, TwoIndirectDrawsShareIndexBuffer)
+{
+    // http://anglebug.com/42264370
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
+
+    // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
+    // http://anglebug.com/40096699
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
+
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+    ignoreD3D11SDKLayersWarnings();
 
     // Start at index 1.
-    runTest(GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(indices), sizeof(indices), 1, true);
+    GLuint firstIndex        = 1;
+    const GLushort indices[] = {0, 7, 6, 9, 8, 0};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    initUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, kLoopPositions,
+                      sizeof(kLoopPositions), indices, sizeof(indices));
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_SHORT, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    setVertexAttribs(kStripPositions);
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, kStripIndices);
+    ASSERT_GL_NO_ERROR();
+
+    checkPixels();
+}
+
+// Test that one indirect line-loop followed by one non-line-loop draw that share the same index
+// buffer works.
+TEST_P(LineLoopIndirectTest, IndirectAndElementDrawsShareIndexBuffer)
+{
+    // http://anglebug.com/42264370
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsQualcomm());
+
+    // Old drivers buggy with optimized ConvertIndexIndirectLineLoop shader.
+    // http://anglebug.com/40096699
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsVulkan());
+
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+    ignoreD3D11SDKLayersWarnings();
+
+    GLuint firstIndex                    = 10;
+    static const GLubyte indices[]       = {0, 6, 9, 8, 7, 6, 0, 0, 9, 1, 2, 3, 4, 1, 0};
+    static const GLfloat loopPositions[] = {0.0f,  0.0f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f,
+                                            0.0f,  0.0f, -0.5f, 0.0f, 0.0f, -0.5f, -0.5f,
+                                            -0.5f, 0.5f, 0.5f,  0.5f, 0.5f, -0.5f};
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    ASSERT_GL_NO_ERROR();
+
+    GLVertexArray vertexArray;
+    GLBuffer vertexBuffer;
+    GLBuffer indexBuffer;
+
+    initUpdateBuffers(vertexArray, vertexBuffer, indexBuffer, loopPositions, sizeof(loopPositions),
+                      indices, sizeof(indices));
+
+    GLBuffer indirectBuffer;
+    initIndirectBuffer(indirectBuffer, firstIndex);
+
+    glEnable(GL_BLEND);
+    setVertexAttribs(nullptr);
+    glUniform4f(mColorLocation, 1.0f, 0.0f, 1.0f, 1.0f);
+
+    glViewport(0, 0, getWindowWidth() / 2, getWindowHeight());
+    glDrawElementsIndirect(GL_LINE_LOOP, GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight());
+    glUniform4f(mColorLocation, 0.0, 1.0, 1.0, 1.0);
+    glDrawElements(GL_LINE_STRIP, 5, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(1));
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // Check pixels.
+    std::vector<GLubyte> pixels(getWindowWidth() * getWindowHeight() * 4);
+    glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    ASSERT_GL_NO_ERROR();
+
+    for (int y = 0; y < getWindowHeight(); y++)
+    {
+        for (int x = 0; x < getWindowWidth() / 2; x++)
+        {
+            const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+
+            EXPECT_TRUE(pixel[0] == pixel[2]) << "Failed at " << x << ", " << y << std::endl;
+            EXPECT_TRUE(pixel[1] == 0) << "Failed at " << x << ", " << y << std::endl;
+            ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
+        }
+        for (int x = getWindowWidth() / 2; x < getWindowWidth(); x++)
+        {
+            const GLubyte *pixel = &pixels[0] + ((y * getWindowWidth() + x) * 4);
+
+            EXPECT_TRUE(pixel[0] == 0) << "Failed at " << x << ", " << y << std::endl;
+            EXPECT_TRUE(pixel[1] == pixel[2]) << "Failed at " << x << ", " << y << std::endl;
+            ASSERT_EQ(pixel[3], 255) << "Failed at " << x << ", " << y << std::endl;
+        }
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2(LineLoopTest);

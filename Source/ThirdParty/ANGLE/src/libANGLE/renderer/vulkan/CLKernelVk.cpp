@@ -5,10 +5,13 @@
 //
 // CLKernelVk.cpp: Implements the class methods for CLKernelVk.
 
-#include "libANGLE/renderer/vulkan/CLKernelVk.h"
+#include "common/PackedEnums.h"
+
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
+#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
@@ -31,6 +34,10 @@ CLKernelVk::CLKernelVk(const cl::Kernel &kernel,
 {
     mShaderProgramHelper.setShader(gl::ShaderType::Compute,
                                    mKernel.getProgram().getImpl<CLProgramVk>().getShaderModule());
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        mDescriptorSets[index] = VK_NULL_HANDLE;
+    }
 }
 
 CLKernelVk::~CLKernelVk()
@@ -48,6 +55,70 @@ CLKernelVk::~CLKernelVk()
     mShaderProgramHelper.destroy(mContext->getRenderer());
 }
 
+angle::Result CLKernelVk::init()
+{
+    vk::DescriptorSetLayoutDesc &descriptorSetLayoutDesc =
+        mDescriptorSetLayoutDescs[DescriptorSetIndex::KernelArguments];
+    VkPushConstantRange pcRange = mProgram->getDeviceProgramData(mName.c_str())->pushConstRange;
+    for (const auto &arg : getArgs())
+    {
+        VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
+        switch (arg.type)
+        {
+            case NonSemanticClspvReflectionArgumentStorageBuffer:
+            case NonSemanticClspvReflectionArgumentPodStorageBuffer:
+                descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                break;
+            case NonSemanticClspvReflectionArgumentUniform:
+            case NonSemanticClspvReflectionArgumentPodUniform:
+            case NonSemanticClspvReflectionArgumentPointerUniform:
+                descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                break;
+            case NonSemanticClspvReflectionArgumentPodPushConstant:
+                // Get existing push constant range and see if we need to update
+                if (arg.pushConstOffset + arg.pushConstantSize > pcRange.offset + pcRange.size)
+                {
+                    pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
+                }
+                continue;
+            default:
+                continue;
+        }
+        descriptorSetLayoutDesc.addBinding(arg.descriptorBinding, descType, 1,
+                                           VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
+    }
+
+    if (usesPrintf())
+    {
+        mDescriptorSetLayoutDescs[DescriptorSetIndex::Printf].addBinding(
+            mProgram->getDeviceProgramData(mName.c_str())
+                ->reflectionData.printfBufferStorage.binding,
+            VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
+    }
+
+    // Get pipeline layout from cache (creates if missed)
+    // A given kernel need not have resulted in use of all the descriptor sets. Unless the
+    // graphicsPipelineLibrary extension is supported, the pipeline layout need all the descriptor
+    // set layouts to be valide. So set them up in the order of their occurrence.
+    mPipelineLayoutDesc = {};
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        if (!mDescriptorSetLayoutDescs[index].empty())
+        {
+            mPipelineLayoutDesc.updateDescriptorSetLayout(index, mDescriptorSetLayoutDescs[index]);
+        }
+    }
+
+    // push constant setup
+    // push constant size must be multiple of 4
+    pcRange.size = roundUpPow2(pcRange.size, 4u);
+    // push constant offset must be multiple of 4, round down to ensure this
+    pcRange.offset = roundDownPow2(pcRange.offset, 4u);
+    mPipelineLayoutDesc.updatePushConstantRange(pcRange.stageFlags, pcRange.offset, pcRange.size);
+
+    return angle::Result::Continue;
+}
+
 angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
 {
     auto &arg = mArgs.at(argIndex);
@@ -55,6 +126,13 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
     {
         arg.handle     = const_cast<void *>(argValue);
         arg.handleSize = argSize;
+
+        if (arg.type == NonSemanticClspvReflectionArgumentWorkgroup)
+        {
+            mSpecConstants.push_back(
+                KernelSpecConstant{.ID   = arg.workgroupSpecId,
+                                   .data = static_cast<uint32_t>(argSize / arg.workgroupSize)});
+        }
     }
 
     return angle::Result::Continue;
@@ -192,6 +270,14 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
             .size       = sizeof(uint32_t)});
         constantDataOffset += sizeof(uint32_t);
     }
+    // Populate kernel specialization constants (if any)
+    for (const auto &specConstant : mSpecConstants)
+    {
+        specConstantData.push_back(specConstant.data);
+        mapEntries.push_back(VkSpecializationMapEntry{
+            .constantID = specConstant.ID, .offset = constantDataOffset, .size = sizeof(uint32_t)});
+        constantDataOffset += sizeof(uint32_t);
+    }
     VkSpecializationInfo computeSpecializationInfo{
         .mapEntryCount = static_cast<uint32_t>(mapEntries.size()),
         .pMapEntries   = mapEntries.data(),
@@ -204,6 +290,12 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
         mContext, &mComputePipelineCache, pipelineCache, getPipelineLayout().get(),
         vk::ComputePipelineOptions{}, PipelineSource::Draw, pipelineOut, mName.c_str(),
         &computeSpecializationInfo);
+}
+
+bool CLKernelVk::usesPrintf() const
+{
+    return mProgram->getDeviceProgramData(mName.c_str())->getKernelFlags(mName) &
+           NonSemanticClspvReflectionMayUsePrintf;
 }
 
 }  // namespace rx

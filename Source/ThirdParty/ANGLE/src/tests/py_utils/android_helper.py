@@ -40,7 +40,7 @@ class _Global(object):
 
     @classmethod
     def IsMultiUser(cls):
-        assert (cls.current_user != None, "Call _GetCurrentUser before using IsMultiUser")
+        assert cls.current_user != None, "Call _GetCurrentUser before using IsMultiUser"
         return cls.current_user != '0'
 
 def _ApkPath(suite_name):

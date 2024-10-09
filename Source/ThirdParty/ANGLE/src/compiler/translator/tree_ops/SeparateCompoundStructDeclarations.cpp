@@ -4,26 +4,24 @@
 // found in the LICENSE file.
 //
 
-#include <algorithm>
+#include "compiler/translator/tree_ops/SeparateCompoundStructDeclarations.h"
 
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
-#include "compiler/translator/tree_ops/msl/SeparateCompoundStructDeclarations.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
 #include "compiler/translator/util.h"
 
-using namespace sh;
+#include <algorithm>
 
-////////////////////////////////////////////////////////////////////////////////
-
+namespace sh
+{
 namespace
 {
-
 class Separator : public TIntermTraverser
 {
   public:
-    Separator(TSymbolTable &symbolTable, IdGen &idGen)
-        : TIntermTraverser(false, false, true, &symbolTable), mIdGen(idGen)
+    Separator(TSymbolTable &symbolTable, StructNameGenerator nameGenerator)
+        : TIntermTraverser(false, false, true, &symbolTable), mNameGenerator(nameGenerator)
     {}
 
     bool visitDeclaration(Visit, TIntermDeclaration *declNode) override
@@ -40,8 +38,8 @@ class Separator : public TIntermTraverser
             if (structure->symbolType() == SymbolType::Empty)
             {
                 // Name unnamed inline structs.
-                structure = new TStructure(mSymbolTable, mIdGen.createNewName().rawName(),
-                                           &structure->fields(), SymbolType::AngleInternal);
+                structure = new TStructure(mSymbolTable, mNameGenerator(), &structure->fields(),
+                                           SymbolType::AngleInternal);
             }
             TVariable *structVar = new TVariable(mSymbolTable, kEmptyImmutableString,
                                                  new TType(structure, true), SymbolType::Empty);
@@ -89,17 +87,16 @@ class Separator : public TIntermTraverser
         }
     }
 
-    IdGen &mIdGen;
+    StructNameGenerator mNameGenerator;
     VariableReplacementMap mVariableMap;
 };
-
 }  // anonymous namespace
 
-////////////////////////////////////////////////////////////////////////////////
-
-bool sh::SeparateCompoundStructDeclarations(TCompiler &compiler, IdGen &idGen, TIntermBlock &root)
+bool SeparateCompoundStructDeclarations(TCompiler &compiler,
+                                        StructNameGenerator nameGenerator,
+                                        TIntermBlock &root)
 {
-    Separator separator(compiler.getSymbolTable(), idGen);
+    Separator separator(compiler.getSymbolTable(), nameGenerator);
     root.traverse(&separator);
     if (!separator.updateTree(&compiler, &root))
     {
@@ -113,3 +110,4 @@ bool sh::SeparateCompoundStructDeclarations(TCompiler &compiler, IdGen &idGen, T
 
     return true;
 }
+}  // namespace sh

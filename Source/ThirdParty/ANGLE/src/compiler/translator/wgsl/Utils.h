@@ -4,10 +4,12 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_TRANSLATOR_WGSL_WRITETYPENAM_H_
-#define COMPILER_TRANSLATOR_WGSL_WRITETYPENAM_H_
+#ifndef COMPILER_TRANSLATOR_WGSL_UTILS_H_
+#define COMPILER_TRANSLATOR_WGSL_UTILS_H_
 
+#include "compiler/translator/Common.h"
 #include "compiler/translator/InfoSink.h"
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Types.h"
 
 namespace sh
@@ -27,6 +29,9 @@ void WriteWgslBareTypeName(StringStreamType &output, const TType &type);
 template <typename StringStreamType>
 void WriteWgslType(StringStreamType &output, const TType &type);
 
+using GlobalVars = TMap<ImmutableString, TIntermDeclaration *>;
+GlobalVars FindGlobalVars(TIntermBlock *root);
+
 }  // namespace sh
 
-#endif  // COMPILER_TRANSLATOR_WGSL_WRITETYPENAM_H_
+#endif  // COMPILER_TRANSLATOR_WGSL_UTILS_H_

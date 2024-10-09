@@ -943,6 +943,22 @@ void PackParameter<const uint64_t *>(ParamBuffer &params,
     UNREACHABLE();
 }
 
+template <>
+void PackParameter<GLGETBLOBPROCANGLE>(ParamBuffer &params,
+                                       const Token &token,
+                                       const TraceStringMap &strings)
+{
+    UNREACHABLE();
+}
+
+template <>
+void PackParameter<GLSETBLOBPROCANGLE>(ParamBuffer &params,
+                                       const Token &token,
+                                       const TraceStringMap &strings)
+{
+    UNREACHABLE();
+}
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
 template <>
 void PackParameter<EGLNativeDisplayType>(ParamBuffer &params,

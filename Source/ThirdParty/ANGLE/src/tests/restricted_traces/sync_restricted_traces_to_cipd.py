@@ -87,9 +87,16 @@ def check_trace_before_upload(trace):
             jtrace = json.load(f)
         additional_files = set([trace_json, trace + '.angledata.gz'])
         extra_files = set(files) - set(jtrace['TraceFiles']) - additional_files
+        required_extensions = 'RequiredExtensions' in jtrace
         if extra_files:
             logging.error('Unexpected files, not listed in %s.json [TraceFiles]:\n%s', trace,
                           '\n'.join(extra_files))
+        if not required_extensions:
+            logging.error(
+                '"RequiredExtensions" missing from %s.json. Please run retrace_restricted_traces.py with "get_min_reqs":\n'
+                '  ./src/tests/restricted_traces/retrace_restricted_traces.py get_min_reqs out/LinuxDebug --traces "%s"\n',
+                trace, trace)
+        if extra_files or not required_extensions:
             sys.exit(1)
 
 

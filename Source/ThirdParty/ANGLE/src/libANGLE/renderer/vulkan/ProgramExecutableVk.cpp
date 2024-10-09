@@ -239,167 +239,6 @@ vk::SpecializationConstants MakeSpecConsts(ProgramTransformOptions transformOpti
     return specConsts;
 }
 
-template <typename T>
-void UpdateDefaultUniformBlock(GLsizei count,
-                               uint32_t arrayIndex,
-                               int componentCount,
-                               const T *v,
-                               const sh::BlockMemberInfo &layoutInfo,
-                               angle::MemoryBuffer *uniformData)
-{
-    const int elementSize = sizeof(T) * componentCount;
-
-    uint8_t *dst = uniformData->data() + layoutInfo.offset;
-    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
-    {
-        uint32_t arrayOffset = arrayIndex * layoutInfo.arrayStride;
-        uint8_t *writePtr    = dst + arrayOffset;
-        ASSERT(writePtr + (elementSize * count) <= uniformData->data() + uniformData->size());
-        memcpy(writePtr, v, elementSize * count);
-    }
-    else
-    {
-        // Have to respect the arrayStride between each element of the array.
-        int maxIndex = arrayIndex + count;
-        for (int writeIndex = arrayIndex, readIndex = 0; writeIndex < maxIndex;
-             writeIndex++, readIndex++)
-        {
-            const int arrayOffset = writeIndex * layoutInfo.arrayStride;
-            uint8_t *writePtr     = dst + arrayOffset;
-            const T *readPtr      = v + (readIndex * componentCount);
-            ASSERT(writePtr + elementSize <= uniformData->data() + uniformData->size());
-            memcpy(writePtr, readPtr, elementSize);
-        }
-    }
-}
-
-template <typename T>
-void ReadFromDefaultUniformBlock(int componentCount,
-                                 uint32_t arrayIndex,
-                                 T *dst,
-                                 const sh::BlockMemberInfo &layoutInfo,
-                                 const angle::MemoryBuffer *uniformData)
-{
-    ASSERT(layoutInfo.offset != -1);
-
-    const int elementSize = sizeof(T) * componentCount;
-    const uint8_t *source = uniformData->data() + layoutInfo.offset;
-
-    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
-    {
-        const uint8_t *readPtr = source + arrayIndex * layoutInfo.arrayStride;
-        memcpy(dst, readPtr, elementSize);
-    }
-    else
-    {
-        // Have to respect the arrayStride between each element of the array.
-        const int arrayOffset  = arrayIndex * layoutInfo.arrayStride;
-        const uint8_t *readPtr = source + arrayOffset;
-        memcpy(dst, readPtr, elementSize);
-    }
-}
-
-template <typename T>
-void SetUniformImpl(const gl::ProgramExecutable *executable,
-                    GLint location,
-                    GLsizei count,
-                    const T *v,
-                    GLenum entryPointType,
-                    DefaultUniformBlockMap *defaultUniformBlocks,
-                    gl::ShaderBitSet *defaultUniformBlocksDirty)
-{
-    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
-
-    ASSERT(!linkedUniform.isSampler());
-
-    if (linkedUniform.getType() == entryPointType)
-    {
-        for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
-        {
-            DefaultUniformBlockVk &uniformBlock   = *(*defaultUniformBlocks)[shaderType];
-            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-            // Assume an offset of -1 means the block is unused.
-            if (layoutInfo.offset == -1)
-            {
-                continue;
-            }
-
-            const GLint componentCount = linkedUniform.getElementComponents();
-            UpdateDefaultUniformBlock(count, locationInfo.arrayIndex, componentCount, v, layoutInfo,
-                                      &uniformBlock.uniformData);
-            defaultUniformBlocksDirty->set(shaderType);
-        }
-    }
-    else
-    {
-        for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
-        {
-            DefaultUniformBlockVk &uniformBlock   = *(*defaultUniformBlocks)[shaderType];
-            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-            // Assume an offset of -1 means the block is unused.
-            if (layoutInfo.offset == -1)
-            {
-                continue;
-            }
-
-            const GLint componentCount = linkedUniform.getElementComponents();
-
-            ASSERT(linkedUniform.getType() == gl::VariableBoolVectorType(entryPointType));
-
-            GLint initialArrayOffset =
-                locationInfo.arrayIndex * layoutInfo.arrayStride + layoutInfo.offset;
-            for (GLint i = 0; i < count; i++)
-            {
-                GLint elementOffset = i * layoutInfo.arrayStride + initialArrayOffset;
-                GLint *dst =
-                    reinterpret_cast<GLint *>(uniformBlock.uniformData.data() + elementOffset);
-                const T *source = v + i * componentCount;
-
-                for (int c = 0; c < componentCount; c++)
-                {
-                    dst[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
-                }
-            }
-
-            defaultUniformBlocksDirty->set(shaderType);
-        }
-    }
-}
-
-template <int cols, int rows>
-void SetUniformMatrixfv(const gl::ProgramExecutable *executable,
-                        GLint location,
-                        GLsizei count,
-                        GLboolean transpose,
-                        const GLfloat *value,
-                        DefaultUniformBlockMap *defaultUniformBlocks,
-                        gl::ShaderBitSet *defaultUniformBlocksDirty)
-{
-    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
-
-    for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
-    {
-        DefaultUniformBlockVk &uniformBlock   = *(*defaultUniformBlocks)[shaderType];
-        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
-
-        // Assume an offset of -1 means the block is unused.
-        if (layoutInfo.offset == -1)
-        {
-            continue;
-        }
-
-        SetFloatUniformMatrixGLSL<cols, rows>::Run(
-            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
-            value, uniformBlock.uniformData.data() + layoutInfo.offset);
-
-        defaultUniformBlocksDirty->set(shaderType);
-    }
-}
-
 vk::GraphicsPipelineSubset GetWarmUpSubset(const angle::FeaturesVk &features)
 {
     // Only build the shaders subset of the pipeline if VK_EXT_graphics_pipeline_library is
@@ -573,10 +412,6 @@ class ProgramExecutableVk::WarmUpGraphicsTask : public WarmUpTaskCommon
     SharedRenderPass *mCompatibleRenderPass;
 };
 
-DefaultUniformBlockVk::DefaultUniformBlockVk() = default;
-
-DefaultUniformBlockVk::~DefaultUniformBlockVk() = default;
-
 // ShaderInfo implementation.
 ShaderInfo::ShaderInfo() {}
 
@@ -711,9 +546,9 @@ ProgramExecutableVk::ProgramExecutableVk(const gl::ProgramExecutable *executable
       mValidComputePermutations{}
 {
     mDescriptorSets.fill(VK_NULL_HANDLE);
-    for (std::shared_ptr<DefaultUniformBlockVk> &defaultBlock : mDefaultUniformBlocks)
+    for (std::shared_ptr<BufferAndLayout> &defaultBlock : mDefaultUniformBlocks)
     {
-        defaultBlock = std::make_shared<DefaultUniformBlockVk>();
+        defaultBlock = std::make_shared<BufferAndLayout>();
     }
 }
 
@@ -2248,60 +2083,28 @@ angle::Result ProgramExecutableVk::resizeUniformBlockMemory(
     return angle::Result::Continue;
 }
 
-template <typename T>
-void ProgramExecutableVk::getUniformImpl(GLint location, T *v, GLenum entryPointType) const
-{
-    const gl::VariableLocation &locationInfo = mExecutable->getUniformLocations()[location];
-    const gl::LinkedUniform &linkedUniform   = mExecutable->getUniforms()[locationInfo.index];
-
-    ASSERT(!linkedUniform.isSampler() && !linkedUniform.isImage());
-
-    const gl::ShaderType shaderType = linkedUniform.getFirstActiveShaderType();
-    ASSERT(shaderType != gl::ShaderType::InvalidEnum);
-
-    const DefaultUniformBlockVk &uniformBlock = *mDefaultUniformBlocks[shaderType];
-    const sh::BlockMemberInfo &layoutInfo     = uniformBlock.uniformLayout[location];
-
-    ASSERT(linkedUniform.getUniformTypeInfo().componentType == entryPointType ||
-           linkedUniform.getUniformTypeInfo().componentType ==
-               gl::VariableBoolVectorType(entryPointType));
-
-    if (gl::IsMatrixType(linkedUniform.getType()))
-    {
-        const uint8_t *ptrToElement = uniformBlock.uniformData.data() + layoutInfo.offset +
-                                      (locationInfo.arrayIndex * layoutInfo.arrayStride);
-        GetMatrixUniform(linkedUniform.getType(), v, reinterpret_cast<const T *>(ptrToElement),
-                         false);
-    }
-    else
-    {
-        ReadFromDefaultUniformBlock(linkedUniform.getElementComponents(), locationInfo.arrayIndex,
-                                    v, layoutInfo, &uniformBlock.uniformData);
-    }
-}
-
 void ProgramExecutableVk::setUniform1fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_FLOAT, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_FLOAT, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform2fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_FLOAT_VEC2, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_FLOAT_VEC2, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform3fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_FLOAT_VEC3, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_FLOAT_VEC3, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform4fv(GLint location, GLsizei count, const GLfloat *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_FLOAT_VEC4, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_FLOAT_VEC4, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform1iv(GLint location, GLsizei count, const GLint *v)
@@ -2315,50 +2118,50 @@ void ProgramExecutableVk::setUniform1iv(GLint location, GLsizei count, const GLi
         return;
     }
 
-    SetUniformImpl(mExecutable, location, count, v, GL_INT, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_INT, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform2iv(GLint location, GLsizei count, const GLint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_INT_VEC2, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_INT_VEC2, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform3iv(GLint location, GLsizei count, const GLint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_INT_VEC3, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_INT_VEC3, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform4iv(GLint location, GLsizei count, const GLint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_INT_VEC4, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_INT_VEC4, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform1uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_UNSIGNED_INT, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_UNSIGNED_INT, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform2uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC2, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC2, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform3uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC3, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC3, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniform4uiv(GLint location, GLsizei count, const GLuint *v)
 {
-    SetUniformImpl(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC4, &mDefaultUniformBlocks,
-                   &mDefaultUniformBlocksDirty);
+    SetUniform(mExecutable, location, count, v, GL_UNSIGNED_INT_VEC4, &mDefaultUniformBlocks,
+               &mDefaultUniformBlocksDirty);
 }
 
 void ProgramExecutableVk::setUniformMatrix2fv(GLint location,
@@ -2446,20 +2249,20 @@ void ProgramExecutableVk::getUniformfv(const gl::Context *context,
                                        GLint location,
                                        GLfloat *params) const
 {
-    getUniformImpl(location, params, GL_FLOAT);
+    GetUniform(mExecutable, location, params, GL_FLOAT, &mDefaultUniformBlocks);
 }
 
 void ProgramExecutableVk::getUniformiv(const gl::Context *context,
                                        GLint location,
                                        GLint *params) const
 {
-    getUniformImpl(location, params, GL_INT);
+    GetUniform(mExecutable, location, params, GL_INT, &mDefaultUniformBlocks);
 }
 
 void ProgramExecutableVk::getUniformuiv(const gl::Context *context,
                                         GLint location,
                                         GLuint *params) const
 {
-    getUniformImpl(location, params, GL_UNSIGNED_INT);
+    GetUniform(mExecutable, location, params, GL_UNSIGNED_INT, &mDefaultUniformBlocks);
 }
 }  // namespace rx

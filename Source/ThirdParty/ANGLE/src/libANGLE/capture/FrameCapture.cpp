@@ -2536,50 +2536,33 @@ bool IsTextureUpdate(CallCapture &call)
     switch (call.entryPoint)
     {
         case EntryPoint::GLCompressedCopyTextureCHROMIUM:
-        case EntryPoint::GLCompressedTexImage1D:
         case EntryPoint::GLCompressedTexImage2D:
         case EntryPoint::GLCompressedTexImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexImage3D:
         case EntryPoint::GLCompressedTexImage3DOES:
         case EntryPoint::GLCompressedTexImage3DRobustANGLE:
-        case EntryPoint::GLCompressedTexSubImage1D:
         case EntryPoint::GLCompressedTexSubImage2D:
         case EntryPoint::GLCompressedTexSubImage2DRobustANGLE:
         case EntryPoint::GLCompressedTexSubImage3D:
         case EntryPoint::GLCompressedTexSubImage3DOES:
         case EntryPoint::GLCompressedTexSubImage3DRobustANGLE:
-        case EntryPoint::GLCompressedTextureSubImage1D:
-        case EntryPoint::GLCompressedTextureSubImage2D:
-        case EntryPoint::GLCompressedTextureSubImage3D:
-        case EntryPoint::GLCopyTexImage1D:
         case EntryPoint::GLCopyTexImage2D:
-        case EntryPoint::GLCopyTexSubImage1D:
         case EntryPoint::GLCopyTexSubImage2D:
         case EntryPoint::GLCopyTexSubImage3D:
         case EntryPoint::GLCopyTexSubImage3DOES:
         case EntryPoint::GLCopyTexture3DANGLE:
         case EntryPoint::GLCopyTextureCHROMIUM:
-        case EntryPoint::GLCopyTextureSubImage1D:
-        case EntryPoint::GLCopyTextureSubImage2D:
-        case EntryPoint::GLCopyTextureSubImage3D:
-        case EntryPoint::GLTexImage1D:
         case EntryPoint::GLTexImage2D:
         case EntryPoint::GLTexImage2DExternalANGLE:
-        case EntryPoint::GLTexImage2DMultisample:
         case EntryPoint::GLTexImage2DRobustANGLE:
         case EntryPoint::GLTexImage3D:
-        case EntryPoint::GLTexImage3DMultisample:
         case EntryPoint::GLTexImage3DOES:
         case EntryPoint::GLTexImage3DRobustANGLE:
-        case EntryPoint::GLTexSubImage1D:
         case EntryPoint::GLTexSubImage2D:
         case EntryPoint::GLTexSubImage2DRobustANGLE:
         case EntryPoint::GLTexSubImage3D:
         case EntryPoint::GLTexSubImage3DOES:
         case EntryPoint::GLTexSubImage3DRobustANGLE:
-        case EntryPoint::GLTextureSubImage1D:
-        case EntryPoint::GLTextureSubImage2D:
-        case EntryPoint::GLTextureSubImage3D:
         case EntryPoint::GLCopyImageSubData:
         case EntryPoint::GLCopyImageSubDataEXT:
         case EntryPoint::GLCopyImageSubDataOES:
@@ -2733,8 +2716,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
 {
     switch (call.entryPoint)
     {
-        case EntryPoint::GLProgramUniform1d:
-        case EntryPoint::GLProgramUniform1dv:
         case EntryPoint::GLProgramUniform1f:
         case EntryPoint::GLProgramUniform1fEXT:
         case EntryPoint::GLProgramUniform1fv:
@@ -2747,8 +2728,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform1uiEXT:
         case EntryPoint::GLProgramUniform1uiv:
         case EntryPoint::GLProgramUniform1uivEXT:
-        case EntryPoint::GLProgramUniform2d:
-        case EntryPoint::GLProgramUniform2dv:
         case EntryPoint::GLProgramUniform2f:
         case EntryPoint::GLProgramUniform2fEXT:
         case EntryPoint::GLProgramUniform2fv:
@@ -2761,8 +2740,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform2uiEXT:
         case EntryPoint::GLProgramUniform2uiv:
         case EntryPoint::GLProgramUniform2uivEXT:
-        case EntryPoint::GLProgramUniform3d:
-        case EntryPoint::GLProgramUniform3dv:
         case EntryPoint::GLProgramUniform3f:
         case EntryPoint::GLProgramUniform3fEXT:
         case EntryPoint::GLProgramUniform3fv:
@@ -2775,8 +2752,6 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform3uiEXT:
         case EntryPoint::GLProgramUniform3uiv:
         case EntryPoint::GLProgramUniform3uivEXT:
-        case EntryPoint::GLProgramUniform4d:
-        case EntryPoint::GLProgramUniform4dv:
         case EntryPoint::GLProgramUniform4f:
         case EntryPoint::GLProgramUniform4fEXT:
         case EntryPoint::GLProgramUniform4fv:
@@ -2789,86 +2764,59 @@ DefaultUniformType GetDefaultUniformType(const CallCapture &call)
         case EntryPoint::GLProgramUniform4uiEXT:
         case EntryPoint::GLProgramUniform4uiv:
         case EntryPoint::GLProgramUniform4uivEXT:
-        case EntryPoint::GLProgramUniformMatrix2dv:
         case EntryPoint::GLProgramUniformMatrix2fv:
         case EntryPoint::GLProgramUniformMatrix2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix2x3dv:
         case EntryPoint::GLProgramUniformMatrix2x3fv:
         case EntryPoint::GLProgramUniformMatrix2x3fvEXT:
-        case EntryPoint::GLProgramUniformMatrix2x4dv:
         case EntryPoint::GLProgramUniformMatrix2x4fv:
         case EntryPoint::GLProgramUniformMatrix2x4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3dv:
         case EntryPoint::GLProgramUniformMatrix3fv:
         case EntryPoint::GLProgramUniformMatrix3fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3x2dv:
         case EntryPoint::GLProgramUniformMatrix3x2fv:
         case EntryPoint::GLProgramUniformMatrix3x2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix3x4dv:
         case EntryPoint::GLProgramUniformMatrix3x4fv:
         case EntryPoint::GLProgramUniformMatrix3x4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4dv:
         case EntryPoint::GLProgramUniformMatrix4fv:
         case EntryPoint::GLProgramUniformMatrix4fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4x2dv:
         case EntryPoint::GLProgramUniformMatrix4x2fv:
         case EntryPoint::GLProgramUniformMatrix4x2fvEXT:
-        case EntryPoint::GLProgramUniformMatrix4x3dv:
         case EntryPoint::GLProgramUniformMatrix4x3fv:
         case EntryPoint::GLProgramUniformMatrix4x3fvEXT:
             return DefaultUniformType::SpecifiedProgram;
 
-        case EntryPoint::GLUniform1d:
-        case EntryPoint::GLUniform1dv:
         case EntryPoint::GLUniform1f:
         case EntryPoint::GLUniform1fv:
         case EntryPoint::GLUniform1i:
         case EntryPoint::GLUniform1iv:
         case EntryPoint::GLUniform1ui:
         case EntryPoint::GLUniform1uiv:
-        case EntryPoint::GLUniform2d:
-        case EntryPoint::GLUniform2dv:
         case EntryPoint::GLUniform2f:
         case EntryPoint::GLUniform2fv:
         case EntryPoint::GLUniform2i:
         case EntryPoint::GLUniform2iv:
         case EntryPoint::GLUniform2ui:
         case EntryPoint::GLUniform2uiv:
-        case EntryPoint::GLUniform3d:
-        case EntryPoint::GLUniform3dv:
         case EntryPoint::GLUniform3f:
         case EntryPoint::GLUniform3fv:
         case EntryPoint::GLUniform3i:
         case EntryPoint::GLUniform3iv:
         case EntryPoint::GLUniform3ui:
         case EntryPoint::GLUniform3uiv:
-        case EntryPoint::GLUniform4d:
-        case EntryPoint::GLUniform4dv:
         case EntryPoint::GLUniform4f:
         case EntryPoint::GLUniform4fv:
         case EntryPoint::GLUniform4i:
         case EntryPoint::GLUniform4iv:
         case EntryPoint::GLUniform4ui:
         case EntryPoint::GLUniform4uiv:
-        case EntryPoint::GLUniformMatrix2dv:
         case EntryPoint::GLUniformMatrix2fv:
-        case EntryPoint::GLUniformMatrix2x3dv:
         case EntryPoint::GLUniformMatrix2x3fv:
-        case EntryPoint::GLUniformMatrix2x4dv:
         case EntryPoint::GLUniformMatrix2x4fv:
-        case EntryPoint::GLUniformMatrix3dv:
         case EntryPoint::GLUniformMatrix3fv:
-        case EntryPoint::GLUniformMatrix3x2dv:
         case EntryPoint::GLUniformMatrix3x2fv:
-        case EntryPoint::GLUniformMatrix3x4dv:
         case EntryPoint::GLUniformMatrix3x4fv:
-        case EntryPoint::GLUniformMatrix4dv:
         case EntryPoint::GLUniformMatrix4fv:
-        case EntryPoint::GLUniformMatrix4x2dv:
         case EntryPoint::GLUniformMatrix4x2fv:
-        case EntryPoint::GLUniformMatrix4x3dv:
         case EntryPoint::GLUniformMatrix4x3fv:
-        case EntryPoint::GLUniformSubroutinesuiv:
             return DefaultUniformType::CurrentProgram;
 
         default:
@@ -6175,7 +6123,6 @@ bool SkipCall(EntryPoint entryPoint)
             return true;
 
         case EntryPoint::GLGetActiveUniformBlockiv:
-        case EntryPoint::GLGetActiveUniformName:
         case EntryPoint::GLGetActiveUniformBlockName:
             // Skip these calls because:
             // - We don't use the return values.
@@ -7441,12 +7388,6 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
             captureCustomMapBufferFromContext(context, "MapBufferRangeEXT", inCall, outCalls);
             break;
         }
-        case EntryPoint::GLMapBuffer:
-        {
-            // Currently desktop GL is not implemented.
-            UNREACHABLE();
-            break;
-        }
         case EntryPoint::GLMapBufferOES:
         {
             captureCustomMapBufferFromContext(context, "MapBufferOES", inCall, outCalls);
@@ -7812,8 +7753,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
 
         case EntryPoint::GLBindBufferBase:
         case EntryPoint::GLBindBufferRange:
-        case EntryPoint::GLBindBuffersBase:
-        case EntryPoint::GLBindBuffersRange:
             if (isCaptureActive())
             {
                 WARN() << "Indexed buffer binding changed during capture, Reset doesn't handle it "
@@ -8011,13 +7950,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
-        case EntryPoint::GLCompressedTexImage1D:
-        case EntryPoint::GLCompressedTexSubImage1D:
-        {
-            UNIMPLEMENTED();
-            break;
-        }
-
         case EntryPoint::GLDeleteTextures:
         {
             // Free any TextureLevelDataMap entries being tracked for this texture
@@ -8041,7 +7973,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
-        case EntryPoint::GLMapBuffer:
         case EntryPoint::GLMapBufferOES:
         {
             gl::BufferBinding target =
@@ -8063,12 +7994,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
                 context->getShareGroup()->getFrameCaptureShared();
             frameCaptureShared->trackBufferMapping(context, &call, buffer->id(), buffer, offset,
                                                    length, writable, false);
-            break;
-        }
-
-        case EntryPoint::GLUnmapNamedBuffer:
-        {
-            UNIMPLEMENTED();
             break;
         }
 
@@ -8953,10 +8878,9 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
 
     const gl::State &contextState = mainContext->getState();
     gl::State mainContextReplayState(
-        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, contextState.getClientType(),
-        contextState.getClientVersion(), contextState.getProfileMask(), false, true, true, true,
-        false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG, contextState.hasRobustAccess(),
-        contextState.hasProtectedContent(), false);
+        nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, contextState.getClientVersion(),
+        false, true, true, true, false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG,
+        contextState.hasRobustAccess(), contextState.hasProtectedContent(), false);
     mainContextReplayState.initializeForCapture(mainContext);
 
     CaptureShareGroupMidExecutionSetup(mainContext, &mShareGroupSetupCalls, &mResourceTracker,
@@ -8998,12 +8922,11 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
         else
         {
             const gl::State &shareContextState = shareContext.second->getState();
-            gl::State auxContextReplayState(
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                shareContextState.getClientType(), shareContextState.getClientVersion(),
-                shareContextState.getProfileMask(), false, true, true, true, false,
-                EGL_CONTEXT_PRIORITY_MEDIUM_IMG, shareContextState.hasRobustAccess(),
-                shareContextState.hasProtectedContent(), false);
+            gl::State auxContextReplayState(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                            shareContextState.getClientVersion(), false, true, true,
+                                            true, false, EGL_CONTEXT_PRIORITY_MEDIUM_IMG,
+                                            shareContextState.hasRobustAccess(),
+                                            shareContextState.hasProtectedContent(), false);
             auxContextReplayState.initializeForCapture(shareContext.second);
 
             egl::Error error = shareContext.second->makeCurrent(display, draw, read);

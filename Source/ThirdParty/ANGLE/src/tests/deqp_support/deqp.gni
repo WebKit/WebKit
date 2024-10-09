@@ -1074,6 +1074,8 @@ deqp_khr_gl_sources = [
   "$deqp_path/external/openglcts/modules/gl/gl3cGLSLnoperspectiveTests.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cGPUShader5Tests.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cGPUShader5Tests.hpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cGetUniform.cpp",
+  "$deqp_path/external/openglcts/modules/gl/gl3cGetUniform.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cPrimitiveRestart.cpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cPrimitiveRestart.hpp",
   "$deqp_path/external/openglcts/modules/gl/gl3cTestPackages.cpp",

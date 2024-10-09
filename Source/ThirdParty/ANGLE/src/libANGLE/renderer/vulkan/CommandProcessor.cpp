@@ -707,7 +707,7 @@ angle::Result CommandProcessor::processTasksImpl(bool *exitThread)
             ANGLE_TRY(mCommandQueue->checkCompletedCommands(this));
 
             // Reset command buffer and clean up garbage
-            if (mRenderer->isAsyncCommandBufferResetEnabled() &&
+            if (mRenderer->isAsyncCommandBufferResetAndGarbageCleanupEnabled() &&
                 mCommandQueue->hasFinishedCommands())
             {
                 ANGLE_TRY(mCommandQueue->retireFinishedCommands(this));
@@ -823,11 +823,11 @@ angle::Result CommandProcessor::waitForAllWorkToBeSubmitted(Context *context)
         ANGLE_TRY(processTask(&task));
     }
 
-    if (mRenderer->isAsyncCommandBufferResetEnabled())
+    if (mRenderer->isAsyncCommandBufferResetAndGarbageCleanupEnabled())
     {
         ANGLE_TRY(mCommandQueue->retireFinishedCommands(context));
+        mRenderer->cleanupGarbage();
     }
-    context->getRenderer()->cleanupGarbage();
 
     mNeedCommandsAndGarbageCleanup = false;
 
@@ -1595,13 +1595,16 @@ void CommandQueue::resetPerFramePerfCounters()
 angle::Result CommandQueue::retireFinishedCommandsAndCleanupGarbage(Context *context)
 {
     vk::Renderer *renderer = context->getRenderer();
-    if (!renderer->isAsyncCommandBufferResetEnabled())
+    if (renderer->isAsyncCommandBufferResetAndGarbageCleanupEnabled())
     {
-        // Do immediate command buffer reset
-        ANGLE_TRY(retireFinishedCommands(context));
+        renderer->requestAsyncCommandsAndGarbageCleanup(context);
     }
-
-    renderer->requestAsyncCommandsAndGarbageCleanup(context);
+    else
+    {
+        // Do immediate command buffer reset and garbage cleanup
+        ANGLE_TRY(retireFinishedCommands(context));
+        renderer->cleanupGarbage();
+    }
 
     return angle::Result::Continue;
 }

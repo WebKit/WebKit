@@ -58,6 +58,7 @@ MSG kBlitTypeMismatchFixedPoint = "If the read buffer contains fixed-point value
 MSG kBlitTypeMismatchSignedInteger = "If the read buffer contains signed integer values the draw buffer must as well.";
 MSG kBlitTypeMismatchUnsignedInteger = "If the read buffer contains unsigned integer values the draw buffer must as well.";
 MSG kBlitYUVFramebuffer = "Blitting to or from a YUV framebuffer is disallowed.";
+MSG kBlobCacheCallbacksUnbalanced = "Blob cache callbacks must both be NULL or both be non-NULL.";
 MSG kBufferAlreadyMapped = "Buffer is already mapped.";
 MSG kBufferBoundForTransformFeedback = "Buffer is bound for transform feedback.";
 MSG kBufferImmutable = "Buffer is immutable.";

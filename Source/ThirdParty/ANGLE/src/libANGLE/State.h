@@ -221,9 +221,7 @@ using DirtyObjects = angle::BitSet<DIRTY_OBJECT_MAX>;
 class PrivateState : angle::NonCopyable
 {
   public:
-    PrivateState(const EGLenum clientType,
-                 const Version &clientVersion,
-                 EGLint profileMask,
+    PrivateState(const Version &clientVersion,
                  bool debug,
                  bool bindGeneratesResourceCHROMIUM,
                  bool clientArraysEnabled,
@@ -237,8 +235,6 @@ class PrivateState : angle::NonCopyable
 
     void reset();
 
-    EGLenum getClientType() const { return mClientType; }
-    EGLint getProfileMask() const { return mProfileMask; }
     const Version &getClientVersion() const { return mClientVersion; }
     GLint getClientMajorVersion() const { return mClientVersion.major; }
     GLint getClientMinorVersion() const { return mClientVersion.minor; }
@@ -335,10 +331,11 @@ class PrivateState : angle::NonCopyable
 
     // Stencil state maniupulation
     bool isStencilTestEnabled() const { return mDepthStencil.stencilTest; }
-    bool isStencilWriteEnabled() const
+    bool isStencilWriteEnabled(GLuint framebufferStencilSize) const
     {
         return mDepthStencil.stencilTest &&
-               !(mDepthStencil.isStencilNoOp() && mDepthStencil.isStencilBackNoOp());
+               !(mDepthStencil.isStencilNoOp(framebufferStencilSize) &&
+                 mDepthStencil.isStencilBackNoOp(framebufferStencilSize));
     }
     void setStencilTest(bool enabled);
     void setStencilParams(GLenum stencilFunc, GLint stencilRef, GLuint stencilMask);
@@ -578,6 +575,10 @@ class PrivateState : angle::NonCopyable
     const Debug &getDebug() const { return mDebug; }
     Debug &getDebug() { return mDebug; }
 
+    // GL_ANGLE_blob_cache
+    const BlobCacheCallbacks &getBlobCacheCallbacks() const { return mBlobCacheCallbacks; }
+    BlobCacheCallbacks &getBlobCacheCallbacks() { return mBlobCacheCallbacks; }
+
     // Generic state toggle & query
     void setEnableFeature(GLenum feature, bool enabled);
     void setEnableFeatureIndexed(GLenum feature, bool enabled, GLuint index);
@@ -621,8 +622,6 @@ class PrivateState : angle::NonCopyable
     bool hasConstantColor(GLenum sourceRGB, GLenum destRGB) const;
     bool hasConstantAlpha(GLenum sourceRGB, GLenum destRGB) const;
 
-    const EGLenum mClientType;
-    const EGLint mProfileMask;
     const Version mClientVersion;
 
     // Caps to use for validation
@@ -763,6 +762,9 @@ class PrivateState : angle::NonCopyable
 
     Debug mDebug;
 
+    // ANGLE_blob_cache
+    BlobCacheCallbacks mBlobCacheCallbacks;
+
     state::DirtyBits mDirtyBits;
     state::ExtendedDirtyBits mExtendedDirtyBits;
     state::DirtyObjects mDirtyObjects;
@@ -779,9 +781,7 @@ class State : angle::NonCopyable
           SemaphoreManager *shareSemaphores,
           egl::ContextMutex *contextMutex,
           const OverlayType *overlay,
-          const EGLenum clientType,
           const Version &clientVersion,
-          EGLint profileMask,
           bool debug,
           bool bindGeneratesResourceCHROMIUM,
           bool clientArraysEnabled,
@@ -798,8 +798,6 @@ class State : angle::NonCopyable
 
     // Getters
     ContextID getContextID() const { return mID; }
-    EGLenum getClientType() const { return mPrivateState.getClientType(); }
-    EGLint getProfileMask() const { return mPrivateState.getProfileMask(); }
     EGLenum getContextPriority() const { return mContextPriority; }
     bool hasRobustAccess() const { return mHasRobustAccess; }
     bool hasProtectedContent() const { return mHasProtectedContent; }
@@ -1319,7 +1317,10 @@ class State : angle::NonCopyable
     {
         return mPrivateState.isBlendAdvancedCoherentEnabled();
     }
-    bool isStencilWriteEnabled() const { return mPrivateState.isStencilWriteEnabled(); }
+    bool isStencilWriteEnabled(GLuint framebufferStencilSize) const
+    {
+        return mPrivateState.isStencilWriteEnabled(framebufferStencilSize);
+    }
     GLint getStencilRef() const { return mPrivateState.getStencilRef(); }
     GLint getStencilBackRef() const { return mPrivateState.getStencilBackRef(); }
     PolygonMode getPolygonMode() const { return mPrivateState.getPolygonMode(); }
@@ -1443,6 +1444,11 @@ class State : angle::NonCopyable
     bool isPerfMonitorActive() const { return mPrivateState.isPerfMonitorActive(); }
     const Debug &getDebug() const { return mPrivateState.getDebug(); }
     Debug &getDebug() { return mPrivateState.getDebug(); }
+    const BlobCacheCallbacks &getBlobCacheCallbacks() const
+    {
+        return mPrivateState.getBlobCacheCallbacks();
+    }
+    BlobCacheCallbacks &getBlobCacheCallbacks() { return mPrivateState.getBlobCacheCallbacks(); }
     bool getEnableFeature(GLenum feature) const { return mPrivateState.getEnableFeature(feature); }
     bool getEnableFeatureIndexed(GLenum feature, GLuint index) const
     {

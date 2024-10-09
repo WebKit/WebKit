@@ -103,7 +103,7 @@ angle::Result ImageHelper::flushStagedUpdates(ContextWgpu *contextWgpu)
     for (gl::LevelIndex currentMipLevel = mFirstAllocatedLevel;
          currentMipLevel < mFirstAllocatedLevel + getLevelCount(); ++currentMipLevel)
     {
-        ANGLE_TRY(flushSingleLevelUpdates(contextWgpu, currentMipLevel));
+        ANGLE_TRY(flushSingleLevelUpdates(contextWgpu, currentMipLevel, nullptr, 0));
     }
     return angle::Result::Continue;
 }
@@ -126,6 +126,10 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
     std::vector<wgpu::RenderPassColorAttachment> colorAttachments;
     wgpu::TextureView textureView;
     ANGLE_TRY(createTextureView(levelGL, 0, textureView));
+    bool updateDepth      = false;
+    bool updateStencil    = false;
+    float depthValue      = 1;
+    uint32_t stencilValue = 0;
     for (const SubresourceUpdate &srcUpdate : *currentLevelQueue)
     {
         if (!isTextureLevelInAllocatedImage(srcUpdate.targetLevel))
@@ -141,23 +145,50 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
             case UpdateSource::Clear:
                 if (deferredClears)
                 {
-                    deferredClears->store(deferredClearIndex, srcUpdate.clearData);
+                    if (deferredClearIndex == kUnpackedDepthIndex)
+                    {
+                        if (srcUpdate.clearData.hasStencil)
+                        {
+                            deferredClears->store(kUnpackedStencilIndex,
+                                                  srcUpdate.clearData.clearValues);
+                        }
+                        if (!srcUpdate.clearData.hasDepth)
+                        {
+                            break;
+                        }
+                    }
+                    deferredClears->store(deferredClearIndex, srcUpdate.clearData.clearValues);
                 }
                 else
                 {
-                    colorAttachments.push_back(
-                        CreateNewClearColorAttachment(srcUpdate.clearData.clearColor,
-                                                      srcUpdate.clearData.depthSlice, textureView));
+                    colorAttachments.push_back(CreateNewClearColorAttachment(
+                        srcUpdate.clearData.clearValues.clearColor,
+                        srcUpdate.clearData.clearValues.depthSlice, textureView));
+                    if (srcUpdate.clearData.hasDepth)
+                    {
+                        updateDepth = true;
+                        depthValue  = srcUpdate.clearData.clearValues.depthValue;
+                    }
+                    if (srcUpdate.clearData.hasStencil)
+                    {
+                        updateStencil = true;
+                        stencilValue  = srcUpdate.clearData.clearValues.stencilValue;
+                    }
                 }
                 break;
         }
     }
+    FramebufferWgpu *frameBuffer =
+        GetImplAs<FramebufferWgpu>(contextWgpu->getState().getDrawFramebuffer());
 
     if (!colorAttachments.empty())
     {
-        FramebufferWgpu *frameBuffer =
-            GetImplAs<FramebufferWgpu>(contextWgpu->getState().getDrawFramebuffer());
         frameBuffer->addNewColorAttachments(colorAttachments);
+    }
+    if (updateDepth || updateStencil)
+    {
+        frameBuffer->updateDepthStencilAttachment(CreateNewDepthStencilAttachment(
+            depthValue, stencilValue, textureView, updateDepth, updateStencil));
     }
     wgpu::CommandBuffer commandBuffer = encoder.Finish();
     queue.Submit(1, &commandBuffer);
@@ -225,10 +256,13 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     return angle::Result::Continue;
 }
 
-void ImageHelper::stageClear(gl::LevelIndex targetLevel, ClearValues clearValues)
+void ImageHelper::stageClear(gl::LevelIndex targetLevel,
+                             ClearValues clearValues,
+                             bool hasDepth,
+                             bool hasStencil)
 {
-    appendSubresourceUpdate(targetLevel,
-                            SubresourceUpdate(UpdateSource::Clear, targetLevel, clearValues));
+    appendSubresourceUpdate(targetLevel, SubresourceUpdate(UpdateSource::Clear, targetLevel,
+                                                           clearValues, hasDepth, hasStencil));
 }
 
 void ImageHelper::removeStagedUpdates(gl::LevelIndex levelToRemove)
@@ -277,6 +311,13 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
                                       const rx::PackPixelsParams &packPixelsParams,
                                       void *pixels)
 {
+    if (mActualFormatID == angle::FormatID::NONE)
+    {
+        // Unimplemented texture format
+        UNIMPLEMENTED();
+        return angle::Result::Stop;
+    }
+
     wgpu::Device device          = contextWgpu->getDisplay()->getDevice();
     wgpu::CommandEncoder encoder = device.CreateCommandEncoder();
     wgpu::Queue queue            = contextWgpu->getDisplay()->getQueue();

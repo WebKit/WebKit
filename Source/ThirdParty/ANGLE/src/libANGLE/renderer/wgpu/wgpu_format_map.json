@@ -47,6 +47,7 @@
       "BC7_RGBA_UNORM_BLOCK": "BC7RGBAUnorm",
       "BC7_RGBA_UNORM_SRGB_BLOCK": "BC7RGBAUnormSrgb",
       "D16_UNORM": "Depth16Unorm",
+      "D24_UNORM_S8_UINT": "Depth24PlusStencil8",
       "D32_FLOAT": "Depth32Float",
       "EAC_R11_SNORM_BLOCK": "EACR11Snorm",
       "EAC_R11_UNORM_BLOCK": "EACR11Unorm",

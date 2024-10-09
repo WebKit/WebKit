@@ -281,23 +281,6 @@ class ContextImpl : public GLImplFactory
     // AMD_performance_monitor
     virtual const angle::PerfMonitorCounterGroups &getPerfMonitorCounters();
 
-    // Enables GL_SHADER_PIXEL_LOCAL_STORAGE_EXT and polyfills load operations for
-    // ANGLE_shader_pixel_local_storage using a fullscreen draw.
-    //
-    // The implementation's ShPixelLocalStorageType must be "PixelLocalStorageEXT".
-    virtual angle::Result drawPixelLocalStorageEXTEnable(gl::Context *,
-                                                         GLsizei n,
-                                                         const gl::PixelLocalStoragePlane[],
-                                                         const GLenum loadops[]);
-
-    // Stores texture-backed PLS planes via fullscreen draw and disables
-    // GL_SHADER_PIXEL_LOCAL_STORAGE_EXT.
-    //
-    // The implementation's ShPixelLocalStorageType must be "PixelLocalStorageEXT".
-    virtual angle::Result drawPixelLocalStorageEXTDisable(gl::Context *,
-                                                          const gl::PixelLocalStoragePlane[],
-                                                          const GLenum storeops[]);
-
     // GL_ANGLE_variable_rasterization_rate_metal
     virtual angle::Result bindMetalRasterizationRateMap(gl::Context *,
                                                         RenderbufferImpl *renderbuffer,

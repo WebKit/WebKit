@@ -11,6 +11,7 @@
 
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/renderer/ProgramExecutableImpl.h"
+#include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
 #include <dawn/webgpu_cpp.h>
@@ -29,6 +30,13 @@ class ProgramExecutableWgpu : public ProgramExecutableImpl
     ~ProgramExecutableWgpu() override;
 
     void destroy(const gl::Context *context) override;
+
+    angle::Result resizeUniformBlockMemory(const gl::ShaderMap<size_t> &requiredBufferSize);
+
+    std::shared_ptr<BufferAndLayout> &getSharedDefaultUniformBlock(gl::ShaderType shaderType)
+    {
+        return mDefaultUniformBlocks[shaderType];
+    }
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
     void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -92,6 +100,11 @@ class ProgramExecutableWgpu : public ProgramExecutableImpl
   private:
     gl::ShaderMap<TranslatedWGPUShaderModule> mShaderModules;
     webgpu::PipelineCache mPipelineCache;
+
+    // Holds layout info for basic GL uniforms, which needs to be laid out in a buffer for WGSL
+    // similarly to a UBO.
+    DefaultUniformBlockMap mDefaultUniformBlocks;
+    gl::ShaderBitSet mDefaultUniformBlocksDirty;
 };
 
 }  // namespace rx

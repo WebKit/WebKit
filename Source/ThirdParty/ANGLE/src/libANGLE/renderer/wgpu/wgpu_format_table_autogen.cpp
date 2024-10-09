@@ -701,7 +701,11 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::D24_UNORM_S8_UINT:
-            // This format is not implemented in WebGPU.
+            mIntendedGLFormat         = GL_DEPTH24_STENCIL8;
+            mActualImageFormatID      = angle::FormatID::D24_UNORM_S8_UINT;
+            mImageInitializerFunction = nullptr;
+            mIsRenderable             = true;
+
             break;
 
         case angle::FormatID::D24_UNORM_X8_UINT:
@@ -2074,6 +2078,7 @@ wgpu::TextureFormat GetWgpuTextureFormatFromFormatID(angle::FormatID formatID)
         {angle::FormatID::BC7_RGBA_UNORM_BLOCK, wgpu::TextureFormat::BC7RGBAUnorm},
         {angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK, wgpu::TextureFormat::BC7RGBAUnormSrgb},
         {angle::FormatID::D16_UNORM, wgpu::TextureFormat::Depth16Unorm},
+        {angle::FormatID::D24_UNORM_S8_UINT, wgpu::TextureFormat::Depth24PlusStencil8},
         {angle::FormatID::D32_FLOAT, wgpu::TextureFormat::Depth32Float},
         {angle::FormatID::EAC_R11G11_SNORM_BLOCK, wgpu::TextureFormat::EACRG11Snorm},
         {angle::FormatID::EAC_R11G11_UNORM_BLOCK, wgpu::TextureFormat::EACRG11Unorm},
@@ -2234,6 +2239,8 @@ angle::FormatID GetFormatIDFromWgpuTextureFormat(wgpu::TextureFormat wgpuFormat)
             return angle::FormatID::BC7_RGBA_UNORM_SRGB_BLOCK;
         case wgpu::TextureFormat::Depth16Unorm:
             return angle::FormatID::D16_UNORM;
+        case wgpu::TextureFormat::Depth24PlusStencil8:
+            return angle::FormatID::D24_UNORM_S8_UINT;
         case wgpu::TextureFormat::Depth32Float:
             return angle::FormatID::D32_FLOAT;
         case wgpu::TextureFormat::EACRG11Snorm:

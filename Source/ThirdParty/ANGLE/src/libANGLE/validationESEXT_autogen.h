@@ -119,6 +119,17 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
                                                                    const GLuint *baseInstances,
                                                                    GLsizei drawcount);
 
+// GL_ANGLE_blob_cache
+bool ValidateBlobCacheCallbacksANGLE(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     GLSETBLOBPROCANGLE set,
+                                     GLGETBLOBPROCANGLE get,
+                                     const void *userParam);
+bool ValidateGetPointervANGLE(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLenum pname,
+                              void *const *params);
+
 // GL_ANGLE_client_arrays
 
 // GL_ANGLE_clip_cull_distance
@@ -2040,6 +2051,8 @@ bool ValidateTexBufferRangeEXT(const Context *context,
 // GL_EXT_texture_sRGB_RG8
 
 // GL_EXT_texture_sRGB_decode
+
+// GL_EXT_texture_shadow_lod
 
 // GL_EXT_texture_storage
 bool ValidateTexStorage1DEXT(const Context *context,

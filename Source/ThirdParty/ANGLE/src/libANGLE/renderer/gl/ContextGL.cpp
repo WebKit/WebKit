@@ -19,7 +19,6 @@
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/MemoryObjectGL.h"
-#include "libANGLE/renderer/gl/PLSProgramCache.h"
 #include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/ProgramPipelineGL.h"
@@ -1056,113 +1055,6 @@ MultiviewImplementationTypeGL ContextGL::getMultiviewImplementationType() const
 bool ContextGL::hasNativeParallelCompile()
 {
     return mRenderer->hasNativeParallelCompile();
-}
-
-void ContextGL::resetDrawStateForPixelLocalStorageEXT(const gl::Context *context)
-{
-    // Since our load/store shaders require shader images, this extension should only be used if the
-    // context version is 3.1+.
-    ASSERT(getFunctions()->isAtLeastGLES(gl::Version(3, 1)));
-    StateManagerGL *stateMgr = getStateManager();
-    stateMgr->setCullFaceEnabled(false);
-    stateMgr->setDepthTestEnabled(false);
-    stateMgr->setFramebufferSRGBEnabled(context, false);
-    stateMgr->setPolygonMode(gl::PolygonMode::Fill);
-    stateMgr->setPolygonOffsetPointEnabled(false);
-    stateMgr->setPolygonOffsetLineEnabled(false);
-    stateMgr->setPolygonOffsetFillEnabled(false);
-    stateMgr->setRasterizerDiscardEnabled(false);
-    stateMgr->setSampleAlphaToCoverageEnabled(false);
-    stateMgr->setSampleCoverageEnabled(false);
-    stateMgr->setScissorTestEnabled(false);
-    stateMgr->setStencilTestEnabled(false);
-    stateMgr->setSampleMaskEnabled(false);
-    stateMgr->setViewport({0, 0, mState.getDrawFramebuffer()->getDefaultWidth(),
-                           mState.getDrawFramebuffer()->getDefaultHeight()});
-    // Color mask, dither, and blend don't affect EXT_shader_pixel_local_storage or shader images.
-}
-
-angle::Result ContextGL::drawPixelLocalStorageEXTEnable(gl::Context *context,
-                                                        GLsizei n,
-                                                        const gl::PixelLocalStoragePlane planes[],
-                                                        const GLenum loadops[])
-{
-    ASSERT(getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-
-    getFunctions()->enable(GL_SHADER_PIXEL_LOCAL_STORAGE_EXT);
-
-    PLSProgramKeyBuilder b;
-    for (GLsizei i = n - 1; i >= 0; --i)
-    {
-        const gl::PixelLocalStoragePlane &plane = planes[i];
-        GLenum loadop                           = loadops[i];
-        bool preserved                          = loadop == GL_LOAD_OP_LOAD_ANGLE;
-        b.prependPlane(plane.getInternalformat(), preserved);
-        if (preserved)
-        {
-            const gl::ImageIndex &idx = plane.getTextureImageIndex();
-            getStateManager()->bindImageTexture(i, plane.getBackingTexture(context)->getNativeID(),
-                                                idx.getLevelIndex(), GL_FALSE, idx.getLayerIndex(),
-                                                GL_READ_ONLY, plane.getInternalformat());
-        }
-    }
-    PLSProgramKey key = b.finish(PLSProgramType::Load);
-
-    PLSProgramCache *cache       = mRenderer->getPLSProgramCache();
-    const PLSProgram *plsProgram = cache->getProgram(key);
-    getStateManager()->forceUseProgram(plsProgram->getProgramID());
-    plsProgram->setClearValues(planes, loadops);
-    getStateManager()->bindVertexArray(cache->getEmptyVAO(), cache->getEmptyVAOState());
-    resetDrawStateForPixelLocalStorageEXT(context);
-
-    ANGLE_GL_TRY(context, getFunctions()->drawArrays(GL_TRIANGLE_STRIP, 0, 4));
-    mRenderer->markWorkSubmitted();
-
-    return angle::Result::Continue;
-}
-
-angle::Result ContextGL::drawPixelLocalStorageEXTDisable(gl::Context *context,
-                                                         const gl::PixelLocalStoragePlane planes[],
-                                                         const GLenum storeops[])
-{
-    ASSERT(getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-
-    GLsizei n = context->getState().getPixelLocalStorageActivePlanes();
-
-    PLSProgramKeyBuilder b;
-    for (GLsizei i = n - 1; i >= 0; --i)
-    {
-        const gl::PixelLocalStoragePlane &plane = planes[i];
-        bool preserved =
-            plane.isActive() && !plane.isMemoryless() && storeops[i] == GL_STORE_OP_STORE_ANGLE;
-        b.prependPlane(plane.isActive() ? plane.getInternalformat() : GL_NONE, preserved);
-        if (preserved)
-        {
-            const gl::ImageIndex &idx = plane.getTextureImageIndex();
-            getStateManager()->bindImageTexture(i, plane.getBackingTexture(context)->getNativeID(),
-                                                idx.getLevelIndex(), GL_FALSE, idx.getLayerIndex(),
-                                                GL_WRITE_ONLY, plane.getInternalformat());
-        }
-    }
-    PLSProgramKey key = b.finish(PLSProgramType::Store);
-
-    if (key.areAnyPreserved())
-    {
-        PLSProgramCache *cache       = mRenderer->getPLSProgramCache();
-        const PLSProgram *plsProgram = cache->getProgram(key);
-        getStateManager()->forceUseProgram(plsProgram->getProgramID());
-        getStateManager()->bindVertexArray(cache->getEmptyVAO(), cache->getEmptyVAOState());
-        resetDrawStateForPixelLocalStorageEXT(context);
-
-        ANGLE_GL_TRY(context, getFunctions()->drawArrays(GL_TRIANGLE_STRIP, 0, 4));
-        mRenderer->markWorkSubmitted();
-    }
-
-    getFunctions()->disable(GL_SHADER_PIXEL_LOCAL_STORAGE_EXT);
-
-    return angle::Result::Continue;
 }
 
 }  // namespace rx

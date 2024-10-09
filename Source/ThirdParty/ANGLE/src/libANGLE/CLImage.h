@@ -8,8 +8,9 @@
 #ifndef LIBANGLE_CLIMAGE_H_
 #define LIBANGLE_CLIMAGE_H_
 
-#include "libANGLE/CLMemory.h"
+#include "common/PackedCLEnums_autogen.h"
 
+#include "libANGLE/CLMemory.h"
 #include "libANGLE/cl_utils.h"
 
 namespace cl
@@ -41,6 +42,10 @@ class Image final : public Memory
     size_t getElementSize() const;
     size_t getRowSize() const;
     size_t getSliceSize() const;
+    size_t getArraySize() const { return mDesc.arraySize; }
+    size_t getWidth() const { return mDesc.width; }
+    size_t getHeight() const { return mDesc.height; }
+    size_t getDepth() const { return mDesc.depth; }
 
   private:
     Image(Context &context,
@@ -84,12 +89,12 @@ inline size_t Image::getElementSize() const
 
 inline size_t Image::getRowSize() const
 {
-    return GetElementSize(mFormat) * mDesc.width;
+    return mDesc.rowPitch != 0u ? mDesc.rowPitch : GetElementSize(mFormat) * getWidth();
 }
 
 inline size_t Image::getSliceSize() const
 {
-    return GetElementSize(mFormat) * mDesc.width * mDesc.height;
+    return mDesc.slicePitch != 0u ? mDesc.slicePitch : getRowSize() * getHeight();
 }
 
 }  // namespace cl

@@ -1063,10 +1063,6 @@ SpirvTypeData SPIRVBuilder::declareType(const SpirvType &type, const TSymbol *bl
         // Declaring a basic type.  There's a different instruction for each.
         switch (type.type)
         {
-            case EbtDouble:
-                // TODO: support desktop GLSL.  http://anglebug.com/42264721
-                UNIMPLEMENTED();
-                break;
             case EbtBool:
                 spirv::WriteTypeBool(&mSpirvTypeAndConstantDecls, typeId);
                 break;
@@ -1274,52 +1270,6 @@ void SPIRVBuilder::getImageTypeParameters(TBasicType type,
         case EbtUImageCubeArray:
             sampledType = EbtUInt;
             *dimOut     = spv::DimCube;
-            isArrayed   = true;
-            break;
-
-        // Float 1D images
-        case EbtSampler1D:
-        case EbtImage1D:
-            *dimOut = spv::Dim1D;
-            break;
-        case EbtSampler1DArray:
-        case EbtImage1DArray:
-            *dimOut   = spv::Dim1D;
-            isArrayed = true;
-            break;
-        case EbtSampler1DShadow:
-            *dimOut = spv::Dim1D;
-            isDepth = true;
-            break;
-        case EbtSampler1DArrayShadow:
-            *dimOut   = spv::Dim1D;
-            isDepth   = true;
-            isArrayed = true;
-            break;
-
-        // Integer 1D images
-        case EbtISampler1D:
-        case EbtIImage1D:
-            sampledType = EbtInt;
-            *dimOut     = spv::Dim1D;
-            break;
-        case EbtISampler1DArray:
-        case EbtIImage1DArray:
-            sampledType = EbtInt;
-            *dimOut     = spv::Dim1D;
-            isArrayed   = true;
-            break;
-
-        // Unsigned integer 1D images
-        case EbtUSampler1D:
-        case EbtUImage1D:
-            sampledType = EbtUInt;
-            *dimOut     = spv::Dim1D;
-            break;
-        case EbtUSampler1DArray:
-        case EbtUImage1DArray:
-            sampledType = EbtUInt;
-            *dimOut     = spv::Dim1D;
             isArrayed   = true;
             break;
 

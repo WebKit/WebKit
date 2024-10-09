@@ -97,8 +97,6 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
     virtual egl::Error waitNative(const gl::Context *context, EGLint engine) = 0;
     virtual gl::Version getMaxSupportedESVersion() const                     = 0;
     virtual gl::Version getMaxConformantESVersion() const                    = 0;
-    // If desktop GL is not supported in any capacity for a given backend, this returns None.
-    virtual Optional<gl::Version> getMaxSupportedDesktopVersion() const = 0;
     const egl::Caps &getCaps() const;
 
     virtual void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) {}

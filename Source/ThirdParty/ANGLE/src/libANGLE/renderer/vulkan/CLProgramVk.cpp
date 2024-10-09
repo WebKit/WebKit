@@ -6,15 +6,20 @@
 // CLProgramVk.cpp: Implements the class methods for CLProgramVk.
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
+#include "common/log_utils.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
+#include "common/PackedEnums.h"
+#include "common/string_utils.h"
 #include "common/system_utils.h"
 
 #include "clspv/Compiler.h"
@@ -24,8 +29,6 @@
 
 #include "spirv-tools/libspirv.hpp"
 #include "spirv-tools/optimizer.hpp"
-
-#include "common/string_utils.h"
 
 namespace rx
 {
@@ -155,6 +158,9 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                 case NonSemanticClspvReflectionPushConstantGlobalSize:
                 case NonSemanticClspvReflectionPushConstantGlobalOffset:
                 case NonSemanticClspvReflectionPushConstantRegionOffset:
+                case NonSemanticClspvReflectionPushConstantNumWorkgroups:
+                case NonSemanticClspvReflectionPushConstantRegionGroupOffset:
+                case NonSemanticClspvReflectionPushConstantEnqueuedLocalSize:
                 {
                     uint32_t offset = reflectionData.spvIntLookup[spvInstr.words[5]];
                     uint32_t size   = reflectionData.spvIntLookup[spvInstr.words[6]];
@@ -202,6 +208,40 @@ spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
                     reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetY] = true;
                     reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetZ] = true;
                     break;
+                case NonSemanticClspvReflectionPrintfInfo:
+                {
+                    // Info on the format string used in the builtin printf call in kernel
+                    uint32_t printfID        = reflectionData.spvIntLookup[spvInstr.words[5]];
+                    std::string formatString = reflectionData.spvStrLookup[spvInstr.words[6]];
+                    reflectionData.printfInfoMap[printfID].id              = printfID;
+                    reflectionData.printfInfoMap[printfID].formatSpecifier = formatString;
+                    for (int i = 6; i < spvInstr.num_operands; i++)
+                    {
+                        uint16_t offset = spvInstr.operands[i].offset;
+                        size_t size     = reflectionData.spvIntLookup[spvInstr.words[offset]];
+                        reflectionData.printfInfoMap[printfID].argSizes.push_back(
+                            static_cast<uint32_t>(size));
+                    }
+
+                    break;
+                }
+                case NonSemanticClspvReflectionPrintfBufferStorageBuffer:
+                {
+                    // Info about the printf storage buffer that contains the formatted content
+                    uint32_t set     = reflectionData.spvIntLookup[spvInstr.words[5]];
+                    uint32_t binding = reflectionData.spvIntLookup[spvInstr.words[6]];
+                    uint32_t size    = reflectionData.spvIntLookup[spvInstr.words[7]];
+                    reflectionData.printfBufferStorage = {set, binding, 0, size};
+                    break;
+                }
+                case NonSemanticClspvReflectionPrintfBufferPointerPushConstant:
+                {
+                    ERR() << "Shouldn't be here. Support of printf builtin function is enabled "
+                             "through "
+                             "PrintfBufferStorageBuffer. Check optins passed down to clspv";
+                    UNREACHABLE();
+                    return SPV_UNSUPPORTED;
+                }
                 default:
                     break;
             }
@@ -391,11 +431,15 @@ CLProgramVk::~CLProgramVk()
     {
         pool.reset();
     }
-    mPoolBinding.reset();
+    for (vk::RefCountedDescriptorPoolBinding &binding : mDescriptorPoolBindings)
+    {
+        binding.reset();
+    }
     mShader.get().destroy(mContext->getDevice());
-    mMetaDescriptorPool.destroy(mContext->getRenderer());
-    mDescSetLayoutCache.destroy(mContext->getRenderer());
-    mPipelineLayoutCache.destroy(mContext->getRenderer());
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        mMetaDescriptorPools[index].destroy(mContext->getRenderer());
+    }
 }
 
 angle::Result CLProgramVk::build(const cl::DevicePtrs &devices,
@@ -660,60 +704,7 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
     }
 
-    // Update push contant range and add layout bindings for arguments
-    vk::DescriptorSetLayoutDesc descriptorSetLayoutDesc;
-    VkPushConstantRange pcRange = devProgram->pushConstRange;
-    for (const auto &arg : kernelImpl->getArgs())
-    {
-        VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-        switch (arg.type)
-        {
-            case NonSemanticClspvReflectionArgumentStorageBuffer:
-            case NonSemanticClspvReflectionArgumentPodStorageBuffer:
-                descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-                break;
-            case NonSemanticClspvReflectionArgumentUniform:
-            case NonSemanticClspvReflectionArgumentPodUniform:
-            case NonSemanticClspvReflectionArgumentPointerUniform:
-                descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                break;
-            case NonSemanticClspvReflectionArgumentPodPushConstant:
-                // Get existing push constant range and see if we need to update
-                if (arg.pushConstOffset + arg.pushConstantSize > pcRange.offset + pcRange.size)
-                {
-                    pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
-                }
-                continue;
-            default:
-                continue;
-        }
-        descriptorSetLayoutDesc.addBinding(arg.descriptorBinding, descType, 1,
-                                           VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
-    }
-
-    // Get descriptor set layout from cache (creates if missed)
-    ANGLE_CL_IMPL_TRY_ERROR(
-        mDescSetLayoutCache.getDescriptorSetLayout(
-            mContext, descriptorSetLayoutDesc,
-            &kernelImpl->getDescriptorSetLayouts()[DescriptorSetIndex::ShaderResource]),
-        CL_INVALID_OPERATION);
-
-    // Get pipeline layout from cache (creates if missed)
-    vk::PipelineLayoutDesc pipelineLayoutDesc;
-    pipelineLayoutDesc.updateDescriptorSetLayout(DescriptorSetIndex::ShaderResource,
-                                                 descriptorSetLayoutDesc);
-    pipelineLayoutDesc.updatePushConstantRange(pcRange.stageFlags, pcRange.offset, pcRange.size);
-    ANGLE_CL_IMPL_TRY_ERROR(mPipelineLayoutCache.getPipelineLayout(
-                                mContext, pipelineLayoutDesc, kernelImpl->getDescriptorSetLayouts(),
-                                &kernelImpl->getPipelineLayout()),
-                            CL_INVALID_OPERATION);
-
-    // Setup descriptor pool
-    ANGLE_CL_IMPL_TRY_ERROR(mMetaDescriptorPool.bindCachedDescriptorPool(
-                                mContext, descriptorSetLayoutDesc, 1, &mDescSetLayoutCache,
-                                &mDescriptorPools[DescriptorSetIndex::ShaderResource]),
-                            CL_INVALID_OPERATION);
-
+    ANGLE_TRY(kernelImpl->init());
     *kernelOut = std::move(kernelImpl);
 
     return angle::Result::Continue;
@@ -980,15 +971,19 @@ angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceP
     return binaryStripped;
 }
 
-angle::Result CLProgramVk::allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
+angle::Result CLProgramVk::allocateDescriptorSet(const DescriptorSetIndex setIndex,
+                                                 const vk::DescriptorSetLayout &descriptorSetLayout,
+                                                 vk::CommandBufferHelperCommon *commandBuffer,
                                                  VkDescriptorSet *descriptorSetOut)
 {
-    if (mDescriptorPools[DescriptorSetIndex::ShaderResource].get().valid())
+    if (mDescriptorPools[setIndex].get().valid())
     {
-        ANGLE_CL_IMPL_TRY_ERROR(
-            mDescriptorPools[DescriptorSetIndex::ShaderResource].get().allocateDescriptorSet(
-                mContext, descriptorSetLayout, &mPoolBinding, descriptorSetOut),
-            CL_INVALID_OPERATION);
+        ANGLE_CL_IMPL_TRY_ERROR(mDescriptorPools[setIndex].get().allocateDescriptorSet(
+                                    mContext, descriptorSetLayout,
+                                    &mDescriptorPoolBindings[setIndex], descriptorSetOut),
+                                CL_INVALID_OPERATION);
+
+        commandBuffer->retainResource(&mDescriptorPoolBindings[setIndex].get());
     }
     return angle::Result::Continue;
 }
@@ -1003,6 +998,17 @@ void CLProgramVk::setBuildStatus(const cl::DevicePtrs &devices, cl_build_status 
         DeviceProgramData &deviceProgram = mAssociatedDevicePrograms.at(device->getNative());
         deviceProgram.buildStatus        = status;
     }
+}
+
+const angle::HashMap<uint32_t, ClspvPrintfInfo> *CLProgramVk::getPrintfDescriptors(
+    const std::string &kernelName) const
+{
+    const DeviceProgramData *deviceProgram = getDeviceProgramData(kernelName.c_str());
+    if (deviceProgram)
+    {
+        return &deviceProgram->reflectionData.printfInfoMap;
+    }
+    return nullptr;
 }
 
 }  // namespace rx

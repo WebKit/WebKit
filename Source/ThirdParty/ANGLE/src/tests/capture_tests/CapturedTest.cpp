@@ -231,7 +231,7 @@ void MultiFrame::frame1()
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_NEAR(0, 0, 64, 128, 128, 128, 1.0);
 
-    GLfloat vertices[] = {
+    static GLfloat vertices[] = {
         -0.75f, 0.25f,  0.0f,  // Position 0
         0.0f,   0.0f,          // TexCoord 0
         -0.75f, -0.75f, 0.0f,  // Position 1
@@ -309,7 +309,7 @@ void MultiFrame::frame2()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    GLfloat vertices[] = {
+    static GLfloat vertices[] = {
         -0.25f, 0.75f,  0.0f,  // Position 0
         0.0f,   0.0f,          // TexCoord 0
         -0.25f, -0.25f, 0.0f,  // Position 1
@@ -412,7 +412,7 @@ void MultiFrame::frame4()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    GLfloat vertices[] = {
+    static GLfloat vertices[] = {
         -0.25f, 0.75f,  0.0f,  // Position 0
         0.0f,   0.0f,          // TexCoord 0
         -0.25f, -0.25f, 0.0f,  // Position 1

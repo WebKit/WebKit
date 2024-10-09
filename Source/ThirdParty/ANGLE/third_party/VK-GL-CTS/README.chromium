@@ -3,7 +3,7 @@ Short Name: VK-GL-CTS
 Version: 1.0
 URL: https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS
 SOURCE CODE: git clone -b VK-GL-CTS https://chromium.googlesource.com/external/github.com/KhronosGroup/VK-GL-CTS
-Date: 20/06/2016
+Date: 2016-06-20
 Revision: f4f3d8079e7a37d7675ab93583e6438d0bca0e58
 Security Critical: no
 Shipped: no

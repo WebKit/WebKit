@@ -116,7 +116,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     *resultOut = egl::CacheGetResult::NotFound;
 
     // If caching is effectively disabled, don't bother calculating the hash.
-    if (!mBlobCache.isCachingEnabled())
+    if (!mBlobCache.isCachingEnabled(context))
     {
         return angle::Result::Continue;
     }
@@ -124,7 +124,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     ComputeHash(context, program, hashOut);
 
     angle::MemoryBuffer uncompressedData;
-    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut,
+    switch (mBlobCache.getAndDecompress(context, context->getScratchBuffer(), *hashOut,
                                         kMaxUncompressedProgramSize, &uncompressedData))
     {
         case egl::BlobCache::GetAndDecompressResult::NotFound:
@@ -177,7 +177,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
                                              Program *program)
 {
     // If caching is effectively disabled, don't bother serializing the program.
-    if (!mBlobCache.isCachingEnabled())
+    if (!mBlobCache.isCachingEnabled(context))
     {
         return angle::Result::Continue;
     }
@@ -203,7 +203,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
         platform->cacheProgram(platform, programHash, compressedData.size(), compressedData.data());
     }
 
-    mBlobCache.put(programHash, std::move(compressedData));
+    mBlobCache.put(context, programHash, std::move(compressedData));
     return angle::Result::Continue;
 }
 

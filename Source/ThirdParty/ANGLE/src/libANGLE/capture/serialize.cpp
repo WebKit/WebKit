@@ -73,7 +73,6 @@ const char *SrgbOverrideToString(gl::SrgbOverride value)
     {
         ENUM_TO_STRING(gl::SrgbOverride, Default);
         ENUM_TO_STRING(gl::SrgbOverride, SRGB);
-        ENUM_TO_STRING(gl::SrgbOverride, Linear);
         default:
             return "invalid";
     }
@@ -539,7 +538,6 @@ void SerializeResourceID(JsonSerializer *json, const char *name, const ResourceT
 void SerializeContextState(JsonSerializer *json, const gl::State &state)
 {
     GroupScope group(json, "ContextState");
-    json->addScalar("ClientType", state.getClientType());
     json->addScalar("Priority", state.getContextPriority());
     json->addScalar("Major", state.getClientMajorVersion());
     json->addScalar("Minor", state.getClientMinorVersion());

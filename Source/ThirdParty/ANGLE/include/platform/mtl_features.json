@@ -107,13 +107,6 @@
             ]
         },
         {
-            "name": "allow_sampler_compare_lod",
-            "category": "Features",
-            "description": [
-                "The renderer supports sample_compare with lod"
-            ]
-        },
-        {
             "name": "allow_buffer_read_write",
             "category": "Features",
             "description": [

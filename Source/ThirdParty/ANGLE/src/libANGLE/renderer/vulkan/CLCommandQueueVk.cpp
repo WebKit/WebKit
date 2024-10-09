@@ -5,6 +5,8 @@
 //
 // CLCommandQueueVk.cpp: Implements the class methods for CLCommandQueueVk.
 
+#include "common/PackedEnums.h"
+
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
@@ -12,7 +14,9 @@
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLCommandQueue.h"
@@ -50,7 +54,9 @@ CLCommandQueueVk::CLCommandQueueVk(const cl::CommandQueue &commandQueue)
       mDevice(&commandQueue.getDevice().getImpl<CLDeviceVk>()),
       mComputePassCommands(nullptr),
       mCurrentQueueSerialIndex(kInvalidQueueSerialIndex),
-      mHasAnyCommandsPendingSubmission(false)
+      mHasAnyCommandsPendingSubmission(false),
+      mNeedPrintfHandling(false),
+      mPrintfInfos(nullptr)
 {}
 
 angle::Result CLCommandQueueVk::init()
@@ -83,6 +89,12 @@ angle::Result CLCommandQueueVk::init()
 
 CLCommandQueueVk::~CLCommandQueueVk()
 {
+    ASSERT(!mNeedPrintfHandling);
+    if (mPrintfBuffer)
+    {
+        mPrintfBuffer->release();
+    }
+
     VkDevice vkDevice = mContext->getDevice();
 
     if (mCurrentQueueSerialIndex != kInvalidQueueSerialIndex)
@@ -419,7 +431,9 @@ angle::Result CLCommandQueueVk::enqueueNDRangeKernel(const cl::Kernel &kernel,
     vk::PipelineHelper *pipelineHelper = nullptr;
     CLKernelVk &kernelImpl             = kernel.getImpl<CLKernelVk>();
 
-    ANGLE_TRY(processKernelResources(kernelImpl, ndrange));
+    // Here, we create-update-bind the kernel's descriptor set, put push-constants in cmd
+    // buffer, capture kernel resources, and handle kernel execution dependencies
+    ANGLE_TRY(processKernelResources(kernelImpl, ndrange, workgroupCount));
 
     // Fetch or create compute pipeline (if we miss in cache)
     ANGLE_CL_IMPL_TRY_ERROR(mContext->getRenderer()->getPipelineCache(mContext, &pipelineCache),
@@ -428,6 +442,7 @@ angle::Result CLCommandQueueVk::enqueueNDRangeKernel(const cl::Kernel &kernel,
         &pipelineCache, ndrange, mCommandQueue.getDevice(), &pipelineHelper, &workgroupCount));
 
     mComputePassCommands->retainResource(pipelineHelper);
+
     mComputePassCommands->getCommandBuffer().bindComputePipeline(pipelineHelper->getPipeline());
     mComputePassCommands->getCommandBuffer().dispatch(workgroupCount[0], workgroupCount[1],
                                                       workgroupCount[2]);
@@ -577,19 +592,49 @@ angle::Result CLCommandQueueVk::syncHostBuffers()
 }
 
 angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
-                                                       const cl::NDRange &ndrange)
+                                                       const cl::NDRange &ndrange,
+                                                       const cl::WorkgroupCount &workgroupCount)
 {
     bool needsBarrier = false;
-    UpdateDescriptorSetsBuilder updateDescriptorSetsBuilder;
     const CLProgramVk::DeviceProgramData *devProgramData =
         kernelVk.getProgram()->getDeviceProgramData(mCommandQueue.getDevice().getNative());
     ASSERT(devProgramData != nullptr);
 
-    // Allocate descriptor set
-    VkDescriptorSet descriptorSet{VK_NULL_HANDLE};
-    ANGLE_TRY(kernelVk.getProgram()->allocateDescriptorSet(
-        kernelVk.getDescriptorSetLayouts()[DescriptorSetIndex::ShaderResource].get(),
-        &descriptorSet));
+    // Set the descriptor set layouts and allocate descriptor sets
+    // The descriptor set layouts are setup in the order of their appearance, as Vulkan requires
+    // them to point to valid handles.
+    angle::EnumIterator<DescriptorSetIndex> layoutIndex(DescriptorSetIndex::LiteralSampler);
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        if (!kernelVk.getDescriptorSetLayoutDesc(index).empty())
+        {
+            // Setup the descriptor layout
+            ANGLE_CL_IMPL_TRY_ERROR(mContext->getDescriptorSetLayoutCache()->getDescriptorSetLayout(
+                                        mContext, kernelVk.getDescriptorSetLayoutDesc(index),
+                                        &kernelVk.getDescriptorSetLayouts()[*layoutIndex]),
+                                    CL_INVALID_OPERATION);
+
+            ANGLE_CL_IMPL_TRY_ERROR(
+                kernelVk.getProgram()->getMetaDescriptorPool(index).bindCachedDescriptorPool(
+                    mContext, kernelVk.getDescriptorSetLayoutDesc(index), 1,
+                    mContext->getDescriptorSetLayoutCache(),
+                    &kernelVk.getProgram()->getDescriptorPoolPointer(index)),
+                CL_INVALID_OPERATION);
+
+            // Allocate descriptor set
+            ANGLE_TRY(kernelVk.getProgram()->allocateDescriptorSet(
+                index, kernelVk.getDescriptorSetLayouts()[*layoutIndex].get(), mComputePassCommands,
+                &kernelVk.getDescriptorSet(index)));
+
+            ++layoutIndex;
+        }
+    }
+
+    // Setup the pipeline layout
+    ANGLE_CL_IMPL_TRY_ERROR(mContext->getPipelineLayoutCache()->getPipelineLayout(
+                                mContext, kernelVk.getPipelineLayoutDesc(),
+                                kernelVk.getDescriptorSetLayouts(), &kernelVk.getPipelineLayout()),
+                            CL_INVALID_OPERATION);
 
     // Push global offset data
     const VkPushConstantRange *globalOffsetRange = devProgramData->getGlobalOffsetRange();
@@ -609,12 +654,62 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
             globalSizeRange->offset, globalSizeRange->size, ndrange.globalWorkSize.data());
     }
 
+    // Push region offset data.
+    const VkPushConstantRange *regionOffsetRange = devProgramData->getRegionOffsetRange();
+    if (regionOffsetRange != nullptr)
+    {
+        // We dont support non-uniform batches yet in ANGLE, this field also represents global
+        // offset for NDR in uniform cases. Update this when non-uniform batches are supported.
+        // https://github.com/google/clspv/blob/main/docs/OpenCLCOnVulkan.md#module-scope-push-constants
+        mComputePassCommands->getCommandBuffer().pushConstants(
+            kernelVk.getPipelineLayout().get(), VK_SHADER_STAGE_COMPUTE_BIT,
+            regionOffsetRange->offset, regionOffsetRange->size, ndrange.globalWorkOffset.data());
+    }
+
+    // Push region group offset data.
+    const VkPushConstantRange *regionGroupOffsetRange = devProgramData->getRegionGroupOffsetRange();
+    if (regionGroupOffsetRange != nullptr)
+    {
+        // We dont support non-uniform batches yet in ANGLE, and based on clspv doc/notes:
+        // "only required when non-uniform NDRanges are supported"
+        // For now, we set this field to zeros until we later support non-uniform.
+        // https://github.com/google/clspv/blob/main/docs/OpenCLCOnVulkan.md#module-scope-push-constants
+        uint32_t regionGroupOffsets[3] = {0, 0, 0};
+        mComputePassCommands->getCommandBuffer().pushConstants(
+            kernelVk.getPipelineLayout().get(), VK_SHADER_STAGE_COMPUTE_BIT,
+            regionGroupOffsetRange->offset, regionGroupOffsetRange->size, &regionGroupOffsets);
+    }
+
+    // Push enqueued local size
+    const VkPushConstantRange *enqueuedLocalSizeRange = devProgramData->getEnqueuedLocalSizeRange();
+    if (enqueuedLocalSizeRange != nullptr)
+    {
+        mComputePassCommands->getCommandBuffer().pushConstants(
+            kernelVk.getPipelineLayout().get(), VK_SHADER_STAGE_COMPUTE_BIT,
+            enqueuedLocalSizeRange->offset, enqueuedLocalSizeRange->size,
+            ndrange.localWorkSize.data());
+    }
+
+    // Push number of workgroups
+    const VkPushConstantRange *numWorkgroupsRange = devProgramData->getNumWorkgroupsRange();
+    if (devProgramData->reflectionData.pushConstants.contains(
+            NonSemanticClspvReflectionPushConstantNumWorkgroups))
+    {
+        uint32_t numWorkgroups[3] = {workgroupCount[0], workgroupCount[1], workgroupCount[2]};
+        mComputePassCommands->getCommandBuffer().pushConstants(
+            kernelVk.getPipelineLayout().get(), VK_SHADER_STAGE_COMPUTE_BIT,
+            numWorkgroupsRange->offset, numWorkgroupsRange->size, &numWorkgroups);
+    }
+
     // Retain kernel object until we finish executing it later
     mKernelCaptures.push_back(cl::KernelPtr{&kernelVk.getFrontendObject()});
 
     // Process each kernel argument/resource
+    vk::DescriptorSetArray<UpdateDescriptorSetsBuilder> updateDescriptorSetsBuilders;
     for (const auto &arg : kernelVk.getArgs())
     {
+        UpdateDescriptorSetsBuilder &kernelArgDescSetBuilder =
+            updateDescriptorSetsBuilders[DescriptorSetIndex::KernelArguments];
         switch (arg.type)
         {
             case NonSemanticClspvReflectionArgumentUniform:
@@ -640,14 +735,14 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
 
                 // Update buffer/descriptor info
                 VkDescriptorBufferInfo &bufferInfo =
-                    updateDescriptorSetsBuilder.allocDescriptorBufferInfo();
+                    kernelArgDescSetBuilder.allocDescriptorBufferInfo();
                 bufferInfo.range  = clMem->getSize();
                 bufferInfo.offset = clMem->getOffset();
                 bufferInfo.buffer = vkMem.isSubBuffer()
                                         ? vkMem.getParent()->getBuffer().getBuffer().getHandle()
                                         : vkMem.getBuffer().getBuffer().getHandle();
                 VkWriteDescriptorSet &writeDescriptorSet =
-                    updateDescriptorSetsBuilder.allocWriteDescriptorSet();
+                    kernelArgDescSetBuilder.allocWriteDescriptorSet();
                 writeDescriptorSet.descriptorCount = 1;
                 writeDescriptorSet.descriptorType =
                     arg.type == NonSemanticClspvReflectionArgumentUniform
@@ -655,7 +750,8 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
                         : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
                 writeDescriptorSet.pBufferInfo = &bufferInfo;
                 writeDescriptorSet.sType       = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                writeDescriptorSet.dstSet      = descriptorSet;
+                writeDescriptorSet.dstSet =
+                    kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
                 writeDescriptorSet.dstBinding  = arg.descriptorBinding;
                 break;
             }
@@ -683,6 +779,55 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
         }
     }
 
+    // process the printf storage buffer
+    if (kernelVk.usesPrintf())
+    {
+        UpdateDescriptorSetsBuilder &printfDescSetBuilder =
+            updateDescriptorSetsBuilders[DescriptorSetIndex::Printf];
+
+        cl::Memory *clMem   = cl::Buffer::Cast(getOrCreatePrintfBuffer());
+        CLBufferVk &vkMem   = clMem->getImpl<CLBufferVk>();
+        uint8_t *mapPointer = nullptr;
+        ANGLE_TRY(vkMem.map(mapPointer, 0));
+        // The spec calls out *The first 4 bytes of the buffer should be zero-initialized.*
+        memset(mapPointer, 0, 4);
+
+        auto &bufferInfo  = printfDescSetBuilder.allocDescriptorBufferInfo();
+        bufferInfo.range  = clMem->getSize();
+        bufferInfo.offset = clMem->getOffset();
+        bufferInfo.buffer = vkMem.getBuffer().getBuffer().getHandle();
+
+        auto &writeDescriptorSet           = printfDescSetBuilder.allocWriteDescriptorSet();
+        writeDescriptorSet.descriptorCount = 1;
+        writeDescriptorSet.descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        writeDescriptorSet.pBufferInfo     = &bufferInfo;
+        writeDescriptorSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        writeDescriptorSet.dstSet          = kernelVk.getDescriptorSet(DescriptorSetIndex::Printf);
+        writeDescriptorSet.dstBinding      = kernelVk.getProgram()
+                                            ->getDeviceProgramData(kernelVk.getKernelName().c_str())
+                                            ->reflectionData.printfBufferStorage.binding;
+
+        mNeedPrintfHandling = true;
+        mPrintfInfos        = kernelVk.getProgram()->getPrintfDescriptors(kernelVk.getKernelName());
+    }
+
+    angle::EnumIterator<DescriptorSetIndex> descriptorSetIndex(DescriptorSetIndex::LiteralSampler);
+    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
+    {
+        if (!kernelVk.getDescriptorSetLayoutDesc(index).empty())
+        {
+            mContext->getPerfCounters().writeDescriptorSets =
+                updateDescriptorSetsBuilders[index].flushDescriptorSetUpdates(
+                    mContext->getRenderer()->getDevice());
+
+            mComputePassCommands->getCommandBuffer().bindDescriptorSets(
+                kernelVk.getPipelineLayout().get(), VK_PIPELINE_BIND_POINT_COMPUTE,
+                *descriptorSetIndex, 1, &kernelVk.getDescriptorSet(index), 0, nullptr);
+
+            ++descriptorSetIndex;
+        }
+    }
+
     if (needsBarrier)
     {
         VkMemoryBarrier memoryBarrier = {VK_STRUCTURE_TYPE_MEMORY_BARRIER, nullptr,
@@ -692,13 +837,6 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
             VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1,
             &memoryBarrier, 0, nullptr, 0, nullptr);
     }
-
-    mContext->getPerfCounters().writeDescriptorSets =
-        updateDescriptorSetsBuilder.flushDescriptorSetUpdates(mContext->getRenderer()->getDevice());
-
-    mComputePassCommands->getCommandBuffer().bindDescriptorSets(
-        kernelVk.getPipelineLayout().get(), VK_PIPELINE_BIND_POINT_COMPUTE,
-        DescriptorSetIndex::Internal, 1, &descriptorSet, 0, nullptr);
 
     return angle::Result::Continue;
 }
@@ -864,6 +1002,12 @@ angle::Result CLCommandQueueVk::finishInternal()
         ANGLE_TRY(syncHostBuffers());
     }
 
+    if (mNeedPrintfHandling)
+    {
+        ANGLE_TRY(processPrintfBuffer());
+        mNeedPrintfHandling = false;
+    }
+
     for (cl::EventPtr event : mAssociatedEvents)
     {
         ANGLE_TRY(event->getImpl<CLEventVk>().setStatusAndExecuteCallback(CL_COMPLETE));
@@ -922,6 +1066,35 @@ angle::Result CLCommandQueueVk::onResourceAccess(const vk::CommandBufferAccess &
     }
 
     return angle::Result::Continue;
+}
+
+angle::Result CLCommandQueueVk::processPrintfBuffer()
+{
+    ASSERT(mPrintfBuffer);
+    ASSERT(mNeedPrintfHandling);
+    ASSERT(mPrintfInfos);
+
+    cl::Memory *clMem = cl::Buffer::Cast(getOrCreatePrintfBuffer());
+    CLBufferVk &vkMem = clMem->getImpl<CLBufferVk>();
+
+    unsigned char *data = nullptr;
+    ANGLE_TRY(vkMem.map(data, 0));
+    ANGLE_TRY(ClspvProcessPrintfBuffer(data, vkMem.getSize(), mPrintfInfos));
+    vkMem.unmap();
+
+    return angle::Result::Continue;
+}
+
+// A single CL buffer is setup for every command queue of size kPrintfBufferSize. This can be
+// expanded later, if more storage is needed.
+cl_mem CLCommandQueueVk::getOrCreatePrintfBuffer()
+{
+    if (!mPrintfBuffer)
+    {
+        mPrintfBuffer = cl::Buffer::Cast(mContext->getFrontendObject().createBuffer(
+            nullptr, cl::MemFlags(CL_MEM_READ_WRITE), kPrintfBufferSize, nullptr));
+    }
+    return mPrintfBuffer;
 }
 
 }  // namespace rx

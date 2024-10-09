@@ -91,8 +91,6 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     // It should also be possible to set multisample and floating point framebuffers.
     EGLint getClientMajorVersion() const { return mClientMajorVersion; }
     EGLint getClientMinorVersion() const { return mClientMinorVersion; }
-    EGLenum getClientType() const { return mClientType; }
-    EGLint getProfileMask() const { return mProfileMask; }
 
     virtual bool initializeGL(OSWindow *osWindow,
                               angle::Library *glWindowingLibrary,
@@ -160,16 +158,11 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     virtual bool isFeatureEnabled(angle::Feature feature) { return false; }
 
   protected:
-    GLWindowBase(EGLenum clientType,
-                 EGLint glesMajorVersion,
-                 EGLint glesMinorVersion,
-                 EGLint profileMask);
+    GLWindowBase(EGLint glesMajorVersion, EGLint glesMinorVersion);
     virtual ~GLWindowBase();
 
-    EGLenum mClientType;
     EGLint mClientMajorVersion;
     EGLint mClientMinorVersion;
-    EGLint mProfileMask;
     EGLPlatformParameters mPlatform;
     ConfigParameters mConfigParams;
 };
@@ -185,10 +178,7 @@ using ANGLEFeatureArray = angle::PackedEnumMap<angle::Feature, ANGLEFeatureStatu
 class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
 {
   public:
-    static EGLWindow *New(EGLenum clientType,
-                          EGLint glesMajorVersion,
-                          EGLint glesMinorVersion,
-                          EGLint profileMask);
+    static EGLWindow *New(EGLint glesMajorVersion, EGLint glesMinorVersion);
     static void Delete(EGLWindow **window);
 
     static EGLBoolean FindEGLConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *config);
@@ -284,10 +274,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     bool isFeatureEnabled(angle::Feature feature) override;
 
   private:
-    EGLWindow(EGLenum clientType,
-              EGLint glesMajorVersion,
-              EGLint glesMinorVersion,
-              EGLint profileMask);
+    EGLWindow(EGLint glesMajorVersion, EGLint glesMinorVersion);
     ~EGLWindow() override;
 
     EGLConfig mConfig;

@@ -8,11 +8,15 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLPROGRAMVK_H_
 
+#include <cstdint>
+
 #include "common/SimpleMutex.h"
+#include "common/hash_containers.h"
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -47,6 +51,8 @@ class CLProgramVk : public CLProgramImpl
         angle::PackedEnumMap<SpecConstantType, uint32_t> specConstantIDs;
         angle::PackedEnumBitSet<SpecConstantType, uint32_t> specConstantsUsed;
         CLKernelArgsMap kernelArgsMap;
+        ClspvPrintfBufferStorage printfBufferStorage;
+        angle::HashMap<uint32_t, ClspvPrintfInfo> printfInfoMap;
     };
 
     // Output binary structure (for CL_PROGRAM_BINARIES query)
@@ -125,6 +131,15 @@ class CLProgramVk : public CLProgramImpl
             return names;
         }
 
+        uint32_t getKernelFlags(const std::string &kernelName) const
+        {
+            if (containsKernel(kernelName))
+            {
+                return reflectionData.kernelFlags.at(kernelName);
+            }
+            return 0;
+        }
+
         CLKernelArguments getKernelArguments(const std::string &kernelName) const
         {
             CLKernelArguments kargsCopy;
@@ -184,6 +199,30 @@ class CLProgramVk : public CLProgramImpl
             return getPushConstantRangeFromClspvReflectionType(
                 NonSemanticClspvReflectionPushConstantGlobalSize);
         }
+
+        inline const VkPushConstantRange *getEnqueuedLocalSizeRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantEnqueuedLocalSize);
+        }
+
+        inline const VkPushConstantRange *getNumWorkgroupsRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantNumWorkgroups);
+        }
+
+        inline const VkPushConstantRange *getRegionOffsetRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantRegionOffset);
+        }
+
+        inline const VkPushConstantRange *getRegionGroupOffsetRange() const
+        {
+            return getPushConstantRangeFromClspvReflectionType(
+                NonSemanticClspvReflectionPushConstantRegionGroupOffset);
+        }
     };
     using DevicePrograms   = angle::HashMap<const _cl_device_id *, DeviceProgramData>;
     using LinkPrograms     = std::vector<const DeviceProgramData *>;
@@ -237,22 +276,40 @@ class CLProgramVk : public CLProgramImpl
                        const LinkProgramsList &LinkProgramsList);
     angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
 
-    angle::Result allocateDescriptorSet(const vk::DescriptorSetLayout &descriptorSetLayout,
+    angle::Result allocateDescriptorSet(const DescriptorSetIndex setIndex,
+                                        const vk::DescriptorSetLayout &descriptorSetLayout,
+                                        vk::CommandBufferHelperCommon *commandBuffer,
                                         VkDescriptorSet *descriptorSetOut);
 
     // Sets the status for given associated device programs
     void setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status);
+
+    vk::RefCountedDescriptorPoolBinding &getDescriptorPoolBinding(DescriptorSetIndex index)
+    {
+        return mDescriptorPoolBindings[index];
+    }
+
+    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex index)
+    {
+        return mMetaDescriptorPools[index];
+    }
+
+    vk::DescriptorPoolPointer &getDescriptorPoolPointer(DescriptorSetIndex index)
+    {
+        return mDescriptorPools[index];
+    }
+
+    const angle::HashMap<uint32_t, ClspvPrintfInfo> *getPrintfDescriptors(
+        const std::string &kernelName) const;
 
   private:
     CLContextVk *mContext;
     std::string mProgramOpts;
     vk::RefCounted<vk::ShaderModule> mShader;
     DevicePrograms mAssociatedDevicePrograms;
-    PipelineLayoutCache mPipelineLayoutCache;
-    vk::MetaDescriptorPool mMetaDescriptorPool;
-    DescriptorSetLayoutCache mDescSetLayoutCache;
+    vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
-    vk::RefCountedDescriptorPoolBinding mPoolBinding;
+    vk::DescriptorSetArray<vk::RefCountedDescriptorPoolBinding> mDescriptorPoolBindings;
     angle::SimpleMutex mProgramMutex;
 };
 

@@ -71,7 +71,7 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
     virtual egl::Error releaseTexImage(const gl::Context *context, EGLint buffer) = 0;
     virtual egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc);
     virtual egl::Error getMscRate(EGLint *numerator, EGLint *denominator);
-    virtual void setSwapInterval(EGLint interval) = 0;
+    virtual void setSwapInterval(const egl::Display *display, EGLint interval) = 0;
     virtual void setFixedWidth(EGLint width);
     virtual void setFixedHeight(EGLint height);
 

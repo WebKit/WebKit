@@ -6,8 +6,14 @@
 #
 
 sleep_duration=$1
-if [ $sleep_duration -eq 0 ]; then
+if [ -z "${sleep_duration}" ]; then
     echo "No sleep_duration provided"
+    exit 1
+fi
+
+storage_dir=$2
+if [ -z "${storage_dir}" ]; then
+    echo "No storage_dir provided"
     exit 1
 fi
 
@@ -16,10 +22,10 @@ while true; do
     pid=$(pidof com.android.angle.test:test_process)
     case $pid in
         ''|*[!0-9]*) echo pid is not a number ;;
-        *) echo com.android.angle.test:test_process $pid >> /sdcard/Download/gpumem.txt ;;
+        *) echo com.android.angle.test:test_process $pid >> ${storage_dir}/gpumem.txt ;;
     esac
-    dumpsys gpu --gpumem >> /sdcard/Download/gpumem.txt
+    dumpsys gpu --gpumem >> ${storage_dir}/gpumem.txt
     time_elapsed=$(( SECONDS - start_time ))
-    echo "time_elapsed: $time_elapsed" >> /sdcard/Download/gpumem.txt
-    sleep $sleep_duration;
+    echo "time_elapsed: $time_elapsed" >> ${storage_dir}/gpumem.txt
+    sleep ${sleep_duration};
 done

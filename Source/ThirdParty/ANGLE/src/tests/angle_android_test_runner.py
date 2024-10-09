@@ -37,7 +37,6 @@ def AddCommonParserArgs(parser):
             'angle_unittests',
             # dEQP - grep \"angle_deqp infra/specs/gn_isolate_map.pyl
             'angle_deqp_egl_tests',
-            'angle_deqp_gl46_tests',
             'angle_deqp_gles2_tests',
             'angle_deqp_gles31_rotate180_tests',
             'angle_deqp_gles31_rotate270_tests',

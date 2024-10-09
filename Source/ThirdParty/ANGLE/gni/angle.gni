@@ -28,22 +28,10 @@ declare_args() {
   # Don't build dEQP by default.
   build_angle_deqp_tests = false
 
-  # Enable Desktop GL frontend support.
-  angle_enable_gl_desktop_frontend = false
-
   build_angle_end2end_tests_aosp = false
 }
 
 declare_args() {
-  # Expose WGL entry points, which is necessary for running windows desktop GL applications against ANGLE.
-  # TODO(http://anglebug.com/42266094): This condition should be `angle_enable_gl_desktop_frontend && is_win`
-  # This is disabled by default on Windows because it was causing some test failures. Once the WGL frontend
-  # has more functionality implemented, we can re-enable this.
-  angle_expose_wgl_entry_points = false
-
-  # Expose GLX entry points by default when using Desktop GL on Linux.
-  angle_expose_glx_entry_points = angle_enable_gl_desktop_frontend && is_linux
-
   # Only bundle traces in the APK if we're building a subset
   restricted_traces_outside_of_apk = is_android && angle_restricted_traces == []
 }
@@ -248,9 +236,6 @@ declare_args() {
   # Disabled by default on MSVC because of compiler warnings/errors.
   angle_enable_swiftshader =
       angle_enable_vulkan && !is_android && !is_ggp && is_clang
-
-  # Translator frontend support:
-  angle_enable_desktop_glsl = angle_enable_gl_desktop_frontend
 
   # Translator backend support:
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11

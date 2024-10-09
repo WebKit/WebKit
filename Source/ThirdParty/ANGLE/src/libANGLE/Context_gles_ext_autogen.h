@@ -245,6 +245,7 @@
     /* GL_EXT_texture_sRGB_R8 */                                                                   \
     /* GL_EXT_texture_sRGB_RG8 */                                                                  \
     /* GL_EXT_texture_sRGB_decode */                                                               \
+    /* GL_EXT_texture_shadow_lod */                                                                \
     /* GL_EXT_texture_storage */                                                                   \
     void texStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width);        \
     /* GL_EXT_texture_type_2_10_10_10_REV */                                                       \
@@ -385,6 +386,9 @@
         const void *const *indices, const GLsizei *instanceCounts, const GLint *baseVertices,      \
         const GLuint *baseInstances, GLsizei drawcount);                                           \
     /* GL_ANGLE_base_vertex_base_instance_shader_builtin */                                        \
+    /* GL_ANGLE_blob_cache */                                                                      \
+    void blobCacheCallbacks(GLSETBLOBPROCANGLE set, GLGETBLOBPROCANGLE get,                        \
+                            const void *userParam);                                                \
     /* GL_ANGLE_client_arrays */                                                                   \
     /* GL_ANGLE_clip_cull_distance */                                                              \
     /* GL_ANGLE_compressed_texture_etc */                                                          \

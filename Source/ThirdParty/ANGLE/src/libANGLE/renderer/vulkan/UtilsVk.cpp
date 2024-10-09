@@ -2270,6 +2270,64 @@ angle::Result UtilsVk::convertLineLoopArrayIndirectBuffer(
     return angle::Result::Continue;
 }
 
+// Used to clear a layer of a renderable texture in part or whole (EXT_clear_texture).
+angle::Result UtilsVk::clearTexture(ContextVk *contextVk,
+                                    vk::ImageHelper *dst,
+                                    ClearTextureParameters &params)
+{
+    const angle::Format &dstActualFormat = dst->getActualFormat();
+    bool isDepthOrStencil                = dstActualFormat.hasDepthOrStencilBits();
+    bool isFormatDS                      = dstActualFormat.hasDepthAndStencilBits();
+
+    vk::DeviceScoped<vk::ImageView> destView(contextVk->getDevice());
+    const gl::TextureType destViewType = vk::Get2DTextureType(1, dst->getSamples());
+
+    ANGLE_TRY(dst->initLayerImageView(contextVk, destViewType, params.aspectFlags,
+                                      gl::SwizzleState(), &destView.get(), params.level, 1,
+                                      params.layer, 1));
+
+    gl::Rectangle renderArea = {};
+    renderArea.x             = params.clearArea.x;
+    renderArea.y             = params.clearArea.y;
+    renderArea.width         = params.clearArea.width;
+    renderArea.height        = params.clearArea.height;
+
+    vk::RenderPassDesc renderPassDesc;
+    renderPassDesc.setSamples(dst->getSamples());
+
+    if (!isDepthOrStencil)
+    {
+        renderPassDesc.packColorAttachment(0, dstActualFormat.id);
+    }
+    else
+    {
+        renderPassDesc.packDepthStencilAttachment(dstActualFormat.id);
+    }
+    vk::RenderPassCommandBuffer *commandBuffer;
+    vk::ImageLayout imageLayout =
+        isDepthOrStencil ? vk::ImageLayout::DepthWriteStencilWrite : vk::ImageLayout::ColorWrite;
+
+    ANGLE_TRY(startRenderPass(contextVk, dst, &destView.get(), renderPassDesc, renderArea,
+                              params.aspectFlags, &params.clearValue, &commandBuffer));
+
+    // If the format contains both depth and stencil, the barrier aspect mask for the image should
+    // include both bits.
+    contextVk->onImageRenderPassWrite(
+        dst->toGLLevel(params.level), params.layer, 1,
+        isFormatDS ? VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT : params.aspectFlags,
+        imageLayout, dst);
+
+    vk::ImageView destViewObject = destView.release();
+    contextVk->addGarbage(&destViewObject);
+
+    // Close the render pass for this temporary framebuffer. If the render pass is not immediately
+    // closed and the render area grows due to scissor change, the clear area unexpectedly changes.
+    // This can be avoided if the scissor code takes LOAD_OP_CLEAR into account before deciding to
+    // grow the render pass's render area.
+    return contextVk->flushCommandsAndEndRenderPass(
+        RenderPassClosureReason::TemporaryForClearTexture);
+}
+
 angle::Result UtilsVk::convertVertexBuffer(
     ContextVk *contextVk,
     vk::BufferHelper *dst,
@@ -2466,8 +2524,15 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
                                        const vk::ImageView *imageView,
                                        const vk::RenderPassDesc &renderPassDesc,
                                        const gl::Rectangle &renderArea,
+                                       const VkImageAspectFlags aspectFlags,
+                                       const VkClearValue *clearValue,
                                        vk::RenderPassCommandBuffer **commandBufferOut)
 {
+    ASSERT(aspectFlags == VK_IMAGE_ASPECT_COLOR_BIT ||
+           (aspectFlags & (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)) != 0);
+    vk::ImageLayout imageLayout = aspectFlags == VK_IMAGE_ASPECT_COLOR_BIT
+                                      ? vk::ImageLayout::ColorWrite
+                                      : vk::ImageLayout::DepthWriteStencilWrite;
     vk::Framebuffer framebuffer;
     vk::Framebuffer framebufferHandle;
     vk::RenderPassFramebuffer renderPassFramebuffer;
@@ -2505,12 +2570,32 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
         contextVk, std::move(framebufferHandle), {imageView->getHandle()}, framebufferWidth,
         framebufferHeight, framebufferLayers, imageless, vk::RenderPassSource::InternalUtils);
 
+    // If a clear value has been provided, the load op is set to clear.
     vk::AttachmentOpsArray renderPassAttachmentOps;
     vk::PackedClearValuesArray clearValues;
-    clearValues.store(vk::kAttachmentIndexZero, VK_IMAGE_ASPECT_COLOR_BIT, {});
+    VkClearValue attachmentClearValue = {};
 
-    renderPassAttachmentOps.initWithLoadStore(vk::kAttachmentIndexZero, vk::ImageLayout::ColorWrite,
-                                              vk::ImageLayout::ColorWrite);
+    if (clearValue == nullptr)
+    {
+        renderPassAttachmentOps.initWithLoadStore(vk::kAttachmentIndexZero, imageLayout,
+                                                  imageLayout);
+    }
+    else
+    {
+        attachmentClearValue = *clearValue;
+        renderPassAttachmentOps.setLayouts(vk::kAttachmentIndexZero, imageLayout, imageLayout);
+        renderPassAttachmentOps.setClearOp(vk::kAttachmentIndexZero);
+        renderPassAttachmentOps.setClearStencilOp(vk::kAttachmentIndexZero);
+    }
+
+    if (aspectFlags == VK_IMAGE_ASPECT_COLOR_BIT)
+    {
+        clearValues.storeColor(vk::kAttachmentIndexZero, attachmentClearValue);
+    }
+    else
+    {
+        clearValues.storeDepthStencil(vk::kAttachmentIndexZero, attachmentClearValue);
+    }
 
     ANGLE_TRY(contextVk->beginNewRenderPass(
         std::move(renderPassFramebuffer), renderArea, renderPassDesc, renderPassAttachmentOps,
@@ -2709,10 +2794,9 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
     vk::DeviceScoped<vk::ImageView> destView(contextVk->getDevice());
     const gl::TextureType destViewType = vk::Get2DTextureType(1, dst->getSamples());
 
-    ANGLE_TRY(dst->initLayerImageView(
-        contextVk, destViewType, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(), &destView.get(),
-        params.dstMip, 1, params.dstLayer, 1, gl::SrgbWriteControlMode::Default,
-        gl::YuvSamplingMode::Default, vk::ImageHelper::kDefaultImageViewUsageFlags));
+    ANGLE_TRY(dst->initLayerImageView(contextVk, destViewType, VK_IMAGE_ASPECT_COLOR_BIT,
+                                      gl::SwizzleState(), &destView.get(), params.dstMip, 1,
+                                      params.dstLayer, 1));
 
     const gl::Rectangle &renderArea = params.clearArea;
 
@@ -2734,7 +2818,7 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
 
     vk::RenderPassCommandBuffer *commandBuffer;
     ANGLE_TRY(startRenderPass(contextVk, dst, &destView.get(), renderPassDesc, renderArea,
-                              &commandBuffer));
+                              VK_IMAGE_ASPECT_COLOR_BIT, nullptr, &commandBuffer));
 
     UpdateColorAccess(contextVk, MakeColorBufferMask(0), MakeColorBufferMask(0));
 
@@ -3432,8 +3516,8 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     }
 
     vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(
-        startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea, &commandBuffer));
+    ANGLE_TRY(startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea,
+                              VK_IMAGE_ASPECT_COLOR_BIT, nullptr, &commandBuffer));
 
     VkDescriptorSet descriptorSet;
     if (isYUV)
@@ -3784,12 +3868,17 @@ angle::Result UtilsVk::copyImageToBuffer(ContextVk *contextVk,
         textureType = gl::TextureType::_2D;
     }
 
+    // Don't decode to linear colorspace when copying an image
+    angle::FormatID imageFormat = src->getActualFormatID();
+    angle::FormatID linearFormat =
+        src->getActualFormat().isSRGB ? ConvertToLinear(imageFormat) : imageFormat;
+    ASSERT(linearFormat != angle::FormatID::NONE);
+
     vk::DeviceScoped<vk::ImageView> srcView(contextVk->getDevice());
-    ANGLE_TRY(src->initLayerImageView(contextVk, textureType, src->getAspectFlags(), swizzle,
-                                      &srcView.get(), params.srcMip, 1,
-                                      textureType == gl::TextureType::_2D ? params.srcLayer : 0, 1,
-                                      gl::SrgbWriteControlMode::Linear,
-                                      gl::YuvSamplingMode::Default, VK_IMAGE_USAGE_SAMPLED_BIT));
+    ANGLE_TRY(src->initReinterpretedLayerImageView(
+        contextVk, textureType, src->getAspectFlags(), swizzle, &srcView.get(), params.srcMip, 1,
+        textureType == gl::TextureType::_2D ? params.srcLayer : 0, 1, VK_IMAGE_USAGE_SAMPLED_BIT,
+        linearFormat));
 
     vk::CommandBufferAccess access;
     access.onImageComputeShaderRead(src->getAspectFlags(), src);
@@ -4186,8 +4275,7 @@ angle::Result UtilsVk::unresolve(ContextVk *contextVk,
         {
             ANGLE_TRY(depthStencilSrc->initLayerImageView(
                 contextVk, textureType, VK_IMAGE_ASPECT_DEPTH_BIT, gl::SwizzleState(),
-                &depthView.get(), levelIndex, 1, layerIndex, 1, gl::SrgbWriteControlMode::Default,
-                gl::YuvSamplingMode::Default, vk::ImageHelper::kDefaultImageViewUsageFlags));
+                &depthView.get(), levelIndex, 1, layerIndex, 1));
             depthSrcView = &depthView.get();
         }
 
@@ -4195,8 +4283,7 @@ angle::Result UtilsVk::unresolve(ContextVk *contextVk,
         {
             ANGLE_TRY(depthStencilSrc->initLayerImageView(
                 contextVk, textureType, VK_IMAGE_ASPECT_STENCIL_BIT, gl::SwizzleState(),
-                &stencilView.get(), levelIndex, 1, layerIndex, 1, gl::SrgbWriteControlMode::Default,
-                gl::YuvSamplingMode::Default, vk::ImageHelper::kDefaultImageViewUsageFlags));
+                &stencilView.get(), levelIndex, 1, layerIndex, 1));
             stencilSrcView = &stencilView.get();
         }
     }
@@ -4464,8 +4551,8 @@ angle::Result UtilsVk::drawOverlay(ContextVk *contextVk,
     // A potential optimization is to reuse the already open render pass if it belongs to the
     // swapchain.
     vk::RenderPassCommandBuffer *commandBuffer;
-    ANGLE_TRY(
-        startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea, &commandBuffer));
+    ANGLE_TRY(startRenderPass(contextVk, dst, destView, renderPassDesc, renderArea,
+                              VK_IMAGE_ASPECT_COLOR_BIT, nullptr, &commandBuffer));
 
     vk::RenderPassCommandBufferHelper *commandBufferHelper =
         &contextVk->getStartedRenderPassCommands();

@@ -11,6 +11,8 @@
 
     <!-- SECTION: GL type definitions. -->
     <types>
+        <type>typedef GLsizeiptr (<apientry/> *<name>GLGETBLOBPROCANGLE</name>)(const void *key, GLsizeiptr keySize, void *value, GLsizeiptr valueSize, const void *userParam);</type>
+        <type>typedef void (<apientry/> *<name>GLSETBLOBPROCANGLE</name>)(const void *key, GLsizeiptr keySize, const void *value, GLsizeiptr valueSize, const void *userParam);</type>
         <type>typedef void *<name>GLMTLRasterizationRateMapANGLE</name>;</type>
     </types>
 
@@ -1054,6 +1056,18 @@
             <alias name="glLogicOp"/>
         </command>
         <command>
+            <proto>void <name>glBlobCacheCallbacksANGLE</name></proto>
+            <param><ptype>GLSETBLOBPROCANGLE</ptype> <name>set</name></param>
+            <param><ptype>GLGETBLOBPROCANGLE</ptype> <name>get</name></param>
+            <param>const void *<name>userParam</name></param>
+        </command>
+        <command>
+            <proto>void <name>glGetPointervANGLE</name></proto>
+            <param><ptype>GLenum</ptype> <name>pname</name></param>
+            <param len="1">void **<name>params</name></param>
+            <alias name="glGetPointerv"/>
+        </command>
+        <command>
             <proto>void <name>glBindMetalRasterizationRateMapANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>framebuffer</name></param>
             <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
@@ -1478,6 +1492,12 @@
                 <command name="glFramebufferResolveRenderbufferWEBKIT"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_blob_cache" supported="gles2">
+            <require>
+                <command name="glBlobCacheCallbacksANGLE"/>
+                <command name="glGetPointervANGLE"/>
+            </require>
+        </extension>
     </extensions>
 
     <!-- SECTION: GL enumerant (token) definitions. -->
@@ -1657,7 +1677,11 @@
     <enums namespace="GL" start="0x0BF2" end="0x0BF2" vendor="ANGLE">
         <enum value="0x0BF2" name="GL_COLOR_LOGIC_OP_ANGLE"/>
     </enums>
-
+    <enums namespace="GL" vendor="ANGLE">
+        <enum value="0x96BF" name="GL_BLOB_CACHE_GET_FUNCTION_ANGLE"/>
+        <enum value="0x96EF" name="GL_BLOB_CACHE_SET_FUNCTION_ANGLE"/>
+        <enum value="0x972D" name="GL_BLOB_CACHE_USER_PARAM_ANGLE"/>
+    </enums>
     <enums namespace="GL" start="0x96BC" end="0x96BD" vendor="ANGLE">
         <enum value="0x96BC" name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
         <enum value="0x96BD" name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>

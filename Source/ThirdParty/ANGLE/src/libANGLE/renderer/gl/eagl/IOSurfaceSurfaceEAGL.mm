@@ -266,7 +266,7 @@ egl::Error IOSurfaceSurfaceEAGL::releaseTexImage(const gl::Context *context, EGL
     return egl::NoError();
 }
 
-void IOSurfaceSurfaceEAGL::setSwapInterval(EGLint interval)
+void IOSurfaceSurfaceEAGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     UNREACHABLE();
 }

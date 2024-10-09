@@ -20,7 +20,7 @@
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/Shader.h"
 #include "libANGLE/State.h"
-#include "libANGLE/context_private_call_gles_autogen.h"
+#include "libANGLE/context_private_call_autogen.h"
 #include "libANGLE/renderer/ContextImpl.h"
 
 namespace

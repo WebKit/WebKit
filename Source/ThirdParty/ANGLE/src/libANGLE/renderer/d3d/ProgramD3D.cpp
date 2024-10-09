@@ -179,7 +179,6 @@ ProgramD3DMetadata::ProgramD3DMetadata(
     RendererD3D *renderer,
     const gl::SharedCompiledShaderState &fragmentShader,
     const gl::ShaderMap<SharedCompiledShaderStateD3D> &attachedShaders,
-    EGLenum clientType,
     int shaderVersion)
     : mRendererMajorShaderModel(renderer->getMajorShaderModel()),
       mShaderModelSuffix(renderer->getShaderModelSuffix()),
@@ -187,7 +186,6 @@ ProgramD3DMetadata::ProgramD3DMetadata(
       mCanSelectViewInVertexShader(renderer->canSelectViewInVertexShader()),
       mFragmentShader(fragmentShader),
       mAttachedShaders(attachedShaders),
-      mClientType(clientType),
       mShaderVersion(shaderVersion)
 {}
 
@@ -298,13 +296,7 @@ bool ProgramD3DMetadata::usesMultipleFragmentOuts() const
 
 bool ProgramD3DMetadata::usesCustomOutVars() const
 {
-    switch (mClientType)
-    {
-        case EGL_OPENGL_API:
-            return mShaderVersion >= 130;
-        default:
-            return mShaderVersion >= 300;
-    }
+    return mShaderVersion >= 300;
 }
 
 bool ProgramD3DMetadata::usesSampleMask() const
@@ -474,13 +466,11 @@ class ProgramD3D::LinkTaskD3D final : public LinkLoadTaskD3D
   public:
     LinkTaskD3D(const gl::Version &clientVersion,
                 const gl::Caps &caps,
-                EGLenum clientType,
                 ProgramD3D *program,
                 gl::ProvokingVertexConvention provokingVertex)
         : LinkLoadTaskD3D(program),
           mClientVersion(clientVersion),
           mCaps(caps),
-          mClientType(clientType),
           mProvokingVertex(provokingVertex)
     {}
     ~LinkTaskD3D() override = default;
@@ -493,7 +483,6 @@ class ProgramD3D::LinkTaskD3D final : public LinkLoadTaskD3D
   private:
     const gl::Version mClientVersion;
     const gl::Caps &mCaps;
-    const EGLenum mClientType;
     const gl::ProvokingVertexConvention mProvokingVertex;
 };
 
@@ -508,7 +497,7 @@ void ProgramD3D::LinkTaskD3D::link(const gl::ProgramLinkedResources &resources,
     ASSERT(postLinkSubTasksOut && postLinkSubTasksOut->empty());
 
     angle::Result result =
-        mProgram->linkJobImpl(this, mCaps, mClientVersion, mClientType, resources, mergedVaryings);
+        mProgram->linkJobImpl(this, mCaps, mClientVersion, resources, mergedVaryings);
     ASSERT((result == angle::Result::Continue) == (mStoredHR == S_OK));
 
     if (result != angle::Result::Continue)
@@ -642,13 +631,12 @@ angle::Result ProgramD3D::link(const gl::Context *context, std::shared_ptr<LinkT
     ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::link");
     const gl::Version &clientVersion = context->getClientVersion();
     const gl::Caps &caps             = context->getCaps();
-    EGLenum clientType               = context->getClientType();
 
     // Ensure the compiler is initialized to avoid race conditions.
     ANGLE_TRY(mRenderer->ensureHLSLCompilerInitialized(GetImplAs<ContextD3D>(context)));
 
-    *linkTaskOut = std::shared_ptr<LinkTask>(new LinkTaskD3D(
-        clientVersion, caps, clientType, this, context->getState().getProvokingVertex()));
+    *linkTaskOut = std::shared_ptr<LinkTask>(
+        new LinkTaskD3D(clientVersion, caps, this, context->getState().getProvokingVertex()));
 
     return angle::Result::Continue;
 }
@@ -656,7 +644,6 @@ angle::Result ProgramD3D::link(const gl::Context *context, std::shared_ptr<LinkT
 angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
                                       const gl::Caps &caps,
                                       const gl::Version &clientVersion,
-                                      EGLenum clientType,
                                       const gl::ProgramLinkedResources &resources,
                                       const gl::ProgramMergedVaryings &mergedVaryings)
 {
@@ -741,7 +728,7 @@ angle::Result ProgramD3D::linkJobImpl(d3d::Context *context,
         resources.varyingPacking.getOutputPacking(gl::ShaderType::Vertex);
 
     ProgramD3DMetadata metadata(mRenderer, mState.getAttachedShader(gl::ShaderType::Fragment),
-                                executableD3D->mAttachedShaders, clientType,
+                                executableD3D->mAttachedShaders,
                                 mState.getAttachedShader(gl::ShaderType::Vertex)->shaderVersion);
     BuiltinVaryingsD3D builtins(metadata, varyingPacking);
 

@@ -248,6 +248,9 @@
 40644666 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.lowp.subexpression_precision_lowp = FAIL
 40644666 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.lowp.subexpression_precision_mediump = FAIL
 40644666 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.mediump.subexpression_precision_lowp = FAIL
+// New failures when upgrading to Ubuntu 22/newer driver 535.183.01.
+362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.completeness.cube.npot_mirrored_repeat = FAIL
+362486580 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.texture.filtering.cube.linear_mipmap_linear_nearest_clamp_etc1 = FAIL
 // Fails on 431.02 NVIDIA driver
 40644697 VULKAN WIN NVIDIA : dEQP-GLES2.functional.fbo.render.repeated_clear.* = FAIL
 
@@ -382,7 +385,6 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind.mat* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_max_attributes.mat* = FAIL
 // Tests that fail because uniforms aren't yet implemented in the WGSL translator
-42267100 WGPU : dEQP-GLES2.functional.negative_api.state.get_uniform* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.negative_api.shader.uniform* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.state_query.shader.program_active_uniform_* = FAIL
 42267100 WGPU : dEQP-GLES2.functional.attribute_location.bind_aliasing.* = FAIL

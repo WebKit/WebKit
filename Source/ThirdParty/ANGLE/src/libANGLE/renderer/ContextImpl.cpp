@@ -104,27 +104,6 @@ const angle::PerfMonitorCounterGroups &ContextImpl::getPerfMonitorCounters()
     return *sCounters;
 }
 
-angle::Result ContextImpl::drawPixelLocalStorageEXTEnable(gl::Context *,
-                                                          GLsizei n,
-                                                          const gl::PixelLocalStoragePlane[],
-                                                          const GLenum loadops[])
-{
-    ASSERT(getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
-angle::Result ContextImpl::drawPixelLocalStorageEXTDisable(gl::Context *,
-                                                           const gl::PixelLocalStoragePlane[],
-                                                           const GLenum storeops[])
-{
-    ASSERT(getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-    UNREACHABLE();
-    return angle::Result::Stop;
-}
-
 angle::Result ContextImpl::bindMetalRasterizationRateMap(gl::Context *,
                                                          RenderbufferImpl *renderbuffer,
                                                          GLMTLRasterizationRateMapANGLE map)

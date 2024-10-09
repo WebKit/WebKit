@@ -251,12 +251,6 @@ IGNORED_INCLUDES = {
     b'mimalloc-new-delete.h',
     # From the Vulkan-Loader
     b'winres.h',
-    # From the ANGLE desktop GL frontend, since it is only enabled conditionally
-    b'libGLESv2/entry_points_gl_1_autogen.h',
-    b'libGLESv2/entry_points_gl_2_autogen.h',
-    b'libGLESv2/entry_points_gl_3_autogen.h',
-    b'libGLESv2/entry_points_gl_4_autogen.h',
-    b'libGLESv2/entry_points_wgl.h',
     # From a comment in vulkan-validation-layers/src/layers/vk_mem_alloc.h
     b'my_custom_assert.h',
     b'my_custom_min.h',

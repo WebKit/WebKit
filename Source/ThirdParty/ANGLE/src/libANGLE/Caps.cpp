@@ -402,8 +402,7 @@ static bool DetermineRGTextureSupport(const TextureCapsMap &textureCaps,
 
 static bool DetermineTextureFormat2101010Support(const TextureCapsMap &textureCaps)
 {
-    // GL_EXT_texture_type_2_10_10_10_REV specifies both RGBA and RGB support whereas desktop GL
-    // only specifies RGBA support, so check both RGBA and RGB before marking as supported.
+    // GL_EXT_texture_type_2_10_10_10_REV specifies both RGBA and RGB support.
     constexpr GLenum requiredFormats[] = {
         GL_RGB10_A2,
         GL_RGB10_UNORM_ANGLEX,

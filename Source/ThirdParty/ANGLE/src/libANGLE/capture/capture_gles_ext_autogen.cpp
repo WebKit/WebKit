@@ -672,6 +672,63 @@ CallCapture CaptureMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(
                        std::move(paramBuffer));
 }
 
+CallCapture CaptureBlobCacheCallbacksANGLE(const State &glState,
+                                           bool isCallValid,
+                                           GLSETBLOBPROCANGLE set,
+                                           GLGETBLOBPROCANGLE get,
+                                           const void *userParam)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("set", ParamType::TGLSETBLOBPROCANGLE, set);
+    paramBuffer.addValueParam("get", ParamType::TGLGETBLOBPROCANGLE, get);
+
+    if (isCallValid)
+    {
+        ParamCapture userParamParam("userParam", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, userParam, &userParamParam.value);
+        CaptureBlobCacheCallbacksANGLE_userParam(glState, isCallValid, set, get, userParam,
+                                                 &userParamParam);
+        paramBuffer.addParam(std::move(userParamParam));
+    }
+    else
+    {
+        ParamCapture userParamParam("userParam", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &userParamParam.value);
+        paramBuffer.addParam(std::move(userParamParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLBlobCacheCallbacksANGLE, std::move(paramBuffer));
+}
+
+CallCapture CaptureGetPointervANGLE(const State &glState,
+                                    bool isCallValid,
+                                    GLenum pname,
+                                    void **params)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("pname", GLESEnum::AllEnums, ParamType::TGLenum, pname);
+
+    if (isCallValid)
+    {
+        ParamCapture paramsParam("params", ParamType::TvoidPointerPointer);
+        InitParamValue(ParamType::TvoidPointerPointer, params, &paramsParam.value);
+        CaptureGetPointervANGLE_params(glState, isCallValid, pname, params, &paramsParam);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+    else
+    {
+        ParamCapture paramsParam("params", ParamType::TvoidPointerPointer);
+        InitParamValue(ParamType::TvoidPointerPointer, static_cast<void **>(nullptr),
+                       &paramsParam.value);
+        paramBuffer.addParam(std::move(paramsParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLGetPointervANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureCopyTexture3DANGLE(const State &glState,
                                       bool isCallValid,
                                       TextureID sourceIdPacked,

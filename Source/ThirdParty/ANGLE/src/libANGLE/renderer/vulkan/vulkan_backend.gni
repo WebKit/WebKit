@@ -132,6 +132,8 @@ if (angle_enable_cl) {
     "cl_types.h",
     "clspv_utils.cpp",
     "clspv_utils.h",
+    "vk_cl_utils.cpp",
+    "vk_cl_utils.h",
   ]
 }
 

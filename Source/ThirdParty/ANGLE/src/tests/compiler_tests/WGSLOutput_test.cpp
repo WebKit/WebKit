@@ -361,11 +361,16 @@ struct ANGLE_Output_Annotated {
   @location(0) gl_FragColor_ : vec4<f32>,
 };
 
-var<uniform> _uu_color : vec4<f32>;
+struct ANGLE_DefaultUniformBlock {
+  u_color : vec4<f32>
+};
+
+@group(0) @binding(0) var<uniform> ANGLE_defaultUniformBlock : ANGLE_DefaultUniformBlock;
+;
 
 fn _umain()
 {
-  (ANGLE_output_global.gl_FragColor_) = (_uu_color);
+  (ANGLE_output_global.gl_FragColor_) = (ANGLE_defaultUniformBlock.u_color);
 }
 @fragment
 fn wgslMain() -> ANGLE_Output_Annotated

@@ -1115,6 +1115,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
             paramTokens, strings);
         return CallCapture(EntryPoint::GLBlitFramebufferNV, std::move(params));
     }
+    if (strcmp(nameToken, "glBlobCacheCallbacksANGLE") == 0)
+    {
+        ParamBuffer params =
+            ParseParameters<std::remove_pointer<PFNGLBLOBCACHECALLBACKSANGLEPROC>::type>(
+                paramTokens, strings);
+        return CallCapture(EntryPoint::GLBlobCacheCallbacksANGLE, std::move(params));
+    }
     if (strcmp(nameToken, "glBufferData") == 0)
     {
         ParamBuffer params =
@@ -3016,6 +3023,12 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params =
             ParseParameters<std::remove_pointer<PFNGLGETPOINTERVPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLGetPointerv, std::move(params));
+    }
+    if (strcmp(nameToken, "glGetPointervANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLGETPOINTERVANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLGetPointervANGLE, std::move(params));
     }
     if (strcmp(nameToken, "glGetPointervKHR") == 0)
     {

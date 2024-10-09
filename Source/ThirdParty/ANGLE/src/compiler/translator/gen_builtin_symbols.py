@@ -36,7 +36,7 @@ template_immutablestring_cpp = """// GENERATED FILE - DO NOT EDIT.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// ImmutableString_{source_label}autogen.cpp: Wrapper for static or pool allocated char arrays, that are guaranteed to be
+// ImmutableString_autogen.cpp: Wrapper for static or pool allocated char arrays, that are guaranteed to be
 // valid and unchanged for the duration of the compilation.
 // Implements mangledNameHash using perfect hash function from gen_builtin_symbols.py
 
@@ -142,7 +142,7 @@ template_immutablestringtest_cpp = """// GENERATED FILE - DO NOT EDIT.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// ImmutableString_test_{source_label}autogen.cpp:
+// ImmutableString_test_autogen.cpp:
 //   Tests for matching script-generated hashes with runtime computed hashes.
 
 #include "compiler/translator/ImmutableString.h"
@@ -170,7 +170,7 @@ template_builtin_header = """// GENERATED FILE - DO NOT EDIT.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// BuiltIn_{header_label}autogen.h:
+// BuiltIn_autogen.h:
 //   Compile-time initialized built-ins.
 
 #ifndef COMPILER_TRANSLATOR_TREEUTIL_BUILTIN_AUTOGEN_H_
@@ -241,7 +241,7 @@ template_symboltable_cpp = """// GENERATED FILE - DO NOT EDIT.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// SymbolTable_{source_label}autogen.cpp:
+// SymbolTable_autogen.cpp:
 //   Compile-time initialized built-ins.
 
 #include "compiler/translator/SymbolTable.h"
@@ -546,7 +546,7 @@ static inline bool IsBuiltIn(TOperator op)
 
 """
 
-template_rule = """Rule::Get<{spec}, {version}, {shaders}, {extension}>({symbol_or_var})"""
+template_rule = """Rule::Get<{version}, {shaders}, {extension}>({symbol_or_var})"""
 
 basic_types_enumeration = [
     'Void',
@@ -581,21 +581,13 @@ basic_types_enumeration = [
     'Sampler2DShadow',
     'SamplerCubeShadow',
     'Sampler2DArrayShadow',
-    'Sampler1D',
-    'Sampler1DArray',
-    'Sampler1DArrayShadow',
     'SamplerBuffer',
     'SamplerCubeArray',
     'SamplerCubeArrayShadow',
-    'Sampler1DShadow',
     'Sampler2DRectShadow',
-    'ISampler1D',
-    'ISampler1DArray',
     'ISampler2DRect',
     'ISamplerBuffer',
     'ISamplerCubeArray',
-    'USampler1D',
-    'USampler1DArray',
     'USampler2DRect',
     'USamplerBuffer',
     'USamplerCubeArray',
@@ -668,16 +660,9 @@ essl_levels = [
     'ESSL_INTERNAL_BACKEND_BUILTINS'
 ]
 
-glsl_levels = [
-    'GLSL4_6_BUILTINS', 'GLSL4_5_BUILTINS', 'GLSL4_4_BUILTINS', 'GLSL4_3_BUILTINS',
-    'GLSL4_2_BUILTINS', 'GLSL4_1_BUILTINS', 'GLSL4_BUILTINS', 'GLSL3_3_BUILTINS',
-    'GLSL1_5_BUILTINS', 'GLSL1_4_BUILTINS', 'GLSL1_3_BUILTINS', 'GLSL1_2_BUILTINS',
-    'COMMON_BUILTINS'
-]
-
 
 def generate_suffix_from_level(level):
-    assert (level[:4] == 'GLSL' or level[:4] == 'ESSL')
+    assert (level[:4] == 'ESSL')
     assert (level[-9:] == '_BUILTINS')
 
     # Turn XYSLN_M_BUILTINS to XYN_M
@@ -703,44 +688,8 @@ def get_essl_shader_version_for_level(level):
         raise Exception('Unsupported symbol table level')
 
 
-def get_glsl_shader_version_for_level(level):
-    if level == None:
-        return '-1'
-    elif level == 'GLSL1_2_BUILTINS':
-        return '120'
-    elif level == 'GLSL1_3_BUILTINS':
-        return '130'
-    elif level == 'GLSL1_4_BUILTINS':
-        return '140'
-    elif level == 'GLSL1_5_BUILTINS':
-        return '150'
-    elif level == 'GLSL3_3_BUILTINS':
-        return '330'
-    elif level == 'GLSL4_BUILTINS':
-        return '400'
-    elif level == 'GLSL4_1_BUILTINS':
-        return '410'
-    elif level == 'GLSL4_2_BUILTINS':
-        return '420'
-    elif level == 'GLSL4_3_BUILTINS':
-        return '430'
-    elif level == 'GLSL4_4_BUILTINS':
-        return '440'
-    elif level == 'GLSL4_5_BUILTINS':
-        return '450'
-    elif level == 'GLSL4_6_BUILTINS':
-        return '460'
-    elif level == 'COMMON_BUILTINS':
-        return '0'
-    else:
-        raise Exception('Unsupported symbol table level')
-
-
-def get_shader_version_for_level(spec, level):
-    if spec == "ESSL":
-        return get_essl_shader_version_for_level(level)
-    else:
-        return get_glsl_shader_version_for_level(level)
+def get_shader_version_for_level(level):
+    return get_essl_shader_version_for_level(level)
 
 
 def get_extension_list(extensions):
@@ -759,12 +708,10 @@ class GroupedList:
         self.num_names = num_names
         self.rule_offset = 0
 
-    def add_entry(self, essl_level, glsl_level, shader_type, name, symbol, essl_extension,
-                  glsl_extension, script_generated_hash_tests):
-        if essl_level and essl_level not in essl_levels:
+    def add_entry(self, essl_level, shader_type, name, symbol, essl_extension,
+                  script_generated_hash_tests):
+        if essl_level not in essl_levels:
             raise Exception('Unexpected essl level: ' + str(essl_level))
-        if glsl_level and glsl_level not in glsl_levels:
-            raise Exception('Unexpected glsl level: ' + str(glsl_level))
         if len(name) > self.max_name_length:
             self.max_name_length = len(name)
 
@@ -774,37 +721,25 @@ class GroupedList:
 
         self.objs[name_hash]['name'] = name
 
-        if essl_extension == 'UNDEFINED' and glsl_extension == 'UNDEFINED':
+        if essl_extension == 'UNDEFINED':
             if 'symbol' in self.objs[name_hash] and self.objs[name_hash]['symbol'] != symbol:
                 # Adding a variable that is part of two ESSL extensions that have become core
                 if 'symbol2' not in self.objs[name_hash]:
-                    if essl_level:
-                        self.objs[name_hash]['essl_level2'] = essl_level
-                    if glsl_level:
-                        self.objs[name_hash]['glsl_level2'] = glsl_level
+                    self.objs[name_hash]['essl_level2'] = essl_level
                     self.objs[name_hash]['symbol2'] = symbol
                     self.objs[name_hash]['shader_type2'] = shader_type
                 elif 'symbol3' not in self.objs[name_hash]:
-                    if essl_level:
-                        self.objs[name_hash]['essl_level3'] = essl_level
-                    if glsl_level:
-                        self.objs[name_hash]['glsl_level3'] = glsl_level
+                    self.objs[name_hash]['essl_level3'] = essl_level
                     self.objs[name_hash]['symbol3'] = symbol
                     self.objs[name_hash]['shader_type3'] = shader_type
                 elif 'symbol4' not in self.objs[name_hash]:
-                    if essl_level:
-                        self.objs[name_hash]['essl_level4'] = essl_level
-                    if glsl_level:
-                        self.objs[name_hash]['glsl_level4'] = glsl_level
+                    self.objs[name_hash]['essl_level4'] = essl_level
                     self.objs[name_hash]['symbol4'] = symbol
                     self.objs[name_hash]['shader_type4'] = shader_type
                 else:
                     assert (False)
             else:
-                if essl_level:
-                    self.objs[name_hash]['essl_level'] = essl_level
-                if glsl_level:
-                    self.objs[name_hash]['glsl_level'] = glsl_level
+                self.objs[name_hash]['essl_level'] = essl_level
                 self.objs[name_hash]['symbol'] = symbol
                 self.objs[name_hash]['shader_type'] = shader_type
 
@@ -835,12 +770,6 @@ class GroupedList:
                 self.objs[name_hash]['essl_ext_symbol'] = symbol
                 self.objs[name_hash]['essl_ext_shader_type'] = shader_type
 
-        if glsl_extension != 'UNDEFINED':
-            self.objs[name_hash]['glsl_extension'] = glsl_extension
-            self.objs[name_hash]['glsl_ext_level'] = glsl_level
-            self.objs[name_hash]['glsl_ext_symbol'] = symbol
-            self.objs[name_hash]['glsl_ext_shader_type'] = shader_type
-
     def get_max_name_length(self):
         return self.max_name_length
 
@@ -859,21 +788,19 @@ class GroupedList:
     def get_offsets(self):
         return self.offsets
 
-    def update_arrays(self, essl_only):
+    def update_arrays(self):
 
-        def add_rule(rules, spec, level, shaders, extension, symbol):
+        def add_rule(rules, level, shaders, extension, symbol):
             var = ("&TableBase::%s" % symbol) if symbol.startswith("m_gl") else None
 
             extension_list = []
-            specField = "Spec::%s" % ("ESSL" if spec == "ESSL" else "GLSL")
-            versionField = get_shader_version_for_level(spec, level)
+            versionField = get_shader_version_for_level(level)
             shadersField = "Shader::%s" % ("ALL" if shaders == "NONE" else shaders)
             symbolOrVarField = symbol.replace("Func::", "") if var is None else var
             if extension != None:
                 extension_list = [ext.strip() for ext in extension.split(',')]
                 for ext in extension_list:
                     rules.append({
-                        "spec": specField,
                         "version": versionField,
                         "shaders": shadersField,
                         "extension": "0" if ext == None else "EXT_INDEX(%s)" % ext,
@@ -881,7 +808,6 @@ class GroupedList:
                     })
             else:
                 rules.append({
-                    "spec": specField,
                     "version": versionField,
                     "shaders": shadersField,
                     "extension": "0",
@@ -898,55 +824,34 @@ class GroupedList:
                 rules = []
 
                 if "symbol" in data and "essl_level" in data:
-                    add_rule(rules, "ESSL", data['essl_level'], data['shader_type'], None,
-                             data["symbol"])
-
-                if "symbol" in data and "glsl_level" in data and not essl_only:
-                    add_rule(rules, "GLSL", data['glsl_level'], data['shader_type'], None,
-                             data["symbol"])
+                    add_rule(rules, data['essl_level'], data['shader_type'], None, data["symbol"])
 
                 if "symbol2" in data and "essl_level2" in data:
-                    add_rule(rules, "ESSL", data['essl_level2'], data['shader_type2'], None,
-                             data["symbol2"])
-
-                if "symbol2" in data and "glsl_level2" in data and not essl_only:
-                    add_rule(rules, "GLSL", data['glsl_level2'], data['shader_type2'], None,
+                    add_rule(rules, data['essl_level2'], data['shader_type2'], None,
                              data["symbol2"])
 
                 if "symbol3" in data and "essl_level3" in data:
-                    add_rule(rules, "ESSL", data['essl_level3'], data['shader_type3'], None,
-                             data["symbol3"])
-
-                if "symbol3" in data and "glsl_level3" in data and not essl_only:
-                    add_rule(rules, "GLSL", data['glsl_level3'], data['shader_type3'], None,
+                    add_rule(rules, data['essl_level3'], data['shader_type3'], None,
                              data["symbol3"])
 
                 if "symbol4" in data and "essl_level4" in data:
-                    add_rule(rules, "ESSL", data['essl_level4'], data['shader_type4'], None,
-                             data["symbol4"])
-
-                if "symbol4" in data and "glsl_level4" in data and not essl_only:
-                    add_rule(rules, "GLSL", data['glsl_level4'], data['shader_type4'], None,
+                    add_rule(rules, data['essl_level4'], data['shader_type4'], None,
                              data["symbol4"])
 
                 if "essl_ext_symbol" in data:
-                    add_rule(rules, "ESSL", data["essl_ext_level"], data["essl_ext_shader_type"],
+                    add_rule(rules, data["essl_ext_level"], data["essl_ext_shader_type"],
                              data["essl_extension"], data["essl_ext_symbol"])
 
-                if "glsl_ext_symbol" in data and not essl_only:
-                    add_rule(rules, "GLSL", data["glsl_ext_level"], data["glsl_ext_shader_type"],
-                             data["glsl_extension"], data["glsl_ext_symbol"])
-
                 if "essl_ext_symbol2" in data:
-                    add_rule(rules, "ESSL", data["essl_ext_level2"], data["essl_ext_shader_type2"],
+                    add_rule(rules, data["essl_ext_level2"], data["essl_ext_shader_type2"],
                              data["essl_extension2"], data["essl_ext_symbol2"])
 
                 if "essl_ext_symbol3" in data:
-                    add_rule(rules, "ESSL", data["essl_ext_level3"], data["essl_ext_shader_type3"],
+                    add_rule(rules, data["essl_ext_level3"], data["essl_ext_shader_type3"],
                              data["essl_extension3"], data["essl_ext_symbol3"])
 
                 if "essl_ext_symbol4" in data:
-                    add_rule(rules, "ESSL", data["essl_ext_level4"], data["essl_ext_shader_type4"],
+                    add_rule(rules, data["essl_ext_level4"], data["essl_ext_shader_type4"],
                              data["essl_extension4"], data["essl_ext_symbol4"])
 
                 name = data['name']
@@ -972,12 +877,10 @@ class UnmangledGroupedList:
         self.hashfn = hashfn
         self.num_names = num_names
 
-    def add_entry(self, essl_level, glsl_level, shader_type, name, essl_ext, glsl_ext,
-                  essl_extension, glsl_extension, unmangled_script_generated_hash_tests):
-        if essl_level and essl_level not in essl_levels:
+    def add_entry(self, essl_level, shader_type, name, essl_ext, essl_extension,
+                  unmangled_script_generated_hash_tests):
+        if essl_level not in essl_levels:
             raise Exception('Unexpected essl level: ' + str(essl_level))
-        if glsl_level and glsl_level not in glsl_levels:
-            raise Exception('Unexpected glsl level: ' + str(glsl_level))
         if len(name) > self.max_name_length:
             self.max_name_length = len(name)
 
@@ -985,28 +888,23 @@ class UnmangledGroupedList:
         self.objs[name_hash] = OrderedDict()
         self.objs[name_hash]['name'] = name
         self.objs[name_hash]['essl_level'] = essl_level
-        self.objs[name_hash]['glsl_level'] = glsl_level
         self.objs[name_hash]['shader_type'] = shader_type
         self.objs[name_hash]['essl_ext'] = essl_ext
-        self.objs[name_hash]['glsl_ext'] = glsl_ext
         self.objs[name_hash]['essl_extension'] = essl_extension
-        self.objs[name_hash]['glsl_extension'] = glsl_extension
 
-    def has_key(self, essl_level, glsl_level, shader_type, name):
+    def has_key(self, essl_level, shader_type, name):
         name_hash = mangledNameHash(name, self.hashfn, None, True, False)
         if name_hash not in self.objs:
             return False
         entry = self.objs[name_hash]
         if entry['essl_level'] != essl_level:
             return False
-        if entry['glsl_level'] != glsl_level:
-            return False
         if entry['shader_type'] != shader_type:
             return False
         return True
 
-    def get(self, essl_level, glsl_level, shader_type, name):
-        if self.has_key(essl_level, glsl_level, shader_type, name):
+    def get(self, essl_level, shader_type, name):
+        if self.has_key(essl_level, shader_type, name):
             name_hash = mangledNameHash(name, self.hashfn, None, True, False)
             return self.objs[name_hash]
         return None
@@ -1019,7 +917,6 @@ class UnmangledGroupedList:
         for hash_val in range(0, self.num_names):
             obj = self.objs[hash_val]
             essl_level = obj['essl_level']
-            glsl_level = obj['glsl_level']
             shader_type = 'Shader::' + obj['shader_type'] if obj[
                 'shader_type'] != 'NONE' else 'Shader::ALL'
             data = []
@@ -1030,9 +927,7 @@ class UnmangledGroupedList:
                 template_extensions.format(
                     count=len(essl_extensions),
                     extensions=','.join(['Ext::' + ext for ext in essl_extensions])))
-            data.append("Ext::" + obj['glsl_extension'])
             data.append(get_essl_shader_version_for_level(essl_level))
-            data.append(get_glsl_shader_version_for_level(glsl_level))
             data.append(shader_type)
 
             code.append('{%s}' % ', '.join(data))
@@ -1321,7 +1216,7 @@ class HashFunction:
         return (self.G[self.f1(key)] + self.G[self.f2(key)]) % len(self.G)
 
 
-def get_parsed_functions(functions_txt_filename, essl_only):
+def get_parsed_functions(functions_txt_filename):
 
     def parse_function_parameters(parameters):
         if parameters == '':
@@ -1385,11 +1280,7 @@ def get_parsed_functions(functions_txt_filename, essl_only):
                     'parameters': parse_function_parameters(parameters)
                 }
                 function_props.update(default_metadata)
-                if essl_only:
-                    # Skip GLSL-only functions
-                    if 'essl_level' in function_props:
-                        group_stack[-1]['functions'].append(function_props)
-                else:
+                if 'essl_level' in function_props:
                     group_stack[-1]['functions'].append(function_props)
             else:
                 raise Exception('Unexpected function input line: ' + line)
@@ -1443,12 +1334,6 @@ def get_suffix(props):
 def get_essl_extension(props):
     if 'essl_extension' in props:
         return props['essl_extension']
-    return 'UNDEFINED'
-
-
-def get_glsl_extension(props):
-    if 'glsl_extension' in props:
-        return props['glsl_extension']
     return 'UNDEFINED'
 
 
@@ -1625,21 +1510,14 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
 
     function_name = function_props['name']
     essl_level = function_props['essl_level'] if 'essl_level' in function_props else None
-    glsl_level = function_props['glsl_level'] if 'glsl_level' in function_props else None
     essl_extension = get_essl_extension(function_props)
-    glsl_extension = get_glsl_extension(function_props)
-    extension = essl_extension if essl_extension != 'UNDEFINED' else glsl_extension
     op = get_op(function_name, function_props, group_op_suffix)
     template_args = {
         'name': function_name,
         'name_with_suffix': function_name + get_suffix(function_props),
         'essl_level': essl_level,
-        'glsl_level': glsl_level,
         'essl_extension': essl_extension,
-        'glsl_extension': glsl_extension,
-        # This assumes that functions cannot be part of an ESSL and GLSL extension
-        # Will need to update after adding GLSL extension functions if this is not the case
-        'extension': essl_extension if essl_extension != 'UNDEFINED' else glsl_extension,
+        'extension': essl_extension,
         'op': op,
         'known_to_not_have_side_effects': get_known_to_not_have_side_effects(function_props)
     }
@@ -1652,25 +1530,19 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
         symbols.name_declarations.add(name_declaration)
 
     essl_ext = '{essl_extension}'.format(**template_args)
-    glsl_ext = '{glsl_extension}'.format(**template_args)
     unmangled_builtin_no_shader_type = unmangled_function_if_statements.get(
-        essl_level, glsl_level, 'NONE', function_name)
+        essl_level, 'NONE', function_name)
     if unmangled_builtin_no_shader_type != None and unmangled_builtin_no_shader_type[
-            'essl_extension'] == 'UNDEFINED' and unmangled_builtin_no_shader_type[
-                'glsl_extension'] == 'UNDEFINED':
+            'essl_extension'] == 'UNDEFINED':
         # We already have this unmangled name without a shader type nor extension on the same level.
         # No need to add a duplicate with a type.
         pass
-    elif (not unmangled_function_if_statements.has_key(
-            essl_level, glsl_level, shader_type, function_name)) or (
-                unmangled_builtin_no_shader_type and
-                ((essl_extension == 'UNDEFINED' and
-                  unmangled_builtin_no_shader_type['essl_extension'] != 'UNDEFINED') or
-                 (glsl_extension == 'UNDEFINED' and
-                  unmangled_builtin_no_shader_type['glsl_extension'] != 'UNDEFINED'))):
-        unmangled_function_if_statements.add_entry(essl_level, glsl_level, shader_type,
-                                                   function_name, essl_ext, glsl_ext,
-                                                   essl_extension, glsl_extension,
+    elif (not unmangled_function_if_statements.has_key(essl_level, shader_type, function_name)
+         ) or (unmangled_builtin_no_shader_type and
+               (essl_extension == 'UNDEFINED' and
+                unmangled_builtin_no_shader_type['essl_extension'] != 'UNDEFINED')):
+        unmangled_function_if_statements.add_entry(essl_level, shader_type, function_name,
+                                                   essl_ext, essl_extension,
                                                    symbols.unmangled_script_generated_hash_tests)
 
     extension_string = get_extension_list(template_args['extension'])
@@ -1709,10 +1581,8 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
         template_args['mangled_name_length'] = len(template_args['mangled_name'])
 
         symbol = '&Func::{unique_name}'.format(**template_args)
-        mangled_builtins.add_entry(essl_level, glsl_level, shader_type,
-                                   template_args['mangled_name'], symbol,
+        mangled_builtins.add_entry(essl_level, shader_type, template_args['mangled_name'], symbol,
                                    template_args['essl_extension'],
-                                   template_args['glsl_extension'],
                                    symbols.script_generated_hash_tests)
 
         if template_args['unique_name'] in functions.defined_function_variants:
@@ -1866,29 +1736,14 @@ def process_single_variable(shader_type, variable_name, props, symbols, variable
     global id_counter
 
     essl_level = props['essl_level'] if 'essl_level' in props else None
-    glsl_level = props['glsl_level'] if 'glsl_level' in props else None
     template_args = {
-        'id':
-            id_counter,
-        'name':
-            variable_name,
-        'name_with_suffix':
-            variable_name + get_suffix(props),
-        'essl_level':
-            essl_level,
-        'glsl_level':
-            glsl_level,
-        'essl_extension':
-            get_essl_extension(props),
-        'glsl_extension':
-            get_glsl_extension(props),
-        # This assumes that variables cannot be part of an ESSL and GLSL extension
-        # Will need to update after adding GLSL extension variables if this is not the case
-        'extension':
-            get_essl_extension(props)
-            if get_essl_extension(props) != 'UNDEFINED' else get_glsl_extension(props),
-        'class':
-            'TVariable'
+        'id': id_counter,
+        'name': variable_name,
+        'name_with_suffix': variable_name + get_suffix(props),
+        'essl_level': essl_level,
+        'essl_extension': get_essl_extension(props),
+        'extension': get_essl_extension(props),
+        'class': 'TVariable'
     }
 
     template_builtin_id_declaration = '    static constexpr const TSymbolUniqueId {name_with_suffix} = TSymbolUniqueId({id});'
@@ -1988,13 +1843,10 @@ return &k{name_with_suffix};
         variables.get_variable_definitions.append(
             template_get_variable_definition.format(**template_args))
 
-        if essl_level != 'GLSL_BUILTINS':
-            obj = '&BuiltInVariable::k{name_with_suffix}'.format(**template_args)
-            # TODO(http://anglebug.com/42262479): Add GLSL level once GLSL built-in vars are added
-            mangled_builtins.add_entry(essl_level, 'COMMON_BUILTINS', shader_type,
-                                       template_args['name'], obj, template_args['essl_extension'],
-                                       template_args['glsl_extension'],
-                                       symbols.script_generated_hash_tests)
+        obj = '&BuiltInVariable::k{name_with_suffix}'.format(**template_args)
+        mangled_builtins.add_entry(essl_level, shader_type, template_args['name'], obj,
+                                   template_args['essl_extension'],
+                                   symbols.script_generated_hash_tests)
 
     if is_member:
         variables.init_member_variables.append(template_init_variable.format(**template_args))
@@ -2005,10 +1857,8 @@ return &k{name_with_suffix};
 
         obj = 'm_{name_with_suffix}'.format(**template_args)
 
-        # TODO(http://anglebug.com/42262479): Add GLSL level once GLSL built-in vars are added
-        mangled_builtins.add_entry(essl_level, 'COMMON_BUILTINS', shader_type,
-                                   template_args['name'], obj, template_args['essl_extension'],
-                                   template_args['glsl_extension'],
+        mangled_builtins.add_entry(essl_level, shader_type, template_args['name'], obj,
+                                   template_args['essl_extension'],
                                    symbols.script_generated_hash_tests)
 
     id_counter += 1
@@ -2052,7 +1902,7 @@ def process_variable_group(shader_type, group_name, group, symbols, variables, m
                                    mangled_builtins)
 
 
-def generate_files(essl_only, args, functions_txt_filename, variables_json_filename,
+def generate_files(args, functions_txt_filename, variables_json_filename,
                    immutablestring_cpp_filename, immutablestringtest_cpp_filename,
                    builtin_header_filename, symboltable_cpp_filename, operator_header_filename,
                    symboltable_header_filename):
@@ -2061,11 +1911,10 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
     variables = VariablesData()
     functions = FunctionsData()
 
-    parsed_functions = get_parsed_functions(functions_txt_filename, essl_only)
+    parsed_functions = get_parsed_functions(functions_txt_filename)
 
     if args.dump_intermediate_json:
-        with open('builtin_functions_ESSL.json' if essl_only else 'builtin_functions.json',
-                  'w') as outfile:
+        with open('builtin_functions_ESSL.json', 'w') as outfile:
 
             def serialize_obj(obj):
                 if isinstance(obj, TType):
@@ -2078,7 +1927,6 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
 
     parsed_variables = None
     with open(variables_json_filename) as f:
-        # TODO(http://anglebug.com/42262479): skip loading GLSL-only vars when they are added if essl_only
         parsed_variables = json.load(f, object_pairs_hook=OrderedDict)
 
     # This script uses a perfect hash function to avoid dealing with collisions
@@ -2123,7 +1971,7 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
     for group_name, group in parsed_variables.items():
         process_variable_group('NONE', group_name, group, symbols, variables, mangled_builtins)
 
-    mangled_builtins.update_arrays(essl_only)
+    mangled_builtins.update_arrays()
 
     output_strings = {
         'script_name':
@@ -2198,10 +2046,6 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
             len(unmangled_G),
         'unmangled_NS':
             len(unmangled_S1),
-        'header_label':
-            'ESSL_' if essl_only else 'complete_',
-        'source_label':
-            'ESSL_' if essl_only else ''
     }
 
     with open(immutablestring_cpp_filename, 'wt') as outfile_cpp:
@@ -2220,14 +2064,13 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
         output_cpp = template_symboltable_cpp.format(**output_strings)
         outfile_cpp.write(output_cpp)
 
-    if not essl_only:
-        with open(operator_header_filename, 'wt') as outfile_header:
-            output_header = template_operator_header.format(**output_strings)
-            outfile_header.write(output_header)
+    with open(operator_header_filename, 'wt') as outfile_header:
+        output_header = template_operator_header.format(**output_strings)
+        outfile_header.write(output_header)
 
-        with open(symboltable_header_filename, 'wt') as outfile_h:
-            output_h = template_symboltable_header.format(**output_strings)
-            outfile_h.write(output_h)
+    with open(symboltable_header_filename, 'wt') as outfile_h:
+        output_h = template_symboltable_header.format(**output_strings)
+        outfile_h.write(output_h)
 
 
 def main():
@@ -2243,7 +2086,6 @@ def main():
     args = parser.parse_args()
 
     test_filename = '../../tests/compiler_tests/ImmutableString_test_autogen.cpp'
-    essl_test_filename = '../../tests/compiler_tests/ImmutableString_test_ESSL_autogen.cpp'
     variables_json_filename = 'builtin_variables.json'
     functions_txt_filename = 'builtin_function_declarations.txt'
 
@@ -2254,16 +2096,12 @@ def main():
             variables_json_filename,
         ]
         outputs = [
-            'ImmutableString_autogen.cpp',
             'Operator_autogen.h',
-            'SymbolTable_autogen.cpp',
             'SymbolTable_autogen.h',
-            'tree_util/BuiltIn_complete_autogen.h',
             test_filename,
-            'ImmutableString_ESSL_autogen.cpp',
-            'SymbolTable_ESSL_autogen.cpp',
-            'tree_util/BuiltIn_ESSL_autogen.h',
-            essl_test_filename,
+            'ImmutableString_autogen.cpp',
+            'SymbolTable_autogen.cpp',
+            'tree_util/BuiltIn_autogen.h',
         ]
 
         if args.auto_script_command == 'inputs':
@@ -2275,18 +2113,10 @@ def main():
             return 1
         return 0
 
-    # Generate files based on GLSL + ESSL symbols
-    generate_files(False, args, functions_txt_filename, variables_json_filename,
-                   'ImmutableString_autogen.cpp', test_filename,
-                   'tree_util/BuiltIn_complete_autogen.h', 'SymbolTable_autogen.cpp',
-                   'Operator_autogen.h', 'SymbolTable_autogen.h')
-
-    # Generate files based on only ESSL symbols
-    # Symbol table with GLSL + ESSL symbols is too large for Android
-    generate_files(True, args, functions_txt_filename, variables_json_filename,
-                   'ImmutableString_ESSL_autogen.cpp', essl_test_filename,
-                   'tree_util/BuiltIn_ESSL_autogen.h', 'SymbolTable_ESSL_autogen.cpp',
-                   'Operator_autogen.h', 'SymbolTable_autogen.h')
+    # Generate files based on ESSL symbols
+    generate_files(args, functions_txt_filename, variables_json_filename,
+                   'ImmutableString_autogen.cpp', test_filename, 'tree_util/BuiltIn_autogen.h',
+                   'SymbolTable_autogen.cpp', 'Operator_autogen.h', 'SymbolTable_autogen.h')
 
     return 0
 

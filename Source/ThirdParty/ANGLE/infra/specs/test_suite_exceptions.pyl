@@ -11,6 +11,12 @@
 # For more info see Chromium's test_suite_exceptions.pyl in testing/buildbot.
 
 {
+  'angle_deqp_egl_vulkan_tests': {
+    'remove_from': [
+      # Occasionally hangs the machine http://anglebug.com/368553850
+      'linux-exp-nvidia',
+    ],
+  },
   'angle_deqp_gles2_d3d11_tests': {
     'modifications': {
       # anglebug.com/352528974 suspecting OOM caused by multiprocess

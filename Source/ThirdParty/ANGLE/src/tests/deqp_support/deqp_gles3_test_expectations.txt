@@ -701,6 +701,9 @@
 42266544 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_vertex = FAIL
 42266544 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_vertex = FAIL
 
+// Crashes on MacBook Pro 2019 16" macOS 14.4.1
+369219143 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.precision.* = SKIP
+
 // Test failures introduced by Apple's changes (anglebug.com/40096755)
 40644839 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_color = FAIL
 40644839 MAC METAL : dEQP-GLES3.functional.fbo.invalidate.sub.unbind_blit_msaa_stencil = FAIL
@@ -712,9 +715,9 @@
 // Failures introduced after switching to the direct Metal backend
 
 // Some trig functions have precision issues when fast math is enabled in Metal shader compilation
-40096896 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_fragment.scalar = FAIL
-40096896 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_vertex.scalar = FAIL
-40096896 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.refract.lowp_vertex.scalar = FAIL
+40096896 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_fragment.scalar = FAIL
+40096896 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_vertex.scalar = FAIL
+40096896 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_functions.precision.refract.lowp_vertex.scalar = FAIL
 40096896 MAC METAL : dEQP-GLES3.functional.shaders.invariance.lowp.loop_2 = FAIL
 
 

@@ -572,6 +572,21 @@ command:
 src/tests/restricted_traces/retrace_restricted_traces.py --no-swiftshader get_min_reqs $TRACE_GN_PATH [--traces "*"]
 ```
 
+If retracing an existing trace, any associated `addExtensionPrerequisite()` calls must be removed from `TracePerfTest.cpp` and
+the tracename.json file must be made writable.
+
+Traces are run with all extensions enabled by default. It may be useful to test with only a subset of extensions.
+This can be done by adding the `--request-extensions` argument to `angle_trace_tests`. Multiple extensions must be contained by quotation
+marks and only a single space can be used as a separator. To run with no extensions enabled, specify a null list -- `""`:
+
+```
+./out/Debug/angle_trace_tests --gtest_filter=*tracename --request-extensions "EXT_color_buffer_float GL_EXT_texture_filter_anisotropic"
+```
+  or
+```
+./out/Debug/angle_trace_tests --gtest_filter=*tracename --request-extensions ""
+```
+
 ## Extended testing and full trace upgrades
 
 If you want to really drill down on trace differences, you might want to use the

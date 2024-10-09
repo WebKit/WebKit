@@ -148,11 +148,6 @@ gl::Version DisplayWgpu::getMaxSupportedESVersion() const
     return mMaxSupportedClientVersion;
 }
 
-Optional<gl::Version> DisplayWgpu::getMaxSupportedDesktopVersion() const
-{
-    return Optional<gl::Version>::Invalid();
-}
-
 gl::Version DisplayWgpu::getMaxConformantESVersion() const
 {
     return mMaxSupportedClientVersion;
@@ -284,8 +279,7 @@ egl::Error DisplayWgpu::createWgpuDevice()
 
     mAdapter = adapterResult.adapter;
 
-    std::vector<wgpu::FeatureName> requiredFeatures;
-    requiredFeatures.push_back(wgpu::FeatureName::SurfaceCapabilities);
+    std::vector<wgpu::FeatureName> requiredFeatures;  // empty for now
 
     wgpu::DeviceDescriptor deviceDesc;
     deviceDesc.requiredFeatureCount = requiredFeatures.size();

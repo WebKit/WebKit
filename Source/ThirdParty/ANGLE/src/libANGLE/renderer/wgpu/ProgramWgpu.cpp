@@ -9,10 +9,12 @@
 
 #include "libANGLE/renderer/wgpu/ProgramWgpu.h"
 
+#include "GLES2/gl2.h"
 #include "common/PackedEnums.h"
 #include "common/PackedGLEnums_autogen.h"
 #include "common/debug.h"
 #include "common/log_utils.h"
+#include "libANGLE/Error.h"
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/renderer/wgpu/ProgramExecutableWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
@@ -26,6 +28,43 @@ namespace rx
 namespace
 {
 const bool kOutputFinalSource = false;
+
+// Identical to Std140 encoder in all aspects, except it ignores opaque uniform types.
+class WgpuDefaultBlockEncoder : public sh::Std140BlockEncoder
+{
+  public:
+    void advanceOffset(GLenum type,
+                       const std::vector<unsigned int> &arraySizes,
+                       bool isRowMajorMatrix,
+                       int arrayStride,
+                       int matrixStride) override
+    {
+        if (gl::IsOpaqueType(type))
+        {
+            return;
+        }
+
+        sh::Std140BlockEncoder::advanceOffset(type, arraySizes, isRowMajorMatrix, arrayStride,
+                                              matrixStride);
+    }
+};
+
+void InitDefaultUniformBlock(const std::vector<sh::ShaderVariable> &uniforms,
+                             sh::BlockLayoutMap *blockLayoutMapOut,
+                             size_t *blockSizeOut)
+{
+    if (uniforms.empty())
+    {
+        *blockSizeOut = 0;
+        return;
+    }
+
+    WgpuDefaultBlockEncoder blockEncoder;
+    sh::GetActiveUniformBlockInfo(uniforms, "", &blockEncoder, blockLayoutMapOut);
+
+    *blockSizeOut = blockEncoder.getCurrentOffset();
+    return;
+}
 
 class CreateWGPUShaderModuleTask : public LinkSubTask
 {
@@ -152,7 +191,10 @@ class LinkTaskWgpu : public LinkTask
 {
   public:
     LinkTaskWgpu(wgpu::Instance instance, wgpu::Device device, ProgramWgpu *program)
-        : mInstance(instance), mDevice(device), mProgram(program)
+        : mInstance(instance),
+          mDevice(device),
+          mProgram(program),
+          mExecutable(&mProgram->getState().getExecutable())
     {}
     ~LinkTaskWgpu() override = default;
 
@@ -179,17 +221,112 @@ class LinkTaskWgpu : public LinkTask
                 linkSubTasksOut->push_back(task);
             }
         }
+
+        // The default uniform block's CPU buffer needs to be allocated and the layout calculated,
+        // now that the list of uniforms is known.
+        angle::Result initUniformBlocksResult = initDefaultUniformBlocks();
+        if (IsError(initUniformBlocksResult))
+        {
+            mLinkResult = initUniformBlocksResult;
+            return;
+        }
+
+        mLinkResult = angle::Result::Continue;
     }
 
     angle::Result getResult(const gl::Context *context, gl::InfoLog &infoLog) override
     {
-        return angle::Result::Continue;
+        return mLinkResult;
     }
 
   private:
+    angle::Result initDefaultUniformBlocks()
+    {
+        ProgramExecutableWgpu *executableWgpu = webgpu::GetImpl(mExecutable);
+
+        // Process vertex and fragment uniforms into std140 packing.
+        gl::ShaderMap<sh::BlockLayoutMap> layoutMap;
+        gl::ShaderMap<size_t> requiredBufferSize;
+        requiredBufferSize.fill(0);
+
+        generateUniformLayoutMapping(&layoutMap, &requiredBufferSize);
+        initDefaultUniformLayoutMapping(&layoutMap);
+
+        // All uniform initializations are complete, now resize the buffers accordingly and return
+        return executableWgpu->resizeUniformBlockMemory(requiredBufferSize);
+    }
+
+    void generateUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> *layoutMapOut,
+                                      gl::ShaderMap<size_t> *requiredBufferSizeOut)
+    {
+        for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+        {
+            const gl::SharedCompiledShaderState &shader =
+                mProgram->getState().getAttachedShader(shaderType);
+
+            if (shader)
+            {
+                const std::vector<sh::ShaderVariable> &uniforms = shader->uniforms;
+                InitDefaultUniformBlock(uniforms, &(*layoutMapOut)[shaderType],
+                                        &(*requiredBufferSizeOut)[shaderType]);
+            }
+        }
+    }
+
+    void initDefaultUniformLayoutMapping(gl::ShaderMap<sh::BlockLayoutMap> *layoutMapOut)
+    {
+        // Init the default block layout info.
+        ProgramExecutableWgpu *executableWgpu = webgpu::GetImpl(mExecutable);
+        const auto &uniforms                  = mExecutable->getUniforms();
+
+        for (const gl::VariableLocation &location : mExecutable->getUniformLocations())
+        {
+            gl::ShaderMap<sh::BlockMemberInfo> layoutInfo;
+
+            if (location.used() && !location.ignored)
+            {
+                const auto &uniform = uniforms[location.index];
+                if (uniform.isInDefaultBlock() && !uniform.isSampler() && !uniform.isImage() &&
+                    !uniform.isFragmentInOut())
+                {
+                    std::string uniformName = mExecutable->getUniformNameByIndex(location.index);
+                    if (uniform.isArray())
+                    {
+                        // Gets the uniform name without the [0] at the end.
+                        uniformName = gl::StripLastArrayIndex(uniformName);
+                        ASSERT(uniformName.size() !=
+                               mExecutable->getUniformNameByIndex(location.index).size());
+                    }
+
+                    bool found = false;
+
+                    for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+                    {
+                        auto it = (*layoutMapOut)[shaderType].find(uniformName);
+                        if (it != (*layoutMapOut)[shaderType].end())
+                        {
+                            found                  = true;
+                            layoutInfo[shaderType] = it->second;
+                        }
+                    }
+
+                    ASSERT(found);
+                }
+            }
+
+            for (const gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())
+            {
+                executableWgpu->getSharedDefaultUniformBlock(shaderType)
+                    ->uniformLayout.push_back(layoutInfo[shaderType]);
+            }
+        }
+    }
+
     wgpu::Instance mInstance;
     wgpu::Device mDevice;
     ProgramWgpu *mProgram = nullptr;
+    const gl::ProgramExecutable *mExecutable;
+    angle::Result mLinkResult = angle::Result::Stop;
 };
 }  // anonymous namespace
 

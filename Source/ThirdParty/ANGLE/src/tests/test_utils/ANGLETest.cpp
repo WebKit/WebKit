@@ -578,8 +578,7 @@ void ANGLETestBase::initOSWindow()
         case GLESDriverType::ZinkEGL:
         {
             mFixture->eglWindow =
-                EGLWindow::New(mCurrentParams->clientType, mCurrentParams->majorVersion,
-                               mCurrentParams->minorVersion, mCurrentParams->profileMask);
+                EGLWindow::New(mCurrentParams->majorVersion, mCurrentParams->minorVersion);
             break;
         }
 

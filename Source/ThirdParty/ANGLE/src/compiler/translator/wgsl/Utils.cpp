@@ -4,11 +4,12 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/wgsl/WriteTypeName.h"
+#include "compiler/translator/wgsl/Utils.h"
 
 #include "compiler/translator/Common.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/Types.h"
+#include "compiler/translator/util.h"
 
 namespace sh
 {
@@ -178,4 +179,19 @@ template void WriteNameOf<TStringStream>(TStringStream &output,
                                          SymbolType symbolType,
                                          const ImmutableString &name);
 template void WriteWgslType<TStringStream>(TStringStream &output, const TType &type);
+
+GlobalVars FindGlobalVars(TIntermBlock *root)
+{
+    GlobalVars globals;
+    for (TIntermNode *node : *root->getSequence())
+    {
+        if (TIntermDeclaration *declNode = node->getAsDeclarationNode())
+        {
+            Declaration decl = ViewDeclaration(*declNode);
+            globals.insert({decl.symbol.variable().name(), declNode});
+        }
+    }
+    return globals;
+}
+
 }  // namespace sh

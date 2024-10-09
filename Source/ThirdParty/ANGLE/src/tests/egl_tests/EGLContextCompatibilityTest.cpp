@@ -109,8 +109,7 @@ std::vector<EGLConfig> GetConfigs(EGLDisplay display)
 
 PlatformParameters FromRenderer(EGLint renderer)
 {
-    return WithNoFixture(
-        PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, EGLPlatformParameters(renderer)));
+    return WithNoFixture(PlatformParameters(2, 0, EGLPlatformParameters(renderer)));
 }
 
 std::string EGLConfigName(EGLDisplay display, EGLConfig config)

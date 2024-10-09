@@ -2,17 +2,13 @@
 
 ANGLE's Vulkan back-end implementation lives in this folder.
 
-[Vulkan](https://www.khronos.org/vulkan/) is an explicit graphics API. It has a lot in common with
-other explicit APIs such as Microsoft's [D3D12][D3D12 Guide] and Apple's
-[Metal](https://developer.apple.com/metal/). Compared to APIs like OpenGL or D3D11 explicit APIs can
-offer a number of significant benefits:
+[Vulkan](https://www.khronos.org/vulkan/) is an explicit graphics API. Compared to APIs like OpenGL
+or D3D11 explicit APIs can offer a number of significant benefits:
 
  * Lower API call CPU overhead.
  * A smaller API surface with more direct hardware control.
  * Better support for multi-core programming.
  * Vulkan in particular has open-source tooling and tests.
-
-[D3D12 Guide]: https://docs.microsoft.com/en-us/windows/desktop/direct3d12/directx-12-programming-guide
 
 ## Back-end Design
 

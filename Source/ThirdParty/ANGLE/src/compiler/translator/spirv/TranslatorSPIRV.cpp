@@ -875,7 +875,7 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
         driverUniforms->getDriverUniformsVariable()->getType().getInterfaceBlock()->uniqueId(),
         vk::spirv::kIdDriverUniformsBlock);
 
-    if (r32fImageCount > 0)
+    if (r32fImageCount > 0 && compileOptions.emulateR32fImageAtomicExchange)
     {
         if (!RewriteR32fImages(this, root, &getSymbolTable()))
         {

@@ -228,8 +228,3 @@ TEST_F(ShCompileTest, DecimalSepLocale)
         }
     }
 }
-
-// Desktop GLSL support is not enabled on Android
-#if !defined(ANGLE_PLATFORM_ANDROID)
-
-#endif  // !defined(ANGLE_PLATFORM_ANDROID)

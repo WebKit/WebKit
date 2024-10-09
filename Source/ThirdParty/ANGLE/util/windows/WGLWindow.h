@@ -24,7 +24,7 @@ class Library;
 class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
 {
   public:
-    static WGLWindow *New(EGLenum clientType, int majorVersion, int minorVersion, int profileMask);
+    static WGLWindow *New(int majorVersion, int minorVersion);
     static void Delete(WGLWindow **window);
 
     // Internally initializes GL resources.
@@ -82,7 +82,7 @@ class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
     bool makeCurrent(HGLRC context);
 
   private:
-    WGLWindow(EGLenum clientType, int majorVersion, int minorVersion, int profileMask);
+    WGLWindow(int majorVersion, int minorVersion);
     ~WGLWindow() override;
 
     // OS resources.

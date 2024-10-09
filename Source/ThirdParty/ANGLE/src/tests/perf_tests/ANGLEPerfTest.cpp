@@ -258,14 +258,6 @@ bool ATraceEnabled()
 {
     return gATraceIsEnabled();
 }
-
-void ATraceCounter(const char *counterName, int64_t counterValue)
-{
-    if (ATraceEnabled())
-    {
-        gATraceSetCounter(counterName, counterValue);
-    }
-}
 #else
 constexpr bool kHasATrace = false;
 void SetupATrace() {}
@@ -273,7 +265,6 @@ bool ATraceEnabled()
 {
     return false;
 }
-void ATraceCounter(const char *counterName, int64_t counterValue) {}
 #endif
 }  // anonymous namespace
 
@@ -349,7 +340,7 @@ void ANGLEPerfTest::run()
         printf("Test Trials: %d\n", static_cast<int>(numTrials));
     }
 
-    ATraceCounter("TraceStage", 3);
+    atraceCounter("TraceStage", 3);
 
     for (uint32_t trial = 0; trial < numTrials; ++trial)
     {
@@ -366,7 +357,7 @@ void ANGLEPerfTest::run()
         }
     }
 
-    ATraceCounter("TraceStage", 0);
+    atraceCounter("TraceStage", 0);
 
     if (gVerboseLogging && !mTestTrialResults.empty())
     {
@@ -417,7 +408,7 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
             if (loopStepsPerformed > 0)  // 0 at the first frame of the first loop
             {
                 int frameTimeAvgUs = int(1e6 * (wallTime - lastLoopWallTime) / loopStepsPerformed);
-                ATraceCounter("TraceLoopFrameTimeAvgUs", frameTimeAvgUs);
+                atraceCounter("TraceLoopFrameTimeAvgUs", frameTimeAvgUs);
                 loopStepsPerformed = 0;
             }
             lastLoopWallTime = wallTime;
@@ -479,7 +470,7 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
 
     if (runPolicy == RunTrialPolicy::RunContinuously)
     {
-        ATraceCounter("TraceLoopFrameTimeAvgUs", 0);
+        atraceCounter("TraceLoopFrameTimeAvgUs", 0);
     }
     finishTest();
     mTrialTimer.stop();
@@ -490,7 +481,7 @@ void ANGLEPerfTest::SetUp()
 {
     if (gWarmup)
     {
-        ATraceCounter("TraceStage", 1);
+        atraceCounter("TraceStage", 1);
 
         // Trace tests run with glFinish for a loop (getStepAlignment == frameCount).
         int warmupSteps = getStepAlignment();
@@ -506,7 +497,7 @@ void ANGLEPerfTest::SetUp()
 
         if (warmupSteps > 1)  // trace tests only: getStepAlignment() is 1 otherwise
         {
-            ATraceCounter("TraceStage", 2);
+            atraceCounter("TraceStage", 2);
 
             // Short traces (e.g. 10 frames) have some spikes after the first loop b/308975999
             const double kMinWarmupTime = 1.5;
@@ -686,6 +677,16 @@ int ANGLEPerfTest::getStepAlignment() const
     return 1;
 }
 
+void ANGLEPerfTest::atraceCounter(const char *counterName, int64_t counterValue)
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    if (ATraceEnabled())
+    {
+        gATraceSetCounter(counterName, counterValue);
+    }
+#endif
+}
+
 RenderTestParams::RenderTestParams()
 {
 #if defined(ANGLE_DEBUG_LAYERS_ENABLED)
@@ -818,20 +819,17 @@ ANGLERenderTest::ANGLERenderTest(const std::string &name,
     switch (testParams.driver)
     {
         case GLESDriverType::AngleEGL:
-            mGLWindow = EGLWindow::New(testParams.clientType, testParams.majorVersion,
-                                       testParams.minorVersion, testParams.profileMask);
+            mGLWindow = EGLWindow::New(testParams.majorVersion, testParams.minorVersion);
             mEntryPointsLib.reset(OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, SearchType::ModuleDir));
             break;
         case GLESDriverType::AngleVulkanSecondariesEGL:
-            mGLWindow = EGLWindow::New(testParams.clientType, testParams.majorVersion,
-                                       testParams.minorVersion, testParams.profileMask);
+            mGLWindow = EGLWindow::New(testParams.majorVersion, testParams.minorVersion);
             mEntryPointsLib.reset(OpenSharedLibrary(ANGLE_VULKAN_SECONDARIES_EGL_LIBRARY_NAME,
                                                     SearchType::ModuleDir));
             break;
         case GLESDriverType::SystemEGL:
 #if defined(ANGLE_USE_UTIL_LOADER) && !defined(ANGLE_PLATFORM_WINDOWS)
-            mGLWindow = EGLWindow::New(testParams.clientType, testParams.majorVersion,
-                                       testParams.minorVersion, testParams.profileMask);
+            mGLWindow = EGLWindow::New(testParams.majorVersion, testParams.minorVersion);
             mEntryPointsLib.reset(OpenSharedLibraryWithExtension(
                 GetNativeEGLLibraryNameWithExtension(), SearchType::SystemDir));
 #else
@@ -840,16 +838,14 @@ ANGLERenderTest::ANGLERenderTest(const std::string &name,
             break;
         case GLESDriverType::SystemWGL:
 #if defined(ANGLE_USE_UTIL_LOADER) && defined(ANGLE_PLATFORM_WINDOWS)
-            mGLWindow = WGLWindow::New(testParams.clientType, testParams.majorVersion,
-                                       testParams.minorVersion, testParams.profileMask);
+            mGLWindow = WGLWindow::New(testParams.majorVersion, testParams.minorVersion);
             mEntryPointsLib.reset(OpenSharedLibrary("opengl32", SearchType::SystemDir));
 #else
             skipTest("WGL driver not available.");
 #endif  // defined(ANGLE_USE_UTIL_LOADER) && defined(ANGLE_PLATFORM_WINDOWS)
             break;
         case GLESDriverType::ZinkEGL:
-            mGLWindow = EGLWindow::New(testParams.clientType, testParams.majorVersion,
-                                       testParams.minorVersion, testParams.profileMask);
+            mGLWindow = EGLWindow::New(testParams.majorVersion, testParams.minorVersion);
             mEntryPointsLib.reset(
                 OpenSharedLibrary(ANGLE_MESA_EGL_LIBRARY_NAME, SearchType::ModuleDir));
             break;

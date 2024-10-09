@@ -14,7 +14,6 @@
             "   shader_type: The type of shader this variable is supported in",
             " Each variable can have the following properties:",
             "   essl_level: ESSL symbol table level where the variable is contained.",
-            "   glsl_level: GLSL symbol table level where the variable is contained.",
             "   type: Object with properties of the type. Can be substituted with initDynamicType.",
             "   initDynamicType: Template string with C++ code for initializing a TType * with the",
             "                    name {type_name}. The name will be replaced when generating code.",
@@ -23,7 +22,6 @@
             "   essl_extension: Optional. Name of the ESSL extension where this variable is from.",
             "   essl_extension_becomes_core_in: Optional. ESSL level where symbols from this",
             "                                   extension have become core.",
-            "   glsl_extension: Optional. Name of the GLSL extension where this variable is from.",
             "   value: Optional. String that has one valid value: 'resources'. Denotes that the",
             "          value of the variable should be based on the field of ShBuiltInResources",
             "          with the same name as the variable.",
@@ -993,12 +991,12 @@
                 }
             },
             "gl_InstanceIndex":{
-                "essl_level":"GLSL_BUILTINS",
+                "essl_level":"ESSL_INTERNAL_BACKEND_BUILTINS",
                 "type":{
                     "basic":"Int",
                     "precision":"High",
                     "qualifier":"InstanceID",
-                    "comment": "In GLSL 450 used by Vulkan"
+                    "comment": "Used internally for SPIR-V generation, not exposed to application"
                 }
             },
             "gl_VertexID":{
@@ -1010,33 +1008,24 @@
                 }
             },
             "gl_VertexIndex":{
-                "essl_level":"GLSL_BUILTINS",
+                "essl_level":"ESSL_INTERNAL_BACKEND_BUILTINS",
                 "type":{
                     "basic":"Int",
                     "precision":"High",
                     "qualifier":"VertexID",
-                    "comment": "In GLSL 450 used by Vulkan"
-                }
-            },
-            "gl_ViewportIndex":{
-                "comment":"For internal use by ANGLE - not exposed to the parser.",
-                "essl_level":"GLSL_BUILTINS",
-                "type":{
-                    "basic":"Int",
-                    "precision":"High",
-                    "qualifier":"ViewportIndex"
+                    "comment": "Used internally for SPIR-V generation, not exposed to application"
                 }
             },
             "gl_Layer":{
                 "suffix":"VS",
-                "comment":"gl_Layer exists in other shader stages in ESSL, but not in vertex shader so far.",
-                "essl_level":"GLSL_BUILTINS",
+                "comment":"gl_Layer exists in other shader stages in ESSL, but not in vertex shader so far. Used internally for mulitview emulation",
+                "essl_level":"ESSL_INTERNAL_BACKEND_BUILTINS",
                 "type":{
                     "basic":"Int",
                     "precision":"High",
                     "qualifier":"LayerOut"
                 }
-            }
+             }
         },
         "subgroups":{
             "ES300":{
@@ -1132,7 +1121,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"NumWorkGroups",
                     "primarySize":3
                 }
@@ -1141,7 +1130,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"WorkGroupSize",
                     "primarySize":3
                 }
@@ -1150,7 +1139,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"WorkGroupID",
                     "primarySize":3
                 }
@@ -1159,7 +1148,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"LocalInvocationID",
                     "primarySize":3
                 }
@@ -1168,7 +1157,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"GlobalInvocationID",
                     "primarySize":3
                 }
@@ -1177,7 +1166,7 @@
                 "essl_level":"ESSL3_1_BUILTINS",
                 "type":{
                     "basic":"UInt",
-                    "precision":"Undefined",
+                    "precision":"High",
                     "qualifier":"LocalInvocationIndex"
                 }
             }

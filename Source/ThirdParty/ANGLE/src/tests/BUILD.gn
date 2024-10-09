@@ -92,9 +92,6 @@ angle_static_library("angle_test_expectations") {
 config("angle_common_test_utils_config") {
   include_dirs = [ "." ]
   defines = []
-  if (angle_enable_gl_desktop_backend) {
-    defines += [ "ANGLE_ENABLE_GL_DESKTOP_BACKEND" ]
-  }
   if (angle_enable_swiftshader) {
     defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
   }
@@ -343,10 +340,6 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
 
       # Need to bundle the libraries inside the .app.
       deps += [ "$angle_root:angle" ]
-    }
-
-    if (angle_enable_gl_desktop_frontend) {
-      defines += [ "ANGLE_ENABLE_GL_DESKTOP_FRONTEND" ]
     }
   }
 }
@@ -1693,10 +1686,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       } else if (api == "gles32") {
         data = angle_deqp_external_openglcts_data_gl_cts_data_gles32
         mustpass_dir = _khronos_gles_mustpass
-      } else if (api == "gl46") {
-        # Use this as a placeholder, the gl46 test suite does not need data
-        data = [ "$root_gen_dir/vk_gl_cts_data/data/gles2/shaders/misc.test" ]
-        mustpass_dir = _khronos_gl_mustpass
       } else {
         assert(false)
       }
@@ -1725,13 +1714,6 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     defines = [ "ANGLE_DEQP_KHR_GLES32_TESTS" ]
     mustpass_name = "gles32-khr-main.txt"
     api = "gles32"
-  }
-
-  # The core Desktop GL CTS is in the same category as these KHR tests.
-  angle_deqp_khr_gtest("gl46") {
-    defines = [ "ANGLE_DEQP_GL_TESTS" ]
-    mustpass_name = "gl46-main.txt"
-    api = "gl46"
   }
 
   template("angle_deqp_khr_noctx_gtest") {
@@ -1885,7 +1867,6 @@ group("angle_tests") {
   if (build_angle_deqp_tests && !is_fuchsia) {
     deps += [
       ":angle_deqp_egl_tests",
-      ":angle_deqp_gl46_tests",
       ":angle_deqp_gles2_tests",
       ":angle_deqp_gles31_multisample_tests",
       ":angle_deqp_gles31_rotate180_tests",

@@ -132,14 +132,14 @@ angle::Result CLContextCL::createBuffer(const cl::Buffer &buffer,
 }
 
 angle::Result CLContextCL::createImage(const cl::Image &image,
-                                       cl::MemFlags flags,
-                                       const cl_image_format &format,
-                                       const cl::ImageDescriptor &desc,
                                        void *hostPtr,
                                        CLMemoryImpl::Ptr *imageOut)
 {
-    cl_int errorCode   = CL_SUCCESS;
-    cl_mem nativeImage = nullptr;
+    cl_int errorCode         = CL_SUCCESS;
+    cl_mem nativeImage       = nullptr;
+    cl::ImageDescriptor desc = image.getDescriptor();
+    cl::MemFlags flags       = image.getFlags();
+    cl_image_format format   = image.getFormat();
 
     if (mContext.getPlatform().isVersionOrNewer(1u, 2u))
     {

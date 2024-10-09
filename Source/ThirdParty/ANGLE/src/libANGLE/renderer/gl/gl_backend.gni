@@ -33,8 +33,6 @@ gl_backend_sources = [
   "ImageGL.h",
   "MemoryObjectGL.cpp",
   "MemoryObjectGL.h",
-  "PLSProgramCache.cpp",
-  "PLSProgramCache.h",
   "ProgramExecutableGL.cpp",
   "ProgramExecutableGL.h",
   "ProgramGL.cpp",

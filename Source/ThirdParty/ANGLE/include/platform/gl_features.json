@@ -731,14 +731,6 @@
             "issue": "http://anglebug.com/40096838"
         },
         {
-            "name": "supports_shader_pixel_local_storage_EXT",
-            "category": "Features",
-            "description": [
-                "Backend GL context supports EXT_shader_pixel_local_storage extension"
-            ],
-            "issue": "http://anglebug.com/40096838"
-        },
-        {
             "name": "disable_clip_control",
             "category": "Features",
             "description": [

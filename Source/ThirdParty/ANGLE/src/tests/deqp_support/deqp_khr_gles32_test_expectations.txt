@@ -88,6 +88,7 @@
 
 // New failures when upgrading to Ubuntu 22/newer driver.
 362486580 VULKAN LINUX NVIDIA : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
+362486580 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_cube_map_array.image_op_compute_sh = FAIL
 
 // Lack of border clamp support on older drivers.
 42262239 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
@@ -107,15 +108,19 @@
 
 // Pixel 4 expectations.
 42264522 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
+365108862 PIXEL4ORXL VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texturelod.samplercubearrayshadow_fragment = SKIP
 
 // Samsung Galaxy S22 (Xclipse)
-b/267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
+267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
 
 // Samsung Galaxy S23
 42266598 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
-b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.geometry_shader.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.tessellation_shader.single.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES32.core.texture_cube_map_array.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment* = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES32.core.geometry_shader.* = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES32.core.tessellation_shader.single.* = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES32.core.texture_cube_map_array.* = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment* = SKIP
+
+// Test bug where tessellation shader support is not queried
+370792795 PIXEL6 VULKAN : KHR-GLES32.core.tessellation_shader.* = SKIP

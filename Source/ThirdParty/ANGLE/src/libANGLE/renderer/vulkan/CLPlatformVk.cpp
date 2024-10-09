@@ -52,9 +52,18 @@ angle::Result CLPlatformVk::initBackendRenderer()
 {
     ASSERT(mRenderer != nullptr);
 
+    angle::FeatureOverrides featureOverrides;
+
+    // In memory |SizedMRUCache| does not require dual slots, supports zero sized values, and evicts
+    // minumum number of old items when storing a new item.
+    featureOverrides.disabled.push_back("useDualPipelineBlobCacheSlots");
+    featureOverrides.enabled.push_back("useEmptyBlobsToEraseOldPipelineCacheFromBlobCache");
+    featureOverrides.enabled.push_back("hasBlobCacheThatEvictsOldItemsFirst");
+    featureOverrides.disabled.push_back("verifyPipelineCacheInBlobCache");
+
     ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0, kUseDebugLayers,
                                     getWSIExtension(), getWSILayer(), getWindowSystem(),
-                                    angle::FeatureOverrides{}));
+                                    featureOverrides));
 
     return angle::Result::Continue;
 }

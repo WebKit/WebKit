@@ -237,13 +237,8 @@ class CaptureReplayTests
 
         if (!mEGLWindow)
         {
-            // TODO: to support desktop OpenGL traces, capture the client api and profile mask in
-            // TraceInfo
-            const EGLenum testClientAPI  = EGL_OPENGL_ES_API;
-            const EGLint testProfileMask = 0;
-
-            mEGLWindow = EGLWindow::New(testClientAPI, traceInfo.contextClientMajorVersion,
-                                        traceInfo.contextClientMinorVersion, testProfileMask);
+            mEGLWindow = EGLWindow::New(traceInfo.contextClientMajorVersion,
+                                        traceInfo.contextClientMinorVersion);
         }
 
         ConfigParameters configParams;

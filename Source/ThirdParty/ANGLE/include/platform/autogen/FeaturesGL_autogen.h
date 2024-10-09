@@ -676,13 +676,6 @@ struct FeaturesGL : FeatureSetBase
         &members, "http://anglebug.com/40096838"
     };
 
-    FeatureInfo supportsShaderPixelLocalStorageEXT = {
-        "supportsShaderPixelLocalStorageEXT",
-        FeatureCategory::OpenGLFeatures,
-        "Backend GL context supports EXT_shader_pixel_local_storage extension",
-        &members, "http://anglebug.com/40096838"
-    };
-
     FeatureInfo disableClipControl = {
         "disableClipControl",
         FeatureCategory::OpenGLFeatures,

@@ -905,6 +905,30 @@
    },
    {
       "op":"mix",
+      "return_type":"int",
+      "args":[
+         "int x",
+         "int y",
+         "bool a"
+      ],
+      "body":[
+         "return a ? y : x;"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"uint",
+      "args":[
+         "uint x",
+         "uint y",
+         "bool a"
+      ],
+      "body":[
+         "return a ? y : x;"
+      ]
+   },
+   {
+      "op":"mix",
       "return_type":"float2",
       "args":[
          "float2 x",
@@ -912,7 +936,31 @@
          "bool2 a"
       ],
       "body":[
-         "return a ? y : x;"
+         "return float2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"int2",
+      "args":[
+         "int2 x",
+         "int2 y",
+         "bool2 a"
+      ],
+      "body":[
+         "return int2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"uint2",
+      "args":[
+         "uint2 x",
+         "uint2 y",
+         "bool2 a"
+      ],
+      "body":[
+         "return uint2(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1]);"
       ]
    },
    {
@@ -924,7 +972,31 @@
          "bool3 a"
       ],
       "body":[
-         "return a ? y : x;"
+         "return float3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"int3",
+      "args":[
+         "int3 x",
+         "int3 y",
+         "bool3 a"
+      ],
+      "body":[
+         "return int3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"uint3",
+      "args":[
+         "uint3 x",
+         "uint3 y",
+         "bool3 a"
+      ],
+      "body":[
+         "return uint3(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2]);"
       ]
    },
    {
@@ -936,7 +1008,31 @@
          "bool4 a"
       ],
       "body":[
-         "return a ? y : x;"
+         "return float4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : x[3]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"int4",
+      "args":[
+         "int4 x",
+         "int4 y",
+         "bool4 a"
+      ],
+      "body":[
+         "return int4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : x[3]);"
+      ]
+   },
+   {
+      "op":"mix",
+      "return_type":"uint4",
+      "args":[
+         "uint4 x",
+         "uint4 y",
+         "bool4 a"
+      ],
+      "body":[
+         "return uint4(a[0] ? y[0] : x[0], a[1] ? y[1] : x[1], a[2] ? y[2] : x[2], a[3] ? y[3] : x[3]);"
       ]
    },
    {

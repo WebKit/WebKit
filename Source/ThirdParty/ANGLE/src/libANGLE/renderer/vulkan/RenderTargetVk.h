@@ -174,13 +174,34 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
         reset();
     }
 
+    // Helpers to update rendertarget colorspace
+    void updateWriteColorspace(gl::SrgbWriteControlMode srgbWriteControlMode)
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        mImageViews->updateSrgbWiteControlMode(*mImage, srgbWriteControlMode);
+    }
+    bool hasColorspaceOverrideForRead() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForRead(*mImage);
+    }
+    bool hasColorspaceOverrideForWrite() const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->hasColorspaceOverrideForWrite(*mImage);
+    }
+    angle::FormatID getColorspaceOverrideFormatForWrite(angle::FormatID format) const
+    {
+        ASSERT(mImage && mImage->valid() && mImageViews);
+        return mImageViews->getColorspaceOverrideFormatForWrite(format);
+    }
+
   private:
     void invalidateImageAndViews();
     void reset();
 
     angle::Result getImageViewImpl(vk::Context *context,
                                    const vk::ImageHelper &image,
-                                   gl::SrgbWriteControlMode mode,
                                    vk::ImageViewHelper *imageViews,
                                    const vk::ImageView **imageViewOut) const;
 

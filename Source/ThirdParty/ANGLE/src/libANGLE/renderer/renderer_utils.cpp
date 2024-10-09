@@ -1028,6 +1028,259 @@ void GetMatrixUniform(GLenum type, NonFloatT *dataOut, const NonFloatT *source, 
     UNREACHABLE();
 }
 
+BufferAndLayout::BufferAndLayout() = default;
+
+BufferAndLayout::~BufferAndLayout() = default;
+
+template <typename T>
+void UpdateBufferWithLayout(GLsizei count,
+                            uint32_t arrayIndex,
+                            int componentCount,
+                            const T *v,
+                            const sh::BlockMemberInfo &layoutInfo,
+                            angle::MemoryBuffer *uniformData)
+{
+    const int elementSize = sizeof(T) * componentCount;
+
+    uint8_t *dst = uniformData->data() + layoutInfo.offset;
+    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
+    {
+        uint32_t arrayOffset = arrayIndex * layoutInfo.arrayStride;
+        uint8_t *writePtr    = dst + arrayOffset;
+        ASSERT(writePtr + (elementSize * count) <= uniformData->data() + uniformData->size());
+        memcpy(writePtr, v, elementSize * count);
+    }
+    else
+    {
+        // Have to respect the arrayStride between each element of the array.
+        int maxIndex = arrayIndex + count;
+        for (int writeIndex = arrayIndex, readIndex = 0; writeIndex < maxIndex;
+             writeIndex++, readIndex++)
+        {
+            const int arrayOffset = writeIndex * layoutInfo.arrayStride;
+            uint8_t *writePtr     = dst + arrayOffset;
+            const T *readPtr      = v + (readIndex * componentCount);
+            ASSERT(writePtr + elementSize <= uniformData->data() + uniformData->size());
+            memcpy(writePtr, readPtr, elementSize);
+        }
+    }
+}
+
+template <typename T>
+void ReadFromBufferWithLayout(int componentCount,
+                              uint32_t arrayIndex,
+                              T *dst,
+                              const sh::BlockMemberInfo &layoutInfo,
+                              const angle::MemoryBuffer *uniformData)
+{
+    ASSERT(layoutInfo.offset != -1);
+
+    const int elementSize = sizeof(T) * componentCount;
+    const uint8_t *source = uniformData->data() + layoutInfo.offset;
+
+    if (layoutInfo.arrayStride == 0 || layoutInfo.arrayStride == elementSize)
+    {
+        const uint8_t *readPtr = source + arrayIndex * layoutInfo.arrayStride;
+        memcpy(dst, readPtr, elementSize);
+    }
+    else
+    {
+        // Have to respect the arrayStride between each element of the array.
+        const int arrayOffset  = arrayIndex * layoutInfo.arrayStride;
+        const uint8_t *readPtr = source + arrayOffset;
+        memcpy(dst, readPtr, elementSize);
+    }
+}
+
+template <typename T>
+void SetUniform(const gl::ProgramExecutable *executable,
+                GLint location,
+                GLsizei count,
+                const T *v,
+                GLenum entryPointType,
+                DefaultUniformBlockMap *defaultUniformBlocks,
+                gl::ShaderBitSet *defaultUniformBlocksDirty)
+{
+    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
+
+    ASSERT(!linkedUniform.isSampler());
+
+    if (linkedUniform.getType() == entryPointType)
+    {
+        for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
+        {
+            BufferAndLayout &uniformBlock         = *(*defaultUniformBlocks)[shaderType];
+            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+            // Assume an offset of -1 means the block is unused.
+            if (layoutInfo.offset == -1)
+            {
+                continue;
+            }
+
+            const GLint componentCount = linkedUniform.getElementComponents();
+            UpdateBufferWithLayout(count, locationInfo.arrayIndex, componentCount, v, layoutInfo,
+                                   &uniformBlock.uniformData);
+            defaultUniformBlocksDirty->set(shaderType);
+        }
+    }
+    else
+    {
+        for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
+        {
+            BufferAndLayout &uniformBlock         = *(*defaultUniformBlocks)[shaderType];
+            const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+            // Assume an offset of -1 means the block is unused.
+            if (layoutInfo.offset == -1)
+            {
+                continue;
+            }
+
+            const GLint componentCount = linkedUniform.getElementComponents();
+
+            ASSERT(linkedUniform.getType() == gl::VariableBoolVectorType(entryPointType));
+
+            GLint initialArrayOffset =
+                locationInfo.arrayIndex * layoutInfo.arrayStride + layoutInfo.offset;
+            for (GLint i = 0; i < count; i++)
+            {
+                GLint elementOffset = i * layoutInfo.arrayStride + initialArrayOffset;
+                GLint *dst =
+                    reinterpret_cast<GLint *>(uniformBlock.uniformData.data() + elementOffset);
+                const T *source = v + i * componentCount;
+
+                for (int c = 0; c < componentCount; c++)
+                {
+                    dst[c] = (source[c] == static_cast<T>(0)) ? GL_FALSE : GL_TRUE;
+                }
+            }
+
+            defaultUniformBlocksDirty->set(shaderType);
+        }
+    }
+}
+template void SetUniform<GLint>(const gl::ProgramExecutable *executable,
+                                GLint location,
+                                GLsizei count,
+                                const GLint *v,
+                                GLenum entryPointType,
+                                DefaultUniformBlockMap *defaultUniformBlocks,
+                                gl::ShaderBitSet *defaultUniformBlocksDirty);
+template void SetUniform<GLuint>(const gl::ProgramExecutable *executable,
+                                 GLint location,
+                                 GLsizei count,
+                                 const GLuint *v,
+                                 GLenum entryPointType,
+                                 DefaultUniformBlockMap *defaultUniformBlocks,
+                                 gl::ShaderBitSet *defaultUniformBlocksDirty);
+template void SetUniform<GLfloat>(const gl::ProgramExecutable *executable,
+                                  GLint location,
+                                  GLsizei count,
+                                  const GLfloat *v,
+                                  GLenum entryPointType,
+                                  DefaultUniformBlockMap *defaultUniformBlocks,
+                                  gl::ShaderBitSet *defaultUniformBlocksDirty);
+
+template <int cols, int rows>
+void SetUniformMatrixfv(const gl::ProgramExecutable *executable,
+                        GLint location,
+                        GLsizei count,
+                        GLboolean transpose,
+                        const GLfloat *value,
+                        DefaultUniformBlockMap *defaultUniformBlocks,
+                        gl::ShaderBitSet *defaultUniformBlocksDirty)
+{
+    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
+
+    for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
+    {
+        BufferAndLayout &uniformBlock         = *(*defaultUniformBlocks)[shaderType];
+        const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+        // Assume an offset of -1 means the block is unused.
+        if (layoutInfo.offset == -1)
+        {
+            continue;
+        }
+
+        SetFloatUniformMatrixGLSL<cols, rows>::Run(
+            locationInfo.arrayIndex, linkedUniform.getBasicTypeElementCount(), count, transpose,
+            value, uniformBlock.uniformData.data() + layoutInfo.offset);
+
+        defaultUniformBlocksDirty->set(shaderType);
+    }
+}
+
+#define ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(cols, rows)                                   \
+    template void SetUniformMatrixfv<cols, rows>(                                                \
+        const gl::ProgramExecutable *executable, GLint location, GLsizei count,                  \
+        GLboolean transpose, const GLfloat *value, DefaultUniformBlockMap *defaultUniformBlocks, \
+        gl::ShaderBitSet *defaultUniformBlocksDirty)
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(2, 2);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(2, 3);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(2, 4);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(3, 2);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(3, 3);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(3, 4);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(4, 2);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(4, 3);
+ANGLE_SET_UNIFORM_MATRIX_FV_SPECIALIZATION(4, 4);
+
+template <typename T>
+void GetUniform(const gl::ProgramExecutable *executable,
+                GLint location,
+                T *v,
+                GLenum entryPointType,
+                const DefaultUniformBlockMap *defaultUniformBlocks)
+{
+    const gl::VariableLocation &locationInfo = executable->getUniformLocations()[location];
+    const gl::LinkedUniform &linkedUniform   = executable->getUniforms()[locationInfo.index];
+
+    ASSERT(!linkedUniform.isSampler() && !linkedUniform.isImage());
+
+    const gl::ShaderType shaderType = linkedUniform.getFirstActiveShaderType();
+    ASSERT(shaderType != gl::ShaderType::InvalidEnum);
+
+    const BufferAndLayout &uniformBlock   = *(*defaultUniformBlocks)[shaderType];
+    const sh::BlockMemberInfo &layoutInfo = uniformBlock.uniformLayout[location];
+
+    ASSERT(linkedUniform.getUniformTypeInfo().componentType == entryPointType ||
+           linkedUniform.getUniformTypeInfo().componentType ==
+               gl::VariableBoolVectorType(entryPointType));
+
+    if (gl::IsMatrixType(linkedUniform.getType()))
+    {
+        const uint8_t *ptrToElement = uniformBlock.uniformData.data() + layoutInfo.offset +
+                                      (locationInfo.arrayIndex * layoutInfo.arrayStride);
+        GetMatrixUniform(linkedUniform.getType(), v, reinterpret_cast<const T *>(ptrToElement),
+                         false);
+    }
+    else
+    {
+        ReadFromBufferWithLayout(linkedUniform.getElementComponents(), locationInfo.arrayIndex, v,
+                                 layoutInfo, &uniformBlock.uniformData);
+    }
+}
+
+template void GetUniform<GLint>(const gl::ProgramExecutable *executable,
+                                GLint location,
+                                GLint *v,
+                                GLenum entryPointType,
+                                const DefaultUniformBlockMap *defaultUniformBlocks);
+template void GetUniform<GLuint>(const gl::ProgramExecutable *executable,
+                                 GLint location,
+                                 GLuint *v,
+                                 GLenum entryPointType,
+                                 const DefaultUniformBlockMap *defaultUniformBlocks);
+template void GetUniform<GLfloat>(const gl::ProgramExecutable *executable,
+                                  GLint location,
+                                  GLfloat *v,
+                                  GLenum entryPointType,
+                                  const DefaultUniformBlockMap *defaultUniformBlocks);
+
 const angle::Format &GetFormatFromFormatType(GLenum format, GLenum type)
 {
     GLenum sizedInternalFormat    = gl::GetInternalFormatInfo(format, type).sizedInternalFormat;

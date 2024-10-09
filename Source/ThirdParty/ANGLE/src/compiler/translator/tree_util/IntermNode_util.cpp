@@ -416,11 +416,6 @@ TIntermTyped *CreateBuiltInUnaryFunctionCallNode(const char *name,
     return CreateBuiltInFunctionCallNode(name, {argument}, symbolTable, shaderVersion);
 }
 
-int GetESSLOrGLSLVersion(ShShaderSpec spec, int esslVersion, int glslVersion)
-{
-    return IsDesktopGLSpec(spec) ? glslVersion : esslVersion;
-}
-
 // Returns true if a block ends in a branch (break, continue, return, etc).  This is only correct
 // after PruneNoOps, because it expects empty blocks after a branch to have been already pruned,
 // i.e. a block can only end in a branch if its last statement is a branch or is a block ending in

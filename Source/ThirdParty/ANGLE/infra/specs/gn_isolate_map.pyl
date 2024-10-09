@@ -35,10 +35,6 @@
     "label": "//src/tests:angle_deqp_egl_tests",
     "type": "windowed_test_launcher",
   },
-  "angle_deqp_gl46_tests": {
-    "label": "//src/tests:angle_deqp_gl46_tests",
-    "type": "windowed_test_launcher",
-  },
   "angle_deqp_gles2_tests": {
     "label": "//src/tests:angle_deqp_gles2_tests",
     "type": "windowed_test_launcher",

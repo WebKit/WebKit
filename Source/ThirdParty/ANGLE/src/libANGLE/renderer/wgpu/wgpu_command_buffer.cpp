@@ -52,6 +52,20 @@ void CommandBuffer::draw(uint32_t vertexCount,
     drawCommand->firstInstance = firstInstance;
 }
 
+void CommandBuffer::drawIndexed(uint32_t indexCount,
+                                uint32_t instanceCount,
+                                uint32_t firstIndex,
+                                int32_t baseVertex,
+                                uint32_t firstInstance)
+{
+    DrawIndexedCommand *drawIndexedCommand = initCommand<CommandID::DrawIndexed>();
+    drawIndexedCommand->indexCount         = indexCount;
+    drawIndexedCommand->instanceCount      = instanceCount;
+    drawIndexedCommand->firstIndex         = firstIndex;
+    drawIndexedCommand->baseVertex         = baseVertex;
+    drawIndexedCommand->firstInstance      = firstInstance;
+}
+
 void CommandBuffer::setPipeline(wgpu::RenderPipeline pipeline)
 {
     SetPipelineCommand *setPiplelineCommand = initCommand<CommandID::SetPipeline>();
@@ -87,6 +101,25 @@ void CommandBuffer::setViewport(float x,
     mHasSetViewportCommand = true;
 }
 
+void CommandBuffer::setIndexBuffer(wgpu::Buffer buffer,
+                                   wgpu::IndexFormat format,
+                                   uint64_t offset,
+                                   uint64_t size)
+{
+    SetIndexBufferCommand *setIndexBufferCommand = initCommand<CommandID::SetIndexBuffer>();
+    setIndexBufferCommand->buffer                = GetReferencedObject(mReferencedBuffers, buffer);
+    setIndexBufferCommand->format                = format;
+    setIndexBufferCommand->offset                = offset;
+    setIndexBufferCommand->size                  = size;
+}
+
+void CommandBuffer::setVertexBuffer(uint32_t slot, wgpu::Buffer buffer)
+{
+    SetVertexBufferCommand *setVertexBufferCommand = initCommand<CommandID::SetVertexBuffer>();
+    setVertexBufferCommand->slot                   = slot;
+    setVertexBufferCommand->buffer = GetReferencedObject(mReferencedBuffers, buffer);
+}
+
 void CommandBuffer::clear()
 {
     mCommandCount = 0;
@@ -105,6 +138,7 @@ void CommandBuffer::clear()
     mCurrentCommandBlock = 0;
 
     mReferencedRenderPipelines.clear();
+    mReferencedBuffers.clear();
 }
 
 void CommandBuffer::recordCommands(wgpu::RenderPassEncoder encoder)
@@ -137,6 +171,27 @@ void CommandBuffer::recordCommands(wgpu::RenderPassEncoder encoder)
                     break;
                 }
 
+                case CommandID::DrawIndexed:
+                {
+                    const DrawIndexedCommand &drawIndexedCommand =
+                        GetCommandAndIterate<CommandID::DrawIndexed>(&currentCommand);
+                    encoder.DrawIndexed(
+                        drawIndexedCommand.indexCount, drawIndexedCommand.instanceCount,
+                        drawIndexedCommand.firstIndex, drawIndexedCommand.baseVertex,
+                        drawIndexedCommand.firstInstance);
+                    break;
+                }
+
+                case CommandID::SetIndexBuffer:
+                {
+                    const SetIndexBufferCommand &setIndexBufferCommand =
+                        GetCommandAndIterate<CommandID::SetIndexBuffer>(&currentCommand);
+                    encoder.SetIndexBuffer(
+                        *setIndexBufferCommand.buffer, setIndexBufferCommand.format,
+                        setIndexBufferCommand.offset, setIndexBufferCommand.size);
+                    break;
+                }
+
                 case CommandID::SetPipeline:
                 {
                     const SetPipelineCommand &setPiplelineCommand =
@@ -162,6 +217,15 @@ void CommandBuffer::recordCommands(wgpu::RenderPassEncoder encoder)
                     encoder.SetViewport(setViewportCommand.x, setViewportCommand.y,
                                         setViewportCommand.width, setViewportCommand.height,
                                         setViewportCommand.minDepth, setViewportCommand.maxDepth);
+                    break;
+                }
+
+                case CommandID::SetVertexBuffer:
+                {
+                    const SetVertexBufferCommand &setVertexBufferCommand =
+                        GetCommandAndIterate<CommandID::SetVertexBuffer>(&currentCommand);
+                    encoder.SetVertexBuffer(setVertexBufferCommand.slot,
+                                            *setVertexBufferCommand.buffer);
                     break;
                 }
 

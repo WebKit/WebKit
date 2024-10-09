@@ -119,13 +119,6 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
-    FeatureInfo allowSamplerCompareLod = {
-        "allowSamplerCompareLod",
-        FeatureCategory::MetalFeatures,
-        "The renderer supports sample_compare with lod",
-        &members,
-    };
-
     FeatureInfo allowBufferReadWrite = {
         "allowBufferReadWrite",
         FeatureCategory::MetalFeatures,

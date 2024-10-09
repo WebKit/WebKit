@@ -185,7 +185,7 @@ egl::Error PbufferSurfaceWGL::releaseTexImage(const gl::Context *context, EGLint
     return egl::NoError();
 }
 
-void PbufferSurfaceWGL::setSwapInterval(EGLint interval) {}
+void PbufferSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval) {}
 
 EGLint PbufferSurfaceWGL::getWidth() const
 {

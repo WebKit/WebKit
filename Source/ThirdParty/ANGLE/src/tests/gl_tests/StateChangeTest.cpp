@@ -11245,6 +11245,9 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES3_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES3_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES3_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 
@@ -11256,6 +11259,9 @@ ANGLE_INSTANTIATE_TEST_ES31_AND(
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
     ES31_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+    ES31_VULKAN()
+        .disable(Feature::SupportsExtendedDynamicState2)
+        .disable(Feature::SupportsGraphicsPipelineLibrary),
     ES31_VULKAN().disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES31_VULKAN().disable(Feature::UsePrimitiveRestartEnableDynamicState));
 

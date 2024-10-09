@@ -10,6 +10,7 @@
 
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLContextImpl.h"
@@ -44,9 +45,6 @@ class CLContextVk : public CLContextImpl, public vk::Context
                                CLMemoryImpl::Ptr *bufferOut) override;
 
     angle::Result createImage(const cl::Image &image,
-                              cl::MemFlags flags,
-                              const cl_image_format &format,
-                              const cl::ImageDescriptor &desc,
                               void *hostPtr,
                               CLMemoryImpl::Ptr *imageOut) override;
 
@@ -93,8 +91,15 @@ class CLContextVk : public CLContextImpl, public vk::Context
 
     cl::Context &getFrontendObject() { return const_cast<cl::Context &>(mContext); }
 
+    DescriptorSetLayoutCache *getDescriptorSetLayoutCache() { return &mDescriptorSetLayoutCache; }
+    PipelineLayoutCache *getPipelineLayoutCache() { return &mPipelineLayoutCache; }
+
   private:
     void handleDeviceLost() const;
+
+    // Caches for DescriptorSetLayout and PipelineLayout
+    DescriptorSetLayoutCache mDescriptorSetLayoutCache;
+    PipelineLayoutCache mPipelineLayoutCache;
 
     // Have the CL Context keep tabs on associated CL objects
     struct Mutable

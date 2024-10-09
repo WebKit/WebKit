@@ -1339,10 +1339,10 @@
             "issue": "https://issuetracker.google.com/253522366"
         },
         {
-            "name": "async_command_buffer_reset",
+            "name": "async_command_buffer_reset_and_garbage_cleanup",
             "category": "Features",
             "description": [
-                "Reset command buffer in async thread."
+                "Reset command buffer and cleanup garbage in async thread."
             ],
             "issue": "https://issuetracker.google.com/255411748"
         },
@@ -1769,6 +1769,48 @@
                 "VkDevice supports SignedZeroInfNanPreserve execution mode for 64-bit floating point from VK_KHR_shader_float_controls extension"
             ],
             "issue": "https://anglebug.com/360031000"
+        },
+        {
+            "name": "prefer_double_buffer_swapchain_on_fifo_mode",
+            "category": "Features",
+            "description": [
+                "allow create double buffer swapchain for fifo present mode"
+            ],
+            "issue": "https://issuetracker.google.com/311022968"
+        },
+        {
+            "name": "use_dual_pipeline_blob_cache_slots",
+            "category": "Features",
+            "description": [
+                "Wether to use single or dual slots to store PipelineCacheVk data into the blob cache."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "use_empty_blobs_to_erase_old_pipeline_cache_from_blob_cache",
+            "category": "Features",
+            "description": [
+                "Whether to use empty blobs or 1-sized blobs to erase old PipelineCacheVk data from the blob cache."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "has_blob_cache_that_evicts_old_items_first",
+            "category": "Features",
+            "description": [
+                "Whether platform blob cache evicts old items first (has LRU). ",
+                "This is also true if cache evicts more old items than required when storing a new item."
+            ],
+            "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "verify_pipeline_cache_in_blob_cache",
+            "category": "Features",
+            "description": [
+                "Wether need to perform verification of stored PipelineCacheVk data chunks or not. ",
+                "Relevant, when blob cache does not evict old items first (no LRU) or evicts more old items than required when storing a new item."
+            ],
+            "issue": "https://anglebug.com/42263322"
         }
     ]
 }

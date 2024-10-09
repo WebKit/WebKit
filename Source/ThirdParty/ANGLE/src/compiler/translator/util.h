@@ -24,17 +24,6 @@ bool atoi_clamp(const char *str, unsigned int *value);
 namespace sh
 {
 
-// Keeps track of whether an implicit conversion from int/uint to float is possible.
-// These conversions are supported in desktop GLSL shaders only.
-// Also keeps track of which side of operation should be converted.
-enum class ImplicitTypeConversion
-{
-    Same,
-    Left,
-    Right,
-    Invalid,
-};
-
 class TIntermBlock;
 class TIntermDeclaration;
 class TSymbolTable;
@@ -91,11 +80,6 @@ bool IsInShaderStorageBlock(TIntermTyped *node);
 GLenum GetImageInternalFormatType(TLayoutImageInternalFormat iifq);
 // ESSL 1.00 shaders nest function body scope within function parameter scope
 bool IsSpecWithFunctionBodyNewScope(ShShaderSpec shaderSpec, int shaderVersion);
-
-// Helper functions for implicit conversions
-ImplicitTypeConversion GetConversion(TBasicType t1, TBasicType t2);
-
-bool IsValidImplicitConversion(ImplicitTypeConversion conversion, TOperator op);
 
 // Whether the given basic type requires precision.
 bool IsPrecisionApplicableToType(TBasicType type);

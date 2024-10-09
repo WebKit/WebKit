@@ -27,7 +27,6 @@
 #include "libANGLE/renderer/gl/FenceNVGL.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/PLSProgramCache.h"
 #include "libANGLE/renderer/gl/ProgramGL.h"
 #include "libANGLE/renderer/gl/QueryGL.h"
 #include "libANGLE/renderer/gl/RenderbufferGL.h"
@@ -214,7 +213,6 @@ RendererGL::~RendererGL()
     SafeDelete(mBlitter);
     SafeDelete(mMultiviewClearer);
     SafeDelete(mStateManager);
-    SafeDelete(mPLSProgramCache);
 }
 
 angle::Result RendererGL::flush()
@@ -331,15 +329,6 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
 const ShPixelLocalStorageOptions &RendererGL::getNativePixelLocalStorageOptions() const
 {
     return mNativePLSOptions;
-}
-
-PLSProgramCache *RendererGL::getPLSProgramCache()
-{
-    if (!mPLSProgramCache)
-    {
-        mPLSProgramCache = new PLSProgramCache(mFunctions.get(), mNativeCaps);
-    }
-    return mPLSProgramCache;
 }
 
 MultiviewImplementationTypeGL RendererGL::getMultiviewImplementationType() const

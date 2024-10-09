@@ -159,16 +159,6 @@ int main(int argc, char *argv[])
                                     resources.FragmentPrecisionHigh = 1;
                                 }
                                 break;
-                            case 'd':
-                                if (argv[0][4] == 'c')
-                                {
-                                    spec = SH_GL_COMPATIBILITY_SPEC;
-                                }
-                                else
-                                {
-                                    spec = SH_GL_CORE_SPEC;
-                                }
-                                break;
                             default:
                                 failCode = EFailUsage;
                         }
@@ -457,8 +447,6 @@ void usage()
         "       -s=w     : use WebGL 1.0 spec\n"
         "       -s=wn    : use WebGL 1.0 spec with no highp support in fragment shaders\n"
         "       -s=w2    : use WebGL 2.0 spec\n"
-        "       -s=d     : use Desktop Core spec (in development)\n"
-        "       -s=dc    : use Desktop Compatibility spec (in development)\n"
         "       -b=e     : output GLSL ES code (this is by default)\n"
         "       -b=g     : output GLSL code (compatibility profile)\n"
         "       -b=g[NUM]: output GLSL code (NUM can be 130, 140, 150, 330, 400, 410, 420, 430, "

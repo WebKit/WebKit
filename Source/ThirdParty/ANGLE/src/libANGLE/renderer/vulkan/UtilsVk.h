@@ -114,6 +114,15 @@ class UtilsVk : angle::NonCopyable
         VkClearDepthStencilValue depthStencilClearValue;
     };
 
+    struct ClearTextureParameters
+    {
+        VkImageAspectFlags aspectFlags;
+        vk::LevelIndex level;
+        uint32_t layer;
+        gl::Box clearArea;
+        VkClearValue clearValue;
+    };
+
     struct BlitResolveParameters
     {
         // |srcOffset| and |dstIndexBufferOffset| define the original blit/resolve offsets, possibly
@@ -255,6 +264,11 @@ class UtilsVk : angle::NonCopyable
                                       vk::BufferHelper *src,
                                       const ConvertVertexParameters &params,
                                       const OffsetAndVertexCounts &additionalOffsetVertexCounts);
+
+    // EXT_clear_texture
+    angle::Result clearTexture(ContextVk *contextVk,
+                               vk::ImageHelper *dst,
+                               ClearTextureParameters &params);
 
     angle::Result clearFramebuffer(ContextVk *contextVk,
                                    FramebufferVk *framebuffer,
@@ -538,6 +552,7 @@ class UtilsVk : angle::NonCopyable
         ComputeStartIndex,  // Special value to separate draw and dispatch functions.
         ConvertIndexBuffer = ComputeStartIndex,
         ConvertVertexBuffer,
+        ClearTexture,
         BlitResolveStencilNoExport,
         ConvertIndexIndirectBuffer,
         ConvertIndexIndirectLineLoopBuffer,
@@ -639,6 +654,8 @@ class UtilsVk : angle::NonCopyable
                                   const vk::ImageView *imageView,
                                   const vk::RenderPassDesc &renderPassDesc,
                                   const gl::Rectangle &renderArea,
+                                  const VkImageAspectFlags aspectFlags,
+                                  const VkClearValue *clearValue,
                                   vk::RenderPassCommandBuffer **commandBufferOut);
 
     // Set up descriptor set and call dispatch.

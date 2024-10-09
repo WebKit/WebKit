@@ -199,7 +199,7 @@ egl::Error WindowSurfaceGLX::releaseTexImage(const gl::Context *context, EGLint 
     return egl::NoError();
 }
 
-void WindowSurfaceGLX::setSwapInterval(EGLint interval)
+void WindowSurfaceGLX::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     mSwapControl.targetSwapInterval = interval;
 }

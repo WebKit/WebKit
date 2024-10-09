@@ -48,6 +48,7 @@ enum class TExtension : uint8_t
     EXT_tessellation_shader,
     EXT_texture_buffer,
     EXT_texture_cube_map_array,
+    EXT_texture_shadow_lod,
     INTEL_fragment_shader_ordering,
     KHR_blend_equation_advanced,
     NV_EGL_stream_consumer_external,

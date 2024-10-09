@@ -29,7 +29,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::DriverVersion, mRenderer->getVersionString(true)},
         {cl::DeviceInfo::Version, std::string("OpenCL 3.0 " + mRenderer->getVersionString(true))},
         {cl::DeviceInfo::Profile, std::string("FULL_PROFILE")},
-        {cl::DeviceInfo::OpenCL_C_Version, std::string("OpenCL C 3.0 ")},
+        {cl::DeviceInfo::OpenCL_C_Version, std::string("OpenCL C 1.2 ")},
         {cl::DeviceInfo::LatestConformanceVersionPassed, std::string("FIXME")}};
     mInfoSizeT = {
         {cl::DeviceInfo::MaxWorkGroupSize, props.limits.maxComputeWorkGroupInvocations},
@@ -89,7 +89,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
 
         // TODO(aannestrand) Update these hardcoded platform/device queries
         // http://anglebug.com/42266935
-        {cl::DeviceInfo::AddressBits, 64},
+        {cl::DeviceInfo::AddressBits, 32},
         {cl::DeviceInfo::EndianLittle, CL_TRUE},
         {cl::DeviceInfo::LocalMemType, CL_LOCAL},
         {cl::DeviceInfo::MaxSamplers, 0},
@@ -119,7 +119,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::PreferredLocalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredGlobalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredPlatformAtomicAlignment, 0},
-        {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_TRUE},
+        {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_FALSE},
         {cl::DeviceInfo::GenericAddressSpaceSupport, CL_FALSE},
         {cl::DeviceInfo::SubGroupIndependentForwardProgress, CL_FALSE},
         {cl::DeviceInfo::WorkGroupCollectiveFunctionsSupport, CL_FALSE},
@@ -162,11 +162,10 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.builtInKernels       = "";
     info.version              = CL_MAKE_VERSION(3, 0, 0);
     info.versionStr           = "OpenCL 3.0 " + mRenderer->getVersionString(true);
-    info.OpenCL_C_AllVersions = {{CL_MAKE_VERSION(3, 0, 0), "OpenCL C"},
-                                 {CL_MAKE_VERSION(2, 0, 0), "OpenCL C"},
-                                 {CL_MAKE_VERSION(1, 2, 0), "OpenCL C"},
+    info.OpenCL_C_AllVersions = {{CL_MAKE_VERSION(1, 0, 0), "OpenCL C"},
                                  {CL_MAKE_VERSION(1, 1, 0), "OpenCL C"},
-                                 {CL_MAKE_VERSION(1, 0, 0), "OpenCL C"}};
+                                 {CL_MAKE_VERSION(1, 2, 0), "OpenCL C"},
+                                 {CL_MAKE_VERSION(3, 0, 0), "OpenCL C"}};
 
     info.OpenCL_C_Features         = {};
     info.extensionsWithVersion     = {};

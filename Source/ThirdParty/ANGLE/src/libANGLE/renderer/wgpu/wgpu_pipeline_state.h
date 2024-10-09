@@ -111,6 +111,8 @@ constexpr uint32_t kVertexAttributeStrideBits = 16;
 
 struct PackedVertexAttribute final
 {
+    PackedVertexAttribute();
+
     uint16_t offset : kAttributeOffsetMaxBits;
     uint16_t enabled : 1;
     uint8_t format : kVertexFormatBitCount;
@@ -138,7 +140,7 @@ class RenderPipelineDesc final
     void setCullMode(gl::CullFaceMode cullMode, bool cullFaceEnabled);
     void setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a);
 
-    bool setVertexAttributes(const gl::AttribArray<PackedVertexAttribute> &attribs);
+    bool setVertexAttribute(size_t attribIndex, PackedVertexAttribute &newAttrib);
     bool setColorAttachmentFormat(size_t colorIndex, wgpu::TextureFormat format);
     bool setDepthStencilAttachmentFormat(wgpu::TextureFormat format);
     bool setDepthFunc(wgpu::CompareFunction compareFunc);

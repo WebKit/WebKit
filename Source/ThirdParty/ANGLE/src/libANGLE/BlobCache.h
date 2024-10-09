@@ -57,16 +57,19 @@ class BlobCache final : angle::NonCopyable
 
     // Store a key-blob pair in the cache.  If application callbacks are set, the application cache
     // will be used.  Otherwise the value is cached in this object.
-    void put(const BlobCache::Key &key, angle::MemoryBuffer &&value);
+    void put(const gl::Context *context, const BlobCache::Key &key, angle::MemoryBuffer &&value);
 
     // Store a key-blob pair in the cache, but compress the blob before insertion. Returns false if
     // compression fails, returns true otherwise.
-    bool compressAndPut(const BlobCache::Key &key,
+    bool compressAndPut(const gl::Context *context,
+                        const BlobCache::Key &key,
                         angle::MemoryBuffer &&uncompressedValue,
                         size_t *compressedSize);
 
     // Store a key-blob pair in the application cache, only if application callbacks are set.
-    void putApplication(const BlobCache::Key &key, const angle::MemoryBuffer &value);
+    void putApplication(const gl::Context *context,
+                        const BlobCache::Key &key,
+                        const angle::MemoryBuffer &value);
 
     // Store a key-blob pair in the cache without making callbacks to the application.  This is used
     // to repopulate this object's cache on startup without generating callback calls.
@@ -76,7 +79,8 @@ class BlobCache final : angle::NonCopyable
 
     // Check if the cache contains the blob corresponding to this key.  If application callbacks are
     // set, those will be used.  Otherwise they key is looked up in this object's cache.
-    [[nodiscard]] bool get(angle::ScratchBuffer *scratchBuffer,
+    [[nodiscard]] bool get(const gl::Context *context,
+                           angle::ScratchBuffer *scratchBuffer,
                            const BlobCache::Key &key,
                            BlobCache::Value *valueOut);
 
@@ -92,6 +96,7 @@ class BlobCache final : angle::NonCopyable
         DecompressFailure,
     };
     [[nodiscard]] GetAndDecompressResult getAndDecompress(
+        const gl::Context *context,
         angle::ScratchBuffer *scratchBuffer,
         const BlobCache::Key &key,
         size_t maxUncompressedDataSize,
@@ -125,11 +130,17 @@ class BlobCache final : angle::NonCopyable
 
     bool areBlobCacheFuncsSet() const;
 
-    bool isCachingEnabled() const { return areBlobCacheFuncsSet() || maxSize() > 0; }
+    bool isCachingEnabled(const gl::Context *context) const;
 
     angle::SimpleMutex &getMutex() { return mBlobCacheMutex; }
 
   private:
+    size_t callBlobGetCallback(const gl::Context *context,
+                               const void *key,
+                               size_t keySize,
+                               void *value,
+                               size_t valueSize);
+
     // This internal cache is used only if the application is not providing caching callbacks
     using CacheEntry = std::pair<angle::MemoryBuffer, CacheSource>;
 

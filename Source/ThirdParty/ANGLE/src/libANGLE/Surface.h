@@ -100,7 +100,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     EGLint isPostSubBufferSupported() const;
 
-    void setSwapInterval(EGLint interval);
+    void setSwapInterval(const Display *display, EGLint interval);
     Error onDestroy(const Display *display);
 
     void setMipmapLevel(EGLint level);

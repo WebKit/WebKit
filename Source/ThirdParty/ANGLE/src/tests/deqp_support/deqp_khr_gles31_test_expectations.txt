@@ -65,8 +65,10 @@
 40644707 VULKAN NVIDIA : KHR-GLES31.core.shader_storage_buffer_object.advanced-unsizedArrayLength-fs-*-matR* = SKIP
 
 // New failures when upgrading to Ubuntu 22/newer driver.
+362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.draw_buffers_indexed.color_masks = FAIL
+362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.pixelstoragemodes.teximage3d.rgb10a2.16_16_1 = FAIL
 362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.max_in_out_attributes = SKIP
-365974429 LINUX NVIDIA VULKAN : KHR-GLES31.core.draw_buffers_indexed.color_masks = FAIL
+362486580 LINUX NVIDIA VULKAN : KHR-GLES31.core.texture_cube_map_array.image_op_fragment_sh = FAIL
 
 ////
 //// SwANGLE expectations
@@ -362,3 +364,8 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array* = SKIP
 // Mali G710
 42266649 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC32FLinear = FAIL
 42266649 MALIG710 VULKAN : KHR-GLES31.core.texture_border_clamp.Texture2DDC16Linear = FAIL
+
+// Test bug where tessellation shader support is not queried
+370792795 SWIFTSHADER : KHR-GLES31.core.tessellation_shader.* = SKIP
+370792795 PIXEL4ORXL VULKAN : KHR-GLES31.core.tessellation_shader.* = SKIP
+370792795 PIXEL6 VULKAN : KHR-GLES31.core.tessellation_shader.* = SKIP

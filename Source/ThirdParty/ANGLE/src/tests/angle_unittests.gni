@@ -172,13 +172,7 @@ angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
 
 angle_unittests_wgsl_sources = [ "../tests/compiler_tests/WGSLOutput_test.cpp" ]
 
-if (!angle_enable_desktop_glsl) {
-  angle_unittests_sources +=
-      [ "compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]
-} else {
-  angle_unittests_sources +=
-      [ "compiler_tests/ImmutableString_test_autogen.cpp" ]
-}
+angle_unittests_sources += [ "compiler_tests/ImmutableString_test_autogen.cpp" ]
 
 if (!is_android && !is_fuchsia && !is_ios) {
   angle_unittests_sources += [ "test_utils/runner/TestSuite_unittest.cpp" ]

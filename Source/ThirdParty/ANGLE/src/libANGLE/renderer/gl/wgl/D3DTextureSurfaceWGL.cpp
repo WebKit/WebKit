@@ -463,7 +463,7 @@ egl::Error D3DTextureSurfaceWGL::releaseTexImage(const gl::Context *context, EGL
     return egl::NoError();
 }
 
-void D3DTextureSurfaceWGL::setSwapInterval(EGLint interval)
+void D3DTextureSurfaceWGL::setSwapInterval(const egl::Display *display, EGLint interval)
 {
     UNIMPLEMENTED();
 }

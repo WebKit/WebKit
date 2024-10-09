@@ -3605,6 +3605,25 @@ void CaptureGenVertexArraysOES_arraysPacked(const State &glState,
     CaptureGenVertexArrays_arraysPacked(glState, isCallValid, n, arrays, paramCapture);
 }
 
+void CaptureBlobCacheCallbacksANGLE_userParam(const State &glState,
+                                              bool isCallValid,
+                                              GLSETBLOBPROCANGLE set,
+                                              GLGETBLOBPROCANGLE get,
+                                              const void *userParam,
+                                              angle::ParamCapture *paramCapture)
+{
+    // Skipped
+}
+
+void CaptureGetPointervANGLE_params(const State &glState,
+                                    bool isCallValid,
+                                    GLenum pname,
+                                    void **params,
+                                    angle::ParamCapture *paramCapture)
+{
+    // Skipped
+}
+
 void CaptureGetTexImageANGLE_pixels(const State &glState,
                                     bool isCallValid,
                                     TextureTarget target,

@@ -29,6 +29,7 @@
 #include "libANGLE/formatutils.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2.h"
+#include "libANGLE/validationES32.h"
 #include "libANGLE/validationES3_autogen.h"
 
 namespace gl
@@ -2408,19 +2409,7 @@ bool ValidateGetPointervKHR(const Context *context,
         return false;
     }
 
-    // TODO: represent this in Context::getQueryParameterInfo.
-    switch (pname)
-    {
-        case GL_DEBUG_CALLBACK_FUNCTION:
-        case GL_DEBUG_CALLBACK_USER_PARAM:
-            break;
-
-        default:
-            ANGLE_VALIDATION_ERRORF(GL_INVALID_ENUM, kEnumNotSupported, pname);
-            return false;
-    }
-
-    return true;
+    return ValidateGetPointerv(context, entryPoint, pname, params);
 }
 
 bool ValidateGetPointervRobustANGLERobustANGLE(const Context *context,
@@ -6513,6 +6502,41 @@ bool ValidateRenderbufferStorageMultisampleEXT(const Context *context,
     }
 
     return true;
+}
+
+bool ValidateBlobCacheCallbacksANGLE(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     GLSETBLOBPROCANGLE set,
+                                     GLGETBLOBPROCANGLE get,
+                                     const void *userParam)
+{
+    if (!context->getExtensions().blobCacheANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if ((get == nullptr) != (set == nullptr))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlobCacheCallbacksUnbalanced);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidateGetPointervANGLE(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLenum pname,
+                              void *const *params)
+{
+    if (!context->getExtensions().blobCacheANGLE)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateGetPointerv(context, entryPoint, pname, params);
 }
 
 void RecordBindTextureTypeError(const Context *context,

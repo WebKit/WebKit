@@ -766,8 +766,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
         writeReferencedVaryings(out);
         out << "\n";
 
-        if ((IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 130) ||
-            (!IsDesktopGLSpec(mShaderSpec) && mShaderVersion >= 300))
+        if (mShaderVersion >= 300)
         {
             for (const auto &outputVariable : mReferencedOutputVariables)
             {

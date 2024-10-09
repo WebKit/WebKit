@@ -575,6 +575,9 @@ struct Extensions
     // GL_EXT_texture_rg
     bool textureRgEXT = false;
 
+    // GL_EXT_texture_shadow_lod
+    bool textureShadowLodEXT = false;
+
     // GL_EXT_texture_sRGB_decode
     bool textureSRGBDecodeEXT = false;
 
@@ -637,6 +640,9 @@ struct Extensions
 
     // GL_CHROMIUM_bind_uniform_location
     bool bindUniformLocationCHROMIUM = false;
+
+    // GL_ANGLE_blob_cache
+    bool blobCacheANGLE = false;
 
     // GL_ANGLE_client_arrays
     bool clientArraysANGLE = false;

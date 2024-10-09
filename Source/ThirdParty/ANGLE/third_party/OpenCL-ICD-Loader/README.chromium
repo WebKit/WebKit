@@ -3,7 +3,7 @@ Short Name: OpenCL-ICD-Loader
 Version: v2021.04.29
 URL: https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-ICD-Loader
 SOURCE CODE: git clone -b OpenCL-ICD-Loader https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenCL-ICD-Loader
-Date: 29/04/2021
+Date: 2021-04-29
 Revision: 9b5e3849b49a1448996c8b96ba086cd774d987db
 Security Critical: no
 Shipped: yes

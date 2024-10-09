@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 //
 
-// context_private_call_gles.cpp:
+// context_private_call.cpp:
 //   Helpers that set/get state that is entirely locally accessed by the context.
 
-#include "libANGLE/context_private_call_gles_autogen.h"
+#include "libANGLE/context_private_call_autogen.h"
 
 #include "common/debug.h"
 #include "libANGLE/queryconversions.h"

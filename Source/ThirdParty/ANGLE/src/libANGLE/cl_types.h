@@ -79,6 +79,40 @@ struct ImageDescriptor
     size_t slicePitch;
     cl_uint numMipLevels;
     cl_uint numSamples;
+
+    ImageDescriptor(MemObjectType type_,
+                    size_t width_,
+                    size_t height_,
+                    size_t depth_,
+                    size_t arraySize_,
+                    size_t rowPitch_,
+                    size_t slicePitch_,
+                    cl_uint numMipLevels_,
+                    cl_uint numSamples_)
+        : type(type_),
+          width(width_),
+          height(height_),
+          depth(depth_),
+          arraySize(arraySize_),
+          rowPitch(rowPitch_),
+          slicePitch(slicePitch_),
+          numMipLevels(numMipLevels_),
+          numSamples(numSamples_)
+    {
+        if (type == MemObjectType::Image1D || type == MemObjectType::Image1D_Array ||
+            type == MemObjectType::Image1D_Buffer)
+        {
+            height = 1;
+        }
+        if (type == MemObjectType::Image3D)
+        {
+            depth = 1;
+        }
+        if (!(type == MemObjectType::Image1D_Array || type == MemObjectType::Image2D_Array))
+        {
+            arraySize = 1;
+        }
+    }
 };
 
 struct MemOffsets

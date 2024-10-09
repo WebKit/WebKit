@@ -118,6 +118,7 @@ class FramebufferState final : angle::NonCopyable
 
     bool hasDepth() const;
     bool hasStencil() const;
+    GLuint getStencilBitCount() const;
 
     bool hasExternalTextureAttachment() const;
     bool hasYUVAttachment() const;
@@ -316,14 +317,13 @@ class Framebuffer final : public angle::ObserverInterface,
     GLenum getReadBufferState() const;
     void setReadBuffer(GLenum buffer);
 
-    size_t getNumColorAttachments() const;
-    bool hasDepth() const;
-    bool hasStencil() const;
+    size_t getNumColorAttachments() const { return mState.mColorAttachments.size(); }
+    bool hasDepth() const { return mState.hasDepth(); }
+    bool hasStencil() const { return mState.hasStencil(); }
+    GLuint getStencilBitCount() const { return mState.getStencilBitCount(); }
 
-    bool hasExternalTextureAttachment() const;
-    bool hasYUVAttachment() const;
-
-    bool usingExtendedDrawBuffers() const;
+    bool hasExternalTextureAttachment() const { return mState.hasExternalTextureAttachment(); }
+    bool hasYUVAttachment() const { return mState.hasYUVAttachment(); }
 
     // This method calls checkStatus.
     int getSamples(const Context *context) const;

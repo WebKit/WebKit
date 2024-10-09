@@ -481,6 +481,10 @@ EXPORTS
     glMultiDrawArraysInstancedBaseInstanceANGLE
     glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE
 
+    ; GL_ANGLE_blob_cache
+    glBlobCacheCallbacksANGLE
+    glGetPointervANGLE
+
     ; GL_ANGLE_client_arrays
 
     ; GL_ANGLE_clip_cull_distance
@@ -984,6 +988,8 @@ EXPORTS
     ; GL_EXT_texture_sRGB_RG8
 
     ; GL_EXT_texture_sRGB_decode
+
+    ; GL_EXT_texture_shadow_lod
 
     ; GL_EXT_texture_storage
     glTexStorage1DEXT

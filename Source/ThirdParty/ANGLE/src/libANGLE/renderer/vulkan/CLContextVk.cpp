@@ -30,7 +30,11 @@ CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs device
     mDeviceQueueIndex = mRenderer->getDefaultDeviceQueueIndex();
 }
 
-CLContextVk::~CLContextVk() = default;
+CLContextVk::~CLContextVk()
+{
+    mDescriptorSetLayoutCache.destroy(getRenderer());
+    mPipelineLayoutCache.destroy(getRenderer());
+}
 
 void CLContextVk::handleError(VkResult errorCode,
                               const char *file,
@@ -102,9 +106,6 @@ angle::Result CLContextVk::createBuffer(const cl::Buffer &buffer,
 }
 
 angle::Result CLContextVk::createImage(const cl::Image &image,
-                                       cl::MemFlags flags,
-                                       const cl_image_format &format,
-                                       const cl::ImageDescriptor &desc,
                                        void *hostPtr,
                                        CLMemoryImpl::Ptr *imageOut)
 {
@@ -191,6 +192,7 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
     {
         ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
     }
+    ANGLE_TRY(programImpl->init());
 
     cl::DevicePtrs linkDeviceList;
     CLProgramVk::LinkProgramsList linkProgramsList;

@@ -89,6 +89,13 @@ inline size_t GetArgLength(const char *str)
     return strlen(str);
 }
 
+inline size_t GetArgLength(int number)
+{
+    std::ostringstream oss;
+    oss << number;
+    return oss.str().length();
+}
+
 inline size_t GetArgsTotalSize()
 {
     return 0;

@@ -5,11 +5,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// context_private_call_gles_autogen.h:
+// context_private_call_autogen.h:
 //   Helpers that set/get state that is entirely privately accessed by the context.
 
-#ifndef LIBANGLE_CONTEXT_PRIVATE_CALL_gles_AUTOGEN_H_
-#define LIBANGLE_CONTEXT_PRIVATE_CALL_gles_AUTOGEN_H_
+#ifndef LIBANGLE_CONTEXT_PRIVATE_CALL_AUTOGEN_H_
+#define LIBANGLE_CONTEXT_PRIVATE_CALL_AUTOGEN_H_
 
 #include "libANGLE/Context.h"
 
@@ -633,4 +633,4 @@ void ContextPrivateShadingRate(PrivateState *privateState,
                                GLenum rate);
 }  // namespace gl
 
-#endif  // LIBANGLE_CONTEXT_PRIVATE_CALL_gles_AUTOGEN_H_
+#endif  // LIBANGLE_CONTEXT_PRIVATE_CALL_AUTOGEN_H_

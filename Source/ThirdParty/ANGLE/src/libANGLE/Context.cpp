@@ -46,7 +46,7 @@
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/capture/FrameCapture.h"
 #include "libANGLE/capture/serialize.h"
-#include "libANGLE/context_private_call_gles_autogen.h"
+#include "libANGLE/context_private_call_autogen.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/queryconversions.h"
 #include "libANGLE/queryutils.h"
@@ -153,14 +153,6 @@ constexpr state::ExtendedDirtyBits kReadInvalidateExtendedDirtyBits{};
 constexpr state::DirtyBits kDrawInvalidateDirtyBits{state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING};
 constexpr state::ExtendedDirtyBits kDrawInvalidateExtendedDirtyBits{};
 
-// The implementation's internal load/store programs for EXT_shader_pixel_pixel_local_storage
-// only need the draw framebuffer to be synced. The remaining state is managed internally.
-constexpr state::DirtyBits kPixelLocalStorageEXTEnableDisableDirtyBits{
-    state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING};
-constexpr state::ExtendedDirtyBits kPixelLocalStorageEXTEnableDisableExtendedDirtyBits{};
-constexpr state::DirtyObjects kPixelLocalStorageEXTEnableDisableDirtyObjects{
-    state::DIRTY_OBJECT_DRAW_FRAMEBUFFER};
-
 constexpr state::DirtyBits kTilingDirtyBits{state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING};
 constexpr state::ExtendedDirtyBits kTilingExtendedDirtyBits{};
 constexpr state::DirtyObjects kTilingDirtyObjects{state::DIRTY_OBJECT_DRAW_FRAMEBUFFER};
@@ -258,24 +250,13 @@ bool GetWebGLContext(const egl::AttributeMap &attribs)
     return (attribs.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) == EGL_TRUE);
 }
 
-Version GetClientVersion(egl::Display *display,
-                         const egl::AttributeMap &attribs,
-                         const EGLenum clientType)
+Version GetClientVersion(egl::Display *display, const egl::AttributeMap &attribs)
 {
     Version requestedVersion =
         Version(GetClientMajorVersion(attribs), GetClientMinorVersion(attribs));
     if (GetBackwardCompatibleContext(attribs))
     {
-        if (clientType == EGL_OPENGL_API)
-        {
-            Optional<gl::Version> maxSupportedDesktopVersion =
-                display->getImplementation()->getMaxSupportedDesktopVersion();
-            if (maxSupportedDesktopVersion.valid())
-                return std::max(maxSupportedDesktopVersion.value(), requestedVersion);
-            else
-                return requestedVersion;
-        }
-        else if (requestedVersion.major == 1)
+        if (requestedVersion.major == 1)
         {
             // If the user requests an ES1 context, we cannot return an ES 2+ context.
             return Version(1, 1);
@@ -295,11 +276,6 @@ Version GetClientVersion(egl::Display *display,
     {
         return requestedVersion;
     }
-}
-
-EGLint GetProfileMask(const egl::AttributeMap &attribs)
-{
-    return attribs.getAsInt(EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT);
 }
 
 GLenum GetResetStrategy(const egl::AttributeMap &attribs)
@@ -580,7 +556,6 @@ Context::Context(egl::Display *display,
                  egl::ContextMutex *sharedContextMutex,
                  MemoryProgramCache *memoryProgramCache,
                  MemoryShaderCache *memoryShaderCache,
-                 const EGLenum clientType,
                  const egl::AttributeMap &attribs,
                  const egl::DisplayExtensions &displayExtensions,
                  const egl::ClientExtensions &clientExtensions)
@@ -590,9 +565,7 @@ Context::Context(egl::Display *display,
              shareSemaphores,
              AllocateOrUseContextMutex(sharedContextMutex),
              &mOverlay,
-             clientType,
-             GetClientVersion(display, attribs, clientType),
-             GetProfileMask(attribs),
+             GetClientVersion(display, attribs),
              GetDebug(attribs),
              GetBindGeneratesResource(attribs),
              GetClientArraysEnabled(attribs),
@@ -677,8 +650,7 @@ egl::Error Context::initialize()
     // validation is always done even with EGL validation disabled because it's not possible to
     // detect ahead of time if an ES 3.1 context is supported (no ES_31_BIT) or if
     // KHR_no_config_context is used.
-    if (getClientType() == EGL_OPENGL_ES_API &&
-        getClientVersion() > getDisplay()->getMaxSupportedESVersion())
+    if (getClientVersion() > getDisplay()->getMaxSupportedESVersion())
     {
         return egl::Error(EGL_BAD_ATTRIBUTE, "Requested version is not supported");
     }
@@ -744,16 +716,14 @@ void Context::initializeDefaultResources()
         }
     }
 
-    if ((getClientType() != EGL_OPENGL_API && getClientVersion() >= Version(3, 2)) ||
-        mSupportedExtensions.textureCubeMapArrayAny())
+    if (getClientVersion() >= Version(3, 2) || mSupportedExtensions.textureCubeMapArrayAny())
     {
         Texture *zeroTextureCubeMapArray =
             new Texture(mImplementation.get(), {0}, TextureType::CubeMapArray);
         mZeroTextures[TextureType::CubeMapArray].set(this, zeroTextureCubeMapArray);
     }
 
-    if ((getClientType() != EGL_OPENGL_API && getClientVersion() >= Version(3, 2)) ||
-        mSupportedExtensions.textureBufferAny())
+    if (getClientVersion() >= Version(3, 2) || mSupportedExtensions.textureBufferAny())
     {
         Texture *zeroTextureBuffer = new Texture(mImplementation.get(), {0}, TextureType::Buffer);
         mZeroTextures[TextureType::Buffer].set(this, zeroTextureBuffer);
@@ -829,8 +799,6 @@ void Context::initializeDefaultResources()
     mComputeDirtyObjects |= kComputeDirtyObjectsBase;
     mCopyImageDirtyBits |= kCopyImageDirtyBitsBase;
     mCopyImageDirtyObjects |= kCopyImageDirtyObjectsBase;
-    mPixelLocalStorageEXTEnableDisableDirtyObjects |=
-        kPixelLocalStorageEXTEnableDisableDirtyObjects;
 
     mOverlay.init();
 }
@@ -968,6 +936,7 @@ egl::Error Context::makeCurrent(egl::Display *display,
     {
         initializeDefaultResources();
         initRendererString();
+        initVendorString();
         initVersionStrings();
         initExtensionStrings();
 
@@ -1989,7 +1958,7 @@ void Context::getIntegervImpl(GLenum pname, GLint *params) const
             *params = static_cast<GLint>(mExtensionStrings.size());
             break;
 
-        // Desktop client flags
+        // GLES3.2 client flags
         case GL_CONTEXT_FLAGS:
         {
             GLint contextFlags = 0;
@@ -2010,10 +1979,6 @@ void Context::getIntegervImpl(GLenum pname, GLint *params) const
             *params = contextFlags;
         }
         break;
-        case GL_CONTEXT_PROFILE_MASK:
-            ASSERT(getClientType() == EGL_OPENGL_API);
-            *params = mState.getProfileMask();
-            break;
 
         // GL_ANGLE_request_extension
         case GL_NUM_REQUESTABLE_EXTENSIONS_ANGLE:
@@ -3377,26 +3342,61 @@ void Context::programParameteri(ShaderProgramID program, GLenum pname, GLint val
 void Context::initRendererString()
 {
     std::ostringstream frontendRendererString;
-    std::string vendorString(mDisplay->getBackendVendorString());
-    std::string rendererString(mDisplay->getBackendRendererDescription());
-    std::string versionString(mDisplay->getBackendVersionString(!isWebGL()));
-    // Commas are used as a separator in ANGLE's renderer string, so remove commas from each
-    // element.
-    vendorString.erase(std::remove(vendorString.begin(), vendorString.end(), ','),
-                       vendorString.end());
-    rendererString.erase(std::remove(rendererString.begin(), rendererString.end(), ','),
-                         rendererString.end());
-    versionString.erase(std::remove(versionString.begin(), versionString.end(), ','),
-                        versionString.end());
-    frontendRendererString << "ANGLE (";
-    frontendRendererString << vendorString;
-    frontendRendererString << ", ";
-    frontendRendererString << rendererString;
-    frontendRendererString << ", ";
-    frontendRendererString << versionString;
-    frontendRendererString << ")";
+
+    constexpr char kRendererString[]        = "ANGLE_GL_RENDERER";
+    constexpr char kAndroidRendererString[] = "debug.angle.gl_renderer";
+
+    std::string overrideRenderer =
+        angle::GetEnvironmentVarOrAndroidProperty(kRendererString, kAndroidRendererString);
+    if (!overrideRenderer.empty())
+    {
+        frontendRendererString << overrideRenderer;
+    }
+    else
+    {
+        std::string vendorString(mDisplay->getBackendVendorString());
+        std::string rendererString(mDisplay->getBackendRendererDescription());
+        std::string versionString(mDisplay->getBackendVersionString(!isWebGL()));
+        // Commas are used as a separator in ANGLE's renderer string, so remove commas from each
+        // element.
+        vendorString.erase(std::remove(vendorString.begin(), vendorString.end(), ','),
+                           vendorString.end());
+        rendererString.erase(std::remove(rendererString.begin(), rendererString.end(), ','),
+                             rendererString.end());
+        versionString.erase(std::remove(versionString.begin(), versionString.end(), ','),
+                            versionString.end());
+        frontendRendererString << "ANGLE (";
+        frontendRendererString << vendorString;
+        frontendRendererString << ", ";
+        frontendRendererString << rendererString;
+        frontendRendererString << ", ";
+        frontendRendererString << versionString;
+        frontendRendererString << ")";
+    }
 
     mRendererString = MakeStaticString(frontendRendererString.str());
+}
+
+void Context::initVendorString()
+{
+    std::ostringstream vendorString;
+
+    constexpr char kVendorString[]        = "ANGLE_GL_VENDOR";
+    constexpr char kAndroidVendorString[] = "debug.angle.gl_vendor";
+
+    std::string overrideVendor =
+        angle::GetEnvironmentVarOrAndroidProperty(kVendorString, kAndroidVendorString);
+
+    if (!overrideVendor.empty())
+    {
+        vendorString << overrideVendor;
+    }
+    else
+    {
+        vendorString << mDisplay->getVendorString();
+    }
+
+    mVendorString = MakeStaticString(vendorString.str());
 }
 
 void Context::initVersionStrings()
@@ -3404,24 +3404,13 @@ void Context::initVersionStrings()
     const Version &clientVersion = getClientVersion();
 
     std::ostringstream versionString;
-    if (getClientType() == EGL_OPENGL_ES_API)
-    {
-        versionString << "OpenGL ES ";
-    }
+    versionString << "OpenGL ES ";
     versionString << clientVersion.major << "." << clientVersion.minor << ".0 (ANGLE "
                   << angle::GetANGLEVersionString() << ")";
     mVersionString = MakeStaticString(versionString.str());
 
     std::ostringstream shadingLanguageVersionString;
-    if (getClientType() == EGL_OPENGL_ES_API)
-    {
-        shadingLanguageVersionString << "OpenGL ES GLSL ES ";
-    }
-    else
-    {
-        ASSERT(getClientType() == EGL_OPENGL_API);
-        shadingLanguageVersionString << "OpenGL GLSL ";
-    }
+    shadingLanguageVersionString << "OpenGL ES GLSL ES ";
     shadingLanguageVersionString << (clientVersion.major == 2 ? 1 : clientVersion.major) << "."
                                  << clientVersion.minor << "0 (ANGLE "
                                  << angle::GetANGLEVersionString() << ")";
@@ -3472,7 +3461,7 @@ const GLubyte *Context::getString(GLenum name) const
     switch (name)
     {
         case GL_VENDOR:
-            return reinterpret_cast<const GLubyte *>(mDisplay->getVendorString().c_str());
+            return reinterpret_cast<const GLubyte *>(mVendorString);
 
         case GL_RENDERER:
             return reinterpret_cast<const GLubyte *>(mRendererString);
@@ -3682,6 +3671,7 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.multiviewMultisampleANGLE    = false;
         supportedExtensions.copyTexture3dANGLE           = false;
         supportedExtensions.textureMultisampleANGLE      = false;
+        supportedExtensions.textureShadowLodEXT          = false;
         supportedExtensions.textureStencil8OES           = false;
         supportedExtensions.conservativeDepthEXT         = false;
         supportedExtensions.drawBuffersIndexedEXT        = false;
@@ -3936,6 +3926,9 @@ Extensions Context::generateSupportedExtensions() const
     supportedExtensions.extensionPackEs31aANDROID =
         CanSupportAEP(getClientVersion(), supportedExtensions);
 
+    // Blob cache extension is provided by the ANGLE frontend
+    supportedExtensions.blobCacheANGLE = true;
+
     return supportedExtensions;
 }
 
@@ -3987,7 +3980,7 @@ void Context::initCaps()
     *mState.getMutableLimitations() = mImplementation->getNativeLimitations();
 
     // GLES1 emulation: Initialize caps (Table 6.20 / 6.22 in the ES 1.1 spec)
-    if (getClientType() == EGL_OPENGL_API || getClientVersion() < Version(2, 0))
+    if (getClientVersion() < Version(2, 0))
     {
         caps->maxMultitextureUnits          = 4;
         caps->maxClipPlanes                 = 6;
@@ -4369,17 +4362,6 @@ void Context::initCaps()
                 caps->maxCombinedDrawBuffersAndPixelLocalStoragePlanes = maxDrawableAttachments;
                 break;
 
-            case ShPixelLocalStorageType::PixelLocalStorageEXT:
-                caps->maxPixelLocalStoragePlanes = caps->maxShaderPixelLocalStorageFastSizeEXT / 4;
-                ASSERT(caps->maxPixelLocalStoragePlanes >= 4);
-                ANGLE_LIMIT_CAP(caps->maxPixelLocalStoragePlanes,
-                                IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES);
-                // EXT_shader_pixel_local_storage doesn't support rendering to color attachments.
-                caps->maxColorAttachmentsWithActivePixelLocalStorage = 0;
-                caps->maxCombinedDrawBuffersAndPixelLocalStoragePlanes =
-                    caps->maxPixelLocalStoragePlanes;
-                break;
-
             case ShPixelLocalStorageType::NotSupported:
                 UNREACHABLE();
                 break;
@@ -4728,16 +4710,14 @@ void Context::clear(GLbitfield mask)
 
     // If depth write is disabled, don't attempt to clear depth.
     if (mState.getDrawFramebuffer()->getDepthAttachment() == nullptr ||
-        !mState.getDepthStencilState().depthMask)
+        mState.getDepthStencilState().isDepthMaskedOut())
     {
         mask &= ~GL_DEPTH_BUFFER_BIT;
     }
 
     // If all stencil bits are masked, don't attempt to clear stencil.
-    if (mState.getDrawFramebuffer()->getStencilAttachment() == nullptr ||
-        (angle::BitMask<uint32_t>(
-             mState.getDrawFramebuffer()->getStencilAttachment()->getStencilSize()) &
-         mState.getDepthStencilState().stencilWritemask) == 0)
+    if (mState.getDepthStencilState().isStencilMaskedOut(
+            mState.getDrawFramebuffer()->getStencilBitCount()))
     {
         mask &= ~GL_STENCIL_BUFFER_BIT;
     }
@@ -4753,7 +4733,9 @@ void Context::clear(GLbitfield mask)
     ANGLE_CONTEXT_TRY(mState.getDrawFramebuffer()->clear(this, mask));
 }
 
-bool Context::isClearBufferMaskedOut(GLenum buffer, GLint drawbuffer) const
+bool Context::isClearBufferMaskedOut(GLenum buffer,
+                                     GLint drawbuffer,
+                                     GLuint framebufferStencilSize) const
 {
     switch (buffer)
     {
@@ -4762,10 +4744,10 @@ bool Context::isClearBufferMaskedOut(GLenum buffer, GLint drawbuffer) const
         case GL_DEPTH:
             return mState.getDepthStencilState().isDepthMaskedOut();
         case GL_STENCIL:
-            return mState.getDepthStencilState().isStencilMaskedOut();
+            return mState.getDepthStencilState().isStencilMaskedOut(framebufferStencilSize);
         case GL_DEPTH_STENCIL:
             return mState.getDepthStencilState().isDepthMaskedOut() &&
-                   mState.getDepthStencilState().isStencilMaskedOut();
+                   mState.getDepthStencilState().isStencilMaskedOut(framebufferStencilSize);
         default:
             UNREACHABLE();
             return true;
@@ -4777,7 +4759,8 @@ bool Context::noopClearBuffer(GLenum buffer, GLint drawbuffer) const
     Framebuffer *framebufferObject = mState.getDrawFramebuffer();
 
     return !IsClearBufferEnabled(framebufferObject->getState(), buffer, drawbuffer) ||
-           mState.isRasterizerDiscardEnabled() || isClearBufferMaskedOut(buffer, drawbuffer);
+           mState.isRasterizerDiscardEnabled() ||
+           isClearBufferMaskedOut(buffer, drawbuffer, framebufferObject->getStencilBitCount());
 }
 
 void Context::clearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *values)
@@ -8970,6 +8953,11 @@ void Context::endPixelLocalStorageWithStoreOpsStore()
     endPixelLocalStorage(n, storeops.data());
 }
 
+bool Context::areBlobCacheFuncsSet() const
+{
+    return mState.getBlobCacheCallbacks().getFunction && mState.getBlobCacheCallbacks().setFunction;
+}
+
 void Context::pixelLocalStorageBarrier()
 {
     if (getExtensions().shaderPixelLocalStorageCoherentANGLE)
@@ -9280,10 +9268,6 @@ GLenum Context::getConvertedRenderbufferFormat(GLenum internalformat) const
     if (isWebGL() && mState.getClientMajorVersion() == 2 && internalformat == GL_DEPTH_STENCIL)
     {
         return GL_DEPTH24_STENCIL8;
-    }
-    if (getClientType() == EGL_OPENGL_API && internalformat == GL_DEPTH_COMPONENT)
-    {
-        return GL_DEPTH_COMPONENT24;
     }
     return internalformat;
 }
@@ -9907,29 +9891,6 @@ const angle::PerfMonitorCounterGroups &Context::getPerfMonitorCounterGroups() co
     return mImplementation->getPerfMonitorCounters();
 }
 
-void Context::drawPixelLocalStorageEXTEnable(GLsizei n,
-                                             const PixelLocalStoragePlane planes[],
-                                             const GLenum loadops[])
-{
-    ASSERT(mImplementation->getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-    ANGLE_CONTEXT_TRY(syncState(kPixelLocalStorageEXTEnableDisableDirtyBits,
-                                kPixelLocalStorageEXTEnableDisableExtendedDirtyBits,
-                                mPixelLocalStorageEXTEnableDisableDirtyObjects, Command::Draw));
-    ANGLE_CONTEXT_TRY(mImplementation->drawPixelLocalStorageEXTEnable(this, n, planes, loadops));
-}
-
-void Context::drawPixelLocalStorageEXTDisable(const PixelLocalStoragePlane planes[],
-                                              const GLenum storeops[])
-{
-    ASSERT(mImplementation->getNativePixelLocalStorageOptions().type ==
-           ShPixelLocalStorageType::PixelLocalStorageEXT);
-    ANGLE_CONTEXT_TRY(syncState(kPixelLocalStorageEXTEnableDisableDirtyBits,
-                                kPixelLocalStorageEXTEnableDisableExtendedDirtyBits,
-                                mPixelLocalStorageEXTEnableDisableDirtyObjects, Command::Draw));
-    ANGLE_CONTEXT_TRY(mImplementation->drawPixelLocalStorageEXTDisable(this, planes, storeops));
-}
-
 void Context::framebufferFoveationConfig(FramebufferID framebufferPacked,
                                          GLuint numLayers,
                                          GLuint focalPointsPerLayer,
@@ -10035,7 +9996,7 @@ void Context::clearTexImage(TextureID texturePacked,
     // bound.
     if (texture->hasAnyDirtyBit())
     {
-        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::Other));
+        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::ClearTexture));
     }
 
     ANGLE_CONTEXT_TRY(
@@ -10056,16 +10017,30 @@ void Context::clearTexSubImage(TextureID texturePacked,
 {
     Texture *texture = getTexture(texturePacked);
 
+    // It is allowed to use extents of 0 as input args. In this case, the function should return
+    // with no changes to the texture.
+    if (width == 0 || height == 0 || depth == 0)
+    {
+        return;
+    }
+
     // Sync the texture's state directly. EXT_clear_texture does not require that the texture is
     // bound.
     if (texture->hasAnyDirtyBit())
     {
-        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::Other));
+        ANGLE_CONTEXT_TRY(texture->syncState(this, Command::ClearTexture));
     }
 
     Box area(xoffset, yoffset, zoffset, width, height, depth);
     ANGLE_CONTEXT_TRY(texture->clearSubImage(this, level, area, format, type,
                                              static_cast<const uint8_t *>(data)));
+}
+
+void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+                                 GLGETBLOBPROCANGLE get,
+                                 const void *userParam)
+{
+    mState.getBlobCacheCallbacks() = {set, get, userParam};
 }
 
 void Context::bindMetalRasterizationRateMap(GLuint renderbufferHandle, GLMTLRasterizationRateMapANGLE map)

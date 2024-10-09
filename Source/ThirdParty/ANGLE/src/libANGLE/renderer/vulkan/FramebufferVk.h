@@ -247,6 +247,7 @@ class FramebufferVk : public FramebufferImpl
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc(ContextVk *contextVk);
     angle::Result updateColorAttachment(const gl::Context *context, uint32_t colorIndex);
+    void updateColorAttachmentColorspace(gl::SrgbWriteControlMode srgbWriteControlMode);
     angle::Result updateDepthStencilAttachment(const gl::Context *context);
     void updateDepthStencilAttachmentSerial(ContextVk *contextVk);
     angle::Result flushColorAttachmentUpdates(const gl::Context *context,

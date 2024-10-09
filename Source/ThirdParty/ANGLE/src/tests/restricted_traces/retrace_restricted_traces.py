@@ -22,10 +22,9 @@ import sys
 import tempfile
 import time
 
+from difflib import unified_diff
 from gen_restricted_traces import read_json as read_json, write_json as write_json
 from pathlib import Path
-
-from gen_restricted_traces import read_json as read_json
 
 SCRIPT_DIR = str(pathlib.Path(__file__).resolve().parent)
 PY_UTILS = str(pathlib.Path(SCRIPT_DIR) / '..' / 'py_utils')
@@ -386,6 +385,10 @@ def get_min_reqs(args, traces):
     run_autoninja(args)
 
     env = {}
+    # List of extensions that impliclity enable *other* extensions
+    extension_deny_list = [
+        'GL_ANGLE_shader_pixel_local_storage', 'GL_ANGLE_shader_pixel_local_storage_coherent'
+    ]
     default_args = ["--no-warmup"]
 
     skipped_traces = []
@@ -395,13 +398,15 @@ def get_min_reqs(args, traces):
         print(f"Finding requirements for {trace}")
         extensions = []
         json_data = load_trace_json(trace)
+        original_json_data = json.dumps(json_data, sort_keys=True, indent=4)
         max_steps = get_num_frames(json_data)
 
         # exts: a list of extensions to use with run_test_suite. If empty,
         #       then run_test_suite runs with all extensions enabled by default.
         def run_test_suite_with_exts(exts):
             additional_args = default_args.copy()
-            additional_args += ['--request-extensions', ' '.join(exts)]
+            if len(exts) > 0:
+                additional_args += ['--request-extensions', ' '.join(exts)]
 
             try:
                 run_test_suite(args, trace_binary, trace, max_steps, additional_args, env)
@@ -456,7 +461,8 @@ def get_min_reqs(args, traces):
                     run_test_suite(args, trace_binary, trace, max_steps, additional_args, env)
                     with open(tmp.name) as f:
                         for line in f:
-                            extensions.append(line.strip())
+                            if line.strip() not in extension_deny_list:
+                                extensions.append(line.strip())
             except Exception:
                 skipped_traces.append(
                     (trace, "Failed to read extension list, likely that test is skipped"))
@@ -475,7 +481,7 @@ def get_min_reqs(args, traces):
             # Use a divide and conquer strategy to find the required extensions.
             # Max depth is log(N) where N is the number of extensions. Expected
             # runtime is p*log(N), where p is the number of required extensions.
-            # p*log(N)
+            # p*log(N). Assume a single possible solution - see 'extension_deny_list'.
             # others: A list that contains one or more required extensions,
             #         but is not actively being searched
             # exts: The list of extensions actively being searched
@@ -512,6 +518,16 @@ def get_min_reqs(args, traces):
 
             json_data['RequiredExtensions'] = recurse_reqs
             save_trace_json(trace, json_data)
+
+            # Output json file diff
+            min_reqs_json_data = json.dumps(json_data, sort_keys=True, indent=4)
+            if original_json_data == min_reqs_json_data:
+                print(f"\nNo changes made to {trace}.json")
+            else:
+                json_diff = unified_diff(
+                    original_json_data.splitlines(), min_reqs_json_data.splitlines(), lineterm='')
+                print(f"\nGet Min Requirements modifications to {trace}.json:")
+                print('\n'.join(list(json_diff)))
         except BaseException as e:
             restore_trace()
             raise e

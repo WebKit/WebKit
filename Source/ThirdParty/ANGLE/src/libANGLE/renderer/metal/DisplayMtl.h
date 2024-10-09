@@ -100,7 +100,6 @@ class DisplayMtl : public DisplayImpl
                                                          const egl::AttributeMap &attribs) override;
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
-    Optional<gl::Version> getMaxSupportedDesktopVersion() const override;
 
     EGLSyncImpl *createSync() override;
 
