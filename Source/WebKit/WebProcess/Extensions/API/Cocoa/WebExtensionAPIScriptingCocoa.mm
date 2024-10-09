@@ -554,6 +554,11 @@ void WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
 
     parameters.tabIdentifier = tabIdentifier;
 
+    if (objectForKey<NSNumber>(targetInfo, allFramesKey).boolValue && targetInfo[frameIDsKey]) {
+        *outExceptionString = toErrorString(nil, targetKey, @"it cannot specify both 'allFrames' and 'frameIds'");
+        return;
+    }
+
     if (NSArray *frameIDs = targetInfo[frameIDsKey]) {
         Vector<WebExtensionFrameIdentifier> frames;
         for (NSNumber *frameID in frameIDs) {
@@ -566,12 +571,9 @@ void WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
             frames.append(frameIdentifier.value());
         }
 
-        parameters.frameIDs = frames;
-        return;
-    }
-
-    if (!boolForKey(targetInfo, allFramesKey, false))
-        parameters.frameIDs = Vector { WebExtensionFrameConstants::MainFrameIdentifier };
+        parameters.frameIDs = WTFMove(frames);
+    } else if (!boolForKey(targetInfo, allFramesKey, false))
+        parameters.frameIDs = { WebExtensionFrameConstants::MainFrameIdentifier };
 }
 
 void WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters, NSString **outExceptionString)
