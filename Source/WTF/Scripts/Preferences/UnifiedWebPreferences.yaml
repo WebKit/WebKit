@@ -7598,13 +7598,14 @@ UseImageDocumentForSubframePDF:
 
 UseMicrophoneMuteStatusAPI:
   type: bool
-  status: preview
+  status: stable
   category: media
   humanReadableName: "Use Microphone Mute Status API"
   humanReadableDescription: "Use Microphone Mute Status API"
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
