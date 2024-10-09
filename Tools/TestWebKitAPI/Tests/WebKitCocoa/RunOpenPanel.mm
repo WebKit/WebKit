@@ -48,8 +48,10 @@ static NSString * const expectedFileName = @"这是中文";
     EXPECT_FALSE(parameters.allowsDirectories);
     EXPECT_EQ(0ull, parameters._acceptedMIMETypes.count);
     EXPECT_EQ(0ull, parameters._acceptedFileExtensions.count);
+    [[NSFileManager defaultManager] createFileAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:expectedFileName] contents:nil attributes:nil];
     completionHandler(@[ [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:expectedFileName]] ]);
     fileSelected = true;
+    [[NSFileManager defaultManager] removeItemAtPath:[NSTemporaryDirectory() stringByAppendingPathComponent:expectedFileName] error:nil];
 }
 
 @end

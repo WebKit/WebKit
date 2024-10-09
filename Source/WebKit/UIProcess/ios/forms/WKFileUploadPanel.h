@@ -37,6 +37,13 @@ class OpenPanelParameters;
 namespace WebKit {
 class WebOpenPanelResultListenerProxy;
 enum class PickerDismissalReason : uint8_t;
+enum class MovedSuccessfully : bool { No, Yes };
+
+struct TemporaryFileMoveResults {
+    MovedSuccessfully operationResult;
+    RetainPtr<NSURL> maybeMovedURL;
+    RetainPtr<NSURL> temporaryDirectoryURL;
+};
 }
 
 @interface WKFileUploadPanel : UIViewController
@@ -53,7 +60,7 @@ enum class PickerDismissalReason : uint8_t;
 - (NSArray<NSString *> *)currentAvailableActionTitles;
 - (NSArray<NSString *> *)acceptedTypeIdentifiers;
 
-+ (std::pair<RetainPtr<NSURL>, RetainPtr<NSURL>>)_copyToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager;
++ (WebKit::TemporaryFileMoveResults)_moveToNewTemporaryDirectory:(NSURL *)originalURL fileCoordinator:(NSFileCoordinator *)fileCoordinator fileManager:(NSFileManager *)fileManager asCopy:(BOOL)asCopy;
 @end
 
 @protocol WKFileUploadPanelDelegate <NSObject>
