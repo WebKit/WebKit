@@ -1,13 +1,3 @@
 
 PASS Units
-PASS Trimming of space
-PASS Non-negative numbers
-PASS Non-positive numbers
-PASS Legacy namedspaces
-FAIL Legacy numbers assert_approx_equals: n3 expected 0 +/- 0.5 but got 70
-
-
-
-
-
 

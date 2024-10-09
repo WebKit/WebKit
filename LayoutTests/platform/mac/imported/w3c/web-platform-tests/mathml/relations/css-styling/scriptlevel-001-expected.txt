@@ -13,7 +13,8 @@ PASS automatic scriptlevel on munder (accentunder=true)
 PASS automatic scriptlevel on mover (accent=true)
 FAIL automatic scriptlevel on munderover (accentunder=true) assert_approx_equals: over expected 71 +/- 0.1 but got 75
 FAIL automatic scriptlevel on munderover (accent=true) assert_approx_equals: under expected 71 +/- 0.1 but got 75
-FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: under expected 71 +/- 0.1 but got 75
+PASS checking case-insensitivity accent/accentunder
+FAIL checking dynamic accent/accentunder assert_approx_equals: under expected 71 +/- 0.1 but got 75
 0
 1
 
@@ -56,6 +57,10 @@ FAIL checking dynamic/case-insensitive accent/accentunder assert_approx_equals: 
 
 0
 1
+
+0
+1
+2
 
 0
 1

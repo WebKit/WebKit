@@ -1,39 +1,81 @@
 
 PASS mfrac
 PASS RTL mfrac
+PASS mfrac (horizontal overflow)
+PASS RTL mfrac (horizontal overflow)
 PASS mfrac without bar
 PASS RTL mfrac without bar
+PASS mfrac without bar (horizontal overflow)
+PASS RTL mfrac without bar (horizontal overflow)
 PASS munder
 PASS RTL munder
+PASS munder (horizontal overflow)
+PASS RTL munder (horizontal overflow)
 PASS mover
 PASS RTL mover
+PASS mover (horizontal overflow)
+PASS RTL mover (horizontal overflow)
 PASS munderover
 PASS RTL munderover
+PASS munderover (horizontal overflow)
+PASS RTL munderover (horizontal overflow)
+X
+X
+
+X
+X
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+X
+X
+
+X
+X
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+X
+X
+
+X
+X
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+X
+X
+
+X
+X
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+X
 X
 X
 
 X
 X
 X
-X
 
-X
-X
-X
-X
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+XXXXXXXXXXXX
 
-X
-X
-X
-X
-
-X
-X
-X
-X
-X
-
-X
-X
-X
+XXXXXXXXXXXX
+XXXXXXXXXXXX
+XXXXXXXXXXXX
 
