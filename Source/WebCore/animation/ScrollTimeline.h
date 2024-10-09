@@ -62,18 +62,19 @@ public:
     AnimationTimelinesController* controller() const override;
     static ScrollableArea* scrollableAreaForSourceRenderer(RenderElement*, Ref<Document>);
 
+    std::optional<CSSNumberishTime> currentTime() override;
+
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);
 
-private:
     struct Data {
         float scrollOffset { 0 };
         float rangeStart { 0 };
         float rangeEnd { 0 };
     };
+    virtual Data computeTimelineData(const TimelineRange& = { }) const;
 
-    Data computeScrollTimelineData(const TimelineRange& = { }) const;
-
+private:
     enum class Scroller : uint8_t { Nearest, Root, Self };
 
     explicit ScrollTimeline(ScrollTimelineOptions&& = { });

@@ -64,12 +64,7 @@ public:
     Element* source() const override;
 
 private:
-    struct Data {
-        float scrollOffset { 0 };
-        float rangeStart { 0 };
-        float rangeEnd { 0 };
-    };
-    Data computeViewTimelineData(const TimelineRange& = { }) const;
+    ScrollTimeline::Data computeTimelineData(const TimelineRange& = { }) const override;
 
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
