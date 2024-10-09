@@ -62,7 +62,7 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
 {
 }
 
-SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal)
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool mayAppearLogicallyDiscontiguous)
     : m_quad(quad)
     , m_behavior(behavior)
     , m_direction(direction)
@@ -76,6 +76,7 @@ SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBe
     , m_containsStart(containsStart)
     , m_containsEnd(containsEnd)
     , m_isHorizontal(isHorizontal)
+    , m_mayAppearLogicallyDiscontiguous(mayAppearLogicallyDiscontiguous)
 {
 }
 
@@ -172,6 +173,9 @@ TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
 
     if (rect.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
         stream.dumpProperty("using individual quads", true);
+
+    if (rect.mayAppearLogicallyDiscontiguous())
+        stream.dumpProperty("reverse bidi", true);
 
     stream.dumpProperty("page number", rect.pageNumber());
     return stream;

@@ -2525,6 +2525,7 @@ class WebCore::SelectionGeometry {
     bool containsStart();
     bool containsEnd();
     bool isHorizontal();
+    bool mayAppearLogicallyDiscontiguous();
 };
 #endif
 

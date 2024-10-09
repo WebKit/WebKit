@@ -2524,12 +2524,136 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometriesWithoutUnionIn
     return collectSelectionGeometriesInternal(range).geometries;
 }
 
+static bool areOnSameLine(const SelectionGeometry& a, const SelectionGeometry& b)
+{
+    if (a.lineNumber() && a.lineNumber() == b.lineNumber())
+        return true;
+
+    auto quadA = a.quad();
+    auto quadB = b.quad();
+    return FloatQuad { quadA.p1(), quadA.p2(), quadB.p2(), quadB.p1() }.isEmpty()
+        && FloatQuad { quadA.p4(), quadA.p3(), quadB.p3(), quadB.p4() }.isEmpty();
+}
+
+static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range, Vector<SelectionGeometry>& geometries)
+{
+    if (!range.startContainer().document().settings().visuallyContiguousBidiTextSelectionEnabled())
+        return;
+
+    FloatPoint selectionStartTop;
+    FloatPoint selectionStartBottom;
+    FloatPoint selectionEndTop;
+    FloatPoint selectionEndBottom;
+
+    std::optional<SelectionGeometry> startGeometry;
+    std::optional<SelectionGeometry> endGeometry;
+    for (auto& geometry : geometries) {
+        if (!geometry.isHorizontal())
+            return;
+
+        if (geometry.containsStart()) {
+            selectionStartTop = geometry.direction() == TextDirection::LTR ? geometry.quad().p1() : geometry.quad().p2();
+            selectionStartBottom = geometry.direction() == TextDirection::LTR ? geometry.quad().p4() : geometry.quad().p3();
+            startGeometry = { geometry };
+        }
+
+        if (geometry.containsEnd()) {
+            selectionEndTop = geometry.direction() == TextDirection::LTR ? geometry.quad().p2() : geometry.quad().p1();
+            selectionEndBottom = geometry.direction() == TextDirection::LTR ? geometry.quad().p3() : geometry.quad().p4();
+            endGeometry = { geometry };
+        }
+    }
+
+    if (!startGeometry || !endGeometry)
+        return;
+
+    geometries.removeAllMatching([&](auto& geometry) {
+        if (geometry.containsStart())
+            return true;
+
+        if (geometry.containsEnd())
+            return true;
+
+        if (areOnSameLine(*startGeometry, geometry))
+            return true;
+
+        if (areOnSameLine(*endGeometry, geometry))
+            return true;
+
+        // Keep selection geometries that lie in the interior of the selection.
+        return false;
+    });
+
+    if (areOnSameLine(*startGeometry, *endGeometry)) {
+        // For a single line selection, simply merge the end into the start and remove other selection geometries on the same line.
+        startGeometry->setQuad({ selectionStartTop, selectionEndTop, selectionEndBottom, selectionStartBottom });
+        startGeometry->setContainsEnd(true);
+        startGeometry->setMayAppearLogicallyDiscontiguous(true);
+        geometries.append(WTFMove(*startGeometry));
+        return;
+    }
+
+    auto start = makeContainerOffsetPosition(range.start).downstream();
+    auto startDirection = directionOfEnclosingBlock(start);
+    auto positionToRightOfStart = rightBoundaryOfLine(start, startDirection, nullptr);
+
+    auto end = makeContainerOffsetPosition(range.end).upstream();
+    if (isStartOfLine(end)) {
+        // It's possible for the end position to be the start of the next line; in this case, walk backwards
+        // to stay on the same line.
+        end = end.previous();
+    }
+
+    auto endDirection = directionOfEnclosingBlock(end);
+    auto positionToLeftOfEnd = leftBoundaryOfLine(end, endDirection, nullptr);
+
+    auto caretRectToRightOfStart = positionToRightOfStart.absoluteCaretBounds();
+    auto caretRectToLeftOfEnd = positionToLeftOfEnd.absoluteCaretBounds();
+    FloatQuad selectionExtents {
+        caretRectToLeftOfEnd.minXMinYCorner(),
+        caretRectToRightOfStart.maxXMinYCorner(),
+        caretRectToRightOfStart.maxXMaxYCorner(),
+        caretRectToLeftOfEnd.minXMaxYCorner(),
+    };
+
+    if (isStartOfLine(start)) {
+        auto startRect = leftBoundaryOfLine(start, startDirection, nullptr).absoluteCaretBounds();
+        selectionStartTop = startRect.minXMinYCorner();
+        selectionStartBottom = startRect.minXMaxYCorner();
+    }
+
+    if (isEndOfLine(end)) {
+        auto endRect = rightBoundaryOfLine(end, endDirection, nullptr).absoluteCaretBounds();
+        selectionEndTop = endRect.maxXMinYCorner();
+        selectionEndBottom = endRect.maxXMaxYCorner();
+    }
+
+    startGeometry->setMayAppearLogicallyDiscontiguous(true);
+    startGeometry->setQuad({
+        selectionStartTop,
+        selectionExtents.p2(),
+        selectionExtents.p3(),
+        selectionStartBottom,
+    });
+
+    endGeometry->setMayAppearLogicallyDiscontiguous(true);
+    endGeometry->setQuad({
+        selectionExtents.p1(),
+        selectionEndTop,
+        selectionEndBottom,
+        selectionExtents.p4(),
+    });
+
+    geometries.appendList({ WTFMove(*startGeometry), WTFMove(*endGeometry) });
+}
+
 auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) -> SelectionGeometries
 {
     Vector<SelectionGeometry> geometries;
     Vector<SelectionGeometry> newGeometries;
     bool hasFlippedWritingMode = range.start.container->renderer() && range.start.container->renderer()->style().isFlippedBlocksWritingMode();
     bool containsDifferentWritingModes = false;
+    bool hasAnyRightToLeftText = false;
     for (Ref node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         CheckedPtr renderer = node->renderer();
         // Only ask leaf render objects for their line box rects.
@@ -2554,6 +2678,8 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
                     selectionGeometry.setContainsEnd(false);
                 if (selectionGeometry.logicalWidth() || selectionGeometry.logicalHeight())
                     geometries.append(selectionGeometry);
+                if (selectionGeometry.direction() == TextDirection::RTL)
+                    hasAnyRightToLeftText = true;
             }
             newGeometries.shrink(0);
         }
@@ -2626,7 +2752,6 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         }
     }
 
-    // Adjust line height.
     adjustLineHeightOfSelectionGeometries(geometries, numberOfGeometries, lineNumber, lineTop, lineBottom - lineTop);
 
     // When using SelectionRenderingBehavior::CoalesceBoundingRects, sort the rectangles and make sure there are no gaps.
@@ -2683,7 +2808,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
             selectionGeometry.setLogicalWidth(selectionGeometry.maxX() - selectionGeometry.logicalLeft());
     }
 
-    return { WTFMove(geometries), maxLineNumber };
+    return { WTFMove(geometries), maxLineNumber, hasAnyRightToLeftText };
 }
 
 static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeometry& current, const SelectionGeometry& next)
@@ -2718,15 +2843,15 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
 
 Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleRange& range)
 {
-    auto result = RenderObject::collectSelectionGeometriesInternal(range);
-    auto numberOfGeometries = result.geometries.size();
+    auto [geometries, maxLineNumber, hasAnyRightToLeftText] = RenderObject::collectSelectionGeometriesInternal(range);
+    auto numberOfGeometries = geometries.size();
 
     // Union all the rectangles on interior lines (i.e. not first or last).
     // On first and last lines, just avoid having overlaps by merging intersecting rectangles.
     Vector<SelectionGeometry> coalescedGeometries;
     IntRect interiorUnionRect;
     for (size_t i = 0; i < numberOfGeometries; ++i) {
-        auto& currentGeometry = result.geometries[i];
+        auto& currentGeometry = geometries[i];
         if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
             if (currentGeometry.quad().isEmpty())
                 continue;
@@ -2747,7 +2872,7 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
             }
             // Couldn't merge with previous rect, so just appending.
             coalescedGeometries.append(currentGeometry);
-        } else if (currentGeometry.lineNumber() < result.maxLineNumber) {
+        } else if (currentGeometry.lineNumber() < maxLineNumber) {
             if (interiorUnionRect.isEmpty()) {
                 // Start collecting interior rects.
                 interiorUnionRect = currentGeometry.rect();
@@ -2781,6 +2906,9 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
             coalescedGeometries.append(currentGeometry);
         }
     }
+
+    if (hasAnyRightToLeftText)
+        makeBidiSelectionVisuallyContiguousIfNeeded(range, coalescedGeometries);
 
     return coalescedGeometries;
 }

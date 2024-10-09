@@ -982,6 +982,34 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async isSelectionVisuallyContiguous()
+    {
+        const rects = await this.getUISelectionViewRects();
+        if (!rects?.length)
+            return false;
+
+        rects.sort((a, b) => {
+            if (a.top < b.top)
+                return -1;
+            if (a.top > b.top)
+                return 1;
+            return a.left < b.left ? -1 : (a.left > b.left ? 1 : 0);
+        });
+
+        for (let i = 1; i < rects.length; ++i) {
+            const previousRect = rects[i - 1];
+            const rect = rects[i];
+
+            if (previousRect.top !== rect.top)
+                continue;
+
+            if (previousRect.left + previousRect.width < rect.left)
+                return false;
+        }
+
+        return true;
+    }
+
     static getSelectionStartGrabberViewRect()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

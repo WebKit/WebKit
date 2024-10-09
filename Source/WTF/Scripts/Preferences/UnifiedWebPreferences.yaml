@@ -7926,6 +7926,20 @@ VisualViewportEnabled:
     WebCore:
       default: true
 
+VisuallyContiguousBidiTextSelectionEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Visually Contiguous Bidi Selection"
+  humanReadableDescription: "Visually contiguous bidi selection"
+  conditional: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 VorbisDecoderEnabled:
   type: bool
   status: mature

@@ -42,7 +42,7 @@ public:
 
     // FIXME: We should move some of these arguments to an auxillary struct.
     SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, int);
-    WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool);
+    WEBCORE_EXPORT SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool /* mayAppearLogicallyDiscontiguous */);
     SelectionGeometry() = default;
     ~SelectionGeometry() = default;
 
@@ -71,6 +71,7 @@ public:
     bool isInFixedPosition() const { return m_isInFixedPosition; }
     int pageNumber() const { return m_pageNumber; }
     SelectionRenderingBehavior behavior() const { return m_behavior; }
+    bool mayAppearLogicallyDiscontiguous() const { return m_mayAppearLogicallyDiscontiguous; }
 
     void setLogicalLeft(int);
     void setLogicalWidth(int);
@@ -89,6 +90,7 @@ public:
     void setContainsEnd(bool containsEnd) { m_containsEnd = containsEnd; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
     void setBehavior(SelectionRenderingBehavior behavior) { m_behavior = behavior; }
+    void setMayAppearLogicallyDiscontiguous(bool value) { m_mayAppearLogicallyDiscontiguous = value; }
 
 private:
     FloatQuad m_quad;
@@ -105,6 +107,7 @@ private:
     bool m_containsEnd { false };
     bool m_isHorizontal { true };
     bool m_isInFixedPosition { false };
+    bool m_mayAppearLogicallyDiscontiguous { false };
     int m_pageNumber { 0 };
 
     mutable std::optional<IntRect> m_cachedEnclosingRect;

@@ -123,7 +123,10 @@
 
 - (NSWritingDirection)writingDirection
 {
-    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
+    if (_selectionGeometry.direction() == WebCore::TextDirection::LTR || _selectionGeometry.mayAppearLogicallyDiscontiguous())
+        return NSWritingDirectionLeftToRight;
+
+    return NSWritingDirectionRightToLeft;
 }
 
 - (UITextRange *)range

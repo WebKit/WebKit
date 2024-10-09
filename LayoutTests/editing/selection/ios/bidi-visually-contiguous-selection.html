@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+
+.start {
+    border: 1px solid tomato;
+    padding: 4px;
+}
+
+.stop {
+    border: 1px solid orange;
+    padding: 4px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that the text selection appears visually contiguous when selecting across bidi text boundaries.");
+
+    await UIHelper.longPressElement(document.querySelector(".start"));
+    await UIHelper.waitForSelectionToAppear();
+
+    const touchStart = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+    const touchEnd = UIHelper.midPointOfRect(document.querySelector(".stop").getBoundingClientRect());
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(touchStart.x, touchStart.y)
+        .move(touchEnd.x, touchEnd.y, 0.5)
+        .takeResult());
+
+    isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+
+    shouldBeTrue("isVisuallyContiguous");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p>Arabic, <span class="stop">مثل</span> هذا النص, is right to <span class="start">left</span>.</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>
