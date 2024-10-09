@@ -44,6 +44,7 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
 #if USE(ATSPI)
     launchOptions.extraInitializationData.set("accessibilityBusAddress"_s, m_processPool->accessibilityBusAddress());
+    launchOptions.extraInitializationData.set("accessibilityBusName"_s, m_processPool->generateNextAccessibilityBusName());
 #endif
 
     if (m_processPool->sandboxEnabled()) {

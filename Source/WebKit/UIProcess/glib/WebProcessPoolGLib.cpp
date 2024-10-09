@@ -40,6 +40,10 @@
 #include <wtf/glib/Application.h>
 #include <wtf/glib/Sandbox.h>
 
+#if USE(ATSPI)
+#include <wtf/UUID.h>
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -161,6 +165,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.accessibilityBusAddress = String::fromUTF8(address);
     else
         parameters.accessibilityBusAddress = m_sandboxEnabled && shouldUseBubblewrap() ? sandboxedAccessibilityBusAddress() : accessibilityBusAddress();
+
+    parameters.accessibilityBusName = accessibilityBusName();
 #endif
 
     parameters.systemSettings = WebCore::SystemSettings::singleton().settingsState();
@@ -272,10 +278,26 @@ const String& WebProcessPool::accessibilityBusAddress() const
     return m_accessibilityBusAddress.value();
 }
 
+const String& WebProcessPool::accessibilityBusName() const
+{
+    RELEASE_ASSERT(m_accessibilityBusName.has_value());
+    return m_accessibilityBusName.value();
+}
+
 const String& WebProcessPool::sandboxedAccessibilityBusAddress() const
 {
     return m_sandboxedAccessibilityBusAddress;
 }
+
+const String& WebProcessPool::generateNextAccessibilityBusName()
+{
+    m_accessibilityBusName = makeString(String::fromUTF8(WTF::applicationID().span()), ".Sandboxed.WebProcess-"_s, WTF::UUID::createVersion4());
+    RELEASE_ASSERT(g_dbus_is_name(m_accessibilityBusName.value().utf8().data()));
+    RELEASE_ASSERT(!g_dbus_is_unique_name(m_accessibilityBusName.value().utf8().data()));
+
+    return accessibilityBusName();
+}
+
 #endif
 
 } // namespace WebKit

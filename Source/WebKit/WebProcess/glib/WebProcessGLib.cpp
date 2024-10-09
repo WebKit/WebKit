@@ -225,7 +225,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if USE(ATSPI)
-    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);
+    AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress, parameters.accessibilityBusName);
 #endif
 
     if (parameters.disableFontHintingForTesting)

@@ -522,7 +522,10 @@ public:
 
 #if USE(ATSPI)
     const String& accessibilityBusAddress() const;
+    const String& accessibilityBusName() const;
     const String& sandboxedAccessibilityBusAddress() const;
+
+    const String& generateNextAccessibilityBusName();
 #endif
 #endif
 
@@ -873,6 +876,7 @@ private:
 
 #if USE(ATSPI)
     mutable std::optional<String> m_accessibilityBusAddress;
+    mutable std::optional<String> m_accessibilityBusName;
     String m_sandboxedAccessibilityBusAddress;
 #endif
 #endif

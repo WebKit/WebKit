@@ -2557,7 +2557,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 # Enum value allowlist
-_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'PM', 'URL', 'XHR']
+_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'GPU', 'PM', 'URL', 'XHR']
 
 def check_enum_casing(clean_lines, line_number, enum_state, error):
     """Looks for incorrectly named enum values.

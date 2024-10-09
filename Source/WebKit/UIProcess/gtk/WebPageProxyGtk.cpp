@@ -56,8 +56,7 @@ GtkWidget* WebPageProxy::viewWidget()
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
 #if USE(GTK4)
-    // FIXME(273245): Make a11y work under Flatpak.
-    if (!isInsideFlatpak())
+    if (!isInsideFlatpak() || checkFlatpakPortalVersion(7))
         webkitWebViewBaseSetPlugID(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugID);
 #else
     auto* accessible = gtk_widget_get_accessible(viewWidget());

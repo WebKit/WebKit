@@ -354,9 +354,9 @@ static void bindGtkData(Vector<CString>& args)
 #endif
 
 #if USE(ATSPI)
-static void bindA11y(Vector<CString>& args, XDGDBusProxy& dbusProxy, const String& accessibilityBusAddress, const String& sandboxedAccessibilityBusAddress)
+static void bindA11y(Vector<CString>& args, XDGDBusProxy& dbusProxy, const String& accessibilityBusAddress, const String& accessibilityBusName, const String& sandboxedAccessibilityBusAddress)
 {
-    auto accessibilityProxyPath = dbusProxy.accessibilityProxy(BASE_DIRECTORY, accessibilityBusAddress);
+    auto accessibilityProxyPath = dbusProxy.accessibilityProxy(BASE_DIRECTORY, accessibilityBusAddress, accessibilityBusName);
     if (!accessibilityProxyPath)
         return;
 
@@ -727,7 +727,7 @@ static void addExtraPaths(const HashMap<CString, SandboxPermission>& paths, Vect
     }
 }
 
-GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
+GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const ProcessLauncher::LaunchOptions& launchOptions, XDGDBusProxy& dbusProxy, char** argv, GError **error)
 {
     ASSERT(launcher);
 
@@ -885,9 +885,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 sandboxArgs.appendVector(Vector<CString>({ "--bind-try", extraPath.utf8(), extraPath.utf8() }));
         }
 
-        static std::unique_ptr<XDGDBusProxy> dbusProxy = makeUnique<XDGDBusProxy>();
-        if (dbusProxy)
-            bindDBusSession(sandboxArgs, *dbusProxy, flatpakInfoFd != -1);
+        bindDBusSession(sandboxArgs, dbusProxy, flatpakInfoFd != -1);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
         bindSndio(sandboxArgs);
@@ -897,18 +895,17 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         // FIXME: This is also fixed by Pipewire once in use.
         bindV4l(sandboxArgs);
 #if USE(ATSPI)
-        if (dbusProxy) {
-            auto accessibilityBusAddress = launchOptions.extraInitializationData.get("accessibilityBusAddress"_s);
-            auto sandboxedAccessibilityBusAddress = launchOptions.extraInitializationData.get("sandboxedAccessibilityBusAddress"_s);
-            if (!accessibilityBusAddress.isEmpty() && !sandboxedAccessibilityBusAddress.isEmpty())
-                bindA11y(sandboxArgs, *dbusProxy, accessibilityBusAddress, sandboxedAccessibilityBusAddress);
+        auto accessibilityBusAddress = launchOptions.extraInitializationData.get("accessibilityBusAddress"_s);
+        auto sandboxedAccessibilityBusAddress = launchOptions.extraInitializationData.get("sandboxedAccessibilityBusAddress"_s);
+        if (!accessibilityBusAddress.isEmpty() && !sandboxedAccessibilityBusAddress.isEmpty()) {
+            auto a11yBusName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s);
+            bindA11y(sandboxArgs, dbusProxy, accessibilityBusAddress, a11yBusName, sandboxedAccessibilityBusAddress);
         }
 #endif
 #if PLATFORM(GTK)
         bindGtkData(sandboxArgs);
 #endif
-        if (dbusProxy && !dbusProxy->launch(launchOptions))
-            dbusProxy = nullptr;
+        dbusProxy.launch(launchOptions);
     } else {
         // Only X11 users need this for XShm which is only the Web process.
         sandboxArgs.append("--unshare-ipc");

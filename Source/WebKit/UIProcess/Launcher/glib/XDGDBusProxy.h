@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(BUBBLEWRAP_SANDBOX)
-#include "ProcessLauncher.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -34,6 +33,8 @@
 #include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebKit {
+
+struct ProcessLaunchOptions;
 
 class XDGDBusProxy {
     WTF_MAKE_TZONE_ALLOCATED(XDGDBusProxy);
@@ -45,10 +46,10 @@ public:
     enum class AllowPortals : bool { No, Yes };
     std::optional<CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
 #if USE(ATSPI)
-    std::optional<CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath);
+    std::optional<CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath, const String& accessibilityBusName);
 #endif
 
-    bool launch(const ProcessLauncher::LaunchOptions&);
+    void launch(const ProcessLaunchOptions&);
 
 private:
     static CString makeProxy(const char* baseDirectory, const char* proxyTemplate);
