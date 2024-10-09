@@ -3250,6 +3250,67 @@ TEST(WritingTools, SuggestedTextIsSelectedAfterSmartReply)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, SuggestedTextIsSelectedAfterCompose)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    [session setCompositionSessionType:WTCompositionSessionTypeCompose];
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='p'>AAAA</p><p>BBBB</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const range = document.createRange();"
+        "  range.setStart(document.getElementById('p'), 0);"
+        "  range.setEnd(document.getElementById('p'), 0);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+
+    __block bool finished = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+#if PLATFORM(MAC)
+        id<NSTextInputClient_Async> contentView = (id<NSTextInputClient_Async>)webView.get();
+#elif USE(BROWSERENGINEKIT)
+        id<BETextInput> contentView = [webView asyncTextInput];
+#else
+        id<UIWKInteractionViewProtocol> contentView = [webView textInputContentView];
+#endif
+
+        [contentView insertTextPlaceholderWithSize:CGSizeMake(50, 100) completionHandler:^(PlatformTextPlaceholder *placeholder) {
+            TestWebKitAPI::Util::runFor(0.1_s);
+            EXPECT_NOT_NULL(placeholder);
+
+            EXPECT_WK_STREQ(@"AAAA\n\nBBBB", contexts.firstObject.attributedText.string);
+            RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Z"]);
+
+            [contentView removeTextPlaceholder:placeholder willInsertText:YES completionHandler:^{
+                [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+
+                [webView waitForSelectionValue:@"Z"];
+
+                [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+                auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+                EXPECT_WK_STREQ(@"Z", selectionAfterEnd);
+
+                EXPECT_WK_STREQ(@"ZAAAA\n\nBBBB", [webView contentsAsString]);
+
+                finished = true;
+            }];
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, BlockquoteAndPreContentsAreIgnored)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);

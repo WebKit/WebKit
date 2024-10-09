@@ -105,6 +105,18 @@ String WritingToolsController::plainText(const SimpleRange& range)
 
 #pragma mark - Static utility helper methods.
 
+static bool isZeroToOneCompositionType(WritingTools::Session::CompositionType type)
+{
+    switch (type) {
+    case WritingTools::Session::CompositionType::Compose:
+    case WritingTools::Session::CompositionType::SmartReply:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 static std::optional<SimpleRange> contextRangeForSession(Document& document, const std::optional<WritingTools::Session>& session)
 {
     // If the selection is a range, the range of the context should be the range of the paragraph
@@ -595,9 +607,10 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
             weakThis->compositionSessionDidReceiveTextWithReplacementRangeAsync(sourceAnimationUUID, destinationAnimationUUID, attributedText, range, context, finished, runMode);
     };
 
-    // We only get a single replace call for smart replies with finished = true. We use this flag to not run the final replace for a composition
-    // session, so for smart replies, we need to make sure to not send with this flag, so that we can be sure to do the animation for smart replies.
-    if (session.compositionType == WritingTools::SessionCompositionType::SmartReply)
+    // Unlike regular rewrites, we only get a single replace call for zero-to-one compositions with finished = true.
+    // We use this flag to not run the final replace for a composition session, so for zero-to-one compositions, we need
+    // to make sure to not send with this flag, thereby ensuring an animation is run.
+    if (isZeroToOneCompositionType(session.compositionType))
         finished = false;
 
     m_page->chrome().client().addSourceTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, finished, range, attributedText.string, WTFMove(addDestinationTextAnimation));
@@ -966,8 +979,8 @@ void WritingToolsController::restartCompositionForSession()
 
     m_page->chrome().client().clearAnimationsForActiveWritingToolsSession();
 
-    // Don't animate smart replies, they are animated by UIKit/AppKit.
-    if (state->session.compositionType != WebCore::WritingTools::Session::CompositionType::SmartReply) {
+    // Zero-to-one compositions are animated by UIKit/AppKit.
+    if (!isZeroToOneCompositionType(state->session.compositionType)) {
         document->selection().clear();
         m_page->chrome().client().addInitialTextAnimationForActiveWritingToolsSession();
     }
