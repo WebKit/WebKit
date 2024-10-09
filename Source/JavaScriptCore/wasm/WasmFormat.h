@@ -38,12 +38,12 @@
 #include "WasmMemoryInformation.h"
 #include "WasmName.h"
 #include "WasmNameSection.h"
-#include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <wtf/FixedBitVector.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -769,6 +769,10 @@ struct Entrypoint {
 };
 #endif
 
+class OSREntryValue;
+using StackMap = FixedVector<OSREntryValue>;
+using StackMaps = HashMap<CallSiteIndex, StackMap>;
+
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
@@ -779,6 +783,7 @@ struct InternalFunction {
     Vector<CCallHelpers::Label> bbqLoopEntrypoints;
     std::optional<CCallHelpers::Label> bbqSharedLoopEntrypoint;
     Entrypoint entrypoint;
+    FixedBitVector outgoingJITDirectCallees;
 #endif
     unsigned osrEntryScratchBufferSize { 0 };
 };

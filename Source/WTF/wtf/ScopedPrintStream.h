@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,41 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "WasmTierUpCount.h"
+#pragma once
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+#include <wtf/StringPrintStream.h>
 
-#include "WasmOSREntryData.h"
-#include <wtf/TZoneMallocInlines.h>
+namespace WTF {
 
-namespace JSC { namespace Wasm {
+// This class is intended for when you want to easily buffer and print a bunch of information
+// at the end of some scope/function.
+class ScopedPrintStream final : public PrintStream {
+public:
+    ScopedPrintStream(PrintStream& out = WTF::dataFile())
+        : m_out(out)
+    { }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(TierUpCount);
+    ~ScopedPrintStream() final
+    {
+        m_out.print(m_buffer.toCString());
+        m_out.flush();
+    }
 
-TierUpCount::TierUpCount()
-{
-    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
-    m_compilationStatusForOMG.fill(CompilationStatus::NotCompiled);
-    m_compilationStatusForOMGForOSREntry.fill(CompilationStatus::NotCompiled);
-}
+    void vprintf(const char* format, va_list argList) final WTF_ATTRIBUTE_PRINTF(2, 0)
+    {
+        m_buffer.vprintf(format, argList);
+    }
 
-TierUpCount::~TierUpCount() = default;
+    void reset() { m_buffer.reset(); }
 
-OSREntryData& TierUpCount::addOSREntryData(FunctionCodeIndex functionIndex, uint32_t loopIndex, StackMap&& stackMap)
-{
-    m_osrEntryData.append(makeUnique<OSREntryData>(functionIndex, loopIndex, WTFMove(stackMap)));
-    return *m_osrEntryData.last().get();
-}
+private:
+    StringPrintStream m_buffer;
+    PrintStream& m_out;
+};
 
-OSREntryData& TierUpCount::osrEntryData(uint32_t loopIndex)
-{
-    return *m_osrEntryData[loopIndex];
-}
+} // namespace WTF
 
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+using WTF::ScopedPrintStream;

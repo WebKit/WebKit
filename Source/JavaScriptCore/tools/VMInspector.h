@@ -56,7 +56,7 @@ public:
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
-    template <typename Functor> void iterate(const Functor& functor) WTF_REQUIRES_LOCK(m_lock)
+    void iterate(const Invocable<IterationStatus(VM&)> auto& functor) WTF_REQUIRES_LOCK(m_lock)
     {
         for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
             IterationStatus status = functor(*vm);

@@ -285,7 +285,7 @@ void CallFrame::dump(PrintStream& out) const
         case NativeCallee::Category::Wasm: {
 #if ENABLE(WEBASSEMBLY)
             auto* wasmCallee = static_cast<Wasm::Callee*>(nativeCallee);
-            out.print(Wasm::makeString(wasmCallee->indexOrName()), " [", wasmCallee->compilationMode(), "]");
+            out.print(Wasm::makeString(wasmCallee->indexOrName()), " [", wasmCallee->compilationMode(), " ", RawPointer(callee().rawPtr()), "]");
             out.print("(JSWebAssemblyInstance: ", RawPointer(wasmInstance()), ")");
 #else
             out.print(RawPointer(returnPCForInspection()));

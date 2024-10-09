@@ -1273,7 +1273,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmCallee.h
     wasm/WasmCalleeGroup.h
     wasm/WasmCallingConvention.h
-    wasm/WasmCallsiteCollection.h
     wasm/WasmCapabilities.h
     wasm/WasmCompilationContext.h
     wasm/WasmCompilationMode.h

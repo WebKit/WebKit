@@ -1653,6 +1653,10 @@ public:
     void boxNativeCallee(GPRReg calleeGPR, GPRReg boxedGPR)
     {
 #if USE(JSVALUE64)
+#if CPU(ARM64)
+        // NativeCallees are sometimes stored in ThreadSafeWeakOrStrongPtr, which relies on top byte ignore, so we need to strip the top byte on ARM64.
+        and64(TrustedImm64(CalleeBits::nativeCalleeTopByteMask), calleeGPR);
+#endif
         sub64(calleeGPR, TrustedImm64(lowestAccessibleAddress()), boxedGPR);
         or64(TrustedImm64(JSValue::NativeCalleeTag), boxedGPR);
 #else

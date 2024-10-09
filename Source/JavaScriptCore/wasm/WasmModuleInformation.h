@@ -165,6 +165,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool callCanClobberInstance(FunctionSpaceIndex functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
     void addClobberingTailCall(FunctionSpaceIndex functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
 
+    // FIXME: These should probably be FixedVectors.
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;
     Vector<TypeIndex> internalFunctionTypeIndices;

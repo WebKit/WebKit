@@ -1810,7 +1810,7 @@ def runWebAssembly
         run("wasm-eager", "-m", "--useRandomizingExecutableIslandAllocation=true", *(FTL_OPTIONS + EAGER_OPTIONS))
         run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *FTL_OPTIONS)
         run("wasm-slow-memory", "-m", "--useWasmFastMemory=false", *FTL_OPTIONS)
-        run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
+        run("wasm-collect-continuously", "-m", "--collectContinuously=true", "--zeroExecutableMemoryOnFree=true", "--verifyGC=true", *FTL_OPTIONS) if shouldCollectContinuously?
         run("wasm-bbq", "-m", "--useWasmLLInt=false", *FTL_OPTIONS)
         if $isOMGPlatform
             run("wasm-omg", "-m", "--useWasmLLInt=true", "--useBBQJIT=true", "--thresholdForBBQOptimizeAfterWarmUp=0", "--thresholdForBBQOptimizeSoon=0", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *FTL_OPTIONS)

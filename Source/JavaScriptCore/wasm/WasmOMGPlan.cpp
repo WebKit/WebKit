@@ -32,6 +32,7 @@
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
 #include "NativeCalleeRegistry.h"
+#include "VMInspector.h"
 #include "WasmCallee.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmNameSection.h"
@@ -39,6 +40,7 @@
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
+#include <wtf/ScopedPrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 
@@ -77,6 +79,7 @@ void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
 {
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG code for WebAssembly OMG function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::OMGMode))) {
+        ScopedPrintStream out;
         auto* disassembler = context.procedure->code().disassembler();
 
         const char* b3Prefix = "b3    ";
@@ -87,15 +90,15 @@ void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
         auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
-                    dataLogLn("\033[1;37m", string, "\033[0m");
-                dataLog(b3Prefix);
-                inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
-                dataLogLn();
+                    out.println("\033[1;37m", string, "\033[0m");
+                out.print(b3Prefix);
+                inst.origin->deepDump(context.procedure.get(), out);
+                out.println();
                 prevOrigin = inst.origin;
             }
         });
 
-        disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
+        disassembler->dump(context.procedure->code(), out, linkBuffer, airPrefix, asmPrefix, forEachInst);
         linkBuffer.didAlreadyDisassemble();
     }
 }
@@ -138,10 +141,13 @@ void OMGPlan::work(CompilationEffort)
 
     computePCToCodeOriginMap(context, linkBuffer);
 
-    dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
-    omgEntrypoint.compilation = makeUnique<Compilation>(
-        FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
-        WTFMove(context.wasmEntrypointByproducts));
+    {
+        ScopedPrintStream out;
+        dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
+        omgEntrypoint.compilation = makeUnique<Compilation>(
+            FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMG function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
+            WTFMove(context.wasmEntrypointByproducts));
+    }
 
     omgEntrypoint.calleeSaveRegisters = WTFMove(internalFunction->entrypoint.calleeSaveRegisters);
 
@@ -162,6 +168,7 @@ void OMGPlan::work(CompilationEffort)
 
         m_calleeGroup->setOMGCallee(locker, m_functionIndex, callee.copyRef());
         ASSERT(m_calleeGroup->replacement(locker, callee->index()) == callee.ptr());
+        m_calleeGroup->reportCallees(locker, callee.ptr(), internalFunction->outgoingJITDirectCallees);
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
@@ -173,12 +180,14 @@ void OMGPlan::work(CompilationEffort)
                 entrypoint = m_calleeGroup->wasmEntrypointCalleeFromFunctionIndexSpace(locker, call.functionIndexSpace).entrypoint().retagged<WasmEntryPtrTag>();
             }
 
+            // FIXME: This does an icache flush for each of these... which doesn't make any sense since this code isn't runnable here
+            // and any stale cache will be evicted when updateCallsitesToCallUs is called.
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
             MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(calleeCallee));
         }
 
-        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
-        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
+        m_calleeGroup->updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex);
+        ASSERT(*m_calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace) == entrypoint);
 
         {
             // These locks store barrier the set of OMG callee above.
@@ -202,6 +211,12 @@ void OMGPlan::work(CompilationEffort)
     auto* jsEntrypointCallee = m_calleeGroup->m_jsEntrypointCallees.get(m_functionIndex);
     if (jsEntrypointCallee)
         jsEntrypointCallee->setReplacementTarget(entrypoint);
+
+    if (Options::freeRetiredWasmCode()) {
+        // Taking the lock here fences all the stores above.
+        Locker locker { m_calleeGroup->m_lock };
+        m_calleeGroup->releaseBBQCallee(locker, m_functionIndex);
+    }
 
     dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished OMG ", m_functionIndex);
     Locker locker { m_lock };

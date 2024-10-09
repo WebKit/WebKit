@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 
 namespace WTF {
 
+// FIXME: This should be `: private BitVector`.
 class FixedBitVector final {
     WTF_MAKE_FAST_ALLOCATED;
     using WordType = decltype(BitVector::m_bitsOrPointer);
@@ -47,6 +48,11 @@ public:
     {
     }
 
+    FixedBitVector(BitVector&& other)
+        : m_bitVector(WTFMove(other))
+    {
+    }
+
     bool concurrentTestAndSet(size_t bitIndex, Dependency = Dependency());
     bool concurrentTestAndClear(size_t bitIndex, Dependency = Dependency());
 
@@ -54,9 +60,14 @@ public:
     bool testAndClear(size_t bitIndex);
     bool test(size_t bitIndex);
 
+    inline void merge(const FixedBitVector& other);
+    inline void filter(const FixedBitVector& other);
+    inline void exclude(const FixedBitVector& other);
+
     // Note that BitVector will be in inline mode with fixed size when
     // the BitVector is constructed with size less or equal to `maxInlineBits`.
     size_t size() const { return m_bitVector.size(); }
+    size_t bitCount() const { return m_bitVector.bitCount(); }
 
     bool isEmpty() const { return m_bitVector.isEmpty(); }
 
@@ -163,6 +174,24 @@ ALWAYS_INLINE unsigned FixedBitVector::hash() const
 ALWAYS_INLINE void FixedBitVector::dump(PrintStream& out) const
 {
     m_bitVector.dump(out);
+}
+
+ALWAYS_INLINE void FixedBitVector::merge(const FixedBitVector& other)
+{
+    ASSERT(size() == other.size());
+    m_bitVector.merge(other.m_bitVector);
+}
+
+ALWAYS_INLINE void FixedBitVector::filter(const FixedBitVector& other)
+{
+    ASSERT(size() == other.size());
+    m_bitVector.filter(other.m_bitVector);
+}
+
+ALWAYS_INLINE void FixedBitVector::exclude(const FixedBitVector& other)
+{
+    ASSERT(size() == other.size());
+    m_bitVector.exclude(other.m_bitVector);
 }
 
 struct FixedBitVectorHash {

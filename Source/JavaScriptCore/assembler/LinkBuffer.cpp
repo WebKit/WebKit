@@ -35,6 +35,7 @@
 #include "PerfLog.h"
 #include "WasmCallee.h"
 #include "YarrJIT.h"
+#include <wtf/ScopedPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -131,7 +132,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
 
     bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
 
-    StringPrintStream out;
+    ScopedPrintStream out;
     out.printf("Generated JIT code for ");
     va_list argList;
     va_start(argList, format);
@@ -159,26 +160,16 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
     out.printf(": [%p, %p) %zu bytes%s\n", executableAddress, executableAddress + result.size(), result.size(), justDumpingHeader ? "." : ":");
 
-    CString header = out.toCString();
-    
     if (justDumpingHeader) {
-        if (Options::logJIT())
-            dataLog(header);
+        if (!Options::logJIT())
+            out.reset();
         return result;
     }
     
     void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedPtr();
     void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
 
-    if (Options::asyncDisassembly()) {
-        CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
-        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, codeStart, codeEnd, "    ");
-        return result;
-    }
-    
-    dataLog(header);
-    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", WTF::dataFile());
-    
+    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", out);
     return result;
 }
 

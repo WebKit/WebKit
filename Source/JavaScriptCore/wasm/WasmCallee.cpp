@@ -34,8 +34,10 @@
 #include "LLIntExceptions.h"
 #include "LLIntThunks.h"
 #include "NativeCalleeRegistry.h"
+#include "VMInspector.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
+
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -66,6 +68,16 @@ Callee::Callee(Wasm::CompilationMode compilationMode, FunctionSpaceIndex index, 
     , m_indexOrName(index, WTFMove(name))
     , m_index(index)
 {
+}
+
+void Callee::reportToVMsForDestruction()
+{
+    // We don't know which VMs a Module has ever run on so we just report to all of them.
+    Locker locker(VMInspector::singleton().getLock());
+    VMInspector::singleton().iterate([&] (VM& vm) {
+        vm.heap.reportWasmCalleePendingDestruction(Ref(*this));
+        return IterationStatus::Continue;
+    });
 }
 
 template<typename Func>
@@ -512,6 +524,14 @@ void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unli
         const UnlinkedHandlerInfo& unlinkedHandler = unlinkedExceptionHandlers[i];
         CodeLocationLabel<ExceptionHandlerPtrTag> location = exceptionHandlerLocations[i];
         handler.initialize(unlinkedHandler, location);
+    }
+}
+
+BBQCallee::~BBQCallee()
+{
+    if (m_osrEntryCallee) {
+        ASSERT(m_osrEntryCallee->hasOneRef());
+        m_osrEntryCallee->reportToVMsForDestruction();
     }
 }
 

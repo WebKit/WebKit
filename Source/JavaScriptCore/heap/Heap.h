@@ -108,6 +108,10 @@ namespace DFG {
 class SpeculativeJIT;
 }
 
+namespace Wasm {
+class Callee;
+}
+
 namespace GCClient {
 class Heap;
 }
@@ -583,10 +587,17 @@ public:
 
     bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
 
+#if ENABLE(WEBASSEMBLY)
+    // FIXME: We should have a way to clear Wasm::Callees pending destruction when the Module dies.
+    void reportWasmCalleePendingDestruction(Ref<Wasm::Callee>&&);
+    bool isWasmCalleePendingDestruction(Wasm::Callee&);
+#endif
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;
     friend class CollectingScope;
+    friend class ConservativeRoots;
     friend class DeferGC;
     friend class DeferGCForAWhile;
     friend class GCAwareJITStubRoutine;
@@ -840,6 +851,7 @@ private:
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     bool m_isMarkingForGCVerifier { false };
+    Lock m_wasmCalleesPendingDestructionLock;
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
 
@@ -874,6 +886,10 @@ private:
 
     HashSet<WeakGCHashTable*> m_weakGCHashTables;
     
+#if ENABLE(WEBASSEMBLY)
+    HashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
+#endif
+
     std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
     std::unique_ptr<MarkStackArray> m_sharedMutatorMarkStack;
     unsigned m_numberOfActiveParallelMarkers { 0 };

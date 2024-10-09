@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -656,6 +656,7 @@ LLIntGenerator::LLIntGenerator(ModuleInformation& info, FunctionCodeIndex functi
     , m_info(info)
     , m_functionIndex(functionIndex)
 {
+    m_codeBlock->m_callees = FixedBitVector(m_info.internalFunctionCount());
     {
         auto& threadSpecific = threadSpecificBuffer();
         Buffer buffer = WTFMove(*threadSpecific);
@@ -1653,6 +1654,8 @@ auto LLIntGenerator::addCall(FunctionSpaceIndex functionIndex, const TypeDefinit
     ASSERT(callType == CallType::Call || isTailCall);
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     LLIntCallInformation wasmCalleeInfo = callInformationForCaller(*signature.as<FunctionSignature>());
+    if (!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex))
+        m_codeBlock->m_callees.testAndSet(functionIndex - m_info.importFunctionCount());
 
     unifyValuesWithBlock(wasmCalleeInfo.arguments, args);
 

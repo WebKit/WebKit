@@ -131,6 +131,9 @@ public:
     TakeType take(iterator);
     TakeType takeAny();
 
+    template<size_t inlineCapacity = 0>
+    Vector<TakeType, inlineCapacity> takeIf(const Invocable<bool(const ValueType&)> auto& functor) { return m_impl.template takeIf<inlineCapacity>(functor); }
+
     // Returns a new set with the elements of both this and the given
     // collection (a.k.a. OR).
     template<typename OtherCollection>

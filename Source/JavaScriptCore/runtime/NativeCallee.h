@@ -33,7 +33,7 @@ namespace JSC {
 
 class LLIntOffsetsExtractor;
 
-class NativeCallee : public ThreadSafeRefCounted<NativeCallee> {
+class NativeCallee : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NativeCallee> {
     WTF_MAKE_COMPACT_TZONE_ALLOCATED(NativeCallee);
 public:
     enum class Category : uint8_t {

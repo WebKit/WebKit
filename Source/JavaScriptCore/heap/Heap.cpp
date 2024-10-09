@@ -81,6 +81,7 @@
 #include "TypeProfilerLog.h"
 #include "VM.h"
 #include "VerifierSlotVisitorInlines.h"
+#include "WasmCallee.h"
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
@@ -2877,6 +2878,7 @@ void Heap::addCoreConstraints()
         "Cs", "Conservative Scan",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this, lastVersion = static_cast<uint64_t>(0)] (auto& visitor) mutable {
             bool shouldNotProduceWork = lastVersion == m_phaseVersion;
+            SuperSamplerScope superSamplerScope(false);
 
             // For the GC Verfier, we would like to use the identical set of conservative roots
             // as the real GC. Otherwise, the GC verifier may report false negatives due to
@@ -2890,8 +2892,14 @@ void Heap::addCoreConstraints()
             m_jitStubRoutines->prepareForConservativeScan();
 
             {
+
+                // We only want to do this when the mutator has the conn because that means we're under a safepoint.
+                // If we tried to scan while not under a safepoint we could stop a thread that's in the process of calling
+                // one of the callees we are looking for.
+                // FIXME: Should we have two constraints for this? One for concurrent and one under safepoint at the bitter end.
+                // TODO: Verify this part only runs on one thread.
+                ASSERT(worldIsStopped());
                 ConservativeRoots conservativeRoots(*this);
-                SuperSamplerScope superSamplerScope(false);
 
                 gatherStackRoots(conservativeRoots);
                 gatherJSStackRoots(conservativeRoots);
@@ -3301,6 +3309,25 @@ DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructi
 
 #undef DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW
 
+#if ENABLE(WEBASSEMBLY)
+
+void Heap::reportWasmCalleePendingDestruction(Ref<Wasm::Callee>&& callee)
+{
+    void* boxedCallee = CalleeBits::boxNativeCallee(callee.ptr());
+    // This better be true or we won't find the callee in ConservativeRoots.
+    ASSERT_UNUSED(boxedCallee, boxedCallee == removeArrayPtrTag(boxedCallee));
+
+    Locker locker(m_wasmCalleesPendingDestructionLock);
+    m_wasmCalleesPendingDestruction.add(WTFMove(callee));
+}
+
+bool Heap::isWasmCalleePendingDestruction(Wasm::Callee& callee)
+{
+    Locker locker(m_wasmCalleesPendingDestructionLock);
+    return m_wasmCalleesPendingDestruction.contains(callee);
+}
+
+#endif
 
 namespace GCClient {
 

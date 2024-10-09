@@ -39,6 +39,7 @@
 namespace JSC {
 
 class VM;
+class JSWebAssemblyInstance;
 
 namespace Wasm {
 

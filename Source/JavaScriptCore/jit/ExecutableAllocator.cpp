@@ -1424,6 +1424,11 @@ ExecutableMemoryHandle::~ExecutableMemoryHandle()
     AssemblyCommentRegistry::singleton().unregisterCodeRange(start().untaggedPtr(), end().untaggedPtr());
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     allocator->handleWillBeReleased(*this, sizeInBytes());
+    if (UNLIKELY(Options::zeroExecutableMemoryOnFree())) {
+        // We don't have a performJITMemset so just use a zeroed buffer.
+        auto zeros = MallocPtr<uint8_t>::zeroedMalloc(sizeInBytes());
+        performJITMemcpy(start().untaggedPtr(), zeros.get(), sizeInBytes());
+    }
     jit_heap_deallocate(key());
 }
 

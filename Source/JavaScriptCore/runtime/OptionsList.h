@@ -435,6 +435,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, fireExecutableAllocationFuzzRandomly, false, Normal, nullptr) \
     v(Double, fireExecutableAllocationFuzzRandomlyProbability, 0.1, Normal, nullptr) \
     v(Bool, verboseExecutableAllocationFuzz, false, Normal, nullptr) \
+    v(Bool, zeroExecutableMemoryOnFree, false, Normal, "0 out instructions when freeing JIT memory."_s) \
     \
     v(Bool, useOSRExitFuzz, false, Normal, nullptr) \
     v(Unsigned, fireOSRExitFuzzAtStatic, 0, Normal, nullptr) \
@@ -536,6 +537,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useTracePoints, false, Normal, nullptr) \
     v(Bool, useCompilerSignpost, false, Normal, nullptr) \
     v(Bool, traceLLIntExecution, false, Configurable, nullptr) \
+    v(Bool, traceWasmLLIntExecution, false, Configurable, nullptr) \
     v(Bool, traceLLIntSlowPath, false, Configurable, nullptr) \
     v(Bool, traceBaselineJITExecution, false, Normal, nullptr) \
     v(Unsigned, thresholdForGlobalLexicalBindingEpoch, UINT_MAX, Normal, "Threshold for global lexical binding epoch. If the epoch reaches to this value, CodeBlock metadata for scope operations will be revised globally. It needs to be greater than 1."_s) \
@@ -580,6 +582,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmIPIntEpilogueOSR, true, Normal, "Allow IPInt to tier up during function epilogues"_s) \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing."_s) \
     v(Bool, useOMGInlining, true, Normal, "Use OMG inlining"_s) \
+    v(Bool, freeRetiredWasmCode, true, Normal, "free BBQ/OMG-OSR wasm code once it's no longer reachable."_s) \
     \
     /* Feature Flags */\
     \

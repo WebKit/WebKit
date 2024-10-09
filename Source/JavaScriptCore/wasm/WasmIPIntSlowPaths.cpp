@@ -82,7 +82,9 @@ static inline bool shouldJIT(Wasm::IPIntCallee* callee)
     return true;
 }
 
-static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAssemblyInstance* instance)
+enum class OSRFor { Call, Loop };
+
+static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, JSWebAssemblyInstance* instance, OSRFor osrFor)
 {
     Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
@@ -92,13 +94,18 @@ static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::IPIntCallee* cal
 
     MemoryMode memoryMode = instance->memory()->mode();
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    {
+    auto getReplacement = [&] () -> Wasm::JITCallee* {
         Locker locker { calleeGroup.m_lock };
-        if (auto* replacement = calleeGroup.replacement(locker, callee->index()))  {
-            dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
-            tierUpCounter.optimizeSoon();
-            return replacement;
-        }
+        if (osrFor == OSRFor::Call)
+            return calleeGroup.replacement(locker, callee->index());
+        return calleeGroup.tryGetBBQCalleeForLoopOSR(locker, instance->vm(), callee->functionIndex());
+    };
+
+    if (auto* replacement = getReplacement()) {
+        dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
+        // FIXME: This should probably be some optimizeNow() for calls or checkIfOptimizationThresholdReached() should have a different threshold for calls.
+        tierUpCounter.optimizeSoon();
+        return replacement;
     }
 
     bool compile = false;
@@ -129,8 +136,7 @@ static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::IPIntCallee* cal
         }
     }
 
-    Locker locker { calleeGroup.m_lock };
-    return calleeGroup.replacement(locker, callee->index());
+    return getReplacement();
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
@@ -147,7 +153,7 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered prologue_osr with tierUpCounter = ", callee->tierUpCounter());
 
-    if (auto* replacement = jitCompileAndSetHeuristics(callee, instance))
+    if (auto* replacement = jitCompileAndSetHeuristics(callee, instance, OSRFor::Call))
         WASM_RETURN_TWO(replacement->entrypoint().taggedPtr(), nullptr);
     WASM_RETURN_TWO(nullptr, nullptr);
 }
@@ -174,17 +180,11 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntLoc
 
     if (!Options::useBBQJIT())
         WASM_RETURN_TWO(nullptr, nullptr);
-    // We don't use the replacement directly here since it could be a OMGCallee and we can't loop OSR to OMG from IPInt.
-    if (!jitCompileAndSetHeuristics(callee, instance))
+    auto* bbqCallee = static_cast<Wasm::BBQCallee*>(jitCompileAndSetHeuristics(callee, instance, OSRFor::Loop));
+    if (!bbqCallee)
         WASM_RETURN_TWO(nullptr, nullptr);
 
-    Wasm::BBQCallee* bbqCallee;
-    {
-        Locker locker { instance->calleeGroup()->m_lock };
-        bbqCallee = instance->calleeGroup()->bbqCallee(locker, callee->functionIndex());
-    }
-    RELEASE_ASSERT(bbqCallee);
-
+    ASSERT(bbqCallee->compilationMode() == Wasm::CompilationMode::BBQMode);
     size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
     RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->numLocals() + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
 
@@ -226,7 +226,7 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
 
     dataLogLnIf(Options::verboseOSR(), *callee, ": Entered epilogue_osr with tierUpCounter = ", callee->tierUpCounter());
 
-    jitCompileAndSetHeuristics(callee, instance);
+    jitCompileAndSetHeuristics(callee, instance, OSRFor::Call);
     WASM_RETURN_TWO(nullptr, nullptr);
 }
 #endif

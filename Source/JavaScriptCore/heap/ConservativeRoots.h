@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,14 +47,23 @@ public:
 private:
     static constexpr size_t inlineCapacity = 2048;
     
-    template<typename MarkHook>
-    void genericAddPointer(void*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t>, MarkHook&);
+    template<bool lookForWasmCallees, typename MarkHook>
+    void genericAddPointer(char*, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> jsGCFilter, TinyBloomFilter<uintptr_t> boxedWasmCalleeFilter, MarkHook&);
 
     template<typename MarkHook>
-    void genericAddSpan(void*, void* end, MarkHook&);
+    void genericAddSpan(void* begin, void* end, MarkHook&);
     
     void grow();
 
+    // We can't just use the copy of Heap::m_wasmCalleesPendingDestruction since new callees could be registered while
+    // we're actively scanning the stack. A bad race would be:
+    // 1) Start scanning the stack passing a frame with Wasm::Callee foo.
+    // 2) tier up finishes for foo and is added to Heap::m_wasmCalleesPendingDestruction
+    // 3) foo isn't added to m_wasmCalleesDiscovered
+    // 4) foo gets derefed and destroyed.
+    HashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionCopy;
+    HashSet<const Wasm::Callee*> m_wasmCalleesDiscovered;
+    TinyBloomFilter<uintptr_t> m_boxedWasmCalleeFilter;
     HeapCell** m_roots;
     size_t m_size;
     size_t m_capacity;

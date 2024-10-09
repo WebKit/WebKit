@@ -36,7 +36,6 @@ struct ProtoCallFrame;
 
 namespace LLInt {
 
-extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp)  REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_default_call(CallFrame*, CallLinkInfo*) REFERENCED_FROM_ASM WTF_INTERNAL;

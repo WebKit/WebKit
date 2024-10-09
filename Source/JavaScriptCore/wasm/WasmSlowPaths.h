@@ -44,6 +44,8 @@ class JSWebAssemblyInstance;
 
 namespace LLInt {
 
+extern "C" void SYSV_ABI logWasmPrologue(uint64_t i, uint64_t* fp, uint64_t* sp) REFERENCED_FROM_ASM WTF_INTERNAL;
+
 #define WASM_SLOW_PATH_DECL(name) \
     extern "C" UGPRPair SYSV_ABI slow_path_wasm_##name(CallFrame* callFrame, const WasmInstruction* pc, JSWebAssemblyInstance* instance)
 

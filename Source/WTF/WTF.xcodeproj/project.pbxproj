@@ -107,6 +107,8 @@
 		5311BD531EA71CAD00525281 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD511EA71CAD00525281 /* Signals.cpp */; };
 		5311BD5C1EA822F900525281 /* ThreadMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5B1EA822F900525281 /* ThreadMessage.cpp */; };
 		53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */ = {isa = PBXBuildFile; fileRef = 53534F291EC0E10E00141B2F /* MachExceptions.defs */; settings = {ATTRIBUTES = (Client, Server, ); }; };
+		53CAC0632C6FBD8200B1A77C /* ScopedPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CAC0622C6FBD8200B1A77C /* ScopedPrintStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53F202252CAB267000A33D14 /* TaggedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F202242CAB267000A33D14 /* TaggedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53FC70D023FB950C005B1990 /* OSLogPrintStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */; };
 		5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F05912164356B0039302C /* CFURLExtras.cpp */; };
 		5C1F0595216437B30039302C /* URLCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1F0594216437B30039302C /* URLCF.cpp */; };
@@ -1237,9 +1239,11 @@
 		5338EBA423AB04D100382662 /* EnumClassOperatorOverloads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumClassOperatorOverloads.h; sourceTree = "<group>"; };
 		53534F291EC0E10E00141B2F /* MachExceptions.defs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.mig; path = MachExceptions.defs; sourceTree = "<group>"; };
 		539EB0621D55284200C82EF7 /* LEBDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEBDecoder.h; sourceTree = "<group>"; };
+		53CAC0622C6FBD8200B1A77C /* ScopedPrintStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopedPrintStream.h; sourceTree = "<group>"; };
 		53EC253C1E95AD30000831B9 /* PriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriorityQueue.h; sourceTree = "<group>"; };
 		53F08A1BA39D49A8BAD369A1 /* StdSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdSet.h; sourceTree = "<group>"; };
 		53F1D98620477B9800EBC6BF /* FunctionTraits.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = FunctionTraits.h; sourceTree = "<group>"; };
+		53F202242CAB267000A33D14 /* TaggedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TaggedPtr.h; sourceTree = "<group>"; };
 		53FC70CE23FB950C005B1990 /* OSLogPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSLogPrintStream.h; sourceTree = "<group>"; };
 		53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OSLogPrintStream.mm; sourceTree = "<group>"; };
 		553071C91C40427200384898 /* TinyLRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyLRUCache.h; sourceTree = "<group>"; };
@@ -2412,6 +2416,7 @@
 				1469419416EAAFF80024E146 /* SchedulePair.h */,
 				1A3524AA1D63A2FF0031729B /* Scope.h */,
 				0FEC84B01BDACD390080FF74 /* ScopedLambda.h */,
+				53CAC0622C6FBD8200B1A77C /* ScopedPrintStream.h */,
 				0F66B2841DC97BAB004A1D3F /* Seconds.cpp */,
 				0F66B2851DC97BAB004A1D3F /* Seconds.h */,
 				0FA6F38E20CC580E00A03DCD /* SegmentedVector.cpp */,
@@ -2475,6 +2480,7 @@
 				E4D2AE4D268A4C7F00DFEA02 /* SystemMalloc.h */,
 				0FB317C31C488001007E395A /* SystemTracing.h */,
 				DEF7FE5F22581AC800C15129 /* TaggedArrayStoragePtr.h */,
+				53F202242CAB267000A33D14 /* TaggedPtr.h */,
 				7B2739F12632A8940040F182 /* ThreadAssertions.h */,
 				E311FB151F0A568B003C08DE /* ThreadGroup.cpp */,
 				E311FB161F0A568B003C08DE /* ThreadGroup.h */,
@@ -3489,6 +3495,7 @@
 				DD3DC91527A4BF8E007E5B61 /* SchedulePair.h in Headers */,
 				DD3DC87527A4BF8E007E5B61 /* Scope.h in Headers */,
 				DD3DC8CB27A4BF8E007E5B61 /* ScopedLambda.h in Headers */,
+				53CAC0632C6FBD8200B1A77C /* ScopedPrintStream.h in Headers */,
 				DD3DC8F327A4BF8E007E5B61 /* Seconds.h in Headers */,
 				DDF306DD27C08654006A526F /* SecuritySPI.h in Headers */,
 				DD3DC99227A4BF8E007E5B61 /* SegmentedVector.h in Headers */,
@@ -3568,6 +3575,7 @@
 				DD3DC8D527A4BF8E007E5B61 /* SystemMalloc.h in Headers */,
 				DD3DC95827A4BF8E007E5B61 /* SystemTracing.h in Headers */,
 				DD3DC8D627A4BF8E007E5B61 /* TaggedArrayStoragePtr.h in Headers */,
+				53F202252CAB267000A33D14 /* TaggedPtr.h in Headers */,
 				DDF307DF27C086DF006A526F /* TextBreakIterator.h in Headers */,
 				DDF307D027C086DF006A526F /* TextBreakIteratorCF.h in Headers */,
 				1C2BA32628E6C19B00FA6E17 /* TextBreakIteratorCFCharacterCluster.h in Headers */,

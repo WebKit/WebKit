@@ -136,6 +136,7 @@ void BBQPlan::work(CompilationEffort)
 
         m_calleeGroup->setBBQCallee(locker, m_functionIndex, callee.copyRef());
         ASSERT(m_calleeGroup->replacement(locker, callee->index()) == callee.ptr());
+        m_calleeGroup->reportCallees(locker, callee.ptr(), function->outgoingJITDirectCallees);
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
@@ -151,8 +152,7 @@ void BBQPlan::work(CompilationEffort)
             MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(calleeCallee));
         }
 
-        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
-        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, m_calleeGroup.get(), CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
+        m_calleeGroup->updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex);
 
         {
             // These locks store barrier the set of OMG callee above.
@@ -183,11 +183,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex fun
     ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
-#if ENABLE(WEBASSEMBLY_BBQJIT)
     beginCompilerSignpost(callee);
     parseAndCompileResult = parseAndCompileBBQ(context, callee, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, UINT32_MAX);
     endCompilerSignpost(callee);
-#endif
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

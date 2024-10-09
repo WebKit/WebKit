@@ -488,7 +488,7 @@ public:
         return m_callSiteIndex;
     }
 
-    OMGIRGenerator(CalleeGroup&, const ModuleInformation&, OptimizingJITCallee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
+    OMGIRGenerator(CalleeGroup&, const ModuleInformation&, OptimizingJITCallee&, Procedure&, Vector<UnlinkedWasmToWasmCall>&, FixedBitVector& outgoingDirectCallees, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry);
     OMGIRGenerator(OMGIRGenerator& inlineCaller, OMGIRGenerator& inlineRoot, CalleeGroup&, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, BasicBlock* returnContinuation, Vector<Value*> args);
 
     void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
@@ -1125,6 +1125,7 @@ private:
     Vector<Variable*> m_locals;
     Vector<Variable*> m_stack;
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
+    FixedBitVector& m_directCallees; // Note this includes call targets from functions we inline.
     unsigned* m_osrEntryScratchBufferSize;
     HashMap<ValueKey, Value*> m_constantPool;
     HashMap<const TypeDefinition*, B3::Type> m_tupleMap;
@@ -1328,6 +1329,7 @@ OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& roo
     , m_inlinedArgs(WTFMove(args))
     , m_inlineDepth(parentCaller.m_inlineDepth + 1)
     , m_unlinkedWasmToWasmCalls(rootCaller.m_unlinkedWasmToWasmCalls)
+    , m_directCallees(rootCaller.m_directCallees)
     , m_osrEntryScratchBufferSize(nullptr)
     , m_constantInsertionValues(m_proc)
     , m_hasExceptionHandlers(hasExceptionHandlers)
@@ -1346,7 +1348,7 @@ OMGIRGenerator::OMGIRGenerator(OMGIRGenerator& parentCaller, OMGIRGenerator& roo
         m_hasExceptionHandlers = { true };
 }
 
-OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation& info, OptimizingJITCallee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
+OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation& info, OptimizingJITCallee& callee, Procedure& procedure, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, FixedBitVector& outgoingDirectCallees, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry)
     : m_calleeGroup(calleeGroup)
     , m_info(info)
     , m_callee(&callee)
@@ -1358,6 +1360,7 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
     , m_inlineRoot(this)
     , m_inlinedBytes(m_info.functionWasmSize(m_functionIndex))
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
+    , m_directCallees(outgoingDirectCallees)
     , m_osrEntryScratchBufferSize(&osrEntryScratchBufferSize)
     , m_constantInsertionValues(m_proc)
     , m_hasExceptionHandlers(hasExceptionHandlers)
@@ -5567,6 +5570,13 @@ auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex,
 
 auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
+    if (!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
+        // Record the callee so the callee knows to look for it in updateCallsitesToCallUs.
+        // FIXME: This could only record the callees from inlined functions since BBQ should have reported any direct callees before so we don't do the extra
+        // bookkeeping for edges we already know about.
+        m_directCallees.testAndSet(m_info.toCodeIndex(functionIndexSpace));
+    }
+
     const bool isTailCallInlineCaller = callType == CallType::TailCall && m_inlineParent;
     const bool isTailCall = callType == CallType::TailCall && !isTailCallInlineCaller;
 
@@ -6008,7 +6018,8 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
 
     procedure.code().setForceIRCRegisterAllocation();
 
-    OMGIRGenerator irGenerator(calleeGroup, info, callee, procedure, unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, hasExceptionHandlers, loopIndexForOSREntry);
+    result->outgoingJITDirectCallees = FixedBitVector(info.internalFunctionCount());
+    OMGIRGenerator irGenerator(calleeGroup, info, callee, procedure, unlinkedWasmToWasmCalls, result->outgoingJITDirectCallees, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, hasExceptionHandlers, loopIndexForOSREntry);
     FunctionParser<OMGIRGenerator> parser(irGenerator, function.data, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

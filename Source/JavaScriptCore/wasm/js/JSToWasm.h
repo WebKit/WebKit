@@ -43,6 +43,7 @@ namespace Wasm {
 
 struct CallInformation;
 class JSEntrypointCallee;
+class Module;
 
 MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared();
 MacroAssemblerCodeRef<JITThunkPtrTag> wasmFunctionThunkGenerator(VM&);

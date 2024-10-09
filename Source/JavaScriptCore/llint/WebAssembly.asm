@@ -666,6 +666,19 @@ end
         addp constexpr Wasm::JSEntrypointCallee::SpillStackSpaceAligned, sp
     end
 
+    macro boxNativeCallee(callee, dest)
+        if JSVALUE64 and (ARM64 or ARM64E)
+            # NativeCallees are sometimes stored in ThreadSafeWeakOrStrongPtr, which relies on top byte ignore, so we need to strip the top byte on ARM64.
+            andp (constexpr CalleeBits::nativeCalleeTopByteMask), callee
+        end
+        leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, dest
+        loadp [dest], dest
+        subp callee, dest, dest
+        if JSVALUE64
+            orp (constexpr JSValue::NativeCalleeTag), dest
+        end
+    end
+
     tagReturnAddress sp
     preserveCallerPCAndCFR()
     saveJSEntrypointRegisters()
@@ -684,12 +697,7 @@ if ASSERT_ENABLED
 .ident_ok:
 end
 
-    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, wa0
-    loadp [wa0], wa0
-    subp ws1, wa0, wa0
-if JSVALUE64
-    orp (constexpr JSValue::NativeCalleeTag), wa0
-end
+    boxNativeCallee(ws1, wa0)
     storep wa0, Callee[cfr] # CalleeBits(JSEntrypointCallee*)
 if not JSVALUE64
     move constexpr JSValue::NativeCalleeTag, wa0

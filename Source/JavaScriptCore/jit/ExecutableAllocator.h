@@ -218,6 +218,8 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
         auto checkForZeroes = [dst, src, n] () {
+            if (UNLIKELY(Options::zeroExecutableMemoryOnFree()))
+                return;
             // On x86-64, the maximum immediate size is 8B, no opcodes/prefixes have 0x00
             // On other architectures this could be smaller
             constexpr size_t maxZeroByteRunLength = 16;

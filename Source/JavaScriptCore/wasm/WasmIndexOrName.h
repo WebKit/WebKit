@@ -106,6 +106,7 @@ public:
     }
 
     NameSection* nameSection() const { return m_nameSection.get(); }
+    void dump(PrintStream&) const;
 
 private:
     union {

@@ -215,6 +215,13 @@ public:
     Locker(const Locker<T>&) = delete;
     Locker& operator=(const Locker<T>&) = delete;
 
+    void assertIsHolding(T& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock)
+    {
+        ASSERT(m_isLocked);
+        ASSERT(&lock == &m_lock);
+        lock.assertIsOwner();
+    }
+
 private:
     // Support DropLockForScope even though it doesn't support thread safety analysis.
     template<typename>

@@ -1981,7 +1981,6 @@
 		E3443E3128E9711700C0020C /* ArrayPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3443E3028E9711700C0020C /* ArrayPrototypeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E348876228F516C600527E5E /* ObjectPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E348876128F516C600527E5E /* ObjectPrototypeInlines.h */; };
 		E349A7812491F161001BA336 /* DFGCodeOriginPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E349A7802491F15A001BA336 /* DFGCodeOriginPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E34D4FAA2984F25B00CE5F9F /* WasmCallsiteCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E34D4FA92984F25A00CE5F9F /* WasmCallsiteCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34E657520668EAA00FB81AC /* ParseHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E34E657320668E8D00FB81AC /* ParseHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34EDBF71DB5FFC900DC87A5 /* FrameTracers.h in Headers */ = {isa = PBXBuildFile; fileRef = E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E34F930E2322D882002B8DB4 /* JSGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F930C2322D881002B8DB4 /* JSGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5654,7 +5653,6 @@
 		E349A77F2491F159001BA336 /* DFGCodeOriginPool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCodeOriginPool.cpp; path = dfg/DFGCodeOriginPool.cpp; sourceTree = "<group>"; };
 		E349A7802491F15A001BA336 /* DFGCodeOriginPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGCodeOriginPool.h; path = dfg/DFGCodeOriginPool.h; sourceTree = "<group>"; };
 		E34AE50028B75C07006088FA /* ProxyHelpers.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ProxyHelpers.js; sourceTree = "<group>"; };
-		E34D4FA92984F25A00CE5F9F /* WasmCallsiteCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCallsiteCollection.h; sourceTree = "<group>"; };
 		E34E657320668E8D00FB81AC /* ParseHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseHash.h; sourceTree = "<group>"; };
 		E34E657420668E8E00FB81AC /* ParseHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseHash.cpp; sourceTree = "<group>"; };
 		E34EDBF61DB5FFC100DC87A5 /* FrameTracers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameTracers.h; sourceTree = "<group>"; };
@@ -5677,7 +5675,6 @@
 		E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBaseInlines.h; sourceTree = "<group>"; };
 		E35B36052A2E981E004EC264 /* StringReplaceCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCacheInlines.h; sourceTree = "<group>"; };
 		E35B36062A2E981E004EC264 /* StringReplaceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReplaceCache.h; sourceTree = "<group>"; };
-		E35C88C42984F411005A3CDA /* WasmCallsiteCollection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallsiteCollection.cpp; sourceTree = "<group>"; };
 		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
 		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
 		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
@@ -7744,8 +7741,6 @@
 				526AC4B51E977C5D003500E1 /* WasmCalleeGroup.h */,
 				53FD04D11D7AB187003287D3 /* WasmCallingConvention.cpp */,
 				53FD04D21D7AB187003287D3 /* WasmCallingConvention.h */,
-				E35C88C42984F411005A3CDA /* WasmCallsiteCollection.cpp */,
-				E34D4FA92984F25A00CE5F9F /* WasmCallsiteCollection.h */,
 				E337B966224324E50093A820 /* WasmCapabilities.h */,
 				E32D51A62C6D0FD600B013D1 /* WasmCompilationContext.cpp */,
 				E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */,
@@ -11914,7 +11909,6 @@
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,
-				E34D4FAA2984F25B00CE5F9F /* WasmCallsiteCollection.h in Headers */,
 				E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */,
 				E32D51AF2C6D0FF200B013D1 /* WasmCompilationContext.h in Headers */,
 				E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */,

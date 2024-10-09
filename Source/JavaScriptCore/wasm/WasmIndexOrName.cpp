@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WasmIndexOrName.h"
 
+#include <wtf/PrintStream.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC { namespace Wasm {
@@ -50,6 +51,22 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
     }
 #endif
     m_nameSection = WTFMove(name.second);
+}
+
+void IndexOrName::dump(PrintStream& out) const
+{
+    if (isEmpty() || !nameSection()) {
+        out.print("wasm-stub"_s);
+        if (isIndex())
+            out.print('[', index(), ']');
+        return;
+    }
+
+    auto moduleName = nameSection()->moduleName.size() ? nameSection()->moduleName.span() : nameSection()->moduleHash.span();
+    if (isIndex())
+        out.print(moduleName, ".wasm-function["_s, index(), "]");
+    else
+        out.print(moduleName, ".wasm-function["_s, name()->span(), "]");
 }
 
 String makeString(const IndexOrName& ion)

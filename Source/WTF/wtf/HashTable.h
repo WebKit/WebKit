@@ -365,6 +365,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         typedef Traits ValueTraits;
         typedef Key KeyType;
         typedef Value ValueType;
+        using TakeType = typename ValueTraits::TakeType;
         typedef IdentityHashTranslator<ValueTraits, HashFunctions> IdentityTranslatorType;
         typedef HashTableAddResult<iterator> AddResult;
 
@@ -498,9 +499,12 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void remove(iterator);
         void removeWithoutEntryConsistencyCheck(iterator);
         void removeWithoutEntryConsistencyCheck(const_iterator);
-        template<typename Functor>
-        bool removeIf(const Functor&);
+        // FIXME: This feels like it should be Invocable<bool(const ValueType&)> but that breaks many HashMap users.
+        bool removeIf(const Invocable<bool(ValueType&)> auto&);
         void clear();
+
+        template<size_t inlineCapacity>
+        Vector<TakeType, inlineCapacity> takeIf(const Invocable<bool(const ValueType&)> auto&);
 
         static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
         static bool isReleasedWeakBucket(const ValueType& value) { return isHashTraitsReleasedWeakValue<KeyTraits>(Extractor::extract(value)); }
@@ -1119,8 +1123,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    template<typename Functor>
-    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::removeIf(const Functor& functor)
+    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::removeIf(const Invocable<bool(ValueType&)> auto& functor)
     {
         // We must use local copies in case "functor" or "deleteBucket"
         // make a function call, which prevents the compiler from keeping
@@ -1149,6 +1152,41 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         
         internalCheckTableConsistency();
         return removedBucketCount;
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<size_t inlineCapacity>
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::takeIf(const Invocable<bool(const ValueType&)> auto& functor) -> Vector<TakeType, inlineCapacity>
+    {
+        // We must use local copies in case "functor" or "deleteBucket"
+        // make a function call, which prevents the compiler from keeping
+        // the values in register.
+        unsigned removedBucketCount = 0;
+        ValueType* table = m_table;
+        Vector<TakeType, inlineCapacity> result;
+
+        for (unsigned i = tableSize(); i--;) {
+            ValueType& bucket = table[i];
+            if (isEmptyOrDeletedBucket(bucket))
+                continue;
+
+            if (!functor(bucket))
+                continue;
+
+            result.append(ValueTraits::take(WTFMove(bucket)));
+            deleteBucket(bucket);
+            ++removedBucketCount;
+        }
+        if (removedBucketCount) {
+            setDeletedCount(deletedCount() + removedBucketCount);
+            setKeyCount(keyCount() - removedBucketCount);
+        }
+
+        if (shouldShrink())
+            shrinkToBestSize();
+
+        internalCheckTableConsistency();
+        return result;
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

@@ -500,9 +500,10 @@ class Parser
             @idx += 1
             BitnotImmediate.new(@tokens[@idx - 1].codeOrigin, parseExpressionAtom)
         elsif @tokens[@idx] == "("
+            originalIndex = @idx
             @idx += 1
             result = parseExpression
-            parseError unless @tokens[@idx] == ")"
+            parseError("expected ')' to match #{@tokens[originalIndex]}") unless @tokens[@idx] == ")"
             @idx += 1
             result
         elsif isInteger @tokens[@idx]
