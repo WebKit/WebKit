@@ -528,8 +528,13 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 
     Ref request = UserMediaPermissionRequestProxy::create(*this, userMediaID, page->mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), { }, { }, WTFMove(userRequest));
     if (m_currentUserMediaRequest) {
-        m_pendingUserMediaRequests.append(WTFMove(request));
-        return;
+        if (m_currentUserMediaRequest->requiresDisplayCapture() && request->requiresDisplayCapture()) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Cancelling pending getDisplayMedia request");
+            std::exchange(m_currentUserMediaRequest, nullptr)->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure);
+        } else {
+            m_pendingUserMediaRequests.append(WTFMove(request));
+            return;
+        }
     }
 
     if (!UserMediaProcessManager::singleton().captureEnabled()) {
