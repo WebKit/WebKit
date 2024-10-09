@@ -521,6 +521,12 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCo
 {
     m_currentCommand = nil;
     ++m_currentCommandIndex;
+
+    constexpr auto approximateCommandSize = 512;
+    static const auto maxCommandCount = std::max<uint32_t>(100000, m_device->limits().maxBufferSize / approximateCommandSize);
+    if (isValid() && m_currentCommandIndex >= maxCommandCount && !m_renderPassEncoder && !m_indirectCommandBuffer)
+        endCurrentICB();
+
     return FinalizeRenderCommand { };
 }
 
@@ -878,7 +884,7 @@ void RenderBundleEncoder::endCurrentICB()
 
     if (!m_renderPassEncoder) {
         m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
-        if (!m_indirectCommandBuffer) {
+        if (!m_indirectCommandBuffer || m_indirectCommandBuffer.size != commandCount) {
             makeInvalid(@"MTLIndirectCommandBuffer allocation failed, likely tried to encode too many commands");
             return;
         }
