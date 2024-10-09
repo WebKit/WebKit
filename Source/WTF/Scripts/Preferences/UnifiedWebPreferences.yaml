@@ -899,6 +899,19 @@ BlockIOKitInWebContentSandbox:
     WebKit:
       default: true
 
+BlockIconServicesInWebContentSandbox:
+  type: bool
+  status: internal
+  category: networking
+  humanReadableName: "Block Icon services in the WebContent sandbox"
+  humanReadableDescription: "Block Icon services in the WebContent sandbox"
+  webcoreBinding: none
+  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 BlockMediaLayerRehostingInWebContentProcess:
   type: bool
   status: internal

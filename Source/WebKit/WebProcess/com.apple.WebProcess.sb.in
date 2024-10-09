@@ -1358,13 +1358,19 @@
             (global-name
                 "com.apple.webinspector"))))
 
+(with-filter (require-not (state-flag "BlockIconServicesInWebContentSandbox"))
+    (allow mach-lookup
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name
+                "com.apple.iconservices"
+                "com.apple.iconservices.store"))))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.coreservices.launchservicesd"
-            "com.apple.iconservices"
-            "com.apple.iconservices.store")))
+            "com.apple.coreservices.launchservicesd")))
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
