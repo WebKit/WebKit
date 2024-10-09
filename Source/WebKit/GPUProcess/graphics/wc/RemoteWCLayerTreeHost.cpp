@@ -42,7 +42,7 @@ namespace WebKit {
 IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 {
 #if ENABLE(WEBGL)
-    return remoteGraphicsContextGLStreamWorkQueue();
+    return remoteGraphicsContextGLStreamWorkQueueSingleton();
 #else
     static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
     static std::once_flag onceKey;

@@ -2,11 +2,7 @@ AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
 GPUProcess/graphics/RemoteDisplayListRecorder.h
-GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
-GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
-GPUProcess/media/RemoteAudioTrackProxy.h
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
-GPUProcess/media/RemoteVideoTrackProxy.h
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
 JSWebExtensionAPICommands.mm
@@ -388,7 +384,6 @@ WebProcess/Extensions/Bindings/Cocoa/JSWebExtensionWrapperCocoa.mm
 WebProcess/Extensions/Bindings/JSWebExtensionWrapper.h
 WebProcess/FileAPI/BlobRegistryProxy.cpp
 WebProcess/FullScreen/WebFullScreenManager.cpp
-WebProcess/GPU/GPUProcessConnection.cpp
 WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
 WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
 WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp

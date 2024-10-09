@@ -80,7 +80,7 @@ namespace WebKit {
 class RemoteVideoFrameObjectHeap;
 #endif
 
-IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue();
+IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueueSingleton();
 
 
 // GPU process side implementation of that receives messages about GraphicsContextGL calls

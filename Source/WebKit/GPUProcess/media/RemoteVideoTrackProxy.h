@@ -63,7 +63,7 @@ public:
     void setSelected(bool selected)
     {
         m_selected = selected;
-        m_trackPrivate->setSelected(selected);
+        Ref { m_trackPrivate }->setSelected(selected);
     }
     bool operator==(const WebCore::VideoTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 

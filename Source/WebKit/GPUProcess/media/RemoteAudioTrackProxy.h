@@ -63,7 +63,7 @@ public:
     void setEnabled(bool enabled)
     {
         m_enabled = enabled;
-        m_trackPrivate->setEnabled(enabled);
+        Ref { m_trackPrivate }->setEnabled(enabled);
     }
     bool operator==(const WebCore::AudioTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 
