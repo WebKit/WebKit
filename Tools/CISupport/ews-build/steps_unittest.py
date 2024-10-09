@@ -9278,6 +9278,8 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
 
 
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
+    HEADER = '### Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13)\n'
+
     def setUp(self):
         return self.setUpBuildStep()
 
@@ -9285,6 +9287,7 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def configureStep(self):
+        self.maxDiff = None
         self.setupStep(DisplaySaferCPPResults())
         self.setProperty('buildnumber', '123')
         self.setProperty('github.number', '17')
@@ -9326,10 +9329,14 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
     def test_success_preexisting_failures(self):
         self.configureStep()
         self.setProperty('unexpected_new_issues', 10)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
 
         self.expectOutcome(result=SUCCESS, state_string='Ignored 10 pre-existing failures')
         rc = self.runStep()
         self.assertEqual(self.getProperty('build_summary'), 'Ignored 10 pre-existing failures')
+        self.assertEqual(self.getProperty('comment_text'), None)
+        self.assertEqual([], next_steps)
         return rc
 
     def test_success_only_fixes(self):
@@ -9341,15 +9348,30 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Found 1 fixed file: File17.cpp')
         rc = self.runStep()
         self.assertEqual(self.getProperty('passes'), ['File17.cpp'])
-        expected_comment = "Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13): Found 1 fixed file!\n"
-        expected_comment += "Please update expectations in Source/[WebKit/WebCore]/SaferCPPExpectations manually or by running the following command:\n"
-        expected_comment += "Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp "
+        expected_comment = self.HEADER + "\n:warning: Found 1 fixed file! Please update expectations in `Source/[WebKit/WebCore]/SaferCPPExpectations` by running the following command and update your pull request:\n"
+        expected_comment += "- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp`"
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_summary'), 'Found 1 fixed file: File17.cpp')
         self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
         return rc
 
     def test_failure_new_failures(self):
+        self.configureStep()
+        self.setProperty('unexpected_new_issues', 10)
+        self.setProperty('unexpected_failing_files', 1)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+
+        self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp')
+        rc = self.runStep()
+        expected_comment = self.HEADER + ":x: Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
+        expected_comment += "Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n"
+        self.assertEqual(self.getProperty('comment_text'), expected_comment)
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
+        return rc
+
+    def test_failure_mixed(self):
         self.configureStep()
         self.setProperty('unexpected_new_issues', 10)
         self.setProperty('unexpected_passing_files', 1)
@@ -9359,12 +9381,13 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectOutcome(result=FAILURE, state_string='Found 10 new failures in File1.cpp and found 1 fixed file: File17.cpp')
         rc = self.runStep()
-        expected_comment = "Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13): Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html)."
-        expected_comment += "\nPlease address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)"
+        expected_comment = self.HEADER + ":x: Found [10 new failures](https://ews-build.s3-us-west-2.amazonaws.com/None/None-123/scan-build-output/new-results.html). "
+        expected_comment += "Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n"
+        expected_comment += "\n:warning: Found 1 fixed file! Please update expectations in `Source/[WebKit/WebCore]/SaferCPPExpectations` by running the following command and update your pull request:\n"
+        expected_comment += '- `Tools/Scripts/update-safer-cpp-expectations -p WebKit --RefCntblBaseVirtualDtor File17.cpp`'
         self.assertEqual(self.getProperty('comment_text'), expected_comment)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
-        self.assertEqual([LeaveComment()], next_steps)
-        return rc
+        self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
 
 
 class TestPrintClangVersion(BuildStepMixinAdditions, unittest.TestCase):
