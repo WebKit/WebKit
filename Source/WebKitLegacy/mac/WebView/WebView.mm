@@ -4704,6 +4704,10 @@ IGNORE_WARNINGS_END
 
 + (void)_setLoadResourcesSerially:(BOOL)serialize
 {
+#if PLATFORM(IOS_FAMILY)
+    WebThreadLock();
+#endif
+
     WebPlatformStrategies::initializeIfNecessary();
 
     webResourceLoadScheduler().setSerialLoadingEnabled(serialize);
