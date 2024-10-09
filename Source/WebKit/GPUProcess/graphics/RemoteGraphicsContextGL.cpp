@@ -59,7 +59,7 @@ Vector<S> vectorCopyCast(const T& arrayReference)
 }
 
 // Currently we have one global WebGL processing instance.
-IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
+IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueueSingleton()
 {
     static LazyNeverDestroyed<IPC::StreamConnectionWorkQueue> instance;
     static std::once_flag onceKey;
@@ -83,7 +83,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGL);
 
 RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_workQueue(remoteGraphicsContextGLStreamWorkQueue())
+    , m_workQueue(remoteGraphicsContextGLStreamWorkQueueSingleton())
     , m_streamConnection(WTFMove(streamConnection))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(renderingBackend)

@@ -110,9 +110,9 @@ Ref<GPUProcessConnection> GPUProcessConnection::create(Ref<IPC::Connection>&& co
 }
 
 GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
-    : m_connection(WTFMove(connection))
+    : m_connection(connection)
 {
-    m_connection->open(*this);
+    connection->open(*this);
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
     }
@@ -120,10 +120,10 @@ GPUProcessConnection::GPUProcessConnection(Ref<IPC::Connection>&& connection)
 
 GPUProcessConnection::~GPUProcessConnection()
 {
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
-    if (m_audioSourceProviderManager)
-        m_audioSourceProviderManager->stopListeningForIPC();
+    if (RefPtr audioSourceProviderManager = m_audioSourceProviderManager)
+        audioSourceProviderManager->stopListeningForIPC();
 #endif
 }
 
@@ -157,7 +157,7 @@ Ref<RemoteSharedResourceCacheProxy> GPUProcessConnection::sharedResourceCache()
 
 void GPUProcessConnection::invalidate()
 {
-    m_connection->invalidate();
+    protectedConnection()->invalidate();
     m_hasInitialized = true;
 }
 
@@ -316,15 +316,17 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
 
 bool GPUProcessConnection::waitForDidInitialize()
 {
+    Ref connection = m_connection;
+
     if (!m_hasInitialized) {
-        auto result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
+        auto result = connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
         if (result != IPC::Error::NoError) {
             RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::waitForDidInitialize - failed, error:%" PUBLIC_LOG_STRING, this, IPC::errorAsString(result).characters());
             invalidate();
             return false;
         }
     }
-    return m_connection->isValid();
+    return connection->isValid();
 }
 
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
