@@ -1054,7 +1054,6 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     if (!page)
         return;
 
-#if PLATFORM(MAC)
     IntPoint originInPluginCoordinates;
     if (originInRootViewCoordinates)
         originInPluginCoordinates = convertFromRootViewToPlugin(*originInRootViewCoordinates);
@@ -1079,7 +1078,6 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
     };
 
     auto zoomContentsOrigin = computeOriginInContentsCoordinates();
-#endif
 
     std::exchange(m_scaleFactor, scale);
 
@@ -1094,17 +1092,11 @@ void UnifiedPDFPlugin::setScaleFactor(double scale, std::optional<WebCore::IntPo
 #if PLATFORM(MAC)
     if (m_activeAnnotation)
         m_activeAnnotation->updateGeometry();
+#endif
 
     auto scrolledContentsPoint = roundedIntPoint(convertUp(CoordinateSpace::Contents, CoordinateSpace::ScrolledContents, FloatPoint { zoomContentsOrigin }));
     auto newScrollPosition = IntPoint { scrolledContentsPoint - originInPluginCoordinates };
     newScrollPosition = newScrollPosition.expandedTo({ 0, 0 });
-#else
-    FloatPoint newScrollPosition;
-    if (originInRootViewCoordinates)
-        newScrollPosition = convertUp(CoordinateSpace::Contents, CoordinateSpace::ScrolledContents, FloatPoint { originInRootViewCoordinates.value() });
-    else
-        newScrollPosition = convertUp(CoordinateSpace::Plugin, CoordinateSpace::Contents, FloatRect({ }, size())).center();
-#endif
 
     scrollToPointInContentsSpace(newScrollPosition);
 

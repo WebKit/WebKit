@@ -4616,6 +4616,13 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         return transactionIdBeforeScalingPage >= visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
     })();
 
+    bool pluginHandlesScaleFactor = [&]() -> bool {
+#if ENABLE(PDF_PLUGIN)
+        return mainFramePlugIn();
+#endif
+        return false;
+    }();
+
     if (!pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale) {
         bool hasSetPageScale = false;
         if (scaleFromUIProcess) {
@@ -4624,11 +4631,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
             m_dynamicSizeUpdateHistory.clear();
 
-#if ENABLE(PDF_PLUGIN)
-            if (RefPtr pluginView = mainFramePlugIn())
-                pluginView->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition);
-            else
-#endif
+            if (!pluginHandlesScaleFactor)
                 m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
 
             hasSetPageScale = true;

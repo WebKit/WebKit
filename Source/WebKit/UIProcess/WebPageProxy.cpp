@@ -13263,6 +13263,13 @@ void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocu
     send(Messages::WebPage::SetShouldScaleViewToFitDocument(shouldScaleViewToFitDocument));
 }
 
+#if ENABLE(PDF_PLUGIN)
+void WebPageProxy::setPluginScaleFactor(double scaleFactor, WebCore::IntPoint origin)
+{
+    send(Messages::WebPage::SetPluginScaleFactor(scaleFactor, origin));
+}
+#endif
+
 void WebPageProxy::didRestoreScrollPosition()
 {
     if (RefPtr pageClient = this->pageClient())
