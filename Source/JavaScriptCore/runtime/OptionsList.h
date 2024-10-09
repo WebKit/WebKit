@@ -582,6 +582,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     /* Feature Flags */\
     \
+    v(Bool, useAtomicsPause, true, Normal, "Expose Atomics.pause."_s) \
     v(Bool, useErrorIsError, false, Normal, "Expose Error.isError feature."_s) \
     v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
     v(Bool, useIteratorHelpers, false, Normal, "Expose the Iterator Helpers."_s) \

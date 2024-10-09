@@ -179,6 +179,7 @@ namespace JSC {
     macro(AtomicsLoadIntrinsic) \
     macro(AtomicsNotifyIntrinsic) \
     macro(AtomicsOrIntrinsic) \
+    macro(AtomicsPauseIntrinsic) \
     macro(AtomicsStoreIntrinsic) \
     macro(AtomicsSubIntrinsic) \
     macro(AtomicsWaitIntrinsic) \

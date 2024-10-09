@@ -3,6 +3,7 @@
 flags:
   SharedArrayBuffer: useSharedArrayBuffer
   Atomics: useSharedArrayBuffer
+  Atomics.pause: useAtomicsPause
   iterator-helpers: useIteratorHelpers
   Temporal: useTemporal
   ShadowRealm: useShadowRealm
@@ -18,7 +19,6 @@ skip:
     - explicit-resource-management
     - regexp-modifiers
     - source-phase-imports
-    - Atomics.pause
   paths:
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/built-ins/Temporal/Now/plainDateISO

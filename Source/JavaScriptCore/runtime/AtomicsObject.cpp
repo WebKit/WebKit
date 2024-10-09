@@ -32,6 +32,7 @@
 #include "ReleaseHeapAccessScope.h"
 #include "TypedArrayController.h"
 #include "WaiterListManager.h"
+#include <wtf/SIMDHelpers.h>
 
 namespace JSC {
 
@@ -57,6 +58,7 @@ FOR_EACH_ATOMICS_FUNC(DECLARE_FUNC_PROTO)
 #undef DECLARE_FUNC_PROTO
 
 static JSC_DECLARE_HOST_FUNCTION(atomicsFuncWaitAsync);
+static JSC_DECLARE_HOST_FUNCTION(atomicsFuncPause);
 
 const ClassInfo AtomicsObject::s_info = { "Atomics"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AtomicsObject) };
 
@@ -87,8 +89,10 @@ void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     FOR_EACH_ATOMICS_FUNC(PUT_DIRECT_NATIVE_FUNC)
 #undef PUT_DIRECT_NATIVE_FUNC
 
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("pause"_s, atomicsFuncPause, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, AtomicsPauseIntrinsic);
+
     if (vm.vmType == VM::Default)
-        putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, "waitAsync"_s), 4, atomicsFuncWaitAsync, ImplementationVisibility::Public, AtomicsWaitAsyncIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("waitAsync"_s, atomicsFuncWaitAsync, static_cast<unsigned>(PropertyAttribute::DontEnum), 4, ImplementationVisibility::Public, AtomicsWaitAsyncIntrinsic);
 
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
@@ -535,6 +539,25 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncWaitAsync, (JSGlobalObject* globalObject, Ca
         break;
     }
     return { };
+}
+
+JSC_DEFINE_HOST_FUNCTION(atomicsFuncPause, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue argument = callFrame->argument(0);
+    if (!argument.isUndefined()) {
+        if (UNLIKELY(!argument.isNumber() || !isInteger(argument.asNumber())))
+            return throwVMTypeError(globalObject, scope, "Atomics.pause argument needs to be either undefined or integer number"_s);
+        // Right now, argument integer is not used.
+    }
+
+    // Note that we use "isb" for ARM64 instead of "yield".
+    // https://stackoverflow.com/questions/70810121/why-does-hintspin-loop-use-isb-on-aarch64
+    simde_mm_pause();
+
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue getWaiterListSize(JSGlobalObject* globalObject, CallFrame* callFrame)
