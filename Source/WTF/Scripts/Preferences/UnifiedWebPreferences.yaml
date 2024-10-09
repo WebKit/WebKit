@@ -8298,7 +8298,7 @@ WebGPUEnabled:
 
 WebGPUHDREnabled:
   type: bool
-  status: unstable
+  status: testable
   category: dom
   humanReadableName: "WebGPU support for HDR"
   humanReadableDescription: "WebGPU High Dynamic Range through canvas configuration tone mapping mode"
