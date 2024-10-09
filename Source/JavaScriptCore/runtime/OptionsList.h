@@ -38,11 +38,7 @@ using WTF::PrintStream;
 
 namespace JSC {
 
-#if PLATFORM(IOS_FAMILY)
-#define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 2
-#else
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
-#endif
 
 JS_EXPORT_PRIVATE bool canUseJITCage();
 bool canUseHandlerIC();

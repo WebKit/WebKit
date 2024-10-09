@@ -570,10 +570,10 @@ static void overrideDefaults()
             Options::gcIncrementScale() = 0;
     }
 
-#if PLATFORM(MAC) && CPU(ARM64)
-    Options::numberOfGCMarkers() = 3;
-    Options::numberOfDFGCompilerThreads() = 3;
-    Options::numberOfFTLCompilerThreads() = 3;
+#if OS(DARWIN)
+    Options::numberOfGCMarkers() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfDFGCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
+    Options::numberOfFTLCompilerThreads() = std::min<unsigned>(3, kernTCSMAwareNumberOfProcessorCores());
 #endif
 
 #if OS(LINUX) && CPU(ARM)
