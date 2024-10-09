@@ -40,7 +40,7 @@ class OriginAccessPatterns;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
-    enum Policy {
+    enum class Policy : uint8_t {
         AlwaysDeny = 0,
         AlwaysAllow,
         Ask
@@ -219,8 +219,8 @@ private:
     // scheme, e.g. HTTP and HTTPS.
     bool isHTTPFamily() const { return m_data.protocol() == "http"_s || m_data.protocol() == "https"_s; }
     
-    enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
-    WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
+    enum class ShouldAllowFromThirdParty : uint8_t { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
+    WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = ShouldAllowFromThirdParty::MaybeAllowFromThirdParty) const;
 
     SecurityOriginData m_data;
     String m_domain;
