@@ -94,7 +94,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                     // If that value is itself auto, then the used value is content.
                     if (!style.width().isAuto())
                         mainAxis.definiteFlexBasis = valueForLength(style.width(), *flexContainerMainInnerSize);
-                } else if (!style.flexBasis().isContent())
+                } else if (!style.flexBasis().isIntrinsic())
                     mainAxis.definiteFlexBasis = valueForLength(style.flexBasis(), *flexContainerMainInnerSize);
                 if (style.minWidth().isSpecified())
                     mainAxis.minimumSize = valueForLength(style.minWidth(), *flexContainerMainInnerSize);
