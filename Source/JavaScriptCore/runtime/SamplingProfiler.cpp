@@ -141,6 +141,7 @@ protected:
                     stackTrace[m_depth].wasmCompilationMode = wasmCallee->compilationMode();
                     stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
                     stackTrace[m_depth].callSiteIndex = m_callFrame->unsafeCallSiteIndex();
+#if ENABLE(JIT)
                     // FIXME: We should be able to add all stack traces including inlined ones in SamplingProfiler.
                     if (wasmCallee->compilationMode() == Wasm::CompilationMode::OMGMode) {
                         auto* omgCallee = static_cast<const Wasm::OptimizingJITCallee*>(wasmCallee);
@@ -149,7 +150,6 @@ protected:
                         if (isInlined)
                             stackTrace[m_depth].wasmIndexOrName = origin;
                     }
-#if ENABLE(JIT)
                     stackTrace[m_depth].wasmPCMap = NativeCalleeRegistry::singleton().codeOriginMap(wasmCallee);
 #endif
 #endif
