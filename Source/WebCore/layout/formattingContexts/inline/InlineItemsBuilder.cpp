@@ -938,18 +938,16 @@ void InlineItemsBuilder::handleInlineBoxEnd(const Box& inlineBox, InlineItemList
 
 void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItemList& inlineItemList)
 {
+    m_isTextAndForcedLineBreakOnlyContent = m_isTextAndForcedLineBreakOnlyContent && isTextOrLineBreak(layoutBox);
+
     if (layoutBox.isRubyAnnotationBox())
         return inlineItemList.append({ layoutBox, InlineItem::Type::Opaque });
 
-    if (layoutBox.isAtomicInlineBox()) {
-        m_isTextAndForcedLineBreakOnlyContent = false;
+    if (layoutBox.isAtomicInlineBox())
         return inlineItemList.append({ layoutBox, InlineItem::Type::AtomicInlineBox });
-    }
 
-    if (layoutBox.isLineBreakBox()) {
-        m_isTextAndForcedLineBreakOnlyContent = m_isTextAndForcedLineBreakOnlyContent && isTextOrLineBreak(layoutBox);
+    if (layoutBox.isLineBreakBox())
         return inlineItemList.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
-    }
 
     ASSERT_NOT_REACHED();
 }
