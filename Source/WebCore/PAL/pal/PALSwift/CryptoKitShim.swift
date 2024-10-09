@@ -47,29 +47,29 @@ public class AesGcm {
         key: SpanConstUInt8, iv: SpanConstUInt8, ad: SpanConstUInt8, message: SpanConstUInt8,
         desiredTagLengthInBytes: Int
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             if iv.size() == 0 {
-                rv.errorCode = .InvalidArgument
-                return rv
+                 returnValue.errorCode = .InvalidArgument
+                return returnValue
             }
             let sealedBox: AES.GCM.SealedBox = try AES.GCM.seal(message, key: key, iv: iv, ad: ad)
             if desiredTagLengthInBytes > sealedBox.tag.count {
-                rv.errorCode = .InvalidArgument
-                return rv
+                 returnValue.errorCode = .InvalidArgument
+                return returnValue
             }
             var result = sealedBox.ciphertext
             result.append(
                 sealedBox.tag[
                     sealedBox.tag.startIndex..<(sealedBox.tag.startIndex + desiredTagLengthInBytes)]
             )
-            rv.errorCode = .Success
-            rv.result = result.copyToVectorUInt8()
-            return rv
+             returnValue.errorCode = .Success
+             returnValue.result = result.copyToVectorUInt8()
+            return returnValue
         } catch {
-            rv.errorCode = .EncryptionFailed
+             returnValue.errorCode = .EncryptionFailed
         }
-        return rv
+        return returnValue
     }
 }
 
@@ -77,30 +77,30 @@ public class AesKw {
     public static func wrap(keyToWrap: SpanConstUInt8, using: SpanConstUInt8)
         -> CryptoOperationReturnValue
     {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             let result = try AES.KeyWrap.wrap(keyToWrap, using: using)
-            rv.errorCode = .Success
-            rv.result = result
+             returnValue.errorCode = .Success
+             returnValue.result = result
         } catch {
-            rv.errorCode = .EncryptionFailed
+             returnValue.errorCode = .EncryptionFailed
         }
-        return rv
+        return returnValue
     }
 
     public static func unwrap(wrappedKey: SpanConstUInt8, using: SpanConstUInt8)
         -> CryptoOperationReturnValue
     {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             let result = try AES.KeyWrap.unwrap(
                 wrappedKey, using: using)
-            rv.errorCode = .Success
-            rv.result = result.copyToVectorUInt8()
+             returnValue.errorCode = .Success
+             returnValue.result = result.copyToVectorUInt8()
         } catch {
-            rv.errorCode = .EncryptionFailed
+             returnValue.errorCode = .EncryptionFailed
         }
-        return rv
+        return returnValue
     }
 }  // AesKw
 
@@ -202,8 +202,8 @@ enum ECPublicKey {
     case p521(P521.Signing.PublicKey)
 }
 enum ECKeyInternal {
-    case priv(ECPrivateKey)
-    case pub(ECPublicKey)
+    case privateKey(ECPrivateKey)
+    case publicKey(ECPublicKey)
 }
 public enum ECImportReturnCode {
     case defaultValue
@@ -221,207 +221,207 @@ public struct ECKey {
     public init(curve: ECCurve) {
         switch curve {
         case .p256:
-            key = .priv(.p256(P256.Signing.PrivateKey(compactRepresentable: true)))
+            key = .privateKey(.p256(P256.Signing.PrivateKey(compactRepresentable: true)))
         case .p384:
-            key = .priv(.p384(P384.Signing.PrivateKey(compactRepresentable: true)))
+            key = .privateKey(.p384(P384.Signing.PrivateKey(compactRepresentable: true)))
         case .p521:
-            key = .priv(.p521(P521.Signing.PrivateKey(compactRepresentable: true)))
+            key = .privateKey(.p521(P521.Signing.PrivateKey(compactRepresentable: true)))
         }
     }
-    private init(pub: ECPublicKey) {
-        key = .pub(pub)
+    private init(publicKey: ECPublicKey) {
+        key = .publicKey(publicKey)
     }
-    private init(priv: ECPrivateKey) {
-        key = .priv(priv)
+    private init(privateKey: ECPrivateKey) {
+        key = .privateKey(privateKey)
     }
     private init(internalKey: ECKeyInternal) {
         key = internalKey
     }
     public func toPub() -> ECKey {
         switch key {
-        case .pub:
+        case .publicKey:
             return self
-        case let .priv(v):
+        case let .privateKey(v):
             switch v {
             case let .p256(u):
-                return ECKey(pub: .p256(u.publicKey))
+                return ECKey(publicKey: .p256(u.publicKey))
             case let .p384(u):
-                return ECKey(pub: .p384(u.publicKey))
+                return ECKey(publicKey: .p384(u.publicKey))
             case let .p521(u):
-                return ECKey(pub: .p521(u.publicKey))
+                return ECKey(publicKey: .p521(u.publicKey))
             }
         }
     }
 
     public static func importX963Pub(data: SpanConstUInt8, curve: ECCurve) -> ECImportReturnValue {
-        var rv = ECImportReturnValue()
+        var returnValue = ECImportReturnValue()
         do {
             switch curve {
             case .p256:
-                rv.key = ECKey(internalKey: .pub(.p256(try P256.Signing.PublicKey(span: data))))
+                 returnValue.key = ECKey(internalKey: .publicKey(.p256(try P256.Signing.PublicKey(span: data))))
             case .p384:
-                rv.key = ECKey(internalKey: .pub(.p384(try P384.Signing.PublicKey(span: data))))
+                 returnValue.key = ECKey(internalKey: .publicKey(.p384(try P384.Signing.PublicKey(span: data))))
             case .p521:
-                rv.key = ECKey(internalKey: .pub(.p521(try P521.Signing.PublicKey(span: data))))
+                 returnValue.key = ECKey(internalKey: .publicKey(.p521(try P521.Signing.PublicKey(span: data))))
             }
-            rv.errorCode = .success
+             returnValue.errorCode = .success
         } catch {
-            rv.errorCode = .importFailed
+             returnValue.errorCode = .importFailed
         }
-        return rv
+        return returnValue
     }
 
     public func exportX963Pub() -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch try getInternalPublic() {
             case .p256(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             case .p384(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             case .p521(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             }
-            rv.errorCode = .Success
+             returnValue.errorCode = .Success
         } catch {
-            rv.errorCode = .FailedToExport
+             returnValue.errorCode = .FailedToExport
         }
-        return rv
+        return returnValue
     }
     public static func importCompressedPub(data: SpanConstUInt8, curve: ECCurve)
         -> ECImportReturnValue
     {
-        var rv = ECImportReturnValue()
+        var returnValue = ECImportReturnValue()
         do {
             switch curve {
             case .p256:
-                rv.key = ECKey(pub: .p256(try P256.Signing.PublicKey(spanCompressed: data)))
+                 returnValue.key = ECKey(publicKey: .p256(try P256.Signing.PublicKey(spanCompressed: data)))
             case .p384:
-                rv.key = ECKey(pub: .p384(try P384.Signing.PublicKey(spanCompressed: data)))
+                 returnValue.key = ECKey(publicKey: .p384(try P384.Signing.PublicKey(spanCompressed: data)))
             case .p521:
-                rv.key = ECKey(pub: .p521(try P521.Signing.PublicKey(spanCompressed: data)))
+                 returnValue.key = ECKey(publicKey: .p521(try P521.Signing.PublicKey(spanCompressed: data)))
             }
-            rv.errorCode = .success
+             returnValue.errorCode = .success
         } catch {
-            rv.errorCode = .importFailed
+             returnValue.errorCode = .importFailed
         }
-        return rv
+        return returnValue
     }
     public static func importX963Private(data: SpanConstUInt8, curve: ECCurve)
         -> ECImportReturnValue
     {
-        var rv = ECImportReturnValue()
+        var returnValue = ECImportReturnValue()
         do {
             switch curve {
             case .p256:
-                rv.key = ECKey(priv: .p256(try P256.Signing.PrivateKey(span: data)))
+                 returnValue.key = ECKey(privateKey: .p256(try P256.Signing.PrivateKey(span: data)))
             case .p384:
-                rv.key = ECKey(priv: .p384(try P384.Signing.PrivateKey(span: data)))
+                 returnValue.key = ECKey(privateKey: .p384(try P384.Signing.PrivateKey(span: data)))
             case .p521:
-                rv.key = ECKey(priv: .p521(try P521.Signing.PrivateKey(span: data)))
+                 returnValue.key = ECKey(privateKey: .p521(try P521.Signing.PrivateKey(span: data)))
             }
-            rv.errorCode = .success
+             returnValue.errorCode = .success
         } catch {
-            rv.errorCode = .importFailed
+             returnValue.errorCode = .importFailed
         }
-        return rv
+        return returnValue
     }
     public func exportX963Private() -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch try getInternalPrivate() {
             case .p256(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             case .p384(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             case .p521(let k):
-                rv.result = k.x963Representation.copyToVectorUInt8()
+                 returnValue.result = k.x963Representation.copyToVectorUInt8()
             }
-            rv.errorCode = .Success
+             returnValue.errorCode = .Success
         } catch {
-            rv.errorCode = .FailedToExport
+             returnValue.errorCode = .FailedToExport
         }
-        return rv
+        return returnValue
     }
     public func sign(message: SpanConstUInt8, hashFunction: HashFunction)
         -> CryptoOperationReturnValue
     {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch try getInternalPrivate() {
             case .p256(let cryptoKey):
-                rv.result =
+                 returnValue.result =
                     try cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
                     .rawRepresentation.copyToVectorUInt8()
             case .p384(let cryptoKey):
-                rv.result =
+                 returnValue.result =
                     try cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
                     .rawRepresentation.copyToVectorUInt8()
             case .p521(let cryptoKey):
-                rv.result =
+                 returnValue.result =
                     try cryptoKey.signature(for: Digest.digest(message, hashFunction: hashFunction))
                     .rawRepresentation.copyToVectorUInt8()
             }
-            rv.errorCode = .Success
+             returnValue.errorCode = .Success
         } catch {
-            rv.errorCode = .FailedToSign
+             returnValue.errorCode = .FailedToSign
         }
-        return rv
+        return returnValue
     }
 
     public func verify(
         message: SpanConstUInt8, signature: SpanConstUInt8, hashFunction: HashFunction
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             let internalPublic = try getInternalPublic()
             switch internalPublic {
             case .p256(let cryptoKey):
-                rv.errorCode =
+                 returnValue.errorCode =
                     cryptoKey.isValidSignature(
                         try P256.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction))
                     ? .Success : .FailedToVerify
             case .p384(let cryptoKey):
-                rv.errorCode =
+                 returnValue.errorCode =
                     cryptoKey.isValidSignature(
                         try P384.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction))
                     ? .Success : .FailedToVerify
             case .p521(let cryptoKey):
-                rv.errorCode =
+                 returnValue.errorCode =
                     cryptoKey.isValidSignature(
                         try P521.Signing.ECDSASignature(span: signature),
                         for: Digest.digest(message, hashFunction: hashFunction))
                     ? .Success : .FailedToVerify
             }
         } catch {
-            rv.errorCode = .FailedToVerify
+             returnValue.errorCode = .FailedToVerify
         }
-        return rv
+        return returnValue
     }
     private func getInternalPrivate() throws -> ECPrivateKey {
         switch key {
-        case .pub:
+        case .publicKey:
             throw LocalErrors.invalidArgument
-        case .priv(let priv):
-            return priv
+        case .privateKey(let privateKey):
+            return privateKey
         }
     }
     private func getInternalPublic() throws -> ECPublicKey {
         switch key {
-        case .priv:
+        case .privateKey:
             throw LocalErrors.invalidArgument
-        case .pub(let pub):
-            return pub
+        case .publicKey(let publicKey):
+            return publicKey
         }
     }
 
-    public func deriveBits(pub: ECKey) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+    public func deriveBits(publicKey: ECKey) -> CryptoOperationReturnValue {
+        var returnValue = CryptoOperationReturnValue()
         do {
             let internalPrivate = try getInternalPrivate()
-            let internalPub = try pub.getInternalPublic()
+            let internalPub = try publicKey.getInternalPublic()
             switch internalPrivate {
             case .p256(let signing):
                 let scalar = try P256.KeyAgreement.PrivateKey(
@@ -430,10 +430,10 @@ public struct ECKey {
                     let derived = try scalar.sharedSecretFromKeyAgreement(
                         with: try P256.KeyAgreement.PublicKey(
                             rawRepresentation: publicKey.rawRepresentation))
-                    rv.result = derived.copyToVectorUInt8()
+                     returnValue.result = derived.copyToVectorUInt8()
                     break
                 }
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
             case .p384(let signing):
                 let scalar = try P384.KeyAgreement.PrivateKey(
                     rawRepresentation: signing.rawRepresentation)
@@ -441,10 +441,10 @@ public struct ECKey {
                     let derived = try scalar.sharedSecretFromKeyAgreement(
                         with: try P384.KeyAgreement.PublicKey(
                             rawRepresentation: publicKey.rawRepresentation))
-                    rv.result = derived.copyToVectorUInt8()
+                     returnValue.result = derived.copyToVectorUInt8()
                     break
                 }
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
             case .p521(let signing):
                 let scalar = try P521.KeyAgreement.PrivateKey(
                     rawRepresentation: signing.rawRepresentation)
@@ -452,16 +452,16 @@ public struct ECKey {
                     let derived = try scalar.sharedSecretFromKeyAgreement(
                         with: try P521.KeyAgreement.PublicKey(
                             rawRepresentation: publicKey.rawRepresentation))
-                    rv.result = derived.copyToVectorUInt8()
+                     returnValue.result = derived.copyToVectorUInt8()
                     break
                 }
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
             }
-            rv.errorCode = .Success
+             returnValue.errorCode = .Success
         } catch {
-            rv.errorCode = .FailedToDerive
+             returnValue.errorCode = .FailedToDerive
         }
-        return rv
+        return returnValue
     }
 }
 
@@ -495,66 +495,66 @@ public class EdKey {
         }
     }
 
-    public static func privateToPublic(algo: EdSigningAlgorithm, priv: SpanConstUInt8)
+    public static func privateToPublic(algo: EdSigningAlgorithm, privateKey: SpanConstUInt8)
         -> CryptoOperationReturnValue
     {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
-            if priv.size() != 32 {
+            if privateKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
             case .ed25519:
-                rv.result = try Curve25519.Signing.PrivateKey(span: priv).publicKey
+                 returnValue.result = try Curve25519.Signing.PrivateKey(span: privateKey).publicKey
                     .rawRepresentation.copyToVectorUInt8()
-                if rv.result.size() != 32 {
+                if  returnValue.result.size() != 32 {
                     throw LocalErrors.invalidArgument
                 }
-                rv.errorCode = .Success
+                 returnValue.errorCode = .Success
             case .ed448:
-                rv.errorCode = .UnsupportedAlgorithm
+                 returnValue.errorCode = .UnsupportedAlgorithm
             }
         } catch {
-            rv.errorCode = .FailedToImport
+             returnValue.errorCode = .FailedToImport
         }
-        return rv
+        return returnValue
     }
 
     public static func privateToPublicKeyAgreement(
-        algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8
+        algo: EdKeyAgreementAlgorithm, privateKey: SpanConstUInt8
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
-            if priv.size() != 32 {
+            if privateKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
             case .x25519:
-                rv.result = try Curve25519.KeyAgreement.PrivateKey(span: priv).publicKey
+                 returnValue.result = try Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey
                     .rawRepresentation.copyToVectorUInt8()
-                if rv.result.size() != 32 {
+                if  returnValue.result.size() != 32 {
                     throw LocalErrors.invalidArgument
                 }
-                rv.errorCode = .Success
+                 returnValue.errorCode = .Success
             case .x448:
-                rv.errorCode = .UnsupportedAlgorithm
+                 returnValue.errorCode = .UnsupportedAlgorithm
             }
         } catch {
-            rv.errorCode = .FailedToImport
+             returnValue.errorCode = .FailedToImport
         }
-        return rv
+        return returnValue
     }
     public static func validateKeyPair(
-        algo: EdSigningAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8
+        algo: EdSigningAlgorithm, privateKey: SpanConstUInt8, publicKey: SpanConstUInt8
     ) -> Bool {
         do {
-            if priv.size() != 32 || pub.size() != 32 {
+            if privateKey.size() != 32 || publicKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
             case .ed25519:
-                let derivedPublicKey = try Curve25519.Signing.PrivateKey(span: priv).publicKey.rawRepresentation
-                let importedPublicKey = try Curve25519.Signing.PublicKey(span: pub).rawRepresentation
+                let derivedPublicKey = try Curve25519.Signing.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.Signing.PublicKey(span: publicKey).rawRepresentation
                 return derivedPublicKey == importedPublicKey
             case .ed448:
                 return false
@@ -566,16 +566,16 @@ public class EdKey {
     }
 
     public static func validateKeyPairKeyAgreement(
-        algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8
+        algo: EdKeyAgreementAlgorithm, privateKey: SpanConstUInt8, publicKey: SpanConstUInt8
     ) -> Bool {
         do {
-            if priv.size() != 32 || pub.size() != 32 {
+            if privateKey.size() != 32 || publicKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
             case .x25519:
-                let derivedPublicKey = try Curve25519.KeyAgreement.PrivateKey(span: priv).publicKey.rawRepresentation
-                let importedPublicKey = try Curve25519.KeyAgreement.PublicKey(span: pub).rawRepresentation
+                let derivedPublicKey = try Curve25519.KeyAgreement.PrivateKey(span: privateKey).publicKey.rawRepresentation
+                let importedPublicKey = try Curve25519.KeyAgreement.PublicKey(span: publicKey).rawRepresentation
                 return derivedPublicKey == importedPublicKey
             case .x448:
                 return false
@@ -586,62 +586,62 @@ public class EdKey {
 
     }
 
-    public static func sign(algo: EdSigningAlgorithm, key: SpanConstUInt8, data: SpanConstUInt8)
+    public static func sign(algo: EdSigningAlgorithm, privateKey: SpanConstUInt8, data: SpanConstUInt8)
         -> CryptoOperationReturnValue
     {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch algo {
             case .ed25519:
-                let priv = try Curve25519.Signing.PrivateKey(span: key)
-                rv.result = try priv.signature(span: data)
-                rv.errorCode = .Success
+                let privateKeyImported = try Curve25519.Signing.PrivateKey(span: privateKey)
+                 returnValue.result = try privateKeyImported.signature(span: data)
+                 returnValue.errorCode = .Success
             case .ed448:
-                rv.errorCode = .UnsupportedAlgorithm
+                 returnValue.errorCode = .UnsupportedAlgorithm
             }
         } catch {
-            rv.errorCode = .FailedToSign
+             returnValue.errorCode = .FailedToSign
         }
-        return rv
+        return returnValue
     }
     public static func verify(
-        algo: EdSigningAlgorithm, key: SpanConstUInt8, signature: SpanConstUInt8,
+        algo: EdSigningAlgorithm, publicKey: SpanConstUInt8, signature: SpanConstUInt8,
         data: SpanConstUInt8
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch algo {
             case .ed25519:
-                let pub = try Curve25519.Signing.PublicKey(span: key)
-                rv.errorCode =
-                    pub.isValidSignature(signature: signature, data: data)
+                let publicKeyImported = try Curve25519.Signing.PublicKey(span: publicKey)
+                 returnValue.errorCode =
+                    publicKeyImported.isValidSignature(signature: signature, data: data)
                     ? .Success : .FailedToVerify
             case .ed448:
-                rv.errorCode = .UnsupportedAlgorithm
+                 returnValue.errorCode = .UnsupportedAlgorithm
             }
         } catch {
-            rv.errorCode = .FailedToSign
+             returnValue.errorCode = .FailedToSign
         }
-        return rv
+        return returnValue
     }
 
     public static func deriveBits(
-        algo: EdKeyAgreementAlgorithm, priv: SpanConstUInt8, pub: SpanConstUInt8
+        algo: EdKeyAgreementAlgorithm, privateKey: SpanConstUInt8, publicKey: SpanConstUInt8
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         do {
             switch algo {
             case .x25519:
-                let priv = try Curve25519.KeyAgreement.PrivateKey(span: priv)
-                rv.result = try priv.sharedSecretFromKeyAgreement(pubSpan: pub)
-                rv.errorCode = .Success
+                let privateKeyImported = try Curve25519.KeyAgreement.PrivateKey(span: privateKey)
+                 returnValue.result = try privateKeyImported.sharedSecretFromKeyAgreement(pubSpan: publicKey)
+                 returnValue.errorCode = .Success
             case .x448:
-                rv.errorCode = .UnsupportedAlgorithm
+                 returnValue.errorCode = .UnsupportedAlgorithm
             }
         } catch {
-            rv.errorCode = .FailedToDerive
+             returnValue.errorCode = .FailedToDerive
         }
-        return rv
+        return returnValue
 
     }
 }
@@ -689,56 +689,56 @@ public class HKDF {
         key: SpanConstUInt8, salt: SpanConstUInt8, info: SpanConstUInt8, outputBitCount: Int,
         hashFunction: HashFunction
     ) -> CryptoOperationReturnValue {
-        var rv = CryptoOperationReturnValue()
+        var returnValue = CryptoOperationReturnValue()
         if outputBitCount <= 0 || outputBitCount % 8 != 0 {
-            rv.errorCode = .InvalidArgument
-            return rv
+             returnValue.errorCode = .InvalidArgument
+            return returnValue
         } else {
-            rv.errorCode = .Success
+             returnValue.errorCode = .Success
         }
         switch hashFunction {
         case .sha1:
             if outputBitCount > hkdfInputSizeLimitSHA1 {
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            rv.result =
+             returnValue.result =
                 CryptoKit.HKDF<Insecure.SHA1>.deriveKey(
                     inputKeyMaterial: key, salt: salt, info: info,
                     outputByteCount: outputBitCount / 8)
 
         case .sha256:
             if outputBitCount > hkdfInputSizeLimitSHA256 {
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            rv.result =
+             returnValue.result =
                 CryptoKit.HKDF<SHA256>.deriveKey(
                     inputKeyMaterial: key, salt: salt, info: info,
                     outputByteCount: outputBitCount / 8)
 
         case .sha384:
             if outputBitCount > hkdfInputSizeLimitSHA384 {
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            rv.result =
+             returnValue.result =
                 CryptoKit.HKDF<SHA384>.deriveKey(
                     inputKeyMaterial: key, salt: salt, info: info,
                     outputByteCount: outputBitCount / 8)
 
         case .sha512:
             if outputBitCount > hkdfInputSizeLimitSHA512 {
-                rv.errorCode = .InvalidArgument
+                 returnValue.errorCode = .InvalidArgument
                 break
             }
-            rv.result =
+             returnValue.result =
                 CryptoKit.HKDF<SHA512>.deriveKey(
                     inputKeyMaterial: key, salt: salt, info: info,
                     outputByteCount: outputBitCount / 8)
 
         }
-        return rv
+        return returnValue
     }
 }
 #endif
