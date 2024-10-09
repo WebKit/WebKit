@@ -196,9 +196,6 @@ WTF::BitSet<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& code
         result.set(OpIteratorNext::nextResult);
         return result;
     }
-    case op_instanceof: {
-        return result;
-    }
     default:
         break;
     }

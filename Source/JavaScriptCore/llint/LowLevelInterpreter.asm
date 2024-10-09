@@ -2061,6 +2061,7 @@ if not JSVALUE64
     slowPathOp(get_prototype_of)
 end
 
+slowPathOp(instanceof_custom)
 slowPathOp(is_callable)
 slowPathOp(is_constructor)
 slowPathOp(new_array_buffer)
@@ -2090,6 +2091,7 @@ llintSlowPathOp(has_private_name)
 llintSlowPathOp(has_private_brand)
 llintSlowPathOp(del_by_id)
 llintSlowPathOp(del_by_val)
+llintSlowPathOp(instanceof)
 llintSlowPathOp(create_lexical_environment)
 llintSlowPathOp(create_direct_arguments)
 llintSlowPathOp(create_scoped_arguments)

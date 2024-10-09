@@ -2706,9 +2706,15 @@ RegisterID* BytecodeGenerator::initializeVariable(const Variable& variable, Regi
     return emitPutToScope(scope, variable, value, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 
-RegisterID* BytecodeGenerator::emitInstanceof(RegisterID* dst, RegisterID* value, RegisterID* constructor)
+RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* basePrototype)
 {
-    OpInstanceof::emit(this, dst, value, constructor, nextValueProfileIndex(), nextValueProfileIndex());
+    OpInstanceof::emit(this, dst, value, basePrototype);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitInstanceOfCustom(RegisterID* dst, RegisterID* value, RegisterID* constructor, RegisterID* hasInstanceValue)
+{
+    OpInstanceofCustom::emit(this, dst, value, constructor, hasInstanceValue);
     return dst;
 }
 

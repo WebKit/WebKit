@@ -773,7 +773,7 @@ namespace JSC {
 
         RegisterID* emitOverridesHasInstance(RegisterID* dst, RegisterID* constructor, RegisterID* hasInstanceValue);
         RegisterID* emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* basePrototype);
-        RegisterID* emitInstanceof(RegisterID* dst, RegisterID* value, RegisterID* constructor);
+        RegisterID* emitInstanceOfCustom(RegisterID* dst, RegisterID* value, RegisterID* constructor, RegisterID* hasInstanceValue);
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src);
         RegisterID* emitInByVal(RegisterID* dst, RegisterID* property, RegisterID* base);
         RegisterID* emitInById(RegisterID* dst, RegisterID* base, const Identifier& property);
