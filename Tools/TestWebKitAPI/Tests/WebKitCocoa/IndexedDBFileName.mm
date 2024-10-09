@@ -110,52 +110,91 @@ static void runTest()
 static void createDirectories(StringView testName)
 {
     auto defaultFileManager = [NSFileManager defaultManager];
-    NSURL *idbRootURL = [[[WKWebsiteDataStore defaultDataStore] _configuration] _indexedDBDatabaseDirectory];
-    [defaultFileManager removeItemAtURL:idbRootURL error:nil];
-    
-    NSString *existingDatabaseName = @"IndexedDBTest";
-    NSString *createdDatabaseName = @"IndexedDBOther";
-    NSString *unusedDatabaseName = @"IndexedDBUnused";
-    NSURL *directOriginDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"file__0"];
-    NSURL *directExistingDatabaseDirectoryURL = [directOriginDirectoryURL URLByAppendingPathComponent:existingDatabaseName];
-    NSURL *directUnusedDatabaseDirectoryURL = [directOriginDirectoryURL URLByAppendingPathComponent:unusedDatabaseName];
-    NSURL *resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDB" withExtension:@"sqlite3"];
-    [defaultFileManager createDirectoryAtURL:directExistingDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [defaultFileManager createDirectoryAtURL:directUnusedDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directUnusedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    RetainPtr idbRootURL = [websiteDataStoreConfiguration _indexedDBDatabaseDirectory];
+    NSError *error = nil;
+    [defaultFileManager removeItemAtURL:idbRootURL.get() error:&error];
+    EXPECT_NULL(error);
+
+    /*
+     IndexedDB directory structure for non-unified origin storage:
+     |- IndexedDB
+     |  |- Origin
+     |      |- DatabaseName
+     |          |- IndexedDB.sqlite3
+     |  |- v0 // Symlink to its parent IndexedDB
+     |  |- v1
+     |      |- Origin
+     |          |- DatabaseNameHash
+     |              | - IndexedDB.sqlite3
+     This function creates directories and files for different test cases:
+        - none: IndexedDB directory only contains Origin directories.
+        - v0: IndexedDB directory contains Origin and v0 directories.
+        - v1: IndexedDB directory conatins Origin, v0 and v1 directories (existing database is in v1 directory).
+        - API: IndexedDB directory contains Origin, v0, and v1 directories; v1 directory has multiple Origin directories.
+        - collision: Same as API; plus a database file with wrong database name inside, to simulate hash collision case.
+     */
+    // Baked database file which contains database name "IndexedDBTest".
+    RetainPtr resourceDatabaseFileURL = [NSBundle.test_resourcesBundle URLForResource:@"IndexedDB" withExtension:@"sqlite3"];
+    // Existing database to be opened by test page.
+    RetainPtr existingDatabaseName = @"IndexedDBTest";
+    String existingDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { existingDatabaseName.get() });
+    // Database to be created by test page.
+    RetainPtr createdDatabaseName = @"IndexedDBOther";
+    String createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { createdDatabaseName.get() });
+    // Existing database that test page does not use at all; only used for verify data migration.
+    RetainPtr unusedDatabaseName = @"IndexedDBUnused";
+    RetainPtr fileOrigin = @"file__0";
+    RetainPtr oldVersion = @"v0";
+    RetainPtr newVersion = @"v1";
+
+    RetainPtr existingDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, fileOrigin.get(), existingDatabaseName.get()]]];
+    [defaultFileManager createDirectoryAtURL:existingDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[existingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
+    RetainPtr unusedDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, fileOrigin.get(), unusedDatabaseName.get()]]];
+    [defaultFileManager createDirectoryAtURL:unusedDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[unusedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
     if (testName == "none"_s)
         return;
     
-    NSString *existingDatbaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { existingDatabaseName });
-    NSString *createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(String { createdDatabaseName });
-    NSURL *oldVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v0"];
-    NSURL *newVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v1"];
-    NSURL *newVersionOriginDirectoryURL = [newVersionDirectoryURL URLByAppendingPathComponent: @"file__0"];
-    NSURL *newVersionExistingDatabaseDirectoryURL = [newVersionOriginDirectoryURL URLByAppendingPathComponent: existingDatbaseHash];
-    NSURL *newVersionCreatedDatabaseDirectoryURL = [newVersionOriginDirectoryURL URLByAppendingPathComponent: createdDatabaseHash];
-    NSURL *directOtherOriginDatabaseDirectoryURL = [[idbRootURL URLByAppendingPathComponent:@"https_apple.com_0"] URLByAppendingPathComponent:@"IndexedDBTest"];
-    NSURL *newVersionOtherOriginDatabaseDirectoryURL = [[newVersionDirectoryURL URLByAppendingPathComponent:@"https_webkit.org_0"] URLByAppendingPathComponent:existingDatbaseHash];
-    [defaultFileManager createSymbolicLinkAtURL:oldVersionDirectoryURL withDestinationURL:idbRootURL error:nil];
-
+    RetainPtr oldVersionDirectoryURL = [idbRootURL.get() URLByAppendingPathComponent:oldVersion.get()];
+    [defaultFileManager createSymbolicLinkAtURL:oldVersionDirectoryURL.get() withDestinationURL:idbRootURL.get() error:&error];
+    EXPECT_NULL(error);
     if (testName == "v0"_s)
         return;
-    if (testName == "v1"_s) {
-        [defaultFileManager removeItemAtURL:directExistingDatabaseDirectoryURL error:nil];
-        [defaultFileManager createDirectoryAtURL:newVersionExistingDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-        [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[newVersionExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+
+    [defaultFileManager removeItemAtURL:existingDatabaseDirectoryURL.get() error:nil];
+    RetainPtr v1ExistingDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), existingDatabaseHash]]];
+    [defaultFileManager createDirectoryAtURL:v1ExistingDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1ExistingDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
+    if (testName == "v1"_s)
         return;
-    }
-    if (testName == "API"_s) {
-        [defaultFileManager createDirectoryAtURL:directOtherOriginDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-        [defaultFileManager createDirectoryAtURL:newVersionOtherOriginDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-        [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[directOtherOriginDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-        [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[newVersionOtherOriginDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+
+    RetainPtr appleDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, @"https_apple.com_0", existingDatabaseName.get()]]];
+    [defaultFileManager createDirectoryAtURL:appleDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[appleDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
+    RetainPtr v1WebKitOriginDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), @"https_webkit.org_0", existingDatabaseHash]]];
+    [defaultFileManager createDirectoryAtURL:v1WebKitOriginDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1WebKitOriginDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
+    if (testName == "API"_s)
         return;
-    }
-    
-    [defaultFileManager createDirectoryAtURL:newVersionCreatedDatabaseDirectoryURL withIntermediateDirectories:YES attributes:nil error:nil];
-    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL toURL:[newVersionCreatedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+
+    EXPECT_WK_STREQ("collision", testName.toString());
+    RetainPtr v1CreatedDatabaseDirectoryURL = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbRootURL.get().path, newVersion.get(), fileOrigin.get(), createdDatabaseHash]]];
+    [defaultFileManager createDirectoryAtURL:v1CreatedDatabaseDirectoryURL.get() withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_NULL(error);
+    [defaultFileManager copyItemAtURL:resourceDatabaseFileURL.get() toURL:[v1CreatedDatabaseDirectoryURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:&error];
+    EXPECT_NULL(error);
 }
 
 TEST(IndexedDB, IndexedDBFileName)
@@ -210,19 +249,18 @@ TEST(IndexedDB, IndexedDBFileNameAPI)
     
 }
 
-// rdar://137076757
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-TEST(IndexedDB, DISABLED_IndexedDBFileHashCollision)
-#else
 TEST(IndexedDB, IndexedDBFileHashCollision)
-#endif
 {
     createDirectories("collision"_s);
     
     auto handler = adoptNS([[IndexedDBFileNameMessageHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelNone;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"IndexedDBFileName-1" withExtension:@"html"]];
     [webView loadRequest:request];
