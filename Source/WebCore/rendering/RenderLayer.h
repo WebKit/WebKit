@@ -664,7 +664,7 @@ public:
         IncludeOverlayScrollbarSize = 1 << 1,
     };
 
-    static constexpr OptionSet<ClipRectsOption> clipRectOptionsForPaintingOverflowControls = { };
+    static constexpr OptionSet<ClipRectsOption> clipRectOptionsForPaintingOverflowContents = { };
     static constexpr OptionSet<ClipRectsOption> clipRectDefaultOptions = { ClipRectsOption::RespectOverflowClip };
 
     struct ClipRectsContext {

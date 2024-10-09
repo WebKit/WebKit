@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            width: 400px;
+            height: 400px;
+            border: 1px solid black;
+            overflow: scroll;
+            font-size: 36pt;
+        }
+        
+        .transformed {
+            margin: 20px;
+            overflow: hidden;
+            width: 50px;
+            transform: rotate(0deg);
+            border: 1px solid black;
+        }
+        
+        .spacer {
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="transformed">CSS is awesome.</div>
+        <div class="spacer"></div>
+    </div>
+</body>
+</html>
