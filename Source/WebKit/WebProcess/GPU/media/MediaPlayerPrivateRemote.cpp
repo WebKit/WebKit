@@ -1850,6 +1850,12 @@ bool MediaPlayerPrivateRemote::supportsLinearMediaPlayer() const
 }
 #endif
 
+void MediaPlayerPrivateRemote::audioOutputDeviceChanged()
+{
+    if (RefPtr player = m_player.get())
+        protectedConnection()->send(Messages::RemoteMediaPlayerProxy::AudioOutputDeviceChanged { player->audioOutputDeviceId() }, m_id);
+}
+
 void MediaPlayerPrivateRemote::commitAllTransactions(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();

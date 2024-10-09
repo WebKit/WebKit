@@ -150,6 +150,7 @@ messages -> RemoteMediaPlayerProxy {
     SetSpatialTrackingLabel(String spatialTrackingLabel);
 #endif
 
+    AudioOutputDeviceChanged(String deviceId)
     IsInFullscreenOrPictureInPictureChanged(bool value)
 }
 

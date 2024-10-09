@@ -1317,6 +1317,13 @@ Ref<RemoteVideoFrameObjectHeap> RemoteMediaPlayerProxy::protectedVideoFrameObjec
     return m_videoFrameObjectHeap;
 }
 
+void RemoteMediaPlayerProxy::audioOutputDeviceChanged(String&& deviceId)
+{
+    m_configuration.audioOutputDeviceId = WTFMove(deviceId);
+    if (RefPtr player = m_player)
+        player->audioOutputDeviceChanged();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

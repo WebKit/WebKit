@@ -157,6 +157,7 @@ Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlay
 #if PLATFORM(IOS_FAMILY)
     proxyConfiguration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
 #endif
+    proxyConfiguration.audioOutputDeviceId = player->audioOutputDeviceId();
     proxyConfiguration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
     proxyConfiguration.renderingCanBeAccelerated = player->renderingCanBeAccelerated();
     proxyConfiguration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();

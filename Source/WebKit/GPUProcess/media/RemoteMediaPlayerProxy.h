@@ -267,6 +267,8 @@ private:
     void mediaPlayerDidRemoveVideoTrack(WebCore::VideoTrackPrivate&) final;
     void mediaPlayerDidAddTextTrack(WebCore::InbandTextTrackPrivate&) final;
     void mediaPlayerDidRemoveTextTrack(WebCore::InbandTextTrackPrivate&) final;
+    String audioOutputDeviceId() const final { return m_configuration.audioOutputDeviceId; }
+    String audioOutputDeviceIdOverride() const final { return m_configuration.audioOutputDeviceId; }
 
     // Not implemented
     void mediaPlayerFirstVideoFrameAvailable() final;
@@ -379,6 +381,8 @@ private:
 #endif
 
     void isInFullscreenOrPictureInPictureChanged(bool);
+
+    void audioOutputDeviceChanged(String&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }

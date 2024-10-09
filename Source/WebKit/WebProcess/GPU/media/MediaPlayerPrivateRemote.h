@@ -477,6 +477,8 @@ private:
     bool supportsLinearMediaPlayer() const final;
 #endif
 
+    void audioOutputDeviceChanged() final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
