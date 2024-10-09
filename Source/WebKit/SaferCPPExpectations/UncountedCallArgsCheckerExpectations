@@ -2,7 +2,6 @@ AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
 GPUProcess/graphics/RemoteDisplayListRecorder.h
-GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
 GPUProcess/media/RemoteAudioTrackProxy.h

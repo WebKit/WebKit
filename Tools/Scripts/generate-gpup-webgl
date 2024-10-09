@@ -879,7 +879,7 @@ class webkit_ipc_cpp_impl(object):
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
         is_async = len(self.out_exprs) == 0
 
-        call_expr = f"m_context->{self.name}({in_exprs})"
+        call_expr = f"protectedContext()->{self.name}({in_exprs})"
         if not self.return_value_expr:
             self.call_stmts += [f"{call_expr};"]
         else:
