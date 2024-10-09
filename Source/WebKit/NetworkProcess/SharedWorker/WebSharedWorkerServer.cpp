@@ -65,7 +65,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
 
     if (sharedWorker->workerOptions().type != workerOptions.type || sharedWorker->workerOptions().credentials != workerOptions.credentials) {
         RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A worker already exists with this name but has different type / credentials");
-        if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
+        if (RefPtr serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
             serverConnection->notifyWorkerObjectOfLoadCompletion(sharedWorkerObjectIdentifier, { WebCore::ResourceError::Type::AccessControl });
         return;
     }
@@ -75,7 +75,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
     if (sharedWorker->sharedWorkerObjectsCount() > 1) {
         RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A shared worker with this URL already exists (now shared by %u shared worker objects)", sharedWorker->sharedWorkerObjectsCount());
         if (sharedWorker->didFinishFetching()) {
-            if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
+            if (RefPtr serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
                 serverConnection->notifyWorkerObjectOfLoadCompletion(sharedWorkerObjectIdentifier, { });
         }
         if (sharedWorker->isRunning()) {
@@ -97,7 +97,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
     }
     ASSERT(!sharedWorker->isRunning());
 
-    auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier());
+    RefPtr serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier());
     if (!serverConnection) {
         // sharedWorkerObject is gone if there is no longer a server connection.
         sharedWorker->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
@@ -254,10 +254,10 @@ void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey&
         contextConnection->terminateSharedWorker(*sharedWorker);
 }
 
-void WebSharedWorkerServer::addConnection(std::unique_ptr<WebSharedWorkerServerConnection>&& connection)
+void WebSharedWorkerServer::addConnection(Ref<WebSharedWorkerServerConnection>&& connection)
 {
     auto processIdentifier = connection->webProcessIdentifier();
-    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addConnection(%p): processIdentifier=%" PRIu64, connection.get(), processIdentifier.toUInt64());
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addConnection(%p): processIdentifier=%" PRIu64, connection.ptr(), processIdentifier.toUInt64());
     ASSERT(!m_connections.contains(processIdentifier));
     m_connections.add(processIdentifier, WTFMove(connection));
 }

@@ -48,6 +48,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerConnection);
 
+Ref<WebSharedWorkerServerConnection> WebSharedWorkerServerConnection::create(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
+{
+    return adoptRef(*new WebSharedWorkerServerConnection(networkProcess, server, connection, webProcessIdentifier));
+}
+
 WebSharedWorkerServerConnection::WebSharedWorkerServerConnection(NetworkProcess& networkProcess, WebSharedWorkerServer& server, IPC::Connection& connection, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_contentConnection(connection)
     , m_networkProcess(networkProcess)
@@ -67,12 +72,12 @@ Ref<NetworkProcess> WebSharedWorkerServerConnection::protectedNetworkProcess()
     return m_networkProcess;
 }
 
-WebSharedWorkerServer& WebSharedWorkerServerConnection::server()
+WebSharedWorkerServer* WebSharedWorkerServerConnection::server()
 {
     return m_server.get();
 }
 
-const WebSharedWorkerServer& WebSharedWorkerServerConnection::server() const
+const WebSharedWorkerServer* WebSharedWorkerServerConnection::server() const
 {
     return m_server.get();
 }
@@ -82,14 +87,12 @@ IPC::Connection* WebSharedWorkerServerConnection::messageSenderConnection() cons
     return m_contentConnection.ptr();
 }
 
-PAL::SessionID WebSharedWorkerServerConnection::sessionID()
-{
-    return server().sessionID();
-}
-
 NetworkSession* WebSharedWorkerServerConnection::session()
 {
-    return protectedNetworkProcess()->networkSession(sessionID());
+    CheckedPtr server = m_server.get();
+    if (!server)
+        return nullptr;
+    return protectedNetworkProcess()->networkSession(server->sessionID());
 }
 
 void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)

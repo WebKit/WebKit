@@ -38,11 +38,6 @@ namespace WebKit {
 class WebSharedWorkerServerConnection;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServerConnection> : std::true_type { };
-}
-
 namespace WebCore {
 class ResourceError;
 struct SharedWorkerKey;
@@ -59,16 +54,16 @@ class WebSharedWorkerServer;
 class WebSharedWorkerServerToContextConnection;
 class NetworkSession;
 
-class WebSharedWorkerServerConnection : public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSharedWorkerServerConnection : public IPC::MessageSender, public IPC::MessageReceiver, public RefCounted<WebSharedWorkerServerConnection> {
     WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerServerConnection);
 public:
-    WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+    static Ref<WebSharedWorkerServerConnection> create(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
+
     ~WebSharedWorkerServerConnection();
 
-    WebSharedWorkerServer& server();
-    const WebSharedWorkerServer& server() const;
+    WebSharedWorkerServer* server();
+    const WebSharedWorkerServer* server() const;
 
-    PAL::SessionID sessionID();
     NetworkSession* session();
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
@@ -79,6 +74,7 @@ public:
     void postErrorToWorkerObject(WebCore::SharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
 
 private:
+    WebSharedWorkerServerConnection(NetworkProcess&, WebSharedWorkerServer&, IPC::Connection&, WebCore::ProcessIdentifier);
     Ref<NetworkProcess> protectedNetworkProcess();
 
     // IPC::MessageSender.
@@ -93,7 +89,7 @@ private:
 
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;
-    CheckedRef<WebSharedWorkerServer> m_server;
+    WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
