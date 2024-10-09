@@ -83,6 +83,7 @@
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/PermissionName.h>
 #include <WebCore/PlatformMediaSessionManager.h>
@@ -330,9 +331,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
     , m_webLockRegistry(websiteDataStore ? makeUnique<WebLockRegistryProxy>(*this) : nullptr)
     , m_webPermissionController(makeUnique<WebPermissionControllerProxy>(*this))
-#if ENABLE(ROUTING_ARBITRATION)
-    , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
-#endif
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
@@ -725,7 +723,8 @@ void WebProcessProxy::shutDown()
         m_webLockRegistry->processDidExit();
 
 #if ENABLE(ROUTING_ARBITRATION)
-    m_routingArbitrator->processDidTerminate();
+    if (m_routingArbitrator)
+        m_routingArbitrator->processDidTerminate();
 #endif
 
     Ref<WebProcessPool> { processPool() }->disconnectProcess(*this);
@@ -1283,7 +1282,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     }
 
 #if ENABLE(ROUTING_ARBITRATION)
-    m_routingArbitrator->processDidTerminate();
+    if (m_routingArbitrator)
+        m_routingArbitrator->processDidTerminate();
 #endif
 
     // There is a nested transaction in WebPageProxy::resetStateAfterProcessExited() that we don't want to commit before the client call below (dispatchProcessDidTerminate).
@@ -2249,10 +2249,25 @@ Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
     return processPool();
 }
 
+void WebProcessProxy::enableMediaPlaybackIfNecessary()
+{
+#if USE(AUDIO_SESSION)
+    if (m_sharedPreferencesForWebProcess.mediaPlaybackEnabled)
+        WebCore::AudioSession::enableMediaPlayback();
+#endif
+
+#if ENABLE(ROUTING_ARBITRATION)
+    ASSERT(!m_routingArbitrator);
+    m_routingArbitrator = makeUnique<AudioSessionRoutingArbitratorProxy>(*this);
+#endif
+}
+
 std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore)
 {
     if (WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, preferencesStore)) {
         ++m_sharedPreferencesForWebProcess.version;
+        enableMediaPlaybackIfNecessary();
+
         return m_sharedPreferencesForWebProcess;
     }
     return std::nullopt;

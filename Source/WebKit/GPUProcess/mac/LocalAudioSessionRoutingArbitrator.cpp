@@ -41,9 +41,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalAudioSessionRoutingArbitrator);
 
-UniqueRef<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+std::unique_ptr<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
 {
-    return makeUniqueRef<LocalAudioSessionRoutingArbitrator>(gpuConnectionToWebProcess);
+    return makeUnique<LocalAudioSessionRoutingArbitrator>(gpuConnectionToWebProcess);
 }
 
 LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess& gpuConnectionToWebProcess)

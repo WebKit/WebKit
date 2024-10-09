@@ -196,6 +196,14 @@ void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
     AudioSession::sharedSession().endInterruptionForTesting();
 }
 
+std::optional<SharedPreferencesForWebProcess> RemoteAudioSessionProxy::sharedPreferencesForWebProcess() const
+{
+    if (RefPtr gpuConnectionToWebProcess = m_gpuConnection.get())
+        return gpuConnectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

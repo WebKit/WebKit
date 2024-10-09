@@ -120,6 +120,7 @@ struct ServiceWorkerContextData;
 namespace WebKit {
 
 class AudioMediaStreamTrackRendererInternalUnitManager;
+class AudioSessionRoutingArbitrator;
 class GamepadData;
 class GPUProcessConnection;
 class InjectedBundle;
@@ -449,6 +450,10 @@ public:
 
     bool haveStorageAccessQuirksForDomain(const WebCore::RegistrableDomain&);
     void updateCachedCookiesEnabled();
+    void enableMediaPlayback();
+#if ENABLE(ROUTING_ARBITRATION)
+    AudioSessionRoutingArbitrator* audioSessionRoutingArbitrator() const { return m_routingArbitrator.get(); }
+#endif
 
 private:
     WebProcess();
@@ -837,6 +842,9 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
+#endif
+#if ENABLE(ROUTING_ARBITRATION)
+    std::unique_ptr<AudioSessionRoutingArbitrator> m_routingArbitrator;
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
     bool m_imageAnimationEnabled { true };

@@ -170,7 +170,7 @@ void GPUProcessConnection::didClose(IPC::Connection&)
     webProcess.gpuProcessConnectionClosed();
 
 #if ENABLE(ROUTING_ARBITRATION)
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>())
+    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator())
         arbitrator->leaveRoutingAbritration();
 #endif
 
@@ -339,7 +339,7 @@ void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteC
 #if ENABLE(ROUTING_ARBITRATION)
 void GPUProcessConnection::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, AudioSessionRoutingArbitrationClient::ArbitrationCallback&& callback)
 {
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>()) {
+    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator()) {
         arbitrator->beginRoutingArbitrationWithCategory(category, WTFMove(callback));
         return;
     }
@@ -350,7 +350,7 @@ void GPUProcessConnection::beginRoutingArbitrationWithCategory(AudioSession::Cat
 
 void GPUProcessConnection::endRoutingArbitration()
 {
-    if (auto* arbitrator = WebProcess::singleton().supplement<AudioSessionRoutingArbitrator>()) {
+    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator()) {
         arbitrator->leaveRoutingAbritration();
         return;
     }

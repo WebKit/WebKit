@@ -473,7 +473,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus
 {
 #if ENABLE(ROUTING_ARBITRATION)
-    switch (_page->legacyMainFrameProcess().audioSessionRoutingArbitrator().arbitrationStatus()) {
+    WeakPtr arbitrator = _page->legacyMainFrameProcess().audioSessionRoutingArbitrator();
+    if (!arbitrator)
+        return WKWebViewAudioRoutingArbitrationStatusNone;
+
+    switch (arbitrator->arbitrationStatus()) {
     case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::None: return WKWebViewAudioRoutingArbitrationStatusNone;
     case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::Pending: return WKWebViewAudioRoutingArbitrationStatusPending;
     case WebKit::AudioSessionRoutingArbitratorProxy::ArbitrationStatus::Active: return WKWebViewAudioRoutingArbitrationStatusActive;
@@ -487,7 +491,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (double)_audioRoutingArbitrationUpdateTime
 {
 #if ENABLE(ROUTING_ARBITRATION)
-    return _page->legacyMainFrameProcess().audioSessionRoutingArbitrator().arbitrationUpdateTime().secondsSinceEpoch().seconds();
+    WeakPtr arbitrator = _page->legacyMainFrameProcess().audioSessionRoutingArbitrator();
+    if (!arbitrator)
+        return 0;
+
+    return arbitrator->arbitrationUpdateTime().secondsSinceEpoch().seconds();
 #else
     return 0;
 #endif

@@ -309,16 +309,12 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_presentingApplicationAuditToken(parameters.presentingApplicationAuditToken ? std::optional(parameters.presentingApplicationAuditToken->auditToken()) : std::nullopt)
 #endif
     , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
-#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
-#endif
     , m_sharedPreferencesForWebProcess(WTFMove(parameters.sharedPreferencesForWebProcess))
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
-#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    gpuProcess.protectedAudioSessionManager()->session().setRoutingArbitrationClient(m_routingArbitrator.get());
-#endif
+    // This must be called before any media playback function is invoked.
+    enableMediaPlaybackIfNecessary();
 
     // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
     // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
@@ -400,7 +396,8 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     assertIsMainThread();
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    m_routingArbitrator->processDidTerminate();
+    if (m_routingArbitrator)
+        m_routingArbitrator->processDidTerminate();
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -1256,6 +1253,21 @@ void GPUConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPrefe
     m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     protectedLibWebRTCCodecsProxy()->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
+#endif
+    enableMediaPlaybackIfNecessary();
+}
+
+void GPUConnectionToWebProcess::enableMediaPlaybackIfNecessary()
+{
+#if USE(AUDIO_SESSION)
+    if (!WebCore::AudioSession::enableMediaPlayback())
+        return;
+#endif
+
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    ASSERT(!m_routingArbitrator);
+    m_routingArbitrator = LocalAudioSessionRoutingArbitrator::create(*this);
+    protectedGPUProcess()->protectedAudioSessionManager()->session().setRoutingArbitrationClient(m_routingArbitrator.get());
 #endif
 }
 

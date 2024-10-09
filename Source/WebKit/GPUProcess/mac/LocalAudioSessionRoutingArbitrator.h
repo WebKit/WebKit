@@ -48,13 +48,13 @@ class LocalAudioSessionRoutingArbitrator final
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);
 
-    static UniqueRef<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
+    static std::unique_ptr<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
+    LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess&);
     virtual ~LocalAudioSessionRoutingArbitrator();
 
     void processDidTerminate();
 
 private:
-    LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess&);
 
     // AudioSessionRoutingArbitrationClient
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&) final;

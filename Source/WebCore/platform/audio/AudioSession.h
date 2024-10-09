@@ -109,6 +109,7 @@ public:
     static UniqueRef<AudioSession> create();
     static void setSharedSession(UniqueRef<AudioSession>&&);
     static AudioSession& sharedSession();
+    static bool enableMediaPlayback();
 
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;
     static void addAudioSessionChangedObserver(const ChangedObserver&);

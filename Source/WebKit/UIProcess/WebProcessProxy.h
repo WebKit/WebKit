@@ -443,7 +443,7 @@ public:
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION)
-    AudioSessionRoutingArbitratorProxy& audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
+    AudioSessionRoutingArbitratorProxy* audioSessionRoutingArbitrator() { return m_routingArbitrator.get(); }
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -636,6 +636,7 @@ private:
     bool shouldDropNearSuspendedAssertionAfterDelay() const;
 
     void updateRuntimeStatistics();
+    void enableMediaPlaybackIfNecessary();
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     void setupLogStream(uint32_t pid, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
@@ -776,7 +777,7 @@ private:
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
 #if ENABLE(ROUTING_ARBITRATION)
-    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
+    std::unique_ptr<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
 #endif
     bool m_isConnectedToHardwareConsole { true };
 #if PLATFORM(MAC)

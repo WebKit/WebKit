@@ -27,7 +27,6 @@
 
 #if ENABLE(ROUTING_ARBITRATION)
 
-#include "WebProcessSupplement.h"
 #include <WebCore/AudioSession.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -36,9 +35,7 @@ namespace WebKit {
 
 class WebProcess;
 
-class AudioSessionRoutingArbitrator final
-    : public WebProcessSupplement
-    , public WebCore::AudioSessionRoutingArbitrationClient {
+class AudioSessionRoutingArbitrator final : public WebCore::AudioSessionRoutingArbitrationClient {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionRoutingArbitrator);
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::AudioSessionRoutingArbitrationClient);

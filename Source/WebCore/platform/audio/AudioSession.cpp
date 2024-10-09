@@ -47,6 +47,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSession);
 
 bool AudioSession::s_shouldManageAudioSessionCategory { false };
+static bool s_mediaPlaybackEnabled { false };
 
 static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
 {
@@ -54,10 +55,25 @@ static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
     return session.get();
 }
 
+static std::optional<UniqueRef<AudioSession>>& dummyAudioSession()
+{
+    static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> dummySession = makeUniqueRef<AudioSession>();
+    return dummySession.get();
+}
+
 static WeakHashSet<AudioSession::ChangedObserver>& audioSessionChangedObservers()
 {
     static NeverDestroyed<WeakHashSet<AudioSession::ChangedObserver>> observers;
     return observers;
+}
+
+bool AudioSession::enableMediaPlayback()
+{
+    if (s_mediaPlaybackEnabled)
+        return false;
+
+    s_mediaPlaybackEnabled = true;
+    return true;
 }
 
 UniqueRef<AudioSession> AudioSession::create()
@@ -76,8 +92,12 @@ AudioSession::~AudioSession() = default;
 
 AudioSession& AudioSession::sharedSession()
 {
+    if (!s_mediaPlaybackEnabled)
+        return *dummyAudioSession();
+
     if (!sharedAudioSession())
         setSharedSession(AudioSession::create());
+
     return *sharedAudioSession();
 }
 

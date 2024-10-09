@@ -4691,6 +4691,8 @@ MediaDevicesEnabled:
 MediaEnabled:
   type: bool
   status: embedder
+  humanReadableName: "HTML Media Elements"
+  humanReadableDescription: "Enable HTML media elements <audio>, <video> and <track>"
   condition: ENABLE(VIDEO)
   defaultValue:
     WebKitLegacy:
@@ -4699,6 +4701,20 @@ MediaEnabled:
       default: true
     WebCore:
       default: true
+
+MediaPlaybackEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Media Playback Functionalities"
+  humanReadableDescription: "Enable media playback functionalities"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+  sharedPreferenceForWebProcess: true
 
 MediaPreferredFullscreenWidth:
   type: double

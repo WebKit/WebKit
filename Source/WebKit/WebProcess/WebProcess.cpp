@@ -335,10 +335,6 @@ WebProcess::WebProcess()
     addSupplement<RemoteLegacyCDMFactory>();
 #endif
 
-#if ENABLE(ROUTING_ARBITRATION)
-    addSupplement<AudioSessionRoutingArbitrator>();
-#endif
-
 #if ENABLE(GPU_PROCESS)
     addSupplement<RemoteMediaEngineConfigurationFactory>();
 #endif
@@ -2404,6 +2400,18 @@ void WebProcess::updateCachedCookiesEnabled()
 bool WebProcess::requiresScriptTelemetryForURL(const URL& url, const WebCore::SecurityOrigin& topOrigin) const
 {
     return m_scriptTelemetryFilter && m_scriptTelemetryFilter->matches(url, topOrigin);
+}
+
+void WebProcess::enableMediaPlayback()
+{
+#if USE(AUDIO_SESSION)
+    if (!WebCore::AudioSession::enableMediaPlayback())
+        return;
+#endif
+
+#if ENABLE(ROUTING_ARBITRATION)
+    m_routingArbitrator = makeUnique<AudioSessionRoutingArbitrator>(*this);
+#endif
 }
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
