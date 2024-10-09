@@ -26,19 +26,18 @@
 
 #if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
-#import <CoreMedia/CoreMedia.h>
-#import <wtf/TZoneMalloc.h>
-#import <wtf/WorkQueue.h>
+#include <CoreMedia/CoreMedia.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WorkQueue.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
 
 namespace WebCore {
 
-class AudioSampleBufferCompressor {
-    WTF_MAKE_TZONE_ALLOCATED(AudioSampleBufferCompressor);
+class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor, WTF::DestructionThread::Main> {
 public:
-    static std::unique_ptr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
+    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
     ~AudioSampleBufferCompressor();
 
     void setBitsPerSecond(unsigned);

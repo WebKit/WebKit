@@ -34,7 +34,6 @@
 #include <Foundation/Foundation.h>
 #include <algorithm>
 #include <wtf/Scope.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -43,11 +42,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSampleBufferCompressor);
-
-std::unique_ptr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject)
+RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject)
 {
-    auto compressor = std::unique_ptr<AudioSampleBufferCompressor>(new AudioSampleBufferCompressor());
+    Ref compressor = adoptRef(*new AudioSampleBufferCompressor());
     if (!compressor->initialize(callback, callbackObject))
         return nullptr;
     return compressor;
@@ -537,9 +534,12 @@ void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    m_serialDispatchQueue->dispatchSync([this, buffer] {
-        if (m_isEncoding)
-            processSampleBuffer(buffer);
+
+    m_serialDispatchQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }, buffer = RetainPtr { buffer }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !protectedThis->m_isEncoding)
+            return;
+        protectedThis->processSampleBuffer(buffer.get());
     });
 }
 

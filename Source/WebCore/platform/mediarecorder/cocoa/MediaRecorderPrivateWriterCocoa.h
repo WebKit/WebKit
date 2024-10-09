@@ -122,11 +122,11 @@ private:
     CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
-    std::unique_ptr<AudioSampleBufferCompressor> m_audioCompressor;
+    RefPtr<AudioSampleBufferCompressor> m_audioCompressor;
     RetainPtr<AVAssetWriterInput> m_audioAssetWriterInput;
 
     RetainPtr<CMFormatDescriptionRef> m_videoFormatDescription;
-    std::unique_ptr<VideoSampleBufferCompressor> m_videoCompressor;
+    RefPtr<VideoSampleBufferCompressor> m_videoCompressor;
     RetainPtr<AVAssetWriterInput> m_videoAssetWriterInput;
     CMTime m_lastVideoPresentationTime;
     CMTime m_lastVideoDecodingTime;

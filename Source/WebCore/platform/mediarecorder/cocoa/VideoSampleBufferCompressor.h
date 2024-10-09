@@ -28,7 +28,7 @@
 
 #include <CoreMedia/CoreMedia.h>
 #include <VideoToolbox/VTErrors.h>
-#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -36,10 +36,9 @@ typedef struct OpaqueVTCompressionSession *VTCompressionSessionRef;
 
 namespace WebCore {
 
-class VideoSampleBufferCompressor {
-    WTF_MAKE_TZONE_ALLOCATED(VideoSampleBufferCompressor);
+class VideoSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoSampleBufferCompressor, WTF::DestructionThread::Main> {
 public:
-    static std::unique_ptr<VideoSampleBufferCompressor> create(String mimeType, CMBufferQueueTriggerCallback, void* callbackObject);
+    static RefPtr<VideoSampleBufferCompressor> create(String mimeType, CMBufferQueueTriggerCallback, void* callbackObject);
     ~VideoSampleBufferCompressor();
 
     void setBitsPerSecond(unsigned);
