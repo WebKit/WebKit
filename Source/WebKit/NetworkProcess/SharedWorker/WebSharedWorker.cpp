@@ -62,7 +62,7 @@ WebSharedWorker::WebSharedWorker(WebSharedWorkerServer& server, const WebCore::S
 
 WebSharedWorker::~WebSharedWorker()
 {
-    if (auto* connection = contextConnection()) {
+    if (RefPtr connection = contextConnection()) {
         for (auto& sharedWorkerObject : m_sharedWorkerObjects)
             connection->removeSharedWorkerObject(sharedWorkerObject.identifier);
     }
@@ -105,7 +105,7 @@ void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifie
 {
     ASSERT(!m_sharedWorkerObjects.contains({ sharedWorkerObjectIdentifier, { false, port } }));
     m_sharedWorkerObjects.add({ sharedWorkerObjectIdentifier, { false, port } });
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
 
     resumeIfNeeded();
@@ -114,7 +114,7 @@ void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifie
 void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
     m_sharedWorkerObjects.remove({ sharedWorkerObjectIdentifier, { } });
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
 
     suspendIfNeeded();
@@ -142,7 +142,7 @@ void WebSharedWorker::suspendIfNeeded()
     }
 
     m_isSuspended = true;
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->suspendSharedWorker(identifier());
 }
 
@@ -162,7 +162,7 @@ void WebSharedWorker::resumeIfNeeded()
         return;
 
     m_isSuspended = false;
-    if (auto* connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->resumeSharedWorker(identifier());
 }
 

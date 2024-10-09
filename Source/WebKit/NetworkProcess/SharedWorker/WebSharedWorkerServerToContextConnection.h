@@ -34,15 +34,11 @@
 #include <WebCore/Timer.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
 class WebSharedWorkerServerToContextConnection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSharedWorkerServerToContextConnection> : std::true_type { };
 }
 
 namespace WebCore {
@@ -59,15 +55,16 @@ class NetworkConnectionToWebProcess;
 class WebSharedWorker;
 class WebSharedWorkerServer;
 
-class WebSharedWorkerServerToContextConnection final : public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSharedWorkerServerToContextConnection final : public IPC::MessageSender, public IPC::MessageReceiver, public RefCounted<WebSharedWorkerServerToContextConnection> {
     WTF_MAKE_TZONE_ALLOCATED(WebSharedWorkerServerToContextConnection);
 public:
-    WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::RegistrableDomain&, WebSharedWorkerServer&);
+    static Ref<WebSharedWorkerServerToContextConnection> create(NetworkConnectionToWebProcess&, const WebCore::RegistrableDomain&, WebSharedWorkerServer&);
+
     ~WebSharedWorkerServerToContextConnection();
 
-    WebCore::ProcessIdentifier webProcessIdentifier() const;
+    std::optional<WebCore::ProcessIdentifier> webProcessIdentifier() const;
     const WebCore::RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
-    IPC::Connection& ipcConnection() const;
+    IPC::Connection* ipcConnection() const;
 
     void terminateWhenPossible() { m_shouldTerminateWhenPossible = true; }
 
@@ -86,10 +83,10 @@ public:
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
 
 private:
+    WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess&, const WebCore::RegistrableDomain&, WebSharedWorkerServer&);
+
     void idleTerminationTimerFired();
     void connectionIsNoLongerNeeded();
-
-    Ref<NetworkConnectionToWebProcess> protectedConnection() const;
 
     // IPC messages.
     void postErrorToWorkerObject(WebCore::SharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent);
@@ -99,7 +96,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WeakRef<NetworkConnectionToWebProcess> m_connection;
+    WeakPtr<NetworkConnectionToWebProcess> m_connection;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::RegistrableDomain m_registrableDomain;
     HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
