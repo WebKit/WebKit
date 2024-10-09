@@ -226,9 +226,11 @@ void ScreenCaptureKitCaptureSource::whenReady(CompletionHandler<void(CaptureSour
 
     // We start to get the first frame. The frame size allows to finalize initialization of the source settings.
     m_whenReadyCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (auto&& result) mutable {
-        callback(WTFMove(result));
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->stop();
+        if (RefPtr protectedThis = weakThis.get()) {
+            protectedThis->stopInternal([callback = WTFMove(callback), result = WTFMove(result)] () mutable {
+                callback(WTFMove(result));
+            });
+        }
     };
 
     start();
@@ -250,16 +252,20 @@ bool ScreenCaptureKitCaptureSource::start()
     return m_isRunning;
 }
 
-void ScreenCaptureKitCaptureSource::stop()
+void ScreenCaptureKitCaptureSource::stopInternal(CompletionHandler<void()>&& callback)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     m_isRunning = false;
-    if (!contentStream())
+    if (!contentStream()) {
+        callback();
         return;
+    }
 
-    auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
+    auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }, callback = WTFMove(callback)] (NSError *error) mutable {
+        callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }, callback = WTFMove(callback)]() mutable {
+            callback();
+
             if (!error)
                 return;
 

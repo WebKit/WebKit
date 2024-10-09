@@ -76,7 +76,7 @@ public:
 private:
     // DisplayCaptureSourceCocoa::Capturer
     bool start() final;
-    void stop() final;
+    void stop() final { stopInternal([] { }); }
     void end() final;
     DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
     CaptureDevice::DeviceType deviceType() const final;
@@ -92,6 +92,7 @@ private:
     void sessionFilterDidChange(SCContentFilter*) final;
     void sessionStreamDidEnd(SCStream*) final;
 
+    void stopInternal(CompletionHandler<void()>&&);
     void startContentStream();
     void findShareableContent();
     RetainPtr<SCStreamConfiguration> streamConfiguration();
