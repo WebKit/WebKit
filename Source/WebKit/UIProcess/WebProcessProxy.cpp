@@ -1469,18 +1469,20 @@ void WebProcessProxy::recordUserGestureAuthorizationToken(PageIdentifier pageID,
     });
 }
 
-RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::optional<UserGestureTokenIdentifier> identifier)
 {
-    if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
+    if (!identifier)
         return nullptr;
 
-    auto result = m_userInitiatedActionMap.ensure(identifier, [] { return API::UserInitiatedAction::create(); });
+    auto result = m_userInitiatedActionMap.ensure(*identifier, [] {
+        return API::UserInitiatedAction::create();
+    });
     return result.iterator->value;
 }
 
-RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(PageIdentifier pageID, std::optional<WTF::UUID> authorizationToken, uint64_t identifier)
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(PageIdentifier pageID, std::optional<WTF::UUID> authorizationToken, std::optional<UserGestureTokenIdentifier> identifier)
 {
-    if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
+    if (!identifier)
         return nullptr;
 
     if (authorizationToken) {
@@ -1488,7 +1490,7 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(PageIden
         if (authorizationTokenMapByPageIterator != m_userInitiatedActionByAuthorizationTokenMap.end()) {
             auto it = authorizationTokenMapByPageIterator->value.find(*authorizationToken);
             if (it != authorizationTokenMapByPageIterator->value.end()) {
-                auto result = m_userInitiatedActionMap.ensure(identifier, [it] {
+                auto result = m_userInitiatedActionMap.ensure(*identifier, [it] {
                     return it->value;
                 });
                 return result.iterator->value;
@@ -1516,9 +1518,8 @@ bool WebProcessProxy::isResponsive() const
     return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
 }
 
-void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, uint64_t identifier)
+void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGestureTokenIdentifier identifier)
 {
-    ASSERT(UserInitiatedActionMap::isValidKey(identifier));
     auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
     if (authorizationTokenMapByPageIterator != m_userInitiatedActionByAuthorizationTokenMap.end()) {
         if (auto removed = m_userInitiatedActionMap.take(identifier); removed && removed->authorizationToken()) {

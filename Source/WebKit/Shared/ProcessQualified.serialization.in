@@ -29,6 +29,7 @@ additional_forward_declaration: namespace WebCore { using PlatformLayerIdentifie
 additional_forward_declaration: namespace WebCore { using RTCDataChannelLocalIdentifier =  AtomicObjectIdentifier<RTCDataChannelLocalIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using ScrollingNodeIdentifier = ObjectIdentifier<ScrollingNodeIDType>; }
 additional_forward_declaration: namespace WebCore { using SharedWorkerObjectIdentifierID = ObjectIdentifier<SharedWorkerObjectIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using UserGestureTokenIdentifierID = ObjectIdentifier<UserGestureTokenIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using WebLockIdentifierID = AtomicObjectIdentifier<WebLockIdentifierType>; }
 
 header: <WebCore/ProcessQualified.h>
@@ -64,6 +65,11 @@ header: <WebCore/ProcessQualified.h>
 
 [Alias=class ProcessQualified<SharedWorkerObjectIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::SharedWorkerObjectIdentifier {
     WebCore::SharedWorkerObjectIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class ProcessQualified<UserGestureTokenIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::UserGestureTokenIdentifier {
+    WebCore::UserGestureTokenIdentifierID object();
     WebCore::ProcessIdentifier processIdentifier();
 };
 

@@ -1047,21 +1047,17 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     return result.iterator->value.get();
 }
 
-static uint64_t nextUserGestureTokenIdentifier()
-{
-    static uint64_t identifier = 1;
-    return identifier++;
-}
-
-uint64_t WebProcess::userGestureTokenIdentifier(std::optional<PageIdentifier> pageID, RefPtr<UserGestureToken> token)
+std::optional<WebCore::UserGestureTokenIdentifier> WebProcess::userGestureTokenIdentifier(std::optional<PageIdentifier> pageID, RefPtr<UserGestureToken> token)
 {
     if (!pageID)
-        return 0;
+        return std::nullopt;
 
     if (!token || !token->processingUserGesture())
-        return 0;
+        return std::nullopt;
 
-    auto result = m_userGestureTokens.ensure(*token, [] { return nextUserGestureTokenIdentifier(); });
+    auto result = m_userGestureTokens.ensure(*token, [] {
+        return UserGestureTokenIdentifier::generate();
+    });
     if (result.isNewEntry) {
         result.iterator->key.addDestructionObserver([pageID] (UserGestureToken& tokenBeingDestroyed) {
             WebProcess::singleton().userGestureTokenDestroyed(*pageID, tokenBeingDestroyed);

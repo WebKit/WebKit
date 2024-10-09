@@ -571,6 +571,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationItemIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::TextManipulationTokenIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::IDBDatabaseConnectionIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::UserGestureTokenIdentifierID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::UserMediaRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::WebLockIdentifierID));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::WebSocketIdentifier));
@@ -717,6 +718,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::TextManipulationItemIdentifier"_s,
         "WebCore::TextManipulationTokenIdentifier"_s,
         "WebCore::IDBDatabaseConnectionIdentifier"_s,
+        "WebCore::UserGestureTokenIdentifierID"_s,
         "WebCore::UserMediaRequestIdentifier"_s,
         "WebCore::WebLockIdentifierID"_s,
         "WebCore::WebSocketIdentifier"_s,
