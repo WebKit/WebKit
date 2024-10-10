@@ -1899,3 +1899,6 @@ tiled-drawing/tile-size-slow-zoomed.html [ Pass Failure ]
 
 # webkit.org/b/281089 REGRESSION(284750@main): [macOS iOS Debug] ASSERTION FAILED: !child->frameID() in http/tests/site-isolation/draw-after-cross-origin-navigation-between-two-remote-frames.html
 [ Debug ] http/tests/site-isolation/draw-after-cross-origin-navigation-between-two-remote-frames.html [ Pass Timeout ImageOnlyFailure ]
+
+# webkit.org/b/281193 [ macOS wk2 ] imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.serviceworker.html is a constant failure.
+imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any.serviceworker.html [ Failure ]
