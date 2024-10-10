@@ -673,12 +673,12 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext, newStyleOriginatedAnimations, isInDisplayNoneTree);
     };
 
-    auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {
+    auto applyAnimations = [&]() -> std::tuple<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>, bool> {
         if (!styleable.hasKeyframeEffects()) {
             // FIXME: Push after-change style into parent stack instead.
             styleable.setLastStyleChangeEventStyle(resolveAfterChangeStyleForNonAnimated(resolvedStyle, styleable, resolutionContext));
             styleable.setHasPropertiesOverridenAfterAnimation(false);
-            return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { } };
+            return { WTFMove(resolvedStyle.style), OptionSet<AnimationImpact> { }, false };
         }
 
         auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) : nullptr;
@@ -691,8 +691,12 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
         auto animationImpact = styleable.applyKeyframeEffects(*animatedStyle, animatedProperties, previousLastStyleChangeEventStyle.get(), resolutionContext);
 
-        if (*resolvedStyle.style == *animatedStyle && animationImpact.isEmpty() && previousLastStyleChangeEventStyle)
-            return { WTFMove(resolvedStyle.style), animationImpact };
+        bool animatedStyleDiffers = *resolvedStyle.style != *animatedStyle;
+        if (!animatedStyleDiffers && animationImpact.isEmpty() && previousLastStyleChangeEventStyle)
+            return { WTFMove(resolvedStyle.style), animationImpact, false };
+
+        // FIXME: This could possibly be more fine-grained.
+        animatedStyleDiffers = true;
 
         if (resolvedStyle.matchResult) {
             auto animatedStyleBeforeCascadeApplication = RenderStyle::clonePtr(*animatedStyle);
@@ -707,7 +711,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
-        return { WTFMove(animatedStyle), animationImpact };
+        return { WTFMove(animatedStyle), animationImpact, animatedStyleDiffers };
     };
 
     // FIXME: Something like this is also needed for viewport units.
@@ -720,16 +724,18 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     // Now we can update all Web animations, which will include CSS Animations as well
     // as animations created via the JS API.
-    auto [newStyle, animationImpact] = applyAnimations();
+    auto [newStyle, animationImpact, animatedStyleDiffers] = applyAnimations();
 
     // Deduplication speeds up equality comparisons as the properties inherit to descendants.
     // FIXME: There should be a more general mechanism for this.
     if (currentStyle)
         newStyle->deduplicateCustomProperties(*currentStyle);
 
-    auto change = currentStyle ? determineChange(*currentStyle, *newStyle) : Change::Renderer;
+    auto change = Change::None;
+    if (currentStyle && animatedStyleDiffers)
+        change = determineChange(*currentStyle, *newStyle);
 
-    if (element.hasInvalidRenderer() || parentChange == Change::Renderer)
+    if (!currentStyle || element.hasInvalidRenderer() || parentChange == Change::Renderer)
         change = Change::Renderer;
 
     auto animationsAffectedDisplay = [&, animatedDisplay = newStyle->display()]() {
