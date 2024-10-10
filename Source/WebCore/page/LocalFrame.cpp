@@ -177,6 +177,8 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
     frameCounter.increment();
 #endif
 
+    updateScrollingMode();
+
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
     if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
@@ -1368,6 +1370,13 @@ void LocalFrame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUI
 {
     Frame::updateSandboxFlags(flags, notifyUIProcess);
     m_sandboxFlags = flags;
+}
+
+void LocalFrame::updateScrollingMode()
+{
+    m_scrollingMode = ownerElement() ? ownerElement()->scrollingMode() : ScrollbarMode::Auto;
+    if (RefPtr view = this->view())
+        view->setCanHaveScrollbars(m_scrollingMode != ScrollbarMode::AlwaysOff);
 }
 
 } // namespace WebCore

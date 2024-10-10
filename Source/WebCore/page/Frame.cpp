@@ -279,6 +279,7 @@ void Frame::setOwnerElement(HTMLFrameOwnerElement* element)
         element->clearContentFrame();
         element->setContentFrame(*this);
     }
+    updateScrollingMode();
 }
 
 void Frame::setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&& ownerPermissionsPolicy)

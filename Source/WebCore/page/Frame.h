@@ -29,6 +29,7 @@
 #include "FrameTree.h"
 #include "OwnerPermissionsPolicyData.h"
 #include "PageIdentifier.h"
+#include "ScrollTypes.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -125,6 +126,8 @@ public:
 
     WEBCORE_EXPORT void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&&);
     WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
+
+    virtual void updateScrollingMode() { }
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);
