@@ -78,13 +78,13 @@ namespace WebCore {
 class Font;
 
 struct AttributedStringTextTableIDType;
-using AttributedStringTextTableID = LegacyNullableObjectIdentifier<AttributedStringTextTableIDType>;
+using AttributedStringTextTableID = ObjectIdentifier<AttributedStringTextTableIDType>;
 
 struct AttributedStringTextTableBlockIDType;
-using AttributedStringTextTableBlockID = LegacyNullableObjectIdentifier<AttributedStringTextTableBlockIDType>;
+using AttributedStringTextTableBlockID = ObjectIdentifier<AttributedStringTextTableBlockIDType>;
 
 struct AttributedStringTextListIDType;
-using AttributedStringTextListID = LegacyNullableObjectIdentifier<AttributedStringTextListIDType>;
+using AttributedStringTextListID = ObjectIdentifier<AttributedStringTextListIDType>;
 
 struct WEBCORE_EXPORT AttributedString {
     struct Range {

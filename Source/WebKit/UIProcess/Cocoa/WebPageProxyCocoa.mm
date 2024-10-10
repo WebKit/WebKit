@@ -422,7 +422,7 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     Vector<DictationAlternative> dictationAlternatives;
     for (const auto& alternativeWithRange : dictationAlternativesWithRange) {
         if (auto context = pageClient->addDictationAlternatives(alternativeWithRange.alternatives.get()))
-            dictationAlternatives.append({ alternativeWithRange.range, context });
+            dictationAlternatives.append({ alternativeWithRange.range, *context });
     }
 
     if (dictationAlternatives.isEmpty()) {
@@ -444,9 +444,9 @@ void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternativ
 
     auto nsAlternatives = alternative.alternatives.get();
     auto context = pageClient->addDictationAlternatives(nsAlternatives);
-    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.primaryString, context }, [context, weakThis = WeakPtr { *this }](bool success) {
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.primaryString, *context }, [context, weakThis = WeakPtr { *this }](bool success) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
-            protectedThis->removeDictationAlternatives(context);
+            protectedThis->removeDictationAlternatives(*context);
     }, webPageIDInMainFrameProcess());
 }
 

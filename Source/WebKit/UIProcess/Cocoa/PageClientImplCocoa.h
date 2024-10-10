@@ -89,7 +89,7 @@ public:
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 
-    WebCore::DictationContext addDictationAlternatives(PlatformTextAlternatives *) final;
+    std::optional<WebCore::DictationContext> addDictationAlternatives(PlatformTextAlternatives *) final;
     void replaceDictationAlternatives(PlatformTextAlternatives *, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;

@@ -35,7 +35,7 @@ class FloatRect;
 class AlternativeTextUIController {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AlternativeTextUIController, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT DictationContext addAlternatives(PlatformTextAlternatives *);
+    WEBCORE_EXPORT std::optional<DictationContext> addAlternatives(PlatformTextAlternatives *);
     WEBCORE_EXPORT void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
     WEBCORE_EXPORT void removeAlternatives(DictationContext);
     WEBCORE_EXPORT void clear();

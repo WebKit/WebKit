@@ -65,13 +65,6 @@ template: enum class WebCore::MediaSessionGroupIdentifierType
 template: enum class WebCore::MediaUniqueIdentifierType
 template: enum class WebCore::PushSubscriptionIdentifierType
 template: enum class WebCore::RealtimeMediaSourceIdentifierType
-template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
-template: struct WebCore::AttributedStringTextListIDType
-#if PLATFORM(COCOA)
-template: struct WebCore::AttributedStringTextTableBlockIDType
-template: struct WebCore::AttributedStringTextTableIDType
-#endif
-template: struct WebCore::DictationContextType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaPlayerClientIdentifierType
@@ -93,6 +86,7 @@ template: enum class WebCore::LayerHostingContextIdentifierType
 template: enum class WebCore::ProcessIdentifierType
 template: enum class WebCore::SWServerToContextConnectionIdentifierType
 template: enum class WebCore::SharedWorkerIdentifierType
+template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType
 template: enum class WebCore::TextCheckingRequestIdentifierType
 template: enum class WebCore::TextManipulationItemIdentifierType
 template: enum class WebCore::TextManipulationTokenIdentifierType
@@ -128,7 +122,13 @@ template: enum class WebKit::VisitedLinkTableIdentifierType
 template: enum class WebKit::WCLayerTreeHostIdentifierType
 template: enum class WebKit::WebExtensionControllerIdentifierType
 template: enum class WebKit::XRDeviceIdentifierType
+template: struct WebCore::AttributedStringTextListIDType
+#if PLATFORM(COCOA)
+template: struct WebCore::AttributedStringTextTableBlockIDType
+template: struct WebCore::AttributedStringTextTableIDType
+#endif
 template: struct WebCore::BackForwardItemIdentifierType
+template: struct WebCore::DictationContextType
 template: struct WebCore::FrameIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PageIdentifierType

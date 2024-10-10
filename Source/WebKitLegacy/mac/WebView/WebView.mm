@@ -8985,7 +8985,7 @@ FORWARD(toggleUnderline)
 {
     for (auto& alternativeWithRange : alternativesWithRange) {
         if (auto dictationContext = _private->m_alternativeTextUIController->addAlternatives(alternativeWithRange.alternatives.get()))
-            alternatives.append({ alternativeWithRange.range, dictationContext });
+            alternatives.append({ alternativeWithRange.range, *dictationContext });
     }
 }
 

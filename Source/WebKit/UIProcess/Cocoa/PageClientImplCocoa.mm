@@ -191,7 +191,7 @@ void PageClientImplCocoa::modelProcessDidExit()
 }
 #endif
 
-WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(PlatformTextAlternatives *alternatives)
+std::optional<WebCore::DictationContext> PageClientImplCocoa::addDictationAlternatives(PlatformTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
 }

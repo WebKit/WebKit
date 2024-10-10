@@ -43,7 +43,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AlternativeTextUIController);
 
-DictationContext AlternativeTextUIController::addAlternatives(PlatformTextAlternatives *alternatives)
+std::optional<DictationContext> AlternativeTextUIController::addAlternatives(PlatformTextAlternatives *alternatives)
 {
     return m_contextController.addAlternatives(alternatives);
 }

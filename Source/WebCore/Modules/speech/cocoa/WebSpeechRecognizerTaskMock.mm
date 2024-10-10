@@ -57,12 +57,12 @@ NS_ASSUME_NONNULL_BEGIN
     
     if (!_hasSentSpeechStart) {
         _hasSentSpeechStart = true;
-        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechStart));
+        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::SpeechStart));
     }
 
     // Fake some recognition results.
     WebCore::SpeechRecognitionAlternativeData alternative { "Test"_s, 1.0 };
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(_identifier, { WebCore::SpeechRecognitionResultData { { WTFMove(alternative) }, true } }));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(*_identifier, { WebCore::SpeechRecognitionResultData { { WTFMove(alternative) }, true } }));
 
     if (!_doMultipleRecognitions)
         [self abort];
@@ -76,10 +76,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!_hasSentSpeechEnd && _hasSentSpeechStart) {
         _hasSentSpeechEnd = true;
-        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechEnd));
+        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::SpeechEnd));
     }
 
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::End));
+    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(*_identifier, WebCore::SpeechRecognitionUpdateType::End));
 }
 
 - (void)stop

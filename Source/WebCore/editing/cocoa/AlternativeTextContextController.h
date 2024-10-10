@@ -32,7 +32,7 @@ namespace WebCore {
 
 class AlternativeTextContextController {
 public:
-    DictationContext addAlternatives(PlatformTextAlternatives *);
+    std::optional<DictationContext> addAlternatives(PlatformTextAlternatives *);
     void replaceAlternatives(PlatformTextAlternatives *, DictationContext);
     void removeAlternativesForContext(DictationContext);
     void clear();

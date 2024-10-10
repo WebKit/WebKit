@@ -63,7 +63,6 @@ std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPre
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     ASSERT(!m_requests.contains(clientIdentifier));
     auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin), frameIdentifier };
     auto& newRequest = m_requests.add(clientIdentifier, makeUnique<WebCore::SpeechRecognitionRequest>(WTFMove(requestInfo))).iterator->value;
@@ -126,8 +125,6 @@ void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognition
 
 void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
-
     if (m_requests.remove(clientIdentifier)) {
         sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
@@ -139,7 +136,6 @@ void SpeechRecognitionServer::stop(WebCore::SpeechRecognitionConnectionClientIde
 
 void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     if (m_requests.remove(clientIdentifier)) {
         sendUpdate(clientIdentifier, WebCore::SpeechRecognitionUpdateType::End);
         return;
@@ -151,7 +147,6 @@ void SpeechRecognitionServer::abort(WebCore::SpeechRecognitionConnectionClientId
 
 void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)
 {
-    MESSAGE_CHECK(clientIdentifier);
     if (m_recognizer && m_recognizer->clientIdentifier() == clientIdentifier)
         m_recognizer->abort();
 }
