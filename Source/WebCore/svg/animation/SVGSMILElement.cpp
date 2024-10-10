@@ -516,6 +516,9 @@ void SVGSMILElement::attributeChanged(const QualifiedName& name, const AtomStrin
     case AttributeNames::onbeginAttr:
         setAttributeEventListener(eventNames().beginEventEvent, name, newValue);
         break;
+    case AttributeNames::onrepeatAttr:
+        setAttributeEventListener(eventNames().repeatEventEvent, name, newValue);
+        break;
     default:
         break;
     }
@@ -1166,6 +1169,9 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
         if (oldActiveState == Inactive)
             startedActiveInterval();
 
+        if (repeat && repeat != m_lastRepeat)
+            smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+
         updateAnimation(percent, repeat);
         m_lastPercent = percent;
         m_lastRepeat = repeat;
@@ -1183,6 +1189,16 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
     if (seekToTime) {
         if (m_activeState == Inactive || m_activeState == Frozen)
             smilEventSender().dispatchEventSoon(*this, eventNames().endEventEvent);
+
+        // FIXME: Add `repeat(n)` support where n would iterations. Below is named tentatively
+        // as `repeatEventCount` for future.
+        if (repeat) {
+            for (unsigned repeatEventCount = 1; repeatEventCount < repeat; repeatEventCount++)
+                smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+
+            if (m_activeState == Inactive)
+                smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+        }
     }
 
     m_nextProgressTime = calculateNextProgressTime(elapsed);

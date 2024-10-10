@@ -39,6 +39,8 @@
     undefined beginElementAt(float offset);
     undefined endElement();
     undefined endElementAt(float offset);
+
+    attribute EventHandler onrepeat;
 };
 
 SVGAnimationElement includes SVGTests;

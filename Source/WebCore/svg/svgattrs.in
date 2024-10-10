@@ -118,6 +118,7 @@ numOctaves
 offset
 onbegin
 onend
+onrepeat
 onzoom
 opacity
 operator
@@ -145,6 +146,7 @@ radius
 refX
 refY
 rel
+repeat
 repeatCount
 repeatDur
 requiredExtensions
