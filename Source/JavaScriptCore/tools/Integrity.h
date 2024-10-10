@@ -98,6 +98,10 @@ private:
 ALWAYS_INLINE static bool isSanePointer(const void* pointer)
 {
     uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
+#if CPU(ARM64) && CPU(ADDRESS64)
+    // On ARM64, top byte ignore means we can ignore these bits for addresses.
+    pointerAsInt &= std::numeric_limits<uintptr_t>::max() >> CHAR_BIT;
+#endif
     if (pointerAsInt < lowestAccessibleAddress())
         return false;
 #if CPU(ADDRESS64)
