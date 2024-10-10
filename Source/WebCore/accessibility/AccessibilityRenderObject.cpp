@@ -1134,7 +1134,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
         // text APIs off the main-thread because this allows them to be part of the AX tree, which is
         // traversed to compute text markers.
         auto* node = this->node();
-        return !node || !node->hasEditableStyle();
+        return !node;
 #else
         return true;
 #endif
@@ -1448,6 +1448,12 @@ AXTextRuns AccessibilityRenderObject::textRuns()
             return containingBlock ? AXTextRuns(containingBlock, { AXTextRun(0, inputElement->value().isolatedCopy()) }) : AXTextRuns();
         }
         return { };
+    }
+
+    if (is<HTMLImageElement>(node()) || is<HTMLMediaElement>(node())) {
+        auto* renderer = this->renderer();
+        auto* containingBlock = renderer ? renderer->containingBlock() : nullptr;
+        return containingBlock ? AXTextRuns(containingBlock, { AXTextRun(0, String(span(objectReplacementCharacter))) }) : AXTextRuns();
     }
 
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer());

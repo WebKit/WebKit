@@ -122,6 +122,7 @@ struct AXTextRuns {
         return { containingBlock, runs[index].lineIndex };
     }
     String substring(unsigned start, unsigned length = StringImpl::MaxLength) const;
+    String toString() const { return substring(0); }
 };
 
 } // namespace WebCore

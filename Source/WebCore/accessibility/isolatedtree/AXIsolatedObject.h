@@ -86,6 +86,8 @@ public:
     bool shouldEmitNewlinesBeforeAndAfterNode() const final { return boolAttributeValue(AXPropertyName::ShouldEmitNewlinesBeforeAndAfterNode); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
+    AXTextMarkerRange textMarkerRange() const final;
+
 private:
     constexpr ProcessID processID() const final { return tree()->processID(); }
     void detachRemoteParts(AccessibilityDetachmentType) final;
@@ -394,7 +396,6 @@ private:
 
     std::optional<SimpleRange> simpleRange() const final;
     VisiblePositionRange visiblePositionRange() const final;
-    AXTextMarkerRange textMarkerRange() const final;
 
     String selectedText() const final;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;

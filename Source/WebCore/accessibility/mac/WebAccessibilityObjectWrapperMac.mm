@@ -3054,6 +3054,20 @@ enum class TextUnit {
 
 - (AXTextMarkerRangeRef)textMarkerRangeAtTextMarker:(AXTextMarkerRef)textMarker forUnit:(TextUnit)textUnit
 {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis()) {
+        AXTextMarker inputMarker { textMarker };
+        switch (textUnit) {
+        case TextUnit::LeftWord:
+            return inputMarker.wordRange(WordRangeType::Left).platformData().autorelease();
+        case TextUnit::RightWord:
+            return inputMarker.wordRange(WordRangeType::Right).platformData().autorelease();
+        default:
+            // TODO: Not implemented!
+            break;
+        }
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
     return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([textMarker = retainPtr(textMarker), &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
