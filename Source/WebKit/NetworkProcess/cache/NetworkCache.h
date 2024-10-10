@@ -235,7 +235,7 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
-    HashMap<Key, std::unique_ptr<AsyncRevalidation>> m_pendingAsyncRevalidations;
+    HashMap<Key, Ref<AsyncRevalidation>> m_pendingAsyncRevalidations;
     HashMap<GlobalFrameID, WeakHashSet<AsyncRevalidation>> m_pendingAsyncRevalidationByPage;
 #endif
 
