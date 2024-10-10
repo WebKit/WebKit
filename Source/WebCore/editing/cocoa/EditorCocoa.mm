@@ -157,7 +157,7 @@ static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document&
     if (ImageOverlay::isInsideOverlay(selection))
         return selectionInImageOverlayAsAttributedString(selection);
     auto range = selection.firstRange();
-    return range ? attributedString(*range).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
+    return range ? attributedString(*range, IgnoreUserSelectNone::Yes).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
 }
 
 template<typename PasteboardContent>

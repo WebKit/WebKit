@@ -167,7 +167,7 @@ private:
 
 class HTMLConverter {
 public:
-    explicit HTMLConverter(const SimpleRange&);
+    explicit HTMLConverter(const SimpleRange&, IgnoreUserSelectNone);
     ~HTMLConverter();
 
     AttributedString convert();
@@ -254,11 +254,11 @@ private:
     void _adjustTrailingNewline();
 };
 
-HTMLConverter::HTMLConverter(const SimpleRange& range)
+HTMLConverter::HTMLConverter(const SimpleRange& range, IgnoreUserSelectNone treatment)
     : m_start(makeContainerOffsetPosition(range.start))
     , m_end(makeContainerOffsetPosition(range.end))
     , m_userSelectNoneStateCache(ComposedTree)
-    , m_ignoreUserSelectNoneContent(!range.start.document().quirks().needsToCopyUserSelectNoneQuirk())
+    , m_ignoreUserSelectNoneContent(treatment == IgnoreUserSelectNone::Yes && !range.start.document().quirks().needsToCopyUserSelectNoneQuirk())
 {
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -2564,9 +2564,9 @@ static void updateAttributesForStyle(const Node* node, const RenderStyle& style,
 namespace WebCore {
 
 // This function supports more HTML features than the editing variant below, such as tables.
-AttributedString attributedString(const SimpleRange& range)
+AttributedString attributedString(const SimpleRange& range, IgnoreUserSelectNone treatment)
 {
-    return HTMLConverter { range }.convert();
+    return HTMLConverter { range, treatment }.convert();
 }
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.

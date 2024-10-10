@@ -99,6 +99,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WindowsKeyboardCodes.h>
+#import <WebCore/markup.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
@@ -762,7 +763,7 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!range)
         return;
 
-    auto selectionString = attributedString(*range);
+    auto selectionString = attributedString(*range, IgnoreUserSelectNone::Yes);
     if (selectionString.isNull())
         return;
 

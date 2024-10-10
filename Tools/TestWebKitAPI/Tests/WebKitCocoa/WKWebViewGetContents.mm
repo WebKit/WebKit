@@ -562,3 +562,12 @@ TEST(WKWebView, AttributedStringAndCDATASection)
 
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WKWebView, AttributedStringIncludesUserSelectNoneContent)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)]);
+    [webView synchronouslyLoadHTMLString:@"<body><p style='-webkit-user-select: none;'>Hello</p></body>"];
+
+    RetainPtr string = [[webView _contentsAsAttributedString] string];
+    EXPECT_WK_STREQ("Hello", [string stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);
+}

@@ -7026,7 +7026,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!startContainer || !endContainer)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
-        { *core(endContainer), static_cast<unsigned>(endOffset) } }).nsAttributedString().autorelease();
+        { *core(endContainer), static_cast<unsigned>(endOffset) } }, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString().autorelease();
 }
 
 - (NSAttributedString *)attributedString
@@ -7035,7 +7035,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
     auto range = makeRangeSelectingNodeContents(*document);
-    if (auto result = attributedString(range).nsAttributedString())
+    if (auto result = attributedString(range, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString())
         return result.autorelease();
     return editingAttributedString(range).nsAttributedString().autorelease();
 }
@@ -7048,7 +7048,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto range = frame->selection().selection().firstRange();
     if (!range)
         return adoptNS([[NSAttributedString alloc] init]).autorelease();
-    if (auto result = attributedString(*range).nsAttributedString())
+    if (auto result = attributedString(*range, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString())
         return result.autorelease();
     return editingAttributedString(*range).nsAttributedString().autorelease();
 }

@@ -78,6 +78,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
+#import <WebCore/markup.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -490,8 +491,8 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 
 void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore::AttributedString&)>&& completionHandler)
 {
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(Ref { *localFrame->document() })) : AttributedString());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(Ref { *localFrame->document() }), IgnoreUserSelectNone::No) : AttributedString { });
 }
 
 void WebPage::setRemoteObjectRegistry(WebRemoteObjectRegistry* registry)

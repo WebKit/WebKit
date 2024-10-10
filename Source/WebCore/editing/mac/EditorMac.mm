@@ -183,10 +183,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
         return selectionInWebArchiveFormat();
 
     if (pasteboardType == String(legacyRTFDPasteboardType()))
-        return dataInRTFDFormat(attributedString(*adjustedSelectionRange()).nsAttributedString().get());
+        return dataInRTFDFormat(attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString().get());
 
     if (pasteboardType == String(legacyRTFPasteboardType())) {
-        auto string = attributedString(*adjustedSelectionRange()).nsAttributedString();
+        auto string = attributedString(*adjustedSelectionRange(), IgnoreUserSelectNone::Yes).nsAttributedString();
         // FIXME: Why is this stripping needed here, but not in writeSelectionToPasteboard?
         if ([string containsAttachments])
             string = attributedStringByStrippingAttachmentCharacters(string.get());
