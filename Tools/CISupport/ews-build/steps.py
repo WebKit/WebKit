@@ -7331,24 +7331,24 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
     NUM_TO_DISPLAY = 10
     UPDATE_COMMAND = 'Tools/Scripts/update-safer-cpp-expectations -p {project}'
     CHECKER_ARGS = '--{checker} {files}'
-    commands = set()
 
     def __init___(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
     def run(self):
+        commands_for_comment = set()
         num_issues = self.getProperty('unexpected_new_issues', 0)
         self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('change_id')}-{self.getProperty('buildnumber')}"
         unexpected_results_data = self.loadResultsData(os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json'))
-        is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes')
-        is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures')
+        is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes', commands_for_comment)
+        is_log += yield self.getFilesPerProject(unexpected_results_data, 'failures', commands_for_comment)
         if num_issues:
             if not is_log:
                 pluralSuffix = 's' if num_issues > 1 else ''
                 yield self._addToLog('stdio', f'Ignored {num_issues} pre-existing failure{pluralSuffix}')
             self.addURL("View failures", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html")
-        self.createComment()
+        self.createComment(commands_for_comment)
         if self.getProperty('unexpected_failing_files', 0):
             return defer.returnValue(FAILURE)
         return defer.returnValue(SUCCESS)
@@ -7359,7 +7359,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         return unexpected_results_data
 
     @defer.inlineCallbacks
-    def getFilesPerProject(self, unexpected_results_data, type):
+    def getFilesPerProject(self, unexpected_results_data, type, commands_for_comment):
         total_file_list = set()
         is_log = 0
         for project, data in unexpected_results_data[type].items():
@@ -7375,11 +7375,11 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
                 yield self._addToLog(f'{project}-unexpected-{type}', log_content)
                 is_log += 1
                 if type == 'passes':
-                    self.commands.add(command)
+                    commands_for_comment.add(command)
         self.setProperty(f'{type}', list(total_file_list))
         return defer.returnValue(is_log)
 
-    def createComment(self):
+    def createComment(self, commands_for_comment):
         num_failures = self.getProperty('unexpected_failing_files', 0)
         num_passes = self.getProperty('unexpected_passing_files', 0)
         num_issues = self.getProperty('unexpected_new_issues', 0)
@@ -7398,9 +7398,9 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
             comment += 'Please address these issues before landing. See [WebKit Guidelines for Safer C++ Programming](https://github.com/WebKit/WebKit/wiki/Safer-CPP-Guidelines).\n(cc @rniwa)\n'
         if num_passes:
             pluralSuffix = 's' if num_passes > 1 else ''
-            pluralCommand = 's' if len(self.commands) > 1 else ''
+            pluralCommand = 's' if len(commands_for_comment) > 1 else ''
             comment += f'\n:warning: Found {num_passes} fixed file{pluralSuffix}! Please update expectations in `Source/[WebKit/WebCore]/SaferCPPExpectations` by running the following command{pluralCommand} and update your {self.change_type}:\n'
-            comment += '\n'.join([f"- `{c}`" for c in self.commands])
+            comment += '\n'.join([f"- `{c}`" for c in commands_for_comment])
 
         self.setProperty('comment_text', comment)
         # FIXME: Add merging blocked upon failure after initial deployment period
