@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+NS_SWIFT_SENDABLE
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface _WKTextPreview : NSObject
 
-#if HAVE(APP_SSO)
+// Preview image of text rendered against a transparent background.
+@property (readonly) CGImageRef previewImage;
 
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/TZoneMalloc.h>
+// The frame this image is meant to be presented in in the web view's coordinate space.
+@property (readonly) CGRect presentationFrame;
 
-OBJC_CLASS SOAuthorization;
-OBJC_CLASS WKSOAuthorizationDelegate;
+- (instancetype)initWithSnapshotImage:(CGImageRef)snapshotImage presentationFrame:(CGRect)presentationFrame;
 
-namespace API {
-class NavigationAction;
-class PageConfiguration;
-}
-
-namespace WebCore {
-class ResourceRequest;
-}
-
-namespace WebKit {
-
-class WebPageProxy;
-
-class SOAuthorizationCoordinator {
-    WTF_MAKE_TZONE_ALLOCATED(SOAuthorizationCoordinator);
-    WTF_MAKE_NONCOPYABLE(SOAuthorizationCoordinator);
-public:
-    SOAuthorizationCoordinator();
-
-    // For Navigation interception.
-    void tryAuthorize(Ref<API::NavigationAction>&&, WebPageProxy&, Function<void(bool)>&&);
-
-    // For PopUp interception.
-    using NewPageCallback = CompletionHandler<void(RefPtr<WebPageProxy>&&)>;
-    using UIClientCallback = Function<void(Ref<API::NavigationAction>&&, NewPageCallback&&)>;
-    void tryAuthorize(Ref<API::PageConfiguration>&&, Ref<API::NavigationAction>&&, WebPageProxy&, NewPageCallback&&, UIClientCallback&&);
-
-private:
-    bool canAuthorize(const URL&) const;
-
-    RetainPtr<WKSOAuthorizationDelegate> m_soAuthorizationDelegate;
-    bool m_hasAppSSO { false };
-};
-
-} // namespace WebKit
-
-#endif
+@end

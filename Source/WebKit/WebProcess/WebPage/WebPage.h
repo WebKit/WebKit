@@ -1814,6 +1814,10 @@ public:
     void didEndPartialIntelligenceTextAnimation();
 #endif
 
+#if PLATFORM(COCOA)
+    void createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+#endif
+
     void startObservingNowPlayingMetadata();
     void stopObservingNowPlayingMetadata();
 

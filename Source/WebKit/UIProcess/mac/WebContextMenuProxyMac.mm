@@ -31,6 +31,7 @@
 #import "APIAttachment.h"
 #import "APIContextMenuClient.h"
 #import "CocoaImage.h"
+#import "EditorState.h"
 #import "ImageAnalysisUtilities.h"
 #import "MenuUtilities.h"
 #import "PageClientImplMac.h"

@@ -1435,6 +1435,16 @@ void WebPageProxy::proofreadingSessionUpdateStateForSuggestionWithID(IPC::Connec
 
 #endif // ENABLE(WRITING_TOOLS)
 
+void WebPageProxy::createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::CreateTextIndicatorForElementWithID(elementID), WTFMove(completionHandler), webPageIDInMainFrameProcess());
+}
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 void WebPageProxy::playPredominantOrNowPlayingMediaSession(CompletionHandler<void(bool)>&& completion)

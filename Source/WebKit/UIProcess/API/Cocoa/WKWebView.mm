@@ -133,6 +133,7 @@
 #import "_WKTextManipulationExclusionRule.h"
 #import "_WKTextManipulationItem.h"
 #import "_WKTextManipulationToken.h"
+#import "_WKTextPreview.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/AppHighlight.h>
@@ -4803,6 +4804,71 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 {
     _dontResetTransientActivationAfterRunJavaScript = value;
 }
+
+#if USE(UICONTEXTMENU)
+- (void)_targetedPreviewForElementWithID:(NSString *)elementID completionHandler:(void (^)(UITargetedPreview *))completionHandler
+{
+    _page->createTextIndicatorForElementWithID(elementID, [completionHandler = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](auto&& textIndicatorData) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf) {
+            completionHandler(nil);
+            return;
+        }
+
+        if (!textIndicatorData) {
+            completionHandler(nil);
+            return;
+        }
+
+        RetainPtr preview = [strongSelf->_contentView _createTargetedPreviewFromTextIndicator:*textIndicatorData previewContainer:strongSelf.get()];
+        completionHandler(preview.get());
+    });
+}
+#elif PLATFORM(MAC)
+- (void)_textPreviewsForElementWithID:(NSString *)elementID completionHandler:(void (^)(NSArray<_WKTextPreview *> *))completionHandler
+{
+    _page->createTextIndicatorForElementWithID(elementID, [completionHandler = makeBlockPtr(completionHandler)](auto&& textIndicatorData) {
+        if (!textIndicatorData) {
+            completionHandler(@[ ]);
+            return;
+        }
+
+        RefPtr contentImage = textIndicatorData->contentImage;
+        if (!contentImage) {
+            ASSERT_NOT_REACHED();
+            completionHandler(@[ ]);
+            return;
+        }
+
+        RefPtr nativeImage = contentImage->nativeImage();
+        if (!nativeImage) {
+            ASSERT_NOT_REACHED();
+            completionHandler(@[ ]);
+            return;
+        }
+
+        RetainPtr platformImage = nativeImage->platformImage();
+
+        auto textBoundingRectInRootViewCoordinates = textIndicatorData->textBoundingRectInRootViewCoordinates;
+        auto textRectsInBoundingRectCoordinates = textIndicatorData->textRectsInBoundingRectCoordinates;
+        auto contentImageScaleFactor = textIndicatorData->contentImageScaleFactor;
+
+        RetainPtr previews = createNSArray(textRectsInBoundingRectCoordinates, [platformImage, textBoundingRectInRootViewCoordinates, contentImageScaleFactor](auto textRectInBoundingRectCoordinates) -> _WKTextPreview * {
+            auto croppedTextRectInImageCoordinates = textRectInBoundingRectCoordinates;
+            croppedTextRectInImageCoordinates.scale(contentImageScaleFactor);
+
+            RetainPtr textImage = adoptCF(CGImageCreateWithImageInRect(platformImage.get(), croppedTextRectInImageCoordinates));
+
+            auto presentationFrame = CGRectOffset(textRectInBoundingRectCoordinates, textBoundingRectInRootViewCoordinates.x(), textBoundingRectInRootViewCoordinates.y());
+
+            RetainPtr textPreview = adoptNS([[_WKTextPreview alloc] initWithSnapshotImage:textImage.get() presentationFrame:presentationFrame]);
+            return textPreview.autorelease();
+        });
+
+        completionHandler(previews.get());
+    });
+}
+#endif
 
 - (NSUUID *)_enableSourceTextAnimationAfterElementWithID:(NSString *)elementID
 {

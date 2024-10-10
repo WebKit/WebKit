@@ -301,6 +301,7 @@ UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm
 UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm
 UIProcess/API/Cocoa/_WKTextManipulationItem.mm
 UIProcess/API/Cocoa/_WKTextManipulationToken.mm
+UIProcess/API/Cocoa/_WKTextPreview.mm
 UIProcess/API/Cocoa/_WKThumbnailView.mm
 UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
 UIProcess/API/Cocoa/_WKUserContentFilter.mm
