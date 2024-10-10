@@ -1,0 +1,33 @@
+This tests that sentence navigation is working correctly.
+
+Current character is: T
+Current sentence is: This is a sentence, right?
+
+Current character is: t
+Current sentence is: test audio [ATTACHMENT]file.
+
+Current character is: 巧
+Current sentence is: 巧克力 是食物吗?
+
+Current character is: ك
+Current sentence is: كيف حالك؟
+
+Current character is: b
+Current sentence is: both   spaces
+
+Current character is: i
+Current sentence is: line breaks.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a sentence, right? Yes!
+test audio file.
+巧克力 是食物吗? 是的。
+كيف حالك؟
+both   spaces
+line breaks. Right?
+This is my first sentence.
+
+This is my second sentence. This is my third sentence. This is my fourth sentence.
