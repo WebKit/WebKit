@@ -10400,6 +10400,7 @@
         "web-platform-tests/mathml/presentation-markup/operators/embellished-op-4-3-ref.html",
         "web-platform-tests/mathml/presentation-markup/operators/embellished-op-5-ref.html",
         "web-platform-tests/mathml/presentation-markup/operators/embellished-operator-dynamic-001-ref.html",
+        "web-platform-tests/mathml/presentation-markup/operators/mo-boolean-attributes-case-insensitive-ref.html",
         "web-platform-tests/mathml/presentation-markup/operators/mo-dynamic-mozilla-347348-ref.xhtml",
         "web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002-ref.html",
         "web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-ref.html",
