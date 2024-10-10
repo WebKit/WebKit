@@ -1084,9 +1084,9 @@ void WebLocalFrameLoaderClient::setMainFrameDocumentReady(bool)
     notImplemented();
 }
 
-void WebLocalFrameLoaderClient::startDownload(const ResourceRequest& request, const String& suggestedName)
+void WebLocalFrameLoaderClient::startDownload(const ResourceRequest& request, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
 {
-    m_frame->startDownload(request, suggestedName);
+    m_frame->startDownload(request, suggestedName, fromDownloadAttribute);
 }
 
 void WebLocalFrameLoaderClient::willChangeTitle(DocumentLoader*)

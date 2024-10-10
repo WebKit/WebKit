@@ -143,7 +143,7 @@ private:
     
     void setMainFrameDocumentReady(bool) final;
     
-    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) final;
+    void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String(), WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No) final;
     
     void willChangeTitle(WebCore::DocumentLoader*) final;
     void didChangeTitle(WebCore::DocumentLoader*) final;

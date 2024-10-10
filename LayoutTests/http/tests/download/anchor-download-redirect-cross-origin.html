@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
+        testRunner.waitUntilDownloadFinished();
+    }
+</script>
+</head>
+<body>
+<p>
+Download cross origin redirect with anchor in an iframe. Logs should say it failed.
+<iframe id="cross" src="/download/resources/iframe-anchor-cross-origin-redirect-download.html"></iframe>
+<p>
+</body>
+</html>

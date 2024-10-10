@@ -101,6 +101,7 @@ enum class LoadWillContinueInAnotherProcess : bool;
 enum class LockBackForwardList : bool;
 enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
+enum class FromDownloadAttribute : bool { No , Yes };
 
 struct StringWithDirection;
 
@@ -199,7 +200,7 @@ public:
 
     virtual void setMainFrameDocumentReady(bool) = 0;
 
-    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) = 0;
+    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String(), FromDownloadAttribute = FromDownloadAttribute::No) = 0;
 
     virtual void willChangeTitle(DocumentLoader*) = 0;
     virtual void didChangeTitle(DocumentLoader*) = 0;

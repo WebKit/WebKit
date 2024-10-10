@@ -981,7 +981,7 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
     [getWebView(m_webFrame.get()) setMainFrameDocumentReady:ready];
 }
 
-void WebFrameLoaderClient::startDownload(const WebCore::ResourceRequest& request, const String& /* suggestedName */)
+void WebFrameLoaderClient::startDownload(const WebCore::ResourceRequest& request, const String& /* suggestedName */, WebCore::FromDownloadAttribute)
 {
     // FIXME: Should download full request.
     [getWebView(m_webFrame.get()) _downloadURL:request.url()];

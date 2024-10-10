@@ -39,6 +39,8 @@ class Connection;
 
 namespace WebCore {
 class ResourceResponse;
+
+enum class FromDownloadAttribute : bool;
 }
 
 namespace WebKit {
@@ -51,9 +53,9 @@ class NetworkSession;
 class PendingDownload : public RefCountedAndCanMakeWeakPtr<PendingDownload>, public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
 public:
-    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName)
+    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName));
+        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute));
     }
 
     static Ref<PendingDownload> create(IPC::Connection* connection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& responseCompletionHandler, DownloadID downloadID, const WebCore::ResourceRequest& resourceRequest, const WebCore::ResourceResponse& resourceResponse)
@@ -75,7 +77,7 @@ public:
 #endif
 
 private:    
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute);
     PendingDownload(IPC::Connection*, Ref<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     // NetworkLoadClient.
@@ -87,6 +89,7 @@ private:
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) override { };
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) override { };
     void didFailLoading(const WebCore::ResourceError&) override;
+    bool isDownloadTriggeredWithDownloadAttribute() const;
 
     // MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -96,6 +99,10 @@ private:
     Ref<NetworkLoad> m_networkLoad;
     RefPtr<IPC::Connection> m_parentProcessConnection;
     bool m_isAllowedToAskUserForCredentials;
+    bool m_isDownloadCancelled = false;
+    WebCore::FromDownloadAttribute m_fromDownloadAttribute;
+    bool m_isFullWebBrowser = true;
+
 
 #if PLATFORM(COCOA)
     URL m_progressURL;
