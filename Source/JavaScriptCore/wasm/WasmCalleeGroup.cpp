@@ -334,12 +334,15 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     case CompilationMode::LLIntMode:
     case CompilationMode::IPIntMode:
         return TriState::True;
+#if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
         if (m_bbqCallees.at(index).isWeak())
             return m_bbqCallees.at(index).get() ? TriState::Indeterminate : TriState::False;
         return triState(m_bbqCallees.at(index).ptr());
     }
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     case CompilationMode::OMGMode:
         return triState(m_omgCallees.at(toCodeIndex(callee->index())).get());
     case CompilationMode::OMGForOSREntryMode: {
@@ -352,6 +355,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
         }
         return TriState::False;
     }
+#endif
     // FIXME: This doesn't record the index its associated with so we can't validate anything here.
     case CompilationMode::JSToWasmEntrypointMode:
     // FIXME: These are owned by JS, it's not clear how to verify they're still alive here.
