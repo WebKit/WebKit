@@ -96,8 +96,6 @@ void RenderVideo::intrinsicSizeChanged()
 bool RenderVideo::updateIntrinsicSize()
 {
     LayoutSize size = calculateIntrinsicSize();
-    size.scale(style().usedZoom());
-
     // Never set the element size to zero when in a media document.
     if (size.isEmpty() && document().isMediaDocument())
         return false;
@@ -154,6 +152,8 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
         return intrinsicSize();
 
     auto calculatedIntrinsicSize = calculateIntrinsicSizeInternal();
+    calculatedIntrinsicSize.scale(style().usedZoom());
+
     if (shouldApplyInlineSizeContainment()) {
         if (isHorizontalWritingMode())
             calculatedIntrinsicSize.setWidth(intrinsicSize().width());

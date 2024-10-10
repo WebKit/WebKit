@@ -862,10 +862,12 @@ bool RenderReplaced::needsPreferredWidthsRecalculation() const
 LayoutSize RenderReplaced::intrinsicSize() const
 {
     LayoutSize size = m_intrinsicSize;
+    auto zoomValue = style().usedZoom();
+
     if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
-        size.setWidth(explicitIntrinsicInnerWidth().value_or(0));
+        size.setWidth(explicitIntrinsicInnerWidth().value_or(0) * zoomValue);
     if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
-        size.setHeight(explicitIntrinsicInnerHeight().value_or(0));
+        size.setHeight(explicitIntrinsicInnerHeight().value_or(0) * zoomValue);
     return size;
 }
 
