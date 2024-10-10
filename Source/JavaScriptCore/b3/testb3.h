@@ -627,6 +627,8 @@ void testSubWithUnsignedRightShift32();
 void testSubWithLeftShift64();
 void testSubWithRightShift64();
 void testSubWithUnsignedRightShift64();
+void testAddZeroExtend64();
+void testAddSignExtend64();
 
 void testAndLeftShift32();
 void testAndRightShift32();

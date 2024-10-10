@@ -5262,6 +5262,46 @@ void testAddWithUnsignedRightShift64()
     }
 }
 
+void testAddZeroExtend64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<uint64_t, uint64_t>(proc, root);
+    Value* nValue = arguments[0];
+    Value* mValue = arguments[1];
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), nValue, root->appendNew<Value>(proc, ZExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), mValue))));
+    auto code = compileProc(proc);
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            int64_t n = nOperand.value;
+            int64_t m = mOperand.value;
+            CHECK_EQ(invoke<int64_t>(*code, n, m), n + static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(m))));
+        }
+    }
+}
+
+void testAddSignExtend64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<uint64_t, uint64_t>(proc, root);
+    Value* nValue = arguments[0];
+    Value* mValue = arguments[1];
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), nValue, root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Value>(proc, Trunc, Origin(), mValue))));
+    auto code = compileProc(proc);
+    for (auto nOperand : int64Operands()) {
+        for (auto mOperand : int64Operands()) {
+            int64_t n = nOperand.value;
+            int64_t m = mOperand.value;
+            CHECK_EQ(invoke<int64_t>(*code, n, m), n + static_cast<int32_t>(m));
+        }
+    }
+}
+
 void testSubWithLeftShift32()
 {
     if (JSC::Options::defaultB3OptLevel() < 2)
@@ -7215,6 +7255,8 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testAddWithLeftShift64());
     RUN(testAddWithRightShift64());
     RUN(testAddWithUnsignedRightShift64());
+    RUN(testAddZeroExtend64());
+    RUN(testAddSignExtend64());
     RUN(testSubWithLeftShift32());
     RUN(testSubWithRightShift32());
     RUN(testSubWithUnsignedRightShift32());
