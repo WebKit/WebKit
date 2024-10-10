@@ -55,7 +55,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
 - (instancetype)init
 {
     CGRect frame = CGRectMake(0, 0, 100, 100);
-    self = [self initWithFrame:frame];
+    self = [super initWithFrame:frame];
 
     if (!self)
         return nil;

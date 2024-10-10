@@ -2119,7 +2119,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
 
 - (id)initWithFrame:(NakedPtr<WebCore::LocalFrame>)frame policyFunction:(WebCore::FramePolicyFunction&&)policyFunction defaultPolicy:(WebCore::PolicyAction)defaultPolicy
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
 

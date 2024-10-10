@@ -57,7 +57,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 
 - (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download&)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension
 {
-    if (!(self = [self initWithParent:nil userInfo:nil]))
+    if (!(self = [super initWithParent:nil userInfo:nil]))
         return nil;
 
     m_task = task;

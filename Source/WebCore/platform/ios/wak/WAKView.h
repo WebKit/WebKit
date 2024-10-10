@@ -57,7 +57,7 @@ WEBCORE_EXPORT @interface WAKView : WAKResponder
 
 + (WAKView *)focusView;
 
-- (id)initWithFrame:(CGRect)rect;
+- (instancetype)initWithFrame:(CGRect)rect;
 
 - (WAKWindow *)window;
 

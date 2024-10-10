@@ -37,16 +37,16 @@ using namespace WebCore;
 {
     AuthenticationClient* m_client;
 }
-- (id)initWithAuthenticationClient:(AuthenticationClient*)client;
+- (instancetype)initWithAuthenticationClient:(AuthenticationClient*)client;
 - (AuthenticationClient*)client;
 - (void)detachClient;
 @end
 
 @implementation WebCoreAuthenticationClientAsChallengeSender
 
-- (id)initWithAuthenticationClient:(AuthenticationClient*)client
+- (instancetype)initWithAuthenticationClient:(AuthenticationClient*)client
 {
-    self = [self init];
+    self = [super init];
     if (!self)
         return nil;
     m_client = client;

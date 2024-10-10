@@ -245,7 +245,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self _setRealDelegate:delegate];
-    return [super initWithRequest:request delegate:_webInternal];
+    self = [super initWithRequest:request delegate:_webInternal];
+    return self;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -257,7 +258,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 IGNORE_WARNINGS_END
 {
     [self _setRealDelegate:delegate];
-    return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    self = [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    return self;
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -267,7 +269,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 IGNORE_WARNINGS_END
 {
     [self _setRealDelegate:delegate];
-    return [super _initWithRequest:request delegate:_webInternal directory:directory];
+    self = [super _initWithRequest:request delegate:_webInternal directory:directory];
+    return self;
 }
 
 @end
