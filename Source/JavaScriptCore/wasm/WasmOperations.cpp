@@ -775,7 +775,7 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
 }
 
 SUPPRESS_ASAN
-static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context, BBQCallee& callee, OSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
+static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context, BBQCallee& callee, OMGOSREntryCallee& osrEntryCallee, OSREntryData& osrEntryData)
 {
     auto returnWithoutOSREntry = [&] {
         context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = 0;
@@ -913,7 +913,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = 0;
     };
 
-    auto doStackCheck = [instance](OSREntryCallee* callee) -> bool {
+    auto doStackCheck = [instance](OMGOSREntryCallee* callee) -> bool {
         uintptr_t stackPointer = reinterpret_cast<uintptr_t>(currentStackPointer());
         ASSERT(callee->stackCheckSize());
         if (callee->stackCheckSize() == stackCheckNotNeeded)
@@ -1002,7 +1002,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         return returnWithoutOSREntry();
     }
 
-    if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
+    if (OMGOSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
         if (osrEntryCallee->loopIndex() == loopIndex) {
             if (!doStackCheck(osrEntryCallee))
                 return returnWithoutOSREntry();
@@ -1020,7 +1020,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
             return returnWithoutOSREntry();
     }
 
-    if (OSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
+    if (OMGOSREntryCallee* osrEntryCallee = callee.osrEntryCallee()) {
         if (osrEntryCallee->loopIndex() == loopIndex) {
             if (!doStackCheck(osrEntryCallee))
                 return returnWithoutOSREntry();
@@ -1099,7 +1099,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
             tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
     }
 
-    OSREntryCallee* osrEntryCallee = callee.osrEntryCallee();
+    OMGOSREntryCallee* osrEntryCallee = callee.osrEntryCallee();
     if (!osrEntryCallee) {
         tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
         return returnWithoutOSREntry();

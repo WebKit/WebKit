@@ -174,7 +174,7 @@ public:
         m_omgCallees[functionIndex] = WTFMove(callee);
     }
 
-    void recordOSREntryCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, OSREntryCallee& callee) WTF_REQUIRES_LOCK(m_lock)
+    void recordOMGOSREntryCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, OMGOSREntryCallee& callee) WTF_REQUIRES_LOCK(m_lock)
     {
         auto result = m_osrEntryCallees.add(functionIndex, callee);
         ASSERT_UNUSED(result, result.isNewEntry);
@@ -242,7 +242,7 @@ private:
     HashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
 #if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
     // FIXME: We should probably find some way to prune dead entries periodically.
-    HashMap<uint32_t, ThreadSafeWeakPtr<OSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees;
+    HashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees;
 #endif
     // functionCodeIndex -> functionCodeIndex of internal functions that have direct JIT callsites to the lhs.
     // Note, this can grow over time since OMG inlining can add to the set of callers.

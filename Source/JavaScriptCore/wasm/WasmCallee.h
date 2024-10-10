@@ -283,12 +283,12 @@ private:
 constexpr int32_t stackCheckUnset = 0;
 constexpr int32_t stackCheckNotNeeded = -1;
 
-class OSREntryCallee final : public OptimizingJITCallee {
-    WTF_MAKE_COMPACT_TZONE_ALLOCATED(OSREntryCallee);
+class OMGOSREntryCallee final : public OptimizingJITCallee {
+    WTF_MAKE_COMPACT_TZONE_ALLOCATED(OMGOSREntryCallee);
 public:
-    static Ref<OSREntryCallee> create(CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
+    static Ref<OMGOSREntryCallee> create(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
-        return adoptRef(*new OSREntryCallee(compilationMode, index, WTFMove(name), loopIndex));
+        return adoptRef(*new OMGOSREntryCallee(index, WTFMove(name), loopIndex));
     }
 
     unsigned osrEntryScratchBufferSize() const { return m_osrEntryScratchBufferSize; }
@@ -315,8 +315,8 @@ public:
     }
 
 private:
-    OSREntryCallee(CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
-        : OptimizingJITCallee(compilationMode, index, WTFMove(name))
+    OMGOSREntryCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
+        : OptimizingJITCallee(CompilationMode::OMGForOSREntryMode, index, WTFMove(name))
         , m_loopIndex(loopIndex)
     {
     }
@@ -362,8 +362,8 @@ public:
     }
     ~BBQCallee();
 
-    OSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
-    void setOSREntryCallee(Ref<OSREntryCallee>&& osrEntryCallee, MemoryMode)
+    OMGOSREntryCallee* osrEntryCallee() { return m_osrEntryCallee.get(); }
+    void setOSREntryCallee(Ref<OMGOSREntryCallee>&& osrEntryCallee, MemoryMode)
     {
         ASSERT(!m_osrEntryCallee);
         m_osrEntryCallee = WTFMove(osrEntryCallee);
@@ -414,7 +414,7 @@ private:
     {
     }
 
-    RefPtr<OSREntryCallee> m_osrEntryCallee;
+    RefPtr<OMGOSREntryCallee> m_osrEntryCallee;
     TierUpCount m_tierUpCounter;
     std::optional<CodeLocationLabel<WasmEntryPtrTag>> m_sharedLoopEntrypoint;
     Vector<CodeLocationLabel<WasmEntryPtrTag>> m_loopEntrypoints;

@@ -50,7 +50,7 @@ WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(OptimizingJITCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(OMGCallee);
-WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(OSREntryCallee);
+WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(OMGOSREntryCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(BBQCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(IPIntCallee);
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(LLIntCallee);
@@ -97,12 +97,8 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::BBQMode:
         func(static_cast<BBQCallee*>(this));
         break;
-    case CompilationMode::BBQForOSREntryMode:
-        func(static_cast<OSREntryCallee*>(this));
-        break;
 #else
     case CompilationMode::BBQMode:
-    case CompilationMode::BBQForOSREntryMode:
         break;
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
@@ -110,7 +106,7 @@ inline void Callee::runWithDowncast(const Func& func)
         func(static_cast<OMGCallee*>(this));
         break;
     case CompilationMode::OMGForOSREntryMode:
-        func(static_cast<OSREntryCallee*>(this));
+        func(static_cast<OMGOSREntryCallee*>(this));
         break;
 #else
     case CompilationMode::OMGMode:

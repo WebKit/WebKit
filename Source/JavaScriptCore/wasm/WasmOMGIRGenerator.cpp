@@ -1461,7 +1461,7 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg contextInstance = params[0].gpr();
                 GPRReg fp = params[1].gpr();
-                if (isOSREntry(m_compilationMode))
+                if (m_compilationMode == CompilationMode::OMGForOSREntryMode)
                     jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp).linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(crashDueToOMGStackOverflowGenerator).code()), &jit);
                 else
                     jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp).linkThunk(CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()), &jit);
@@ -1469,7 +1469,7 @@ OMGIRGenerator::OMGIRGenerator(CalleeGroup& calleeGroup, const ModuleInformation
         });
     }
 
-    if (isOSREntry(m_compilationMode))
+    if (m_compilationMode == CompilationMode::OMGForOSREntryMode)
         m_currentBlock = m_proc.addBlock();
 }
 
@@ -6049,14 +6049,14 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileOMG(Compilati
     result->stackmaps = irGenerator.takeStackmaps();
     result->exceptionHandlers = irGenerator.takeExceptionHandlers();
 
-    if (isOSREntry(compilationMode)) {
+    if (compilationMode == CompilationMode::OMGForOSREntryMode) {
         int32_t checkSize = 0;
         bool needsOverflowCheck = false;
         irGenerator.computeStackCheckSize(needsOverflowCheck, checkSize);
         ASSERT(checkSize || !needsOverflowCheck);
         if (!needsOverflowCheck)
             checkSize = stackCheckNotNeeded;
-        static_cast<OSREntryCallee*>(&callee)->setStackCheckSize(checkSize);
+        static_cast<OMGOSREntryCallee*>(&callee)->setStackCheckSize(checkSize);
     }
 
     return result;

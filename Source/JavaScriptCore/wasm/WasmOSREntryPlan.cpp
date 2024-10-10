@@ -103,13 +103,12 @@ void OSREntryPlan::work(CompilationEffort)
     TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
     const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
 
-    CompilationMode targetCompilationMode = CompilationMode::OMGForOSREntryMode;
-    Ref<OSREntryCallee> callee = OSREntryCallee::create(targetCompilationMode, functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
+    Ref<OMGOSREntryCallee> callee = OMGOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), m_loopIndex);
 
     beginCompilerSignpost(callee.get());
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, targetCompilationMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
+    auto parseAndCompileResult = parseAndCompileOMG(context, callee.get(), function, signature, unlinkedCalls, m_calleeGroup.get(), m_moduleInformation.get(), m_mode, CompilationMode::OMGForOSREntryMode, m_functionIndex, m_hasExceptionHandlers, m_loopIndex);
     endCompilerSignpost(callee.get());
 
     if (UNLIKELY(!parseAndCompileResult)) {
@@ -141,7 +140,7 @@ void OSREntryPlan::work(CompilationEffort)
     callee->setEntrypoint(WTFMove(omgEntrypoint), internalFunction->osrEntryScratchBufferSize, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
         Locker locker { m_calleeGroup->m_lock };
-        m_calleeGroup->recordOSREntryCallee(locker, m_functionIndex, callee.get());
+        m_calleeGroup->recordOMGOSREntryCallee(locker, m_functionIndex, callee.get());
         m_calleeGroup->reportCallees(locker, callee.ptr(), internalFunction->outgoingJITDirectCallees);
 
         for (auto& call : callee->wasmToWasmCallsites()) {

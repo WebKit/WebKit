@@ -1065,7 +1065,6 @@ static String tierName(SamplingProfiler::StackFrame& frame)
                 // Just say "Wasm" for now.
                 break;
             case Wasm::CompilationMode::BBQMode:
-            case Wasm::CompilationMode::BBQForOSREntryMode:
                 return Tiers::bbq;
             case Wasm::CompilationMode::OMGMode:
             case Wasm::CompilationMode::OMGForOSREntryMode:

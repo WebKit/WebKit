@@ -245,10 +245,10 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
     };
 
     // This is necessary since Callees are released under `Heap::stopThePeriphery()`, but that only stops JS compiler
-    // threads and not wasm ones. So the OSREntryCallee could die between the time we collect the callsites and when
+    // threads and not wasm ones. So the OMGOSREntryCallee could die between the time we collect the callsites and when
     // we actually repatch its callsites.
     // FIXME: These inline capacities were picked semi-randomly. We should figure out if there's a better number.
-    Vector<RefPtr<OSREntryCallee>, 4> keepAliveOSREntryCallees;
+    Vector<RefPtr<OMGOSREntryCallee>, 4> keepAliveOSREntryCallees;
     Vector<Callsite, 16> callsites;
 
     auto functionSpaceIndex = toSpaceIndex(functionIndex);
@@ -345,7 +345,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     case CompilationMode::OMGForOSREntryMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
         if (m_osrEntryCallees.get(index).get()) {
-            // The BBQCallee really owns the OSREntryCallee so as long as that's around the OSREntryCallee is referenced.
+            // The BBQCallee really owns the OMGOSREntryCallee so as long as that's around the OMGOSREntryCallee is referenced.
             if (m_bbqCallees.at(index).get())
                 return TriState::True;
             return TriState::Indeterminate;
@@ -358,8 +358,6 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
         return TriState::True;
-    case CompilationMode::BBQForOSREntryMode:
-        RELEASE_ASSERT_NOT_REACHED();
     }
     return TriState::False;
 }
