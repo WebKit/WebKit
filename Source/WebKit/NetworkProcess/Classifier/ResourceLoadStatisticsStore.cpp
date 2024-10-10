@@ -937,11 +937,11 @@ void ResourceLoadStatisticsStore::migrateDataToPCMDatabaseIfNecessary()
             if (!networkSession)
                 return;
 
-            auto& manager = networkSession->privateClickMeasurement();
+            Ref manager = networkSession->privateClickMeasurement();
             for (auto&& pcm : WTFMove(attributed))
-                manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
+                manager->migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
             for (auto&& pcm : WTFMove(unattributed))
-                manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
+                manager->migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
         });
 
     }

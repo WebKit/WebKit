@@ -73,6 +73,11 @@ void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& 
     });
 }
 
+Ref<ManagerProxy> ManagerProxy::create(const String& machServiceName, NetworkSession& networkSession)
+{
+    return adoptRef(*new ManagerProxy(machServiceName, networkSession));
+}
+
 ManagerProxy::ManagerProxy(const String& machServiceName, NetworkSession& networkSession)
     : m_connection(machServiceName.utf8(), networkSession) { }
 

@@ -314,7 +314,7 @@ protected:
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
     bool m_isStaleWhileRevalidateEnabled { false };
-    UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;
+    Ref<PCM::ManagerInterface> m_privateClickMeasurement;
     bool m_privateClickMeasurementDebugModeEnabled { false };
     std::optional<WebCore::PrivateClickMeasurement> m_ephemeralMeasurement;
     bool m_isRunningEphemeralMeasurementTest { false };

@@ -44,7 +44,7 @@ class PrivateClickMeasurementManager;
 
 namespace PCM {
 
-class ManagerInterface {
+class ManagerInterface : public RefCounted<ManagerInterface> {
 public:
     virtual ~ManagerInterface() { };
 

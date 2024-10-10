@@ -39,7 +39,7 @@ namespace PCM {
 class ManagerProxy : public ManagerInterface {
     WTF_MAKE_TZONE_ALLOCATED(ManagerProxy);
 public:
-    ManagerProxy(const String& machServiceName, NetworkSession&);
+    static Ref<ManagerProxy> create(const String& machServiceName, NetworkSession&);
 
     using ApplicationBundleIdentifier = String;
 
@@ -64,6 +64,8 @@ public:
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
 
 private:
+    ManagerProxy(const String& machServiceName, NetworkSession&);
+
     template<MessageType messageType, typename... Args>
     void sendMessage(Args&&...) const;
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
