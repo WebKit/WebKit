@@ -43,10 +43,15 @@ Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorMa
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel()
-    : m_manager(makeUnique<AuthenticatorManager>())
+    : m_manager(AuthenticatorManager::create())
     , m_client(makeUniqueRef<WebAuthenticationPanelClient>())
 {
-    m_manager->enableNativeSupport();
+    protectedManager()->enableNativeSupport();
+}
+
+RefPtr<WebKit::AuthenticatorManager> WebAuthenticationPanel::protectedManager() const
+{
+    return m_manager;
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
@@ -71,29 +76,31 @@ void WebAuthenticationPanel::handleRequest(WebAuthenticationRequestData&& reques
 {
     ASSERT(m_manager);
     request.weakPanel = *this;
-    m_manager->handleRequest(WTFMove(request), WTFMove(callback));
+    protectedManager()->handleRequest(WTFMove(request), WTFMove(callback));
 }
 
 void WebAuthenticationPanel::cancel() const
 {
-    if (m_weakManager) {
-        m_weakManager->cancelRequest(*this);
+    if (RefPtr manager = m_weakManager.get()) {
+        manager->cancelRequest(*this);
         return;
     }
 
-    m_manager->cancel();
+    protectedManager()->cancel();
 }
 
 void WebAuthenticationPanel::setMockConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
 {
     ASSERT(m_manager);
 
-    if (!m_manager->isMock()) {
-        m_manager = makeUnique<MockAuthenticatorManager>(WTFMove(configuration));
-        m_manager->enableNativeSupport();
+    if (RefPtr mockManager = dynamicDowncast<MockAuthenticatorManager>(*m_manager)) {
+        mockManager->setTestConfiguration(WTFMove(configuration));
         return;
     }
-    static_cast<MockAuthenticatorManager*>(m_manager.get())->setTestConfiguration(WTFMove(configuration));
+
+    Ref manager = MockAuthenticatorManager::create(WTFMove(configuration));
+    manager->enableNativeSupport();
+    m_manager = WTFMove(manager);
 }
 
 void WebAuthenticationPanel::setClient(UniqueRef<WebAuthenticationPanelClient>&& client)

@@ -100,22 +100,22 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
     CompletionHandler<void(bool)> afterConsent = [this, weakThis = WeakPtr { *this }, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
         if (!weakThis)
             return;
-        auto& authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
+        Ref authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
         if (result) {
 #if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
-            if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+            if (!authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
                 if (!isASCAvailable()) {
                     handler({ }, AuthenticatorAttachment::Platform, ExceptionData { ExceptionCode::NotSupportedError, "Not implemented."_s });
                     RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not currently supported in this environment.");
                     return;
                 }
                 // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
-                // which calls authenticatorManager.handleRequest(..)
+                // which calls authenticatorManager->handleRequest(..)
                 performRequest(WTFMove(data), WTFMove(handler));
                 return;
             }
 #else
-            if (data.parentOrigin && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+            if (data.parentOrigin && !authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
                 handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
                 RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
                 return;
@@ -133,7 +133,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             });
             data.hash = buildClientDataJsonHash(*clientDataJSON);
 
-            authenticatorManager.handleRequest(WTFMove(data), [handler = WTFMove(handler), clientDataJSON = WTFMove(clientDataJSON)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
+            authenticatorManager->handleRequest(WTFMove(data), [handler = WTFMove(handler), clientDataJSON = WTFMove(clientDataJSON)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
                 ASSERT(RunLoop::isMain());
                 WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
                     auto responseData = response->data();
@@ -149,8 +149,8 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
         }
     };
 
-    auto& authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
-    if (shouldRequestConditionalRegistration && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+    Ref authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
+    if (shouldRequestConditionalRegistration && !authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
         m_webPageProxy->uiClient().requestWebAuthenticationConditonalMediationRegistration(WTFMove(username), WTFMove(afterConsent));
         return;
     }

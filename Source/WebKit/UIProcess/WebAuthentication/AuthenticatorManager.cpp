@@ -179,6 +179,11 @@ const size_t AuthenticatorManager::maxTransportNumber = 5;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorManager);
 
+Ref<AuthenticatorManager> AuthenticatorManager::create()
+{
+    return adoptRef(*new AuthenticatorManager);
+}
+
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
 {

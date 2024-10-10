@@ -35,10 +35,12 @@ namespace WebKit {
 
 struct VirtualCredential;
 
-VirtualAuthenticatorManager::VirtualAuthenticatorManager()
-    : AuthenticatorManager()
+Ref<VirtualAuthenticatorManager> VirtualAuthenticatorManager::create()
 {
+    return adoptRef(*new VirtualAuthenticatorManager);
 }
+
+VirtualAuthenticatorManager::VirtualAuthenticatorManager() = default;
 
 String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticatorConfiguration& config)
 {

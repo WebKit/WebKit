@@ -77,10 +77,12 @@ public:
     WTF::String userName() const { return m_userName; }
 
 private:
+    RefPtr<WebKit::AuthenticatorManager> protectedManager() const;
+
     // FIXME: <rdar://problem/71509848> Remove the following deprecated method.
     WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType, const WTF::String& userName);
 
-    std::unique_ptr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to UniqueRef.
+    RefPtr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to Ref.
     UniqueRef<WebAuthenticationPanelClient> m_client;
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated fields.

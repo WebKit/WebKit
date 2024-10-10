@@ -270,7 +270,7 @@ void LocalAuthenticator::makeCredential()
         }
     }
 
-    if (auto* observer = this->observer()) {
+    if (RefPtr observer = this->observer()) {
         auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
@@ -635,7 +635,7 @@ void LocalAuthenticator::getAssertion()
     // Step 6-7. User consent is implicitly acquired by selecting responses.
     m_connection->filterResponses(assertionResponses);
 
-    if (auto* observer = this->observer()) {
+    if (RefPtr observer = this->observer()) {
         auto callback = [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
             RELEASE_ASSERT(RunLoop::isMain());
             if (!weakThis)
@@ -774,7 +774,7 @@ void LocalAuthenticator::receiveException(ExceptionData&& exception, WebAuthenti
             RELEASE_LOG_ERROR(WebAuthn, "Couldn't delete provisional credential while handling error: %d", status);
     }
 
-    if (auto* observer = this->observer())
+    if (RefPtr observer = this->observer())
         observer->authenticatorStatusUpdated(status);
 
     receiveRespond(WTFMove(exception));
@@ -809,7 +809,7 @@ void LocalAuthenticator::deleteDuplicateCredential() const
 bool LocalAuthenticator::validateUserVerification(LocalConnection::UserVerification verification) const
 {
     if (verification == LocalConnection::UserVerification::Cancel) {
-        if (auto* observer = this->observer())
+        if (RefPtr observer = this->observer())
             observer->cancelRequest();
         return false;
     }

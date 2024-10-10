@@ -38,15 +38,6 @@
 
 OBJC_CLASS LAContext;
 
-namespace WebKit {
-class AuthenticatorObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorObserver> : std::true_type { };
-}
-
 namespace WebCore {
 class AuthenticatorAssertionResponse;
 }
@@ -67,6 +58,9 @@ public:
     virtual void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) = 0;
     virtual void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) = 0;
     virtual void cancelRequest() = 0;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {

@@ -161,7 +161,7 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_trackingPreventionDebugMode(m_configuration->resourceLoadStatisticsDebugModeEnabled())
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"_s))
 #if ENABLE(WEB_AUTHN)
-    , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
+    , m_authenticatorManager(AuthenticatorManager::create())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
     , m_webLockRegistry(WebCore::LocalWebLockRegistry::create())
@@ -2100,17 +2100,23 @@ void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
 void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&& configuration)
 {
     if (!m_authenticatorManager->isMock()) {
-        m_authenticatorManager = makeUniqueRef<MockAuthenticatorManager>(WTFMove(configuration));
+        m_authenticatorManager = MockAuthenticatorManager::create(WTFMove(configuration));
         return;
     }
-    static_cast<MockAuthenticatorManager*>(&m_authenticatorManager)->setTestConfiguration(WTFMove(configuration));
+    Ref manager = downcast<MockAuthenticatorManager>(m_authenticatorManager);
+    manager->setTestConfiguration(WTFMove(configuration));
 }
 
 VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
 {
     if (!m_authenticatorManager->isVirtual())
-        m_authenticatorManager = makeUniqueRef<VirtualAuthenticatorManager>();
-    return static_cast<VirtualAuthenticatorManager&>(m_authenticatorManager.get());
+        m_authenticatorManager = VirtualAuthenticatorManager::create();
+    return downcast<VirtualAuthenticatorManager>(m_authenticatorManager.get());
+}
+
+Ref<VirtualAuthenticatorManager> WebsiteDataStore::protectedVirtualAuthenticatorManager()
+{
+return virtualAuthenticatorManager();
 }
 #endif
 

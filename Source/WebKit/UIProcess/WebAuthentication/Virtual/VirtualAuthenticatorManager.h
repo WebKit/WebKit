@@ -46,7 +46,7 @@ struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
 public:
-    explicit VirtualAuthenticatorManager();
+    static Ref<VirtualAuthenticatorManager> create();
 
     String createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
     bool removeAuthenticator(const String& /*authenticatorId*/);
@@ -62,6 +62,8 @@ protected:
     
     
 private:
+    VirtualAuthenticatorManager();
+
     UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
@@ -71,5 +73,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::VirtualAuthenticatorManager)
+static bool isType(const WebKit::AuthenticatorManager& manager) { return manager.isVirtual(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_AUTHN)

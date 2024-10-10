@@ -30,6 +30,11 @@
 
 namespace WebKit {
 
+Ref<MockAuthenticatorManager> MockAuthenticatorManager::create(WebCore::MockWebAuthenticationConfiguration&& configuration)
+{
+    return adoptRef(*new MockAuthenticatorManager(WTFMove(configuration)));
+}
+
 MockAuthenticatorManager::MockAuthenticatorManager(WebCore::MockWebAuthenticationConfiguration&& configuration)
     : m_testConfiguration(WTFMove(configuration))
 {

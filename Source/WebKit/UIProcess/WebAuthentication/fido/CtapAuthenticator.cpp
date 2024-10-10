@@ -372,7 +372,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
     CTAP_RELEASE_LOG("continueGetNextAssertionAfterResponseReceived: Remaining responses: %lu", m_remainingAssertionResponses);
 
     if (!m_remainingAssertionResponses) {
-        if (auto* observer = this->observer()) {
+        if (RefPtr observer = this->observer()) {
             observer->selectAssertionResponse(Vector { m_assertionResponses }, WebAuthenticationSource::External, [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
                 RELEASE_ASSERT(RunLoop::isMain());
                 if (!weakThis)
@@ -442,7 +442,7 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
         return;
     }
 
-    if (auto* observer = this->observer()) {
+    if (RefPtr observer = this->observer()) {
         CTAP_RELEASE_LOG("continueRequestPinAfterGetKeyAgreement: Requesting pin from observer.");
         observer->requestPin(retries, [weakThis = WeakPtr { *this }, this, keyAgreement = WTFMove(*keyAgreement)] (const String& pin) {
             RELEASE_ASSERT(RunLoop::isMain());
@@ -465,7 +465,7 @@ void CtapAuthenticator::continueGetPinTokenAfterRequestPin(const String& pin, co
     auto pinUTF8 = pin::validateAndConvertToUTF8(pin);
     if (!pinUTF8) {
         // Fake a pin invalid response from the authenticator such that clients could show some error to the user.
-        if (auto* observer = this->observer())
+        if (RefPtr observer = this->observer())
             observer->authenticatorStatusUpdated(WebAuthenticationStatus::PinInvalid);
         tryRestartPin(CtapDeviceResponseCode::kCtap2ErrPinInvalid);
         return;
@@ -495,7 +495,7 @@ void CtapAuthenticator::continueRequestAfterGetPinToken(Vector<uint8_t>&& data, 
         auto error = getResponseCode(data);
 
         if (isPinError(error)) {
-            if (auto* observer = this->observer())
+            if (RefPtr observer = this->observer())
                 observer->authenticatorStatusUpdated(toStatus(error));
             if (tryRestartPin(error))
                 return;

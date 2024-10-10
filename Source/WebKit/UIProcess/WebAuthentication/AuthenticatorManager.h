@@ -57,7 +57,7 @@ class WebAuthenticationPanel;
 
 namespace WebKit {
 
-class AuthenticatorManager : public AuthenticatorTransportServiceObserver, public AuthenticatorObserver {
+class AuthenticatorManager : public RefCounted<AuthenticatorManager>, public AuthenticatorTransportServiceObserver, public AuthenticatorObserver {
     WTF_MAKE_TZONE_ALLOCATED(AuthenticatorManager);
     WTF_MAKE_NONCOPYABLE(AuthenticatorManager);
 public:
@@ -69,7 +69,7 @@ public:
 
     const static size_t maxTransportNumber;
 
-    AuthenticatorManager();
+    static Ref<AuthenticatorManager> create();
     virtual ~AuthenticatorManager() = default;
 
     void handleRequest(WebAuthenticationRequestData&&, Callback&&);
@@ -82,7 +82,12 @@ public:
 
     void enableNativeSupport();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
 protected:
+    AuthenticatorManager();
+
     RunLoop::Timer& requestTimeOutTimer() { return m_requestTimeOutTimer; }
     void clearStateAsync(); // To void cyclic dependence.
     void clearState();

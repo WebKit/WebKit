@@ -326,6 +326,7 @@ public:
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
+    Ref<VirtualAuthenticatorManager> protectedVirtualAuthenticatorManager();
 #endif
 
     const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }
@@ -587,7 +588,7 @@ private:
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    UniqueRef<AuthenticatorManager> m_authenticatorManager;
+    Ref<AuthenticatorManager> m_authenticatorManager;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

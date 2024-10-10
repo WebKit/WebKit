@@ -1648,7 +1648,7 @@ Inspector::Protocol::ErrorStringOr<String /* authenticatorId */> WebAutomationSe
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-    return page->protectedWebsiteDataStore()->virtualAuthenticatorManager().createAuthenticator({
+    return page->protectedWebsiteDataStore()->protectedVirtualAuthenticatorManager()->createAuthenticator({
         .protocol = protocol,
         .transport = toAuthenticatorTransport(parsedTransport.value()),
         .hasResidentKey = *hasResidentKey,
@@ -1667,7 +1667,7 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::removeVirtualAuth
     auto page = webPageProxyForHandle(browsingContextHandle);
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-    if (!page->protectedWebsiteDataStore()->virtualAuthenticatorManager().removeAuthenticator(authenticatorId))
+    if (!page->protectedWebsiteDataStore()->protectedVirtualAuthenticatorManager()->removeAuthenticator(authenticatorId))
         SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "No such authenticator exists."_s);
     return { };
 #else

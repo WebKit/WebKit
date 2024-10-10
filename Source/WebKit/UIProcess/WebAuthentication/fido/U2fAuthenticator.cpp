@@ -228,7 +228,7 @@ void U2fAuthenticator::continueBogusCommandNoCredentialsAfterResponseReceived(Ap
     U2F_RELEASE_LOG("continueBogusCommandNoCredentialsAfterResponseReceived: Status %hu", enumToUnderlyingType(apduResponse.status()));
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR:
-        if (auto* observer = this->observer())
+        if (RefPtr observer = this->observer())
             observer->authenticatorStatusUpdated(WebAuthenticationStatus::NoCredentialsFound);
         receiveRespond(ExceptionData { ExceptionCode::NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
         return;
