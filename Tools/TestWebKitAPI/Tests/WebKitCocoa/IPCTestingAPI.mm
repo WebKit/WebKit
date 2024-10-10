@@ -697,8 +697,9 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 #if !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"WKDDActionContext",
 #endif
-        @"WebCore::ContextMenuAction"
+        @"WebCore::ContextMenuAction",
 #endif
+        @"WebCore::FromDownloadAttribute"
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
         EXPECT_TRUE(false);
