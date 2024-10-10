@@ -291,7 +291,7 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     auto rangeStart = computeRangeStart() + insetEnd.value();
     auto rangeEnd = computeRangeEnd() - insetStart.value();
 
-    return { currentScrollOffset, rangeStart + floatValueForLength(range.start.offset, rangeEnd - rangeStart), rangeEnd - floatValueForLength(range.end.offset, rangeEnd - rangeStart) };
+    return { currentScrollOffset, rangeStart + ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart), rangeEnd - ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart) };
 }
 
 const CSSNumericValue& ViewTimeline::startOffset() const
