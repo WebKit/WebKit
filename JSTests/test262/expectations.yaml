@@ -49,6 +49,9 @@ test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-objec
 test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
+test/built-ins/Atomics/pause/negative-iterationnumber-throws.js:
+  default: 'Test262Error: -1 is an illegal iterationNumber Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: -1 is an illegal iterationNumber Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -1012,6 +1015,15 @@ test/built-ins/TypedArrayConstructors/internals/Set/key-is-valid-index-reflect-s
 test/intl402/DateTimeFormat/canonicalize-calendar.js:
   default: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
   strict mode: 'Test262Error: calendar ID is canonicalized (option) Expected SameValue(«islamicc», «islamic-civil») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js:
+  default: 'Test262Error: 00:00, long format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: 00:00, long format Expected SameValue(«in the morning», «at night») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js:
+  default: 'Test262Error: 00:00, narrow format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: 00:00, narrow format Expected SameValue(«in the morning», «at night») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
+  default: 'Test262Error: 00:00, short format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: 00:00, short format Expected SameValue(«in the morning», «at night») to be true'
 test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1021,6 +1033,15 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-sup
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
+  default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«in the morning», «at night») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
+  default: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«in the morning», «at night») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
+  default: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«in the morning», «at night») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«in the morning», «at night») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
@@ -1039,6 +1060,18 @@ test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-gaulish-u-nu-latn», «fr-Cyrl-FR-u-nu-latn») to be true'
+test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
+test/intl402/NumberFormat/prototype/format/unit-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
