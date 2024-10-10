@@ -195,6 +195,7 @@ void CalleeGroup::compileAsync(VM& vm, AsyncCompilationCallback&& task)
     task->run(Ref { *this }, isAsync);
 }
 
+#if ENABLE(WEBASSEMBLY_BBQJIT)
 BBQCallee* CalleeGroup::tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM& vm, FunctionCodeIndex functionIndex)
 {
     if (m_bbqCallees.isEmpty())
@@ -231,6 +232,7 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex func
 
     bbqCallee->reportToVMsForDestruction();
 }
+#endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex)
