@@ -2251,9 +2251,12 @@ Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
 
 void WebProcessProxy::enableMediaPlaybackIfNecessary()
 {
+    if (!m_sharedPreferencesForWebProcess.mediaPlaybackEnabled)
+        return;
+
 #if USE(AUDIO_SESSION)
-    if (m_sharedPreferencesForWebProcess.mediaPlaybackEnabled)
-        WebCore::AudioSession::enableMediaPlayback();
+    if (!WebCore::AudioSession::enableMediaPlayback())
+        return;
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION)
