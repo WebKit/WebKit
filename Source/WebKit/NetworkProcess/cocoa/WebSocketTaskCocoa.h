@@ -40,11 +40,6 @@ namespace WebKit {
 class WebSocketTask;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSocketTask> : std::true_type { };
-}
-
 namespace WebCore {
 class ResourceResponse;
 class ResourceRequest;
@@ -57,8 +52,9 @@ class NetworkSessionCocoa;
 class NetworkSocketChannel;
 struct SessionSet;
 
-class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public NetworkTaskCocoa {
+class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask>, public NetworkTaskCocoa {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WeakPtr<SessionSet>&&, const WebCore::ResourceRequest&, const WebCore::ClientOrigin&, RetainPtr<NSURLSessionWebSocketTask>&&, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy);
     ~WebSocketTask();

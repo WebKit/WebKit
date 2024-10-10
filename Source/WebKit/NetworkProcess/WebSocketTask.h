@@ -38,16 +38,11 @@ namespace WebKit {
 class WebSocketTask;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSocketTask> : std::true_type { };
-}
-
 namespace WebKit {
 
 struct SessionSet;
 
-class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
+class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebSocketTask);
 public:
     typedef uint64_t TaskIdentifier;

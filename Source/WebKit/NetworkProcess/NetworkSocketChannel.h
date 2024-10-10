@@ -89,6 +89,8 @@ private:
 
     NetworkSession* session() const;
 
+    CheckedPtr<WebSocketTask> checkedSocket();
+
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 

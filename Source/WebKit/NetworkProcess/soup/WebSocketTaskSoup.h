@@ -35,8 +35,9 @@ namespace WebKit {
 class NetworkSocketChannel;
 struct SessionSet;
 
-class WebSocketTask {
+class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public CanMakeCheckedPtr<WebSocketTask> {
     WTF_MAKE_TZONE_ALLOCATED(WebSocketTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSocketTask);
 public:
     WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, SoupSession*, SoupMessage*, const String& protocol);
     ~WebSocketTask();
