@@ -3123,6 +3123,34 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     target.target->addBranch(m_jit.jump());
 }
 
+PartialResult WARN_UNUSED_RETURN BBQJIT::addThrowRef(Value exception, Stack&)
+{
+    LOG_INSTRUCTION("ThrowRef", exception);
+
+    emitMove(exception, Location::fromGPR(GPRInfo::argumentGPR1));
+    consume(exception);
+
+    ++m_callSiteIndex;
+    bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+    if (mayHaveExceptionHandlers) {
+        m_jit.store32(CCallHelpers::TrustedImm32(m_callSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+        flushRegisters();
+    }
+
+    // Check for a null exception
+    m_jit.move(CCallHelpers::TrustedImmPtr(JSValue::encode(jsNull())), wasmScratchGPR);
+    auto nullexn = m_jit.branchPtr(CCallHelpers::Equal, GPRInfo::argumentGPR1, wasmScratchGPR);
+
+    m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+    emitThrowRefImpl(m_jit);
+
+    nullexn.linkTo(m_jit.label(), &m_jit);
+
+    emitThrowException(ExceptionType::NullExnReference);
+
+    return { };
+}
+
 PartialResult WARN_UNUSED_RETURN BBQJIT::addRethrow(unsigned, ControlType& data)
 {
     LOG_INSTRUCTION("Rethrow", exception(data));
