@@ -1620,6 +1620,12 @@ bool Quirks::shouldFlipScreenDimensions() const
 #endif
 }
 
+bool Quirks::shouldAllowDownloadsInSpiteOfCSP() const
+{
+    // FIXME: Remove this when rdar://137625935 is resolved.
+    return isDomain("apple.com"_s);
+}
+
 // This section is dedicated to UA override for iPad. iPads (but iPad Mini) are sending a desktop user agent
 // to websites. In some cases, the website breaks in some ways, not expecting a touch interface for the website.
 // Controls not active or too small, form factor, etc. In this case it is better to send the iPad Mini UA.

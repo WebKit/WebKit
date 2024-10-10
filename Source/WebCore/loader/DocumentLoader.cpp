@@ -1143,7 +1143,8 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyDownload(*m_frame, *mainResourceLoader->identifier(), *this, m_response);
 
-        if (!m_frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
+        bool shouldIgnoreSandboxFlags = m_frame->isMainFrame() && m_frame->document() && m_frame->protectedDocument()->quirks().shouldAllowDownloadsInSpiteOfCSP();
+        if (!m_frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads) || shouldIgnoreSandboxFlags) {
             // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
             // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
             protectedFrameLoader()->setOriginalURLForDownloadRequest(m_request);
