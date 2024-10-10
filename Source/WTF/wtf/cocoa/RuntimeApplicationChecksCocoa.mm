@@ -48,6 +48,8 @@ static bool linkedBefore(dyld_build_version_t version, uint32_t fallbackIOSVersi
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    // FIXME: On iOS-family platforms that are not iOS itself, this comparison is incorrect
+    // (e.g., it's wrong to compare a visionOS SDK version to a DYLD_IOS_VERSION_*).
     UNUSED_PARAM(fallbackMacOSVersion);
     return dyld_get_program_sdk_version() < fallbackIOSVersion;
 #else
@@ -183,7 +185,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::UIBackForwardSkipsHistoryItemsWithoutUserGesture);
     }
 
-    if (linkedBefore(dyld_spring_2023_os_versions, DYLD_IOS_VERSION_16_4, DYLD_MACOSX_VERSION_13_3)) {
+    if (linkedBefore(dyld_2022_SU_E_os_versions, DYLD_IOS_VERSION_16_4, DYLD_MACOSX_VERSION_13_3)) {
         disableBehavior(SDKAlignedBehavior::NoShowModalDialog);
         disableBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls);
         disableBehavior(SDKAlignedBehavior::ProgrammaticFocusDuringUserScriptShowsInputViews);
@@ -210,7 +212,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::ThrowIfCanDeclareGlobalFunctionFails);
     }
 
-    if (linkedBefore(dyld_spring_2024_os_versions, DYLD_IOS_VERSION_17_4, DYLD_MACOSX_VERSION_14_4)) {
+    if (linkedBefore(dyld_2023_SU_E_os_versions, DYLD_IOS_VERSION_17_4, DYLD_MACOSX_VERSION_14_4)) {
         disableBehavior(SDKAlignedBehavior::AsyncFragmentNavigationPolicyDecision);
         disableBehavior(SDKAlignedBehavior::DoNotLoadStyleSheetIfHTTPStatusIsNotOK);
         disableBehavior(SDKAlignedBehavior::ScrollViewSubclassImplementsAddGestureRecognizer);
