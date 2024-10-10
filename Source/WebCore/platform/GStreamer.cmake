@@ -124,7 +124,7 @@ if (ENABLE_VIDEO)
     endif ()
 endif ()
 
-if (ENABLE_WEB_AUDIO OR ENABLE_WEB_CODECS)
+if (ENABLE_MEDIA_STREAM OR ENABLE_WEB_AUDIO OR ENABLE_WEB_CODECS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/audio/gstreamer"
     )
