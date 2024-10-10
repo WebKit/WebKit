@@ -1,1 +1,3 @@
-# This file is required for Python to search this directory for modules.
+# mypy: allow-untyped-defs
+def test_init():
+    pass

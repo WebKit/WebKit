@@ -26,9 +26,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/http.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/http11.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/imports.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/protocol.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/py.typed
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/server.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/speedups.c
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/speedups.pyi
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/streams.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/typing.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/uri.py

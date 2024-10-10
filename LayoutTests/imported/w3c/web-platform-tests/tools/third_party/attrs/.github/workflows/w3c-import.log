@@ -14,4 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/workflows/main.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/workflows/build-docset.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/workflows/ci.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/workflows/codeql-analysis.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/workflows/pypi-package.yml

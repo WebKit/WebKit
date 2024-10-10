@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/dataclass_transform_example.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/strategies.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_3rd_party.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_abc.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_annotations.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_cmp.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_compat.py
@@ -34,10 +35,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_make.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_mypy.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_next_gen.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_packaging.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_pattern_matching.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_pyright.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_setattr.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_slots.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_utils.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_validators.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/test_version_info.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tests/typing_example.py

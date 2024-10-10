@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_funcs.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_make.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_next_gen.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_typing_compat.pyi
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_version_info.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/_version_info.pyi
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/src/attr/converters.py

@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+user-select
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/client_secure.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/counter.css
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/counter.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/counter.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/counter.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/localhost.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/server.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/server_secure.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/show_time.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/show_time.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/show_time.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/example/quickstart/show_time_2.py

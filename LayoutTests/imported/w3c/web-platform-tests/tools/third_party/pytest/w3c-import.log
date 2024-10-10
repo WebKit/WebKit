@@ -26,6 +26,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/TIDELIFT.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/codecov.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/pyproject.toml
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/setup.cfg
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/setup.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/tox.ini

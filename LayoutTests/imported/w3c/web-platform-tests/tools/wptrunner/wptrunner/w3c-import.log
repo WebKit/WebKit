@@ -32,7 +32,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-extra.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-vendor.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharness_runner.html
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-content-shell.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servo.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servodriver.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-wktr.js

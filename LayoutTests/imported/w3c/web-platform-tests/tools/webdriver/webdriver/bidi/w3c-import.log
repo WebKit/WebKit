@@ -17,5 +17,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/client.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/error.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/protocol.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/transport.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/webdriver/webdriver/bidi/undefined.py

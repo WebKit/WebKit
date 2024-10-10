@@ -14,13 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/AUTHORS.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CHANGELOG.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CHANGELOG.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/CITATION.cff
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/LICENSE
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/MANIFEST.in
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/README.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/README.md
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/conftest.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/mypy.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/pyproject.toml
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/setup.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/tox.ini

@@ -17,5 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_dataclasses.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_dataclasses_field_comparison_off.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_dataclasses_verbose.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_dataclasses_with_custom_eq.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_initvar.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_recursive_dataclasses.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/example_scripts/dataclasses/test_compare_two_different_dataclasses.py

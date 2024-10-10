@@ -14,6 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/main.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/backport.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/deploy.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/prepare-release-pr.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/stale.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/test.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/workflows/update-plugin-list.yml

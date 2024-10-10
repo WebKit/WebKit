@@ -14,4 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/towncrier_template.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/changelog.d/towncrier_template.md.jinja

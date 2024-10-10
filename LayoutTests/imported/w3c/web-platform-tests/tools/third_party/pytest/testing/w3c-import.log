@@ -42,7 +42,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_meta.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_monkeypatch.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_nodes.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_nose.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_parseopt.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pastebin.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/testing/test_pathlib.py

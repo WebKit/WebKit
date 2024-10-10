@@ -14,9 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/CODE_OF_CONDUCT.md
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/LICENSE
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/MANIFEST.in
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/PKG-INFO
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/Makefile
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/README.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/setup.cfg
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/SECURITY.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/pyproject.toml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/setup.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tox.ini

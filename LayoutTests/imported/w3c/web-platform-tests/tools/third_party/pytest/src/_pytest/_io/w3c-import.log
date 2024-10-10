@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/_io/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/_io/pprint.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/_io/saferepr.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/_io/terminalwriter.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/_pytest/_io/wcwidth.py

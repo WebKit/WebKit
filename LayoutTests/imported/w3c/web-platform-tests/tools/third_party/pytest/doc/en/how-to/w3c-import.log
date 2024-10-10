@@ -27,7 +27,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/logging.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/mark.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/monkeypatch.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/nose.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/output.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/parametrize.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/how-to/plugins.rst

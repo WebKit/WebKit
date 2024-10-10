@@ -127,7 +127,7 @@ class BidiSession:
                   requested_capabilities: Optional[Mapping[str, Any]] = None) -> "BidiSession":
         """Create a BiDi session where there is no existing HTTP session
 
-        :param webdocket_url: URL to the WebSocket server listening for BiDi connections
+        :param websocket_url: URL to the WebSocket server listening for BiDi connections
         :param requested_capabilities: Capabilities request for establishing the session."""
         return cls(websocket_url, requested_capabilities=requested_capabilities)
 
@@ -211,9 +211,9 @@ class BidiSession:
 
     async def end(self) -> None:
         """Close websocket connection."""
-        assert self.transport is not None
-        await self.transport.end()
-        self.transport = None
+        if self.transport is not None:
+            await self.transport.end()
+            self.transport = None
 
     def add_event_listener(
         self,

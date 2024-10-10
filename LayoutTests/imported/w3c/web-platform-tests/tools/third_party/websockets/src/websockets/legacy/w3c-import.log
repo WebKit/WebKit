@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/legacy/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/legacy/async_timeout.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/legacy/auth.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/legacy/client.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/src/websockets/legacy/compatibility.py

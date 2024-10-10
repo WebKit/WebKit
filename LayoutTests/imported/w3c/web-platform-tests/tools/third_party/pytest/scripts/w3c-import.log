@@ -14,8 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/generate-gh-release-notes.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/prepare-release-pr.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/publish-gh-release-notes.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/release.major.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/release.minor.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/scripts/release.patch.rst

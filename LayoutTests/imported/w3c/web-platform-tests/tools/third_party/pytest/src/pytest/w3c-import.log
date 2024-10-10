@@ -16,5 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/pytest/__init__.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/pytest/__main__.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/pytest/collect.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/src/pytest/py.typed

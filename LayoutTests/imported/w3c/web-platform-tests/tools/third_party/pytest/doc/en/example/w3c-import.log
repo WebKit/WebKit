@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/attic.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/customdirectory.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/index.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/markers.rst
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/doc/en/example/multipython.py
