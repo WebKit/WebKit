@@ -1602,7 +1602,7 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
 {
     LOADER_RELEASE_LOG("didReceiveMainResourceResponse:");
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (auto* speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
+    if (CheckedPtr speculativeLoadManager = m_cache ? m_cache->speculativeLoadManager() : nullptr)
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
 #endif
 #if ENABLE(WEB_ARCHIVE)

@@ -399,9 +399,10 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     info.priority = priority;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    bool canUseSpeculativeRevalidation = frameID && m_speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
+    CheckedPtr speculativeLoadManager = m_speculativeLoadManager.get();
+    bool canUseSpeculativeRevalidation = frameID && speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
     if (canUseSpeculativeRevalidation)
-        m_speculativeLoadManager->registerLoad(*frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
+        speculativeLoadManager->registerLoad(*frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
 #endif
 
     auto retrieveDecision = makeRetrieveDecision(request);
@@ -411,8 +412,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
-        m_speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
+    if (canUseSpeculativeRevalidation && speculativeLoadManager->canRetrieve(storageKey, request, *frameID)) {
+        speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
             info.wasSpeculativeLoad = true;
             if (entry && WebCore::verifyVaryingRequestHeaders(networkProcess->storageSession(sessionID), entry->varyingRequestHeaders(), request))
                 completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);

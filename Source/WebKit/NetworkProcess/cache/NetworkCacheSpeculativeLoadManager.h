@@ -31,6 +31,7 @@
 #include "NetworkCache.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -40,11 +41,6 @@ namespace WebKit {
 namespace NetworkCache {
 class SpeculativeLoadManager;
 }
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkCache::SpeculativeLoadManager> : std::true_type { };
 }
 
 namespace WebCore {
@@ -60,8 +56,9 @@ class SpeculativeLoad;
 class SubresourceInfo;
 class SubresourcesEntry;
 
-class SpeculativeLoadManager : public CanMakeWeakPtr<SpeculativeLoadManager> {
+class SpeculativeLoadManager final : public CanMakeWeakPtr<SpeculativeLoadManager>, public CanMakeCheckedPtr<SpeculativeLoadManager> {
     WTF_MAKE_TZONE_ALLOCATED(SpeculativeLoadManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SpeculativeLoadManager);
 public:
     explicit SpeculativeLoadManager(Cache&, Storage&);
     ~SpeculativeLoadManager();
