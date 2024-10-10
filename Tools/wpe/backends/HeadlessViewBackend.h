@@ -71,7 +71,6 @@ public:
 
 private:
     void updateSnapshot(PlatformBuffer);
-    void vsync();
 
 #if WPE_CHECK_VERSION(1, 11, 1)
     static bool onDOMFullScreenRequest(void* data, bool fullscreen);
@@ -88,7 +87,7 @@ private:
 #if defined(USE_GLIB) && USE_GLIB
     struct {
         GSource* source { nullptr };
-        bool pending { false };
+        gint64 lastFrameTime { 0 };
     } m_update;
 #endif
 

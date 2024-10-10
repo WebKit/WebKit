@@ -65,6 +65,21 @@ struct HeadlessInstance {
 static cairo_user_data_key_t s_bufferKey;
 #endif
 
+static GSourceFuncs frameSourceFuncs = {
+    nullptr, // prepare
+    nullptr, // check
+    // dispatch
+    [](GSource* source, GSourceFunc callback, gpointer userData) -> gboolean {
+        if (g_source_get_ready_time(source) == -1)
+            return G_SOURCE_CONTINUE;
+        g_source_set_ready_time(source, -1);
+        return callback(userData);
+    },
+    nullptr, // finalize
+    nullptr, // closure_callback
+    nullptr, // closure_marshall
+};
+
 HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     : ViewBackend(width, height)
 {
@@ -79,10 +94,17 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
         [](void* data, struct wpe_fdo_shm_exported_buffer* buffer)
         {
             auto& backend = *static_cast<HeadlessViewBackend*>(data);
-            backend.m_update.pending = true;
-
             backend.updateSnapshot(buffer);
             wpe_view_backend_exportable_fdo_dispatch_release_shm_exported_buffer(backend.m_exportable, buffer);
+            auto now = g_get_monotonic_time();
+            if (!backend.m_update.lastFrameTime)
+                backend.m_update.lastFrameTime = now;
+            auto next = backend.m_update.lastFrameTime + (G_USEC_PER_SEC / 60);
+            backend.m_update.lastFrameTime = now;
+            if (next <= now)
+                g_source_set_ready_time(backend.m_update.source, 0);
+            else
+                g_source_set_ready_time(backend.m_update.source, next);
         },
 #else
         nullptr,
@@ -129,13 +151,21 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullScreenRequest, this);
 #endif
 
-    m_update.source = g_timeout_source_new(G_USEC_PER_SEC / 60000);
-    g_source_set_callback(m_update.source, [](gpointer data) -> gboolean {
-        static_cast<HeadlessViewBackend*>(data)->vsync();
-        return TRUE;
-    }, this, nullptr);
+    m_update.source = g_source_new(&frameSourceFuncs, sizeof(GSource));
     g_source_set_priority(m_update.source, G_PRIORITY_DEFAULT);
+    g_source_set_callback(m_update.source, [](gpointer data) -> gboolean {
+        auto& backend = *static_cast<HeadlessViewBackend*>(data);
+
+#if WPE_FDO_CHECK_VERSION(1,7,0)
+        wpe_view_backend_exportable_fdo_dispatch_frame_complete(backend.m_exportable);
+#endif
+
+        if (g_source_is_destroyed(backend.m_update.source))
+            return G_SOURCE_REMOVE;
+        return G_SOURCE_CONTINUE;
+    }, this, nullptr);
     g_source_attach(m_update.source, g_main_context_default());
+    g_source_set_ready_time(m_update.source, -1);
 }
 
 HeadlessViewBackend::~HeadlessViewBackend()
@@ -234,15 +264,6 @@ void HeadlessViewBackend::updateSnapshot(PlatformBuffer exportedBuffer)
 #else
     (void)exportedBuffer;
 #endif
-}
-
-void HeadlessViewBackend::vsync()
-{
-#if WPE_FDO_CHECK_VERSION(1,7,0)
-    if (m_update.pending)
-        wpe_view_backend_exportable_fdo_dispatch_frame_complete(m_exportable);
-#endif
-    m_update.pending = false;
 }
 
 } // namespace WPEToolingBackends
