@@ -1372,7 +1372,7 @@ AXTextMarker AXIsolatedTree::firstMarker()
     // which is the ScrollView, so that when we convert the marker to a CharacterPosition, there
     // is an associated node. Otherwise, the CharacterPosition will be null.
     RefPtr webArea = rootWebArea();
-    return webArea ? AXTextMarker { webArea->treeID(), webArea->objectID(), 0 } : AXTextMarker();
+    return webArea ? AXTextMarker { *webArea, 0 } : AXTextMarker();
 }
 
 AXTextMarker AXIsolatedTree::lastMarker()
@@ -1384,7 +1384,7 @@ AXTextMarker AXIsolatedTree::lastMarker()
     const auto& children = root->unignoredChildren();
     // Start the `findLast` traversal from the last child of the root to reduce the amount of traversal done.
     RefPtr endObject = children.isEmpty() ? root : dynamicDowncast<AXIsolatedObject>(children[children.size() - 1].get());
-    return AXTextMarker { endObject->treeID(), endObject->objectID(), 0 }.findLast();
+    return endObject ? AXTextMarker { *endObject, 0 }.findLast() : AXTextMarker();
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 

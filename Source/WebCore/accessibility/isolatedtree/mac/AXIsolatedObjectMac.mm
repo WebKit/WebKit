@@ -155,7 +155,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         // We would expect the returned range to be: {ID 2, offset 0} to {ID 4, offset 3}
         auto* stopObject = nextUnignoredSiblingOrParent();
 
-        auto thisMarker = AXTextMarker { tree()->treeID(), objectID(), 0 };
+        auto thisMarker = AXTextMarker { *this, 0 };
         AXTextMarkerRange range { thisMarker, thisMarker };
         auto endMarker = thisMarker.findLastBefore(stopObject ? std::make_optional(stopObject->objectID()) : std::nullopt);
         if (endMarker.isValid() && endMarker.isInTextRun()) {

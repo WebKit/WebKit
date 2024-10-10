@@ -144,6 +144,10 @@ public:
     AXTextMarker(AXID treeID, AXID objectID, unsigned offset)
         : m_data({ treeID, objectID, offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset })
     { }
+    AXTextMarker(const AXCoreObject& object, unsigned offset)
+        : m_data({ object.treeID(), object.objectID(), offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset })
+    { }
+
     AXTextMarker() = default;
 
     operator bool() const { return !isNull(); }
