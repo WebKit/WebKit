@@ -43,6 +43,9 @@ public:
 
     ~SubFrameSOAuthorizationSession();
 
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+
 private:
     using Supplement = std::variant<Vector<uint8_t>, String>;
 

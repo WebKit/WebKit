@@ -104,8 +104,11 @@ class WebPageProxyFrameLoadStateObserver final : public FrameLoadStateObserver {
 public:
     static constexpr size_t maxVisitedDomainsSize = 6;
 
-    WebPageProxyFrameLoadStateObserver();
+    explicit WebPageProxyFrameLoadStateObserver(const WebPageProxy&);
     virtual ~WebPageProxyFrameLoadStateObserver();
+
+    void ref() const final;
+    void deref() const final;
 
     void didReceiveProvisionalURL(const URL& url) override
     {
@@ -140,6 +143,7 @@ private:
             m_visitedDomains.removeLast();
     }
 
+    WeakRef<WebPageProxy> m_page;
     Vector<URL> m_provisionalURLs;
     ListHashSet<WebCore::RegistrableDomain> m_visitedDomains;
 };
@@ -147,6 +151,14 @@ private:
 
 class PageLoadTimingFrameLoadStateObserver final : public FrameLoadStateObserver {
 public:
+    explicit PageLoadTimingFrameLoadStateObserver(const WebPageProxy&page)
+        : m_page(page)
+    {
+    }
+
+    void ref() const final;
+    void deref() const final;
+
     bool hasLoadingFrame() const { return !!m_loadingFrameCount; }
 
 private:
@@ -182,6 +194,7 @@ private:
         // FIXME: Assert that m_loadingFrameCount is zero if this is a main frame.
     }
 
+    WeakRef<WebPageProxy> m_page;
     size_t m_loadingFrameCount { 0 };
 };
 
