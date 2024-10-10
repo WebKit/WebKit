@@ -45,8 +45,8 @@
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-#if USE(NICOSIA)
-#include "NicosiaBuffer.h"
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedTileBuffer.h"
 #endif
 
 namespace WebCore {
@@ -109,8 +109,8 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
             m_samplingProfilerThreadID = thread->id();
     }
 #endif
-#if USE(NICOSIA)
-    Nicosia::Buffer::resetMemoryUsage();
+#if USE(COORDINATED_GRAPHICS)
+    CoordinatedTileBuffer::resetMemoryUsage();
 #endif
 }
 
@@ -326,8 +326,8 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
     });
     data.categories[MemoryCategory::Images].dirtySize = imagesDecodedSize;
 
-#if USE(NICOSIA)
-    data.categories[MemoryCategory::Layers].dirtySize = Nicosia::Buffer::getMemoryUsage();
+#if USE(COORDINATED_GRAPHICS)
+    data.categories[MemoryCategory::Layers].dirtySize = CoordinatedTileBuffer::getMemoryUsage();
 #endif
 
     size_t categoriesTotalSize = 0;

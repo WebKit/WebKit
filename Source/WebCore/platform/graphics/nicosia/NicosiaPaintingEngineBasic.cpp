@@ -29,9 +29,9 @@
 #include "config.h"
 #include "NicosiaPaintingEngineBasic.h"
 
+#include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "NicosiaBuffer.h"
 #include "NicosiaPaintingContext.h"
 
 namespace Nicosia {
@@ -41,7 +41,7 @@ using namespace WebCore;
 PaintingEngineBasic::PaintingEngineBasic() = default;
 PaintingEngineBasic::~PaintingEngineBasic() = default;
 
-void PaintingEngineBasic::paint(GraphicsLayer& layer, Buffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
+void PaintingEngineBasic::paint(GraphicsLayer& layer, CoordinatedTileBuffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
     buffer.beginPainting();
 

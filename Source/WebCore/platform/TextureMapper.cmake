@@ -55,6 +55,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferNativeImage.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferRGB.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferYUV.cpp
+        platform/graphics/texmap/coordinated/CoordinatedTileBuffer.cpp
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
@@ -64,6 +65,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
+        platform/graphics/texmap/coordinated/CoordinatedTileBuffer.h
     )
 
     if (USE_GSTREAMER)
@@ -124,7 +126,6 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h
         platform/graphics/nicosia/NicosiaAnimation.h
         platform/graphics/nicosia/NicosiaBackingStore.h
-        platform/graphics/nicosia/NicosiaBuffer.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h
         platform/graphics/nicosia/NicosiaScene.h

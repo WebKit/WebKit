@@ -20,9 +20,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-
 #include "IntRect.h"
-#include "NicosiaBuffer.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperTile.h"
 #include <wtf/HashMap.h>
@@ -31,7 +29,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
+class CoordinatedTileBuffer;
 class TextureMapper;
 
 class CoordinatedBackingStoreTile final : public TextureMapperTile {
@@ -46,7 +44,7 @@ public:
     float scale() const { return m_scale; }
 
     struct Update {
-        RefPtr<Nicosia::Buffer> buffer;
+        RefPtr<CoordinatedTileBuffer> buffer;
         IntRect sourceRect;
         IntRect tileRect;
         IntPoint bufferOffset;
@@ -72,7 +70,7 @@ public:
 
     void createTile(uint32_t tileID, float scale);
     void removeTile(uint32_t tileID);
-    void updateTile(uint32_t tileID, const IntRect&, const IntRect&, RefPtr<Nicosia::Buffer>&&, const IntPoint&);
+    void updateTile(uint32_t tileID, const IntRect&, const IntRect&, RefPtr<CoordinatedTileBuffer>&&, const IntPoint&);
 
     void swapBuffers(TextureMapper&);
 

@@ -47,7 +47,7 @@ class PaintingContextCairo final {
 public:
     class ForPainting final : public PaintingContext {
     public:
-        explicit ForPainting(Buffer&);
+        explicit ForPainting(WebCore::CoordinatedTileBuffer&);
         virtual ~ForPainting();
 
     private:

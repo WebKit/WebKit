@@ -33,18 +33,17 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class CoordinatedTileBuffer;
 class GraphicsContext;
 }
 
 namespace Nicosia {
 
-class Buffer;
-
 class PaintingContext {
     WTF_MAKE_TZONE_ALLOCATED(PaintingContext);
 public:
     template<typename T>
-    static void paint(Buffer& buffer, const T& paintFunctor)
+    static void paint(WebCore::CoordinatedTileBuffer& buffer, const T& paintFunctor)
     {
         auto paintingContext = PaintingContext::createForPainting(buffer);
         paintFunctor(paintingContext->graphicsContext());
@@ -57,7 +56,7 @@ public:
         recordFunctor(recordingContext->graphicsContext());
     }
 
-    static void replay(Buffer& buffer, const PaintingOperations& paintingOperations)
+    static void replay(WebCore::CoordinatedTileBuffer& buffer, const PaintingOperations& paintingOperations)
     {
         auto paintingContext = PaintingContext::createForPainting(buffer);
         paintingContext->replay(paintingOperations);
@@ -70,7 +69,7 @@ protected:
     virtual void replay(const PaintingOperations&) = 0;
 
 private:
-    static std::unique_ptr<PaintingContext> createForPainting(Buffer&);
+    static std::unique_ptr<PaintingContext> createForPainting(WebCore::CoordinatedTileBuffer&);
     static std::unique_ptr<PaintingContext> createForRecording(PaintingOperations&);
 };
 

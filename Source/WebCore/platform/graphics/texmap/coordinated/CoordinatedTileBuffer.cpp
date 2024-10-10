@@ -27,7 +27,9 @@
  */
 
 #include "config.h"
-#include "NicosiaBuffer.h"
+#include "CoordinatedTileBuffer.h"
+
+#if USE(COORDINATED_GRAPHICS)
 
 #if USE(SKIA)
 #include "BitmapTexture.h"
@@ -54,20 +56,19 @@
 
 #include "PixelFormat.h"
 
-namespace Nicosia {
-using namespace WebCore;
+namespace WebCore {
 
-Lock Buffer::s_layersMemoryUsageLock;
-double Buffer::s_currentLayersMemoryUsage = 0.0;
-double Buffer::s_maxLayersMemoryUsage = 0.0;
+Lock CoordinatedTileBuffer::s_layersMemoryUsageLock;
+double CoordinatedTileBuffer::s_currentLayersMemoryUsage = 0.0;
+double CoordinatedTileBuffer::s_maxLayersMemoryUsage = 0.0;
 
-void Buffer::resetMemoryUsage()
+void CoordinatedTileBuffer::resetMemoryUsage()
 {
     Locker locker { s_layersMemoryUsageLock };
     s_maxLayersMemoryUsage = s_currentLayersMemoryUsage;
 }
 
-double Buffer::getMemoryUsage()
+double CoordinatedTileBuffer::getMemoryUsage()
 {
     // The memory usage is max of memory usage since last resetMemoryUsage or getMemoryUsage.
     Locker locker { s_layersMemoryUsageLock };
@@ -77,7 +78,7 @@ double Buffer::getMemoryUsage()
 }
 
 #if USE(SKIA)
-SkCanvas* Buffer::canvas()
+SkCanvas* CoordinatedTileBuffer::canvas()
 {
     if (!tryEnsureSurface())
         return nullptr;
@@ -85,13 +86,13 @@ SkCanvas* Buffer::canvas()
 }
 #endif
 
-Ref<Buffer> UnacceleratedBuffer::create(const WebCore::IntSize& size, Flags flags)
+Ref<CoordinatedTileBuffer> CoordinatedUnacceleratedTileBuffer::create(const IntSize& size, Flags flags)
 {
-    return adoptRef(*new UnacceleratedBuffer(size, flags));
+    return adoptRef(*new CoordinatedUnacceleratedTileBuffer(size, flags));
 }
 
-UnacceleratedBuffer::UnacceleratedBuffer(const IntSize& size, Flags flags)
-    : Buffer(flags)
+CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const IntSize& size, Flags flags)
+    : CoordinatedTileBuffer(flags)
     , m_size(size)
 {
     const auto checkedArea = size.area() * 4;
@@ -104,7 +105,7 @@ UnacceleratedBuffer::UnacceleratedBuffer(const IntSize& size, Flags flags)
     }
 }
 
-PixelFormat UnacceleratedBuffer::pixelFormat() const
+PixelFormat CoordinatedUnacceleratedTileBuffer::pixelFormat() const
 {
 #if USE(SKIA)
     // For GPU/hybrid rendering, prefer RGBA, otherwise use BGRA.
@@ -115,7 +116,7 @@ PixelFormat UnacceleratedBuffer::pixelFormat() const
     return PixelFormat::BGRA8;
 }
 
-UnacceleratedBuffer::~UnacceleratedBuffer()
+CoordinatedUnacceleratedTileBuffer::~CoordinatedUnacceleratedTileBuffer()
 {
     const auto checkedArea = m_size.area().value() * 4;
     {
@@ -125,7 +126,7 @@ UnacceleratedBuffer::~UnacceleratedBuffer()
 }
 
 #if USE(SKIA)
-bool UnacceleratedBuffer::tryEnsureSurface()
+bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
 {
     if (m_surface)
         return true;
@@ -139,14 +140,14 @@ bool UnacceleratedBuffer::tryEnsureSurface()
 }
 #endif
 
-void UnacceleratedBuffer::beginPainting()
+void CoordinatedUnacceleratedTileBuffer::beginPainting()
 {
     Locker locker { m_painting.lock };
     ASSERT(m_painting.state == PaintingState::Complete);
     m_painting.state = PaintingState::InProgress;
 }
 
-void UnacceleratedBuffer::completePainting()
+void CoordinatedUnacceleratedTileBuffer::completePainting()
 {
     Locker locker { m_painting.lock };
     ASSERT(m_painting.state == PaintingState::InProgress);
@@ -159,7 +160,7 @@ void UnacceleratedBuffer::completePainting()
 #endif
 }
 
-void UnacceleratedBuffer::waitUntilPaintingComplete()
+void CoordinatedUnacceleratedTileBuffer::waitUntilPaintingComplete()
 {
     Locker locker { m_painting.lock };
     m_painting.condition.wait(m_painting.lock, [this] {
@@ -168,19 +169,19 @@ void UnacceleratedBuffer::waitUntilPaintingComplete()
 }
 
 #if USE(SKIA)
-Ref<Buffer> AcceleratedBuffer::create(Ref<BitmapTexture>&& texture)
+Ref<CoordinatedTileBuffer> CoordinatedAcceleratedTileBuffer::create(Ref<BitmapTexture>&& texture)
 {
-    auto flags = Nicosia::Buffer::Flags { texture->isOpaque() ? Nicosia::Buffer::NoFlags : Nicosia::Buffer::SupportsAlpha };
-    return adoptRef(*new AcceleratedBuffer(WTFMove(texture), flags));
+    auto flags = CoordinatedTileBuffer::Flags { texture->isOpaque() ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha };
+    return adoptRef(*new CoordinatedAcceleratedTileBuffer(WTFMove(texture), flags));
 }
 
-AcceleratedBuffer::AcceleratedBuffer(Ref<BitmapTexture>&& texture, Flags flags)
-    : Buffer(flags)
+CoordinatedAcceleratedTileBuffer::CoordinatedAcceleratedTileBuffer(Ref<BitmapTexture>&& texture, Flags flags)
+    : CoordinatedTileBuffer(flags)
     , m_texture(WTFMove(texture))
 {
 }
 
-AcceleratedBuffer::~AcceleratedBuffer()
+CoordinatedAcceleratedTileBuffer::~CoordinatedAcceleratedTileBuffer()
 {
     ensureOnMainThread([fence = WTFMove(m_fence)]() mutable {
         PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
@@ -188,12 +189,12 @@ AcceleratedBuffer::~AcceleratedBuffer()
     });
 }
 
-WebCore::IntSize AcceleratedBuffer::size() const
+IntSize CoordinatedAcceleratedTileBuffer::size() const
 {
     return m_texture->size();
 }
 
-bool AcceleratedBuffer::tryEnsureSurface()
+bool CoordinatedAcceleratedTileBuffer::tryEnsureSurface()
 {
     if (m_surface)
         return true;
@@ -221,12 +222,12 @@ bool AcceleratedBuffer::tryEnsureSurface()
     return true;
 }
 
-void AcceleratedBuffer::completePainting()
+void CoordinatedAcceleratedTileBuffer::completePainting()
 {
-    auto* grContext = WebCore::PlatformDisplay::sharedDisplay().skiaGrContext();
-    if (WebCore::GLFence::isSupported()) {
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    if (GLFence::isSupported()) {
         grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kNo);
-        m_fence = WebCore::GLFence::create();
+        m_fence = GLFence::create();
         if (!m_fence)
             grContext->submit(GrSyncCpu::kYes);
     } else
@@ -236,7 +237,7 @@ void AcceleratedBuffer::completePainting()
     m_surface = nullptr;
 }
 
-void AcceleratedBuffer::waitUntilPaintingComplete()
+void CoordinatedAcceleratedTileBuffer::waitUntilPaintingComplete()
 {
     if (!m_fence)
         return;
@@ -246,11 +247,13 @@ void AcceleratedBuffer::waitUntilPaintingComplete()
 }
 #endif
 
-Buffer::Buffer(Flags flags)
+CoordinatedTileBuffer::CoordinatedTileBuffer(Flags flags)
     : m_flags(flags)
 {
 }
 
-Buffer::~Buffer() = default;
+CoordinatedTileBuffer::~CoordinatedTileBuffer() = default;
 
-} // namespace Nicosia
+} // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS)

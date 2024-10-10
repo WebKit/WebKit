@@ -27,7 +27,6 @@
 #include <WebCore/CoordinatedBackingStore.h>
 #include <WebCore/CoordinatedPlatformLayerBuffer.h>
 #include <WebCore/NicosiaBackingStore.h>
-#include <WebCore/NicosiaBuffer.h>
 #include <WebCore/NicosiaCompositionLayer.h>
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/TextureMapperLayer.h>

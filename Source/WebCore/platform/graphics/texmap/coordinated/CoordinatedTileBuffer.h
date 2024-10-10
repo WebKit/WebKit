@@ -28,6 +28,8 @@
 
 #pragma once
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "IntSize.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
@@ -46,11 +48,8 @@ namespace WebCore {
 class BitmapTexture;
 class GLFence;
 enum class PixelFormat : uint8_t;
-}
 
-namespace Nicosia {
-
-class Buffer : public ThreadSafeRefCounted<Buffer> {
+class CoordinatedTileBuffer : public ThreadSafeRefCounted<CoordinatedTileBuffer> {
 public:
     enum Flag {
         NoFlags = 0,
@@ -58,9 +57,9 @@ public:
     };
     using Flags = unsigned;
 
-    WEBCORE_EXPORT virtual ~Buffer();
+    WEBCORE_EXPORT virtual ~CoordinatedTileBuffer();
 
-    virtual WebCore::IntSize size() const = 0;
+    virtual IntSize size() const = 0;
     virtual bool isBackedByOpenGL() const = 0;
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
@@ -77,7 +76,7 @@ public:
     static double getMemoryUsage();
 
 protected:
-    explicit Buffer(Flags);
+    explicit CoordinatedTileBuffer(Flags);
 
 #if USE(SKIA)
     virtual bool tryEnsureSurface() = 0;
@@ -92,21 +91,21 @@ private:
     Flags m_flags;
 };
 
-class UnacceleratedBuffer final : public Buffer {
+class CoordinatedUnacceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
-    WEBCORE_EXPORT static Ref<Buffer> create(const WebCore::IntSize&, Flags);
-    WEBCORE_EXPORT virtual ~UnacceleratedBuffer();
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags);
+    WEBCORE_EXPORT virtual ~CoordinatedUnacceleratedTileBuffer();
 
     int stride() const { return m_size.width() * 4; }
     unsigned char* data() const { return m_data.get(); }
 
-    WebCore::PixelFormat pixelFormat() const;
+    PixelFormat pixelFormat() const;
 
 private:
-    UnacceleratedBuffer(const WebCore::IntSize&, Flags);
+    CoordinatedUnacceleratedTileBuffer(const IntSize&, Flags);
 
     bool isBackedByOpenGL() const final { return false; }
-    WebCore::IntSize size() const final { return m_size; }
+    IntSize size() const final { return m_size; }
 
 #if USE(SKIA)
     bool tryEnsureSurface() final;
@@ -116,7 +115,7 @@ private:
     void waitUntilPaintingComplete() final;
 
     MallocPtr<unsigned char> m_data;
-    WebCore::IntSize m_size;
+    IntSize m_size;
 
     enum class PaintingState {
         InProgress,
@@ -131,27 +130,29 @@ private:
 };
 
 #if USE(SKIA)
-class AcceleratedBuffer final : public Buffer {
+class CoordinatedAcceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
-    WEBCORE_EXPORT static Ref<Buffer> create(Ref<WebCore::BitmapTexture>&&);
-    WEBCORE_EXPORT virtual ~AcceleratedBuffer();
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(Ref<BitmapTexture>&&);
+    WEBCORE_EXPORT virtual ~CoordinatedAcceleratedTileBuffer();
 
-    WebCore::BitmapTexture& texture() const { return m_texture.get(); }
+    BitmapTexture& texture() const { return m_texture.get(); }
 
 private:
-    AcceleratedBuffer(Ref<WebCore::BitmapTexture>&&, Flags);
+    CoordinatedAcceleratedTileBuffer(Ref<BitmapTexture>&&, Flags);
 
     bool isBackedByOpenGL() const final { return true; }
-    WebCore::IntSize size() const final;
+    IntSize size() const final;
 
     bool tryEnsureSurface() final;
     void beginPainting() final { }
     void completePainting() final;
     void waitUntilPaintingComplete() final;
 
-    Ref<WebCore::BitmapTexture> m_texture;
-    std::unique_ptr<WebCore::GLFence> m_fence;
+    Ref<BitmapTexture> m_texture;
+    std::unique_ptr<GLFence> m_fence;
 };
 #endif
 
-} // namespace Nicosia
+} // namespace WebCore
+
+#endif // USE(COORDINATED_GRAPHICS)

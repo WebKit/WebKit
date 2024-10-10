@@ -31,9 +31,9 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
+#include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "NicosiaBuffer.h"
 #include "NicosiaPaintingContext.h"
 
 namespace Nicosia {
@@ -68,7 +68,7 @@ PaintingEngineThreaded::~PaintingEngineThreaded()
 {
 }
 
-void PaintingEngineThreaded::paint(GraphicsLayer& layer, Buffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
+void PaintingEngineThreaded::paint(GraphicsLayer& layer, CoordinatedTileBuffer& buffer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale)
 {
     buffer.beginPainting();
 

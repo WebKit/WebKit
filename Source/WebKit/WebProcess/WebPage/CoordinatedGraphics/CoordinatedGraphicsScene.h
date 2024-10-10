@@ -35,10 +35,6 @@
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
-namespace Nicosia {
-class Buffer;
-}
-
 namespace WebCore {
 class CoordinatedBackingStore;
 }

@@ -52,7 +52,7 @@ void BackingStore::createTile(uint32_t tileID, float scale)
     update.tilesToCreate.append({ tileID, scale });
 }
 
-void BackingStore::updateTile(uint32_t tileID, const WebCore::IntRect& updateRect, const WebCore::IntRect& tileRect, Ref<Buffer>&& buffer)
+void BackingStore::updateTile(uint32_t tileID, const WebCore::IntRect& updateRect, const WebCore::IntRect& tileRect, Ref<WebCore::CoordinatedTileBuffer>&& buffer)
 {
     ASSERT(m_layerState.isFlushing);
     auto& update = m_layerState.update;

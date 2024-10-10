@@ -33,13 +33,12 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class CoordinatedTileBuffer;
 class GraphicsLayer;
 class IntRect;
 }
 
 namespace Nicosia {
-
-class Buffer;
 
 class PaintingEngine {
     WTF_MAKE_TZONE_ALLOCATED(PaintingEngine);
@@ -48,7 +47,7 @@ public:
 
     virtual ~PaintingEngine() = default;
 
-    virtual void paint(WebCore::GraphicsLayer&, Buffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) = 0;
+    virtual void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) = 0;
 };
 
 } /// namespace Nicosia

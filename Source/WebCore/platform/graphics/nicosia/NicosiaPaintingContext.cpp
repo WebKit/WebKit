@@ -46,7 +46,7 @@ using ForRecordingClass = PaintingContextCairo::ForRecording;
 #endif
 
 
-std::unique_ptr<PaintingContext> PaintingContext::createForPainting(Buffer& buffer)
+std::unique_ptr<PaintingContext> PaintingContext::createForPainting(WebCore::CoordinatedTileBuffer& buffer)
 {
     return std::unique_ptr<PaintingContext>(new ForPaintingClass(buffer));
 }

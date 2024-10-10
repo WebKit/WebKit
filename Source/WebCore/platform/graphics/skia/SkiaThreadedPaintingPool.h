@@ -26,14 +26,13 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
-#include "NicosiaBuffer.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkerPool.h>
 
 namespace WebCore {
-
 class CoordinatedGraphicsLayer;
+class CoordinatedTileBuffer;
 class IntRect;
 
 namespace DisplayList {
@@ -49,7 +48,7 @@ public:
 
     static std::unique_ptr<SkiaThreadedPaintingPool> create();
 
-    void postPaintingTask(Ref<Nicosia::Buffer>&, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
+    void postPaintingTask(Ref<CoordinatedTileBuffer>&, const CoordinatedGraphicsLayer&, const IntRect& dirtyRect);
 
 private:
     std::unique_ptr<DisplayList::DisplayList> recordDisplayList(const CoordinatedGraphicsLayer&, const IntRect& dirtyRect) const;

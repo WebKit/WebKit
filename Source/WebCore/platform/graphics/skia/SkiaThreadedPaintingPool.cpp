@@ -28,6 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
 #include "CoordinatedGraphicsLayer.h"
+#include "CoordinatedTileBuffer.h"
 #include "DisplayListRecorderImpl.h"
 #include "GraphicsContextSkia.h"
 #include <wtf/NumberOfCores.h>
@@ -59,7 +60,7 @@ std::unique_ptr<DisplayList::DisplayList> SkiaThreadedPaintingPool::recordDispla
     return displayList;
 }
 
-void SkiaThreadedPaintingPool::postPaintingTask(Ref<Nicosia::Buffer>& buffer, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
+void SkiaThreadedPaintingPool::postPaintingTask(Ref<CoordinatedTileBuffer>& buffer, const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect)
 {
     WTFBeginSignpost(this, RecordTile);
     auto displayList = recordDisplayList(layer, dirtyRect);

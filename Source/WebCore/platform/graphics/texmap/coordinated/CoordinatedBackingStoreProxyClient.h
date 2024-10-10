@@ -21,12 +21,8 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-namespace Nicosia {
-class Buffer;
-}
-
 namespace WebCore {
-
+class CoordinatedTileBuffer;
 class GraphicsContext;
 class SurfaceUpdateInfo;
 
@@ -36,7 +32,7 @@ public:
     virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
-    virtual void updateTile(uint32_t tileID, const IntRect&, const IntRect&, Ref<Nicosia::Buffer>&&) = 0;
+    virtual void updateTile(uint32_t tileID, const IntRect&, const IntRect&, Ref<CoordinatedTileBuffer>&&) = 0;
     virtual void removeTile(uint32_t tileID) = 0;
 };
 

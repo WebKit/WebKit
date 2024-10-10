@@ -28,6 +28,7 @@
 
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
+#include "CoordinatedTileBuffer.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"

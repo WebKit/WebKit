@@ -29,7 +29,6 @@
 #include "IntSize.h"
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
-#include "NicosiaBuffer.h"
 #include "NicosiaCompositionLayer.h"
 #include "NicosiaPlatformLayer.h"
 #include "TransformationMatrix.h"
@@ -55,6 +54,7 @@ class PaintingEngine;
 namespace WebCore {
 class CoordinatedGraphicsLayer;
 class CoordinatedImageBackingStore;
+class CoordinatedTileBuffer;
 class TextureMapperPlatformLayerProxy;
 
 class CoordinatedGraphicsLayerClient {
@@ -215,7 +215,7 @@ private:
     bool checkPendingStateChanges();
     bool checkContentLayerUpdated();
 
-    Ref<Nicosia::Buffer> paintTile(const IntRect& dirtyRect);
+    Ref<CoordinatedTileBuffer> paintTile(const IntRect& dirtyRect);
 
     void notifyFlushRequired();
 

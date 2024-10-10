@@ -31,9 +31,9 @@
 
 #if USE(CAIRO)
 
+#include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCairo.h"
-#include "NicosiaBuffer.h"
 #include "NicosiaCairoOperationRecorder.h"
 #include "NicosiaPaintingOperationReplayCairo.h"
 #include "RefPtrCairo.h"
@@ -42,10 +42,10 @@
 
 namespace Nicosia {
 
-PaintingContextCairo::ForPainting::ForPainting(Buffer& baseBuffer)
+PaintingContextCairo::ForPainting::ForPainting(WebCore::CoordinatedTileBuffer& baseBuffer)
 {
     // All buffers used for painting with Cairo are unaccelerated.
-    auto& buffer = static_cast<UnacceleratedBuffer&>(baseBuffer);
+    auto& buffer = static_cast<WebCore::CoordinatedUnacceleratedTileBuffer&>(baseBuffer);
 
     // Balanced by the deref in the s_bufferKey user data destroy callback.
     buffer.ref();
@@ -55,12 +55,12 @@ PaintingContextCairo::ForPainting::ForPainting(Buffer& baseBuffer)
 
     static cairo_user_data_key_t s_bufferKey;
     cairo_surface_set_user_data(m_surface.get(), &s_bufferKey,
-        new std::pair<Buffer*, ForPainting*> { &buffer, this },
+        new std::pair<WebCore::CoordinatedTileBuffer*, ForPainting*> { &buffer, this },
         [](void* data)
         {
-            auto* userData = static_cast<std::pair<Buffer*, ForPainting*>*>(data);
+            auto* userData = static_cast<std::pair<WebCore::CoordinatedTileBuffer*, ForPainting*>*>(data);
 
-            // Deref the Buffer object.
+            // Deref the CoordinatedTileBuffer object.
             userData->first->deref();
 #if ASSERT_ENABLED
             // Mark the deletion of the cairo_surface_t object associated with this

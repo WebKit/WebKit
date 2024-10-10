@@ -31,6 +31,7 @@
 #include "CoordinatedBackingStore.h"
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedBackingStoreProxyClient.h"
+#include "CoordinatedTileBuffer.h"
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -61,7 +62,7 @@ public:
             uint32_t tileID;
             WebCore::IntRect updateRect;
             WebCore::IntRect tileRect;
-            Ref<Buffer> buffer;
+            Ref<WebCore::CoordinatedTileBuffer> buffer;
         };
         Vector<UpdateData> tilesToUpdate;
 
@@ -110,7 +111,7 @@ public:
     // FIXME: Move these to private once updateTile() is not called from CoordinatedGrahpicsLayer.
     void tiledBackingStoreHasPendingTileCreation() override;
     void createTile(uint32_t, float) override;
-    void updateTile(uint32_t, const WebCore::IntRect&, const WebCore::IntRect&, Ref<Buffer>&&) override;
+    void updateTile(uint32_t, const WebCore::IntRect&, const WebCore::IntRect&, Ref<WebCore::CoordinatedTileBuffer>&&) override;
     void removeTile(uint32_t) override;
 
 private:
