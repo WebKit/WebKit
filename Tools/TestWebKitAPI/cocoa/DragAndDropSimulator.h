@@ -75,7 +75,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 - (UIDropInteraction *)dropInteraction;
 #if USE(BROWSERENGINEKIT)
 - (id<BEDragInteractionDelegate>)dragInteractionDelegate;
-- (BEDragInteraction *)dragInteraction;
+- (id)dragInteraction;
 #else
 - (id<UIDragInteractionDelegate>)dragInteractionDelegate;
 - (UIDragInteraction *)dragInteraction;
