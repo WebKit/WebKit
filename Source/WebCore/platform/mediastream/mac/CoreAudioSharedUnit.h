@@ -159,6 +159,8 @@ private:
     int actualSampleRate() const final;
     void resetSampleRate();
 
+    void willChangeCaptureDevice() final;
+
     OSStatus configureSpeakerProc(int sampleRate);
     OSStatus configureMicrophoneProc(int sampleRate);
 
@@ -172,7 +174,7 @@ private:
 
     void verifyIsCapturing();
 
-    void updateVoiceActiveDetection();
+    void updateVoiceActivityDetection(bool shouldDisableVoiceActivityDetection = false);
     bool shouldEnableVoiceActivityDetection() const;
     RetainPtr<WebCoreAudioInputMuteChangeListener> createAudioInputMuteChangeListener();
     void setMutedState(bool isMuted);

@@ -138,6 +138,8 @@ private:
     OSStatus startUnit();
     bool shouldContinueRunning() const { return m_producingCount || m_isRenderingAudio || hasClients(); }
 
+    virtual void willChangeCaptureDevice() { };
+
     // RealtimeMediaSourceCenterObserver
     void devicesChanged() final;
     void deviceWillBeRemoved(const String&) final { }

@@ -168,6 +168,9 @@ void BaseAudioSharedUnit::prepareForNewCapture()
 void BaseAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captureDeviceID)
 {
     bool hasChanged = this->persistentID() != persistentID || this->captureDeviceID() != captureDeviceID;
+    if (hasChanged)
+        willChangeCaptureDevice();
+
     m_capturingDevice = { WTFMove(persistentID), captureDeviceID };
 
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
@@ -352,6 +355,8 @@ void BaseAudioSharedUnit::voiceActivityDetected()
 {
     if (m_voiceActivityThrottleTimer.isActive() || !m_voiceActivityCallback)
         return;
+
+    RELEASE_LOG_INFO(WebRTC, "BaseAudioSharedUnit::voiceActivityDetected");
 
     m_voiceActivityCallback();
     m_voiceActivityThrottleTimer.startOneShot(voiceActivityThrottlingDuration);
