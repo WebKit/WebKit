@@ -2968,4 +2968,3 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 # webkit.org/b/279712 Clipboard API not supported on WK1
 imported/w3c/web-platform-tests/clipboard-apis/clipboard-item.https.html [ Skip ]
 
-webkit.org/b/281157 imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer.html [ Failure ]

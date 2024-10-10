@@ -255,6 +255,7 @@ PASS right
 PASS rotate
 PASS row-gap
 PASS ruby-align
+FAIL ruby-position assert_not_equals: Should get a different computed value. got disallowed value "over"
 PASS rx
 PASS ry
 PASS scale
