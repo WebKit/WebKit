@@ -256,16 +256,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
-#if PLATFORM(COCOA)
-        // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
-#if PLATFORM(IOS_FAMILY)
-        bool isSafari = WTF::IOSApplication::isMobileSafari();
-#elif PLATFORM(MAC)
-        bool isSafari = WTF::MacApplication::isSafari();
-#endif
-        if (isSafari)
-            enableAllSDKAlignedBehaviors();
-#endif
     }
 
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())

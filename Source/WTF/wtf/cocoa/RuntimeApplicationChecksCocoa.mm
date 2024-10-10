@@ -68,8 +68,19 @@ static void disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
 
 static SDKAlignedBehaviors computeSDKAlignedBehaviors()
 {
+    ASSERT(!isInAuxiliaryProcess());
+
     SDKAlignedBehaviors behaviors;
     behaviors.setAll();
+
+    // This can be removed once Safari calls _setLinkedOnOrAfterEverything everywhere that WebKit deploys.
+#if PLATFORM(IOS_FAMILY)
+    bool isSafari = WTF::IOSApplication::isMobileSafari();
+#elif PLATFORM(MAC)
+    bool isSafari = WTF::MacApplication::isSafari();
+#endif
+    if (isSafari)
+        return behaviors;
 
     auto disableBehavior = [&] (SDKAlignedBehavior behavior) {
         behaviors.clear(static_cast<size_t>(behavior));

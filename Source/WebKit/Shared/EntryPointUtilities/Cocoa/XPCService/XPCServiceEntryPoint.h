@@ -116,6 +116,19 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
         setJSCOptions(initializerMessage, enableLockdownMode ? EnableLockdownMode::Yes : EnableLockdownMode::No, isWebContentProcess);
     }
 
+    // InitializeWebKit2() calls linkedOnOrAfterSDKWithBehavior(), so SDK-aligned behaviors must be
+    // configured beforehand.
+    SDKAlignedBehaviors clientSDKAlignedBehaviors;
+    delegate.getClientSDKAlignedBehaviors(clientSDKAlignedBehaviors);
+    setSDKAlignedBehaviors(clientSDKAlignedBehaviors);
+
+    // computeSDKAlignedBehaviors() asserts that it is not called in an auxiliary process, so
+    // setAuxiliaryProcessType() should be called before the first call to
+    // linkedOnOrAfterSDKWithBehavior() to ensure the assertion will catch bugs where
+    // setSDKAlignedBehaviors() isn't called at the right time.
+    parameters.processType = XPCServiceType::processType;
+    setAuxiliaryProcessType(parameters.processType);
+
     InitializeWebKit2();
 
     if (!delegate.checkEntitlements())
@@ -129,8 +142,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     // The host process may not have a bundle identifier (e.g. a command line app), so don't require one.
     delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier);
-    
-    delegate.getClientSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
 
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     if (!delegate.getProcessIdentifier(processIdentifier))
@@ -147,8 +158,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     if (parameters.extraInitializationData.contains("always-runs-at-background-priority"_s))
         Thread::setGlobalMaxQOSClass(QOS_CLASS_UTILITY);
 #endif
-
-    parameters.processType = XPCServiceType::processType;
 
     initializeAuxiliaryProcess<XPCServiceType>(WTFMove(parameters));
 }

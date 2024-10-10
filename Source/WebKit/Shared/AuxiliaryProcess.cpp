@@ -80,7 +80,12 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
 {
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
+#if PLATFORM(COCOA)
+    // On Cocoa platforms, setAuxiliaryProcessType() is called in XPCServiceInitializer().
+    ASSERT(processType() == parameters.processType);
+#else
     setAuxiliaryProcessType(parameters.processType);
+#endif
 
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
     Process::setIdentifier(*parameters.processIdentifier);

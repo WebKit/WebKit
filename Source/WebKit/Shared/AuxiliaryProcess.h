@@ -212,9 +212,6 @@ struct AuxiliaryProcessInitializationParameters {
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
     WTF::AuxiliaryProcessType processType;
-#if PLATFORM(COCOA)
-    SDKAlignedBehaviors clientSDKAlignedBehaviors;
-#endif
 };
 
 } // namespace WebKit

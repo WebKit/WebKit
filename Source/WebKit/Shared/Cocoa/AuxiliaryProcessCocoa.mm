@@ -101,7 +101,6 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
     setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
-    setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
 
 #if PLATFORM(MAC)
     disableDowngradeToLayoutManager();
