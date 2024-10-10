@@ -1090,6 +1090,13 @@
    },
    {
       "emails" : [
+         "aspensantos99@gmail.com"
+      ],
+      "github" : "aspensantos",
+      "name" : "Aspen Santos"
+   },
+   {
+      "emails" : [
          "asumu@igalia.com",
          "atakikawa@igalia.com"
       ],
