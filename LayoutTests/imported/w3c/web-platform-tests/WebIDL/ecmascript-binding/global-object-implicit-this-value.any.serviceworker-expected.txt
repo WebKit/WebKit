@@ -2,7 +2,7 @@
 PASS Global object's getter throws when called on incompatible object
 PASS Global object's setter throws when called on incompatible object
 PASS Global object's operation throws when called on incompatible object
-PASS Global object's getter works when called on null / undefined
-PASS Global object's setter works when called on null / undefined
+FAIL Global object's getter works when called on null / undefined The WorkerGlobalScope.location getter can only be used on instances of WorkerGlobalScope
+FAIL Global object's setter works when called on null / undefined The WorkerGlobalScope.ononline setter can only be used on instances of WorkerGlobalScope
 PASS Global object's operation works when called on null / undefined
 

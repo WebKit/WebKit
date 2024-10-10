@@ -685,19 +685,6 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
     return NotTypedArray;
 }
 
-std::optional<SpeculatedType> speculationFromJSTypeRange(JSTypeRange range)
-{
-    using IntType = std::underlying_type_t<JSType>;
-    std::optional<SpeculatedType> mergedSpeculation;
-
-    for (IntType type = static_cast<IntType>(range.first); type <= static_cast<IntType>(range.last); type++) {
-        if (std::optional<SpeculatedType> speculation = speculationFromJSType(static_cast<JSType>(type)))
-            mergedSpeculation = mergedSpeculation.value_or(SpecNone) | speculation.value();
-    }
-
-    return mergedSpeculation;
-}
-
 std::optional<SpeculatedType> speculationFromJSType(JSType type)
 {
     switch (type) {

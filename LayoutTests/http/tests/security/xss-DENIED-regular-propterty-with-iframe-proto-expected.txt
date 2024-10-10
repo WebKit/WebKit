@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS this.__proto__ = targetWindow threw exception TypeError: Cannot set prototype of immutable prototype object.
-PASS __proto__ = targetWindow threw exception TypeError: Cannot set prototype of immutable prototype object.
+PASS __proto__ = targetWindow threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
 PASS: innerHeight === originalInnerHeight should be 'true' and is.
 PASS: this.innerHeight === originalInnerHeight should be 'true' and is.
 PASS: successfullyParsed should be 'true' and is.

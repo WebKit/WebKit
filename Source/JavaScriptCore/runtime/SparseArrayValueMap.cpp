@@ -196,7 +196,7 @@ bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, Spar
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(Base::get())->callSetter(globalObject, wrapGlobalObject(thisValue), value, shouldThrow));
+    RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(Base::get())->callSetter(globalObject, thisValue, value, shouldThrow));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const

@@ -149,7 +149,7 @@ JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef
         return nullptr;
     }
     NakedPtr<Exception> internalException;
-    JSValue thisValue = thisValueRef ? wrapGlobalObject(toJS(globalObject, thisValueRef)) : JSValue();
+    JSValue thisValue = thisValueRef ? toJS(globalObject, thisValueRef) : jsUndefined();
     JSValue result = evaluate(globalObject, SourceCode(*script), thisValue, internalException);
     if (internalException) {
         if (exception)

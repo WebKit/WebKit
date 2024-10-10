@@ -19,5 +19,5 @@ async function testDoesNotCrash()
         if (transaction)
             transaction.oncomplete = () => location.hash = 'h';
     }
-    setTimeout(finishJSTest);
+    finishJSTest();
 }

@@ -900,9 +900,11 @@ public:
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
     bool createDataProperty(JSGlobalObject*, PropertyName, JSValue, bool shouldThrow);
 
+    bool isEnvironment() const;
     bool isGlobalObject() const;
     bool isJSLexicalEnvironment() const;
     bool isGlobalLexicalEnvironment() const;
+    bool isStrictEvalActivation() const;
     bool isWithScope() const;
 
     bool isErrorInstance() const;
@@ -1376,6 +1378,18 @@ inline bool JSObject::isJSLexicalEnvironment() const
 inline bool JSObject::isGlobalLexicalEnvironment() const
 {
     return type() == GlobalLexicalEnvironmentType;
+}
+
+inline bool JSObject::isStrictEvalActivation() const
+{
+    return type() == StrictEvalActivationType;
+}
+
+inline bool JSObject::isEnvironment() const
+{
+    bool result = GlobalObjectType <= type() && type() <= StrictEvalActivationType;
+    ASSERT((isGlobalObject() || isJSLexicalEnvironment() || isGlobalLexicalEnvironment() || isStrictEvalActivation()) == result);
+    return result;
 }
 
 inline bool JSObject::isErrorInstance() const

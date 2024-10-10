@@ -1,4 +1,4 @@
 FAILED (This TC requires JavaScript enabled)
 
-FAIL  scheduler: event listener defined by script in a document in history assert_array_equals: lengths differ, expected array ["inline script #1", "IFRAME script", "end script #1", "event: foo", "inline script #2"] length 5, got ["inline script #1", "IFRAME script", "end script #1", "event: foo", "event: foo", "inline script #2", "event: foo"] length 7
+FAIL  scheduler: event listener defined by script in a document in history assert_array_equals: lengths differ, expected array ["inline script #1", "IFRAME script", "end script #1", "event: foo", "inline script #2"] length 5, got ["inline script #1", "IFRAME script", "end script #1", "event: foo", "event: foo", "inline script #2"] length 6
 

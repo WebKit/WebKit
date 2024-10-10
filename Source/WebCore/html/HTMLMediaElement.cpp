@@ -8649,7 +8649,7 @@ bool HTMLMediaElement::ensureMediaControls()
             if (callData.type == JSC::CallData::Type::None)
                 return false;
 
-            auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject.proxy(), argList);
+            auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
             RETURN_IF_EXCEPTION(scope, false);
 
             auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);

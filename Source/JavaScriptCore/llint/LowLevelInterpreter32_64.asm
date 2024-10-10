@@ -864,29 +864,18 @@ llintOpWithReturn(op_get_scope, OpGetScope, macro (size, get, dispatch, return)
 end)
 
 
-llintOp(op_to_this, OpToThis, macro (size, get, dispatch)
+llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, return)
     get(m_srcDst, t0)
-    loadi TagOffset[cfr, t0, 8], t1
-    bineq t1, CellTag, .opToThisNotCell
-    loadi PayloadOffset[cfr, t0, 8], t1
-    bbb JSCell::m_type[t1], ObjectType, .opToThisSlow
-    valueProfile(size, OpToThis, m_valueProfile, CellTag, t1, t2)
-    dispatch()
- 
-.opToThisNotCell:
-    ori 1, t1
-    bieq t1, NullTag, .opToThisUndefinedOrNull
-.opToThisSlow:
-    callSlowPath(_slow_path_to_this)
+    bineq TagOffset[cfr, t0, 8], CellTag, .opToThisSlow
+    loadi PayloadOffset[cfr, t0, 8], t0
+    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
+    metadata(t2, t3)
+    loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
+    bineq JSCell::m_structureID[t0], t2, .opToThisSlow
     dispatch()
 
-.opToThisUndefinedOrNull:
-    loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_globalObject[t1], t1
-    loadp JSGlobalObject::m_globalThis[t1], t1
-    valueProfile(size, OpToThis, m_valueProfile, CellTag, t1, t2)
-    storei CellTag, TagOffset[cfr, t0, 8]
-    storei t1, PayloadOffset[cfr, t0, 8]
+.opToThisSlow:
+    callSlowPath(_slow_path_to_this)
     dispatch()
 end)
 
@@ -1442,13 +1431,11 @@ end)
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0, t3)
-    bineq t0, CellTag, .returnFalseCase
-    getu(size, OpIsCellWithType, m_firstType, t0)
-    bbb JSCell::m_type[t3], t0, .returnFalseCase
-    getu(size, OpIsCellWithType, m_lastType, t0)
-    bba JSCell::m_type[t3], t0, .returnFalseCase
-    return(BooleanTag, 1)
-.returnFalseCase:
+    bineq t0, CellTag, .notCellCase
+    getu(size, OpIsCellWithType, m_type, t0)
+    cbeq JSCell::m_type[t3], t0, t1
+    return(BooleanTag, t1)
+.notCellCase:
     return(BooleanTag, 0)
 end)
 

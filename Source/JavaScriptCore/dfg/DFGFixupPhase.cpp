@@ -3582,18 +3582,98 @@ private:
 
     void fixupToThis(Node* node)
     {
+        bool isStrictMode = node->ecmaMode().isStrict();
+
+        if (isStrictMode) {
+            if (node->child1()->shouldSpeculateBoolean()) {
+                fixEdge<BooleanUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateInt52()) {
+                fixEdge<Int52RepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultInt52);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->convertToIdentity();
+                node->setResult(NodeResultDouble);
+                return;
+            }
+
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
+            if (!m_graph.hasExitSite(node->origin.semantic, BadStringType)) {
+                if (node->child1()->shouldSpeculateStringIdent()) {
+                    fixEdge<StringIdentUse>(node->child1());
+                    node->convertToIdentity();
+                    return;
+                }
+            }
+
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+            
+            if (node->child1()->shouldSpeculateBigInt()) {
+#if USE(BIGINT32)
+                if (node->child1()->shouldSpeculateBigInt32())
+                    fixEdge<BigInt32Use>(node->child1());
+                else if (node->child1()->shouldSpeculateHeapBigInt())
+                    fixEdge<HeapBigIntUse>(node->child1());
+                else
+                    fixEdge<AnyBigIntUse>(node->child1());
+#else
+                fixEdge<HeapBigIntUse>(node->child1());
+#endif
+                node->convertToIdentity();
+                return;
+            }
+        }
+
         if (node->child1()->shouldSpeculateOther()) {
+            if (isStrictMode) {
+                fixEdge<OtherUse>(node->child1());
+                node->convertToIdentity();
+                return;
+            }
+
             m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, Check, node->origin,
                 Edge(node->child1().node(), OtherUse));
             observeUseKindOnNode<OtherUse>(node->child1().node());
             m_graph.convertToConstant(
-                node, m_graph.globalObjectFor(node->origin.semantic)->globalThis());
+                node, m_graph.globalThisObjectFor(node->origin.semantic));
             return;
         }
 
-        if (node->child1()->shouldSpeculateObject()) {
-            fixEdge<ObjectUse>(node->child1());
+        // FIXME: This should cover other use cases but we don't have use kinds for them. It's not critical,
+        // however, since we cover all the missing cases in constant folding.
+        // https://bugs.webkit.org/show_bug.cgi?id=157213
+        if (node->child1()->shouldSpeculateStringObject()) {
+            fixEdge<StringObjectUse>(node->child1());
+            node->convertToIdentity();
+            return;
+        }
+
+        if (isFinalObjectSpeculation(node->child1()->prediction())) {
+            fixEdge<FinalObjectUse>(node->child1());
             node->convertToIdentity();
             return;
         }

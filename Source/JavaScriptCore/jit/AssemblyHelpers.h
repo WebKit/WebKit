@@ -980,20 +980,6 @@ public:
     Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
     Jump branchIfStructure(GPRReg cellGPR) { return branchIfType(cellGPR, StructureType); }
     Jump branchIfNotStructure(GPRReg cellGPR) { return branchIfNotType(cellGPR, StructureType); }
-
-    void isCellWithType(GPRReg cellGPR, JSTypeRange range, GPRReg dst)
-    {
-        if (range.last == range.first) {
-            compare8(Equal, Address(cellGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(range.first), dst);
-            return;
-        }
-
-        ASSERT(range.last > range.first);
-        GPRReg scratch = scratchRegister();
-        load8(Address(cellGPR, JSCell::typeInfoTypeOffset()), scratch);
-        sub32(TrustedImm32(range.first), scratch);
-        compare32(BelowOrEqual, scratch, TrustedImm32(range.last - range.first), dst);
-    }
     
     void isEmpty(GPRReg gpr, GPRReg dst)
     {

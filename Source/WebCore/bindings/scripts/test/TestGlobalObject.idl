@@ -45,8 +45,6 @@
     [PrivateIdentifier, Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] undefined testPrivateFunction();
     [JSBuiltin, Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] undefined testJSBuiltinFunction();
 
-    [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
-
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
     [SecureContext] Promise<double> calculateSecretResult();

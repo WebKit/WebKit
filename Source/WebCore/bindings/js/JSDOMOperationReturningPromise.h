@@ -39,7 +39,7 @@ public:
     static JSC::EncodedJSValue call(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
         return JSC::JSValue::encode(callPromiseFunction(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise) {
-            auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, callFrame.thisValue());
+            auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
             if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
                 if (UNLIKELY(!thisObject))
                     return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
@@ -60,7 +60,7 @@ public:
     static JSC::EncodedJSValue callReturningPromisePair(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
         return callPromisePairFunction(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise, Ref<DeferredPromise>&& promise2) {
-            auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, callFrame.thisValue());
+            auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
             if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
                 if (UNLIKELY(!thisObject))
                     return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
@@ -81,7 +81,7 @@ public:
     template<typename IDLOperation<JSClass>::Operation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue callReturningOwnPromise(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
-        auto* thisObject = castThisValue<JSClass>(lexicalGlobalObject, callFrame.thisValue());
+        auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
         if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
             if (UNLIKELY(!thisObject))
                 return rejectPromiseWithThisTypeError(lexicalGlobalObject, JSClass::info()->className, operationName);

@@ -86,9 +86,9 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     }
 }
 
-JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIterator, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(callFrame->thisValue());
+    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
 }
 
 // https://tc39.es/proposal-iterator-helpers/#sec-get-iteratorprototype-constructor

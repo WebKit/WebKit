@@ -102,11 +102,13 @@ namespace JSC {
     /*                                 <- JSSegmentedVariableObject <- JSGlobalLexicalEnvironment */ \
     /*                                                              <- JSGlobalObject */ \
     /* Start JSScope types. */ \
+    /* Start environment record types. */ \
     macro(GlobalObjectType, SpecObjectOther) \
     macro(GlobalLexicalEnvironmentType, SpecObjectOther) \
     macro(LexicalEnvironmentType, SpecObjectOther) \
     macro(ModuleEnvironmentType, SpecObjectOther) \
     macro(StrictEvalActivationType, SpecObjectOther) \
+    /* End environment record types. */ \
     macro(WithScopeType, SpecObjectOther) \
     /* End JSScope types. */ \
     \
@@ -157,6 +159,9 @@ static constexpr uint32_t LastTypedArrayTypeExcludingDataView = LastTypedArrayTy
 // LastObjectType should be MaxJSType (not LastJSCObjectType) since embedders can add their extended object types after the enums listed in JSType.
 static constexpr uint32_t FirstObjectType = ObjectType;
 static constexpr uint32_t LastObjectType = MaxJSType;
+
+static constexpr uint32_t FirstScopeType = GlobalObjectType;
+static constexpr uint32_t LastScopeType = WithScopeType;
 
 static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;

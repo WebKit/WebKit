@@ -5759,9 +5759,7 @@ sub GenerateAttributeSetterBodyDefinition
         # 3.5.9.1. Let Q be ? Get(O, id).
         my $id = $attribute->name;
         push(@$outputArray, "    auto id = Identifier::fromString(vm, \"${id}\"_s);\n");
-
-        my $getReceiver = IsDOMGlobalObject($interface) ? "thisObject.proxy()" : "thisObject";
-        push(@$outputArray, "    auto valueToForwardTo = ${getReceiver}.get(&lexicalGlobalObject, id);\n");
+        push(@$outputArray, "    auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);\n");
         push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         
         # 3.5.9.2. If Type(Q) is not Object, then throw a TypeError.

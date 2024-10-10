@@ -2,7 +2,7 @@
 PASS Cross-realm global object's getter throws when called on incompatible object
 PASS Cross-realm global object's setter throws when called on incompatible object
 PASS Cross-realm global object's operation throws when called on incompatible object
-PASS Cross-realm global object's getter called on null / undefined
-PASS Cross-realm global object's setter called on null / undefined
+FAIL Cross-realm global object's getter called on null / undefined promise_test: Unhandled rejection with value: object "TypeError: The Window.name getter can only be used on instances of Window"
+FAIL Cross-realm global object's setter called on null / undefined promise_test: Unhandled rejection with value: object "TypeError: The Window.location setter can only be used on instances of Window"
 PASS Cross-realm global object's operation called on null / undefined
 

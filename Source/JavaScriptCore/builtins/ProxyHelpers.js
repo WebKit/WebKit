@@ -96,7 +96,7 @@ function performProxyObjectGet(propertyName, receiver)
     if (!@isCallable(trap))
         @throwTypeError("'get' property of a Proxy's handler should be callable");
 
-    var trapResult = trap.@call(handler, target, propertyName, receiver);
+    var trapResult = trap.@call(handler, target, propertyName, @toThis(receiver));
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))
         @handleProxyGetTrapResult(trapResult, target, propertyName);
@@ -123,7 +123,7 @@ function performProxyObjectGetByVal(propertyName, receiver)
     if (!@isCallable(trap))
         @throwTypeError("'get' property of a Proxy's handler should be callable");
 
-    var trapResult = trap.@call(handler, target, propertyName, receiver);
+    var trapResult = trap.@call(handler, target, propertyName, @toThis(receiver));
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))
         @handleProxyGetTrapResult(trapResult, target, propertyName);
@@ -151,7 +151,7 @@ function performProxyObjectSetSloppy(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
+    if (!trap.@call(handler, target, propertyName, value, @toThis(receiver)))
         return;
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))
@@ -178,7 +178,7 @@ function performProxyObjectSetStrict(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
+    if (!trap.@call(handler, target, propertyName, value, @toThis(receiver)))
         @throwTypeError("Proxy object's 'set' trap returned falsy value for property '" + @String(propertyName) + "'");
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))
@@ -206,7 +206,7 @@ function performProxyObjectSetByValSloppy(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
+    if (!trap.@call(handler, target, propertyName, value, @toThis(receiver)))
         return;
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))
@@ -234,7 +234,7 @@ function performProxyObjectSetByValStrict(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
+    if (!trap.@call(handler, target, propertyName, value, @toThis(receiver)))
         @throwTypeError("Proxy object's 'set' trap returned falsy value for property '" + @String(propertyName) + "'");
 
     if (@mustValidateResultOfProxyGetAndSetTraps(target))

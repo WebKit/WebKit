@@ -343,7 +343,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case IsCellWithType:
-        def(PureValue(node, node->queriedType().rawBits()));
+        def(PureValue(node, node->queriedType()));
         return;
 
     case ValueBitNot:
@@ -648,6 +648,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ToThis:
+        read(MiscFields);
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;

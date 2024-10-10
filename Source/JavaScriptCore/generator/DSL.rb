@@ -225,6 +225,7 @@ module DSL
 #include "PrivateFieldPutKind.h"
 #include "PutByStatus.h"
 #include "PutByIdFlags.h"
+#include "ToThisStatus.h"
 
 namespace JSC {
 

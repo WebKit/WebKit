@@ -1194,21 +1194,14 @@ private:
 #endif
 };
 
+inline JSObject* JSScope::globalThis()
+{ 
+    return globalObject()->globalThis();
+}
+
 inline JSObject* JSGlobalObject::globalThis() const
 { 
     return m_globalThis.get();
-}
-
-ALWAYS_INLINE JSObject* wrapGlobalObject(JSObject* object)
-{
-    ASSERT(object);
-    return object->isGlobalObject() ? jsCast<JSGlobalObject*>(object)->globalThis() : object;
-}
-
-ALWAYS_INLINE JSValue wrapGlobalObject(JSValue value)
-{
-    ASSERT(value);
-    return value.isObject() ? wrapGlobalObject(asObject(value)) : value;
 }
 
 } // namespace JSC

@@ -194,6 +194,70 @@ void AbstractInterpreter<AbstractStateType>::verifyEdges(Node* node)
     DFG_NODE_DO_TO_CHILDREN(m_graph, node, verifyEdge);
 }
 
+enum class ToThisResult {
+    Identity,
+    Undefined,
+    GlobalThis,
+    Dynamic,
+};
+inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueForNode)
+{
+    // We look at the type first since that will cover most cases and does not require iterating all the structures.
+    if (ecmaMode.isStrict()) {
+        if (valueForNode.m_type && !(valueForNode.m_type & SpecObjectOther))
+            return ToThisResult::Identity;
+    } else {
+        if (valueForNode.m_type && !(valueForNode.m_type & (~SpecObject | SpecObjectOther)))
+            return ToThisResult::Identity;
+    }
+
+    if (JSValue value = valueForNode.value()) {
+        if (value.isCell()) {
+            if (value.asCell()->isObject()) {
+                if (value.asCell()->inherits<JSScope>()) {
+                    if (ecmaMode.isStrict())
+                        return ToThisResult::Undefined;
+                    return ToThisResult::GlobalThis;
+                }
+                return ToThisResult::Identity;
+            }
+        }
+    }
+
+    bool onlyObjects = valueForNode.m_type && !(valueForNode.m_type & ~SpecObject);
+    if ((ecmaMode.isStrict() || onlyObjects) && valueForNode.m_structure.isFinite()) {
+        bool allStructuresAreJSScope = !valueForNode.m_structure.isClear();
+        bool overridesToThis = false;
+        valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
+            TypeInfo type = structure->typeInfo();
+            ASSERT(type.isObject() || type.type() == StringType || type.type() == SymbolType || type.type() == HeapBigIntType);
+            if (!ecmaMode.isStrict())
+                ASSERT(type.isObject());
+            // We don't need to worry about strings/symbols here since either:
+            // 1) We are in strict mode and strings/symbols are not wrapped
+            // 2) The AI has proven that the type of this is a subtype of object
+            if (type.isObject() && (FirstScopeType <= type.type() && type.type() <= LastScopeType))
+                overridesToThis = true;
+
+            // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
+            allStructuresAreJSScope &= structure->classInfoForCells()->isSubClassOf(JSScope::info());
+        });
+
+        // This is correct for strict mode even if this can have non objects, since the right semantics is Identity.
+        if (!overridesToThis)
+            return ToThisResult::Identity;
+
+        // But this folding is available only if input is always an object.
+        if (onlyObjects && allStructuresAreJSScope) {
+            if (ecmaMode.isStrict())
+                return ToThisResult::Undefined;
+            return ToThisResult::GlobalThis;
+        }
+    }
+
+    return ToThisResult::Dynamic;
+}
+
 template<typename AbstractStateType>
 bool AbstractInterpreter<AbstractStateType>::handleConstantBinaryBitwiseOp(Node* node)
 {
@@ -1645,7 +1709,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             bool constantWasSet = true;
             switch (node->op()) {
             case IsCellWithType:
-                setConstant(node, jsBoolean(child.value().isCell() && node->queriedType().contains(child.value().asCell()->type())));
+                setConstant(node, jsBoolean(child.value().isCell() && child.value().asCell()->type() == node->queriedType()));
                 break;
             case TypeOfIsUndefined:
                 setConstant(node, jsBoolean(
@@ -1726,7 +1790,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     std::optional<bool> result;
                     child.m_structure.forEach(
                         [&] (RegisteredStructure structure) {
-                            bool matched = node->queriedType().contains(structure->typeInfo().type());
+                            bool matched = structure->typeInfo().type() == node->queriedType();
                             if (!result)
                                 result = matched;
                             else {
@@ -3385,18 +3449,31 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ToThis: {
         AbstractValue& source = forNode(node->child1());
-        if (!(source.m_type & ~SpecObject)) {
-            m_state.setShouldTryConstantFolding(true);
-            setForNode(node, source);
-            break;
-        }
-        if (!(source.m_type & ~SpecOther)) {
-            m_state.setShouldTryConstantFolding(true);
-            setTypeForNode(node, SpecGlobalProxy);
-            break;
-        }
+        AbstractValue& destination = forNode(node);
+        ECMAMode ecmaMode = node->ecmaMode();
 
-        setTypeForNode(node, SpecObject);
+        ToThisResult result = isToThisAnIdentity(ecmaMode, source);
+        switch (result) {
+        case ToThisResult::Identity:
+            m_state.setShouldTryConstantFolding(true);
+            destination = source;
+            break;
+        case ToThisResult::Undefined:
+            setConstant(node, jsUndefined());
+            break;
+        case ToThisResult::GlobalThis:
+            m_state.setShouldTryConstantFolding(true);
+            destination.setType(m_graph, SpecObject);
+            break;
+        case ToThisResult::Dynamic:
+            if (ecmaMode.isStrict())
+                destination.makeHeapTop();
+            else {
+                destination = source;
+                destination.merge(SpecObject);
+            }
+            break;
+        }
         break;
     }
 

@@ -1837,12 +1837,12 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             }
             if (value == "string"_s) {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.m_value, StringType, StringType);
+                OpIsCellWithType::emit(this, dst, op.m_value, StringType);
                 return true;
             }
             if (value == "symbol"_s) {
                 rewind();
-                OpIsCellWithType::emit(this, dst, op.m_value, SymbolType, SymbolType);
+                OpIsCellWithType::emit(this, dst, op.m_value, SymbolType);
                 return true;
             }
             if (value == "bigint"_s) {
@@ -1850,7 +1850,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
 #if USE(BIGINT32)
                 OpIsBigInt::emit(this, dst, op.m_value);
 #else
-                OpIsCellWithType::emit(this, dst, op.m_value, HeapBigIntType, HeapBigIntType);
+                OpIsCellWithType::emit(this, dst, op.m_value, HeapBigIntType);
 #endif
                 return true;
             }
@@ -2657,35 +2657,6 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
     } }
     
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-RegisterID* BytecodeGenerator::emitGetFunctionFromScope(RegisterID* dst, const Variable& variable, RegisterID* thisValueForCall, RegisterID* temp)
-{
-    ASSERT(!variable.local());
-
-    RegisterID* scope = emitResolveScope(nullptr, variable);
-    emitGetFromScope(dst, scope, variable, ThrowIfNotFound);
-    emitTDZCheckIfNecessary(variable, dst, nullptr);
-    if (isTaintedByWithScope(variable)) {
-        Ref<Label> isNotWithScopeObject = newLabel();
-        emitJumpIfTrue(emitIsCellWithType(temp, scope, JSTypeRange { GlobalObjectType, StrictEvalActivationType }), isNotWithScopeObject.get());
-        move(kill(thisValueForCall), scope);
-        emitLabel(isNotWithScopeObject.get());
-    }
-    return dst;
-}
-
-bool BytecodeGenerator::isTaintedByWithScope(const Variable& variable) const
-{
-    if (variable.offset().isValid())
-        return false;
-
-    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
-        if (m_lexicalScopeStack[i].m_isWithScope)
-            return true;
-    }
-
-    return lexicallyScopedFeatures() & TaintedByWithScopeLexicallyScopedFeature;
 }
 
 RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable& variable, RegisterID* value, ResolveMode resolveMode, InitializationMode initializationMode)
@@ -4758,15 +4729,9 @@ RegisterID* BytecodeGenerator::emitGetPropertyEnumerator(RegisterID* dst, Regist
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitIsCellWithType(RegisterID* dst, RegisterID* src, JSTypeRange range)
-{
-    OpIsCellWithType::emit(this, dst, src, range.first, range.last);
-    return dst;
-}
-
 RegisterID* BytecodeGenerator::emitIsCellWithType(RegisterID* dst, RegisterID* src, JSType type)
 {
-    OpIsCellWithType::emit(this, dst, src, type, type);
+    OpIsCellWithType::emit(this, dst, src, type);
     return dst;
 }
 
@@ -5662,10 +5627,10 @@ void StaticPropertyAnalysis::record()
     }
 }
 
-void BytecodeGenerator::emitToThis()
+RegisterID* BytecodeGenerator::emitToThis(RegisterID* srcDst)
 {
-    if (!ecmaMode().isStrict())
-        OpToThis::emit(this, kill(&m_thisRegister), nextValueProfileIndex());
+    OpToThis::emit(this, kill(srcDst), ecmaMode(), nextValueProfileIndex());
+    return srcDst;
 }
 
 ForInContext* BytecodeGenerator::findForInContext(RegisterID* property)

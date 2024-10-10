@@ -73,7 +73,7 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 1. Let O be the this value.
-    JSValue thisValue = callFrame->thisValue();
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
 
     // 2. If Type(O) is not Object, throw a TypeError exception.
     if (!thisValue.isObject())

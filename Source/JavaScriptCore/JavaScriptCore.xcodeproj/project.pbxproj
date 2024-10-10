@@ -223,6 +223,7 @@
 		0F2C63C21E664A5C00C13839 /* B3NativeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63C11E664A5A00C13839 /* B3NativeTraits.h */; };
 		0F2C63C41E69EF9400C13839 /* B3MemoryValueInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2C63C31E69EF9200C13839 /* B3MemoryValueInlines.h */; };
 		0F2D4DDE19832D34007D4B19 /* DebuggerScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DEA19832DAC007D4B19 /* TypeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE719832DAC007D4B19 /* TypeLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DEC19832DC4007D4B19 /* TypeProfilerLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2D4DF019832DD6007D4B19 /* TypeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2D4DE419832D91007D4B19 /* TypeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2761,6 +2762,8 @@
 		0F2D4DE019832D91007D4B19 /* TypeProfilerLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfilerLog.h; sourceTree = "<group>"; };
 		0F2D4DE319832D91007D4B19 /* TypeSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeSet.cpp; sourceTree = "<group>"; };
 		0F2D4DE419832D91007D4B19 /* TypeSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeSet.h; sourceTree = "<group>"; };
+		0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToThisStatus.cpp; sourceTree = "<group>"; };
+		0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToThisStatus.h; sourceTree = "<group>"; };
 		0F2D4DE719832DAC007D4B19 /* TypeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeLocation.h; sourceTree = "<group>"; };
 		0F2DD80C1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArgumentsEliminationPhase.cpp; path = dfg/DFGArgumentsEliminationPhase.cpp; sourceTree = "<group>"; };
 		0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArgumentsEliminationPhase.h; path = dfg/DFGArgumentsEliminationPhase.h; sourceTree = "<group>"; };
@@ -9657,6 +9660,8 @@
 				0F4A38F71C8E13DF00190318 /* SuperSampler.cpp */,
 				0F4A38F81C8E13DF00190318 /* SuperSampler.h */,
 				0F44A7A820BF685E0022B171 /* TerminatedCodeOrigin.h */,
+				0F2D4DE519832DAC007D4B19 /* ToThisStatus.cpp */,
+				0F2D4DE619832DAC007D4B19 /* ToThisStatus.h */,
 				0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */,
 				0F952ABB1B487A7700C367C5 /* TrackedReferences.h */,
 				0F2D4DE719832DAC007D4B19 /* TypeLocation.h */,
@@ -11837,6 +11842,7 @@
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
+				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,
 				0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */,
 				CD1F9B3C270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h in Headers */,
 				0F2B670617B6B5AB00A7AE3F /* TypedArrayAdaptors.h in Headers */,

@@ -2135,17 +2135,12 @@ int main(int argc, char* argv[])
     v = JSObjectCallAsFunction(context, function, o, 0, NULL, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
 
-    JSObjectRef rawGlobalObject = JSObjectGetProxyTarget(globalObject);
-    ASSERT(!JSValueIsEqual(context, rawGlobalObject, globalObject, NULL));
-
     const char* thisScript = "this;";
     JSStringRef script = JSStringCreateWithUTF8CString(thisScript);
     v = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSEvaluateScript(context, script, o, NULL, 1, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
-    v = JSEvaluateScript(context, script, rawGlobalObject, NULL, 1, NULL);
-    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
     JSStringRelease(script);
 
     JSScriptRef scriptObject = JSScriptCreateReferencingImmortalASCIIText(contextGroup, 0, 0, thisScript, strlen(thisScript), 0, 0);
@@ -2153,18 +2148,6 @@ int main(int argc, char* argv[])
     ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
     v = JSScriptEvaluate(context, scriptObject, o, NULL);
     ASSERT(JSValueIsEqual(context, v, o, NULL));
-    v = JSScriptEvaluate(context, scriptObject, rawGlobalObject, NULL);
-    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
-    v = JSScriptEvaluate(context, scriptObject, jsUndefined, NULL);
-    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
-    v = JSScriptEvaluate(context, scriptObject, jsNull, NULL);
-    ASSERT(JSValueIsEqual(context, v, globalObject, NULL));
-    v = JSScriptEvaluate(context, scriptObject, jsZero, NULL);
-    ASSERT(JSValueIsObject(context, v));
-    v = JSScriptEvaluate(context, scriptObject, jsTrue, NULL);
-    ASSERT(JSValueIsObject(context, v));
-    v = JSScriptEvaluate(context, scriptObject, jsEmptyString, NULL);
-    ASSERT(JSValueIsObject(context, v));
     JSScriptRelease(scriptObject);
 
     script = JSStringCreateWithUTF8CString("eval(this);");

@@ -57,6 +57,7 @@ types [
     :StructureChain,
     :SymbolTable,
     :SymbolTableOrScopeDepth,
+    :ToThisStatus,
     :TypeLocation,
     :WasmBoundLabel,
     :WatchpointSet,
@@ -722,6 +723,17 @@ op :enumerator_put_by_val,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
+op :to_this,
+    args: {
+        srcDst: VirtualRegister,
+        ecmaMode: ECMAMode,
+        valueProfile: unsigned,
+    },
+    metadata: {
+        cachedStructureID: StructureID,
+        toThisStatus: ToThisStatus,
+    }
+
 op :enumerator_get_by_val,
     args: {
         dst: VirtualRegister,
@@ -773,12 +785,6 @@ op :jneq_ptr,
     }
 
 # Opcodes without metadata are last
-op :to_this,
-    args: {
-        srcDst: VirtualRegister,
-        valueProfile: unsigned,
-    }
-
 op :get_argument,
     args: {
         dst: VirtualRegister,
@@ -1392,8 +1398,7 @@ op :is_cell_with_type,
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,
-        firstType: JSType,
-        lastType: JSType,
+        type: JSType,
     }
 
 op :has_structure_with_flags,

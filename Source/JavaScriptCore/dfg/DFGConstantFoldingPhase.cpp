@@ -829,13 +829,13 @@ private:
             }
 
             case ToThis: {
-                AbstractValue& value = m_state.forNode(node->child1());
-                if (!(value.m_type & ~SpecObject)) {
+                ToThisResult result = isToThisAnIdentity(node->ecmaMode(), m_state.forNode(node->child1()));
+                if (result == ToThisResult::Identity) {
                     node->convertToIdentity();
                     changed = true;
                     break;
                 }
-                if (!(value.m_type & ~SpecOther)) {
+                if (result == ToThisResult::GlobalThis) {
                     node->convertToGetGlobalThis();
                     changed = true;
                     break;

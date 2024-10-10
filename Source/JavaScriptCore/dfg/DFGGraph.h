@@ -487,6 +487,12 @@ public:
         return m_codeBlock->globalObjectFor(codeOrigin);
     }
     
+    JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
+    {
+        JSGlobalObject* object = globalObjectFor(codeOrigin);
+        return object->globalThis();
+    }
+    
     CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)

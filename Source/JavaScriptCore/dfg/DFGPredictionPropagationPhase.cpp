@@ -642,10 +642,81 @@ private:
         }
             
         case ToThis: {
-            if (SpeculatedType child = node->child1()->prediction())
-                changed |= mergePrediction(resultOfToThis(child));
-            else
+            // ToThis in methods for primitive types should speculate primitive types in strict mode.
+            bool isStrictMode = node->ecmaMode().isStrict();
+            if (isStrictMode) {
+                if (node->child1()->shouldSpeculateBoolean()) {
+                    changed |= mergePrediction(SpecBoolean);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateInt32()) {
+                    changed |= mergePrediction(SpecInt32Only);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateInt52()) {
+                    changed |= mergePrediction(SpecInt52Any);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateNumber()) {
+                    changed |= mergePrediction(SpecBytecodeNumber);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateSymbol()) {
+                    changed |= mergePrediction(SpecSymbol);
+                    break;
+                }
+
+#if USE(BIGINT32)
+                if (node->child1()->shouldSpeculateBigInt32()) {
+                    changed |= mergePrediction(SpecBigInt32);
+                    break;
+                }
+#endif
+
+                if (node->child1()->shouldSpeculateHeapBigInt()) {
+                    changed |= mergePrediction(SpecHeapBigInt);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateBigInt()) {
+                    changed |= mergePrediction(SpecBigInt);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateStringIdent()) {
+                    changed |= mergePrediction(SpecStringIdent);
+                    break;
+                }
+
+                if (node->child1()->shouldSpeculateString()) {
+                    changed |= mergePrediction(SpecString);
+                    break;
+                }
+            } else {
+                if (node->child1()->shouldSpeculateString()) {
+                    changed |= mergePrediction(SpecStringObject);
+                    break;
+                }
+            }
+
+            SpeculatedType prediction = node->child1()->prediction();
+            if (isStrictMode)
                 changed |= mergePrediction(node->getHeapPrediction());
+            else if (prediction) {
+                SpeculatedType originalPrediction = prediction;
+                if (prediction & ~SpecObject) {
+                    // Wrapper objects are created only in sloppy mode.
+                    prediction &= SpecObject;
+                    if (originalPrediction & SpecString)
+                        prediction = mergeSpeculations(prediction, SpecStringObject);
+                    prediction = mergeSpeculations(prediction, SpecObjectOther);
+                }
+                changed |= mergePrediction(prediction);
+            }
             break;
         }
             
@@ -1647,17 +1718,6 @@ private:
             break;
 #endif
         }
-    }
-
-    SpeculatedType resultOfToThis(SpeculatedType type)
-    {
-        if (isOtherSpeculation(type))
-            return SpecGlobalProxy;
-
-        if (isStringSpeculation(type))
-            return SpecStringObject;
-
-        return mergeSpeculations(type & ~SpecPrimitive, SpecObject);
     }
 
     SpeculatedType resultOfToPrimitive(SpeculatedType type)

@@ -50,7 +50,6 @@ struct OpInfo {
     explicit OpInfo(Operand op) : m_value(op.asBits()) { }
     explicit OpInfo(CacheableIdentifier identifier) : m_value(static_cast<uint64_t>(identifier.rawBits())) { }
     explicit OpInfo(ECMAMode ecmaMode) : m_value(ecmaMode.value()) { }
-    explicit OpInfo(JSTypeRange range) : m_value(range.rawBits()) { }
     explicit OpInfo(PrivateFieldPutKind putKind) : m_value(putKind.value()) { }
     template<typename EnumType>
     explicit OpInfo(OptionSet<EnumType> optionSet) : m_value(optionSet.toRaw()) { }

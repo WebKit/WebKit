@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Test named 'WebSockets: navigating nested browsing context' specified 2 'cleanup' functions, and 1 failed.
+
 PASS WebSockets: navigating nested browsing context
 

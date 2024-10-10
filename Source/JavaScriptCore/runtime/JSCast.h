@@ -60,10 +60,6 @@ inline To jsCast(JSValue from)
 // The first and last JSType are inclusive
 struct JSTypeRange {
     bool contains(JSType type) const { return first <= type && type <= last; }
-    uint16_t rawBits() const { return (static_cast<uint8_t>(first) << 8) | static_cast<uint8_t>(last); }
-    void dump(PrintStream& out) const { out.print("JSTypeRange { ", first, ", ", last, " }"); }
-
-    static JSTypeRange fromBits(uint16_t bits) { return JSTypeRange { static_cast<JSType>(bits >> 8), static_cast<JSType>(bits & 0xff) }; }
 
     JSType first;
     JSType last;
@@ -171,7 +167,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSModuleEnvironment, JSType::ModuleEnvironmentType, JSType::ModuleEnvironmentType) \
     macro(JSLexicalEnvironment, JSType::LexicalEnvironmentType, JSType::ModuleEnvironmentType) \
     macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
-    macro(JSScope, JSType::GlobalObjectType, JSType::WithScopeType) \
+    macro(JSScope, FirstScopeType, LastScopeType) \
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
     macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
     macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \

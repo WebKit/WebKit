@@ -289,6 +289,7 @@ bytecode/StructureStubClearingWatchpoint.cpp
 bytecode/StructureStubInfo.cpp
 bytecode/StubInfoSummary.cpp
 bytecode/SuperSampler.cpp
+bytecode/ToThisStatus.cpp
 bytecode/TrackedReferences.cpp
 bytecode/UnlinkedCodeBlock.cpp
 bytecode/UnlinkedCodeBlockGenerator.cpp

@@ -63,10 +63,8 @@ PASS !!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set is true
 PASS !!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set is true
 PASS this.__proto__ = [] threw exception TypeError: Cannot set prototype of immutable prototype object.
 PASS ({__proto__: this.__proto__}) instanceof Array is false
-PASS __proto__ = [] threw exception TypeError: Cannot set prototype of immutable prototype object.
-PASS ({__proto__: __proto__}) instanceof Array is false
-PASS __proto__ is Object.getPrototypeOf(globalThis)
-PASS __proto__ = __proto__ is Object.getPrototypeOf(globalThis)
+PASS __proto__ = [] threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
+PASS ({__proto__: __proto__}) instanceof Array threw exception TypeError: undefined is not an object (evaluating '__proto__').
 SyntaxErrors
 PASS ({break}) threw exception SyntaxError: Cannot use the keyword 'break' as a shorthand property name..
 PASS ({case}) threw exception SyntaxError: Cannot use the keyword 'case' as a shorthand property name..

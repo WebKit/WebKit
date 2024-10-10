@@ -2593,7 +2593,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             // Add the constant before exit becomes invalid because we may want to insert (redundant) checks on it in Fixup.
             Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(*kind)));
 
-            Node* thisValue = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* thisValue = addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(getPrediction()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
             // We don't have an existing error string.
             unsigned errorStringIndex = UINT32_MAX;
             Node* object = addToGraph(ToObject, OpInfo(errorStringIndex), OpInfo(SpecNone), thisValue);
@@ -4258,7 +4258,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
         case AsyncIteratorIntrinsic:
         case IteratorIntrinsic: {
             insertChecks();
-            setResult(get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
+            Node* thisNode = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            setResult(addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(prediction), thisNode));
             return CallOptimizationResult::Inlined;
         }
 
@@ -4457,7 +4458,7 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 
     case SpeciesGetterIntrinsic: {
         insertChecks();
-        set(result, thisNode);
+        set(result, addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(prediction), thisNode));
         return true;
     }
 
@@ -6493,7 +6494,25 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         case op_to_this: {
             auto bytecode = currentInstruction->as<OpToThis>();
-            set(bytecode.m_srcDst, addToGraph(ToThis, OpInfo(0), OpInfo(getPredictionWithoutOSRExit()), get(VirtualRegister(bytecode.m_srcDst))));
+            Node* op1 = get(VirtualRegister(bytecode.m_srcDst));
+            auto& metadata = bytecode.metadata(codeBlock);
+            StructureID cachedStructureID = metadata.m_cachedStructureID;
+            Structure* cachedStructure = nullptr;
+            if (cachedStructureID)
+                cachedStructure = cachedStructureID.decode();
+            if (metadata.m_toThisStatus != ToThisOK
+                || !cachedStructure
+                || !cachedStructure->classInfoForCells()->isSubClassOf(JSObject::info())
+                || cachedStructure->classInfoForCells()->isSubClassOf(JSScope::info())
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
+                || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
+                set(bytecode.m_srcDst, addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
+            } else {
+                addToGraph(
+                    CheckStructure,
+                    OpInfo(m_graph.addStructureSet(cachedStructure)),
+                    op1);
+            }
             NEXT_OPCODE(op_to_this);
         }
 
@@ -7272,7 +7291,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_is_cell_with_type: {
             auto bytecode = currentInstruction->as<OpIsCellWithType>();
             Node* value = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(IsCellWithType, OpInfo(JSTypeRange { bytecode.m_firstType, bytecode.m_lastType }), value));
+            set(bytecode.m_dst, addToGraph(IsCellWithType, OpInfo(bytecode.m_type), value));
             NEXT_OPCODE(op_is_cell_with_type);
         }
 
@@ -8528,7 +8547,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     genericBlock = allocateUntargetableBlock();
 
                     Node* isKnownIterFunction = addToGraph(CompareEqPtr, OpInfo(frozenSymbolIteratorFunction), symbolIterator);
-                    Node* isArray = addToGraph(IsCellWithType, OpInfo(JSTypeRange { ArrayType, ArrayType }), get(bytecode.m_iterable));
+                    Node* isArray = addToGraph(IsCellWithType, OpInfo(ArrayType), get(bytecode.m_iterable));
 
                     BranchData* branchData = m_graph.m_branchData.add();
                     branchData->taken = BranchTarget(fastArrayBlock);
@@ -9107,7 +9126,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
                     auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), CacheType::GetByIdSelf });
-                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(data), OpInfo(prediction), weakJSConstant(globalObject->globalThis())));
+                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(data), OpInfo(prediction), get(bytecode.m_scope)));
                     break;
                 }
 
@@ -9292,7 +9311,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.numVariants() != 1
                     || status[0].kind() != PutByVariant::Replace
                     || status[0].structure().size() != 1) {
-                    addToGraph(PutById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(bytecode.m_getPutInfo.ecmaMode()), weakJSConstant(globalObject->globalThis()), get(bytecode.m_value));
+                    addToGraph(PutById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(bytecode.m_getPutInfo.ecmaMode()), get(bytecode.m_scope), get(bytecode.m_value));
                     break;
                 }
                 Node* base = weakJSConstant(globalObject);

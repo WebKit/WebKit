@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Oleksandr Skachkov <gskackhov@gmail.com>.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,32 +20,53 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
-#include "AsyncIteratorPrototype.h"
-
-#include "JSCBuiltins.h"
-#include "JSCInlines.h"
+#include "ToThisStatus.h"
 
 namespace JSC {
 
-const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
-
-static JSC_DECLARE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator);
-
-void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+ToThisStatus merge(ToThisStatus a, ToThisStatus b)
 {
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-    JSFunction* asyncIteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.asyncIterator]"_s, asyncIteratorProtoFuncAsyncIterator, ImplementationVisibility::Public, AsyncIteratorIntrinsic);
-    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-}
-
-JSC_DEFINE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
+    switch (a) {
+    case ToThisOK:
+        return b;
+    case ToThisConflicted:
+        return ToThisConflicted;
+    case ToThisClearedByGC:
+        if (b == ToThisConflicted)
+            return ToThisConflicted;
+        return ToThisClearedByGC;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+    return ToThisConflicted;
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, ToThisStatus status)
+{
+    switch (status) {
+    case ToThisOK:
+        out.print("OK");
+        return;
+    case ToThisConflicted:
+        out.print("Conflicted");
+        return;
+    case ToThisClearedByGC:
+        out.print("ClearedByGC");
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
+

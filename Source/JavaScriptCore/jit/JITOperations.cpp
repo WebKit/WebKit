@@ -4468,8 +4468,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    PropertySlot slot(wrapGlobalObject(environment), PropertySlot::InternalMethodType::Get);
-    OPERATION_RETURN(scope, JSValue::encode(environment->getPropertySlot(globalObject, ident, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
+    OPERATION_RETURN(scope, JSValue::encode(environment->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
         if (!found) {
             if (getPutInfo.resolveMode() == ThrowIfNotFound)
                 throwException(globalObject, scope, createUndefinedVariableError(globalObject, ident));
@@ -4540,7 +4539,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObjec
         OPERATION_RETURN(scope);
     }
 
-    PutPropertySlot slot(wrapGlobalObject(jsScope), getPutInfo.ecmaMode().isStrict(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
+    PutPropertySlot slot(jsScope, getPutInfo.ecmaMode().isStrict(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     jsScope->methodTable()->put(jsScope, globalObject, ident, value, slot);
     
     OPERATION_RETURN_IF_EXCEPTION(scope);

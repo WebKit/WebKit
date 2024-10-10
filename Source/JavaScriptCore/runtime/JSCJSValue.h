@@ -357,7 +357,7 @@ public:
     bool putByIndex(JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
 
     JSValue getPrototype(JSGlobalObject*) const;
-    JSObject* toSloppyModeThis(JSGlobalObject*) const;
+    JSValue toThis(JSGlobalObject*, ECMAMode) const;
 
     static bool equal(JSGlobalObject*, JSValue v1, JSValue v2);
     static bool equalSlowCase(JSGlobalObject*, JSValue v1, JSValue v2);
@@ -547,6 +547,7 @@ private:
     JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*, bool returnEmptyStringOnError) const;
     JS_EXPORT_PRIVATE WTF::String toWTFStringSlowCase(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE JSObject* toObjectSlowCase(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSValue toThisSloppySlowCase(JSGlobalObject*) const;
 
     EncodedValueDescriptor u;
 };

@@ -735,7 +735,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
     if (callData.type == CallData::Type::None)
         return nullptr;
 
-    JSValueRef result = toRef(globalObject, profiledCall(globalObject, ProfilingReason::API, jsObject, callData, wrapGlobalObject(jsThisObject), argList));
+    JSValueRef result = toRef(globalObject, profiledCall(globalObject, ProfilingReason::API, jsObject, callData, jsThisObject, argList));
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         result = nullptr;
     return result;

@@ -46,7 +46,7 @@ EncodedJSValue APICallbackFunction::callImpl(JSGlobalObject* globalObject, CallF
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSContextRef execRef = toRef(globalObject);
     JSObjectRef functionRef = toRef(callFrame->jsCallee());
-    JSObjectRef thisObjRef = toRef(callFrame->thisValue().toSloppyModeThis(globalObject));
+    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(globalObject, ECMAMode::sloppy())));
 
     int argumentCount = static_cast<int>(callFrame->argumentCount());
     Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {

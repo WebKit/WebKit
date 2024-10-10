@@ -1,4 +1,3 @@
-//@ skip if not $jitTests
 //@ runDefault("--useConcurrentJIT=false")
 
 function assert(a) {
@@ -20,5 +19,5 @@ for (let i = 0; i < 10000; i++) {
     assert(foo.apply(300) === "number");
 }
 
-assert(numberOfDFGCompiles(foo) === 1);
+assert(numberOfDFGCompiles(foo) > 1);
 

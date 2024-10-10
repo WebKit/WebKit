@@ -369,12 +369,13 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
             tag = generator.move(generator.newTemporary(), local);
         } else {
             tag = generator.newTemporary();
-            base = generator.emitLoad(generator.newTemporary(), jsUndefined());
+            base = generator.newTemporary();
 
             JSTextPosition newDivot = divotStart() + identifier.length();
             generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
-            RefPtr<RegisterID> temp = generator.newTemporary();
-            generator.emitGetFunctionFromScope(tag.get(), var, base.get(), temp.get());
+            generator.move(base.get(), generator.emitResolveScope(base.get(), var));
+            generator.emitGetFromScope(tag.get(), base.get(), var, ThrowIfNotFound);
+            generator.emitTDZCheckIfNecessary(var, tag.get(), nullptr);
         }
     } else if (m_tag->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(m_tag);
@@ -1270,14 +1271,18 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
         func = generator.move(generator.tempDestination(dst), local.get());
     } else
         func = generator.newTemporary();
-    RefPtr<RegisterID> temp = generator.newTemporary();
     CallArguments callArguments(generator, m_args);
-    generator.emitLoad(callArguments.thisRegister(), jsUndefined());
 
-    if (!local) {
+    if (local)
+        generator.emitLoad(callArguments.thisRegister(), jsUndefined());
+    else {
         JSTextPosition newDivot = divotStart() + 4;
         generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
-        generator.emitGetFunctionFromScope(func.get(), var, callArguments.thisRegister(), temp.get());
+        generator.move(
+            callArguments.thisRegister(),
+            generator.emitResolveScope(callArguments.thisRegister(), var));
+        generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
+        generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     }
 
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
@@ -1392,6 +1397,8 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
             return generator.move(dst, generator.emitLoad(nullptr, jsUndefined()));
     }
 
+    ExpectedFunction expectedFunction = generator.expectedFunctionForIdentifier(m_ident);
+
     Variable var = generator.variable(m_ident);
     RefPtr<RegisterID> local = var.local();
     RefPtr<RegisterID> func;
@@ -1403,17 +1410,21 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
             func = local;
     } else
         func = generator.tempDestination(dst);
-    RefPtr<RegisterID> temp = generator.newTemporary();
     CallArguments callArguments(generator, m_args);
-    generator.emitLoad(callArguments.thisRegister(), jsUndefined());
 
-    // We expect that if the function is in a local variable, then it's not one of our built-in constructors.
-    ExpectedFunction expectedFunction = NoExpectedFunction;
-    if (!local) {
-        expectedFunction = generator.expectedFunctionForIdentifier(m_ident);
+    if (local) {
+        generator.emitLoad(callArguments.thisRegister(), jsUndefined());
+        // This passes NoExpectedFunction because we expect that if the function is in a
+        // local variable, then it's not one of our built-in constructors.
+        expectedFunction = NoExpectedFunction;
+    } else {
         JSTextPosition newDivot = divotStart() + m_ident.length();
         generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
-        generator.emitGetFunctionFromScope(func.get(), var, callArguments.thisRegister(), temp.get());
+        generator.move(
+            callArguments.thisRegister(),
+            generator.emitResolveScope(callArguments.thisRegister(), var));
+        generator.emitGetFromScope(func.get(), callArguments.thisRegister(), var, ThrowIfNotFound);
+        generator.emitTDZCheckIfNecessary(var, func.get(), nullptr);
     }
 
     RefPtr<RegisterID> returnValue = generator.finalDestination(dst, func.get());
@@ -2197,6 +2208,15 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toObject(BytecodeGenerator& ge
         return generator.move(dst, generator.emitToObject(temp.get(), src.get(), message));
     }
     return generator.move(dst, generator.emitToObject(temp.get(), src.get(), generator.vm().propertyNames->emptyIdentifier));
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toThis(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitToThis(src.get()));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_idWithProfile(BytecodeGenerator& generator, RegisterID* dst)

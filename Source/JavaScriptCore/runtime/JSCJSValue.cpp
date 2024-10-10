@@ -164,6 +164,20 @@ JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
     return nullptr;
 }
 
+JSValue JSValue::toThisSloppySlowCase(JSGlobalObject* globalObject) const
+{
+    if (isInt32() || isDouble())
+        return constructNumber(globalObject, asValue());
+    if (isTrue() || isFalse())
+        return constructBooleanFromImmediateBoolean(globalObject, asValue());
+#if USE(BIGINT32)
+    if (isBigInt32())
+        return BigIntObject::create(globalObject->vm(), globalObject, *this);
+#endif
+    ASSERT(isCell());
+    return toObject(globalObject);
+}
+
 JSObject* JSValue::synthesizePrototype(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();

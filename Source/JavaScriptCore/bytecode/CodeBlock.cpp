@@ -482,6 +482,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTryGetById)
         LINK(OpGetByIdDirect)
         LINK(OpGetByValWithThis)
+        LINK(OpToThis)
 
         LINK(OpGetById)
         LINK(OpGetLength)
@@ -1485,6 +1486,17 @@ void CodeBlock::finalizeLLIntInlineCaches()
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt check_private_brand transition.");
             metadata.m_structureID = StructureID();
             metadata.m_brand.clear();
+        });
+
+        m_metadata->forEach<OpToThis>([&] (auto& metadata) {
+            if (!metadata.m_cachedStructureID || vm.heap.isMarked(metadata.m_cachedStructureID.decode()))
+                return;
+            if (Options::verboseOSR()) {
+                Structure* structure = metadata.m_cachedStructureID.decode();
+                dataLogF("Clearing LLInt to_this with structure %p.\n", structure);
+            }
+            metadata.m_cachedStructureID = StructureID();
+            metadata.m_toThisStatus = merge(metadata.m_toThisStatus, ToThisClearedByGC);
         });
 
         auto clearCachedCalleeIfNecessary = [&](auto& metadata, ASCIILiteral name) {

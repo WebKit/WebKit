@@ -4791,7 +4791,10 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
 
         Jump isNotCell = branchIfNotCell(valueRegs);
 
-        isCellWithType(valueRegs.payloadGPR(), node->queriedType(), resultGPR);
+        compare8(Equal,
+            Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()),
+            TrustedImm32(node->queriedType()),
+            resultGPR);
         blessBoolean(resultGPR);
         Jump done = jump();
 
@@ -4810,7 +4813,10 @@ void SpeculativeJIT::compileIsCellWithType(Node* node)
         GPRReg cellGPR = cell.gpr();
         GPRReg resultGPR = result.gpr();
 
-        isCellWithType(cellGPR, node->queriedType(), resultGPR);
+        compare8(Equal,
+            Address(cellGPR, JSCell::typeInfoTypeOffset()),
+            TrustedImm32(node->queriedType()),
+            resultGPR);
         blessBoolean(resultGPR);
         blessedBooleanResult(resultGPR, node);
         return;
@@ -14197,29 +14203,35 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
 void SpeculativeJIT::compileToThis(Node* node)
 {
     ASSERT(node->child1().useKind() == UntypedUse);
+    JSValueOperand thisValue(this, node->child1());
+    JSValueRegsTemporary temp(this);
 
-    JSValueOperand value(this, node->child1());
-    GPRTemporary scratch(this);
-    GPRTemporary result(this, Reuse, value);
+    JSValueRegs thisValueRegs = thisValue.jsValueRegs();
+    JSValueRegs tempRegs = temp.regs();
 
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg scratchGPR = scratch.gpr();
-    GPRReg resultGPR = result.gpr();
-
-    Jump isCell = branchIfCell(valueRegs);
     JumpList slowCases;
-    slowCases.append(branchIfNotOther(valueRegs, scratchGPR));
-    loadLinkableConstant(LinkableConstant::globalObject(*this, node), scratchGPR);
-    loadPtr(Address(scratchGPR, JSGlobalObject::offsetOfGlobalThis()), resultGPR);
-    Jump done = jump();
+    slowCases.append(branchIfNotCell(thisValueRegs));
+    slowCases.append(branchIfNotObject(thisValueRegs.payloadGPR()));
 
-    isCell.link(this);
-    slowCases.append(branchIfNotObject(valueRegs.payloadGPR()));
-    move(valueRegs.payloadGPR(), resultGPR);
+    moveValueRegs(thisValueRegs, tempRegs);
+    auto notScope = branchIfNotType(thisValueRegs.payloadGPR(), JSC::JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) });
+    if (node->ecmaMode().isStrict())
+        moveTrustedValue(jsUndefined(), tempRegs);
+    else {
+        loadLinkableConstant(LinkableConstant::globalObject(*this, node), tempRegs.payloadGPR());
+        loadPtr(Address(tempRegs.payloadGPR(), JSGlobalObject::offsetOfGlobalThis()), tempRegs.payloadGPR());
+#if USE(JSVALUE32_64)
+        move(TrustedImm32(JSValue::CellTag), tempRegs.tagGPR());
+#endif
+    }
 
-    done.link(this);
-    addSlowPathGenerator(slowPathCall(slowCases, this, operationToObject, resultGPR, LinkableConstant::globalObject(*this, node), valueRegs, TrustedImmPtr(nullptr)));
-    cellResult(resultGPR, node);
+    auto function = &operationToThis;
+    if (node->ecmaMode().isStrict())
+        function = operationToThisStrict;
+    addSlowPathGenerator(slowPathCall(slowCases, this, function, tempRegs, LinkableConstant::globalObject(*this, node), thisValueRegs));
+
+    notScope.link(this);
+    jsValueResult(tempRegs, node);
 }
 
 void SpeculativeJIT::compileOwnPropertyKeysVariant(Node* node)

@@ -50,7 +50,7 @@ JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, JSContextRef ctx, JSObj
     // evaluate sets "this" to the global object if it is NULL
     JSGlobalObject* globalObject = toJS(ctx);
     NakedPtr<Exception> evaluationException;
-    JSValue returnValue = profiledEvaluate(globalObject, ProfilingReason::API, source, jsThisObject ? wrapGlobalObject(jsThisObject) : JSValue(), evaluationException);
+    JSValue returnValue = profiledEvaluate(globalObject, ProfilingReason::API, source, jsThisObject, evaluationException);
 
     if (evaluationException) {
         if (exception)

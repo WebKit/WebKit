@@ -273,8 +273,28 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_this)
 {
     BEGIN();
     auto bytecode = pc->as<OpToThis>();
+    auto& metadata = bytecode.metadata(codeBlock);
     JSValue v1 = GET(bytecode.m_srcDst).jsValue();
-    JSObject* value = v1.toSloppyModeThis(globalObject);
+    if (v1.isCell()) {
+        StructureID myStructureID = v1.asCell()->structureID();
+        StructureID otherStructureID = metadata.m_cachedStructureID;
+        if (myStructureID != otherStructureID) {
+            if (otherStructureID)
+                metadata.m_toThisStatus = ToThisConflicted;
+            metadata.m_cachedStructureID = myStructureID;
+            vm.writeBarrier(codeBlock, myStructureID.decode());
+        }
+    } else {
+        metadata.m_toThisStatus = ToThisConflicted;
+        metadata.m_cachedStructureID = StructureID();
+    }
+    // Note: We only need to do this value profiling here on the slow path. The fast path
+    // just returns the input to to_this if the structure check succeeds. If the structure
+    // check succeeds, doing value profiling here is equivalent to doing it with a potentially
+    // different object that still has the same structure on the fast path since it'll produce
+    // the same SpeculatedType. Therefore, we don't need to worry about value profiling on the
+    // fast path.
+    auto value = v1.toThis(globalObject, bytecode.m_ecmaMode);
     RETURN_WITH_PROFILING_CUSTOM(bytecode.m_srcDst, value, PROFILE_VALUE(value));
 }
 

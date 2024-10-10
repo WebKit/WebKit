@@ -80,6 +80,8 @@ JSC_DECLARE_JIT_OPERATION(operationCreatePromise, JSCell*, (JSGlobalObject*, JSO
 JSC_DECLARE_JIT_OPERATION(operationCreateInternalPromise, JSCell*, (JSGlobalObject*, JSObject* constructor));
 JSC_DECLARE_JIT_OPERATION(operationCreateGenerator, JSCell*, (JSGlobalObject*, JSObject* constructor));
 JSC_DECLARE_JIT_OPERATION(operationCreateAsyncGenerator, JSCell*, (JSGlobalObject*, JSObject* constructor));
+JSC_DECLARE_JIT_OPERATION(operationToThis, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1));
+JSC_DECLARE_JIT_OPERATION(operationToThisStrict, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationValueMod, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2));
 JSC_DECLARE_JIT_OPERATION(operationValueBitNot, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationValueBitAnd, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2));
