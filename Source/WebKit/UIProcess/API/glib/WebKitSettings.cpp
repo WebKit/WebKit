@@ -1105,7 +1105,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             "enable-webaudio",
             _("Enable WebAudio"),
             _("Whether WebAudio content should be handled"),
+#if ENABLE(WEB_AUDIO)
             FEATURE_DEFAULT(WebAudioEnabled),
+#else
+            FALSE,
+#endif
             readWriteConstructParamFlags);
 
     /**
