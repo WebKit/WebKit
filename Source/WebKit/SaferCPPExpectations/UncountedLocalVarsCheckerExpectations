@@ -38,7 +38,6 @@ UIProcess/BrowsingContextGroup.cpp
 UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm
 UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm
 UIProcess/Cocoa/UIDelegate.mm
-UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Gamepad/UIGamepadProvider.cpp
 UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp

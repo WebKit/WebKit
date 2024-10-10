@@ -186,6 +186,11 @@ RefPtr<WebFrameProxy> ProvisionalPageProxy::protectedMainFrame() const
     return m_mainFrame.copyRef();
 }
 
+Ref<BrowsingContextGroup> ProvisionalPageProxy::protectedBrowsingContextGroup()
+{
+    return m_browsingContextGroup;
+}
+
 void ProvisionalPageProxy::processDidTerminate()
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "processDidTerminate:");

@@ -619,7 +619,7 @@ void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const 
         return;
 
     m_validationBubble = protectedPageClient()->createValidationBubble(message, { protectedPreferences()->minimumFontSize() });
-    m_validationBubble->showRelativeTo(anchorClientRect);
+    RefPtr { m_validationBubble }->showRelativeTo(anchorClientRect);
 }
 
 NSView *WebPageProxy::inspectorAttachmentView()

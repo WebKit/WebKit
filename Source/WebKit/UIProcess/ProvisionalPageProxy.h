@@ -105,6 +105,7 @@ public:
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    Ref<BrowsingContextGroup> protectedBrowsingContextGroup();
     WebProcessProxy& process();
     Ref<WebProcessProxy> protectedProcess();
     ProcessSwapRequestedByClient processSwapRequestedByClient() const { return m_processSwapRequestedByClient; }

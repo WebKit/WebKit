@@ -146,7 +146,7 @@ constexpr IntSize iconSize = IntSize(400, 400);
 
 void WebPageProxy::didGeneratePageLoadTiming(const WebPageLoadTiming& timing)
 {
-    if (auto* state = NavigationState::fromWebPage(*this))
+    if (RefPtr state = NavigationState::fromWebPage(*this))
         state->didGeneratePageLoadTiming(timing);
 }
 
@@ -207,14 +207,14 @@ void WebPageProxy::saveRecentSearches(IPC::Connection& connection, const String&
 {
     MESSAGE_CHECK(!name.isNull(), connection);
 
-    m_websiteDataStore->saveRecentSearches(name, searchItems);
+    protectedWebsiteDataStore()->saveRecentSearches(name, searchItems);
 }
 
 void WebPageProxy::loadRecentSearches(IPC::Connection& connection, const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler({ }));
 
-    m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
+    protectedWebsiteDataStore()->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
 std::optional<IPC::AsyncReplyID> WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName, CompletionHandler<void()>&& completionHandler, std::optional<FrameIdentifier> frameID)
@@ -488,7 +488,7 @@ WebPageProxy::Internals::~Internals() = default;
 
 std::optional<SharedPreferencesForWebProcess> WebPageProxy::Internals::sharedPreferencesForWebPaymentMessages() const
 {
-    return page->legacyMainFrameProcess().sharedPreferencesForWebProcess();
+    return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }
 
 IPC::Connection* WebPageProxy::Internals::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
@@ -508,7 +508,7 @@ void WebPageProxy::Internals::getPaymentCoordinatorEmbeddingUserAgent(WebPagePro
 
 CocoaWindow *WebPageProxy::Internals::paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const
 {
-    RefPtr pageClient = page->pageClient();
+    RefPtr pageClient = protectedPage()->pageClient();
     return pageClient ? pageClient->platformWindow() : nullptr;
 }
 
@@ -675,12 +675,12 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoPresentationManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
+    RefPtr { m_videoPresentationManager }->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
 
-        auto presentationManager = protectedThis->m_videoPresentationManager;
+        RefPtr presentationManager = protectedThis->m_videoPresentationManager;
         if (!presentationManager)
             return;
         if (!imageHandle)
@@ -1467,7 +1467,7 @@ bool WebPageProxy::tryToSendCommandToActiveControlledVideo(PlatformMediaSession:
     if (!hasActiveVideoForControlsManager())
         return false;
 
-    WeakPtr model = m_playbackSessionManager->controlsManagerInterface()->playbackSessionModel();
+    WeakPtr model = protectedPlaybackSessionManager()->controlsManagerInterface()->playbackSessionModel();
     if (!model)
         return false;
 

@@ -2238,12 +2238,6 @@ WebProcessPool* WebProcessProxy::processPoolIfExists() const
     return m_processPool.get();
 }
 
-WebProcessPool& WebProcessProxy::processPool() const
-{
-    ASSERT(m_processPool);
-    return *m_processPool.get();
-}
-
 Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
 {
     return processPool();

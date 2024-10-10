@@ -971,4 +971,10 @@ void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message, ShouldSkip
     }
 }
 
+inline WebProcessPool& WebProcessProxy::processPool() const
+{
+    ASSERT(m_processPool);
+    return *m_processPool.get();
+}
+
 } // namespace WebKit

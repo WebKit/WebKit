@@ -184,7 +184,7 @@ public:
     void removeSuspendedPageProxy(SuspendedPageProxy&);
 
     WebProcessPool* processPoolIfExists() const;
-    WebProcessPool& processPool() const;
+    inline WebProcessPool& processPool() const; // This function is implemented in WebProcessPool.h.
     Ref<WebProcessPool> protectedProcessPool() const;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }

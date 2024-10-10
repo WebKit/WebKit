@@ -638,7 +638,7 @@ public:
     bool shouldEnableLockdownMode() const;
 
     bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
-    bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUAndNetworkProcessPreferencesAs(page.configuration()); }
+    bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUAndNetworkProcessPreferencesAs(Ref { page }->configuration()); }
 
     void processIsNoLongerAssociatedWithPage(WebProcessProxy&);
 
@@ -728,6 +728,7 @@ public:
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     PlaybackSessionManagerProxy* playbackSessionManager();
+    RefPtr<PlaybackSessionManagerProxy> protectedPlaybackSessionManager();
     VideoPresentationManagerProxy* videoPresentationManager();
     void setMockVideoPresentationModeEnabled(bool);
 #endif
@@ -3184,6 +3185,8 @@ private:
     void dropOpeningAppLinkActivity();
     bool hasValidOpeningAppLinkActivity() const;
 #endif
+
+    Ref<BrowsingContextGroup> protectedBrowsingContextGroup() const;
 
     UniqueRef<Internals> m_internals;
     Identifier m_identifier;

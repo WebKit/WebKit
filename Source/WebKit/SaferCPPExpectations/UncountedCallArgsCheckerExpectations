@@ -275,7 +275,6 @@ UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm
 UIProcess/Cocoa/WKEditCommand.mm
 UIProcess/Cocoa/WKShareSheet.mm
 UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
-UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
@@ -360,7 +359,6 @@ UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebDateTimePickerMac.mm
-UIProcess/mac/WebPageProxyMac.mm
 UIProcess/mac/WebViewImpl.mm
 WebProcess/Automation/WebAutomationDOMWindowObserver.cpp
 WebProcess/Automation/WebAutomationSessionProxy.cpp

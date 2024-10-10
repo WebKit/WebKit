@@ -245,11 +245,6 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
-void PageConfiguration::setRelatedPage(WeakPtr<WebPageProxy>&& relatedPage)
-{
-    m_data.relatedPage = WTFMove(relatedPage);
-}
-
 WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
 {
     return m_data.pageToCloneSessionStorageFrom.get();

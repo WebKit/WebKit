@@ -150,7 +150,7 @@ public:
     void setPreferences(RefPtr<WebKit::WebPreferences>&&);
 
     WebKit::WebPageProxy* relatedPage() const;
-    void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&&);
+    void setRelatedPage(WeakPtr<WebKit::WebPageProxy>&& relatedPage) { m_data.relatedPage = WTFMove(relatedPage); }
 
     WebKit::WebPageProxy* pageToCloneSessionStorageFrom() const;
     void setPageToCloneSessionStorageFrom(WeakPtr<WebKit::WebPageProxy>&&);
