@@ -596,8 +596,12 @@ void PluginView::setParent(ScrollView* scrollView)
 {
     Widget::setParent(scrollView);
 
-    if (scrollView)
+    if (scrollView) {
         initializePlugin();
+#if PLATFORM(IOS_FAMILY)
+        protectedWebPage()->didInitializePlugin();
+#endif
+    }
 }
 
 unsigned PluginView::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)

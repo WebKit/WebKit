@@ -727,6 +727,11 @@ public:
 
 #if ENABLE(PDF_PLUGIN)
     void setPluginScaleFactor(double scaleFactor, WebCore::IntPoint origin);
+
+#if PLATFORM(IOS_FAMILY)
+    void didInitializePlugin();
+#endif
+
 #endif
 
     void didScalePage(double scale, const WebCore::IntPoint& origin);
