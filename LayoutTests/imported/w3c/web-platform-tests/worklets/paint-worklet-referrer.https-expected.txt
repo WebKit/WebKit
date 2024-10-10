@@ -1,21 +1,21 @@
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
 PASS Importing a same-origin script from a page that has "no-referrer" referrer policy should not send referrer.
 PASS Importing a remote-origin script from a page that has "no-referrer" referrer policy should not send referrer.

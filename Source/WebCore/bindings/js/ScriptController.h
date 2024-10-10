@@ -116,13 +116,13 @@ public:
 
     static void initializeMainThread();
 
-    void loadModuleScriptInWorld(LoadableModuleScript&, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&&, DOMWrapperWorld&);
-    void loadModuleScript(LoadableModuleScript&, const URL&, Ref<JSC::ScriptFetchParameters>&&);
+    void loadModuleScriptInWorld(LoadableModuleScript&, Ref<JSC::ScriptFetchParameters>&&, DOMWrapperWorld&);
+    void loadModuleScript(LoadableModuleScript&, Ref<JSC::ScriptFetchParameters>&&);
     void loadModuleScriptInWorld(LoadableModuleScript&, const ScriptSourceCode&, DOMWrapperWorld&);
     void loadModuleScript(LoadableModuleScript&, const ScriptSourceCode&);
 
-    JSC::JSValue linkAndEvaluateModuleScriptInWorld(LoadableModuleScript& , DOMWrapperWorld&);
-    JSC::JSValue linkAndEvaluateModuleScript(LoadableModuleScript&);
+    void evaluateModuleScriptInWorld(LoadableModuleScript&, DOMWrapperWorld&);
+    void evaluateModuleScript(LoadableModuleScript&);
 
     JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, DOMWrapperWorld&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
     JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);

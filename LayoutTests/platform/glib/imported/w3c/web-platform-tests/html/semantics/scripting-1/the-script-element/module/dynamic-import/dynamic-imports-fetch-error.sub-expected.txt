@@ -1,9 +1,6 @@
 CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS import() must reject when there is a wrong MIME type
 PASS import() must reject with a different error object for each import when there is a wrong MIME type
@@ -21,5 +18,5 @@ PASS import() must reject when there is a cross-origin module (without CORS)
 PASS import() must reject with a different error object for each import when there is a cross-origin module (without CORS)
 PASS import() must reject when there is a cross-origin module dependency (without CORS)
 PASS import() must reject with a different error object for each import when there is a cross-origin module dependency (without CORS)
-FAIL import() fetch errors must be cached assert_unreached: Should have rejected: Second import() must be rejected, because the result of the first import() is cached in the module map Reached unreachable code
+PASS import() fetch errors must be cached
 

@@ -1145,9 +1145,6 @@ test/language/expressions/class/elements/nested-direct-eval-err-contains-argumen
 test/language/expressions/class/elements/nested-private-direct-eval-err-contains-arguments.js:
   default: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a SyntaxError but got a ReferenceError'
-test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
@@ -1189,8 +1186,6 @@ test/language/identifiers/start-unicode-16.0.0-escaped.js:
 test/language/identifiers/start-unicode-16.0.0.js:
   default: "SyntaxError: Invalid character '\\u1c89'"
   strict mode: "SyntaxError: Invalid character '\\u1c89'"
-test/language/module-code/top-level-await/async-module-does-not-block-sibling-modules.js:
-  module: 'Test262Error: Expected SameValue(«true», «false») to be true'
 test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'

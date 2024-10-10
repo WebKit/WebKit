@@ -1,27 +1,27 @@
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
 
 FAIL A remote-origin worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
 FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"

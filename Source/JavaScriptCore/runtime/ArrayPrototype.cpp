@@ -1746,7 +1746,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFastFillWithEmpty, (JSGlobalOb
     return JSValue::encode(jsUndefined());
 }
 
-JSC_DEFINE_HOST_FUNCTION(arrayPrototPrivateFuncArraySpeciesWatchpointIsValid, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncArraySpeciesWatchpointIsValid, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame->argumentCount() == 1);
 
@@ -1757,6 +1757,13 @@ JSC_DEFINE_HOST_FUNCTION(arrayPrototPrivateFuncArraySpeciesWatchpointIsValid, (J
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsBoolean(isValidSpecies));
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncArrayPop, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    ASSERT(callFrame->argumentCount() == 1);
+    JSArray* array = jsCast<JSArray*>(callFrame->uncheckedArgument(0));
+    return JSValue::encode(array->pop(globalObject));
 }
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, CallFrame* callFrame))

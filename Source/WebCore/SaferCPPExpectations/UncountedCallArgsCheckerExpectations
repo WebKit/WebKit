@@ -801,7 +801,6 @@ bindings/js/JSElementCustom.cpp
 bindings/js/JSElementInternalsCustom.cpp
 bindings/js/JSEventListener.cpp
 bindings/js/JSEventTargetCustom.cpp
-bindings/js/JSExecState.h
 bindings/js/JSFetchEventCustom.cpp
 bindings/js/JSHTMLCanvasElementCustom.cpp
 bindings/js/JSHTMLElementCustom.cpp

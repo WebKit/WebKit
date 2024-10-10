@@ -112,7 +112,7 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     auto result = m_workerMap.add(proxy->identifier(), proxy.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    proxy->thread().start([](const String& /*exceptionMessage*/) { });
+    proxy->thread().start();
 }
 
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, String&& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)

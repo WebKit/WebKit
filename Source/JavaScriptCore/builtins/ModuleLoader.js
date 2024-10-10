@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,570 +23,670 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://whatwg.github.io/loader/#loader-object
-// Module Loader has several hooks that can be customized by the platform.
-// For example, the [[Fetch]] hook can be provided by the JavaScriptCore shell
-// as fetching the payload from the local file system.
-// Currently, there are 4 hooks.
-//    1. Loader.resolve
-//    2. Loader.fetch
-
+@alwaysInline
 @linkTimeConstant
-function setStateToMax(entry, newState)
+function ensureImportMapsLoaded(callback)
 {
-    // https://whatwg.github.io/loader/#set-state-to-max
-
     "use strict";
 
-    if (entry.state < newState)
-        entry.state = newState;
+    var status = @importMapStatus();
+    return status === @undefined ? callback() : status.then(callback);
 }
 
-@linkTimeConstant
-function newRegistryEntry(key)
+@alwaysInline
+@visibility=PrivateRecursive
+function getModuleMapEntry(key, moduleType)
 {
-    // https://whatwg.github.io/loader/#registry
-    //
-    // Each registry entry becomes one of the 5 states.
-    // 1. Fetch
-    //     Ready to fetch (or now fetching) the resource of this module.
-    //     Typically, we fetch the source code over the network or from the file system.
-    //     a. If the status is Fetch and there is no entry.fetch promise, the entry is ready to fetch.
-    //     b. If the status is Fetch and there is the entry.fetch promise, the entry is just fetching the resource.
-    //
-    // 2. Instantiate (AnalyzeModule)
-    //     Ready to instantiate (or now instantiating) the module record from the fetched
-    //     source code.
-    //     Typically, we parse the module code, extract the dependencies and binding information.
-    //     a. If the status is Instantiate and there is no entry.instantiate promise, the entry is ready to instantiate.
-    //     b. If the status is Instantiate and there is the entry.fetch promise, the entry is just instantiating
-    //        the module record.
-    //
-    // 3. Satisfy
-    //     Ready to request the dependent modules (or now requesting & resolving).
-    //     Without this state, the current draft causes infinite recursion when there is circular dependency.
-    //     a. If the status is Satisfy and there is no entry.satisfy promise, the entry is ready to resolve the dependencies.
-    //     b. If the status is Satisfy and there is the entry.satisfy promise, the entry has resolved the dependencies.
-    //
-    // 4. Link
-    //     Ready to link the module with the other modules.
-    //     Linking means that the module imports and exports the bindings from/to the other modules.
-    //
-    // 5. Ready
-    //     The module is linked, so the module is ready to be executed.
-    //
-    // Each registry entry has the 4 promises; "fetch", "instantiate" and "satisfy".
-    // They are assigned when starting the each phase. And they are fulfilled when the each phase is completed.
-    //
-    // In the current module draft, linking will be performed after the whole modules are instantiated and the dependencies are resolved.
-    // And execution is also done after the all modules are linked.
-    //
-    // TODO: We need to exploit the way to execute the module while fetching non-related modules.
-    // One solution; introducing the ready promise chain to execute the modules concurrently while keeping
-    // the execution order.
-
     "use strict";
 
-    return {
-        key: key,
-        state: @ModuleFetch,
-        fetch: @undefined,
-        instantiate: @undefined,
-        satisfy: @undefined,
-        isSatisfied: false,
-        dependencies: [], // To keep the module order, we store the module keys in the array.
-        module: @undefined, // JSModuleRecord
-        linkError: @undefined,
-        linkSucceeded: true,
-        evaluated: false,
-        then: @undefined,
-        isAsync: false,
-    };
+    if (moduleType === @ModuleTypeJavaScript)
+        return this.moduleMap.@get(key);
+
+    for (var i = 0, length = this.nonJSModuleArray.length; i < length; i++) {
+        var entry = this.nonJSModuleArray[i];
+        if (entry.key === key && entry.moduleType === moduleType)
+            return entry;
+    }
 }
 
 @visibility=PrivateRecursive
-function ensureRegistered(key)
+function ensureModuleMapEntry(key, moduleType)
 {
-    // https://whatwg.github.io/loader/#ensure-registered
-
     "use strict";
 
-    var entry = this.registry.@get(key);
+    var entry = this.getModuleMapEntry(key, moduleType);
     if (entry)
         return entry;
 
-    entry = @newRegistryEntry(key);
-    this.registry.@set(key, entry);
+    // https://tc39.es/ecma262/#cyclic-module-record
+    entry = {
+        key,
+        moduleType,
+        status: @ModuleStatusNew,
+        errorToRethrow: null,
+        fetchAndParsePromise: null,
+        moduleRecord: null,
+        evaluationError: null,
+        dfsIndex: -1,
+        dfsAncestorIndex: -1,
+        requestedModules: [],
+        requestedModuleParameters: null,
+        loadedModules: null,
+        cycleRoot: null,
+        hasTLA: false, // has top-level `await`
+        asyncEvaluation: 0, // disguises as boolean
+        asyncEvaluationWasEverTrue: false, // debug-only
+        topLevelCapability: null,
+        asyncParentModules: [],
+        pendingAsyncDependencies: -1,
+        __proto__: null,
+    };
 
-    return entry;
-}
-
-@linkTimeConstant
-function forceFulfillPromise(promise, value)
-{
-    "use strict";
-
-    @assert(@isPromise(promise));
-
-    if ((@getPromiseInternalField(promise, @promiseFieldFlags) & @promiseStateMask) === @promiseStatePending)
-        @fulfillPromise(promise, value);
-}
-
-@linkTimeConstant
-function fulfillFetch(entry, source)
-{
-    // https://whatwg.github.io/loader/#fulfill-fetch
-
-    "use strict";
-
-    if (!entry.fetch)
-        entry.fetch = @newPromiseCapability(@InternalPromise).promise;
-    @forceFulfillPromise(entry.fetch, source);
-    @setStateToMax(entry, @ModuleInstantiate);
-}
-
-// Loader.
-
-@visibility=PrivateRecursive
-function requestFetch(entry, parameters, fetcher)
-{
-    // https://whatwg.github.io/loader/#request-fetch
-
-    "use strict";
-
-    if (entry.fetch) {
-        var currentAttempt = entry.fetch;
-        if (entry.state !== @ModuleFetch)
-            return currentAttempt;
-
-        return currentAttempt.catch((error) => {
-            // Even if the existing fetching request failed, this attempt may succeed.
-            // For example, previous attempt used invalid integrity="" value. But this
-            // request could have the correct integrity="" value. In that case, we should
-            // retry fetching for this request.
-            // https://html.spec.whatwg.org/#fetch-a-single-module-script
-            if (currentAttempt === entry.fetch)
-                entry.fetch = @undefined;
-            return this.requestFetch(entry, parameters, fetcher);
-        });
-    }
-
-    // Hook point.
-    // 2. Loader.fetch
-    //     https://whatwg.github.io/loader/#browser-fetch
-    //     Take the key and fetch the resource actually.
-    //     For example, JavaScriptCore shell can provide the hook fetching the resource
-    //     from the local file system.
-    var fetchPromise = this.fetch(entry.key, parameters, fetcher).then((source) => {
-        @setStateToMax(entry, @ModuleInstantiate);
-        return source;
-    });
-    entry.fetch = fetchPromise;
-    return fetchPromise;
-}
-
-@visibility=PrivateRecursive
-function requestInstantiate(entry, parameters, fetcher)
-{
-    // https://whatwg.github.io/loader/#request-instantiate
-
-    "use strict";
-
-    // entry.instantiate is set if fetch succeeds.
-    if (entry.instantiate)
-        return entry.instantiate;
-
-    var instantiatePromise = (async () => {
-        var source = await this.requestFetch(entry, parameters, fetcher);
-        // https://html.spec.whatwg.org/#fetch-a-single-module-script
-        // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
-        // Instantiation won't be retried.
-        if (entry.instantiate)
-            return await entry.instantiate;
-        entry.instantiate = instantiatePromise;
-
-        var key = entry.key;
-        var moduleRecord = await this.parseModule(key, source);
-        var dependenciesMap = moduleRecord.dependenciesMap;
-        var requestedModules = this.requestedModules(moduleRecord);
-        var dependencies = @newArrayWithSize(requestedModules.length);
-        for (var i = 0, length = requestedModules.length; i < length; ++i) {
-            var depName = requestedModules[i];
-            var depKey = this.resolve(depName, key, fetcher);
-            var depEntry = this.ensureRegistered(depKey);
-            @putByValDirect(dependencies, i, depEntry);
-            dependenciesMap.@set(depName, depEntry);
-        }
-        entry.dependencies = dependencies;
-        entry.module = moduleRecord;
-        @setStateToMax(entry, @ModuleSatisfy);
-        return entry;
-    })();
-    return instantiatePromise;
-}
-
-@linkTimeConstant
-function cacheSatisfy(entry)
-{
-    "use strict";
-
-    @setStateToMax(entry, @ModuleLink);
-    entry.satisfy = (async () => {
-        return entry;
-    })();
-}
-
-@linkTimeConstant
-function cacheSatisfyAndReturn(entry, depEntries, satisfyingEntries)
-{
-    "use strict";
-
-    entry.isSatisfied = true;
-    for (var i = 0, length = depEntries.length; i < length; ++i) {
-        if (!depEntries[i].isSatisfied) {
-            entry.isSatisfied = false;
-            break;
-        }
-    }
-
-    if (entry.isSatisfied)
-        @cacheSatisfy(entry);
+    if (moduleType === @ModuleTypeJavaScript)
+        this.moduleMap.@set(key, entry);        
     else
-        satisfyingEntries.@add(entry);
+        @arrayPush(this.nonJSModuleArray, entry);
+
     return entry;
 }
 
+// https://tc39.es/ecma262/#sec-HostLoadImportedModule
 @visibility=PrivateRecursive
-function requestSatisfy(entry, parameters, fetcher, visited)
+function hostFetchAndLoadImportedModule(key, parameters, fetcher, state)
 {
-    // If the root's requestSatisfyUtil is fulfilled, then all reachable entries by the root
-    // should be fulfilled. And this is why:
-    // 
-    // 1. The satisfyingEntries set is only updated when encountering
-    //    an entry that has a visited and unSatisfied dependency. Given
-    //    the following dependency graph and assume requestInstantiate(d)
-    //    consuming much more time than others. Then, the satisfyingEntries
-    //    would contain entries (a), (b), and (c).
-    //
-    // 2. The way we handle visited entry (a) is to check wether it's
-    //    instantiated instead of satisfied. This helps us to avoid infinitely looping
-    //    but we shouldn't mark the entry (c) as satisfied since we don't know
-    //    whether the first entry (a) of the loop has it's dependencies (d) satisfied.
-    //    A counter example for previous requestSatisfy implementation is shown below [1].
-    //
-    // 3. If requestSatisfyUtil(a) is fulfilled, then entry (d) must be satisfied.
-    //    Then, we can say entries (a), (b), and (c) are satisfied.
-    //
-    // 4. A dependency graph may have multiple circles. Once requestSatisfyUtil(r) is fulfilled,
-    //    then all requestSatisfyUtil promises for the first entries of the circles must be fulfilled.
-    //    In that case, all entries added to satisfyingEntries set are satisfied.
-    //
-    //      d
-    //      ^
-    //      |
-    // r -> a -> b -> c -> e
-    //      ^         |
-    //      |         |
-    //      -----------
-    //
-    // FIXME: Ideally we should use DFS (https://tc39.es/ecma262/#sec-moduledeclarationlinking) 
-    // to track strongly connected component (SCC). If the requestSatisfyUtil
-    // promise for the start entry of the SCC is fulfilled, then we can mark all entries
-    // of the SCC satisfied. However, current requestSatisfyUtil cannot guarantee DFS due 
-    // to various requestInstantiate time for children. And we don't prefer to force DFS.
-    // This is because if one child requests a lot of time in requestInstantiate, then the
-    // other children have to wait for it. And this is expensive. BTW, we don't have concept
-    // satisfy in spec see:
-    //  1. https://tc39.es/ecma262/#sec-import-calls
-    //  2. https://tc39.es/ecma262/#sec-ContinueDynamicImport
-    //  3. https://tc39.es/ecma262/#sec-LoadRequestedModules
-    //  4. https://tc39.es/ecma262/#sec-InnerModuleLoading
-    //
-    // [1] Counter Example
-    //
-    // Given module dependency graph:
-    //
-    //   r1 ---> b ---> c
-    //    |      ^
-    //    |      |
-    //    -----> a <--- r2
-    // 
-    // Note that here we treat requestInstantiate as a background execution for simplification. 
-    // And requestInstantiate1 is the 1st requestInstantiate call in requestSatisfyUtil and 
-    // requestInstantiate2 is the 2nd requestInstantiate call for visited depEntry.
-    // `->` means goto in below steps.
-    // 
-    // Step 1: Dynamically import r1 and r2
-    //         -> requestImportModule(r1) -> requestSatisfyUtil(r1, v1) -> v1.add(r1) -> requestInstantiate1(r1)
-    //         -> requestImportModule(r2) -> requestSatisfyUtil(r2, v2) -> v2.add(r2) -> requestInstantiate1(r2)
-    //     Background Executions = [ requestInstantiate1(r1), requestInstantiate1(r2) ]
-    //
-    // Step 2: requestInstantiate1(r1) is done then go for it's dependencies [ b, a ]
-    //         -> !v1.has(b) -> requestSatisfyUtil(b, v1) -> v1.add(b) -> requestInstantiate1(b)
-    //         -> !v1.has(a) -> requestSatisfyUtil(a, v1) -> v1.add(a) -> requestInstantiate1(a)
-    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(b), requestInstantiate1(a) ]
-    //
-    // Step 3: requestInstantiate1(b) is done then go for it's dependencies [ c ]
-    //         -> !v1.has(c) -> requestSatisfyUtil(c, v1) -> v1.add(c) -> requestInstantiate1(c)
-    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(a), requestInstantiate1(c) ]
-    //
-    // Step 4: requestInstantiate1(a) is done then go for it's dependencies [ b ]
-    //         -> v1.has(b) -> requestInstantiate2(b)
-    //         -> Since requestInstantiate1(b) cached in Step 3 and b is the only dependency a has, requestSatisfyUtil(a, v1) is fulfilled and cached to Entry(a).satisfy.
-    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(c) ]
-    //
-    // Step 5: requestInstantiate1(r2) is done then go for it's dependencies [ a ]
-    //         -> !v2.has(a) -> requestSatisfyUtil(a, v2)
-    //         -> Since requestSatisfyUtil(a) is cached in Step 4 and a is the only dependency r2 has, requestSatisfyUtil(r2, v2) is fulfilled and cached.
-    //         -> linkAndEvaluateModule(r2) -> link(r2) crashes since c is not instantiated.
-    //     Background Executions = [ requestInstantiate1(c) ]
-    // 
-
     "use strict";
-    
-    var satisfyingEntries = new @Set;
-    return this.requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntries).then((entry) => {
-        satisfyingEntries.@forEach((satisfyingEntry) => {
-            @cacheSatisfy(satisfyingEntry);
-            satisfyingEntry.isSatisfied = true;
+
+    var moduleType = parameters === @undefined ? @ModuleTypeJavaScript : this.getModuleType(parameters);
+    var entry = this.ensureModuleMapEntry(key, moduleType);
+
+    if (entry.fetchAndParsePromise === null) {
+        entry.fetchAndParsePromise = this.fetch(key, parameters, fetcher).then(sourceCode => {
+            return this.parseModule(key, sourceCode).then(moduleRecord => this.hostLoadImportedModule(entry, moduleRecord), error => {
+                entry.errorToRethrow = error;
+                if (state)
+                    state.parseError = error;
+                return entry;
+            });
         });
-        return entry;
+    }
+
+    return entry.fetchAndParsePromise.catch(error => {
+        var clonedError = @makeTypeError(error.message);
+        clonedError.@failureKind = error.@failureKind;
+        throw clonedError;
     });
 }
 
+// https://tc39.es/ecma262/#sec-HostLoadImportedModule
 @visibility=PrivateRecursive
-function requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntries)
+function hostLoadImportedModule(entry, moduleRecord)
 {
-    // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
-
     "use strict";
 
-    if (entry.satisfy)
-        return entry.satisfy;
+    entry.moduleRecord = moduleRecord;
+    entry.requestedModules = this.requestedModules(moduleRecord);
+    entry.requestedModuleParameters = this.requestedModuleParameters(moduleRecord);
+    entry.loadedModules = moduleRecord.dependenciesMap;
 
-    visited.@add(entry);
-    var satisfyPromise = this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
-        if (entry.satisfy)
-            return entry.satisfy;
+    @assert(entry.requestedModules.length === entry.requestedModuleParameters.length);
+    @assert(entry.loadedModules.@size === 0);
 
-        var depLoads = this.requestedModuleParameters(entry.module);
-        for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
-            var parameters = depLoads[i];
-            var depEntry = entry.dependencies[i];
-            var promise;
+    return entry;
+}
 
-            // Recursive resolving. The dependencies of this entry is being resolved or already resolved.
-            // Stop tracing the circular dependencies.
-            // But to retrieve the instantiated module record correctly,
-            // we need to wait for the instantiation for the dependent module.
-            // For example, reaching here, the module is starting resolving the dependencies.
-            // But the module may or may not reach the instantiation phase in the loader's pipeline.
-            // If we wait for the Satisfy for this module, it construct the circular promise chain and
-            // rejected by the Promises runtime. Since only we need is the instantiated module, instead of waiting
-            // the Satisfy for this module, we just wait Instantiate for this.
-            if (visited.@has(depEntry))
-                promise = this.requestInstantiate(depEntry, parameters, fetcher);
-            else {
-                // Currently, module loader do not pass any information for non-top-level module fetching.
-                promise = this.requestSatisfyUtil(depEntry, parameters, fetcher, visited, satisfyingEntries);
-            }
-            @putByValDirect(depLoads, i, promise);
+// https://html.spec.whatwg.org/multipage/webappapis.html#fetch-the-descendants-of-and-link-a-module-script
+// https://tc39.es/ecma262/#sec-LoadRequestedModules
+@visibility=PrivateRecursive
+function fetchDescendantsOfAndLink(entry, fetcher)
+{
+    "use strict";
+
+    var promiseCapability = @newPromiseCapability(@InternalPromise);
+    var state = {
+        isLoading: true,
+        pendingModulesCount: 1,
+        visited: new @Set,
+        parseError: null,
+        promiseCapability,
+        fetcher,
+    };
+
+    if (entry.errorToRethrow) {
+        promiseCapability.reject(entry.errorToRethrow);
+        return promiseCapability;
+    }
+
+    this.innerModuleLoading(state, entry);
+
+    return promiseCapability.promise.then(() => {
+        if (state.parseError) {
+            entry.errorToRethrow = state.parseError;
+            throw state.parseError;
         }
 
-        // We cannot cache the following promise chain to Entry.satisfy since there might be a infinite recursive 
-        // promise resolution chain. See example:
-        // 
-        //     r1 ---> a ---> b <--- r2
-        //      ^      |            
-        //      |-------
-        //
-        // Step 1: Dynamically import r1 and r2
-        //     requestImportModule(r1) -> requestSatisfyUtil(r1, v1) -> v1.add(r1) -> requestInstantiate1(r1)
-        //     requestImportModule(r2) -> requestSatisfyUtil(r2, v2) -> v2.add(r2) -> requestInstantiate1(r2)
-        //     Background Executions = [ requestInstantiate1(r1), requestInstantiate1(r2) ]
-        //
-        // Step 2: requestInstantiate1(r1) is done then go for it's dependencies [ a ]
-        //     -> !v1.has(a) -> requestSatisfyUtil(a, v1, r1) -> v1.add(a) -> requestInstantiate1(a, r1)
-        //     -> Entry(r1).satisfy = promise.all(requestSatisfyUtil(a, v1, r1)).then(...)
-        //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(a, r1) ]
-        //
-        // Step 3: requestInstantiate1(r2) is done then go for it's dependencies [ b ]
-        //     -> !v2.has(b) -> requestSatisfyUtil(b, v2, r2) -> v2.add(b) -> requestInstantiate1(b, r2)
-        //     -> Entry(r2).satisfy = promise.all(requestSatisfyUtil(b, v2, r2)).then(...)
-        //     Background Executions = [ requestInstantiate1(a, r1), requestInstantiate1(b, r2) ]
-        //
-        // Step 4: requestInstantiate1(b, r2) is done then go for it's dependencies [ a ]
-        //     -> !v2.has(a) -> requestSatisfyUtil(a, v2, r2) -> v2.add(b) -> requestInstantiate1(a, r2)
-        //     -> Entry(b).satisfy = promise.all(requestSatisfyUtil(a, v2, r2)).then(...)
-        //     Background Executions = [ requestInstantiate1(a, r1), requestInstantiate1(a, r2) ]
-        //
-        // Step 4: requestInstantiate1(a, r1) is done then got for it's dependencies [ b ]
-        //     -> !v1.has(b) -> requestSatisfyUtil(b, v1, r1) -> returns Entry(b).satisfy since step 4
-        //     -> Entry(a).satisfy = promise.all(promise.all(requestSatisfyUtil(a, v2, r2)).then(...)) // infinite recursive promise resolution chain
-        //     Background Executions = [ requestInstantiate1(a, r2) ]
-        //
-        // From now on, module a will be satisfied if module a is satisfied.
-        //
-        return @InternalPromise.internalAll(depLoads).then((depEntries) => {
-            if (entry.satisfy)
-                return entry;
-            return @cacheSatisfyAndReturn(entry, depEntries, satisfyingEntries);
-        });
+        try {
+            this.moduleLinking(entry, fetcher);
+        } catch (error) {
+            entry.errorToRethrow = error;
+            throw error;
+        }
     });
-
-    return satisfyPromise;
 }
 
-// Linking semantics.
-
+// https://tc39.es/ecma262/#sec-InnerModuleLoading
 @visibility=PrivateRecursive
-function link(entry, fetcher)
+function innerModuleLoading(state, entry)
 {
-    // https://html.spec.whatwg.org/#fetch-the-descendants-of-and-instantiate-a-module-script
-
     "use strict";
 
-    if (entry.state < @ModuleLink)
-        @throwTypeError("Requested module is not instantiated yet.");
-    if (!entry.linkSucceeded)
-        throw entry.linkError;
-    if (entry.state === @ModuleReady)
-        return;
-    @setStateToMax(entry, @ModuleReady);
+    // This implements step 3 of ContinueModuleLoading
+    const continueModuleLoadingAbrupt = error => {
+        state.isLoading = false;
+        state.promiseCapability.reject(error);
+    };
+
+    @assert(state.isLoading);
+
+    if (entry.status === @ModuleStatusNew && !state.visited.@has(entry)) {
+        state.visited.@add(entry);
+        state.pendingModulesCount += entry.requestedModules.length;
+
+        var fetcher = state.fetcher;
+        for (var i = 0, length = entry.requestedModules.length; i < length; i++) {
+            const specifier = entry.requestedModules[i];
+            var loadedEntry = entry.loadedModules.@get(specifier);
+            if (loadedEntry) {
+                if (loadedEntry.errorToRethrow)
+                    state.parseError = loadedEntry.errorToRethrow;
+
+                this.innerModuleLoading(state, loadedEntry);
+            } else {
+                try {
+                    var key = this.resolve(specifier, entry.key, fetcher);
+                } catch (error) {
+                    // This implements step 9.3 of https://html.spec.whatwg.org/multipage/webappapis.html#creating-a-javascript-module-script
+                    entry.errorToRethrow = error;
+                    throw error;
+                }
+
+                this.hostFetchAndLoadImportedModule(key, entry.requestedModuleParameters[i], fetcher, state).then(loadedEntry => {
+                    // This implements step 1 of FinishLoadingImportedModule
+                    @assert(!entry.loadedModules.@has(specifier) || entry.loadedModules.@get(specifier) === loadedEntry);
+                    entry.loadedModules.@set(specifier, loadedEntry);
+
+                    // This implements steps 1-2 of ContinueModuleLoading
+                    if (state.isLoading)
+                        this.innerModuleLoading(state, loadedEntry);
+                }, continueModuleLoadingAbrupt);
+            }
+        }
+
+        if (!state.isLoading)
+            return;
+    }
+
+    @assert(state.pendingModulesCount >= 1);
+    state.pendingModulesCount--;
+    if (state.pendingModulesCount === 0) {
+        state.isLoading = false;
+        state.visited.@forEach(loadedEntry => {
+            if (loadedEntry.status === @ModuleStatusNew)
+                loadedEntry.status = @ModuleStatusUnlinked;
+        });
+        state.promiseCapability.resolve();
+    }
+}
+
+// https://tc39.es/ecma262/#sec-moduledeclarationlinking
+@visibility=PrivateRecursive
+function moduleLinking(entry, fetcher)
+{
+    "use strict";
+
+    @assert(entry.status === @ModuleStatusUnlinked || entry.status === @ModuleStatusLinked || entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated);
+
+    var stack = [];
 
     try {
-        // Since we already have the "dependencies" field,
-        // we can call moduleDeclarationInstantiation with the correct order
-        // without constructing the dependency graph by calling dependencyGraph.
-        var hasAsyncDependency = false;
-        var dependencies = entry.dependencies;
-        for (var i = 0, length = dependencies.length; i < length; ++i) {
-            var dependency = dependencies[i];
-            this.link(dependency, fetcher);
-            hasAsyncDependency ||= dependency.isAsync;
+        this.innerModuleLinking(entry, stack, 0, fetcher);
+    } catch (error) {
+        for (var i = 0, length = stack.length; i < length; i++) {
+            var stackEntry = stack[i];
+            @assert(stackEntry.status === @ModuleStatusLinking);
+            stackEntry.status = @ModuleStatusUnlinked;
         }
 
-        entry.isAsync = this.moduleDeclarationInstantiation(entry.module, fetcher) || hasAsyncDependency;
-    } catch (error) {
-        entry.linkSucceeded = false;
-        entry.linkError = error;
         throw error;
     }
+
+    @assert(entry.status === @ModuleStatusLinked || entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated);
+    @assert(stack.length === 0);
 }
 
-// Module semantics.
+// https://tc39.es/ecma262/#sec-InnerModuleLinking
+@visibility=PrivateRecursive
+function innerModuleLinking(entry, stack, index, fetcher)
+{
+    "use strict";
 
+    if (entry.status === @ModuleStatusLinking || entry.status === @ModuleStatusLinked || entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated)
+        return index;
+
+    @assert(entry.status === @ModuleStatusUnlinked);
+    entry.status = @ModuleStatusLinking;
+    entry.dfsIndex = index;
+    entry.dfsAncestorIndex = index;
+    index++;
+    @arrayPush(stack, entry);
+
+    for (var i = 0, length = entry.requestedModules.length; i < length; i++) {
+        var specifier = entry.requestedModules[i];
+        var loadedEntry = entry.loadedModules.@get(specifier); // This implements step 2 of GetImportedModule
+        @assert(!!loadedEntry);
+        index = this.innerModuleLinking(loadedEntry, stack, index, fetcher);
+        @assert(loadedEntry.status === @ModuleStatusLinking || loadedEntry.status === @ModuleStatusLinked || loadedEntry.status === @ModuleStatusEvaluatingAsync || loadedEntry.status === @ModuleStatusEvaluated);
+        @assert((loadedEntry.status === @ModuleStatusLinking) === @arrayIncludes(stack, loadedEntry));
+
+        if (loadedEntry.status === @ModuleStatusLinking)
+            entry.dfsAncestorIndex = @min(entry.dfsAncestorIndex, loadedEntry.dfsAncestorIndex);
+    }
+
+    if (!entry.moduleRecord && entry.errorToRethrow)
+        throw entry.errorToRethrow;
+
+    entry.hasTLA = this.linkModuleRecord(entry.moduleRecord, fetcher);
+
+    @assert(@arrayCountOf(stack, entry) === 1);
+    @assert(entry.dfsAncestorIndex <= entry.dfsIndex);
+
+    if (entry.dfsAncestorIndex === entry.dfsIndex) {
+        for (;;) {
+            var requiredModule = @arrayPop(stack);
+            requiredModule.status = @ModuleStatusLinked;
+            if (requiredModule === entry)
+                break;
+        }
+    }
+
+    return index;
+}
+
+// https://tc39.es/ecma262/#sec-moduleevaluation
 @visibility=PrivateRecursive
 function moduleEvaluation(entry, fetcher)
 {
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     "use strict";
 
-    if (entry.evaluated)
-        return;
-    entry.evaluated = true;
+    if (entry.errorToRethrow) {
+        var capability = @newPromiseCapability(@InternalPromise);
+        capability.reject(entry.errorToRethrow);
+        return capability.promise;
+    }
 
-    // The contents of the [[RequestedModules]] is cloned into entry.dependencies.
-    var dependencies = entry.dependencies;
+    @assert(entry.status === @ModuleStatusLinked || entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated);
 
-    if (!entry.isAsync) {
-        // Since linking sets isAsync for any strongly connected component with an async module we should only get here if all our dependencies are also sync.
-        for (var i = 0, length = dependencies.length; i < length; ++i) {
-            var dependency = dependencies[i];
-            @assert(!dependency.isAsync);
-            this.moduleEvaluation(dependency, fetcher);
+    // https://searchfox.org/mozilla-central/rev/1f5e1875cbfd5d4b1bfa27ca54832f62dd19589e/js/src/vm/Modules.cpp#1431
+    if (entry.evaluationError !== null) {
+        var capability = entry.topLevelCapability;
+        if (capability === null) {
+            capability = entry.topLevelCapability = @newPromiseCapability(@InternalPromise);
+            capability.reject(entry.evaluationError.value);
         }
 
-        this.evaluate(entry.key, entry.module, fetcher);
-    } else
-        return this.asyncModuleEvaluation(entry, fetcher, dependencies);
+        return capability.promise;
+    }
+
+    if (entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated) {
+        entry = entry.cycleRoot;
+        @assert(!!entry);
+    }
+
+    if (entry.topLevelCapability !== null)
+        return entry.topLevelCapability.promise;
+
+    var stack = [];
+    var capability = entry.topLevelCapability = @newPromiseCapability(@InternalPromise);
+
+    try {
+        this.innerModuleEvaluation(entry, stack, 0, fetcher);
+
+        @assert(entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated);
+        @assert(entry.evaluationError === null);
+
+        if (!entry.asyncEvaluation) {
+            @assert(entry.status === @ModuleStatusEvaluated);
+            capability.resolve();
+        }
+
+        @assert(stack.length === 0);
+    } catch (error) {
+        for (var i = 0, length = stack.length; i < length; i++) {
+            var stackEntry = stack[i];
+            @assert(stackEntry.status === @ModuleStatusEvaluating);
+            stackEntry.status = @ModuleStatusEvaluated;
+            stackEntry.evaluationError = { value: error };
+        }
+
+        @assert(entry.status === @ModuleStatusEvaluated);
+        @assert(entry.evaluationError.value === error);
+        capability.reject(error);
+    }
+
+    return capability.promise;
 }
 
+// https://tc39.es/ecma262/#sec-innermoduleevaluation
 @visibility=PrivateRecursive
-async function asyncModuleEvaluation(entry, fetcher, dependencies)
+function innerModuleEvaluation(entry, stack, index, fetcher)
 {
     "use strict";
 
-    for (var i = 0, length = dependencies.length; i < length; ++i)
-        await this.moduleEvaluation(dependencies[i], fetcher);
+    if (entry.errorToRethrow)
+        throw entry.errorToRethrow;
 
-    var resumeMode = @GeneratorResumeModeNormal;
-    while (true) {
-        var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
-        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
-            return;
+    if (entry.status === @ModuleStatusEvaluatingAsync || entry.status === @ModuleStatusEvaluated) {
+        if (entry.evaluationError === null)
+            return index;
+        throw entry.evaluationError.value;
+    }
 
-        try {
-            awaitedValue = await awaitedValue;
-            resumeMode = @GeneratorResumeModeNormal;
-        } catch (e) {
-            awaitedValue = e;
-            resumeMode = @GeneratorResumeModeThrow;
+    if (entry.status === @ModuleStatusEvaluating)
+        return index;
+
+    @assert(entry.status === @ModuleStatusLinked);
+
+    entry.status = @ModuleStatusEvaluating;
+    entry.dfsIndex = index;
+    entry.dfsAncestorIndex = index;
+    entry.pendingAsyncDependencies = 0;
+    index++;
+    @arrayPush(stack, entry);
+
+    for (var i = 0, length = entry.requestedModules.length; i < length; i++) {
+        var specifier = entry.requestedModules[i];
+        var loadedEntry = entry.loadedModules.@get(specifier); // This implements step 2 of GetImportedModule
+        @assert(!!loadedEntry);
+        index = this.innerModuleEvaluation(loadedEntry, stack, index, fetcher);
+        @assert(loadedEntry.status === @ModuleStatusEvaluating || loadedEntry.status === @ModuleStatusEvaluatingAsync || loadedEntry.status === @ModuleStatusEvaluated);
+        @assert((loadedEntry.status === @ModuleStatusEvaluating) === @arrayIncludes(stack, loadedEntry));
+
+        if (loadedEntry.status === @ModuleStatusEvaluating)
+            entry.dfsAncestorIndex = @min(entry.dfsAncestorIndex, loadedEntry.dfsAncestorIndex);
+        else {
+            loadedEntry = loadedEntry.cycleRoot;
+            @assert(loadedEntry.status === @ModuleStatusEvaluatingAsync || loadedEntry.status === @ModuleStatusEvaluated);
+            if (loadedEntry.evaluationError !== null)
+                throw loadedEntry.evaluationError.value;
         }
+
+        if (loadedEntry.asyncEvaluation) {
+            entry.pendingAsyncDependencies++;
+            @arrayPush(loadedEntry.asyncParentModules, entry);
+        }
+    }
+
+    if (entry.pendingAsyncDependencies > 0 || entry.hasTLA) {
+        @assert(!entry.asyncEvaluation);
+        @assert(!entry.asyncEvaluationWasEverTrue);
+
+        entry.asyncEvaluation = this.nextAsyncEvaluationValue++;
+        entry.asyncEvaluationWasEverTrue = true;
+        if (entry.pendingAsyncDependencies === 0)
+            this.executeAsyncModule(entry, fetcher);
+    } else
+        this.evaluate(entry.key, entry.moduleRecord, fetcher);
+
+    @assert(@arrayCountOf(stack, entry) === 1);
+    @assert(entry.dfsAncestorIndex <= entry.dfsIndex);
+
+    if (entry.dfsAncestorIndex === entry.dfsIndex) {
+        for (;;) {
+            var requiredModule = @arrayPop(stack);
+            requiredModule.status = requiredModule.asyncEvaluation ? @ModuleStatusEvaluatingAsync : @ModuleStatusEvaluated;
+            requiredModule.cycleRoot = entry;
+            if (requiredModule === entry)
+                break;
+        }
+    }
+
+    return index;
+}
+
+// https://tc39.es/ecma262/#sec-execute-async-module
+@visibility=PrivateRecursive
+async function executeAsyncModule(entry, fetcher)
+{
+    "use strict";
+
+    @assert(entry.status === @ModuleStatusEvaluating || entry.status === @ModuleStatusEvaluatingAsync);
+    @assert(entry.hasTLA);
+
+    var key = entry.key;
+    var moduleRecord = entry.moduleRecord;
+    var sentValue;
+    var resumeMode = @GeneratorResumeModeNormal;
+
+    try {
+        for (;;) {
+            var result = this.evaluate(key, moduleRecord, fetcher, sentValue, resumeMode);
+            if (@getAbstractModuleRecordInternalField(moduleRecord, @abstractModuleRecordFieldState) === @GeneratorStateExecuting)
+                break;
+
+            try {
+                sentValue = await result;
+                resumeMode = @GeneratorResumeModeNormal;
+            } catch (error) {
+                sentValue = error;
+                resumeMode = @GeneratorResumeModeThrow;
+            }
+        }
+    } catch (error) {
+        @asyncModuleExecutionRejected(entry, error);
+        return;
+    }
+
+    this.asyncModuleExecutionFulfilled(entry, fetcher);
+}
+
+// https://tc39.es/ecma262/#sec-gather-available-ancestors
+@linkTimeConstant
+function gatherAvailableAncestors(entry, execList)
+{
+    "use strict";
+
+    for (var i = 0, length = entry.asyncParentModules; i < length; i++) {
+        var parentEntry = entry.asyncParentModules[i];
+        if (!@arrayIncludes(execList, parentEntry) && parentEntry.cycleRoot.evaluationError === null) {
+            @assert(parentEntry.status === @ModuleStatusEvaluatingAsync);
+            @assert(parentEntry.evaluationError === null);
+            @assert(!!parentEntry.asyncEvaluation);
+            @assert(parentEntry.pendingAsyncDependencies > 0);
+
+            parentEntry.pendingAsyncDependencies--;
+            if (parentEntry.pendingAsyncDependencies === 0) {
+                @arrayPush(execList, parentEntry);
+                if (!parentEntry.hasTLA)
+                    @gatherAvailableAncestors(parentEntry, execList);
+            }
+        }
+    }
+}
+
+// https://tc39.es/ecma262/#sec-async-module-execution-fulfilled
+@visibility=PrivateRecursive
+function asyncModuleExecutionFulfilled(entry, fetcher)
+{
+    "use strict";
+
+    if (entry.status === @ModuleStatusEvaluated) {
+        @assert(entry.evaluationError !== null);
+        return;
+    }
+
+    @assert(entry.status === @ModuleStatusEvaluatingAsync);
+    @assert(!!entry.asyncEvaluation);
+    @assert(entry.evaluationError === null);
+
+    // `asyncEvaluation` isn't reset per https://github.com/tc39/ecma262/pull/2824
+    entry.status = @ModuleStatusEvaluated;
+
+    if (entry.topLevelCapability !== null) {
+        @assert(entry.cycleRoot === entry);
+        entry.topLevelCapability.resolve();
+    }
+
+    var execList = [];
+    @gatherAvailableAncestors(entry, execList);
+    @arraySort.@call(execList, (a, b) => a.asyncEvaluation - b.asyncEvaluation);
+
+    @assert((() => {
+        for (var i = 0, length = execList.length; i < length; i++) {
+            var entry = execList[i];
+
+            @assert(!!entry.asyncEvaluation);
+            @assert(entry.pendingAsyncDependencies === 0);
+            @assert(entry.evaluationError === null);
+        }
+
+        return true;
+    })());
+
+    for (var i = 0, length = execList.length; i < length; i++) {
+        var parentEntry = execList[i];
+        if (parentEntry.status === @ModuleStatusEvaluated)
+            @assert(parentEntry.evaluationError !== null);
+        else if (parentEntry.hasTLA)
+            this.executeAsyncModule(parentEntry, fetcher);
+        else {
+            try {
+                this.evaluate(parentEntry.key, parentEntry.moduleRecord, fetcher);
+                parentEntry.status = @ModuleStatusEvaluated;
+                if (parentEntry.topLevelCapability !== null) {
+                    @assert(parentEntry.cycleRoot === parentEntry);
+                    parentEntry.topLevelCapability.resolve();
+                }
+            } catch (error) {
+                @asyncModuleExecutionRejected(parentEntry, error);
+            }
+        }
+    }
+}
+
+// https://tc39.es/ecma262/#sec-async-module-execution-rejected
+@linkTimeConstant
+function asyncModuleExecutionRejected(entry, error)
+{
+    "use strict";
+
+    if (entry.status === @ModuleStatusEvaluated) {
+        @assert(entry.evaluationError !== null);
+        return;
+    }
+
+    @assert(entry.status === @ModuleStatusEvaluatingAsync);
+    @assert(!!entry.asyncEvaluation);
+    @assert(entry.evaluationError === null);
+
+    entry.evaluationError = { value: error };
+    entry.status = @ModuleStatusEvaluated;
+
+    for (var i = 0, length = entry.asyncParentModules.length; i < length; i++) {
+        var parentEntry = entry.asyncParentModules[i];
+        @asyncModuleExecutionRejected(parentEntry, error);
+    }
+
+    if (entry.topLevelCapability !== null) {
+        @assert(entry.cycleRoot === entry);
+        entry.topLevelCapability.reject(error);
     }
 }
 
 // APIs to control the module loader.
 
 @visibility=PrivateRecursive
-function provideFetch(key, value)
+function fetchModule(key, parameters, fetcher)
 {
     "use strict";
 
-    var entry = this.ensureRegistered(key);
-
-    if (entry.state > @ModuleFetch)
-        @throwTypeError("Requested module is already fetched.");
-    @fulfillFetch(entry, value);
+    return @ensureImportMapsLoaded(() => {
+        return this.hostFetchAndLoadImportedModule(key, parameters, fetcher).then(entry => {
+            if (entry.errorToRethrow)
+                throw entry.errorToRethrow;
+            return this.fetchDescendantsOfAndLink(entry, fetcher);
+        });
+    });
 }
 
 @visibility=PrivateRecursive
-async function loadModule(key, parameters, fetcher)
+function fetchModuleAndEvaluate(key, parameters, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    return entry.key;
+    return this.fetchModule(key, parameters, fetcher).then(() => {
+        var entry = this.getModuleMapEntry(key, this.getModuleType(parameters));
+        @assert(!!entry);
+        return this.moduleEvaluation(entry, fetcher);
+    });
 }
 
 @visibility=PrivateRecursive
-function linkAndEvaluateModule(key, fetcher)
+function evaluateModule(key, fetcher)
 {
     "use strict";
 
-    var entry = this.ensureRegistered(key);
-    this.link(entry, fetcher);
+    var entry = this.moduleMap.@get(key);
+    @assert(!!entry);
     return this.moduleEvaluation(entry, fetcher);
 }
 
 @visibility=PrivateRecursive
-async function loadAndEvaluateModule(moduleName, parameters, fetcher)
+function loadModule(key, sourceCode, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
-    var key = this.resolve(moduleName, @undefined, fetcher);
-    key = await this.loadModule(key, parameters, fetcher);
-    return await this.linkAndEvaluateModule(key, fetcher);
+    var entry = this.ensureModuleMapEntry(key, @ModuleTypeJavaScript);
+    if (entry.fetchAndParsePromise === null) {
+        entry.fetchAndParsePromise = this.parseModule(key, sourceCode).then(moduleRecord => this.hostLoadImportedModule(entry, moduleRecord), error => {
+            entry.errorToRethrow = error;
+            return entry;
+        });
+    }
+
+    return @ensureImportMapsLoaded(() => {
+        return entry.fetchAndParsePromise.then(entry => {
+            if (entry.errorToRethrow)
+                throw entry.errorToRethrow;
+            return this.fetchDescendantsOfAndLink(entry, fetcher);
+        });
+    });
 }
 
 @visibility=PrivateRecursive
-async function requestImportModule(moduleName, referrer, parameters, fetcher)
+function loadModuleAndEvaluate(key, sourceCode, fetcher)
 {
     "use strict";
 
-    var importMap = @importMapStatus();
-    if (importMap)
-        await importMap;
-    var key = this.resolve(moduleName, referrer, fetcher);
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    await this.linkAndEvaluateModule(entry.key, fetcher);
-    return this.getModuleNamespaceObject(entry.module);
+    return this.loadModule(key, sourceCode, fetcher).then(() => {
+        var entry = this.moduleMap.@get(key);
+        @assert(!!entry);
+        return this.moduleEvaluation(entry, fetcher);
+    });
+}
+
+@visibility=PrivateRecursive
+function requestImportModule(specifier, referrer, parameters, fetcher)
+{
+    "use strict";
+
+    return @ensureImportMapsLoaded(() => {
+        var key = this.resolve(specifier, referrer, fetcher);
+
+        return this.fetchModuleAndEvaluate(key, parameters, fetcher).then(() => {
+            var entry = this.getModuleMapEntry(key, this.getModuleType(parameters));
+            @assert(!!entry);
+            return this.getModuleNamespaceObject(entry.moduleRecord);
+        });
+    });
 }
 
 @visibility=PrivateRecursive
@@ -594,15 +694,15 @@ function dependencyKeysIfEvaluated(key)
 {
     "use strict";
 
-    var entry = this.registry.@get(key);
-    if (!entry || !entry.evaluated)
-        return null;
+    var entry = this.moduleMap.@get(key);
+    if (!entry || entry.status !== @ModuleStatusEvaluated)
+        return;
 
-    var dependencies = entry.dependencies;
-    var length = dependencies.length;
-    var result = new @Array(length);
-    for (var i = 0; i < length; ++i)
-        result[i] = dependencies[i].key;
+    var result = [];
+
+    entry.loadedModules.@forEach(loadedEntry => {
+        @arrayPush(result, loadedEntry.key);
+    });
 
     return result;
 }

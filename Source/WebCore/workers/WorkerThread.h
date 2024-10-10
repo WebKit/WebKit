@@ -136,7 +136,7 @@ private:
     // WorkerOrWorkletThread.
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
-    void evaluateScriptIfNecessary(String& exceptionMessage) final;
+    void evaluateScriptIfNecessary(CompletionHandler<void(const String&)>&&) final;
     bool shouldWaitForWebInspectorOnStartup() const final;
 
     CheckedPtr<WorkerLoaderProxy> m_workerLoaderProxy;

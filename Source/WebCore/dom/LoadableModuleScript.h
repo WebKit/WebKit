@@ -49,11 +49,12 @@ public:
 
     void execute(ScriptElement&) final;
 
-    void notifyLoadCompleted(UniquedStringImpl&);
+    void notifyLoadCompleted();
     void notifyLoadFailed(LoadableScript::Error&&);
     void notifyLoadWasCanceled();
 
-    UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
+    void setModuleName(const JSC::Identifier& ident) { m_moduleName = ident; }
+    const JSC::Identifier& moduleName() const { return m_moduleName; }
 
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
@@ -61,7 +62,7 @@ private:
     LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, RequestPriority, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree);
 
     Ref<ModuleFetchParameters> m_parameters;
-    RefPtr<UniquedStringImpl> m_moduleKey;
+    JSC::Identifier m_moduleName;
     std::optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };

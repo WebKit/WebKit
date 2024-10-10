@@ -1,3 +1,6 @@
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/json-module/data.json
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/json-module/data.json?pipe=header(Access-Control-Allow-Origin,*)
+Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/json-module/parse-error.json?pipe=header(Access-Control-Allow-Origin,*)
 json-module-crossorigin
 
 

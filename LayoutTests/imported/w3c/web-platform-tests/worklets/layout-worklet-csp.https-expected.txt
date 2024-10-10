@@ -13,20 +13,10 @@ CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')
 CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'get_worklet(worklet_type).addModule')

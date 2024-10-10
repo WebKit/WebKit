@@ -48,28 +48,9 @@ public:
     FetchOptions::Destination destination() const { return m_destination; }
     ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
 
-    void notifyLoadCompleted(UniquedStringImpl& moduleKey)
-    {
-        m_moduleKey = &moduleKey;
-        m_isLoaded = true;
-    }
+    void setHasFinishedFetchingModules() { m_hasFinishedFetchingModules = true; }
+    bool hasFinishedFetchingModules() const { return m_hasFinishedFetchingModules; }
 
-    void notifyLoadFailed(LoadableScript::Error&& error)
-    {
-        m_error = WTFMove(error);
-        m_isLoaded = true;
-    }
-
-    void notifyLoadWasCanceled()
-    {
-        m_wasCanceled = true;
-        m_isLoaded = true;
-    }
-
-    bool isLoaded() const { return m_isLoaded; }
-    std::optional<LoadableScript::Error> error() const { return m_error; }
-    bool wasCanceled() const { return m_wasCanceled; }
-    UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
     void setReferrerPolicy(ReferrerPolicy referrerPolicy)
@@ -90,11 +71,8 @@ private:
     FetchOptions::Credentials m_credentials;
     FetchOptions::Destination m_destination;
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
-    RefPtr<UniquedStringImpl> m_moduleKey;
     Ref<ModuleFetchParameters> m_parameters;
-    std::optional<LoadableScript::Error> m_error;
-    bool m_wasCanceled { false };
-    bool m_isLoaded { false };
+    bool m_hasFinishedFetchingModules { false };
 };
 
 } // namespace WebCore

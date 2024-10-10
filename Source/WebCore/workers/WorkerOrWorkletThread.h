@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "Exception.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThreadMode.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/FunctionDispatcher.h>
@@ -90,7 +92,7 @@ protected:
 private:
     virtual Ref<Thread> createThread() = 0;
     virtual RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() = 0;
-    virtual void evaluateScriptIfNecessary(String&) { }
+    virtual void evaluateScriptIfNecessary(CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
     virtual bool shouldWaitForWebInspectorOnStartup() const { return false; }
     void destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis);
 

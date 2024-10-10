@@ -59,7 +59,7 @@ public:
     static WebAssemblyModuleRecord* create(JSGlobalObject*, VM&, Structure*, const Identifier&, const Wasm::ModuleInformation&);
 
     void prepareLink(VM&, JSWebAssemblyInstance*);
-    Synchronousness link(JSGlobalObject*, JSValue scriptFetcher);
+    void link(JSGlobalObject*, JSValue scriptFetcher);
     void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     void initializeExports(JSGlobalObject*);
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);

@@ -1,23 +1,23 @@
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
-CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: ReferenceError: Can't find variable: resources
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: ReferenceError: Can't find variable: resources
+CONSOLE MESSAGE: ReferenceError: Can't find variable: non
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: ReferenceError: Can't find variable: blank
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: SyntaxError: Invalid regular expression: invalid flags
+CONSOLE MESSAGE: ReferenceError: Can't find variable: resources
+CONSOLE MESSAGE: SyntaxError: Unexpected token '-'. import call expects one or two arguments.
+CONSOLE MESSAGE: SyntaxError: Unexpected end of script
 
 PASS Importing a script resolves the given promise.
 PASS Importing scripts resolves all the given promises.

@@ -60,6 +60,7 @@
 #include "TextNodeTraversal.h"
 #include "TrustedType.h"
 #include <JavaScriptCore/ImportMap.h>
+#include <JavaScriptCore/JSModuleLoader.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
@@ -366,6 +367,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     // Module is always CORS request. If attribute is not given, it should be same-origin credential.
     Ref element = this->element();
     Ref document = element->document();
+    auto& vm = document->globalObject()->vm();
     auto nonce = element->nonce();
     auto crossOriginMode = element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
@@ -392,13 +394,15 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
             integrity = AtomString { document->globalObject()->importMap().integrityForURL(moduleScriptRootURL) };
         Ref script = LoadableModuleScript::create(nonce, integrity, referrerPolicy(), fetchPriorityHint(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
+        script->setModuleName(JSC::Identifier::fromString(vm, moduleScriptRootURL.string()));
         m_loadableScript = script.copyRef();
         if (RefPtr frame = element->document().frame())
-            frame->checkedScript()->loadModuleScript(script, moduleScriptRootURL, script->parameters());
+            frame->checkedScript()->loadModuleScript(script, script->parameters());
         return true;
     }
 
     Ref script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), fetchPriorityHint(), crossOriginMode, scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
+    script->setModuleName(JSC::JSModuleLoader::createIdentifierForEntryPointModule(vm));
 
     TextPosition position = document->isInDocumentWrite() ? TextPosition() : scriptStartPosition;
     ScriptSourceCode sourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
@@ -538,7 +542,7 @@ void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScri
     CurrentScriptIncrementer currentScriptIncrementer(document, *this);
 
     WTFBeginSignpost(this, ExecuteScriptElement, "executing module script");
-    frame->script().linkAndEvaluateModuleScript(loadableModuleScript);
+    frame->script().evaluateModuleScript(loadableModuleScript);
     WTFEndSignpost(this, ExecuteScriptElement, "executing module script");
 }
 
@@ -593,6 +597,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
             // the exception to the global object.
             if (RefPtr frame = element().document().frame())
                 frame->checkedScript()->reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+            dispatchLoadEventRespectingUserGestureIndicator();
             break;
         }
         }

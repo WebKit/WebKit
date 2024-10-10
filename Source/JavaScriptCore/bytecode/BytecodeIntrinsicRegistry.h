@@ -131,12 +131,14 @@ enum class LinkTimeConstant : int32_t;
     macro(MAX_ARRAY_INDEX) \
     macro(MAX_STRING_LENGTH) \
     macro(MAX_SAFE_INTEGER) \
-    macro(ModuleFetch) \
-    macro(ModuleTranslate) \
-    macro(ModuleInstantiate) \
-    macro(ModuleSatisfy) \
-    macro(ModuleLink) \
-    macro(ModuleReady) \
+    macro(ModuleTypeJavaScript) \
+    macro(ModuleStatusNew) \
+    macro(ModuleStatusUnlinked) \
+    macro(ModuleStatusLinking) \
+    macro(ModuleStatusLinked) \
+    macro(ModuleStatusEvaluating) \
+    macro(ModuleStatusEvaluatingAsync) \
+    macro(ModuleStatusEvaluated) \
     macro(promiseRejectionReject) \
     macro(promiseRejectionHandle) \
     macro(promiseStatePending) \
