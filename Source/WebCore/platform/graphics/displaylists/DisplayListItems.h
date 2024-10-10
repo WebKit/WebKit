@@ -758,12 +758,9 @@ class DrawLinesForText {
 public:
     static constexpr char name[] = "draw-lines-for-text";
 
-    WEBCORE_EXPORT DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle);
+    WEBCORE_EXPORT DrawLinesForText(const FloatPoint&, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle);
 
-    void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
-    const FloatPoint& blockLocation() const { return m_blockLocation; }
-    const FloatSize& localAnchor() const { return m_localAnchor; }
-    FloatPoint point() const { return m_blockLocation + m_localAnchor; }
+    FloatPoint point() const { return m_point; }
     float thickness() const { return m_thickness; }
     const DashArray& widths() const { return m_widths; }
     bool isPrinting() const { return m_printing; }
@@ -774,8 +771,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    FloatPoint m_blockLocation;
-    FloatSize m_localAnchor;
+    FloatPoint m_point;
     DashArray m_widths;
     float m_thickness;
     bool m_printing;

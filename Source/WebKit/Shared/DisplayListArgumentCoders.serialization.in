@@ -188,8 +188,7 @@ headers: <WebCore/DisplayListItems.h>
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawLinesForText {
-    WebCore::FloatPoint blockLocation();
-    WebCore::FloatSize localAnchor();
+    WebCore::FloatPoint point();
     WebCore::DashArray widths();
     float thickness();
     bool isPrinting();

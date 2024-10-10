@@ -64,29 +64,62 @@ private:
 
     WebCore::RenderingMode renderingMode() const final;
 
-    void recordSave() final;
-    void recordRestore() final;
-    void recordTranslate(float x, float y) final;
-    void recordRotate(float angle) final;
-    void recordScale(const WebCore::FloatSize&) final;
-    void recordSetCTM(const WebCore::AffineTransform&) final;
-    void recordConcatenateCTM(const WebCore::AffineTransform&) final;
+    void save(WebCore::GraphicsContextState::Purpose) final;
+    void restore(WebCore::GraphicsContextState::Purpose) final;
+    void translate(float x, float y) final;
+    void rotate(float angle) final;
+    void scale(const WebCore::FloatSize&) final;
+    void setCTM(const WebCore::AffineTransform&) final;
+    void concatCTM(const WebCore::AffineTransform&) final;
+    void setLineCap(WebCore::LineCap) final;
+    void setLineDash(const WebCore::DashArray&, float dashOffset) final;
+    void setLineJoin(WebCore::LineJoin) final;
+    void setMiterLimit(float) final;
+    void clip(const WebCore::FloatRect&) final;
+    void clipRoundedRect(const WebCore::FloatRoundedRect&) final;
+    void clipOut(const WebCore::FloatRect&) final;
+    void clipOut(const WebCore::Path&) final;
+    void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final;
+    void clipPath(const WebCore::Path&, WebCore::WindRule) final;
+    void resetClip() final;
+    void beginTransparencyLayer(float) final;
+    void beginTransparencyLayer(WebCore::CompositeOperator, WebCore::BlendMode) final;
+    void endTransparencyLayer() final;
+    void drawRect(const WebCore::FloatRect&, float) final;
+    void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, const WebCore::DashArray& widths, bool printing, bool doubleLines, WebCore::StrokeStyle) final;
+    void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) final;
+    void drawEllipse(const WebCore::FloatRect&) final;
+    void drawPath(const WebCore::Path&) final;
+    void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
+    void drawFocusRing(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
+    void fillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
+    void fillRect(const WebCore::FloatRect&, const WebCore::Color&) final;
+    void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) final;
+    void fillRect(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&, RequiresClipToRect) final;
+    void fillRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) final;
+    void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) final;
+    void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;
+    void fillEllipse(const WebCore::FloatRect&) final;
+#if ENABLE(VIDEO)
+    void drawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
+#endif
+    void strokeRect(const WebCore::FloatRect&, float) final;
+    void strokeEllipse(const WebCore::FloatRect&) final;
+    void clearRect(const WebCore::FloatRect&) final;
+    void drawControlPart(WebCore::ControlPart&, const WebCore::FloatRoundedRect& borderRect, float deviceScaleFactor, const WebCore::ControlStyle&) final;
+#if USE(CG)
+    void applyStrokePattern() final;
+    void applyFillPattern() final;
+#endif
+    void applyDeviceScaleFactor(float) final;
+
+private:
     void recordSetInlineFillColor(WebCore::PackedColor::RGBA) final;
     void recordSetInlineStroke(WebCore::DisplayList::SetInlineStroke&&) final;
     void recordSetState(const WebCore::GraphicsContextState&) final;
-    void recordSetLineCap(WebCore::LineCap) final;
-    void recordSetLineDash(const WebCore::DashArray&, float dashOffset) final;
-    void recordSetLineJoin(WebCore::LineJoin) final;
-    void recordSetMiterLimit(float) final;
     void recordClearDropShadow() final;
-    void recordClip(const WebCore::FloatRect&) final;
-    void recordClipRoundedRect(const WebCore::FloatRoundedRect&) final;
-    void recordClipOut(const WebCore::FloatRect&) final;
-    void recordClipOutRoundedRect(const WebCore::FloatRoundedRect&) final;
     void recordClipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
-    void recordClipOutToPath(const WebCore::Path&) final;
-    void recordClipPath(const WebCore::Path&, WebCore::WindRule) final;
-    void recordResetClip() final;
     void recordDrawFilteredImageBuffer(WebCore::ImageBuffer*, const WebCore::FloatRect& sourceImageRect, WebCore::Filter&) final;
     void recordDrawGlyphs(const WebCore::Font&, const WebCore::GlyphBufferGlyph*, const WebCore::GlyphBufferAdvance*, unsigned count, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void recordDrawDecomposedGlyphs(const WebCore::Font&, const WebCore::DecomposedGlyphs&) final;
@@ -95,24 +128,6 @@ private:
     void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&);
     void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
-    void recordBeginTransparencyLayer(float) final;
-    void recordBeginTransparencyLayer(WebCore::CompositeOperator, WebCore::BlendMode) final;
-    void recordEndTransparencyLayer() final;
-    void recordDrawRect(const WebCore::FloatRect&, float) final;
-    void recordDrawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
-    void recordDrawLinesForText(const WebCore::FloatPoint& blockLocation, const WebCore::FloatSize& localAnchor, float thickness, const WebCore::DashArray& widths, bool printing, bool doubleLines, WebCore::StrokeStyle) final;
-    void recordDrawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&) final;
-    void recordDrawEllipse(const WebCore::FloatRect&) final;
-    void recordDrawPath(const WebCore::Path&) final;
-    void recordDrawFocusRingPath(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
-    void recordDrawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
-    void recordFillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
-    void recordFillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&) final;
-    void recordFillRectWithGradient(const WebCore::FloatRect&, WebCore::Gradient&) final;
-    void recordFillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&, RequiresClipToRect) final;
-    void recordFillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) final;
-    void recordFillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) final;
-    void recordFillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordFillLine(const WebCore::PathDataLine&) final;
     void recordFillArc(const WebCore::PathArc&) final;
@@ -122,11 +137,6 @@ private:
 #endif
     void recordFillPathSegment(const WebCore::PathSegment&) final;
     void recordFillPath(const WebCore::Path&) final;
-    void recordFillEllipse(const WebCore::FloatRect&) final;
-#if ENABLE(VIDEO)
-    void recordDrawVideoFrame(WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
-#endif
-    void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const WebCore::PathDataLine&) final;
     void recordStrokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStroke&&) final;
@@ -137,14 +147,6 @@ private:
 #endif
     void recordStrokePathSegment(const WebCore::PathSegment&) final;
     void recordStrokePath(const WebCore::Path&) final;
-    void recordStrokeEllipse(const WebCore::FloatRect&) final;
-    void recordClearRect(const WebCore::FloatRect&) final;
-    void recordDrawControlPart(WebCore::ControlPart&, const WebCore::FloatRoundedRect& borderRect, float deviceScaleFactor, const WebCore::ControlStyle&) final;
-#if USE(CG)
-    void recordApplyStrokePattern() final;
-    void recordApplyFillPattern() final;
-#endif
-    void recordApplyDeviceScaleFactor(float) final;
 
     bool recordResourceUse(WebCore::NativeImage&) final;
     bool recordResourceUse(WebCore::ImageBuffer&) final;
