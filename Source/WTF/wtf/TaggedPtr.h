@@ -106,7 +106,7 @@ struct EnumTaggingTraits {
     static TagType fromStorage(StorageType storage) { return static_cast<TagType>(storage >> tagShift); }
 #else
     static StorageType toStorage(TagType tag) { return static_cast<StorageType>(tag); }
-    static TagType fromStorage(StorageType storage) { return static_cast<TagType>(storage); }
+    static TagType fromStorage(StorageType storage) { return static_cast<TagType>(storage & tagMask32Bit); }
 #endif
 };
 
