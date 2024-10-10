@@ -97,30 +97,6 @@ Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, con
 {
 }
 
-#if PLATFORM(COCOA)
-static void addIntrinsicMargins(RenderStyle& style)
-{
-    // Intrinsic margin value.
-    const int intrinsicMargin = clampToInteger(2 * style.usedZoom());
-
-    // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
-    // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
-    if (style.width().isIntrinsicOrAuto()) {
-        if (style.marginLeft().hasQuirk())
-            style.setMarginLeft(WebCore::Length(intrinsicMargin, LengthType::Fixed));
-        if (style.marginRight().hasQuirk())
-            style.setMarginRight(WebCore::Length(intrinsicMargin, LengthType::Fixed));
-    }
-
-    if (style.height().isAuto()) {
-        if (style.marginTop().hasQuirk())
-            style.setMarginTop(WebCore::Length(intrinsicMargin, LengthType::Fixed));
-        if (style.marginBottom().hasQuirk())
-            style.setMarginBottom(WebCore::Length(intrinsicMargin, LengthType::Fixed));
-    }
-}
-#endif
-
 // https://www.w3.org/TR/css-display-3/#transformations
 static DisplayType equivalentBlockDisplay(const RenderStyle& style)
 {
@@ -665,19 +641,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // Do the same for scroll-timeline and view-timeline longhands.
     style.adjustScrollTimelines();
     style.adjustViewTimelines();
-
-#if PLATFORM(COCOA)
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls)) {
-        // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
-        // alter fonts and heights/widths.
-        if (is<HTMLFormControlElement>(m_element) && style.computedFontSize() >= 11) {
-            // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
-            // so we have to treat all image buttons as though they were explicitly sized.
-            if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
-                addIntrinsicMargins(style);
-        }
-    }
-#endif
 
     // Let the theme also have a crack at adjusting the style.
     if (style.hasAppearance())

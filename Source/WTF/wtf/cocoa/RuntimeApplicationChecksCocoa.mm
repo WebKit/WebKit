@@ -185,7 +185,6 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
 
     if (linkedBefore(dyld_spring_2023_os_versions, DYLD_IOS_VERSION_16_4, DYLD_MACOSX_VERSION_13_3)) {
         disableBehavior(SDKAlignedBehavior::NoShowModalDialog);
-        disableBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls);
         disableBehavior(SDKAlignedBehavior::ProgrammaticFocusDuringUserScriptShowsInputViews);
         disableBehavior(SDKAlignedBehavior::DefaultsToExcludingBackgroundsWhenPrinting);
         disableBehavior(SDKAlignedBehavior::InspectableDefaultsToDisabled);
