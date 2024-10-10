@@ -5024,17 +5024,20 @@ ModelDocumentEnabled:
 
 ModelElementEnabled:
   type: bool
-  status: testable
+  status: Modelelement_feature_status
   category: html
   humanReadableName: "HTML <model> element"
   humanReadableDescription: "Enable HTML <model> element"
   condition: ENABLE(MODEL_ELEMENT)
   defaultValue:
     WebKitLegacy:
+      "ENABLE(MODEL_ELEMENT_BY_DEFAULT)": true
       default: false
     WebKit:
+      "ENABLE(MODEL_ELEMENT_BY_DEFAULT)": true
       default: false
     WebCore:
+      "ENABLE(MODEL_ELEMENT_BY_DEFAULT)": true
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
