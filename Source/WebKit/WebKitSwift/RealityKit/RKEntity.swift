@@ -187,6 +187,38 @@ public final class WKSRKEntity: NSObject {
         }
     }
 
+    @objc(applyIBLData:) public func applyIBL(data: Data) {
+#if canImport(RealityKit, _version: 366)
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+            Logger.realityKitEntity.error("Cannot get CGImageSource from IBL image data")
+            return
+        }
+        guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+            Logger.realityKitEntity.error("Cannot get CGImage from CGImageSource")
+            return
+        }
+
+        Task {
+            do {
+                let textureResource = try await TextureResource(cubeFromEquirectangular: cgImage, options: TextureResource.CreateOptions(semantic: .hdrColor))
+                let environment = try await EnvironmentResource(cube: textureResource, options: .init())
+
+                await MainActor.run {
+                    entity.components[ImageBasedLightComponent.self] = .init(source: .single(environment))
+                    entity.components[ImageBasedLightReceiverComponent.self] = .init(imageBasedLight: entity)
+                }
+            } catch {
+                Logger.realityKitEntity.error("Cannot load environment resource from CGImage")
+            }
+        }
+#endif
+    }
+
+    @objc(removeIBL) public func removeIBL() {
+        entity.components[ImageBasedLightComponent.self] = nil
+        entity.components[ImageBasedLightReceiverComponent.self] = nil
+    }
+
     private func animationPlaybackStateDidUpdate() {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
      }
