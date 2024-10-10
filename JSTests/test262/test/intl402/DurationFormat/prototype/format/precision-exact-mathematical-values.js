@@ -37,21 +37,6 @@ const durations = [
     nanoseconds: 1,
   },
 
-  // 9007199254740991 + (9007199254740991 / 10^3) + (9007199254740991 / 10^6) + (9007199254740991 / 10^9)
-  // = 9.016215470202185986731991 × 10^15
-  {
-    seconds: Number.MAX_SAFE_INTEGER,
-    milliseconds: Number.MAX_SAFE_INTEGER,
-    microseconds: Number.MAX_SAFE_INTEGER,
-    nanoseconds: Number.MAX_SAFE_INTEGER,
-  },
-  {
-    seconds: Number.MIN_SAFE_INTEGER,
-    milliseconds: Number.MIN_SAFE_INTEGER,
-    microseconds: Number.MIN_SAFE_INTEGER,
-    nanoseconds: Number.MIN_SAFE_INTEGER,
-  },
-
   // 1 + (2 / 10^3) + (3 / 10^6) + (9007199254740991 / 10^9)
   // = 9.007200256743991 × 10^6
   {
@@ -61,23 +46,15 @@ const durations = [
     nanoseconds: Number.MAX_SAFE_INTEGER,
   },
 
-  // 9007199254740991 + (10^3 / 10^3) + (10^6 / 10^6) + (10^9 / 10^9)
-  // = 9007199254740991 + 3
-  // = 9007199254740994
+  // (4503599627370497024 / 10^3) + (4503599627370494951424 / 10^6)
+  // = 4503599627370497.024 + 4503599627370494.951424
+  // = 9007199254740991.975424
   {
-    seconds: Number.MAX_SAFE_INTEGER,
-    milliseconds: 10 ** 3,
-    microseconds: 10 ** 6,
-    nanoseconds: 10 ** 9,
-  },
+    // Actual value is: 4503599627370497024
+    milliseconds: 4503599627370497_000,
 
-  // ~1.7976931348623157e+308 / 10^9
-  // = ~1.7976931348623157 × 10^299
-  {
-    seconds: 0,
-    milliseconds: 0,
-    microseconds: 0,
-    nanoseconds: Number.MAX_VALUE,
+    // Actual value is: 4503599627370494951424
+    microseconds: 4503599627370495_000000,
   },
 ];
 

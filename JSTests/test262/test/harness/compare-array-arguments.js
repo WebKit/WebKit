@@ -28,11 +28,11 @@ function f() {
 
   checkFormatOfAssertionMessage(() => {
     assert.compareArray(arguments, [], 'arguments and []');
-  }, 'Expected [0, a, undefined] and [] to have the same contents. arguments and []');
+  }, 'Actual [0, a, undefined] and expected [] should have the same contents. arguments and []');
 
   checkFormatOfAssertionMessage(() => {
     assert.compareArray([], arguments, '[] and arguments');
-  }, 'Expected [] and [0, a, undefined] to have the same contents. [] and arguments');
+  }, 'Actual [] and expected [0, a, undefined] should have the same contents. [] and arguments');
 }
 
 f(...fixture);

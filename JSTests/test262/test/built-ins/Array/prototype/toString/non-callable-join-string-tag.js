@@ -27,13 +27,15 @@ assert.sameValue(Array.prototype.toString.call({ join: {} }), "[object Object]")
 
 let revokeOnGet = false;
 const proxyTarget = [];
-const { proxy, revoke } = Proxy.revocable(proxyTarget, {
+var proxyObj = Proxy.revocable(proxyTarget, {
     get: (target, key, receiver) => {
         if (revokeOnGet)
             revoke();
         return Reflect.get(target, key, receiver);
     },
 });
+var proxy = proxyObj.proxy;
+var revoke = proxyObj.revoke;
 
 proxyTarget.join = undefined;
 assert.sameValue(Array.prototype.toString.call(proxy), "[object Array]");

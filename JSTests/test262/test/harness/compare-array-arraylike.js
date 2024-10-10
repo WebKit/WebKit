@@ -27,8 +27,8 @@ assert.compareArray([0, 'a', undefined], fixture);
 
 checkFormatOfAssertionMessage(() => {
   assert.compareArray(fixture, [], 'fixture and []');
-}, 'Expected [0, a, undefined] and [] to have the same contents. fixture and []');
+}, 'Actual [0, a, undefined] and expected [] should have the same contents. fixture and []');
 
 checkFormatOfAssertionMessage(() => {
   assert.compareArray([], fixture, '[] and fixture');
-}, 'Expected [] and [0, a, undefined] to have the same contents. [] and fixture');
+}, 'Actual [] and expected [0, a, undefined] should have the same contents. [] and fixture');

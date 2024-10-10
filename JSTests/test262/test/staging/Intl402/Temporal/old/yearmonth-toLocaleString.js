@@ -29,11 +29,3 @@ assert.sameValue(
   `${yearmonth.toLocaleString("de-AT", { timeZone: "Europe/Vienna", calendar })}`,
   `11${deMonthYearSeparator}1976`
 );
-
-// should ignore units not in the data type
-assert.sameValue(yearmonth.toLocaleString("en-US", { timeZoneName: "long" }), "11/1976");
-assert.sameValue(yearmonth.toLocaleString("en-US", { day: "numeric" }), "11/1976");
-assert.sameValue(yearmonth.toLocaleString("en-US", { hour: "numeric" }), "11/1976");
-assert.sameValue(yearmonth.toLocaleString("en-US", { minute: "numeric" }), "11/1976");
-assert.sameValue(yearmonth.toLocaleString("en-US", { second: "numeric" }), "11/1976");
-assert.sameValue(yearmonth.toLocaleString("en-US", { weekday: "long" }), "11/1976");

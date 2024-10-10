@@ -25,3 +25,6 @@ TemporalHelpers.assertDateDuration(result, 1, 0, 0, 1, "ISO string offset accept
 
 relativeTo = "1970-01-01T00:00+00:44:30.123456789[+00:45]";
 assert.throws(RangeError, () => action(relativeTo), "rounding is not accepted between ISO offset and time zone");
+
+relativeTo = "1970-01-01T00:00-00:44:59[-00:44:59]";
+assert.throws(RangeError, () => action(relativeTo), "sub-minute offset not accepted as time zone identifier");
