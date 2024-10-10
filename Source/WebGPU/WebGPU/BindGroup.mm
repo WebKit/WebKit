@@ -907,9 +907,9 @@ static BindGroupEntryUsage usageForBuffer(WGPUBufferBindingType bufferBindingTyp
     return BindGroupEntryUsage::Undefined;
 }
 
-static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage usage, uint32_t bindingIndex, auto& resource, uint64_t entryOffset = 0)
+static BindGroupEntryUsageData makeBindGroupEntryUsageData(BindGroupEntryUsage usage, uint32_t bindingIndex, auto& resource, uint64_t entryOffset = 0, uint64_t entrySize = 0)
 {
-    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = &resource, .entryOffset = entryOffset };
+    return BindGroupEntryUsageData { .usage = usage, .binding = bindingIndex, .resource = &resource, .entryOffset = entryOffset, .entrySize = entrySize };
 }
 
 constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
@@ -1058,7 +1058,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 }
                 if (buffer) {
                     stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
-                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(usageForBuffer(layoutBinding->type), entry.binding, apiBuffer, entryOffset));
+                    stageResourceUsages[metalRenderStage(stage)][resourceUsage - 1].append(makeBindGroupEntryUsageData(usageForBuffer(layoutBinding->type), entry.binding, apiBuffer, entryOffset, entrySize));
                 }
             } else if (samplerIsPresent) {
                 auto* layoutBinding = hasBinding<WGPUSamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex);

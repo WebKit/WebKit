@@ -191,16 +191,19 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
             uint64_t bufferSize = 0;
             if (auto* bufferBinding = get_if<WGPUBufferBindingLayout>(&it->value.bindingLayout))
                 bufferSize = bufferBinding->minBindingSize;
-            if (!bufferSize && mininumBufferSizes) {
-                if (auto bufferSizeIt = mininumBufferSizes->find(it->value.binding); bufferSizeIt != mininumBufferSizes->end())
-                    bufferSize = bufferSizeIt->value;
+            if (mininumBufferSizes) {
+                if (auto bufferSizeIt = mininumBufferSizes->find(it->value.binding); bufferSizeIt != mininumBufferSizes->end()) {
+                    if (bufferSize && bufferSizeIt->value > bufferSize)
+                        return [NSString stringWithFormat:@"buffer size from WGSL shader(%llu) is less than the binding buffer size(%llu)", bufferSizeIt->value, bufferSize];
+                    bufferSize = std::max(bufferSize, bufferSizeIt->value);
+                }
             }
 
             if (bufferSize && buffer->get()) {
                 auto dynamicOffset = bindGroup.dynamicOffset(bindingIndex, dynamicOffsets);
                 auto totalOffset = resource.entryOffset + dynamicOffset;
                 auto mtlBufferLength = buffer->get()->buffer().length;
-                if (totalOffset > mtlBufferLength || (mtlBufferLength - totalOffset) < bufferSize)
+                if (totalOffset > mtlBufferLength || (mtlBufferLength - totalOffset) < bufferSize || bufferSize > resource.entrySize)
                     return [NSString stringWithFormat:@"buffer length(%zu) minus offset(%llu), (resourceOffset(%llu) + dynamicOffset(%u)), is less than required bufferSize(%llu)", mtlBufferLength, totalOffset, resource.entryOffset, dynamicOffset, bufferSize];
             }
         }
