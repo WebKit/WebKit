@@ -8,15 +8,6 @@ function shouldBeOneOf(actual, expectedArray) {
         throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
 }
 
-const icuVersion = $vm.icuVersion();
-function shouldBeForICUVersion(minimumVersion, actual, expected) {
-    if (icuVersion < minimumVersion)
-        return;
-
-    if (actual !== expected)
-        throw new Error(`expected ${expected} but got ${actual}`);
-}
-
 function shouldNotThrow(func) {
     func();
 }

@@ -186,9 +186,7 @@ shouldBe(JSON.stringify(Intl.Collator.supportedLocalesOf(['en', 'pt', 'en', 'es'
 // Canonicalizes tags.
 shouldBe(
     JSON.stringify(Intl.Collator.supportedLocalesOf('En-laTn-us-variAnt-fOObar-1abc-U-kn-tRue-A-aa-aaa-x-RESERVED')),
-    $vm.icuVersion() >= 67
-        ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
-        : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved"]'
+    '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
 );
 // Throws on problems with length, get, or toString.
 shouldThrow(() => Intl.Collator.supportedLocalesOf(Object.create(null, { length: { get() { throw Error() } } })), Error);

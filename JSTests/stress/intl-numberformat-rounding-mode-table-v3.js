@@ -51,11 +51,6 @@ Object.keys(expectations).forEach(function(roundingMode) {
     shouldBe(roundingMode, nf.resolvedOptions().roundingMode);
     inputs.forEach(function(input) {
         let msg = "input: " + input + " with roundingMode: " + roundingMode;
-        if ($vm.icuVersion() >= 69)
-            shouldBe(exp[idx++], nf.format(input), msg);
-        else if (roundingMode !== "halfCeil" && roundingMode !== "halfFloor")
-            shouldBe(exp[idx++], nf.format(input), msg);
-        else
-            nf.format(input) // should not throw.
+        shouldBe(exp[idx++], nf.format(input), msg);
     })
 });
