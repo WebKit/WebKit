@@ -1349,8 +1349,8 @@
                 "inter-character"
             ],
             "codegen-properties": {
-                "top-priority": true,
-                "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
+                "cascade-alias": "ruby-position",
+                "skip-builder": true,
                 "name-for-methods": "RubyPosition",
                 "parser-function": "consumeWebKitRubyPosition",
                 "parser-grammar-unused": "before | after | inter-character",

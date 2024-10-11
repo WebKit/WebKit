@@ -1167,10 +1167,10 @@ RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range, const CSSParserC
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange& range, const CSSParserContext&)
 {
     if (range.peek().id() == CSSValueInterCharacter) {
-        consumeIdent(range);
+        range.consumeIncludingWhitespace();
         return CSSPrimitiveValue::create(CSSValueLegacyInterCharacter);
     }
-    return consumeIdent(range);
+    return consumeIdent<CSSValueBefore, CSSValueAfter>(range);
 }
 
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, const CSSParserContext& context)
