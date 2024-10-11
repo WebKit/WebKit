@@ -1403,12 +1403,12 @@ static bool webViewSizeIsNarrow(WebCore::IntSize viewSize)
 #endif // !PLATFORM(MACCATALYST)
 
 enum class RecommendDesktopClassBrowsingForRequest { No, Yes, Auto };
-static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request)
+static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedForRequest(const WebCore::ResourceRequest& request, bool quirksFlagStatus)
 {
     // FIXME: This should be additionally gated on site-specific quirks being enabled.
     // See also: <rdar://problem/50035167>.
     // The list of domain names is currently available in Source/WebCore/page/Quirks.cpp
-    if (Quirks::needsIPadMiniUserAgent(request.url()))
+    if (Quirks::needsIPadMiniUserAgent(request.url()) && quirksFlagStatus)
         return RecommendDesktopClassBrowsingForRequest::No;
 
     if (Quirks::needsIPhoneUserAgent(request.url()))
@@ -1422,7 +1422,8 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
 
 bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest& request) const
 {
-    auto desktopClassBrowsingRecommendation = desktopClassBrowsingRecommendedForRequest(request);
+    bool quirksFlagStatus = m_frame->settings().needsSiteSpecificQuirks();
+    auto desktopClassBrowsingRecommendation = desktopClassBrowsingRecommendedForRequest(request, quirksFlagStatus);
     if (desktopClassBrowsingRecommendation == RecommendDesktopClassBrowsingForRequest::Yes)
         return true;
 
@@ -1462,7 +1463,7 @@ bool WebPageProxy::useDesktopClassBrowsing(const API::WebsitePolicies& policies,
     case WebContentMode::Mobile:
         return false;
     case WebContentMode::Desktop:
-        return !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
+        return !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request, true) != RecommendDesktopClassBrowsingForRequest::No;
     default:
         ASSERT_NOT_REACHED();
         return false;
