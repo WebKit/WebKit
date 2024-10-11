@@ -358,8 +358,8 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     case op_instanceof: {
         auto bytecode = instruction->as<OpInstanceof>();
         useAt(OpInstanceof::getHasInstance, bytecode.m_constructor);
-        useAt(OpInstanceof::getPrototype, bytecode.m_value, bytecode.m_constructor, bytecode.m_dst);
-        useAt(OpInstanceof::instanceof, bytecode.m_value, bytecode.m_dst);
+        useAt(OpInstanceof::getPrototype, bytecode.m_value, bytecode.m_constructor, bytecode.m_hasInstanceOrPrototype);
+        useAt(OpInstanceof::instanceof, bytecode.m_value, bytecode.m_hasInstanceOrPrototype);
         return;
     }
 
@@ -625,8 +625,8 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
 
     case op_instanceof: {
         auto bytecode = instruction->as<OpInstanceof>();
-        defAt(OpInstanceof::getHasInstance, bytecode.m_dst);
-        defAt(OpInstanceof::getPrototype, bytecode.m_dst);
+        defAt(OpInstanceof::getHasInstance, bytecode.m_hasInstanceOrPrototype);
+        defAt(OpInstanceof::getPrototype, bytecode.m_hasInstanceOrPrototype);
         defAt(OpInstanceof::instanceof, bytecode.m_dst);
         return;
     }

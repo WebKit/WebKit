@@ -3624,11 +3624,12 @@ RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, Re
 
 RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> dstReg = generator.finalDestination(dst);
     RefPtr<RegisterID> value = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
+    RefPtr<RegisterID> dstReg = generator.finalDestination(dst, value.get());
     RefPtr<RegisterID> constructor = generator.emitNode(m_expr2);
+    RefPtr<RegisterID> hasInstanceOrPrototype = generator.newTemporary();
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-    return generator.emitInstanceof(dstReg.get(), value.get(), constructor.get());
+    return generator.emitInstanceof(dstReg.get(), value.get(), constructor.get(), hasInstanceOrPrototype.get());
 }
 
 // ------------------------------ InNode ----------------------------

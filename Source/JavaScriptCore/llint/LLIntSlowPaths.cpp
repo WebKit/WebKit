@@ -1025,7 +1025,11 @@ LLINT_SLOW_PATH_DECL(slow_path_get_hasInstance_from_instanceof)
     auto& metadata = bytecode.metadata(codeBlock);
     JSValue constructor = getOperand(callFrame, bytecode.m_constructor);
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpInstanceof::getHasInstance), codeBlock, globalObject, constructor, vm.propertyNames->hasInstanceSymbol, metadata.m_hasInstanceModeMetadata);
-    LLINT_RETURN(result);
+    LLINT_CHECK_EXCEPTION();
+
+    callFrame->uncheckedR(bytecode.m_hasInstanceOrPrototype) = result;
+    codeBlock->valueProfileForOffset(bytecode.m_hasInstanceValueProfile).m_buckets[0] = JSValue::encode(result);
+    LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_get_prototype_from_instanceof)
@@ -1035,7 +1039,11 @@ LLINT_SLOW_PATH_DECL(slow_path_get_prototype_from_instanceof)
     auto& metadata = bytecode.metadata(codeBlock);
     JSValue constructor = getOperand(callFrame, bytecode.m_constructor);
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpInstanceof::getPrototype), codeBlock, globalObject, constructor, vm.propertyNames->prototype, metadata.m_prototypeModeMetadata);
-    LLINT_RETURN(result);
+    LLINT_CHECK_EXCEPTION();
+
+    callFrame->uncheckedR(bytecode.m_hasInstanceOrPrototype) = result;
+    codeBlock->valueProfileForOffset(bytecode.m_prototypeValueProfile).m_buckets[0] = JSValue::encode(result);
+    LLINT_END();
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_instanceof_from_instanceof)
@@ -1043,7 +1051,7 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof_from_instanceof)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpInstanceof>();
     JSValue value = getOperand(callFrame, bytecode.m_value);
-    JSValue proto = getOperand(callFrame, bytecode.m_dst);
+    JSValue proto = getOperand(callFrame, bytecode.m_hasInstanceOrPrototype);
     LLINT_RETURN(jsBoolean(JSObject::defaultHasInstance(globalObject, value, proto)));
 }
 
@@ -2621,7 +2629,7 @@ static void handleOpInstanceofCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
     ASSERT(checkpointIndex != OpInstanceof::getHasInstance);
 
     auto value = getOperand(callFrame, bytecode.m_value);
-    auto hasInstanceOrPrototype = getOperand(callFrame, bytecode.m_dst);
+    auto hasInstanceOrPrototype = getOperand(callFrame, bytecode.m_hasInstanceOrPrototype);
     auto& dst = callFrame->uncheckedR(bytecode.m_dst);
 
     if (checkpointIndex == OpInstanceof::getPrototype) {

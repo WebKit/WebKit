@@ -3257,9 +3257,9 @@ llintOpWithMetadata(op_instanceof, OpInstanceof, macro (size, get, dispatch, met
         btbz JSCell::m_flags[t0], ImplementsDefaultHasInstance, trueLabel
     end
 
-    macro storeDst(result)
+    macro store(result, fieldName)
         move result, t0
-        storeVariable(get, m_dst, t0, t1)
+        storeVariable(get, fieldName, t0, t1)
     end
 
     macro getByID(fieldName, modeMetadata, valueProfile, slowPath, return)
@@ -3275,15 +3275,15 @@ llintOpWithMetadata(op_instanceof, OpInstanceof, macro (size, get, dispatch, met
 .getHasInstance:
     isObject(m_constructor, .throwStaticError)
     getByID(m_constructor, m_hasInstanceModeMetadata, m_hasInstanceValueProfile, _llint_slow_path_get_hasInstance_from_instanceof, macro (result)
-        storeDst(result)
+        store(result, m_hasInstanceOrPrototype)
         jmp .getPrototype
     end)
 
 .getPrototype:
-    overridesHasInstance(m_dst, m_constructor, .instanceofCustom)
+    overridesHasInstance(m_hasInstanceOrPrototype, m_constructor, .instanceofCustom)
     isObject(m_value, .false)
     getByID(m_constructor, m_prototypeModeMetadata, m_prototypeValueProfile, _llint_slow_path_get_prototype_from_instanceof, macro (result)
-        storeDst(result)
+        store(result, m_hasInstanceOrPrototype)
         jmp .instanceof
     end)
 
@@ -3300,7 +3300,7 @@ llintOpWithMetadata(op_instanceof, OpInstanceof, macro (size, get, dispatch, met
     dispatch()
 
 .false:
-    storeDst(ValueFalse)
+    store(ValueFalse, m_dst)
     dispatch()
 end)
 

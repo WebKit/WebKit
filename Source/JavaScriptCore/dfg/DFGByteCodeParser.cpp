@@ -7097,7 +7097,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 unsigned identifierNumber = m_graph.identifiers().ensure(hasInstanceImpl);
                 AccessType type = AccessType::GetById;
 
-                handleGetById(bytecode.m_dst, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(hasInstanceImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(hasInstanceImpl), identifierNumber, getByStatus, type, nextCheckpoint());
                 itermediateIndex = progressToNextCheckpoint();
 
                 // 2. Get Prototype
@@ -7106,7 +7106,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 branchData->taken = BranchTarget(isCustomBlock);
                 branchData->notTaken = BranchTarget(isNotCustomBlock);
                 JSFunction* defaultHasInstanceSymbolFunction = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin())->functionProtoHasInstanceSymbolFunction();
-                Node* overridesHasInstance = addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), get(bytecode.m_constructor), get(bytecode.m_dst));
+                Node* overridesHasInstance = addToGraph(OverridesHasInstance, OpInfo(m_graph.freeze(defaultHasInstanceSymbolFunction)), get(bytecode.m_constructor), get(bytecode.m_hasInstanceOrPrototype));
                 addToGraph(Branch, OpInfo(branchData), overridesHasInstance);
             }
 
@@ -7115,7 +7115,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 clearCaches();
                 keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
 
-                set(bytecode.m_dst, addToGraph(InstanceOfCustom, get(bytecode.m_value), get(bytecode.m_constructor), get(bytecode.m_dst)));
+                set(bytecode.m_dst, addToGraph(InstanceOfCustom, get(bytecode.m_value), get(bytecode.m_constructor), get(bytecode.m_hasInstanceOrPrototype)));
 
                 m_currentIndex = nextOpcodeIndex();
                 m_exitOK = true;
@@ -7170,14 +7170,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 unsigned identifierNumber = m_graph.identifiers().ensure(prototypeImpl);
                 AccessType type = AccessType::GetById;
 
-                handleGetById(bytecode.m_dst, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(prototypeImpl), identifierNumber, getByStatus, type, nextCheckpoint());
+                handleGetById(bytecode.m_hasInstanceOrPrototype, prediction, get(bytecode.m_constructor), CacheableIdentifier::createFromImmortalIdentifier(prototypeImpl), identifierNumber, getByStatus, type, nextCheckpoint());
                 progressToNextCheckpoint();
 
                 // 3. Do value instanceof prototype.
                 InstanceOfStatus status = InstanceOfStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_currentIndex);
 
                 Node* value = get(bytecode.m_value);
-                Node* prototype = get(bytecode.m_dst);
+                Node* prototype = get(bytecode.m_hasInstanceOrPrototype);
 
                 ([&]() ALWAYS_INLINE_LAMBDA {
                     // Only inline it if it's Simple with a commonPrototype; bottom/top or variable
@@ -7187,7 +7187,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     // recompilation.
                     JSObject* commonPrototype = status.commonPrototype();
                     if (commonPrototype && Options::useAccessInlining()) {
-                        addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(commonPrototype)), get(bytecode.m_dst));
+                        addToGraph(CheckIsConstant, OpInfo(m_graph.freeze(commonPrototype)), prototype);
 
                         bool allOK = true;
                         MatchStructureData* data = m_graph.m_matchStructureData.add();
