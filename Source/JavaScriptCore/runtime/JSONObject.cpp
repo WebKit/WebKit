@@ -115,7 +115,7 @@ private:
         bool m_hasFastObjectProperties { false };
         unsigned m_index { 0 };
         unsigned m_size { 0 };
-        RefPtr<PropertyNameArrayData> m_propertyNames;
+        RefPtr<PropertyNameArray> m_propertyNames;
         Vector<std::tuple<PropertyName, unsigned>, 8> m_propertiesAndOffsets;
     };
 

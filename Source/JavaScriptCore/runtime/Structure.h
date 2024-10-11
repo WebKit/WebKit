@@ -61,7 +61,7 @@ class DeferGC;
 class DeferredStructureTransitionWatchpointFire;
 class LLIntOffsetsExtractor;
 class PropertyNameArray;
-class PropertyNameArrayData;
+class PropertyNameArray;
 class PropertyTable;
 class StructureChain;
 class StructureShape;

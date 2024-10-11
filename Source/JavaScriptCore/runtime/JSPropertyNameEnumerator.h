@@ -98,7 +98,7 @@ private:
     friend class LLIntOffsetsExtractor;
 
     JSPropertyNameEnumerator(VM&, Structure*, uint32_t, uint32_t, WriteBarrier<JSString>*, unsigned);
-    void finishCreation(VM&, RefPtr<PropertyNameArrayData>&&);
+    void finishCreation(VM&, RefPtr<PropertyNameArray>&&);
 
     // JSPropertyNameEnumerator is immutable data structure, which allows VM to cache the empty one.
     // After instantiating JSPropertyNameEnumerator, we must not change any fields.

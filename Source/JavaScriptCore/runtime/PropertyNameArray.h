@@ -26,17 +26,16 @@
 
 namespace JSC {
 
-// FIXME: Rename to PropertyNameArray.
-class PropertyNameArrayData : public RefCounted<PropertyNameArrayData> {
+class PropertyNameArray : public RefCounted<PropertyNameArray> {
 public:
     typedef Vector<Identifier, 20> PropertyNameVector;
 
-    static Ref<PropertyNameArrayData> create() { return adoptRef(*new PropertyNameArrayData); }
+    static Ref<PropertyNameArray> create() { return adoptRef(*new PropertyNameArray); }
 
     PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
 
 private:
-    PropertyNameArrayData()
+    PropertyNameArray()
     {
     }
 
@@ -47,7 +46,7 @@ private:
 class PropertyNameArray {
 public:
     PropertyNameArray(VM& vm, PropertyNameMode propertyNameMode, PrivateSymbolMode privateSymbolMode)
-        : m_data(PropertyNameArrayData::create())
+        : m_data(PropertyNameArray::create())
         , m_vm(vm)
         , m_propertyNameMode(propertyNameMode)
         , m_privateSymbolMode(privateSymbolMode)
@@ -68,12 +67,12 @@ public:
     Identifier& operator[](unsigned i) { return m_data->propertyNameVector()[i]; }
     const Identifier& operator[](unsigned i) const { return m_data->propertyNameVector()[i]; }
 
-    PropertyNameArrayData* data() { return m_data.get(); }
-    RefPtr<PropertyNameArrayData> releaseData() { return WTFMove(m_data); }
+    PropertyNameArray* data() { return m_data.get(); }
+    RefPtr<PropertyNameArray> releaseData() { return WTFMove(m_data); }
 
     // FIXME: Remove these functions.
     bool canAddKnownUniqueForStructure() const { return m_data->propertyNameVector().isEmpty(); }
-    typedef PropertyNameArrayData::PropertyNameVector::const_iterator const_iterator;
+    typedef PropertyNameArray::PropertyNameVector::const_iterator const_iterator;
     size_t size() const { return m_data->propertyNameVector().size(); }
     const_iterator begin() const { return m_data->propertyNameVector().begin(); }
     const_iterator end() const { return m_data->propertyNameVector().end(); }
@@ -88,7 +87,7 @@ private:
     void addUncheckedInternal(UniquedStringImpl*);
     bool isUidMatchedToTypeMode(UniquedStringImpl* identifier);
 
-    RefPtr<PropertyNameArrayData> m_data;
+    RefPtr<PropertyNameArray> m_data;
     HashSet<UniquedStringImpl*> m_set;
     VM& m_vm;
     PropertyNameMode m_propertyNameMode;

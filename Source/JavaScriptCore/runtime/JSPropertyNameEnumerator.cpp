@@ -64,11 +64,11 @@ JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure,
         m_flags |= JSPropertyNameEnumerator::GenericMode;
 }
 
-void JSPropertyNameEnumerator::finishCreation(VM& vm, RefPtr<PropertyNameArrayData>&& identifiers)
+void JSPropertyNameEnumerator::finishCreation(VM& vm, RefPtr<PropertyNameArray>&& identifiers)
 {
     Base::finishCreation(vm);
 
-    PropertyNameArrayData::PropertyNameVector& vector = identifiers->propertyNameVector();
+    PropertyNameArray::PropertyNameVector& vector = identifiers->propertyNameVector();
     ASSERT(m_endGenericPropertyIndex == vector.size());
     for (unsigned i = 0; i < vector.size(); ++i) {
         const Identifier& identifier = vector[i];
