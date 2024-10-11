@@ -21,8 +21,7 @@
 
 #if USE(GLIB)
 
-#include <glib-object.h>
-#include <glib.h>
+#include <gio/gio.h>
 
 namespace WTF {
 
@@ -237,6 +236,21 @@ void derefGPtr(GArray* ptr)
 {
     if (ptr)
         g_array_unref(ptr);
+}
+
+template <>
+GResource* refGPtr(GResource* ptr)
+{
+    if (ptr)
+        g_resource_ref(ptr);
+    return ptr;
+}
+
+template <>
+void derefGPtr(GResource* ptr)
+{
+    if (ptr)
+        g_resource_unref(ptr);
 }
 
 } // namespace WTF

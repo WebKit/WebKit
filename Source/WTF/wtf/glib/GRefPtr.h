@@ -253,6 +253,8 @@ template <> WTF_EXPORT_PRIVATE GDBusNodeInfo* refGPtr(GDBusNodeInfo* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GDBusNodeInfo* ptr);
 template <> WTF_EXPORT_PRIVATE GArray* refGPtr(GArray*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GArray*);
+template <> WTF_EXPORT_PRIVATE GResource* refGPtr(GResource*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GResource*);
 
 #if HAVE(GURI)
 template <> WTF_EXPORT_PRIVATE GUri* refGPtr(GUri*);
