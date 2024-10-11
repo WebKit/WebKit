@@ -274,13 +274,11 @@ String AccessibilityObjectAtspi::text() const
 
     m_hasListMarkerAtStart = false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (m_coreObject->roleValue() == AccessibilityRole::ColorWell) {
         auto color = convertColor<SRGBA<float>>(m_coreObject->colorValue()).resolved();
         GUniquePtr<char> colorString(g_strdup_printf("rgb %7.5f %7.5f %7.5f 1", color.red, color.green, color.blue));
         return String::fromUTF8(colorString.get());
     }
-#endif
 
     if (m_coreObject->isTextControl())
         return m_coreObject->doAXStringForRange({ 0, String::MaxLength });

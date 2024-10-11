@@ -2558,9 +2558,6 @@ DateComponentsType AccessibilityObject::dateTimeComponentsType() const
 
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 {
-#if !ENABLE(INPUT_TYPE_COLOR)
-    return Color::transparentBlack;
-#else
     if (!isColorWell())
         return Color::transparentBlack;
 
@@ -2569,7 +2566,6 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
         return Color::transparentBlack;
 
     return input->valueAsColor().toColorTypeLossy<SRGBA<uint8_t>>();
-#endif
 }
 
 // This function implements the ARIA accessible name as described by the Mozilla
