@@ -101,6 +101,9 @@ public:
 
     virtual ~PDFPluginBase();
 
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeThreadSafeCheckedPtr::ptrCount(); }
     uint32_t ptrCountWithoutThreadCheck() const final { return CanMakeThreadSafeCheckedPtr::ptrCountWithoutThreadCheck(); }

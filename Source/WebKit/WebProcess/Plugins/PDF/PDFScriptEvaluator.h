@@ -32,15 +32,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class PDFScriptEvaluatorClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PDFScriptEvaluatorClient> : std::true_type { };
-}
-
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
@@ -51,6 +42,9 @@ namespace WebKit {
 class PDFScriptEvaluatorClient : public CanMakeWeakPtr<PDFScriptEvaluatorClient> {
 public:
     virtual ~PDFScriptEvaluatorClient() = default;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     virtual void print() = 0;
 };
