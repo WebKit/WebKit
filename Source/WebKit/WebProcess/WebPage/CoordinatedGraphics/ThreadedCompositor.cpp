@@ -27,8 +27,11 @@
 #include "ThreadedCompositor.h"
 
 #if USE(COORDINATED_GRAPHICS)
-
+#include "AcceleratedSurface.h"
 #include "CompositingRunLoop.h"
+#include "LayerTreeHost.h"
+#include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
@@ -59,43 +62,52 @@ static constexpr unsigned c_defaultRefreshRate = 60000;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadedCompositor);
 
 #if HAVE(DISPLAY_LINK)
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
+Ref<ThreadedCompositor> ThreadedCompositor::create(LayerTreeHost& layerTreeHost, float scaleFactor)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayID, viewportSize, scaleFactor, flipY, damagePropagation));
+    return adoptRef(*new ThreadedCompositor(layerTreeHost, scaleFactor));
 }
 #else
-Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
+Ref<ThreadedCompositor> ThreadedCompositor::create(LayerTreeHost& layerTreeHost, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, float scaleFactor, PlatformDisplayID displayID)
 {
-    return adoptRef(*new ThreadedCompositor(client, displayRefreshMonitorClient, displayID, viewportSize, scaleFactor, flipY, damagePropagation));
+    return adoptRef(*new ThreadedCompositor(layerTreeHost, displayRefreshMonitorClient, scaleFactor, displayID));
 }
 #endif
 
 #if HAVE(DISPLAY_LINK)
-ThreadedCompositor::ThreadedCompositor(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
+ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, float scaleFactor)
 #else
-ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY, DamagePropagation damagePropagation)
+ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, float scaleFactor, PlatformDisplayID displayID)
 #endif
-    : m_client(client)
-    , m_flipY(flipY)
-    , m_damagePropagation(damagePropagation)
+    : m_layerTreeHost(layerTreeHost)
+    , m_surface(AcceleratedSurface::create(layerTreeHost.webPage(), [this] { frameComplete(); }))
+    , m_flipY(m_surface->shouldPaintMirrored())
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
-#if !HAVE(DISPLAY_LINK)
+#if HAVE(DISPLAY_LINK)
+    , m_didRenderFrameTimer(RunLoop::main(), this, &ThreadedCompositor::didRenderFrameTimerFired)
+#else
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(displayID, displayRefreshMonitorClient, WebCore::DisplayUpdate { 0, c_defaultRefreshRate / 1000 }))
 #endif
 {
-    {
-        // Locking isn't really necessary here, but it's done for consistency.
-        Locker locker { m_attributes.lock };
-        m_attributes.viewportSize = viewportSize;
-        m_attributes.scaleFactor = scaleFactor;
-        m_attributes.needsResize = !viewportSize.isEmpty();
-    }
+    ASSERT(RunLoop::isMain());
+
+    m_surface->didCreateCompositingRunLoop(m_compositingRunLoop->runLoop());
+
+    m_attributes.viewportSize = m_surface->size();
+    m_attributes.needsResize = !m_attributes.viewportSize.isEmpty();
+    m_attributes.scaleFactor = scaleFactor;
+
+    auto& webPage = layerTreeHost.webPage();
+    m_damagePropagation = ([](const WebCore::Settings& settings) {
+        if (!settings.propagateDamagingInformation())
+            return DamagePropagation::None;
+        if (settings.unifyDamagedRegions())
+            return DamagePropagation::Unified;
+        return DamagePropagation::Region;
+    })(webPage.corePage()->settings());
 
 #if !HAVE(DISPLAY_LINK)
     m_display.displayID = displayID;
     m_display.displayUpdate = { 0, c_defaultRefreshRate / 1000 };
-#else
-    UNUSED_PARAM(displayID);
 #endif
 
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
@@ -111,43 +123,40 @@ ThreadedCompositor::ThreadedCompositor(Client& client, ThreadedDisplayRefreshMon
         const auto propagateDamage = (m_damagePropagation == DamagePropagation::None)
             ? WebCore::Damage::ShouldPropagate::No : WebCore::Damage::ShouldPropagate::Yes;
         m_scene = adoptRef(new CoordinatedGraphicsScene(this, propagateDamage));
-        m_nativeSurfaceHandle = m_client.nativeSurfaceHandleForCompositing();
 
-        createGLContext();
-        if (m_context) {
-            if (!m_nativeSurfaceHandle)
+        // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
+        // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
+        // numeric types (and when needed they get extended to 64-bit) but not for pointers. Using
+        // a plain C cast expression in this one instance works in all cases.
+        static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
+        auto nativeSurfaceHandle = (GLNativeWindowType)m_surface->window();
+        m_context = GLContext::create(nativeSurfaceHandle, PlatformDisplay::sharedDisplay());
+        if (m_context && m_context->makeContextCurrent()) {
+            if (!nativeSurfaceHandle)
                 m_flipY = !m_flipY;
+
+            m_surface->didCreateGLContext();
             m_scene->setActive(true);
         }
     });
 }
 
-ThreadedCompositor::~ThreadedCompositor()
-{
-}
+ThreadedCompositor::~ThreadedCompositor() = default;
 
-void ThreadedCompositor::createGLContext()
+uint64_t ThreadedCompositor::surfaceID() const
 {
-    ASSERT(m_compositingRunLoop->isCurrent());
-
-    // GLNativeWindowType depends on the EGL implementation: reinterpret_cast works
-    // for pointers (only if they are 64-bit wide and not for other cases), and static_cast for
-    // numeric types (and when needed they get extended to 64-bit) but not for pointers. Using
-    // a plain C cast expression in this one instance works in all cases.
-    static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
-    auto windowType = (GLNativeWindowType) m_nativeSurfaceHandle;
-    m_context = GLContext::create(windowType, PlatformDisplay::sharedDisplay());
-    if (m_context) {
-        m_context->makeContextCurrent();
-        m_client.didCreateGLContext();
-    }
+    ASSERT(RunLoop::isMain());
+    return m_surface->surfaceID();
 }
 
 void ThreadedCompositor::invalidate()
 {
+    ASSERT(RunLoop::isMain());
     m_scene->detach();
     m_compositingRunLoop->stopUpdates();
-#if !HAVE(DISPLAY_LINK)
+#if HAVE(DISPLAY_LINK)
+    m_didRenderFrameTimer.stop();
+#else
     m_displayRefreshMonitor->invalidate();
 #endif
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
@@ -159,20 +168,24 @@ void ThreadedCompositor::invalidate()
         updateSceneWithoutRendering();
 
         m_scene->purgeGLResources();
-        m_client.willDestroyGLContext();
+        m_surface->willDestroyGLContext();
         m_context = nullptr;
-        m_client.didDestroyGLContext();
+        m_surface->finalize();
         m_scene = nullptr;
 
 #if !HAVE(DISPLAY_LINK)
         m_display.updateTimer = nullptr;
 #endif
     });
+    m_surface->willDestroyCompositingRunLoop();
     m_compositingRunLoop = nullptr;
 }
 
 void ThreadedCompositor::suspend()
 {
+    ASSERT(RunLoop::isMain());
+    m_surface->visibilityDidChange(false);
+
     if (++m_suspendedCount > 1)
         return;
 
@@ -184,6 +197,9 @@ void ThreadedCompositor::suspend()
 
 void ThreadedCompositor::resume()
 {
+    ASSERT(RunLoop::isMain());
+    m_surface->visibilityDidChange(true);
+
     ASSERT(m_suspendedCount > 0);
     if (--m_suspendedCount > 0)
         return;
@@ -194,22 +210,41 @@ void ThreadedCompositor::resume()
     m_compositingRunLoop->resume();
 }
 
-void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scale)
+void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scaleFactor)
 {
+    ASSERT(RunLoop::isMain());
     Locker locker { m_attributes.lock };
     m_attributes.scrollPosition = scrollPosition;
-    m_attributes.scaleFactor = scale;
+    m_attributes.scrolledSinceLastFrame = true;
+    m_attributes.scaleFactor = scaleFactor;
     m_compositingRunLoop->scheduleUpdate();
 }
 
-void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scale)
+void ThreadedCompositor::setViewportSize(const IntSize& size, float scaleFactor)
 {
+    ASSERT(RunLoop::isMain());
+    m_surface->hostResize(size);
+
     Locker locker { m_attributes.lock };
-    m_attributes.viewportSize = viewportSize;
-    m_attributes.scaleFactor = scale;
+    m_attributes.viewportSize = m_surface->size();
+    m_attributes.scaleFactor = scaleFactor;
     m_attributes.needsResize = true;
     m_compositingRunLoop->scheduleUpdate();
 }
+
+void ThreadedCompositor::backgroundColorDidChange()
+{
+    ASSERT(RunLoop::isMain());
+    m_surface->backgroundColorDidChange();
+}
+
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+void ThreadedCompositor::preferredBufferFormatsDidChange()
+{
+    ASSERT(RunLoop::isMain());
+    m_surface->preferredBufferFormatsDidChange();
+}
+#endif
 
 void ThreadedCompositor::updateViewport()
 {
@@ -224,6 +259,7 @@ void ThreadedCompositor::forceRepaint()
 
 void ThreadedCompositor::renderLayerTree()
 {
+    ASSERT(m_compositingRunLoop->isCurrent());
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(RenderLayerTreeStart, RenderLayerTreeEnd);
 #endif
@@ -243,6 +279,7 @@ void ThreadedCompositor::renderLayerTree()
     WebCore::IntPoint scrollPosition;
     float scaleFactor;
     bool needsResize;
+    bool scrolledSinceLastFrame;
     uint32_t compositionRequestID;
 
     Vector<RefPtr<Nicosia::Scene>> states;
@@ -253,6 +290,7 @@ void ThreadedCompositor::renderLayerTree()
         scrollPosition = m_attributes.scrollPosition;
         scaleFactor = m_attributes.scaleFactor;
         needsResize = m_attributes.needsResize;
+        scrolledSinceLastFrame = m_attributes.scrolledSinceLastFrame;
         compositionRequestID = m_attributes.compositionRequestID;
 
         states = WTFMove(m_attributes.states);
@@ -262,8 +300,9 @@ void ThreadedCompositor::renderLayerTree()
             m_attributes.clientRendersNextFrame = true;
         }
 
-        // Reset the needsResize attribute to false.
+        // Reset the needsResize and scrolledSinceLastFrame attributes to false.
         m_attributes.needsResize = false;
+        m_attributes.scrolledSinceLastFrame = false;
     }
 
     TransformationMatrix viewportTransform;
@@ -276,14 +315,18 @@ void ThreadedCompositor::renderLayerTree()
     // and similarly all GL operations are done inside that specific scope.
 
     if (needsResize)
-        m_client.resize(viewportSize);
+        m_surface->clientResize(viewportSize);
 
-    m_client.willRenderFrame();
+    m_surface->willRenderFrame();
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }] {
+        if (m_compositingRunLoop)
+            m_layerTreeHost.willRenderFrame();
+    });
 
     if (needsResize)
         glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
-    m_client.clearIfNeeded();
+    m_surface->clearIfNeeded();
     WTFBeginSignpost(this, ApplyStateChanges);
     m_scene->applyStateChanges(states);
     WTFEndSignpost(this, ApplyStateChanges);
@@ -292,60 +335,63 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
     WTFEndSignpost(this, PaintToGLContext);
 
-    WebCore::Damage boundsDamage;
-    const auto& frameDamage = ([this, &boundsDamage]() -> const WebCore::Damage& {
+    WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionRequestID);
+
+    auto damageRegion = [&]() -> WebCore::Region {
+        if (scrolledSinceLastFrame)
+            return { };
+
         const auto& damage = m_scene->lastDamage();
-        if (m_damagePropagation != DamagePropagation::None && !damage.isInvalid()) {
+        if (m_damagePropagation == DamagePropagation::None || damage.isInvalid())
+            return { };
+
+        WebCore::Damage boundsDamage;
+        const auto& region = [&] -> WebCore::Region {
             if (m_damagePropagation == DamagePropagation::Unified) {
                 boundsDamage.add(damage.bounds());
-                return boundsDamage;
+                if (boundsDamage.isInvalid() || boundsDamage.isEmpty())
+                    return { };
+
+                return boundsDamage.region();
             }
-            return damage;
-        }
-        return WebCore::Damage::invalid();
-    })();
+            if (damage.isEmpty())
+                return { };
+
+            return damage.region();
+        }();
+
+        if (region.isRect() && region.contains(IntRect({ }, viewportSize)))
+            return { };
+
+        return region;
+    }();
 
     m_context->swapBuffers();
-    if (m_scene->isActive())
-        m_client.didRenderFrame(compositionRequestID, frameDamage);
+
+    m_surface->didRenderFrame(WTFMove(damageRegion));
+#if HAVE(DISPLAY_LINK)
+    m_compositionResponseID = compositionRequestID;
+    if (!m_didRenderFrameTimer.isActive())
+        m_didRenderFrameTimer.startOneShot(0_s);
+#endif
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }] {
+        if (m_compositingRunLoop)
+            m_layerTreeHost.didRenderFrame();
+    });
 }
 
-void ThreadedCompositor::sceneUpdateFinished()
+uint32_t ThreadedCompositor::requestComposition(const RefPtr<Nicosia::Scene>& state)
 {
-#if !HAVE(DISPLAY_LINK)
-    // The composition has finished. Now we have to determine how to manage
-    // the scene update completion.
-
-    // The DisplayRefreshMonitor will be used to dispatch a callback on the client thread if:
-    //  - clientRendersNextFrame is true (i.e. client has to be notified about the finished update), or
-    //  - a DisplayRefreshMonitor callback was requested from the Web engine
-    bool shouldDispatchDisplayRefreshCallback = m_displayRefreshMonitor->requiresDisplayRefreshCallback(m_display.displayUpdate);
-
-    if (!shouldDispatchDisplayRefreshCallback) {
+    ASSERT(RunLoop::isMain());
+    uint32_t compositionRequestID;
+    {
         Locker locker { m_attributes.lock };
-        shouldDispatchDisplayRefreshCallback |= m_attributes.clientRendersNextFrame;
+        if (state)
+            m_attributes.states.append(state);
+        compositionRequestID = ++m_attributes.compositionRequestID;
     }
-#endif
-
-    Locker stateLocker { m_compositingRunLoop->stateLock() };
-
-#if !HAVE(DISPLAY_LINK)
-    // Schedule the DisplayRefreshMonitor callback, if necessary.
-    if (shouldDispatchDisplayRefreshCallback)
-        m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
-#endif
-
-    // Mark the scene update as completed.
-    m_compositingRunLoop->updateCompleted(stateLocker);
-}
-
-void ThreadedCompositor::updateSceneState(const RefPtr<Nicosia::Scene>& state, uint32_t compositionRequestID)
-{
-    Locker locker { m_attributes.lock };
-    if (state)
-        m_attributes.states.append(state);
-    m_attributes.compositionRequestID = compositionRequestID;
     m_compositingRunLoop->scheduleUpdate();
+    return compositionRequestID;
 }
 
 void ThreadedCompositor::updateScene()
@@ -366,13 +412,6 @@ void ThreadedCompositor::updateSceneWithoutRendering()
     m_scene->updateSceneState();
 }
 
-#if !HAVE(DISPLAY_LINK)
-WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() const
-{
-    return m_displayRefreshMonitor.get();
-}
-#endif
-
 void ThreadedCompositor::frameComplete()
 {
     WTFEmitSignpost(this, FrameComplete);
@@ -380,20 +419,59 @@ void ThreadedCompositor::frameComplete()
     ASSERT(m_compositingRunLoop->isCurrent());
 #if !HAVE(DISPLAY_LINK)
     displayUpdateFired();
-#endif
     sceneUpdateFinished();
+#else
+    Locker stateLocker { m_compositingRunLoop->stateLock() };
+    m_compositingRunLoop->updateCompleted(stateLocker);
+#endif
 }
 
-#if !HAVE(DISPLAY_LINK)
+#if HAVE(DISPLAY_LINK)
+void ThreadedCompositor::didRenderFrameTimerFired()
+{
+    if (m_compositingRunLoop)
+        m_layerTreeHost.didComposite(m_compositionResponseID);
+}
+#else
+WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() const
+{
+    return m_displayRefreshMonitor.get();
+}
+
 void ThreadedCompositor::displayUpdateFired()
 {
     m_display.displayUpdate = m_display.displayUpdate.nextUpdate();
 
-    m_client.displayDidRefresh(m_display.displayID);
+    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(m_display.displayID);
 
     m_display.updateTimer->startOneShot(Seconds { 1.0 / m_display.displayUpdate.updatesPerSecond });
 }
-#endif
+
+void ThreadedCompositor::sceneUpdateFinished()
+{
+    // The composition has finished. Now we have to determine how to manage
+    // the scene update completion.
+
+    // The DisplayRefreshMonitor will be used to dispatch a callback on the client thread if:
+    //  - clientRendersNextFrame is true (i.e. client has to be notified about the finished update), or
+    //  - a DisplayRefreshMonitor callback was requested from the Web engine
+    bool shouldDispatchDisplayRefreshCallback = m_displayRefreshMonitor->requiresDisplayRefreshCallback(m_display.displayUpdate);
+
+    if (!shouldDispatchDisplayRefreshCallback) {
+        Locker locker { m_attributes.lock };
+        shouldDispatchDisplayRefreshCallback |= m_attributes.clientRendersNextFrame;
+    }
+
+    Locker stateLocker { m_compositingRunLoop->stateLock() };
+
+    // Schedule the DisplayRefreshMonitor callback, if necessary.
+    if (shouldDispatchDisplayRefreshCallback)
+        m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
+
+    // Mark the scene update as completed.
+    m_compositingRunLoop->updateCompleted(stateLocker);
+}
+#endif // !HAVE(DISPLAY_LINK)
 
 }
 #endif // USE(COORDINATED_GRAPHICS)

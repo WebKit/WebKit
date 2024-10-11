@@ -47,6 +47,9 @@ class Damage;
 
 namespace WebKit {
 
+class AcceleratedSurface;
+class LayerTreeHost;
+
 class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor> {
     WTF_MAKE_TZONE_ALLOCATED(ThreadedCompositor);
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
@@ -57,31 +60,24 @@ public:
         Unified,
     };
 
-    class Client {
-    public:
-        virtual uint64_t nativeSurfaceHandleForCompositing() = 0;
-        virtual void didCreateGLContext() = 0;
-        virtual void willDestroyGLContext() = 0;
-        virtual void didDestroyGLContext() = 0;
-
-        virtual void resize(const WebCore::IntSize&) = 0;
-        virtual void willRenderFrame() = 0;
-        virtual void clearIfNeeded() = 0;
-        virtual void didRenderFrame(uint32_t, const WebCore::Damage&) = 0;
-        virtual void displayDidRefresh(WebCore::PlatformDisplayID) = 0;
-    };
-
 #if HAVE(DISPLAY_LINK)
-    static Ref<ThreadedCompositor> create(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, bool flipY, DamagePropagation);
+    static Ref<ThreadedCompositor> create(LayerTreeHost&, float scaleFactor);
 #else
-    static Ref<ThreadedCompositor> create(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, bool flipY, DamagePropagation);
+    static Ref<ThreadedCompositor> create(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, float scaleFactor, WebCore::PlatformDisplayID);
 #endif
     virtual ~ThreadedCompositor();
 
+    uint64_t surfaceID() const;
+
     void setScrollPosition(const WebCore::IntPoint&, float scale);
     void setViewportSize(const WebCore::IntSize&, float scale);
+    void backgroundColorDidChange();
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+    void preferredBufferFormatsDidChange();
+#endif
 
-    void updateSceneState(const RefPtr<Nicosia::Scene>&, uint32_t);
+
+    uint32_t requestComposition(const RefPtr<Nicosia::Scene>&);
     void updateScene();
     void updateSceneWithoutRendering();
 
@@ -93,38 +89,36 @@ public:
     WebCore::DisplayRefreshMonitor& displayRefreshMonitor() const;
 #endif
 
-    void frameComplete();
-
     void suspend();
     void resume();
 
-    RunLoop& compositingRunLoop() const { return m_compositingRunLoop->runLoop(); }
-
 private:
 #if HAVE(DISPLAY_LINK)
-    ThreadedCompositor(Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, bool flipY, DamagePropagation);
+    ThreadedCompositor(LayerTreeHost&, float scaleFactor);
 #else
-    ThreadedCompositor(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, bool flipY, DamagePropagation);
+    ThreadedCompositor(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, float scaleFactor, WebCore::PlatformDisplayID);
 #endif
 
     // CoordinatedGraphicsSceneClient
     void updateViewport() override;
 
     void renderLayerTree();
-    void sceneUpdateFinished();
+    void frameComplete();
 
-    void createGLContext();
-
-#if !HAVE(DISPLAY_LINK)
+#if HAVE(DISPLAY_LINK)
+    void didRenderFrameTimerFired();
+#else
     void displayUpdateFired();
+    void sceneUpdateFinished();
 #endif
 
-    Client& m_client;
+    LayerTreeHost& m_layerTreeHost;
+    std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<WebCore::GLContext> m_context;
 
-    uintptr_t m_nativeSurfaceHandle;
     bool m_flipY { false };
+    bool m_scrolledSinceLastFrame { false };
     DamagePropagation m_damagePropagation { DamagePropagation::None };
     unsigned m_suspendedCount { 0 };
 
@@ -136,13 +130,17 @@ private:
         WebCore::IntPoint scrollPosition;
         float scaleFactor { 1 };
         bool needsResize { false };
+        bool scrolledSinceLastFrame { false };
         Vector<RefPtr<Nicosia::Scene>> states;
 
         bool clientRendersNextFrame { false };
         uint32_t compositionRequestID { 0 };
     } m_attributes;
 
-#if !HAVE(DISPLAY_LINK)
+#if HAVE(DISPLAY_LINK)
+    std::atomic<uint32_t> m_compositionResponseID { 0 };
+    RunLoop::Timer m_didRenderFrameTimer;
+#else
     struct {
         WebCore::PlatformDisplayID displayID;
         WebCore::DisplayUpdate displayUpdate;

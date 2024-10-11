@@ -57,7 +57,7 @@ class WebPage;
 
 class AcceleratedSurfaceDMABuf final : public AcceleratedSurface, public IPC::MessageReceiver {
 public:
-    static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Client&);
+    static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Function<void()>&& frameCompleteHandler);
     ~AcceleratedSurfaceDMABuf();
 
 private:
@@ -87,7 +87,7 @@ private:
     void visibilityDidChange(bool) override;
     bool backgroundColorDidChange() override;
 
-    AcceleratedSurfaceDMABuf(WebPage&, Client&);
+    AcceleratedSurfaceDMABuf(WebPage&, Function<void()>&& frameCompleteHandler);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

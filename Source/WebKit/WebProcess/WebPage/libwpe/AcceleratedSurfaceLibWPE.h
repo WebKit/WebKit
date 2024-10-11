@@ -41,28 +41,20 @@ class AcceleratedSurfaceLibWPE final : public AcceleratedSurface {
     WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceLibWPE);
     WTF_MAKE_TZONE_ALLOCATED(AcceleratedSurfaceLibWPE);
 public:
-    static std::unique_ptr<AcceleratedSurfaceLibWPE> create(WebPage&, Client&);
+    static std::unique_ptr<AcceleratedSurfaceLibWPE> create(WebPage&, Function<void()>&& frameCompleteHandler);
     ~AcceleratedSurfaceLibWPE();
 
     uint64_t window() const override;
     uint64_t surfaceID() const override;
     void clientResize(const WebCore::IntSize&) override;
-    bool shouldPaintMirrored() const override
-    {
-#if PLATFORM(GTK) && !USE(GTK4)
-        return true;
-#else
-        return false;
-#endif
-    }
-
-    void initialize() override;
     void finalize() override;
     void willRenderFrame() override;
     void didRenderFrame(WebCore::Region&&) override;
 
 private:
-    AcceleratedSurfaceLibWPE(WebPage&, Client&);
+    AcceleratedSurfaceLibWPE(WebPage&, Function<void()>&& frameCompleteHandler);
+
+    void initialize();
 
     UnixFileDescriptor m_hostFD;
     struct wpe_renderer_backend_egl_target* m_backend { nullptr };

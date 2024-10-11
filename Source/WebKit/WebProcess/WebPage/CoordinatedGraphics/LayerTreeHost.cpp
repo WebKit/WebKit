@@ -71,12 +71,9 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displayID)
 #endif
     : m_webPage(webPage)
-    , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
-#if HAVE(DISPLAY_LINK)
-    , m_didRenderFrameTimer(RunLoop::main(), this, &LayerTreeHost::didRenderFrameTimerFired)
-#else
+#if !HAVE(DISPLAY_LINK)
     , m_displayID(displayID)
 #endif
 #if USE(CAIRO)
@@ -112,27 +109,12 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
             m_viewportController.didChangeContentsSize(contentsSize);
     }
 
-    IntSize scaledSize(m_webPage.size());
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    float scaleFactor = m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor();
-
-    const auto damagePropagation = ([](const WebCore::Settings& settings) {
-        if (!settings.propagateDamagingInformation())
-            return ThreadedCompositor::DamagePropagation::None;
-        if (settings.unifyDamagedRegions())
-            return ThreadedCompositor::DamagePropagation::Unified;
-        return ThreadedCompositor::DamagePropagation::Region;
-    })(m_webPage.corePage()->settings());
-
 #if HAVE(DISPLAY_LINK)
-    // FIXME: remove the displayID from ThreadedCompositor too.
-    auto displayID = m_webPage.corePage()->displayID();
-    m_compositor = ThreadedCompositor::create(*this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
+    m_compositor = ThreadedCompositor::create(*this, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
 #else
-    m_compositor = ThreadedCompositor::create(*this, *this, displayID, scaledSize, scaleFactor, m_surface->shouldPaintMirrored(), damagePropagation);
+    m_compositor = ThreadedCompositor::create(*this, *this, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor(), displayID);
 #endif
-    m_layerTreeContext.contextID = m_surface->surfaceID();
-    m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
+    m_layerTreeContext.contextID = m_compositor->surfaceID();
 
     didChangeViewport();
 }
@@ -140,8 +122,6 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 LayerTreeHost::~LayerTreeHost()
 {
     cancelPendingLayerFlush();
-
-    m_surface->willDestroyCompositingRunLoop();
 
     m_nicosia.sceneIntegration->invalidate();
 
@@ -160,7 +140,6 @@ LayerTreeHost::~LayerTreeHost()
 #endif
 
     m_compositor->invalidate();
-    m_surface = nullptr;
 }
 
 void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
@@ -379,30 +358,23 @@ void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
 {
-    if (m_surface->hostResize(size))
-        m_layerTreeContext.contextID = m_surface->surfaceID();
-
     m_rootLayer->setSize(size);
     scheduleLayerFlush();
 
     m_viewportController.didChangeViewportSize(size);
-    IntSize scaledSize(size);
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    m_compositor->setViewportSize(size, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
     didChangeViewport();
 }
 
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;
-    m_surface->visibilityDidChange(false);
     m_compositor->suspend();
 }
 
 void LayerTreeHost::resumeRendering()
 {
     m_isSuspended = false;
-    m_surface->visibilityDidChange(true);
     m_compositor->resume();
     scheduleLayerFlush();
 }
@@ -477,19 +449,14 @@ void LayerTreeHost::didChangeViewport()
 
 void LayerTreeHost::deviceOrPageScaleFactorChanged()
 {
-    if (m_surface->hostResize(m_webPage.size()))
-        m_layerTreeContext.contextID = m_surface->surfaceID();
-
     m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
-    IntSize scaledSize(m_webPage.size());
-    scaledSize.scale(m_webPage.deviceScaleFactor());
-    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    m_compositor->setViewportSize(m_webPage.size(), m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
     didChangeViewport();
 }
 
 void LayerTreeHost::backgroundColorDidChange()
 {
-    m_surface->backgroundColorDidChange();
+    m_compositor->backgroundColorDidChange();
 }
 
 void LayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
@@ -545,107 +512,7 @@ RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(Platfor
     ASSERT(m_displayID == displayID);
     return Ref { m_compositor->displayRefreshMonitor() };
 }
-#endif
 
-void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
-{
-    WTFEmitSignpost(this, CommitSceneState, "compositionRequestID %i", m_compositionRequestID + 1);
-    m_isWaitingForRenderer = true;
-    m_compositor->updateSceneState(state, ++m_compositionRequestID);
-}
-
-void LayerTreeHost::frameComplete()
-{
-    m_compositor->frameComplete();
-}
-
-uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
-{
-    m_surface->initialize();
-    return m_surface->window();
-}
-
-void LayerTreeHost::didCreateGLContext()
-{
-    m_surface->didCreateGLContext();
-}
-
-void LayerTreeHost::willDestroyGLContext()
-{
-    m_surface->willDestroyGLContext();
-}
-
-void LayerTreeHost::didDestroyGLContext()
-{
-    m_surface->finalize();
-}
-
-void LayerTreeHost::resize(const IntSize& size)
-{
-    m_surface->clientResize(size);
-}
-
-void LayerTreeHost::willRenderFrame()
-{
-    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
-        if (auto* drawingArea = webPage->drawingArea())
-            drawingArea->willStartRenderingUpdateDisplay();
-    });
-    m_surface->willRenderFrame();
-}
-
-void LayerTreeHost::clearIfNeeded()
-{
-    m_surface->clearIfNeeded();
-}
-
-void LayerTreeHost::didRenderFrame(uint32_t compositionResponseID, const WebCore::Damage& damage)
-{
-    WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionResponseID);
-
-    auto damageRegion = [&]() -> WebCore::Region {
-        if (m_scrolledSinceLastFrame || damage.isInvalid())
-            return { };
-
-        if (damage.isEmpty())
-            return { };
-
-        const auto& region = damage.region();
-        if (region.isRect() && region.contains(IntRect({ }, m_surface->size())))
-            return { };
-
-        return region;
-    }();
-
-    m_surface->didRenderFrame(WTFMove(damageRegion));
-
-    m_scrolledSinceLastFrame = false;
-
-#if HAVE(DISPLAY_LINK)
-    m_compositionResponseID = compositionResponseID;
-    if (!m_didRenderFrameTimer.isActive())
-        m_didRenderFrameTimer.startOneShot(0_s);
-#endif
-    RunLoop::main().dispatch([webPage = Ref { m_webPage }] {
-        if (auto* drawingArea = webPage->drawingArea())
-            drawingArea->didCompleteRenderingUpdateDisplay();
-    });
-}
-
-#if HAVE(DISPLAY_LINK)
-void LayerTreeHost::didRenderFrameTimerFired()
-{
-    if (!m_isWaitingForRenderer || (m_isWaitingForRenderer && m_compositionRequestID == m_compositionResponseID))
-        renderNextFrame(false);
-}
-#endif
-
-void LayerTreeHost::displayDidRefresh(PlatformDisplayID displayID)
-{
-    WebProcess::singleton().eventDispatcher().notifyScrollingTreesDisplayDidRefresh(displayID);
-}
-
-#if !HAVE(DISPLAY_LINK)
 void LayerTreeHost::requestDisplayRefreshMonitorUpdate()
 {
     // Flush layers to cause a repaint. If m_isWaitingForRenderer was true at this point, the layer
@@ -662,6 +529,33 @@ void LayerTreeHost::handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
     renderNextFrame(hasBeenRescheduled);
 }
 #endif
+
+void LayerTreeHost::willRenderFrame()
+{
+    if (auto* drawingArea = m_webPage.drawingArea())
+        drawingArea->willStartRenderingUpdateDisplay();
+}
+
+void LayerTreeHost::didRenderFrame()
+{
+    if (auto* drawingArea = m_webPage.drawingArea())
+        drawingArea->didCompleteRenderingUpdateDisplay();
+}
+
+#if HAVE(DISPLAY_LINK)
+void LayerTreeHost::didComposite(uint32_t compositionResponseID)
+{
+    if (!m_isWaitingForRenderer || (m_isWaitingForRenderer && m_compositionRequestID == compositionResponseID))
+        renderNextFrame(false);
+}
+#endif
+
+void LayerTreeHost::commitSceneState(const RefPtr<Nicosia::Scene>& state)
+{
+    m_isWaitingForRenderer = true;
+    m_compositionRequestID = m_compositor->requestComposition(state);
+    WTFEmitSignpost(this, CommitSceneState, "compositionRequestID %i", m_compositionRequestID);
+}
 
 void LayerTreeHost::requestUpdate()
 {
@@ -784,7 +678,7 @@ void LayerTreeHost::commitTransientZoom(double scale, FloatPoint origin)
 #if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
 void LayerTreeHost::preferredBufferFormatsDidChange()
 {
-    m_surface->preferredBufferFormatsDidChange();
+    m_compositor->preferredBufferFormatsDidChange();
 }
 #endif
 

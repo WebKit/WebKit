@@ -49,27 +49,27 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedSurface);
 
-std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
+std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Function<void()>&& frameCompleteHandler)
 {
 #if (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM)))
 #if USE(GBM)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::GBM)
-        return AcceleratedSurfaceDMABuf::create(webPage, client);
+        return AcceleratedSurfaceDMABuf::create(webPage, WTFMove(frameCompleteHandler));
 #endif
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Surfaceless)
-        return AcceleratedSurfaceDMABuf::create(webPage, client);
+        return AcceleratedSurfaceDMABuf::create(webPage, WTFMove(frameCompleteHandler));
 #endif
 #if USE(WPE_RENDERER)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::WPE)
-        return AcceleratedSurfaceLibWPE::create(webPage, client);
+        return AcceleratedSurfaceLibWPE::create(webPage, WTFMove(frameCompleteHandler));
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Client& client)
+AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& frameCompleteHandler)
     : m_webPage(webPage)
-    , m_client(client)
+    , m_frameCompleteHandler(WTFMove(frameCompleteHandler))
     , m_size(webPage.size())
     , m_isOpaque(!webPage.backgroundColor().has_value() || webPage.backgroundColor()->isOpaque())
 {
@@ -105,6 +105,11 @@ void AcceleratedSurface::clearIfNeeded()
 
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void AcceleratedSurface::frameComplete() const
+{
+    m_frameCompleteHandler();
 }
 
 } // namespace WebKit
