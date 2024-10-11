@@ -185,6 +185,11 @@ void WebRemoteFrameClient::updateSandboxFlags(WebCore::SandboxFlags sandboxFlags
     WebFrameLoaderClient::updateSandboxFlags(sandboxFlags);
 }
 
+void WebRemoteFrameClient::updateOpener(const WebCore::Frame& newOpener)
+{
+    WebFrameLoaderClient::updateOpener(newOpener);
+}
+
 void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     RefPtr coreFrame = m_frame->coreRemoteFrame();

@@ -1127,7 +1127,7 @@ void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& pa
 
 void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters& treeCreationParameters)
 {
-    auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.frameName);
+    auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.frameName, treeCreationParameters.openerFrameID);
     for (auto& parameters : treeCreationParameters.children)
         constructFrameTree(frame, parameters);
 }
@@ -1139,7 +1139,7 @@ void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::F
         ASSERT_NOT_REACHED();
         return;
     }
-    WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, newChildFrameName);
+    WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, newChildFrameName, std::nullopt);
 }
 
 void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
@@ -10098,6 +10098,27 @@ void WebPage::updateCaptureState(const WebCore::Document& document, bool isActiv
 RefPtr<DrawingArea> WebPage::protectedDrawingArea() const
 {
     return m_drawingArea;
+}
+
+void WebPage::updateOpener(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier newOpenerIdentifier)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+    RefPtr coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+
+    RefPtr newOpener = WebProcess::singleton().webFrame(newOpenerIdentifier);
+    if (!newOpener)
+        return;
+    RefPtr coreNewOpener = newOpener->coreFrame();
+    if (!coreNewOpener)
+        return;
+
+    coreFrame->updateOpener(*coreNewOpener, WebCore::Frame::NotifyUIProcess::No);
+    if (RefPtr provisionalFrame = frame->provisionalFrame())
+        provisionalFrame->updateOpener(*coreNewOpener, WebCore::Frame::NotifyUIProcess::No);
 }
 
 } // namespace WebKit

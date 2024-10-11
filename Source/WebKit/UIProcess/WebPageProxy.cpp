@@ -6332,6 +6332,17 @@ void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::Fram
     }
 }
 
+void WebPageProxy::updateOpener(IPC::Connection& connection, WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier newOpener)
+{
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        frame->updateOpener(newOpener);
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess.hasConnection(connection))
+            return;
+        webProcess.send(Messages::WebPage::UpdateOpener(frameID, newOpener), pageID);
+    });
+}
+
 void WebPageProxy::preconnectTo(ResourceRequest&& request)
 {
     if (!m_websiteDataStore->configuration().allowsServerPreconnect())

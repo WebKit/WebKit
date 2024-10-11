@@ -1839,6 +1839,8 @@ public:
 
     void setTopContentInset(float);
 
+    void updateOpener(WebCore::FrameIdentifier, WebCore::FrameIdentifier);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

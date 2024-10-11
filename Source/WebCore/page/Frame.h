@@ -61,6 +61,7 @@ class Frame : public ThreadSafeRefCounted<Frame, WTF::DestructionThread::Main>, 
 public:
     virtual ~Frame();
 
+    enum class NotifyUIProcess : bool { No, Yes };
     enum class FrameType : bool { Local, Remote };
     FrameType frameType() const { return m_frameType; }
 
@@ -78,7 +79,7 @@ public:
     Frame& mainFrame() const { return m_mainFrame.get(); }
     bool isMainFrame() const { return this == m_mainFrame.ptr(); }
     WEBCORE_EXPORT void disownOpener();
-    void updateOpener(Frame&);
+    WEBCORE_EXPORT void updateOpener(Frame&, NotifyUIProcess = NotifyUIProcess::Yes);
     WEBCORE_EXPORT void setOpenerForWebKitLegacy(Frame*);
     const Frame* opener() const { return m_opener.get(); }
     Frame* opener() { return m_opener.get(); }
@@ -119,7 +120,6 @@ public:
     virtual String customNavigatorPlatform() const = 0;
     virtual OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const = 0;
 
-    enum class NotifyUIProcess : bool { No, Yes };
     virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.

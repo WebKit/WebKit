@@ -604,6 +604,10 @@ void EmptyFrameLoaderClient::updateSandboxFlags(SandboxFlags)
 {
 }
 
+void EmptyFrameLoaderClient::updateOpener(const Frame&)
+{
+}
+
 void EmptyFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL&)
 {
 }

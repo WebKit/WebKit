@@ -507,6 +507,7 @@ FrameTreeCreationParameters WebFrameProxy::frameTreeCreationParameters() const
 {
     return {
         m_frameID,
+        m_opener ? std::optional(m_opener->frameID()) : std::nullopt,
         m_frameName,
         WTF::map(m_childFrames, [] (auto& frame) {
             return frame->frameTreeCreationParameters();
@@ -662,6 +663,11 @@ WebFrameProxy* WebFrameProxy::previousSibling() const
         return nullptr;
     }
     return (--it)->ptr();
+}
+
+void WebFrameProxy::updateOpener(WebCore::FrameIdentifier newOpener)
+{
+    m_opener = WebFrameProxy::webFrame(newOpener);
 }
 
 WebFrameProxy& WebFrameProxy::rootFrame()

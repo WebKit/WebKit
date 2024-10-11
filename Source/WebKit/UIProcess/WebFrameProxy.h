@@ -206,6 +206,7 @@ public:
     WebCore::SandboxFlags effectiveSandboxFlags() const { return m_effectiveSandboxFlags; }
     void updateSandboxFlags(WebCore::SandboxFlags sandboxFlags) { m_effectiveSandboxFlags = sandboxFlags; }
 
+    void updateOpener(WebCore::FrameIdentifier);
     WebFrameProxy* opener() { return m_opener.get(); }
     void disownOpener() { m_opener = nullptr; }
 private:

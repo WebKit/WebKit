@@ -22,6 +22,7 @@
 
 struct WebKit::FrameTreeCreationParameters {
     WebCore::FrameIdentifier frameID;
+    std::optional<WebCore::FrameIdentifier> openerFrameID;
     String frameName;
     Vector<WebKit::FrameTreeCreationParameters> children;
 };

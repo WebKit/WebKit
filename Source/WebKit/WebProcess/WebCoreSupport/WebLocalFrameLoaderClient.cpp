@@ -1004,6 +1004,11 @@ void WebLocalFrameLoaderClient::updateSandboxFlags(WebCore::SandboxFlags sandbox
     WebFrameLoaderClient::updateSandboxFlags(sandboxFlags);
 }
 
+void WebLocalFrameLoaderClient::updateOpener(const WebCore::Frame& newOpener)
+{
+    WebFrameLoaderClient::updateOpener(newOpener);
+}
+
 void WebLocalFrameLoaderClient::cancelPolicyCheck()
 {
     m_frame->invalidatePolicyListeners();

@@ -3481,4 +3481,50 @@ TEST(SiteIsolation, RecoverFromCrash)
     [navigationDelegate waitForDidFinishNavigation];
 }
 
+TEST(SiteIsolation, IframeOpener)
+{
+    auto mainFrameHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('main frame received ' + event.data)"
+    "    }, false);"
+    "    onload = () => { window.open('https://example.com/iframe', 'myframename') }"
+    "</script>"
+    "<iframe name='myframename'></iframe>"_s;
+
+    auto iframeHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('child frame received ' + event.data)"
+    "    }, false);"
+    "    try { window.opener.postMessage('hello', '*') } catch (e) { alert('error ' + e) }"
+    "</script>"_s;
+
+    HTTPServer server({
+        { "/example"_s, { mainFrameHTML } },
+        { "/iframe"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    auto verifyThatOpenerIsParent = [webView = RetainPtr { webView }] (bool openerShouldBeParent) {
+        auto value = openerShouldBeParent ? "1" : "0";
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.frames[0].opener == self"], value);
+        EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"window.opener == window.parent" inFrame:[webView firstChildFrame]], value);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received hello");
+    verifyThatOpenerIsParent(true);
+
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/iframe', 'myframename')" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received hello");
+    verifyThatOpenerIsParent(true);
+
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/iframe', 'myframename')" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "child frame received hello");
+    verifyThatOpenerIsParent(false);
+
+    [webView evaluateJavaScript:@"window.open('https://webkit.org/iframe', 'myframename')" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame received hello");
+    verifyThatOpenerIsParent(true);
+}
+
 }

@@ -213,4 +213,10 @@ void WebFrameLoaderClient::updateSandboxFlags(SandboxFlags sandboxFlags)
         webPage->send(Messages::WebPageProxy::UpdateSandboxFlags(m_frame->frameID(), sandboxFlags));
 }
 
+void WebFrameLoaderClient::updateOpener(const WebCore::Frame& newOpener)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateOpener(m_frame->frameID(), newOpener.frameID()));
+}
+
 }

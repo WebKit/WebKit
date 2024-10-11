@@ -2621,6 +2621,7 @@ private:
 
     void updateRemoteFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
     void updateSandboxFlags(IPC::Connection&, WebCore::FrameIdentifier, WebCore::SandboxFlags);
+    void updateOpener(IPC::Connection&, WebCore::FrameIdentifier, WebCore::FrameIdentifier);
 
     void didDestroyNavigation(WebCore::NavigationIdentifier);
 
