@@ -79,8 +79,8 @@ void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
 SampleBufferDisplayLayer::~SampleBufferDisplayLayer()
 {
     m_connection->send(Messages::RemoteSampleBufferDisplayLayerManager::ReleaseLayer { identifier() }, 0);
-    if (m_manager)
-        m_manager->removeLayer(*this);
+    if (RefPtr manager = m_manager.get())
+        manager->removeLayer(*this);
 }
 
 bool SampleBufferDisplayLayer::didFail() const

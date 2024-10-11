@@ -30,23 +30,20 @@
 #include "SampleBufferDisplayLayer.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebKit {
-class SampleBufferDisplayLayerManager;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SampleBufferDisplayLayerManager> : std::true_type { };
-}
-
-namespace WebKit {
+class GPUProcessConnection;
 
 class SampleBufferDisplayLayerManager : public CanMakeWeakPtr<SampleBufferDisplayLayerManager> {
     WTF_MAKE_TZONE_ALLOCATED(SampleBufferDisplayLayerManager);
 public:
-    SampleBufferDisplayLayerManager() = default;
+    SampleBufferDisplayLayerManager(GPUProcessConnection&);
     ~SampleBufferDisplayLayerManager() = default;
+
+    void ref() const;
+    void deref() const;
 
     void addLayer(SampleBufferDisplayLayer&);
     void removeLayer(SampleBufferDisplayLayer&);
@@ -55,6 +52,7 @@ public:
     RefPtr<WebCore::SampleBufferDisplayLayer> createLayer(WebCore::SampleBufferDisplayLayerClient&);
 
 private:
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     HashMap<SampleBufferDisplayLayerIdentifier, WeakPtr<SampleBufferDisplayLayer>> m_layers;
 };
 
