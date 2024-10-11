@@ -26,10 +26,13 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/_WKFrameHandle.h>
 #import <wtf/RetainPtr.h>
 
@@ -146,4 +149,56 @@ TEST(Printing, PrintPageBorders)
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     [webView _waitUntilPageBorderDrawn];
 }
+
+@interface TestPDFPrintDelegate : NSObject <WKUIDelegatePrivate>
+- (void)waitForPrintFrameCall;
+@end
+
+@implementation TestPDFPrintDelegate {
+    bool _printFrameCalled;
+}
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    completionHandler();
+    _printFrameCalled = true;
+}
+
+- (void)waitForPrintFrameCall
+{
+    while (!_printFrameCalled)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
+
+class PrintWithJSExecutionOptionTests : public ::testing::TestWithParam<bool> {
+public:
+    bool allowsContentJavascript() const { return GetParam(); }
+
+    static NSURLRequest *pdfRequest()
+    {
+        return [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test_print" withExtension:@"pdf"]];
+    }
+};
+
+TEST_P(PrintWithJSExecutionOptionTests, PDFWithWindowPrintEmbeddedJS)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr delegate = adoptNS([TestPDFPrintDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setAllowsContentJavaScript:allowsContentJavascript()];
+
+    [webView synchronouslyLoadRequest:pdfRequest() preferences:preferences.get()];
+
+    [delegate waitForPrintFrameCall];
+}
+
+INSTANTIATE_TEST_SUITE_P(Printing,
+    PrintWithJSExecutionOptionTests,
+    testing::Bool(),
+    [](testing::TestParamInfo<bool> info) { return std::string { "allowsContentJavascript_is_" } + (info.param ? "true" : "false"); }
+);
 #endif

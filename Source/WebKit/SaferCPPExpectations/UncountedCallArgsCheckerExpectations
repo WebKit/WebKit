@@ -485,7 +485,6 @@ WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
 WebProcess/Plugins/PDF/PDFPluginPasswordForm.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
-WebProcess/Plugins/PDF/PDFScriptEvaluator.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm
 WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm

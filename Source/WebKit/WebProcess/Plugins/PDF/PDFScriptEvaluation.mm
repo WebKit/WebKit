@@ -24,16 +24,26 @@
  */
 
 #import "config.h"
-#import "PDFScriptEvaluator.h"
+#import "PDFScriptEvaluation.h"
 
 #if ENABLE(PDF_PLUGIN)
 
-#import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/JSObjectRef.h>
-#import <JavaScriptCore/OpaqueJSString.h>
-#include <wtf/TZoneMalloc.h>
+#import <CoreGraphics/CGPDFDocument.h>
+#import <JavaScriptCore/RegularExpression.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/OptionSet.h>
+#import <wtf/text/ASCIILiteral.h>
+#import <wtf/text/StringView.h>
+#import <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace WebKit::PDFScriptEvaluation {
+
+static bool isPrintScript(const String& script)
+{
+    static constexpr ASCIILiteral searchExpression = "^.*.\\.print(.*)$"_s;
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> printRegex { StringView { searchExpression }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase } };
+    return printRegex->match(script) != -1;
+}
 
 static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> subtree, Vector<CGPDFObjectRef>& values)
 {
@@ -61,24 +71,24 @@ static void appendValuesInPDFNameSubtreeToVector(RetainPtr<CGPDFDictionaryRef> s
     }
 }
 
-static void getAllScriptsInPDFDocument(RetainPtr<CGPDFDocumentRef> pdfDocument, Vector<RetainPtr<CFStringRef>>& scripts)
+static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocument)
 {
     if (!pdfDocument)
-        return;
+        return false;
 
     CGPDFDictionaryRef pdfCatalog = CGPDFDocumentGetCatalog(pdfDocument.get());
     if (!pdfCatalog)
-        return;
+        return false;
 
     // Get the dictionary of all document-level name trees.
     CGPDFDictionaryRef namesDictionary = nullptr;
     if (!CGPDFDictionaryGetDictionary(pdfCatalog, "Names", &namesDictionary))
-        return;
+        return false;
 
     // Get the document-level "JavaScript" name tree.
     CGPDFDictionaryRef javaScriptNameTree = nullptr;
     if (!CGPDFDictionaryGetDictionary(namesDictionary, "JavaScript", &javaScriptNameTree))
-        return;
+        return false;
 
     // The names are arbitrary. We are only interested in the values.
     Vector<CGPDFObjectRef> objects;
@@ -99,7 +109,7 @@ static void getAllScriptsInPDFDocument(RetainPtr<CGPDFDocumentRef> pdfDocument, 
             return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, bytes, length, encoding, true));
         };
 
-        auto scriptFromStream = [&]() -> RetainPtr<CFStringRef> {
+        auto scriptFromStream = [&] -> RetainPtr<CFStringRef> {
             CGPDFStreamRef stream = nullptr;
             if (!CGPDFDictionaryGetStream(javaScriptAction, "JS", &stream))
                 return nullptr;
@@ -110,111 +120,26 @@ static void getAllScriptsInPDFDocument(RetainPtr<CGPDFDocumentRef> pdfDocument, 
             return scriptFromBytes(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
         };
 
-        auto scriptFromString = [&]() -> RetainPtr<CFStringRef> {
+        auto scriptFromString = [&] -> RetainPtr<CFStringRef> {
             CGPDFStringRef string = nullptr;
             if (!CGPDFDictionaryGetString(javaScriptAction, "JS", &string))
                 return nullptr;
             return scriptFromBytes(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string));
         };
 
-        RetainPtr<CFStringRef> script = scriptFromStream() ?: scriptFromString();
-        if (!script)
-            continue;
-
-        scripts.append(script);
+        if (RetainPtr<CFStringRef> script = scriptFromStream() ?: scriptFromString(); script && isPrintScript({ script.get() }))
+            return true;
     }
+
+    return false;
 }
 
-static void jsPDFDocInitialize(JSContextRef ctx, JSObjectRef object)
+void runScripts(CGPDFDocumentRef document, PrintingCallback&& callback)
 {
-    PDFScriptEvaluator* evaluator = static_cast<PDFScriptEvaluator*>(JSObjectGetPrivate(object));
-    evaluator->ref();
+    if (pdfDocumentContainsPrintScript(document))
+        callback();
 }
 
-static void jsPDFDocFinalize(JSObjectRef object)
-{
-    PDFScriptEvaluator* evaluator = static_cast<PDFScriptEvaluator*>(JSObjectGetPrivate(object));
-    evaluator->deref();
-}
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFScriptEvaluator);
-
-JSClassRef PDFScriptEvaluator::jsPDFDocClass()
-{
-    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
-        { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { 0, 0, 0 },
-    };
-
-    static const JSClassDefinition jsPDFDocClassDefinition = {
-        0,
-        kJSClassAttributeNone,
-        "Doc",
-        0,
-        0,
-        jsPDFDocStaticFunctions,
-        jsPDFDocInitialize, jsPDFDocFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-    static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
-    return jsPDFDocClass;
-}
-
-JSValueRef PDFScriptEvaluator::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    if (!JSValueIsObjectOfClass(ctx, thisObject, jsPDFDocClass()))
-        return JSValueMakeUndefined(ctx);
-
-    RefPtr evaluator = static_cast<PDFScriptEvaluator*>(JSObjectGetPrivate(thisObject));
-    evaluator->print();
-
-    return JSValueMakeUndefined(ctx);
-}
-
-void PDFScriptEvaluator::runScripts(CGPDFDocumentRef document, PDFScriptEvaluatorClient& client)
-{
-    ASSERT(isMainRunLoop());
-
-    Ref evaluator = PDFScriptEvaluator::create(document, client);
-
-    auto completionHandler = [evaluator = WTFMove(evaluator)] (Vector<RetainPtr<CFStringRef>>&& scripts) mutable {
-        if (scripts.isEmpty())
-            return;
-
-        JSGlobalContextRef ctx = JSGlobalContextCreate(nullptr);
-        JSObjectRef jsPDFDoc = JSObjectMake(ctx, jsPDFDocClass(), evaluator.ptr());
-        for (auto& script : scripts)
-            JSEvaluateScript(ctx, OpaqueJSString::tryCreate(script.get()).get(), jsPDFDoc, nullptr, 1, nullptr);
-        JSGlobalContextRelease(ctx);
-    };
-
-#if HAVE(INCREMENTAL_PDF_APIS)
-    auto scriptUtilityQueue = WorkQueue::create("PDF script utility"_s);
-    auto& rawQueue = scriptUtilityQueue.get();
-    rawQueue.dispatch([scriptUtilityQueue = WTFMove(scriptUtilityQueue), completionHandler = WTFMove(completionHandler), document = WTFMove(document)] () mutable {
-        ASSERT(!isMainRunLoop());
-
-        Vector<RetainPtr<CFStringRef>> scripts;
-        getAllScriptsInPDFDocument(document, scripts);
-
-        callOnMainRunLoop([completionHandler = WTFMove(completionHandler), scripts = WTFMove(scripts)] () mutable {
-            completionHandler(WTFMove(scripts));
-        });
-    });
-#else
-    Vector<RetainPtr<CFStringRef>> scripts;
-    getAllScriptsInPDFDocument(document, scripts);
-    completionHandler(WTFMove(scripts));
-#endif
-}
-
-void PDFScriptEvaluator::print()
-{
-    if (!m_client)
-        return;
-    m_client->print();
-}
-
-} // namespace WebKit
+} // namespace WebKit::PDFScriptEvaluation
 
 #endif // ENABLE(PDF_PLUGIN)
