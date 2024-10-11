@@ -36,6 +36,7 @@
     "beforeprint": { },
     "beforetoggle": { },
     "beforeunload": { },
+    "begin": { },
     "beginEvent": { },
     "blocked": { },
     "blur": { "defaultEventHandler": true },

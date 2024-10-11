@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,8 @@
     undefined beginElementAt(float offset);
     undefined endElement();
     undefined endElementAt(float offset);
+
+    attribute EventHandler onbegin;
 };
 
 SVGAnimationElement includes SVGTests;
