@@ -78,7 +78,7 @@ ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, float scale
 #else
 ThreadedCompositor::ThreadedCompositor(LayerTreeHost& layerTreeHost, ThreadedDisplayRefreshMonitor::Client& displayRefreshMonitorClient, float scaleFactor, PlatformDisplayID displayID)
 #endif
-    : m_layerTreeHost(layerTreeHost)
+    : m_layerTreeHost(&layerTreeHost)
     , m_surface(AcceleratedSurface::create(layerTreeHost.webPage(), [this] { frameComplete(); }))
     , m_flipY(m_surface->shouldPaintMirrored())
     , m_compositingRunLoop(makeUnique<CompositingRunLoop>([this] { renderLayerTree(); }))
@@ -177,6 +177,7 @@ void ThreadedCompositor::invalidate()
         m_display.updateTimer = nullptr;
 #endif
     });
+    m_layerTreeHost = nullptr;
     m_surface->willDestroyCompositingRunLoop();
     m_compositingRunLoop = nullptr;
 }
@@ -319,8 +320,8 @@ void ThreadedCompositor::renderLayerTree()
 
     m_surface->willRenderFrame();
     RunLoop::main().dispatch([this, protectedThis = Ref { *this }] {
-        if (m_compositingRunLoop)
-            m_layerTreeHost.willRenderFrame();
+        if (m_layerTreeHost)
+            m_layerTreeHost->willRenderFrame();
     });
 
     if (needsResize)
@@ -375,8 +376,8 @@ void ThreadedCompositor::renderLayerTree()
         m_didRenderFrameTimer.startOneShot(0_s);
 #endif
     RunLoop::main().dispatch([this, protectedThis = Ref { *this }] {
-        if (m_compositingRunLoop)
-            m_layerTreeHost.didRenderFrame();
+        if (m_layerTreeHost)
+            m_layerTreeHost->didRenderFrame();
     });
 }
 
@@ -429,8 +430,8 @@ void ThreadedCompositor::frameComplete()
 #if HAVE(DISPLAY_LINK)
 void ThreadedCompositor::didRenderFrameTimerFired()
 {
-    if (m_compositingRunLoop)
-        m_layerTreeHost.didComposite(m_compositionResponseID);
+    if (m_layerTreeHost)
+        m_layerTreeHost->didComposite(m_compositionResponseID);
 }
 #else
 WebCore::DisplayRefreshMonitor& ThreadedCompositor::displayRefreshMonitor() const

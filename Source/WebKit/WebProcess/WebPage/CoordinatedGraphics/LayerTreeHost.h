@@ -40,6 +40,7 @@
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/NicosiaSceneIntegration.h>
 #include <WebCore/PlatformScreen.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
@@ -70,12 +71,13 @@ namespace WebKit {
 
 class WebPage;
 
-class LayerTreeHost final : public WebCore::GraphicsLayerClient, public WebCore::CoordinatedGraphicsLayerClient, public WebCore::GraphicsLayerFactory, public Nicosia::SceneIntegration::Client
+class LayerTreeHost final : public CanMakeCheckedPtr<LayerTreeHost>, public WebCore::GraphicsLayerClient, public WebCore::CoordinatedGraphicsLayerClient, public WebCore::GraphicsLayerFactory, public Nicosia::SceneIntegration::Client
 #if !HAVE(DISPLAY_LINK)
     , public ThreadedDisplayRefreshMonitor::Client
 #endif
 {
     WTF_MAKE_TZONE_ALLOCATED(LayerTreeHost);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LayerTreeHost);
 public:
 #if HAVE(DISPLAY_LINK)
     explicit LayerTreeHost(WebPage&);

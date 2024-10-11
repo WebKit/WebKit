@@ -33,6 +33,7 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Atomics.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -112,7 +113,7 @@ private:
     void sceneUpdateFinished();
 #endif
 
-    LayerTreeHost& m_layerTreeHost;
+    CheckedPtr<LayerTreeHost> m_layerTreeHost;
     std::unique_ptr<AcceleratedSurface> m_surface;
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<WebCore::GLContext> m_context;
