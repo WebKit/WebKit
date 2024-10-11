@@ -1931,7 +1931,7 @@ static bool validateResolveQuerySet(const QuerySet& querySet, uint32_t firstQuer
     if (firstQuery >= querySet.count())
         return false;
 
-    auto countEnd = checkedSum<uint64_t>(firstQuery, queryCount);
+    auto countEnd = checkedSum<uint32_t>(firstQuery, queryCount);
     if (countEnd.hasOverflowed() || countEnd.value() > querySet.count())
         return false;
 
