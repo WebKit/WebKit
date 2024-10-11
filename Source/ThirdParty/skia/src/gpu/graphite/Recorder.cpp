@@ -33,7 +33,6 @@
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/PathAtlas.h"
 #include "src/gpu/graphite/PipelineData.h"
-#include "src/gpu/graphite/PipelineDataCache.h"
 #include "src/gpu/graphite/ProxyCache.h"
 #include "src/gpu/graphite/RasterPathAtlas.h"
 #include "src/gpu/graphite/RecorderPriv.h"
@@ -100,7 +99,7 @@ Recorder::Recorder(sk_sp<SharedContext> sharedContext,
         : fSharedContext(std::move(sharedContext))
         , fRuntimeEffectDict(std::make_unique<RuntimeEffectDictionary>())
         , fRootTaskList(new TaskList)
-        , fUniformDataCache(new UniformDataCache)
+        , fRootUploads(new UploadList)
         , fTextureDataCache(new TextureDataCache)
         , fProxyReadCounts(new ProxyReadCountMap)
         , fUniqueID(next_id())
@@ -144,7 +143,7 @@ Recorder::~Recorder() {
             device->abandonRecorder();
         }
     }
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (fContext) {
         fContext->priv().deregisterRecorder(this);
     }
@@ -156,13 +155,25 @@ BackendApi Recorder::backend() const { return fSharedContext->backend(); }
 std::unique_ptr<Recording> Recorder::snap() {
     TRACE_EVENT0("skia.gpu", TRACE_FUNC);
     ASSERT_SINGLE_OWNER
+
+    if (fTargetProxyData) {
+        // Normally devices are marked immutable when their owning Surface goes away, but the
+        // deferred canvas+device do not have a surface so mimic that operation. Do this before
+        // flushing all other tracked devices to avoid a redundant flush.
+        fTargetProxyDevice->setImmutable();
+        fTargetProxyDevice.reset();
+        fTargetProxyCanvas.reset();
+    }
+    // Collect all pending tasks on the deferred recording canvas and any other tracked device.
     this->priv().flushTrackedDevices();
 
+    // Now that all devices have been flushed, extract all lazy proxies from the texture
+    // data cache so that they can be instantiated easily when the Recording is inserted.
     std::unordered_set<sk_sp<TextureProxy>, Recording::ProxyHash> nonVolatileLazyProxies;
     std::unordered_set<sk_sp<TextureProxy>, Recording::ProxyHash> volatileLazyProxies;
-    fTextureDataCache->foreach([&](const TextureDataBlock* block) {
-        for (int j = 0; j < block->numTextures(); ++j) {
-            const TextureDataBlock::SampledTexture& tex = block->texture(j);
+    fTextureDataCache->foreach([&](TextureDataBlock block) {
+        for (int j = 0; j < block.numTextures(); ++j) {
+            const TextureDataBlock::SampledTexture& tex = block.texture(j);
 
             if (tex.first->isLazy()) {
                 if (tex.first->isVolatile()) {
@@ -174,60 +185,44 @@ std::unique_ptr<Recording> Recorder::snap() {
         }
     });
 
-    std::unique_ptr<Recording::LazyProxyData> targetProxyData;
-    if (fTargetProxyData) {
-        // The deferred canvas's target proxy moves with the Recording; future deferred canvases
-        // use a new texture proxy.
-        targetProxyData = std::move(fTargetProxyData);
-        // Normally devices are marked immutable when their owning Surface goes away, but the
-        // deferred canvas+device do not have a surface so mimic that operation.
-        fTargetProxyDevice->setImmutable();
-        fTargetProxyDevice.reset();
-        fTargetProxyCanvas.reset();
-    }
-
     // The scratch resources only need to be tracked until prepareResources() is finished, so
     // Recorder doesn't hold a persistent manager and it can be deleted when snap() returns.
     ScratchResourceManager scratchManager{fResourceProvider, std::move(fProxyReadCounts)};
-    fProxyReadCounts = std::make_unique<ProxyReadCountMap>();
-
-    // In both the "task failed" case and the "everything is discarded" case, there's no work that
-    // needs to be done in insertRecording(). However, we use nullptr as a failure signal, so
-    // kDiscard will return a non-null Recording that has no tasks in it.
-    if (fDrawBufferManager->hasMappingFailed() ||
-        fRootTaskList->prepareResources(fResourceProvider,
-                                        &scratchManager,
-                                        fRuntimeEffectDict.get()) == Task::Status::kFail) {
-        // Leaving 'fTrackedDevices' alone since they were flushed earlier and could still be
-        // attached to extant SkSurfaces.
-        fAtlasProvider->invalidateAtlases();
-        fDrawBufferManager = std::make_unique<DrawBufferManager>(fResourceProvider,
-                                                                 fSharedContext->caps(),
-                                                                 fUploadBufferManager.get());
-        fTextureDataCache = std::make_unique<TextureDataCache>();
-        fUniformDataCache = std::make_unique<UniformDataCache>();
-        fRootTaskList->reset();
-        fRuntimeEffectDict->reset();
-        return nullptr;
-    }
-
     std::unique_ptr<Recording> recording(new Recording(fNextRecordingID++,
                                                        fUniqueID,
                                                        std::move(nonVolatileLazyProxies),
                                                        std::move(volatileLazyProxies),
-                                                       std::move(targetProxyData),
+                                                       std::move(fTargetProxyData),
                                                        std::move(fFinishedProcs)));
-
     // Allow the buffer managers to add any collected tasks for data transfer or initialization
     // before moving the root task list to the Recording.
-    fDrawBufferManager->transferToRecording(recording.get());
-    fUploadBufferManager->transferToRecording(recording.get());
-    recording->priv().addTasks(std::move(*fRootTaskList));
+    bool valid = fDrawBufferManager->transferToRecording(recording.get());
 
+    // We create the Recording's full task list even if the DrawBufferManager failed because it is
+    // a convenient way to ensure everything else is unmapped and reset for the next Recording.
+    fUploadBufferManager->transferToRecording(recording.get());
+    // Add one task for all root uploads before the rest of the rendering tasks might depend on them
+    if (fRootUploads->size() > 0) {
+        recording->priv().taskList()->add(UploadTask::Make(fRootUploads.get()));
+        SkASSERT(fRootUploads->size() == 0); // Drained by the newly added task
+    }
+    recording->priv().taskList()->add(std::move(*fRootTaskList));
     SkASSERT(!fRootTaskList->hasTasks());
+
+    // In both the "task failed" case and the "everything is discarded" case, there's no work that
+    // needs to be done in insertRecording(). However, we use nullptr as a failure signal, so
+    // kDiscard will return a non-null Recording that has no tasks in it.
+    valid &= recording->priv().taskList()->prepareResources(
+            fResourceProvider, &scratchManager, fRuntimeEffectDict.get()) != Task::Status::kFail;
+    if (!valid) {
+        recording = nullptr;
+        fAtlasProvider->invalidateAtlases();
+    }
+
+    // Remaining cleanup that must always happen regardless of success or failure
     fRuntimeEffectDict->reset();
+    fProxyReadCounts = std::make_unique<ProxyReadCountMap>();
     fTextureDataCache = std::make_unique<TextureDataCache>();
-    fUniformDataCache = std::make_unique<UniformDataCache>();
     if (!this->priv().caps()->requireOrderedRecordings()) {
         fAtlasProvider->textAtlasManager()->evictAtlases();
     }
@@ -320,8 +315,12 @@ BackendTexture Recorder::createBackendTexture(AHardwareBuffer* hardwareBuffer,
 
 bool Recorder::updateBackendTexture(const BackendTexture& backendTex,
                                     const SkPixmap srcData[],
-                                    int numLevels) {
+                                    int numLevels,
+                                    GpuFinishedProc finishedProc,
+                                    GpuFinishedContext finishedContext) {
     ASSERT_SINGLE_OWNER
+
+    auto releaseHelper = skgpu::RefCntedCallback::Make(finishedProc, finishedContext);
 
     if (!backendTex.isValid() || backendTex.backend() != this->backend()) {
         return false;
@@ -351,6 +350,7 @@ bool Recorder::updateBackendTexture(const BackendTexture& backendTex,
     if (!texture) {
         return false;
     }
+    texture->setReleaseCallback(std::move(releaseHelper));
 
     sk_sp<TextureProxy> proxy = TextureProxy::Wrap(std::move(texture));
 
@@ -390,8 +390,12 @@ bool Recorder::updateBackendTexture(const BackendTexture& backendTex,
 
 bool Recorder::updateCompressedBackendTexture(const BackendTexture& backendTex,
                                               const void* data,
-                                              size_t dataSize) {
+                                              size_t dataSize,
+                                              GpuFinishedProc finishedProc,
+                                              GpuFinishedContext finishedContext) {
     ASSERT_SINGLE_OWNER
+
+    auto releaseHelper = skgpu::RefCntedCallback::Make(finishedProc, finishedContext);
 
     if (!backendTex.isValid() || backendTex.backend() != this->backend()) {
         return false;
@@ -405,6 +409,7 @@ bool Recorder::updateCompressedBackendTexture(const BackendTexture& backendTex,
     if (!texture) {
         return false;
     }
+    texture->setReleaseCallback(std::move(releaseHelper));
 
     sk_sp<TextureProxy> proxy = TextureProxy::Wrap(std::move(texture));
 
@@ -473,6 +478,11 @@ void Recorder::performDeferredCleanup(std::chrono::milliseconds msNotUsed) {
 size_t Recorder::currentBudgetedBytes() const {
     ASSERT_SINGLE_OWNER
     return fResourceProvider->getResourceCacheCurrentBudgetedBytes();
+}
+
+size_t Recorder::currentPurgeableBytes() const {
+    ASSERT_SINGLE_OWNER
+    return fResourceProvider->getResourceCacheCurrentPurgeableBytes();
 }
 
 size_t Recorder::maxBudgetedBytes() const {
@@ -568,7 +578,7 @@ size_t RecorderPriv::getResourceCacheLimit() const {
     return fRecorder->fResourceProvider->getResourceCacheLimit();
 }
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool RecorderPriv::deviceIsRegistered(Device* device) const {
     ASSERT_SINGLE_OWNER_PRIV
     for (const sk_sp<Device>& currentDevice : fRecorder->fTrackedDevices) {
@@ -583,6 +593,11 @@ bool RecorderPriv::deviceIsRegistered(Device* device) const {
 void RecorderPriv::setContext(Context* context) {
     fRecorder->fContext = context;
 }
+
+void RecorderPriv::issueFlushToken() {
+    fRecorder->fTokenTracker->issueFlushToken();
+}
+
 #endif
 
 

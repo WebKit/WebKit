@@ -12,9 +12,9 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSize.h"
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/mock/GrMockTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/mock/GrMockTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
@@ -195,7 +195,7 @@ private:
             const skia_private::TArray<GrSurfaceProxy*, true>& sampledProxies,
             GrXferBarrierFlags renderPassXferBarriers) override;
 
-    bool onSubmitToGpu(GrSyncCpu) override { return true; }
+    bool onSubmitToGpu(const GrSubmitInfo&) override { return true; }
 
     sk_sp<GrAttachment> makeStencilAttachment(const GrBackendFormat& /*colorFormat*/,
                                               SkISize dimensions, int numStencilSamples) override;
@@ -242,7 +242,7 @@ private:
 
     bool compile(const GrProgramDesc&, const GrProgramInfo&) override { return false; }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool isTestingOnlyBackendTexture(const GrBackendTexture&) const override;
 
     GrBackendRenderTarget createTestingOnlyBackendRenderTarget(SkISize dimensions,

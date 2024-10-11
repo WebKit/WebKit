@@ -607,6 +607,8 @@ std::unique_ptr<SkScalerContext> DWriteFontTypeface::onCreateScalerContext(
 }
 
 void DWriteFontTypeface::onFilterRec(SkScalerContextRec* rec) const {
+    rec->useStrokeForFakeBold();
+
     if (rec->fFlags & SkScalerContext::kLCD_Vertical_Flag) {
         rec->fMaskFormat = SkMask::kA8_Format;
         rec->fFlags |= SkScalerContext::kGenA8FromLCD_Flag;
@@ -631,8 +633,6 @@ void DWriteFontTypeface::onFilterRec(SkScalerContextRec* rec) const {
         if (SUCCEEDED(factory->CreateRenderingParams(&defaultRenderingParams))) {
             float gamma = defaultRenderingParams->GetGamma();
             rec->setDeviceGamma(gamma);
-            rec->setPaintGamma(gamma);
-
             rec->setContrast(defaultRenderingParams->GetEnhancedContrast());
         }
     }

@@ -10,7 +10,7 @@
 #import <Metal/Metal.h>
 
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
 #include "include/private/base/SkMutex.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/core/SkTraceEvent.h"
@@ -308,7 +308,7 @@ int GrMtlFormatStencilBits(MTLPixelFormat format) {
     }
 }
 
-#if defined(SK_DEBUG) || defined(GR_TEST_UTILS)
+#if defined(SK_DEBUG) || defined(GPU_TEST_UTILS)
 bool GrMtlFormatIsBGRA8(GrMTLPixelFormat mtlFormat) {
     return mtlFormat == MTLPixelFormatBGRA8Unorm;
 }

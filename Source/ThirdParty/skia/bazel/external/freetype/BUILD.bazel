@@ -15,13 +15,22 @@ FREETYPE_PUBLIC_DEFINES = [
     # FT_CONFIG_OPTION_USE_BROTLI TODO(kjlubick)
     "FT_CONFIG_OPTION_USE_ZLIB",
     #FT_CONFIG_OPTION_SYSTEM_ZLIB TODO(bungeman)
-    "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR)<<24)|((FREETYPE_MINOR)<<16)|((FREETYPE_PATCH)<<8))",
+    "SK_FREETYPE_MINIMUM_RUNTIME_VERSION_IS_BUILD_VERSION",
 ] + select(
     {
         ":cpu_wasm": [
             # Use a trimmed down set of options to reduce code size.
             "FT_CONFIG_MODULES_H=<skia/no-type1/freetype/config/ftmodule.h>",
             "FT_CONFIG_OPTIONS_H=<skia/no-type1/freetype/config/ftoption.h>",
+        ],
+        "@platforms//os:windows": [
+            # On Windows, the shell doesn't like the angle brackets, so we need
+            # to escape them, and we need to escape them twice (meaning that we
+            # also escape the escape character, '^') so that they make it
+            # through from Bazel to the trampoline script and from the
+            # trampoline script to Clang.
+            "FT_CONFIG_MODULES_H=^^^<skia/android/freetype/config/ftmodule.h^^^>",
+            "FT_CONFIG_OPTIONS_H=^^^<skia/android/freetype/config/ftoption.h^^^>",
         ],
         "//conditions:default": [
             "FT_CONFIG_MODULES_H=<skia/android/freetype/config/ftmodule.h>",
@@ -39,8 +48,8 @@ FREETYPE_LOCAL_DEFINES = ["FT2_BUILD_LIBRARY"]
 genrule(
     name = "copy_android_freetype_config",
     srcs = [
-        "@freetype_config//:android/freetype/config/ftmodule.h",
-        "@freetype_config//:android/freetype/config/ftoption.h",
+        "@freetype_config//:freetype-android/freetype/config/ftmodule.h",
+        "@freetype_config//:freetype-android/freetype/config/ftoption.h",
     ],
     outs = [
         "builds/skia/android/freetype/config/ftmodule.h",
@@ -50,14 +59,15 @@ genrule(
     # RULEDIR is the directory containing this BUILD.bazel file (the root of the freetype directory)
     # but only in the "genfiles tree", which does not persist after compilation.
     cmd = "cp $(SRCS) $(RULEDIR)/builds/skia/android/freetype/config/",
+    cmd_bat = "for %f in ($(SRCS)) do copy %f $(RULEDIR)\\builds\\skia\\android\\freetype\\config",
 )
 
 # It is easiest to have multiple copy rules, one per output directory.
 genrule(
     name = "copy_no_type1_freetype_config",
     srcs = [
-        "@freetype_config//:no-type1/freetype/config/ftmodule.h",
-        "@freetype_config//:no-type1/freetype/config/ftoption.h",
+        "@freetype_config//:freetype-no-type1/freetype/config/ftmodule.h",
+        "@freetype_config//:freetype-no-type1/freetype/config/ftoption.h",
     ],
     outs = [
         "builds/skia/no-type1/freetype/config/ftmodule.h",
@@ -67,6 +77,7 @@ genrule(
     # RULEDIR is the directory containing this BUILD.bazel file (the root of the freetype directory)
     # but only in the "genfiles tree", which does not persist after compilation.
     cmd = "cp $(SRCS) $(RULEDIR)/builds/skia/no-type1/freetype/config/",
+    cmd_bat = "for %f in ($(SRCS)) do copy %f $(RULEDIR)\\builds\\skia\\no-type1\\freetype\\config",
 )
 
 cc_library(

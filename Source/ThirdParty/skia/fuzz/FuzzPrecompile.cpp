@@ -29,6 +29,7 @@
 #include "src/gpu/graphite/PaintParamsKey.h"
 #include "src/gpu/graphite/PipelineData.h"
 #include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Renderer.h"
 #include "src/gpu/graphite/RuntimeEffectDictionary.h"
 #include "src/gpu/graphite/geom/Geometry.h"
@@ -275,8 +276,10 @@ void check_draw(Context* context,
         SkCanvas* canvas = surf->getCanvas();
 
         switch (dt) {
-            case DrawTypeFlags::kShape:
+            case DrawTypeFlags::kSimpleShape:
                 canvas->drawRect(SkRect::MakeWH(16, 16), paint);
+                break;
+            case DrawTypeFlags::kNonSimpleShape:
                 canvas->drawPath(path, paint);
                 break;
             default:
@@ -304,28 +307,9 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                                  SkColorSpace::MakeSRGB());
 
     std::unique_ptr<RuntimeEffectDictionary> rtDict = std::make_unique<RuntimeEffectDictionary>();
-    KeyContext precompileKeyContext(recorder->priv().caps(),
-                                    dict,
-                                    rtDict.get(),
-                                    ci,
-                                    /* dstTexture= */ nullptr,
-                                    /* dstOffset= */ {0, 0});
+    KeyContext precompileKeyContext(recorder->priv().caps(), dict, rtDict.get(), ci);
 
-    auto dstTexInfo = recorder->priv().caps()->getDefaultSampledTextureInfo(kRGBA_8888_SkColorType,
-                                                                            skgpu::Mipmapped::kNo,
-                                                                            skgpu::Protected::kNo,
-                                                                            skgpu::Renderable::kNo);
-    // Use Budgeted::kYes to avoid immediately instantiating the TextureProxy. This test doesn't
-    // require full resources.
-    sk_sp<TextureProxy> fakeDstTexture = TextureProxy::Make(recorder->priv().caps(),
-                                                            recorder->priv().resourceProvider(),
-                                                            SkISize::Make(1, 1),
-                                                            dstTexInfo,
-                                                            "FuzzPrecompileFakeDstTexture",
-                                                            skgpu::Budgeted::kYes);
-    constexpr SkIPoint fakeDstOffset = SkIPoint::Make(0, 0);
-
-    DrawTypeFlags kDrawType = DrawTypeFlags::kShape;
+    DrawTypeFlags kDrawType = DrawTypeFlags::kSimpleShape;
     SkPath path = make_path();
 
     Layout layout = context->backend() == skgpu::BackendApi::kMetal ? Layout::kMetal
@@ -349,24 +333,22 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                                            blender->asBlendMode(),
                                            coverage);
     }
-    bool needsDstSample = dstReadReq == DstReadRequirement::kTextureCopy ||
-                          dstReadReq == DstReadRequirement::kTextureSample;
-    sk_sp<TextureProxy> curDst = needsDstSample ? fakeDstTexture : nullptr;
 
-    auto [paintID, uData, tData] = ExtractPaintData(recorder.get(),
-                                                    &gatherer,
-                                                    &builder,
-                                                    layout,
-                                                    {},
-                                                    PaintParams(paint,
-                                                                /* primitiveBlender= */ nullptr,
-                                                                /* clipShader= */ nullptr,
-                                                                dstReadReq,
-                                                                /* skipColorXform= */ false),
-                                                    {},
-                                                    curDst,
-                                                    fakeDstOffset,
-                                                    ci);
+    UniquePaintParamsID paintID = ExtractPaintData(recorder.get(),
+                                                   &gatherer,
+                                                   &builder,
+                                                   layout,
+                                                   {},
+                                                   PaintParams(paint,
+                                                               /* primitiveBlender= */ nullptr,
+                                                               /* analyticClip= */ {},
+                                                               /* clipShader= */ nullptr,
+                                                               dstReadReq,
+                                                               /* skipColorXform= */ false),
+                                                   {},
+                                                   ci);
+
+    RenderPassDesc unusedRenderPassDesc;
 
     std::vector<UniquePaintParamsID> precompileIDs;
     paintOptions.priv().buildCombinations(precompileKeyContext,
@@ -374,10 +356,12 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
                                           DrawTypeFlags::kNone,
                                           /* withPrimitiveBlender= */ false,
                                           coverage,
+                                          unusedRenderPassDesc,
                                           [&](UniquePaintParamsID id,
                                               DrawTypeFlags,
                                               bool /* withPrimitiveBlender */,
-                                              Coverage) {
+                                              Coverage,
+                                              const RenderPassDesc&) {
                                                   precompileIDs.push_back(id);
                                           });
 
@@ -400,10 +384,12 @@ void fuzz_graphite(Fuzz* fuzz, Context* context, int depth = 9) {
     SkASSERT_RELEASE(result != precompileIDs.end());
 
     {
+        static const RenderPassProperties kDefaultRenderPassProperties;
+
         context->priv().globalCache()->resetGraphicsPipelines();
 
         int before = context->priv().globalCache()->numGraphicsPipelines();
-        Precompile(context, paintOptions, kDrawType);
+        Precompile(context, paintOptions, kDrawType, { kDefaultRenderPassProperties });
         int after = context->priv().globalCache()->numGraphicsPipelines();
 
         SkASSERT_RELEASE(before == 0);

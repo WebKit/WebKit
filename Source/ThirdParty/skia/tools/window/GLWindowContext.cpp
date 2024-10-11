@@ -8,8 +8,8 @@
 #include "tools/window/GLWindowContext.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
 #include "src/base/SkMathPriv.h"
@@ -26,7 +26,12 @@ GLWindowContext::GLWindowContext(const DisplayParams& params)
         : WindowContext(params)
         , fBackendContext(nullptr)
         , fSurface(nullptr) {
-    fDisplayParams.fMSAASampleCount = GrNextPow2(fDisplayParams.fMSAASampleCount);
+    // SkNextPow2 is undefined for 0, so handle that ourselves.
+    if (fDisplayParams.fMSAASampleCount <= 1) {
+        fDisplayParams.fMSAASampleCount = 1;
+    } else {
+        fDisplayParams.fMSAASampleCount = SkNextPow2(fDisplayParams.fMSAASampleCount);
+    }
 }
 
 void GLWindowContext::initializeContext() {

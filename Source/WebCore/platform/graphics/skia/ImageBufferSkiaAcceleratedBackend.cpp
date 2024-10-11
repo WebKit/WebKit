@@ -37,7 +37,6 @@
 #include <skia/core/SkBitmap.h>
 #include <skia/core/SkPixmap.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
-#include <skia/gpu/gl/GrGLTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(COORDINATED_GRAPHICS)
@@ -48,7 +47,7 @@
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerProxy.h"
-#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
 #endif

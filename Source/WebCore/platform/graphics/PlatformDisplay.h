@@ -46,7 +46,7 @@ typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
 
 #if USE(SKIA)
-#include <skia/gpu/GrDirectContext.h>
+#include <skia/gpu/ganesh/GrDirectContext.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #endif
 

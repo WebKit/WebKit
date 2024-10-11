@@ -25,28 +25,6 @@ class SkFontationsScalerContext;
 
 namespace sk_fontations {
 
-/** Implementation of PathWrapper FFI C++ interface which allows Rust to call back
- * into C++ without exposing Skia types on the interface, see skpath_bridge.h. */
-class PathGeometrySink : public fontations_ffi::PathWrapper {
-public:
-    /* From fontations_ffi::PathWrapper. */
-    void move_to(float x, float y) override;
-    void line_to(float x, float y) override;
-    void quad_to(float cx0, float cy0, float x, float y) override;
-    void curve_to(float cx0, float cy0, float cx1, float cy1, float x, float y) override;
-    void close() override;
-
-    SkPath into_inner() &&;
-
-private:
-    void going_to(SkPoint point);
-    bool current_is_not(SkPoint);
-
-    SkPath fPath;
-    bool fStarted{false};
-    SkPoint fCurrent{0, 0};
-};
-
 /** Implementation of AxisWrapper FFI C++ interface, allowing Rust to call back into
  * C++ for populating variable axis availability information, see skpath_bridge.h. */
 class AxisWrapper : public fontations_ffi::AxisWrapper {
@@ -74,6 +52,7 @@ public:
                  uint16_t upem);
 
     // fontations_ffi::ColorPainter interface.
+    virtual bool is_bounds_mode() override { return false; }
     virtual void push_transform(const fontations_ffi::Transform& transform) override;
     virtual void pop_transform() override;
     virtual void push_clip_glyph(uint16_t glyph_id) override;
@@ -150,6 +129,7 @@ public:
     SkRect getBoundingBox();
 
     // fontations_ffi::ColorPainter interface.
+    virtual bool is_bounds_mode() override { return true; }
     virtual void push_transform(const fontations_ffi::Transform& transform) override;
     virtual void pop_transform() override;
     virtual void push_clip_glyph(uint16_t glyph_id) override;

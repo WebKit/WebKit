@@ -12,9 +12,9 @@
 #include "include/core/SkSize.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/base/SingleOwner.h"
 #include "include/private/gpu/ganesh/GrImageContext.h"
 #include "src/core/SkImageInfoPriv.h"
@@ -126,7 +126,7 @@ sk_sp<GrTextureProxy> GrProxyProvider::findProxyByUniqueKey(const skgpu::UniqueK
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 sk_sp<GrTextureProxy> GrProxyProvider::testingOnly_createInstantiatedProxy(
         SkISize dimensions,
         const GrBackendFormat& format,

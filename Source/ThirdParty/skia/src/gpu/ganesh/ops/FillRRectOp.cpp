@@ -14,12 +14,12 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkScalar.h"
 #include "include/core/SkString.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkAlignedStorage.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
+#include "include/private/base/SkMacros.h"
 #include "include/private/base/SkOnce.h"
 #include "include/private/base/SkPoint_impl.h"
 #include "include/private/base/SkTArray.h"
@@ -54,7 +54,7 @@
 #include "src/gpu/ganesh/ops/GrMeshDrawOp.h"
 #include "src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelper.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/base/SkRandom.h"
 #include "src/gpu/ganesh/GrDrawOpTest.h"
 #include "src/gpu/ganesh/GrTestUtils.h"
@@ -145,7 +145,7 @@ public:
     GrProcessorSet::Analysis finalize(const GrCaps&, const GrAppliedClip*, GrClampType) override;
     CombineResult onCombineIfPossible(GrOp*, SkArenaAlloc*, const GrCaps&) override;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     SkString onDumpInfo() const override;
 #endif
 
@@ -175,7 +175,7 @@ private:
     };
     constexpr static int kNumProcessorFlags = 5;
 
-    GR_DECL_BITFIELD_CLASS_OPS_FRIENDS(ProcessorFlags);
+    SK_DECL_BITFIELD_CLASS_OPS_FRIENDS(ProcessorFlags);
 
     class Processor;
 
@@ -230,7 +230,7 @@ private:
     GrProgramInfo* fProgramInfo = nullptr;
 };
 
-GR_MAKE_BITFIELD_CLASS_OPS(FillRRectOpImpl::ProcessorFlags)
+SK_MAKE_BITFIELD_CLASS_OPS(FillRRectOpImpl::ProcessorFlags)
 
 // Hardware derivatives are not always accurate enough for highly elliptical corners. This method
 // checks to make sure the corners will still all look good if we use HW derivatives.
@@ -431,7 +431,7 @@ GrOp::CombineResult FillRRectOpImpl::onCombineIfPossible(GrOp* op,
     return CombineResult::kMerged;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 SkString FillRRectOpImpl::onDumpInfo() const {
     SkString str = SkStringPrintf("# instances: %d\n", fInstanceCount);
     str += fHelper.dumpInfo();
@@ -1018,7 +1018,7 @@ GrOp::Owner Make(GrRecordingContext* ctx,
 
 }  // namespace skgpu::ganesh::FillRRectOp
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 GR_DRAW_OP_TEST_DEFINE(FillRRectOp) {
     SkArenaAlloc arena(64 * sizeof(float));

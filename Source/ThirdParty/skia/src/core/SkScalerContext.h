@@ -9,6 +9,7 @@
 #define SkScalerContext_DEFINED
 
 #include "include/core/SkColor.h"
+#include "include/core/SkFourByteTag.h"
 #include "include/core/SkMatrix.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkRect.h"
@@ -29,7 +30,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <utility>
 
 class SkArenaAlloc;
 class SkAutoDescriptor;
@@ -135,6 +135,9 @@ public:
         ignoreGamma();
         setContrast(0);
     }
+
+    /** If the kEmbolden_Flag is set, drop it and use stroking instead. */
+    void useStrokeForFakeBold();
 
     SkMask::Format fMaskFormat;
 
@@ -425,7 +428,7 @@ protected:
      *  Does not apply subpixel positioning to the path.
      *  @return false if this glyph does not have any path.
      */
-    [[nodiscard]] virtual bool generatePath(const SkGlyph&, SkPath*) = 0;
+    [[nodiscard]] virtual bool generatePath(const SkGlyph&, SkPath*, bool* modified) = 0;
 
     /** Returns the drawable for the glyph (if any).
      *
@@ -447,6 +450,7 @@ private:
     friend class PathText;  // For debug purposes
     friend class PathTextBench;  // For debug purposes
     friend class RandomScalerContext;  // For debug purposes
+    friend class SkScalerContext_fontconfig;
 
     static SkScalerContextRec PreprocessRec(const SkTypeface&,
                                             const SkScalerContextEffects&,

@@ -10,12 +10,12 @@
  */
 
 #include "include/core/SkRefCnt.h"
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
-#include "include/gpu/gl/GrGLExtensions.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/ganesh/gl/GrGLAssembleInterface.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 
@@ -444,7 +444,7 @@ sk_sp<const GrGLInterface> GrGLMakeAssembledGLInterface(void *ctx, GrGLGetProc g
 
     GET_PROC(GetQueryObjectiv);
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     GET_PROC(BeginQuery);
     GET_PROC(DeleteQueries);
     GET_PROC(EndQuery);

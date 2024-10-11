@@ -8,10 +8,18 @@
 #ifndef skgpu_graphite_render_VerticesRenderStep_DEFINED
 #define skgpu_graphite_render_VerticesRenderStep_DEFINED
 
-#include "include/core/SkVertices.h"
+#include "src/base/SkVx.h"
 #include "src/gpu/graphite/Renderer.h"
 
+#include <cstdint>
+#include <string>
+
 namespace skgpu::graphite {
+
+class DrawParams;
+class DrawWriter;
+class PipelineDataGatherer;
+enum class PrimitiveType : uint8_t;
 
 class VerticesRenderStep final : public RenderStep {
 public:
@@ -22,7 +30,7 @@ public:
     std::string vertexSkSL() const override;
     void writeVertices(DrawWriter* writer,
                        const DrawParams& params,
-                       skvx::ushort2 ssboIndices) const override;
+                       skvx::uint2 ssboIndices) const override;
     void writeUniformsAndTextures(const DrawParams&, PipelineDataGatherer*) const override;
     const char* fragmentColorSkSL() const override;
 

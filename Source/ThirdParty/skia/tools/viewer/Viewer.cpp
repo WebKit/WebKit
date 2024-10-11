@@ -31,7 +31,7 @@
 #include "include/core/SkSurfaceProps.h"
 #include "include/core/SkTextBlob.h"
 #include "include/encode/SkPngEncoder.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTo.h"
@@ -64,6 +64,7 @@
 #include "tools/flags/CommandLineFlags.h"
 #include "tools/flags/CommonFlags.h"
 #include "tools/flags/CommonFlagsGanesh.h"
+#include "tools/flags/CommonFlagsGraphite.h"
 #include "tools/skui/InputState.h"
 #include "tools/skui/Key.h"
 #include "tools/skui/ModifierKey.h"
@@ -251,11 +252,6 @@ static DEFINE_string2(match, m, nullptr,
 
 static DEFINE_string(pathstrategy, "default",
                      "Path renderer strategy to use. Allowed values are " PATHSTRATEGY_STR ".");
-#if defined(SK_DAWN)
-static DEFINE_bool(disable_tint_symbol_renaming,
-                   false,
-                   "Disable Tint WGSL symbol renaming when using Dawn");
-#endif
 #endif
 
 #if defined(SK_BUILD_FOR_ANDROID)
@@ -588,11 +584,9 @@ Viewer::Viewer(int argc, char** argv, void* platformData)
     }
     displayParams.fCreateProtectedNativeBackend = FLAGS_createProtected;
 #if defined(SK_GRAPHITE)
-    displayParams.fGraphiteContextOptions.fPriv.fPathRendererStrategy =
+    CommonFlags::SetTestOptions(&displayParams.fGraphiteTestOptions.fTestOptions);
+    displayParams.fGraphiteTestOptions.fPriv.fPathRendererStrategy =
             get_path_renderer_strategy_type(FLAGS_pathstrategy[0]);
-#if defined(SK_DAWN)
-    displayParams.fDisableTintSymbolRenaming = FLAGS_disable_tint_symbol_renaming;
-#endif
 #endif
     fWindow->setRequestedDisplayParams(displayParams);
     fDisplay = fWindow->getRequestedDisplayParams();
@@ -1305,7 +1299,7 @@ void Viewer::updateTitle() {
 #if defined(SK_GRAPHITE)
         skgpu::graphite::PathRendererStrategy strategy =
                 fWindow->getRequestedDisplayParams()
-                        .fGraphiteContextOptions.fPriv.fPathRendererStrategy;
+                        .fGraphiteTestOptions.fPriv.fPathRendererStrategy;
         if (skgpu::graphite::PathRendererStrategy::kDefault != strategy) {
             title.appendf(" [Path renderer strategy: %s]",
                           get_path_renderer_strategy_string(strategy));
@@ -1917,6 +1911,9 @@ void Viewer::onResize(int width, int height) {
         }
         fSlides[fCurrentSlide]->resize(width / scaleFactor, height / scaleFactor);
     }
+
+    fImGuiLayer.setScaleFactor(fWindow->scaleFactor());
+    fStatsLayer.setDisplayScale((fZoomUI ? 2.0f : 1.0f) * fWindow->scaleFactor());
 }
 
 SkPoint Viewer::mapEvent(float x, float y) {
@@ -2268,7 +2265,7 @@ void Viewer::drawImGui() {
 #if defined(SK_GRAPHITE)
                         using skgpu::graphite::PathRendererStrategy;
                         skgpu::graphite::ContextOptionsPriv* opts =
-                                &params.fGraphiteContextOptions.fPriv;
+                                &params.fGraphiteTestOptions.fPriv;
                         auto prevPrs = opts->fPathRendererStrategy;
                         auto prsButton = [&](skgpu::graphite::PathRendererStrategy s) {
                             if (ImGui::RadioButton(get_path_renderer_strategy_string(s),
@@ -2769,17 +2766,11 @@ void Viewer::drawImGui() {
                             // Retrieve the shaders from the pipeline.
                             const skgpu::graphite::GraphicsPipeline::PipelineInfo& pipelineInfo =
                                     pipeline->getPipelineInfo();
-                            const skgpu::graphite::ShaderCodeDictionary* dict =
-                                    gctx->priv().shaderCodeDictionary();
-                            skgpu::graphite::PaintParamsKey paintKey =
-                                    dict->lookup(pipelineInfo.fPaintID);
 
                             CachedShader& entry(fCachedShaders.push_back());
                             entry.fKey = nullptr;
-                            entry.fKeyString = SkStringPrintf("#%-3d RenderStep: %u, Paint: ",
-                                                              index++,
-                                                              pipelineInfo.fRenderStepID);
-                            entry.fKeyString.append(paintKey.toString(dict, /*includeData=*/true));
+                            entry.fKeyString = SkStringPrintf("#%-3d %s",
+                                                              index++, pipelineInfo.fLabel.c_str());
 
                             if (sksl) {
                                 entry.fShader[kVertex_GrShaderType] =
@@ -3026,7 +3017,7 @@ void Viewer::drawImGui() {
             SkImageInfo info = SkImageInfo::MakeN32Premul(1, 1);
             bool didGraphiteRead = false;
             if (is_graphite_backend_type(fBackendType)) {
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
                 SkBitmap bitmap;
                 bitmap.allocPixels(info);
                 SkPixmap pixels;

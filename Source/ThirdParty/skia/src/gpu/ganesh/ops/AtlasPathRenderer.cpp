@@ -11,11 +11,11 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkSize.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextOptions.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkSpan_impl.h"
@@ -164,7 +164,7 @@ sk_sp<AtlasPathRenderer> AtlasPathRenderer::Make(GrRecordingContext* rContext) {
 AtlasPathRenderer::AtlasPathRenderer(GrDirectContext* dContext) {
     SkASSERT(IsSupported(dContext));
     const GrCaps& caps = *dContext->priv().caps();
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     fAtlasMaxSize = dContext->priv().options().fMaxTextureAtlasSize;
 #else
     fAtlasMaxSize = 2048;
@@ -435,7 +435,7 @@ bool AtlasPathRenderer::preFlush(GrOnFlushResourceProvider* onFlushRP) {
 
     bool successful;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (onFlushRP->failFlushTimeCallbacks()) {
         successful = false;
     } else

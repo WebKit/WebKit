@@ -50,6 +50,8 @@ bool DawnFormatIsDepthOrStencil(wgpu::TextureFormat format) {
         default:
             return false;
     }
+
+    SkUNREACHABLE;
 }
 
 bool DawnFormatIsDepth(wgpu::TextureFormat format) {
@@ -62,6 +64,8 @@ bool DawnFormatIsDepth(wgpu::TextureFormat format) {
         default:
             return false;
     }
+
+    SkUNREACHABLE;
 }
 
 bool DawnFormatIsStencil(wgpu::TextureFormat format) {
@@ -73,6 +77,8 @@ bool DawnFormatIsStencil(wgpu::TextureFormat format) {
         default:
             return false;
     }
+
+    SkUNREACHABLE;
 }
 
 wgpu::TextureFormat DawnDepthStencilFlagsToFormat(SkEnumBitMask<DepthStencilFlags> mask) {
@@ -124,10 +130,13 @@ static bool check_shader_module([[maybe_unused]] const DawnSharedContext* shared
                 std::string errors;
                 for (size_t index = 0; index < info->messageCount; ++index) {
                     const WGPUCompilationMessage& entry = info->messages[index];
-                    errors += "line " +
-                              std::to_string(entry.lineNum) + ':' +
-                              std::to_string(entry.linePos) + ' ' +
-                              entry.message + '\n';
+#if defined(WGPU_BREAKING_CHANGE_STRING_VIEW_OUTPUT_STRUCTS)
+                    std::string messageString(entry.message.data, entry.message.length);
+#else   // defined(WGPU_BREAKING_CHANGE_STRING_VIEW_OUTPUT_STRUCTS)
+                    std::string messageString(entry.message);
+#endif  // defined(WGPU_BREAKING_CHANGE_STRING_VIEW_OUTPUT_STRUCTS)
+                    errors += "line " + std::to_string(entry.lineNum) + ':' +
+                              std::to_string(entry.linePos) + ' ' + messageString + '\n';
                 }
                 self->fErrorHandler->compileError(
                         self->fShaderText, errors.c_str(), /*shaderWasCached=*/false);
@@ -175,7 +184,11 @@ bool DawnCompileWGSLShaderModule(const DawnSharedContext* sharedContext,
                                  const std::string& wgsl,
                                  wgpu::ShaderModule* module,
                                  ShaderErrorHandler* errorHandler) {
+#ifdef WGPU_BREAKING_CHANGE_DROP_DESCRIPTOR
+    wgpu::ShaderSourceWGSL wgslDesc;
+#else
     wgpu::ShaderModuleWGSLDescriptor wgslDesc;
+#endif
     wgslDesc.code = wgsl.c_str();
 
     wgpu::ShaderModuleDescriptor desc;

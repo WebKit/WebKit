@@ -21,9 +21,16 @@ namespace skgpu::graphite {
 
 sk_sp<RenderPassTask> RenderPassTask::Make(DrawPassList passes,
                                            const RenderPassDesc& desc,
-                                           sk_sp<TextureProxy> target) {
+                                           sk_sp<TextureProxy> target,
+                                           sk_sp<TextureProxy> dstCopy,
+                                           SkIRect dstCopyBounds) {
     // For now we have one DrawPass per RenderPassTask
     SkASSERT(passes.size() == 1);
+    // We should only have dst copy bounds if we have a dst copy texture, and the texture should be
+    // big enough to cover the copy bounds that will be sampled.
+    SkASSERT(dstCopyBounds.isEmpty() == !dstCopy);
+    SkASSERT(!dstCopy || (dstCopy->dimensions().width() >= dstCopyBounds.width() &&
+                          dstCopy->dimensions().height() >= dstCopyBounds.height()));
     if (!target) {
         return nullptr;
     }
@@ -39,13 +46,23 @@ sk_sp<RenderPassTask> RenderPassTask::Make(DrawPassList passes,
         SkASSERT(desc.fSampleCount == desc.fDepthStencilAttachment.fTextureInfo.numSamples());
     }
 
-    return sk_sp<RenderPassTask>(new RenderPassTask(std::move(passes), desc, target));
+    return sk_sp<RenderPassTask>(new RenderPassTask(std::move(passes),
+                                                    desc,
+                                                    std::move(target),
+                                                    std::move(dstCopy),
+                                                    dstCopyBounds));
 }
 
 RenderPassTask::RenderPassTask(DrawPassList passes,
                                const RenderPassDesc& desc,
-                               sk_sp<TextureProxy> target)
-        : fDrawPasses(std::move(passes)), fRenderPassDesc(desc), fTarget(std::move(target)) {}
+                               sk_sp<TextureProxy> target,
+                               sk_sp<TextureProxy> dstCopy,
+                               SkIRect dstCopyBounds)
+        : fDrawPasses(std::move(passes))
+        , fRenderPassDesc(desc)
+        , fTarget(std::move(target))
+        , fDstCopy(std::move(dstCopy))
+        , fDstCopyBounds(dstCopyBounds) {}
 
 RenderPassTask::~RenderPassTask() = default;
 
@@ -81,12 +98,9 @@ Task::Status RenderPassTask::addCommands(Context* context,
                                          ReplayTargetData replayData) {
     // TBD: Expose the surfaces that will need to be attached within the renderpass?
 
-    // TODO: for task execution, start the render pass, then iterate passes and
-    // possibly(?) start each subpass, and call DrawPass::addCommands() on the command buffer
-    // provided to the task. Then close the render pass and we should have pixels..
-
     // Instantiate the target
     SkASSERT(fTarget && fTarget->isInstantiated());
+    SkASSERT(!fDstCopy || fDstCopy->isInstantiated());
 
     if (fTarget->texture() == replayData.fTarget) {
         commandBuffer->setReplayTranslation(replayData.fTranslation);
@@ -134,7 +148,9 @@ Task::Status RenderPassTask::addCommands(Context* context,
                                      std::move(colorAttachment),
                                      std::move(resolveAttachment),
                                      std::move(depthStencilAttachment),
-                                     SkRect::Make(fTarget->dimensions()),
+                                     fDstCopy ? fDstCopy->texture() : nullptr,
+                                     fDstCopyBounds,
+                                     fTarget->dimensions(),
                                      fDrawPasses)) {
         return Status::kSuccess;
     } else {

@@ -11,6 +11,7 @@
 #include "include/core/SkFontArguments.h"
 #include "include/core/SkFontParameters.h"
 #include "include/core/SkFontStyle.h"
+#include "include/core/SkFourByteTag.h"
 #include "include/core/SkRect.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkString.h"
@@ -351,6 +352,10 @@ protected:
     // Must return a valid scaler context. It can not return nullptr.
     virtual std::unique_ptr<SkScalerContext> onCreateScalerContext(const SkScalerContextEffects&,
                                                                    const SkDescriptor*) const = 0;
+    virtual std::unique_ptr<SkScalerContext> onCreateScalerContextAsProxyTypeface
+                                                                  (const SkScalerContextEffects&,
+                                                                   const SkDescriptor*,
+                                                                   sk_sp<SkTypeface>) const;
     virtual void onFilterRec(SkScalerContextRec*) const = 0;
     friend class SkScalerContext;  // onFilterRec
 
@@ -419,6 +424,7 @@ private:
     std::unique_ptr<SkAdvancedTypefaceMetrics> getAdvancedMetrics() const;
     friend class SkRandomTypeface;   // getAdvancedMetrics
     friend class SkPDFFont;          // getAdvancedMetrics
+    friend class SkTypeface_fontconfig;
 
     friend class SkFontPriv;         // getGlyphToUnicodeMap
 

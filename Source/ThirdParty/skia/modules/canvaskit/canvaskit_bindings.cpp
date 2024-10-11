@@ -79,7 +79,7 @@
 
 #ifdef ENABLE_GPU
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/GrExternalTextureGenerator.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
@@ -87,13 +87,13 @@
 #endif // ENABLE_GPU
 
 #ifdef CK_ENABLE_WEBGL
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
 #include "include/gpu/ganesh/gl/GrGLDirectContext.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
 #include "include/gpu/ganesh/gl/GrGLMakeWebGLInterface.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/RefCntedCallback.h"
 #include "src/gpu/ganesh/GrProxyProvider.h"
 #include "src/gpu/ganesh/GrRecordingContextPriv.h"
@@ -137,7 +137,7 @@ struct SkEmbeddedResourceHeader { const SkEmbeddedResource* entries; int count; 
 extern "C" const SkEmbeddedResourceHeader SK_EMBEDDED_FONTS;
 #endif
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #error "This define should not be set, as it brings in test-only things and bloats codesize."
 #endif
 
@@ -1425,6 +1425,12 @@ EMSCRIPTEN_BINDINGS(Skia) {
             }
             self.getDeviceClipBounds(outputRect);
         }))
+
+        .function("_quickReject", optional_override([](const SkCanvas& self, WASMPointerF32 fPtr)->bool {
+          const SkRect* rect = reinterpret_cast<const SkRect*>(fPtr);
+          return self.quickReject(*rect);
+        }))
+
         // 4x4 matrix functions
         // Just like with getTotalMatrix, we allocate the buffer for the 16 floats to go in from
         // interface.js, so it can also free them when its done.
@@ -2578,6 +2584,7 @@ EMSCRIPTEN_BINDINGS(Skia) {
         .value("RGB_101010x", SkColorType::kRGB_101010x_SkColorType)
         .value("Gray_8", SkColorType::kGray_8_SkColorType)
         .value("RGBA_F16", SkColorType::kRGBA_F16_SkColorType)
+        .value("RGB_F16F16F16x", SkColorType::kRGB_F16F16F16x_SkColorType)
         .value("RGBA_F32", SkColorType::kRGBA_F32_SkColorType);
 
     enum_<SkPathFillType>("FillType")

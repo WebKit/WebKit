@@ -33,7 +33,7 @@
 #include "include/gpu/vk/VulkanBackendContext.h"
 #include "include/gpu/vk/VulkanExtensions.h"
 #include "src/base/SkAutoMalloc.h"
-#include "src/ports/SkOSLibrary.h"
+#include "tools/library/LoadDynamicLibrary.h"
 
 #if defined(SK_ENABLE_SCOPED_LSAN_SUPPRESSIONS)
 #include <sanitizer/lsan_interface.h>
@@ -168,11 +168,12 @@ static bool should_include_extension(const char* extensionName) {
     const char* kValidExtensions[] = {
             // single merged layer
             VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME,
-            VK_EXT_DEVICE_FAULT_EXTENSION_NAME,
             VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME,
+            VK_EXT_DEVICE_FAULT_EXTENSION_NAME,
+            VK_EXT_FRAME_BOUNDARY_EXTENSION_NAME,
             VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME,
-            VK_EXT_RGBA10X6_FORMATS_EXTENSION_NAME,
             VK_EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME,
+            VK_EXT_RGBA10X6_FORMATS_EXTENSION_NAME,
             VK_KHR_BIND_MEMORY_2_EXTENSION_NAME,
             VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME,
             VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME,

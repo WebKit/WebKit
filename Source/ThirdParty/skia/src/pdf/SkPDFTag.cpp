@@ -11,6 +11,7 @@
 #include "include/core/SkScalar.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTo.h"
+#include "src/base/SkZip.h"
 #include "src/pdf/SkPDFDocumentPriv.h"
 
 #include <algorithm>
@@ -69,31 +70,52 @@ struct SkPDFTagNode {
         return idString;
     }
 
-    SkPDFTagNode* fChildren = nullptr;
-    size_t fChildCount = 0;
+    SkPDFTagNode* fParent = nullptr;
+    SkSpan<SkPDFTagNode> fChildren;
     struct MarkedContentInfo {
         Location fLocation;
         int fMarkId;
     };
     TArray<MarkedContentInfo> fMarkedContent;
-    int fNodeId;
-    bool fWantTitle;
+    int fNodeId = 0;
+    bool fWantTitle = false;
+    bool fUsed = false;
+    bool fUsedInIDTree = false;
     SkString fTypeString;
     SkString fTitle;
     SkString fAlt;
     SkString fLang;
     SkPDFIndirectReference fRef;
-    enum State {
-        kUnknown,
-        kYes,
-        kNo,
-    } fCanDiscard = kUnknown;
     std::unique_ptr<SkPDFArray> fAttributes;
+    std::vector<int> fAttributeNodeIds;
     struct AnnotationInfo {
         unsigned fPageIndex;
         SkPDFIndirectReference fAnnotationRef;
     };
     std::vector<AnnotationInfo> fAnnotations;
+
+    void markUsed(const THashMap<int, SkPDFTagNode*>& nodeMap) {
+        if (fUsed) {
+            return;
+        }
+        // First to avoid possible cycles.
+        fUsed = true;
+        // Any nodes referenced by an attribute are used.
+        for (int nodeId : fAttributeNodeIds) {
+            SkPDFTagNode** tagPtr = nodeMap.find(nodeId);
+            if (!tagPtr) {
+                continue;
+            }
+            SkPDFTagNode* tag = *tagPtr;
+            SkASSERT(tag);
+            tag->markUsed(nodeMap);
+            tag->fUsedInIDTree = true;
+        }
+        // The parent node is used.
+        if (fParent) {
+            fParent->markUsed(nodeMap);
+        }
+    }
 };
 
 SkPDF::AttributeList::AttributeList() = default;
@@ -150,61 +172,58 @@ void SkPDF::AttributeList::appendNodeIdArray(
         const std::vector<int>& nodeIds) {
     if (!fAttrs)
         fAttrs = SkPDFMakeArray();
+    // Keep the node ids around so we can mark them as used (and needing IDs) later.
+    fNodeIds.insert(fNodeIds.end(), nodeIds.begin(), nodeIds.end());
     std::unique_ptr<SkPDFDict> attrDict = SkPDFMakeDict();
     attrDict->insertName("O", owner);
     std::unique_ptr<SkPDFArray> pdfArray = SkPDFMakeArray();
     for (int nodeId : nodeIds) {
-        SkString idString = SkPDFTagNode::nodeIdToString(nodeId);
-        pdfArray->appendByteString(idString);
+        pdfArray->appendByteString(SkPDFTagNode::nodeIdToString(nodeId));
     }
     attrDict->insertObject(name, std::move(pdfArray));
     fAttrs->appendObject(std::move(attrDict));
 }
 
-SkPDFTagTree::SkPDFTagTree() : fArena(4 * sizeof(SkPDFTagNode)) {}
+SkPDFTagTree::SkPDFTagTree(SkPDF::StructureElementNode* node, SkPDF::Metadata::Outline outline)
+    : fArena(4 * sizeof(SkPDFTagNode))
+{
+    if (node) {
+        fRoot = fArena.make<SkPDFTagNode>();
+        fOutline = outline;
+        Move(*node, fRoot, &fArena, &fNodeMap, false);
+    }
+}
 
 SkPDFTagTree::~SkPDFTagTree() = default;
 
 // static
-void SkPDFTagTree::Copy(SkPDF::StructureElementNode& node,
-                        SkPDFTagNode* dst,
+void SkPDFTagTree::Move(SkPDF::StructureElementNode& srcNode,
+                        SkPDFTagNode* dstNode,
                         SkArenaAlloc* arena,
                         THashMap<int, SkPDFTagNode*>* nodeMap,
                         bool wantTitle) {
-    nodeMap->set(node.fNodeId, dst);
-    for (int nodeId : node.fAdditionalNodeIds) {
-        SkASSERT(!nodeMap->find(nodeId));
-        nodeMap->set(nodeId, dst);
-    }
-    dst->fNodeId = node.fNodeId;
+    dstNode->fNodeId = srcNode.fNodeId;
+    nodeMap->set(dstNode->fNodeId, dstNode);
 
     // Accumulate title text, need to be in sync with create_outline_from_headers
-    const char* type = node.fTypeString.c_str();
+    const char* type = srcNode.fTypeString.c_str();
     wantTitle |= fOutline == SkPDF::Metadata::Outline::StructureElementHeaders &&
                  type[0] == 'H' && '1' <= type[1] && type[1] <= '6';
-    dst->fWantTitle = wantTitle;
+    dstNode->fWantTitle = wantTitle;
 
-    dst->fTypeString = node.fTypeString;
-    dst->fAlt = node.fAlt;
-    dst->fLang = node.fLang;
+    dstNode->fTypeString = srcNode.fTypeString;
+    dstNode->fAlt = srcNode.fAlt;
+    dstNode->fLang = srcNode.fLang;
 
-    size_t childCount = node.fChildVector.size();
-    SkPDFTagNode* children = arena->makeArray<SkPDFTagNode>(childCount);
-    dst->fChildCount = childCount;
-    dst->fChildren = children;
-    for (size_t i = 0; i < childCount; ++i) {
-        Copy(*node.fChildVector[i], &children[i], arena, nodeMap, wantTitle);
+    size_t childCount = srcNode.fChildVector.size();
+    dstNode->fChildren = SkSpan(arena->makeArray<SkPDFTagNode>(childCount), childCount);
+    for (auto&& [nodeChild, dstChild] : SkMakeZip(srcNode.fChildVector, dstNode->fChildren)) {
+        dstChild.fParent = dstNode;
+        Move(*nodeChild, &dstChild, arena, nodeMap, wantTitle);
     }
 
-    dst->fAttributes = std::move(node.fAttributes.fAttrs);
-}
-
-void SkPDFTagTree::init(SkPDF::StructureElementNode* node, SkPDF::Metadata::Outline outline) {
-    if (node) {
-        fRoot = fArena.make<SkPDFTagNode>();
-        fOutline = outline;
-        Copy(*node, fRoot, &fArena, &fNodeMap, false);
-    }
+    dstNode->fAttributes = std::move(srcNode.fAttributes.fAttrs);
+    dstNode->fAttributeNodeIds = std::move(srcNode.fAttributes.fNodeIds);
 }
 
 int SkPDFTagTree::Mark::id() {
@@ -225,11 +244,16 @@ auto SkPDFTagTree::createMarkIdForNodeId(int nodeId, unsigned pageIndex, SkPoint
     }
     SkPDFTagNode* tag = *tagPtr;
     SkASSERT(tag);
+
+    tag->markUsed(fNodeMap);
+
     while (SkToUInt(fMarksPerPage.size()) < pageIndex + 1) {
         fMarksPerPage.push_back();
     }
     TArray<SkPDFTagNode*>& pageMarks = fMarksPerPage[pageIndex];
     int markId = pageMarks.size();
+    SkASSERT(tag->fMarkedContent.empty() ||
+             tag->fMarkedContent.back().fLocation.fPageIndex <= pageIndex);
     tag->fMarkedContent.push_back({{point, pageIndex}, markId});
     pageMarks.push_back(tag);
     return Mark(tag, tag->fMarkedContent.size() - 1);
@@ -246,7 +270,7 @@ int SkPDFTagTree::createStructParentKeyForNodeId(int nodeId, unsigned pageIndex)
     SkPDFTagNode* tag = *tagPtr;
     SkASSERT(tag);
 
-    tag->fCanDiscard = SkPDFTagNode::kNo;
+    tag->markUsed(fNodeMap);
 
     int nextStructParentKey = kFirstAnnotationStructParentKey +
         static_cast<int>(fParentTreeAnnotationNodeIds.size());
@@ -254,53 +278,11 @@ int SkPDFTagTree::createStructParentKeyForNodeId(int nodeId, unsigned pageIndex)
     return nextStructParentKey;
 }
 
-static bool can_discard(SkPDFTagNode* node) {
-    if (node->fCanDiscard == SkPDFTagNode::kYes) {
-        return true;
-    }
-    if (node->fCanDiscard == SkPDFTagNode::kNo) {
-        return false;
-    }
-    if (!node->fMarkedContent.empty()) {
-        node->fCanDiscard = SkPDFTagNode::kNo;
-        return false;
-    }
-    for (size_t i = 0; i < node->fChildCount; ++i) {
-        if (!can_discard(&node->fChildren[i])) {
-            node->fCanDiscard = SkPDFTagNode::kNo;
-            return false;
-        }
-    }
-    node->fCanDiscard = SkPDFTagNode::kYes;
-    return true;
-}
-
 SkPDFIndirectReference SkPDFTagTree::PrepareTagTreeToEmit(SkPDFIndirectReference parent,
                                                           SkPDFTagNode* node,
                                                           SkPDFDocument* doc) {
-    SkPDFIndirectReference ref = doc->reserveRef();
-    std::unique_ptr<SkPDFArray> kids = SkPDFMakeArray();
-    SkPDFTagNode* children = node->fChildren;
-    size_t childCount = node->fChildCount;
-    for (size_t i = 0; i < childCount; ++i) {
-        SkPDFTagNode* child = &children[i];
-        if (!(can_discard(child))) {
-            kids->appendRef(PrepareTagTreeToEmit(ref, child, doc));
-        }
-    }
-    for (const SkPDFTagNode::MarkedContentInfo& info : node->fMarkedContent) {
-        std::unique_ptr<SkPDFDict> mcr = SkPDFMakeDict("MCR");
-        mcr->insertRef("Pg", doc->getPage(info.fLocation.fPageIndex));
-        mcr->insertInt("MCID", info.fMarkId);
-        kids->appendObject(std::move(mcr));
-    }
-    for (const SkPDFTagNode::AnnotationInfo& annotationInfo : node->fAnnotations) {
-        std::unique_ptr<SkPDFDict> annotationDict = SkPDFMakeDict("OBJR");
-        annotationDict->insertRef("Obj", annotationInfo.fAnnotationRef);
-        annotationDict->insertRef("Pg", doc->getPage(annotationInfo.fPageIndex));
-        kids->appendObject(std::move(annotationDict));
-    }
-    node->fRef = ref;
+    node->fRef = doc->reserveRef();
+
     SkPDFDict dict("StructElem");
     dict.insertName("S", node->fTypeString.isEmpty() ? "NonStruct" : node->fTypeString.c_str());
     if (!node->fAlt.isEmpty()) {
@@ -310,20 +292,68 @@ SkPDFIndirectReference SkPDFTagTree::PrepareTagTreeToEmit(SkPDFIndirectReference
         dict.insertTextString("Lang", node->fLang);
     }
     dict.insertRef("P", parent);
-    dict.insertObject("K", std::move(kids));
+
+    { // K
+        std::unique_ptr<SkPDFArray> kids = SkPDFMakeArray();
+        for (auto&& child : node->fChildren) {
+            if (child.fUsed) {
+                kids->appendRef(PrepareTagTreeToEmit(node->fRef, &child, doc));
+            }
+        }
+        if (!node->fMarkedContent.empty()) {
+            // Use the mode page as /Pg and use integer markId for marks on that page.
+            // SkPDFTagNode::fMarkedContent is already sorted by page, since it is append only in
+            // createMarkIdForNodeId where pageIndex is the monotonically increasing current page.
+            size_t longestRun = 0;
+            unsigned longestPage = 0;
+            size_t currentRun = 0;
+            unsigned currentPage = 0;
+            for (const SkPDFTagNode::MarkedContentInfo& info : node->fMarkedContent) {
+                unsigned thisPage = info.fLocation.fPageIndex;
+                if (currentPage != thisPage) {
+                    SkASSERT(currentPage < thisPage);
+                    currentPage = thisPage;
+                    currentRun = 0;
+                }
+                ++currentRun;
+                if (longestRun < currentRun) {
+                    longestRun = currentRun;
+                    longestPage = currentPage;
+                }
+            }
+            for (const SkPDFTagNode::MarkedContentInfo& info : node->fMarkedContent) {
+                if (info.fLocation.fPageIndex == longestPage) {
+                    kids->appendInt(info.fMarkId);
+                } else {
+                    std::unique_ptr<SkPDFDict> mcr = SkPDFMakeDict("MCR");
+                    mcr->insertRef("Pg", doc->getPage(info.fLocation.fPageIndex));
+                    mcr->insertInt("MCID", info.fMarkId);
+                    kids->appendObject(std::move(mcr));
+                }
+            }
+            dict.insertRef("Pg", doc->getPage(longestPage));
+        }
+        for (const SkPDFTagNode::AnnotationInfo& annotationInfo : node->fAnnotations) {
+            std::unique_ptr<SkPDFDict> annotationDict = SkPDFMakeDict("OBJR");
+            annotationDict->insertRef("Obj", annotationInfo.fAnnotationRef);
+            annotationDict->insertRef("Pg", doc->getPage(annotationInfo.fPageIndex));
+            kids->appendObject(std::move(annotationDict));
+        }
+        dict.insertObject("K", std::move(kids));
+    }
+
     if (node->fAttributes) {
         dict.insertObject("A", std::move(node->fAttributes));
     }
 
-    // Each node has a unique ID that also needs to be referenced
-    // in a separate IDTree node, along with the lowest and highest
-    // unique ID string.
-    SkString idString = SkPDFTagNode::nodeIdToString(node->fNodeId);
-    dict.insertByteString("ID", idString.c_str());
-    IDTreeEntry idTreeEntry = {node->fNodeId, ref};
-    fIdTreeEntries.push_back(idTreeEntry);
+    // If this StructElem ID was referenced, emit it and add it to the IDTree.
+    if (node->fUsedInIDTree) {
+        dict.insertByteString("ID", SkPDFTagNode::nodeIdToString(node->fNodeId));
+        IDTreeEntry idTreeEntry = {node->fNodeId, node->fRef};
+        fIdTreeEntries.push_back(idTreeEntry);
+    }
 
-    return doc->emit(dict, ref);
+    return doc->emit(dict, node->fRef);
 }
 
 void SkPDFTagTree::addNodeAnnotation(int nodeId, SkPDFIndirectReference annotationRef, unsigned pageIndex) {
@@ -362,7 +392,7 @@ void SkPDFTagTree::addNodeTitle(int nodeId, SkSpan<const char> title) {
 }
 
 SkPDFIndirectReference SkPDFTagTree::makeStructTreeRoot(SkPDFDocument* doc) {
-    if (!fRoot || can_discard(fRoot)) {
+    if (!fRoot || !fRoot->fUsed) {
         return SkPDFIndirectReference();
     }
 
@@ -433,8 +463,7 @@ SkPDFIndirectReference SkPDFTagTree::makeStructTreeRoot(SkPDFDocument* doc) {
         idTreeLeaf.insertObject("Limits", std::move(limits));
         auto names = SkPDFMakeArray();
         for (const IDTreeEntry& entry : fIdTreeEntries) {
-          SkString idString = SkPDFTagNode::nodeIdToString(entry.nodeId);
-            names->appendByteString(idString);
+            names->appendByteString(SkPDFTagNode::nodeIdToString(entry.nodeId));
             names->appendRef(entry.ref);
         }
         idTreeLeaf.insertObject("Names", std::move(names));
@@ -520,12 +549,10 @@ OutlineEntry::Content create_outline_entry_content(SkPDFTagNode* const node) {
     OutlineEntry::Content content{std::move(text), std::move(markPoint)};
 
     // Accumulate children
-    SkSpan<SkPDFTagNode> children(node->fChildren, node->fChildCount);
-    for (auto&& child : children) {
-        if (can_discard(&child)) {
-            continue;
+    for (auto&& child : node->fChildren) {
+        if (child.fUsed) {
+            content.accumulate(create_outline_entry_content(&child));
         }
-        content.accumulate(create_outline_entry_content(&child));
     }
     return content;
 }
@@ -545,19 +572,17 @@ void create_outline_from_headers(SkPDFDocument* const doc, SkPDFTagNode* const n
         }
     }
 
-    SkSpan<SkPDFTagNode> children(node->fChildren, node->fChildCount);
-    for (auto&& child : children) {
-        if (can_discard(&child)) {
-            continue;
+    for (auto&& child : node->fChildren) {
+        if (child.fUsed) {
+            create_outline_from_headers(doc, &child, stack);
         }
-        create_outline_from_headers(doc, &child, stack);
     }
 }
 
 } // namespace
 
 SkPDFIndirectReference SkPDFTagTree::makeOutline(SkPDFDocument* doc) {
-    if (!fRoot || can_discard(fRoot) ||
+    if (!fRoot || !fRoot->fUsed ||
         fOutline != SkPDF::Metadata::Outline::StructureElementHeaders)
     {
         return SkPDFIndirectReference();

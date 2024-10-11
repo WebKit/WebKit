@@ -80,7 +80,7 @@ using RescaleMode        = SkImage::RescaleMode;
 using ReadPixelsCallback = SkImage::ReadPixelsCallback;
 using ReadPixelsContext  = SkImage::ReadPixelsContext;
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 int gOverrideMaxTextureSizeGraphite = 0;
 // Allows tests to check how many tiles were drawn on the most recent call to
 // Device::drawAsTiledImageRect. This is an atomic because we can write to it from
@@ -573,7 +573,7 @@ sk_sp<Image> Device::makeImageCopy(const SkIRect& subset,
 }
 
 bool Device::onReadPixels(const SkPixmap& pm, int srcX, int srcY) {
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     // This testing-only function should only be called before the Device has detached from its
     // Recorder, since it's accessed via the test-held Surface.
     ASSERT_SINGLE_OWNER
@@ -842,7 +842,7 @@ bool Device::drawAsTiledImageRect(SkCanvas* canvas,
     size_t cacheSize = recorder->priv().getResourceCacheLimit();
     size_t maxTextureSize = recorder->priv().caps()->maxTextureSize();
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (gOverrideMaxTextureSizeGraphite) {
         maxTextureSize = gOverrideMaxTextureSizeGraphite;
     }
@@ -868,9 +868,10 @@ bool Device::drawAsTiledImageRect(SkCanvas* canvas,
                                                            sampling,
                                                            &paint,
                                                            constraint,
+                                                           /* sharpenMM= */ true,
                                                            cacheSize,
                                                            maxTextureSize);
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     gNumTilesDrawnGraphite.store(numTiles, std::memory_order_relaxed);
 #endif
     return wasTiled;
@@ -1077,7 +1078,7 @@ sktext::gpu::AtlasDrawDelegate Device::atlasDelegate() {
                const SkPaint& paint,
                sk_sp<SkRefCnt> subRunStorage,
                sktext::gpu::RendererData rendererData) {
-        this->drawAtlasSubRun(subRun, drawOrigin, paint, subRunStorage, rendererData);
+        this->drawAtlasSubRun(subRun, drawOrigin, paint, std::move(subRunStorage), rendererData);
     };
 }
 
@@ -1267,9 +1268,9 @@ void Device::drawGeometry(const Transform& localToDevice,
                                                          : SkBlendMode::kSrcOver;
     Coverage rendererCoverage = renderer ? renderer->coverage()
                                          : Coverage::kSingleChannel;
-    if (clip.shader() && rendererCoverage == Coverage::kNone) {
-        // Must upgrade to single channel coverage if there is a clip shader; but preserve LCD
-        // coverage if the Renderer uses that.
+    if ((clip.shader() || !clip.analyticClip().isEmpty()) && rendererCoverage == Coverage::kNone) {
+        // Must upgrade to single channel coverage if there is a clip shader or analytic clip;
+        // but preserve LCD coverage if the Renderer uses that.
         rendererCoverage = Coverage::kSingleChannel;
     }
     dstReadReq = GetDstReadRequirement(fRecorder->priv().caps(), blendMode, rendererCoverage);
@@ -1285,10 +1286,12 @@ void Device::drawGeometry(const Transform& localToDevice,
 
     PaintParams shading{paint,
                         std::move(primitiveBlender),
+                        clip.analyticClip(),
                         sk_ref_sp(clip.shader()),
                         dstReadReq,
                         skipColorXform};
-    const bool dependsOnDst = paint_depends_on_dst(shading);
+    const bool dependsOnDst = paint_depends_on_dst(shading) ||
+                              clip.shader() || !clip.analyticClip().isEmpty();
 
     // Some shapes and styles combine multiple draws so the total render step count is split between
     // the main renderer and possibly a secondaryRenderer.
@@ -1579,7 +1582,7 @@ std::pair<const Renderer*, PathAtlas*> Device::chooseRenderer(const Transform& l
     //    2. Fall back to CPU raster AA if hardware MSAA is disabled or it was explicitly requested
     //       via ContextOptions.
     //    3. Otherwise use tessellation.
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     PathRendererStrategy strategy = fRecorder->priv().caps()->requestedPathRendererStrategy();
 #else
     PathRendererStrategy strategy = PathRendererStrategy::kDefault;
@@ -1761,7 +1764,7 @@ void Device::internalFlush() {
     fCurrentDepth = DrawOrder::kClearDepth;
 
      // Any cleanup in the AtlasProvider
-    fRecorder->priv().atlasProvider()->compact();
+    fRecorder->priv().atlasProvider()->compact(/*forceCompact=*/false);
 }
 
 bool Device::needsFlushBeforeDraw(int numNewRenderSteps, DstReadRequirement dstReadReq) const {
@@ -1835,16 +1838,13 @@ void Device::drawCoverageMask(const SkSpecialImage* mask,
     // 'mask' logically has 0 coverage outside of its pixels, which is equivalent to kDecal tiling.
     // However, since we draw geometry tightly fitting 'mask', we can use the better-supported
     // kClamp tiling and behave effectively the same way.
-    const SkTileMode kClamp[2] = {SkTileMode::kClamp, SkTileMode::kClamp};
-
+    TextureDataBlock::SampledTexture sampledMask{maskProxyView.refProxy(),
+                                                 {SkFilterMode::kLinear, SkTileMode::kClamp}};
     // Ensure this is kept alive; normally textures are kept alive by the PipelineDataGatherer for
     // image shaders, or by the PathAtlas. This is a unique circumstance.
-    // TODO: Find a cleaner way to ensure 'maskProxyView' is transferred to the final Recording.
-    TextureDataBlock tdb;
     // NOTE: CoverageMaskRenderStep controls the final sampling options; this texture data block
     // serves only to keep the mask alive so the sampling passed to add() doesn't matter.
-    tdb.add(maskProxyView.refProxy(), {SkFilterMode::kLinear, kClamp});
-    fRecorder->priv().textureDataCache()->insert(tdb);
+    fRecorder->priv().textureDataCache()->insert(TextureDataBlock(sampledMask));
 
     // CoverageMaskShape() wraps a Shape when it's used as a PathAtlas, but in this case the
     // original shape has been long lost, so just use a Rect that bounds the image.

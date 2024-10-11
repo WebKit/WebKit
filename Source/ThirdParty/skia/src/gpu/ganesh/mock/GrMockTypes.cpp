@@ -5,11 +5,11 @@
  * found in the LICENSE file.
  */
 
-#include "include/gpu/mock/GrMockTypes.h"
+#include "include/gpu/ganesh/mock/GrMockTypes.h"
 
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "src/gpu/ganesh/mock/GrMockTypesPriv.h"
 
 GrBackendFormat GrMockRenderTargetInfo::getBackendFormat() const {

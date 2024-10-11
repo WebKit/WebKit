@@ -172,15 +172,7 @@ void RecordingPriv::addResourceRef(sk_sp<Resource> resource) {
     fRecording->fExtraResourceRefs.push_back(std::move(resource));
 }
 
-void RecordingPriv::addTask(sk_sp<Task> task) {
-    fRecording->fRootTaskList->add(std::move(task));
-}
-
-void RecordingPriv::addTasks(TaskList&& tasks) {
-    fRecording->fRootTaskList->add(std::move(tasks));
-}
-
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool RecordingPriv::isTargetProxyInstantiated() const {
     return fRecording->fTargetProxyData->lazyProxy()->isInstantiated();
 }

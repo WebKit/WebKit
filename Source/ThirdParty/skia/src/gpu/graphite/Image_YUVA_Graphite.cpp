@@ -42,8 +42,8 @@ static constexpr int kA = static_cast<int>(SkYUVAInfo::kA);
 
 static SkAlphaType yuva_alpha_type(const SkYUVAInfo& yuvaInfo) {
     // If an alpha channel is present we always use kPremul. This is because, although the planar
-    // data is always un-premul, the final interleaved RGBA sample produced in the shader is premul
-    // (and similar if flattened).
+    // data is always un-premul and the final interleaved RGBA sample produced in the shader is
+    // unpremul (and similar if flattened), the client is expecting premul.
     return yuvaInfo.hasAlpha() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
 }
 
@@ -204,7 +204,7 @@ size_t Image_YUVA::textureSize() const {
             continue; // Null channels (A) have no size.
         }
         bool repeat = false;
-        for (int j = 0; j < i - 1; ++j) {
+        for (int j = i - 1; j >= 0; --j) {
             if (fProxies[i].proxy() == fProxies[j].proxy()) {
                 repeat = true;
                 break;

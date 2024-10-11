@@ -8,7 +8,7 @@
 
 #include "src/gpu/ganesh/GrShaderCaps.h"
 
-#include "include/gpu/GrContextOptions.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -117,7 +117,7 @@ void GrShaderCaps::applyOptionsOverrides(const GrContextOptions& options) {
     if (options.fReducedShaderVariations) {
         fReducedShaderMode = true;
     }
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     if (options.fSuppressDualSourceBlending) {
         fDualSourceBlendingSupport = false;
     }

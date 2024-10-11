@@ -6,7 +6,7 @@
  */
 #include "include/gpu/ganesh/mtl/GrMtlBackendSurface.h"
 
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/mtl/GrMtlTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "src/gpu/ganesh/GrBackendSurfacePriv.h"
@@ -46,7 +46,7 @@ private:
     }
 
     std::string toString() const override {
-#if defined(SK_DEBUG) || GR_TEST_UTILS
+#if defined(SK_DEBUG) || GPU_TEST_UTILS
         return skgpu::MtlFormatToString(fFormat);
 #else
         return "";

@@ -39,7 +39,7 @@
 #if USE(SKIA)
 #include "GLContext.h"
 #include "PlatformDisplay.h"
-#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 

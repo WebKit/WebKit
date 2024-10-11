@@ -27,9 +27,9 @@
 namespace skwindow::internal {
 
 GraphiteDawnWindowContext::GraphiteDawnWindowContext(const DisplayParams& params,
-                                                     wgpu::TextureFormat swapChainFormat)
+                                                     wgpu::TextureFormat surfaceFormat)
     : WindowContext(params)
-    , fSwapChainFormat(swapChainFormat) {
+    , fSurfaceFormat(surfaceFormat) {
     WGPUInstanceDescriptor desc{};
     // need for WaitAny with timeout > 0
     desc.features.timedWaitAnyEnable = true;
@@ -42,21 +42,20 @@ void GraphiteDawnWindowContext::initializeContext(int width, int height) {
     fWidth = width;
     fHeight = height;
 
-    if (!onInitializeContext())
+    if (!this->onInitializeContext())
         return;
 
     SkASSERT(fDevice);
     SkASSERT(fSurface);
-    SkASSERT(fSwapChain);
 
     skgpu::graphite::DawnBackendContext backendContext;
     backendContext.fInstance = wgpu::Instance(fInstance->Get());
     backendContext.fDevice = fDevice;
     backendContext.fQueue = fDevice.GetQueue();
     // Needed to make synchronous readPixels work:
-    fDisplayParams.fGraphiteContextOptions.fPriv.fStoreContextRefInRecorder = true;
+    fDisplayParams.fGraphiteTestOptions.fPriv.fStoreContextRefInRecorder = true;
     fGraphiteContext = skgpu::graphite::ContextFactory::MakeDawn(
-            backendContext, fDisplayParams.fGraphiteContextOptions.fOptions);
+            backendContext, fDisplayParams.fGraphiteTestOptions.fTestOptions.fContextOptions);
     if (!fGraphiteContext) {
         SkASSERT(false);
         return;
@@ -77,16 +76,19 @@ void GraphiteDawnWindowContext::destroyContext() {
 
     fGraphiteRecorder = nullptr;
     fGraphiteContext = nullptr;
-    fSwapChain = nullptr;
     fSurface = nullptr;
     fDevice = nullptr;
 }
 
 sk_sp<SkSurface> GraphiteDawnWindowContext::getBackbufferSurface() {
-    auto texture = fSwapChain.GetCurrentTexture();
+    wgpu::SurfaceTexture surfaceTexture;
+    fSurface.GetCurrentTexture(&surfaceTexture);
+    SkASSERT(surfaceTexture.texture);
+    auto texture = surfaceTexture.texture;
+
     skgpu::graphite::DawnTextureInfo info(/*sampleCount=*/1,
                                           skgpu::Mipmapped::kNo,
-                                          fSwapChainFormat,
+                                          fSurfaceFormat,
                                           texture.GetUsage(),
                                           wgpu::TextureAspect::All);
     auto backendTex = skgpu::graphite::BackendTextures::MakeDawn(texture.Get());
@@ -102,7 +104,7 @@ sk_sp<SkSurface> GraphiteDawnWindowContext::getBackbufferSurface() {
 
 void GraphiteDawnWindowContext::onSwapBuffers() {
     this->snapRecordingAndSubmit();
-    fSwapChain.Present();
+    fSurface.Present();
 }
 
 void GraphiteDawnWindowContext::setDisplayParams(const DisplayParams& params) {
@@ -118,9 +120,15 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     static constexpr const char* kToggles[] = {
         "allow_unsafe_apis",  // Needed for dual-source blending, BufferMapExtendedUsages.
         "use_user_defined_labels_in_backend",
+        // Robustness impacts performance and is always disabled when running Graphite in Chrome,
+        // so this keeps Skia's tests operating closer to real-use behavior.
+        "disable_robustness",
+        // Must be last to correctly respond to `fUseTintIR` option.
+        "use_tint_ir",
     };
     wgpu::DawnTogglesDescriptor togglesDesc;
-    togglesDesc.enabledToggleCount  = std::size(kToggles);
+    togglesDesc.enabledToggleCount  = std::size(kToggles) -
+        (fDisplayParams.fGraphiteTestOptions.fTestOptions.fUseTintIR ? 0 : 1);
     togglesDesc.enabledToggles      = kToggles;
 
     wgpu::RequestAdapterOptions adapterOptions;
@@ -137,7 +145,6 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     wgpu::Adapter adapter = adapters[0].Get();
 
     std::vector<wgpu::FeatureName> features;
-    features.push_back(wgpu::FeatureName::SurfaceCapabilities);
     if (adapter.HasFeature(wgpu::FeatureName::MSAARenderToSingleSampled)) {
         features.push_back(wgpu::FeatureName::MSAARenderToSingleSampled);
     }
@@ -192,7 +199,7 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
 
     wgpu::DawnTogglesDescriptor deviceTogglesDesc;
 
-    if (fDisplayParams.fDisableTintSymbolRenaming) {
+    if (fDisplayParams.fGraphiteTestOptions.fTestOptions.fDisableTintSymbolRenaming) {
         static constexpr const char* kOptionalDeviceToggles[] = {
             "disable_symbol_renaming",
         };
@@ -213,20 +220,22 @@ wgpu::Device GraphiteDawnWindowContext::createDevice(wgpu::BackendType type) {
     return device;
 }
 
-wgpu::SwapChain GraphiteDawnWindowContext::createSwapChain() {
-    wgpu::SwapChainDescriptor swapChainDesc;
-    swapChainDesc.usage = wgpu::TextureUsage::RenderAttachment |
+void GraphiteDawnWindowContext::configureSurface() {
+    SkASSERT(fDevice);
+    SkASSERT(fSurface);
+
+    wgpu::SurfaceConfiguration surfaceConfig;
+    surfaceConfig.device = fDevice;
+    surfaceConfig.format = fSurfaceFormat;
+    surfaceConfig.usage = wgpu::TextureUsage::RenderAttachment |
                           wgpu::TextureUsage::TextureBinding |
                           wgpu::TextureUsage::CopySrc |
                           wgpu::TextureUsage::CopyDst;
-    swapChainDesc.format = fSwapChainFormat;
-    swapChainDesc.width = fWidth;
-    swapChainDesc.height = fHeight;
-    swapChainDesc.presentMode =
+    surfaceConfig.width = fWidth;
+    surfaceConfig.height = fHeight;
+    surfaceConfig.presentMode =
             fDisplayParams.fDisableVsync ? wgpu::PresentMode::Immediate : wgpu::PresentMode::Fifo;
-    auto swapChain = fDevice.CreateSwapChain(fSurface, &swapChainDesc);
-    SkASSERT(swapChain);
-    return swapChain;
+    fSurface.Configure(&surfaceConfig);
 }
 
 }   //namespace skwindow::internal

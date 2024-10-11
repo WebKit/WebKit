@@ -10,9 +10,9 @@
 
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/mock/GrMockTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/mock/GrMockTypes.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkMath.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
@@ -88,10 +88,12 @@ public:
 
     bool isFormatAsColorTypeRenderable(GrColorType ct, const GrBackendFormat& format,
                                        int sampleCount = 1) const override {
-        // Currently we don't allow RGB_888X to be renderable because we don't have a way to
-        // handle blends that reference dst alpha when the values in the dst alpha channel are
-        // uninitialized.
-        if (ct == GrColorType::kRGB_888x) {
+        // Currently we don't allow RGB_888X, RGB_F16F16F16x, or RGB_101010x to
+        // be renderable because we don't have a way to handle blends that
+        // reference dst alpha when the values in the dst alpha channel are uninitialized.
+        if (ct == GrColorType::kRGB_888x ||
+            ct == GrColorType::kRGB_F16F16F16x ||
+            ct == GrColorType::kRGB_101010x) {
             return false;
         }
         return this->isFormatRenderable(format, sampleCount);
@@ -164,7 +166,7 @@ public:
                            const GrProgramInfo&,
                            ProgramDescOverrideFlags) const override;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     std::vector<GrTest::TestFormatColorTypeCombination> getTestingCombinations() const override;
 #endif
 

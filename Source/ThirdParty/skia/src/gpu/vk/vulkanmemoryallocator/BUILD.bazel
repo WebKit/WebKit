@@ -6,6 +6,16 @@ package(
 
 licenses(["notice"])
 
+# In own group for export to .gni
+skia_filegroup(
+    name = "vma_srcs",
+    srcs = [
+        "VulkanAMDMemoryAllocator.cpp",
+        "VulkanAMDMemoryAllocator.h",
+        "VulkanMemoryAllocatorPriv.h",
+    ],
+)
+
 skia_cc_library(
     name = "vulkanmemoryallocator",
     srcs = [
@@ -25,6 +35,10 @@ skia_cc_library(
         # https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/issues/299
         "-Wno-implicit-fallthrough",
     ],
+    implementation_deps = [
+        "//include/third_party/vulkan",
+    ],
+    local_defines = ["SK_USE_INTERNAL_VULKAN_HEADERS"],
     textual_hdrs = [
         "VulkanMemoryAllocatorWrapper.h",
     ],
@@ -36,7 +50,6 @@ skia_cc_library(
     ],
     deps = [
         "//:core",
-        "//include/third_party/vulkan",
         "//src/base",
         "//src/gpu/vk",
         "@vulkanmemoryallocator//:hdrs",
@@ -54,25 +67,4 @@ skia_cc_library(
         "//src/gpu/ganesh/vk:__pkg__",  # TODO(kjlubick) remove when this is not built in
     ],
     deps = [":vulkanmemoryallocator"],
-)
-
-skia_filegroup(
-    name = "vma_hdrs",
-    srcs = [
-        "VulkanAMDMemoryAllocator.h",
-        "VulkanMemoryAllocatorPriv.h",
-    ],
-    visibility = [
-        "//src/gpu/vk:__pkg__",
-    ],
-)
-
-skia_filegroup(
-    name = "vma_srcs",
-    srcs = [
-        "VulkanAMDMemoryAllocator.cpp",
-    ],
-    visibility = [
-        "//src/gpu/vk:__pkg__",
-    ],
 )

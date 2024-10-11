@@ -30,11 +30,10 @@
 #include "FontRenderOptions.h"
 #include "GLContext.h"
 #include <skia/core/SkColorSpace.h>
-#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
-#include <skia/gpu/gl/GrGLInterface.h>
-#include <skia/gpu/gl/GrGLTypes.h>
+#include <skia/gpu/ganesh/gl/GrGLInterface.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -46,7 +45,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 IGNORE_CLANG_WARNINGS_END
 
 #if USE(LIBEPOXY)
-#include <skia/gpu/gl/epoxy/GrGLMakeEpoxyEGLInterface.h>
+#include <skia/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.h>
 #else
 #include <skia/gpu/gl/egl/GrGLMakeEGLInterface.h>
 #endif

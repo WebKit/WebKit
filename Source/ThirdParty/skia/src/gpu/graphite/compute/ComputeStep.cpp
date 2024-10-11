@@ -7,7 +7,11 @@
 
 #include "src/gpu/graphite/compute/ComputeStep.h"
 
+#include "include/core/SkColorType.h"
+#include "include/core/SkSize.h"
+#include "include/core/SkTileMode.h"
 #include "include/private/base/SkAssert.h"
+#include "include/private/base/SkDebug.h"
 
 #include <atomic>
 #include <unordered_set>
@@ -82,8 +86,7 @@ std::tuple<SkISize, SkColorType> ComputeStep::calculateTextureParameters(
 
 SamplerDesc ComputeStep::calculateSamplerParameters(int resourceIndex, const ResourceDesc&) const {
     SK_ABORT("ComputeSteps that initialize a sampler must override calculateSamplerParameters()");
-    constexpr SkTileMode kTileModes[2] = {SkTileMode::kClamp, SkTileMode::kClamp};
-    return {{}, kTileModes};
+    return {{}, SkTileMode::kClamp};
 }
 
 WorkgroupSize ComputeStep::calculateGlobalDispatchSize() const {

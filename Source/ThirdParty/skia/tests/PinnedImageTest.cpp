@@ -21,9 +21,9 @@
 #include "include/core/SkTileMode.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
-#include "include/gpu/mock/GrMockTypes.h"
+#include "include/gpu/ganesh/mock/GrMockTypes.h"
 #include "src/gpu/ganesh/GrFragmentProcessor.h" // IWYU pragma: keep
 #include "src/gpu/ganesh/SkGr.h"
 #include "src/gpu/ganesh/image/GrImageUtils.h"

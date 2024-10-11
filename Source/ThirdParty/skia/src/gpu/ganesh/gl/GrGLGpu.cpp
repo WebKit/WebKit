@@ -17,12 +17,12 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextOptions.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrDriverBugWorkarounds.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/gl/GrGLConfig.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDriverBugWorkarounds.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/gl/GrGLConfig.h"
 #include "include/private/base/SkFloatingPoint.h"
 #include "include/private/base/SkMath.h"
 #include "include/private/base/SkPoint_impl.h"
@@ -725,8 +725,8 @@ static bool check_backend_texture(const GrBackendTexture& backendTex,
     desc->fTarget = info.fTarget;
     desc->fID = info.fID;
     desc->fFormat = GrGLFormatFromGLEnum(info.fFormat);
-    desc->fIsProtected = GrProtected(info.fProtected == GrProtected::kYes ||
-                                     caps.supportsProtectedContent());
+    desc->fIsProtected = skgpu::Protected(info.fProtected == skgpu::Protected::kYes ||
+                                          caps.strictProtectedness());
 
     if (desc->fFormat == GrGLFormat::kUnknown) {
         return false;
@@ -801,8 +801,8 @@ static bool check_compressed_backend_texture(const GrBackendTexture& backendTex,
     desc->fTarget = info.fTarget;
     desc->fID = info.fID;
     desc->fFormat = GrGLFormatFromGLEnum(info.fFormat);
-    desc->fIsProtected = GrProtected(info.fProtected == GrProtected::kYes ||
-                                     caps.supportsProtectedContent());
+    desc->fIsProtected = skgpu::Protected(info.fProtected == skgpu::Protected::kYes ||
+                                          caps.strictProtectedness());
 
     if (desc->fFormat == GrGLFormat::kUnknown) {
         return false;
@@ -1547,8 +1547,8 @@ sk_sp<GrTexture> GrGLGpu::onCreateTexture(SkISize dimensions,
     texDesc.fOwnership = GrBackendObjectOwnership::kOwned;
     SkASSERT(texDesc.fFormat != GrGLFormat::kUnknown);
     SkASSERT(!GrGLFormatIsCompressed(texDesc.fFormat));
-    texDesc.fIsProtected = GrProtected(isProtected == GrProtected::kYes ||
-                                       this->glCaps().supportsProtectedContent());
+    texDesc.fIsProtected = skgpu::Protected(isProtected == skgpu::Protected::kYes ||
+                                            this->glCaps().strictProtectedness());
 
     texDesc.fID = this->createTexture(dimensions, texDesc.fFormat, texDesc.fTarget, renderable,
                                       &initialState, mipLevelCount, texDesc.fIsProtected, label);
@@ -1639,8 +1639,8 @@ sk_sp<GrTexture> GrGLGpu::onCreateCompressedTexture(SkISize dimensions,
     desc.fTarget = GR_GL_TEXTURE_2D;
     desc.fOwnership = GrBackendObjectOwnership::kOwned;
     desc.fFormat = GrBackendFormats::AsGLFormat(format);
-    desc.fIsProtected = GrProtected(isProtected == GrProtected::kYes ||
-                                    this->glCaps().supportsProtectedContent());
+    desc.fIsProtected = skgpu::Protected(isProtected == skgpu::Protected::kYes ||
+                                         this->glCaps().strictProtectedness());
     desc.fID = this->createCompressedTexture2D(desc.fSize, compression, desc.fFormat,
                                                mipmapped, desc.fIsProtected, &initialState);
     if (!desc.fID) {
@@ -1692,8 +1692,8 @@ GrBackendTexture GrGLGpu::onCreateCompressedBackendTexture(SkISize dimensions,
 
     info.fTarget = GR_GL_TEXTURE_2D;
     info.fFormat = GrGLFormatToEnum(glFormat);
-    info.fProtected = GrProtected(isProtected == GrProtected::kYes ||
-                                  this->glCaps().supportsProtectedContent());
+    info.fProtected = skgpu::Protected(isProtected == skgpu::Protected::kYes ||
+                                       this->glCaps().strictProtectedness());
     info.fID = this->createCompressedTexture2D(dimensions, compression, glFormat,
                                                mipmapped, info.fProtected, &initialState);
     if (!info.fID) {
@@ -1764,6 +1764,10 @@ bool GrGLGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendTe
 }
 
 int GrGLGpu::getCompatibleStencilIndex(GrGLFormat format) {
+    if (this->glCaps().avoidStencilBuffers()) {
+        return -1;
+    }
+
     static const int kSize = 16;
     SkASSERT(this->glCaps().canFormatBeFBOColorAttachment(format));
 
@@ -1771,13 +1775,18 @@ int GrGLGpu::getCompatibleStencilIndex(GrGLFormat format) {
         // Default to unsupported, set this if we find a stencil format that works.
         int firstWorkingStencilFormatIndex = -1;
 
-        GrProtected isProtected = GrProtected(this->glCaps().supportsProtectedContent());
+        // In the following we're not actually creating the StencilBuffer that will be used but,
+        // rather, are just determining the correct format to use. We assume that the
+        // acceptable format will not change between Protected and unProtected stencil buffers and
+        // that using Protected::kNo here will not cause any issues with strictProtectedness mode
+        // (since no work is actually submitted to a queue).
+        const GrProtected kNotProtected = skgpu::Protected::kNo;
 
         GrGLuint colorID = this->createTexture({kSize, kSize}, format, GR_GL_TEXTURE_2D,
                                                GrRenderable::kYes,
                                                nullptr,
                                                1,
-                                               isProtected,
+                                               kNotProtected,
                                                /*label=*/"Skia");
         if (!colorID) {
             return -1;
@@ -1876,7 +1885,9 @@ GrGLuint GrGLGpu::createCompressedTexture2D(
                                                this->glCaps(),
                                                GR_GL_TEXTURE_2D);
 
-    SkASSERT((GrProtected::kYes == isProtected) == this->glCaps().supportsProtectedContent());
+    SkASSERT(isProtected == skgpu::Protected::kNo || this->glCaps().supportsProtectedContent());
+    SkASSERT(!this->glCaps().strictProtectedness() || isProtected == skgpu::Protected::kYes);
+
     if (GrProtected::kYes == isProtected) {
         if (this->glCaps().supportsProtectedContent()) {
             GL_CALL(TexParameteri(GR_GL_TEXTURE_2D, GR_GL_TEXTURE_PROTECTED_EXT, GR_GL_TRUE));
@@ -1922,7 +1933,9 @@ GrGLuint GrGLGpu::createTexture(SkISize dimensions,
         set_initial_texture_params(this->glInterface(), this->glCaps(), target);
     }
 
-    SkASSERT((GrProtected::kYes == isProtected) == this->glCaps().supportsProtectedContent());
+    SkASSERT(isProtected == skgpu::Protected::kNo || this->glCaps().supportsProtectedContent());
+    SkASSERT(!this->glCaps().strictProtectedness() || isProtected == skgpu::Protected::kYes);
+
     if (GrProtected::kYes == isProtected) {
         if (this->glCaps().supportsProtectedContent()) {
             GL_CALL(TexParameteri(target, GR_GL_TEXTURE_PROTECTED_EXT, GR_GL_TRUE));
@@ -3949,8 +3962,8 @@ GrBackendTexture GrGLGpu::onCreateBackendTexture(SkISize dimensions,
             info.fTarget = GR_GL_TEXTURE_RECTANGLE;
             break;
     }
-    info.fProtected = GrProtected(isProtected == GrProtected::kYes ||
-                                  this->glCaps().supportsProtectedContent());
+    info.fProtected = skgpu::Protected(isProtected == skgpu::Protected::kYes ||
+                                       this->glCaps().strictProtectedness());
     info.fFormat = GrGLFormatToEnum(glFormat);
     info.fID = this->createTexture(dimensions, glFormat, info.fTarget, renderable, &initialState,
                                    numMipLevels, info.fProtected, label);
@@ -4037,7 +4050,7 @@ bool GrGLGpu::compile(const GrProgramDesc& desc, const GrProgramInfo& programInf
     return stat != GrThreadSafePipelineBuilder::Stats::ProgramCacheResult::kHit;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 bool GrGLGpu::isTestingOnlyBackendTexture(const GrBackendTexture& tex) const {
     SkASSERT(GrBackendApi::kOpenGL == tex.backend());
@@ -4087,17 +4100,22 @@ GrBackendRenderTarget GrGLGpu::createTestingOnlyBackendRenderTarget(SkISize dime
         }
         useTexture = true;
     }
-    int sFormatIdx = this->getCompatibleStencilIndex(format);
-    if (sFormatIdx < 0) {
-        return {};
+
+    bool avoidStencil = this->glCaps().avoidStencilBuffers();
+    int sFormatIdx = -1;
+    if (!avoidStencil) {
+        sFormatIdx = this->getCompatibleStencilIndex(format);
+        if (sFormatIdx < 0) {
+            return {};
+        }
     }
     GrGLuint colorID = 0;
     GrGLuint stencilID = 0;
     GrGLFramebufferInfo info;
     info.fFBOID = 0;
     info.fFormat = GrGLFormatToEnum(format);
-    info.fProtected = GrProtected(isProtected == GrProtected::kYes ||
-                                  this->glCaps().supportsProtectedContent());
+    info.fProtected = skgpu::Protected(isProtected == skgpu::Protected::kYes ||
+                                       this->glCaps().strictProtectedness());
 
     auto deleteIDs = [&](bool saveFBO = false) {
         if (colorID) {
@@ -4120,10 +4138,17 @@ GrBackendRenderTarget GrGLGpu::createTestingOnlyBackendRenderTarget(SkISize dime
     } else {
         GL_CALL(GenRenderbuffers(1, &colorID));
     }
-    GL_CALL(GenRenderbuffers(1, &stencilID));
-    if (!stencilID || !colorID) {
+    if (!colorID) {
         deleteIDs();
         return {};
+    }
+
+    if (!avoidStencil) {
+        GL_CALL(GenRenderbuffers(1, &stencilID));
+        if (!stencilID) {
+            deleteIDs();
+            return {};
+        }
     }
 
     GL_CALL(GenFramebuffers(1, &info.fFBOID));
@@ -4169,24 +4194,28 @@ GrBackendRenderTarget GrGLGpu::createTestingOnlyBackendRenderTarget(SkISize dime
         GL_CALL(FramebufferRenderbuffer(GR_GL_FRAMEBUFFER, GR_GL_COLOR_ATTACHMENT0,
                                         GR_GL_RENDERBUFFER, colorID));
     }
-    GL_CALL(BindRenderbuffer(GR_GL_RENDERBUFFER, stencilID));
-    auto stencilBufferFormat = this->glCaps().stencilFormats()[sFormatIdx];
-    if (sampleCnt == 1) {
-        GL_CALL(RenderbufferStorage(GR_GL_RENDERBUFFER, GrGLFormatToEnum(stencilBufferFormat),
-                                    dimensions.width(), dimensions.height()));
-    } else {
-        if (!this->renderbufferStorageMSAA(this->glContext(), sampleCnt,
-                                           GrGLFormatToEnum(stencilBufferFormat),
-                                           dimensions.width(), dimensions.height())) {
-            deleteIDs();
-            return {};
+    if (!avoidStencil) {
+        GL_CALL(BindRenderbuffer(GR_GL_RENDERBUFFER, stencilID));
+        auto stencilBufferFormat = this->glCaps().stencilFormats()[sFormatIdx];
+        if (sampleCnt == 1) {
+            GL_CALL(RenderbufferStorage(GR_GL_RENDERBUFFER, GrGLFormatToEnum(stencilBufferFormat),
+                                        dimensions.width(), dimensions.height()));
+        } else {
+            if (!this->renderbufferStorageMSAA(this->glContext(), sampleCnt,
+                                               GrGLFormatToEnum(stencilBufferFormat),
+                                               dimensions.width(), dimensions.height())) {
+                deleteIDs();
+                return {};
+                                               }
         }
-    }
-    GL_CALL(FramebufferRenderbuffer(GR_GL_FRAMEBUFFER, GR_GL_STENCIL_ATTACHMENT, GR_GL_RENDERBUFFER,
-                                    stencilID));
-    if (GrGLFormatIsPackedDepthStencil(this->glCaps().stencilFormats()[sFormatIdx])) {
-        GL_CALL(FramebufferRenderbuffer(GR_GL_FRAMEBUFFER, GR_GL_DEPTH_ATTACHMENT,
-                                        GR_GL_RENDERBUFFER, stencilID));
+        GL_CALL(FramebufferRenderbuffer(GR_GL_FRAMEBUFFER,
+                                        GR_GL_STENCIL_ATTACHMENT,
+                                        GR_GL_RENDERBUFFER,
+                                        stencilID));
+        if (GrGLFormatIsPackedDepthStencil(this->glCaps().stencilFormats()[sFormatIdx])) {
+            GL_CALL(FramebufferRenderbuffer(GR_GL_FRAMEBUFFER, GR_GL_DEPTH_ATTACHMENT,
+                                            GR_GL_RENDERBUFFER, stencilID));
+        }
     }
 
     // We don't want to have to recover the renderbuffer/texture IDs later to delete them. OpenGL
@@ -4204,7 +4233,10 @@ GrBackendRenderTarget GrGLGpu::createTestingOnlyBackendRenderTarget(SkISize dime
         return {};
     }
 
-    auto stencilBits = SkToInt(GrGLFormatStencilBits(this->glCaps().stencilFormats()[sFormatIdx]));
+    int stencilBits = 0;
+    if (!avoidStencil) {
+        stencilBits = SkToInt(GrGLFormatStencilBits(this->glCaps().stencilFormats()[sFormatIdx]));
+    }
 
     GrBackendRenderTarget beRT = GrBackendRenderTargets::MakeGL(
             dimensions.width(), dimensions.height(), sampleCnt, stencilBits, info);
@@ -4270,8 +4302,8 @@ void GrGLGpu::flush(FlushType flushType) {
     }
 }
 
-bool GrGLGpu::onSubmitToGpu(GrSyncCpu sync) {
-    if (sync == GrSyncCpu::kYes ||
+bool GrGLGpu::onSubmitToGpu(const GrSubmitInfo& info) {
+    if (info.fSync == GrSyncCpu::kYes ||
         (!fFinishCallbacks.empty() && !this->glCaps().fenceSyncSupport())) {
         this->finishOutstandingGpuWork();
         fFinishCallbacks.callAll(true);

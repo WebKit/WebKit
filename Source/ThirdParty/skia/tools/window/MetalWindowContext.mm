@@ -9,8 +9,8 @@
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendContext.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendSurface.h"
@@ -31,7 +31,12 @@ MetalWindowContext::MetalWindowContext(const DisplayParams& params)
         : WindowContext(params)
         , fValid(false)
         , fDrawableHandle(nil) {
-    fDisplayParams.fMSAASampleCount = GrNextPow2(fDisplayParams.fMSAASampleCount);
+    // SkNextPow2 is undefined for 0, so handle that ourselves.
+    if (fDisplayParams.fMSAASampleCount <= 1) {
+        fDisplayParams.fMSAASampleCount = 1;
+    } else {
+        fDisplayParams.fMSAASampleCount = SkNextPow2(fDisplayParams.fMSAASampleCount);
+    }
 }
 
 void MetalWindowContext::initializeContext() {

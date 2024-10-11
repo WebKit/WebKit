@@ -5,7 +5,7 @@
  * found in the LICENSE file.
  */
 
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/mtl/GrMtlBackendSurface.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "src/gpu/ganesh/mtl/GrMtlCaps.h"
@@ -71,6 +71,8 @@ DEF_GANESH_TEST_FOR_METAL_CONTEXT(MtlBackendAllocationTest, reporter, ctxInfo) {
 
         { GrColorType::kRGBA_1010102,     MTLPixelFormatRGB10A2Unorm,
                                                                     { 0.25f, 0.5f, 0.75f, 1.0f } },
+        { GrColorType::kRGB_101010x,      MTLPixelFormatRGB10A2Unorm,
+                                                                    { 0.25f, 0.5f, 0.75f, 1.0f } },
 #ifdef SK_BUILD_FOR_MAC
         { GrColorType::kBGRA_1010102,     MTLPixelFormatBGR10A2Unorm,
                                                                     { 0.25f, 0.5f, 0.75f, 1.0f } },
@@ -86,6 +88,7 @@ DEF_GANESH_TEST_FOR_METAL_CONTEXT(MtlBackendAllocationTest, reporter, ctxInfo) {
 
         { GrColorType::kRGBA_F16_Clamped, MTLPixelFormatRGBA16Float,     SkColors::kLtGray    },
         { GrColorType::kRGBA_F16,         MTLPixelFormatRGBA16Float,     SkColors::kYellow    },
+        { GrColorType::kRGB_F16F16F16x,   MTLPixelFormatRGBA16Float,     SkColors::kYellow    },
 
         { GrColorType::kRG_88,            MTLPixelFormatRG8Unorm,        { 0.5f, 0.5f, 0, 1 } },
         { GrColorType::kAlpha_F16,        MTLPixelFormatR16Float,        { 1.0f, 0, 0, 0.5f } },

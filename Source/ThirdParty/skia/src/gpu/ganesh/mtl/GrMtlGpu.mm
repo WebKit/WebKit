@@ -48,7 +48,7 @@ using namespace skia_private;
 
 GR_NORETAIN_BEGIN
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 // set to 1 if you want to do GPU capture of each commandBuffer
 #define GR_METAL_CAPTURE_COMMANDBUFFER 0
 #endif
@@ -289,8 +289,8 @@ void GrMtlGpu::addFinishedCallback(sk_sp<skgpu::RefCntedCallback> finishedCallba
     commandBuffer()->addFinishedCallback(std::move(finishedCallback));
 }
 
-bool GrMtlGpu::onSubmitToGpu(GrSyncCpu sync) {
-    if (sync == GrSyncCpu::kYes) {
+bool GrMtlGpu::onSubmitToGpu(const GrSubmitInfo& info) {
+    if (info.fSync == GrSyncCpu::kYes) {
         return this->submitCommandBuffer(kForce_SyncQueue);
     } else {
         return this->submitCommandBuffer(kSkip_SyncQueue);
@@ -298,7 +298,7 @@ bool GrMtlGpu::onSubmitToGpu(GrSyncCpu sync) {
 }
 
 std::unique_ptr<GrSemaphore> GrMtlGpu::prepareTextureForCrossContextUsage(GrTexture*) {
-    this->submitToGpu(GrSyncCpu::kNo);
+    this->submitToGpu();
     return nullptr;
 }
 
@@ -1148,7 +1148,7 @@ bool GrMtlGpu::precompileShader(const SkData& key, const SkData& data) {
     return this->resourceProvider().precompileShader(key, data);
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool GrMtlGpu::isTestingOnlyBackendTexture(const GrBackendTexture& tex) const {
     SkASSERT(GrBackendApi::kMetal == tex.backend());
 
@@ -1204,12 +1204,14 @@ void GrMtlGpu::deleteTestingOnlyBackendRenderTarget(const GrBackendRenderTarget&
 
     GrMtlTextureInfo info;
     if (GrBackendRenderTargets::GetMtlTextureInfo(rt, &info)) {
-        this->submitToGpu(GrSyncCpu::kYes);
+        GrSubmitInfo submitInfo;
+        submitInfo.fSync = GrSyncCpu::kYes;
+        this->submitToGpu(submitInfo);
         // Nothing else to do here, will get cleaned up when the GrBackendRenderTarget
         // is deleted.
     }
 }
-#endif // defined(GR_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)
 
 void GrMtlGpu::copySurfaceAsResolve(GrSurface* dst, GrSurface* src) {
     // TODO: Add support for subrectangles
@@ -1741,7 +1743,7 @@ GrMtlRenderCommandEncoder* GrMtlGpu::loadMSAAFromResolve(
     return renderCmdEncoder;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 void GrMtlGpu::testingOnly_startCapture() {
     if (@available(macOS 10.13, iOS 11.0, tvOS 11.0, *)) {
         // TODO: add Metal 3 interface as well

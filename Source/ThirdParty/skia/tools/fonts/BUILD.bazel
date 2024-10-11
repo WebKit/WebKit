@@ -18,6 +18,8 @@ skia_filegroup(
         "FontToolUtils.h",
         "TestFontMgr.cpp",
         "TestFontMgr.h",
+        "TestSVGTypeface.cpp",
+        "TestSVGTypeface.h",
         "TestTypeface.cpp",
         "TestTypeface.h",
     ],
@@ -50,14 +52,6 @@ skia_filegroup(
 )
 
 skia_cc_library(
-    name = "random_scaler_context",
-    srcs = ["RandomScalerContext.cpp"],
-    hdrs = ["RandomScalerContext.h"],
-    visibility = ["//tests:__pkg__"],
-    deps = ["//:skia_internal"],
-)
-
-skia_cc_library(
     name = "font_tool_utils",
     testonly = True,
     srcs = [
@@ -70,6 +64,7 @@ skia_cc_library(
     hdrs = [
         "FontToolUtils.h",
     ],
+    features = ["layering_check"],
     textual_hdrs = [
         "//tools/fonts:test_fonts",
     ],
@@ -85,10 +80,11 @@ skia_cc_library(
         "//src/core:core_priv",
         "//tools:resources",
         "//tools:tool_utils",
-    ] + select(
-        {
-            "//bazel/common_config_settings:use_fontations_true": ["//src/ports:fontmgr_fontations_empty"],
-            "//conditions:default": [],
-        },
-    ),
+        "//tools/flags:cmd_flags",
+    ] + select({
+        "@platforms//os:android": ["@skia//:fontmgr_android_freetype"],
+        "@platforms//os:linux": ["@skia//:fontmgr_fontconfig_freetype"],
+        "@platforms//os:macos": ["@skia//:fontmgr_coretext"],
+        "//conditions:default": ["//src/ports:fontmgr_fontations_empty"],
+    }),
 )

@@ -10,7 +10,7 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkTypes.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/base/SkDebug.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/base/SkTDArray.h"
@@ -250,7 +250,7 @@ public:
 
     void getStats(Stats*) const;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void dumpStats(SkString*) const;
 
     void dumpStatsKeyValuePairs(
@@ -259,7 +259,7 @@ public:
 
 #endif // GR_CACHE_STATS
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     int countUniqueKeysWithTag(const char* tag) const;
 
     void changeTimestamp(uint32_t newTimestamp);

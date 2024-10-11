@@ -50,10 +50,7 @@ ignorelist = [
   'Surface.h',
   # Used by Ganesh and Graphite
   'Device.h',
-  # Temporary shims
-  'GrGLMakeEGLInterface.h',
-  'GrGLMakeEpoxyEGLInterface.h',
-  'GrGLMakeGLXInterface.h',
+
   # Transitional
   'tools/window',
 ]

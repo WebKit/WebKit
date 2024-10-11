@@ -703,13 +703,13 @@ DEF_TEST(divmod_s64, r) {
 }
 
 static void test_nextsizepow2(skiatest::Reporter* r, size_t test, size_t expectedAns) {
-    size_t ans = GrNextSizePow2(test);
+    size_t ans = SkNextSizePow2(test);
 
     REPORTER_ASSERT(r, ans == expectedAns);
     //SkDebugf("0x%zx -> 0x%zx (0x%zx)\n", test, ans, expectedAns);
 }
 
-DEF_TEST(GrNextSizePow2, reporter) {
+DEF_TEST(SkNextSizePow2, reporter) {
     constexpr int kNumSizeTBits = 8 * sizeof(size_t);
 
     size_t test = 0, expectedAns = 1;
@@ -785,6 +785,40 @@ DEF_TEST(FloatSaturate64, reporter) {
     for (auto r : recs) {
         int64_t i = sk_float_saturate2int64(r.fFloat);
         REPORTER_ASSERT(reporter, r.fExpected64 == i);
+    }
+}
+
+DEF_TEST(SkNextPow2, reporter) {
+    // start off with some easy-to verify cases and some edge cases.
+    const struct {
+        int fInput;
+        int fExpected;
+    } cases[] = {
+        // 0 is undefined for the current implementation.
+        { 1, 1 },
+        { 2, 2 },
+        { 3, 4 },
+        { 4, 4 },
+        { 5, 8 },
+        { 1073741822, 1073741824},
+        { 1073741823, 1073741824},
+        { 1073741824, 1073741824}, // Anything larger than this will overflow
+    };
+
+    for (auto c : cases) {
+        int actual = SkNextPow2(c.fInput);
+        REPORTER_ASSERT(reporter, c.fExpected == actual,
+            "SkNextPow2(%d) == %d not %d", c.fInput, actual, c.fExpected);
+        REPORTER_ASSERT(reporter, actual == SkNextPow2_portable(c.fInput));
+    }
+
+    // exhaustive search for all the between numbers
+    for (int i = 6; i < 63356; i++) {
+        int actual = SkNextPow2(i);
+        int expected = std::pow(2.f, std::ceil(logf(i)/logf(2)));
+        REPORTER_ASSERT(reporter, expected == actual,
+            "SkNextPow2(%d) == %d not %d", i, actual, expected);
+        REPORTER_ASSERT(reporter, actual == SkNextPow2_portable(i));
     }
 }
 

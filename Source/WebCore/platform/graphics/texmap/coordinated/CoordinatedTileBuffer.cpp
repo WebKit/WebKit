@@ -41,7 +41,7 @@
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkStream.h>
-#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>

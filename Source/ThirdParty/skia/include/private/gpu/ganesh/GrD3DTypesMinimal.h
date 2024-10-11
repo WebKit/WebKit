@@ -14,7 +14,7 @@
 
 #include <dxgiformat.h>
 
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
 
 struct ID3D12Resource;
 class GrD3DResourceState;
@@ -48,7 +48,7 @@ struct GrD3DBackendSurfaceInfo {
     GrD3DTextureResourceInfo snapTextureResourceInfo() const;
 
     bool isProtected() const;
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool operator==(const GrD3DBackendSurfaceInfo& that) const;
 #endif
 

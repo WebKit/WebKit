@@ -10,9 +10,9 @@
 #include "include/core/SkString.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSemaphore.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/base/SkTo.h"
 #include "src/base/SkMathPriv.h"
 #include "src/core/SkCompressedDataUtils.h"
@@ -434,6 +434,7 @@ bool GrGpu::readPixels(GrSurface* surface,
     SkASSERT(!surface->framebufferOnly());
     SkASSERT(this->caps()->areColorTypeAndFormatCompatible(surfaceColorType,
                                                            surface->backendFormat()));
+    SkASSERT(dstColorType != GrColorType::kUnknown);
 
     if (!SkIRect::MakeSize(surface->dimensions()).contains(rect)) {
         return false;
@@ -745,7 +746,7 @@ GrOpsRenderPass* GrGpu::getOpsRenderPass(
                                     colorInfo, stencilInfo, sampledProxies, renderPassXferBarriers);
 }
 
-bool GrGpu::submitToGpu(GrSyncCpu sync) {
+bool GrGpu::submitToGpu(const GrSubmitInfo& info) {
     this->stats()->incNumSubmitToGpus();
 
     if (auto manager = this->stagingBufferManager()) {
@@ -756,7 +757,7 @@ bool GrGpu::submitToGpu(GrSyncCpu sync) {
         uniformsBuffer->startSubmit(this);
     }
 
-    bool submitted = this->onSubmitToGpu(sync);
+    bool submitted = this->onSubmitToGpu(info);
 
     this->callSubmittedProcs(submitted);
 
@@ -811,7 +812,7 @@ void GrGpu::dumpJSON(SkJSONWriter* writer) const {
 void GrGpu::dumpJSON(SkJSONWriter* writer) const { }
 #endif
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 #if GR_GPU_STATS
 
@@ -853,7 +854,7 @@ void GrGpu::Stats::dumpKeyValuePairs(TArray<SkString>* keys, TArray<double>* val
 }
 
 #endif // GR_GPU_STATS
-#endif // defined(GR_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)
 
 bool GrGpu::CompressedDataIsCorrect(SkISize dimensions,
                                     SkTextureCompressionType compressionType,

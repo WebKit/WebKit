@@ -57,7 +57,7 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     VkPhysicalDeviceProperties physDevProperties;
     VULKAN_CALL(vkInterface, GetPhysicalDeviceProperties(physDev, &physDevProperties));
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     this->setDeviceName(physDevProperties.deviceName);
 #endif
 
@@ -79,6 +79,10 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     fRequiredUniformBufferAlignment = physDevProperties.limits.minUniformBufferOffsetAlignment;
     fRequiredStorageBufferAlignment =  physDevProperties.limits.minStorageBufferOffsetAlignment;
     fRequiredTransferBufferAlignment = 4;
+
+    // Unlike D3D, WebGPU, and Metal, the Vulkan NDC coordinate space is aligned with the top-left
+    // Y-down coordinate space of the viewport.
+    fNDCYAxisPointsDown = true;
 
     fResourceBindingReqs.fUniformBufferLayout = Layout::kStd140;
     // We can enable std430 and ensure no array stride mismatch in functions because all bound
@@ -111,7 +115,8 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
         requiredLazyFlags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
     }
     for (uint32_t i = 0; i < deviceMemoryProperties.memoryTypeCount; ++i) {
-        if (deviceMemoryProperties.memoryTypes[i].propertyFlags & requiredLazyFlags) {
+        const uint32_t& supportedFlags = deviceMemoryProperties.memoryTypes[i].propertyFlags;
+        if ((supportedFlags & requiredLazyFlags) == requiredLazyFlags) {
             fSupportsMemorylessAttachments = true;
         }
     }
@@ -176,6 +181,10 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     // cannot handle mixed array strides being passed into functions.
     fShaderCaps->fForceStd430ArrayLayout =
             fStorageBufferSupport && fResourceBindingReqs.fStorageBufferLayout == Layout::kStd430;
+
+    if (features && features->features.dualSrcBlend) {
+        fShaderCaps->fDualSourceBlendingSupport = true;
+    }
 
     // Note that format table initialization should be performed at the end of this method to ensure
     // all capability determinations are completed prior to populating the format tables.
@@ -548,13 +557,22 @@ void VulkanCaps::initFormatTable(const skgpu::VulkanInterface* interface,
             info.fColorTypeInfoCount = 2;
             info.fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info.fColorTypeInfoCount);
             int ctIdx = 0;
-            // Format: VK_FORMAT_R16G16B16A16_SFLOAT, Surface: SkColorType::kRGBA_F16_SkColorType
+            // Format: VK_FORMAT_R16G16B16A16_SFLOAT, Surface: kRGBA_F16_SkColorType
             {
                 constexpr SkColorType ct = SkColorType::kRGBA_F16_SkColorType;
                 auto& ctInfo = info.fColorTypeInfos[ctIdx++];
                 ctInfo.fColorType = ct;
                 ctInfo.fTransferColorType = ct;
                 ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
+            }
+            // Format: VK_FORMAT_R16G16B16A16_SFLOAT, Surface: kRGB_F16F16F16x_SkColorType
+            {
+                constexpr SkColorType ct = SkColorType::kRGB_F16F16F16x_SkColorType;
+                auto& ctInfo = info.fColorTypeInfos[ctIdx++];
+                ctInfo.fColorType = ct;
+                ctInfo.fTransferColorType = ct;
+                ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
+                ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
             }
         }
     }
@@ -627,7 +645,7 @@ void VulkanCaps::initFormatTable(const skgpu::VulkanInterface* interface,
         auto& info = this->getFormatInfo(format);
         info.init(interface, physDev, properties, format);
          if (info.isTexturable(VK_IMAGE_TILING_OPTIMAL)) {
-            info.fColorTypeInfoCount = 1;
+            info.fColorTypeInfoCount = 2;
             info.fColorTypeInfos = std::make_unique<ColorTypeInfo[]>(info.fColorTypeInfoCount);
             int ctIdx = 0;
             // Format: VK_FORMAT_A2B10G10R10_UNORM_PACK32, Surface: kRGBA_1010102
@@ -637,6 +655,15 @@ void VulkanCaps::initFormatTable(const skgpu::VulkanInterface* interface,
                 ctInfo.fColorType = ct;
                 ctInfo.fTransferColorType = ct;
                 ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
+            }
+            // Format: VK_FORMAT_A2B10G10R10_UNORM_PACK32, Surface: kRGB_101010x
+            {
+                constexpr SkColorType ct = SkColorType::kRGB_101010x_SkColorType;
+                auto& ctInfo = info.fColorTypeInfos[ctIdx++];
+                ctInfo.fColorType = ct;
+                ctInfo.fTransferColorType = ct;
+                ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
+                ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
             }
         }
     }
@@ -919,9 +946,11 @@ void VulkanCaps::initFormatTable(const skgpu::VulkanInterface* interface,
     this->setColorType(ct::kBGRA_8888_SkColorType,          { VK_FORMAT_B8G8R8A8_UNORM });
     this->setColorType(ct::kRGBA_1010102_SkColorType,       { VK_FORMAT_A2B10G10R10_UNORM_PACK32 });
     this->setColorType(ct::kBGRA_1010102_SkColorType,       { VK_FORMAT_A2R10G10B10_UNORM_PACK32 });
+    this->setColorType(ct::kRGB_101010x_SkColorType,        { VK_FORMAT_A2B10G10R10_UNORM_PACK32 });
     this->setColorType(ct::kGray_8_SkColorType,             { VK_FORMAT_R8_UNORM });
     this->setColorType(ct::kA16_float_SkColorType,          { VK_FORMAT_R16_SFLOAT });
     this->setColorType(ct::kRGBA_F16_SkColorType,           { VK_FORMAT_R16G16B16A16_SFLOAT });
+    this->setColorType(ct::kRGB_F16F16F16x_SkColorType,     { VK_FORMAT_R16G16B16A16_SFLOAT });
     this->setColorType(ct::kA16_unorm_SkColorType,          { VK_FORMAT_R16_UNORM });
     this->setColorType(ct::kR16G16_unorm_SkColorType,       { VK_FORMAT_R16G16_UNORM });
     this->setColorType(ct::kR16G16B16A16_unorm_SkColorType, { VK_FORMAT_R16G16B16A16_UNORM });

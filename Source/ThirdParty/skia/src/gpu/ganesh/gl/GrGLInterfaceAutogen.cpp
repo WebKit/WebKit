@@ -9,11 +9,11 @@
  * be overwritten.
  */
 
-#include "include/gpu/gl/GrGLConfig.h"
-#include "include/gpu/gl/GrGLExtensions.h"
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLConfig.h"
+#include "include/gpu/ganesh/gl/GrGLExtensions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "include/private/base/SkDebug.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
@@ -714,7 +714,7 @@ bool GrGLInterface::validate() const {
        (GR_IS_GR_GL_ES(fStandard) && (
           (glVer >= GR_GL_VER(3,0)) ||
           fExtensions.has("GL_EXT_occlusion_query_boolean")))) {
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
         if (!fFunctions.fBeginQuery ||
             !fFunctions.fDeleteQueries ||
             !fFunctions.fEndQuery ||
@@ -800,10 +800,10 @@ bool GrGLInterface::validate() const {
     return true;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 
 void GrGLInterface::abandon() const {
     const_cast<GrGLInterface*>(this)->fFunctions = GrGLInterface::Functions();
 }
 
-#endif // defined(GR_TEST_UTILS)
+#endif // defined(GPU_TEST_UTILS)

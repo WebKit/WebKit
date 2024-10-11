@@ -1,4 +1,3 @@
-load("//bazel:flags.bzl", "bool_flag")
 load("//bazel:skia_rules.bzl", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
 
 package(
@@ -82,11 +81,6 @@ split_srcs_and_hdrs(
     files = VK_FILES,
 )
 
-bool_flag(
-    name = "enable_secondary_draw_context",
-    default = False,
-)
-
 skia_filegroup(
     name = "vk_chromium_srcs",
     srcs = ["GrVkSecondaryCBDrawContext.cpp"],
@@ -97,24 +91,6 @@ skia_filegroup(
     srcs = ["AHardwareBufferVk.cpp"],
 )
 
-skia_filegroup(
-    name = "srcs",
-    srcs = [
-        ":android_srcs",
-        ":vk_srcs",
-    ] + select({
-        ":enable_secondary_draw_context_true": [":vk_chromium_srcs"],
-        "//conditions:default": [],
-    }),
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":vk_hdrs"],
-    visibility = ["//src/gpu/ganesh:__pkg__"],
-)
-
 skia_cc_library(
     name = "ganesh_vulkan",
     srcs = [
@@ -123,10 +99,10 @@ skia_cc_library(
         "//include/private/gpu/vk:private_hdrs",
     ],
     hdrs = [
-        "//include/gpu:ganesh_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
         "//include/gpu/ganesh:ganesh_hdrs",
         "//include/gpu/ganesh/vk:public_hdrs",
-        "//include/gpu/vk:public_hdrs",
+        "//include/gpu/vk:shared_public_hdrs",
     ],
     features = ["layering_check"],
     local_defines = [
@@ -153,13 +129,12 @@ skia_cc_library(
         ":vk_hdrs",
         ":vk_srcs",
         "//include/private/gpu/vk:private_hdrs",
-        "//src/gpu/vk:private_hdrs",
     ],
     hdrs = [
-        "//include/gpu:ganesh_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
         "//include/gpu/ganesh:ganesh_hdrs",
         "//include/gpu/ganesh/vk:public_hdrs",
-        "//include/gpu/vk:public_hdrs",
+        "//include/gpu/vk:shared_public_hdrs",
     ],
     defines = [
         "SK_GANESH",
@@ -167,8 +142,7 @@ skia_cc_library(
     ],
     features = ["layering_check"],
     local_defines = [
-        "GR_TEST_UTILS",
-        "SK_USE_EXTERNAL_VULKAN_HEADERS",
+        "GPU_TEST_UTILS",
     ],
     visibility = ["//tools:__subpackages__"],
     deps = [

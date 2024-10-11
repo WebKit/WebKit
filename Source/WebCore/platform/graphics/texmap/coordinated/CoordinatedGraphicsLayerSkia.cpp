@@ -35,12 +35,11 @@
 #include "SkiaThreadedPaintingPool.h"
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
-#include <skia/gpu/GrBackendSurface.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
-#include <skia/gpu/gl/GrGLInterface.h>
-#include <skia/gpu/gl/GrGLTypes.h>
+#include <skia/gpu/ganesh/gl/GrGLInterface.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/Vector.h>

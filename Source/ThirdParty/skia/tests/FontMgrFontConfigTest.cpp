@@ -20,6 +20,7 @@
 #include "include/core/SkString.h"
 #include "include/core/SkTypeface.h"
 #include "include/core/SkTypes.h"
+#include "include/encode/SkPngEncoder.h"
 #include "include/ports/SkFontMgr_fontconfig.h"
 #include "tests/Test.h"
 #include "tools/Resources.h"
@@ -32,16 +33,18 @@
 namespace {
 
 bool bitmap_compare(const SkBitmap& ref, const SkBitmap& test) {
+    auto count = 0;
     for (int y = 0; y < test.height(); ++y) {
         for (int x = 0; x < test.width(); ++x) {
             SkColor testColor = test.getColor(x, y);
             SkColor refColor = ref.getColor(x, y);
             if (refColor != testColor) {
-                return false;
+                ++count;
+                SkDebugf("%d: (%d,%d) ", count, x, y);
             }
         }
     }
-    return true;
+    return (count == 0);
 }
 
 FcConfig* build_fontconfig_with_fontfile(const char* fontFilename) {
@@ -56,6 +59,40 @@ FcConfig* build_fontconfig_with_fontfile(const char* fontFilename) {
 
     FcConfigBuildFonts(config);
     return config;
+}
+
+FcConfig* build_fontconfig_from_resources() {
+
+    SkString path = GetResourcePath("");
+    SkString content;
+    content.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                   "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">"
+                   "<fontconfig>\n"
+                   "<dir>/fonts</dir>\n");
+    content.append("<match target=\"font\">\n"
+                   "   <edit name=\"embolden\" mode=\"assign\">\n"
+                   "       <bool>true</bool>\n"
+                   "   </edit>\n"
+                   "</match>");
+    content.append("</fontconfig>\n");
+    FcConfig* fc_config = FcConfigCreate();
+    FcConfigSetSysRoot(fc_config, reinterpret_cast<const FcChar8*>(path.c_str()));
+    if (FcConfigParseAndLoadFromMemory(
+                fc_config, reinterpret_cast<const FcChar8*>(content.c_str()),
+                FcTrue) != FcTrue) {
+        SkDebugf("FcConfigParseAndLoadFromMemory\n");
+    }
+    if (FcConfigBuildFonts(fc_config) != FcTrue) {
+        SkDebugf("!FcConfigBuildFonts\n");
+    }
+    return fc_config;
+}
+
+[[maybe_unused]]
+static void write_bitmap(const SkBitmap* bm, const char fileName[]) {
+    SkFILEWStream file(fileName);
+    SkAssertResult(file.isValid());
+    SkAssertResult(SkPngEncoder::Encode(&file, bm->pixmap(), {}));
 }
 
 }  // namespace
@@ -86,7 +123,7 @@ DEF_TEST(FontMgrFontConfig, reporter) {
     constexpr float kTextSize = 20;
 
     std::unique_ptr<SkStreamAsset> distortableStream(
-        GetResourceAsStream("fonts/Distortable.ttf"));
+            GetResourceAsStream("fonts/Distortable.ttf"));
     if (!distortableStream) {
         return;
     }
@@ -123,4 +160,59 @@ DEF_TEST(FontMgrFontConfig, reporter) {
         bool success = bitmap_compare(bitmapStream, bitmapClone);
         REPORTER_ASSERT(reporter, success);
     }
+}
+
+UNIX_ONLY_TEST(FontMgrFontConfig_AllBold, reporter) {
+
+    FcConfig* config = build_fontconfig_from_resources();
+    sk_sp<SkFontMgr> fontMgr(SkFontMgr_New_FontConfig(config));
+
+    constexpr float kTextSize = 20;
+    constexpr char text[] = "abc";
+
+    SkString filePath = GetResourcePath("fonts/Roboto-Regular.ttf");
+    sk_sp<SkTypeface> dataTypeface(fontMgr->makeFromFile(filePath.c_str(), 0));
+    if (!dataTypeface) {
+        ERRORF(reporter, "Could not find data typeface. FcVersion: %d", FcGetVersion());
+        return;
+    }
+
+    SkFont dataFont(dataTypeface, kTextSize);
+    dataFont.setEmbolden(true);
+
+    sk_sp<SkTypeface> matchTypeface(fontMgr->matchFamilyStyle("Roboto", SkFontStyle()));
+    if (!matchTypeface) {
+        ERRORF(reporter, "Could not find match typeface. FcVersion: %d", FcGetVersion());
+        return;
+    }
+    SkFont matchFont(matchTypeface, kTextSize);
+
+    SkBitmap bitmapData;
+    bitmapData.allocN32Pixels(64, 64);
+    SkCanvas canvasData(bitmapData);
+
+    SkBitmap bitmapMatch;
+    bitmapMatch.allocN32Pixels(64, 64);
+    SkCanvas canvasMatch(bitmapMatch);
+
+    SkPaint paint;
+    paint.setColor(SK_ColorBLACK);
+
+    canvasData.drawColor(SK_ColorGRAY);
+    canvasData.drawString(text, 20.0f, 20.0f, dataFont, paint);
+    if ((false)) {
+        // In case we wonder what's been painted
+        SkString dataPath = GetResourcePath("/fonts/data.png");
+        write_bitmap(&bitmapData, dataPath.c_str());
+    }
+
+    canvasMatch.drawColor(SK_ColorGRAY);
+    canvasMatch.drawString(text, 20.0f, 20.0f, matchFont, paint);
+    if ((false)) {
+        SkString matchPath = GetResourcePath("/fonts/match.png");
+        write_bitmap(&bitmapMatch, matchPath.c_str());
+    }
+
+    bool success = bitmap_compare(bitmapData, bitmapMatch);
+    REPORTER_ASSERT(reporter, success);
 }

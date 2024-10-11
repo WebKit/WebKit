@@ -65,7 +65,7 @@ const (
 	COMPILE_TASK_NAME_OS_LINUX     = "Debian10"
 	COMPILE_TASK_NAME_OS_LINUX_OLD = "Debian9"
 	DEFAULT_OS_MAC                 = "Mac-14.5"
-	DEFAULT_OS_WIN                 = "Windows-Server-17763"
+	DEFAULT_OS_WIN_GCE             = "Windows-Server-17763"
 
 	// Small is a 2-core machine.
 	// TODO(dogben): Would n1-standard-1 or n1-standard-2 be sufficient?
@@ -105,6 +105,15 @@ const (
 	// of /home/chrome-bot/cache/.bazel to make it obvious to someone examining a Skolo machine that
 	// we are overriding the default location.
 	bazelCacheDirOnSkoloLinux = "/home/chrome-bot/bazel_cache"
+
+	// bazelCacheDirOnWindows is like bazelCacheDirOnSkoloLinux. Unlike GCE Linux machines, we only
+	// have a single partition. While using the default cache path would work, our Bazel task
+	// drivers demand an explicit path. We store the Bazel cache at /home/chrome-bot/bazel_cache
+	// rather than on the default location of %APPDATA% to make it obvious to someone examining a
+	// Skolo machine that we are overriding the default location. Note that double-escaping the
+	// path separator is necessary because this string is passed to Bazel via multiple levels of
+	// subprocesses.
+	bazelCacheDirOnWindows = `C:\\Users\\chrome-bot\\bazel_cache`
 )
 
 var (
@@ -194,7 +203,7 @@ var (
 			Path: "mac_toolchain",
 			// When this is updated, also update
 			// https://skia.googlesource.com/skcms.git/+/f1e2b45d18facbae2dece3aca673fe1603077846/infra/bots/gen_tasks.go#56
-			Version: "git_revision:e018acef6f136ec8bbf378a026a910b40ba3a7a9",
+			Version: "git_revision:e6f45bde6c5ee56924b1f905159b6a1a48ef25dd",
 		},
 	}
 
@@ -429,7 +438,7 @@ func GenTasks(cfg *Config) {
 		Paths: []string{
 			// Source code.
 			"skia/example",
-			"skia/experimental/bazel_test",
+			"skia/experimental/rust_png",
 			"skia/include",
 			"skia/modules",
 			"skia/src",
@@ -455,7 +464,6 @@ func GenTasks(cfg *Config) {
 			"skia/LICENSE", // Referred to by default_applicable_licenses
 			"skia/WORKSPACE.bazel",
 			"skia/bazel",
-			"skia/defines.bzl",
 			"skia/go_repositories.bzl",
 			"skia/requirements.txt",
 			"skia/toolchain",
@@ -558,7 +566,6 @@ func GenTasks(cfg *Config) {
 			"skia/LICENSE",
 			"skia/WORKSPACE.bazel",
 			"skia/bazel",
-			"skia/defines.bzl",
 			"skia/go_repositories.bzl",
 			"skia/include/config", // There's a WORKSPACE.bazel in here
 			"skia/requirements.txt",
@@ -652,7 +659,7 @@ func marshalJson(data interface{}) string {
 // kitchenTaskNoBundle sets up the task to run a recipe via Kitchen, without the
 // recipe bundle.
 func (b *taskBuilder) kitchenTaskNoBundle(recipe string, outputDir string) {
-	b.cipd(CIPD_PKG_LUCI_AUTH)
+	b.usesLUCIAuth()
 	b.cipd(cipd.MustGetPackage("infra/tools/luci/kitchen/${platform}"))
 	b.env("RECIPES_USE_PY3", "true")
 	b.envPrefixes("VPYTHON_DEFAULT_SPEC", "skia/.vpython3")
@@ -666,7 +673,6 @@ func (b *taskBuilder) kitchenTaskNoBundle(recipe string, outputDir string) {
 	// Most recipes want this isolate; they can override if necessary.
 	b.cas(CAS_RUN_RECIPE)
 	b.timeout(time.Hour)
-	b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 	b.Spec.ExtraTags = map[string]string{
 		"log_location": fmt.Sprintf("logdog://logs.chromium.org/%s/${SWARMING_TASK_ID}/+/annotations", b.cfg.Project),
 	}
@@ -726,7 +732,8 @@ func (b *jobBuilder) deriveCompileTaskName() string {
 				"DDLRecord", "BonusConfigs", "ColorSpaces", "GL",
 				"SkottieTracing", "SkottieWASM", "GpuTess", "DMSAAStats", "Docker", "PDF",
 				"Puppeteer", "SkottieFrames", "RenderSKP", "CanvasPerf", "AllPathsVolatile",
-				"WebGL2", "i5", "OldestSupportedSkpVersion", "FakeWGPU", "Protected"}
+				"WebGL2", "i5", "OldestSupportedSkpVersion", "FakeWGPU", "TintIR", "Protected",
+				"AndroidNDKFonts"}
 			keep := make([]string, 0, len(ec))
 			for _, part := range ec {
 				if !In(part, ignore) {
@@ -837,6 +844,7 @@ var androidDeviceInfos = map[string][]string{
 	"Pixel5":          {"redfin", "RD1A.200810.022.A4"},
 	"Pixel6":          {"oriole", "SD1A.210817.037"},
 	"Pixel7":          {"cheetah", "TD1A.221105.002"},
+	"Pixel9":          {"tokay", "AD1A.240905.004"},
 	"TecnoSpark3Pro":  {"TECNO-KB8", "PPR1.180610.011"},
 	"Wembley":         {"wembley", "SP2A.220505.008"},
 }
@@ -863,9 +871,9 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			"Mokey":      "Android",
 			"MokeyGo32":  "Android",
 			"Ubuntu18":   "Ubuntu-18.04",
-			"Win":        DEFAULT_OS_WIN,
+			"Win":        DEFAULT_OS_WIN_GCE,
 			"Win10":      "Windows-10-19045",
-			"Win2019":    DEFAULT_OS_WIN,
+			"Win2019":    DEFAULT_OS_WIN_GCE,
 			"iOS":        "iOS-13.3.1",
 		}[os]
 		if !ok {
@@ -988,7 +996,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"IntelIris540":  "8086:1926-31.0.101.2115",
 					"IntelIris6100": "8086:162b-20.19.15.4963",
 					"IntelIris655":  "8086:3ea5-26.20.100.7463",
-					"IntelIrisXe":   "8086:9a49-31.0.101.5186",
+					"IntelIrisXe":   "8086:9a49-31.0.101.5537",
 					"RadeonHD7770":  "1002:683d-26.20.13031.18002",
 					"RadeonR9M470X": "1002:6646-26.20.13031.18002",
 					"QuadroP400":    "10de:1cb3-31.0.15.5222",
@@ -1078,9 +1086,9 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 
 			// Dodge Raspberry Pis.
 			d["cpu"] = "x86-64"
-			// Target the RTX3060 Intel machines, as they are beefy and we have
-			// 20 of them, and they are setup to compile.
-			d["gpu"] = "10de:2489"
+			// Target the AMDRyzen 5 4500U machines, as they are beefy and we have
+			// 19 of them, and they are setup to compile.
+			d["gpu"] = "1002:1636"
 		} else {
 			d["gpu"] = "none"
 		}
@@ -1092,7 +1100,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			// Use many-core machines for Build tasks.
 			b.linuxGceDimensions(MACHINE_TYPE_LARGE)
 			return
-		} else if d["os"] == DEFAULT_OS_WIN {
+		} else if d["os"] == DEFAULT_OS_WIN_GCE {
 			// Windows CPU bots.
 			d["cpu"] = "x86-64-Haswell_GCE"
 			// Use many-core machines for Build tasks.
@@ -1117,13 +1125,12 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 // the name of the task, which may be added as a dependency.
 func (b *jobBuilder) bundleRecipes() string {
 	b.addTask(BUNDLE_RECIPES_NAME, func(b *taskBuilder) {
-		b.cipd(specs.CIPD_PKGS_GIT_LINUX_AMD64...)
+		b.usesGit()
 		b.cmd("/bin/bash", "skia/infra/bots/bundle_recipes.sh", specs.PLACEHOLDER_ISOLATED_OUTDIR)
 		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
 		b.idempotent()
 		b.cas(CAS_RECIPES)
 		b.usesPython()
-		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 	})
 	return BUNDLE_RECIPES_NAME
 }
@@ -1162,7 +1169,7 @@ func (b *jobBuilder) createDockerImage(wasm bool) string {
 		// TODO(borenet): Make this task not use Git.
 		b.usesGit()
 		b.cmd(
-			"./build_push_docker_image",
+			b.taskDriver("build_push_docker_image", false),
 			"--image_name", fmt.Sprintf("gcr.io/skia-public/%s", imageName),
 			"--dockerfile_dir", imageDir,
 			"--project_id", "skia-swarming-bots",
@@ -1178,8 +1185,6 @@ func (b *jobBuilder) createDockerImage(wasm bool) string {
 			"--patch_server", specs.PLACEHOLDER_CODEREVIEW_SERVER,
 			"--swarm_out_dir", specs.PLACEHOLDER_ISOLATED_OUTDIR,
 		)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 		b.cas(CAS_EMPTY)
 		b.serviceAccount(b.cfg.ServiceAccountCompile)
 		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
@@ -1197,7 +1202,7 @@ func (b *jobBuilder) createPushAppsFromSkiaDockerImage() {
 		// TODO(borenet): Make this task not use Git.
 		b.usesGit()
 		b.cmd(
-			"./push_apps_from_skia_image",
+			b.taskDriver("push_apps_from_skia_image", false),
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
 			"--task_name", b.Name,
@@ -1209,9 +1214,7 @@ func (b *jobBuilder) createPushAppsFromSkiaDockerImage() {
 			"--patch_server", specs.PLACEHOLDER_CODEREVIEW_SERVER,
 			"--bazel_cache_dir", bazelCacheDirOnGCELinux,
 		)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
 		b.dep(b.createDockerImage(false))
-		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 		b.cas(CAS_EMPTY)
 		b.usesBazel("linux_x64")
 		b.serviceAccount(b.cfg.ServiceAccountCompile)
@@ -1219,33 +1222,6 @@ func (b *jobBuilder) createPushAppsFromSkiaDockerImage() {
 		b.usesDocker()
 		b.cache(CACHES_DOCKER...)
 		b.timeout(2 * time.Hour)
-	})
-}
-
-// createPushBazelAppsFromWASMDockerImage pushes those infra apps that have been ported to Bazel
-// and require assets built in the WASM docker image.
-// TODO(kjlubick) The inputs to this job should not be the docker build, but a Bazel build.
-func (b *jobBuilder) createPushBazelAppsFromWASMDockerImage() {
-	b.addTask(b.Name, func(b *taskBuilder) {
-		// TODO(borenet): Make this task not use Git.
-		b.usesGit()
-		b.cmd(
-			"--project_id", "skia-swarming-bots",
-			"--task_id", specs.PLACEHOLDER_TASK_ID,
-			"--task_name", b.Name,
-			"--workdir", ".",
-			"--skia_revision", specs.PLACEHOLDER_REVISION,
-			"--bazel_cache_dir", bazelCacheDirOnGCELinux,
-		)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.dep(b.createDockerImage(true))
-		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
-		b.cas(CAS_EMPTY)
-		b.usesBazel("linux_x64")
-		b.serviceAccount(b.cfg.ServiceAccountCompile)
-		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
-		b.usesDocker()
-		b.cache(CACHES_DOCKER...)
 	})
 }
 
@@ -1386,27 +1362,27 @@ func (b *jobBuilder) compile() string {
 
 // recreateSKPs generates a RecreateSKPs task.
 func (b *jobBuilder) recreateSKPs() {
-	cmd := []string{
-		"./recreate_skps",
-		"--local=false",
-		"--project_id", "skia-swarming-bots",
-		"--task_id", specs.PLACEHOLDER_TASK_ID,
-		"--task_name", b.Name,
-		"--skia_revision", specs.PLACEHOLDER_REVISION,
-		"--patch_ref", specs.PLACEHOLDER_PATCH_REF,
-		"--git_cache", "cache/git",
-		"--checkout_root", "cache/work",
-		"--dm_path", "build/dm",
-	}
-	if b.matchExtraConfig("DryRun") {
-		cmd = append(cmd, "--dry_run")
-	}
 	b.addTask(b.Name, func(b *taskBuilder) {
+		cmd := []string{
+			b.taskDriver("recreate_skps", false),
+			"--local=false",
+			"--project_id", "skia-swarming-bots",
+			"--task_id", specs.PLACEHOLDER_TASK_ID,
+			"--task_name", b.Name,
+			"--skia_revision", specs.PLACEHOLDER_REVISION,
+			"--patch_ref", specs.PLACEHOLDER_PATCH_REF,
+			"--git_cache", "cache/git",
+			"--checkout_root", "cache/work",
+			"--dm_path", "build/dm",
+		}
+		if b.matchExtraConfig("DryRun") {
+			cmd = append(cmd, "--dry_run")
+		}
+
 		b.cas(CAS_RECREATE_SKPS)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
 		b.dep("Build-Debian10-Clang-x86_64-Release") // To get DM.
 		b.cmd(cmd...)
-		b.cipd(CIPD_PKG_LUCI_AUTH)
+		b.usesLUCIAuth()
 		b.serviceAccount(b.cfg.ServiceAccountRecreateSKPs)
 		b.dimension(
 			"pool:SkiaCT",
@@ -1416,7 +1392,6 @@ func (b *jobBuilder) recreateSKPs() {
 		b.cache(CACHES_WORKDIR...)
 		b.timeout(6 * time.Hour)
 		b.usesPython()
-		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
 		b.attempts(2)
 	})
 }
@@ -1426,8 +1401,8 @@ func (b *jobBuilder) recreateSKPs() {
 func (b *jobBuilder) checkGeneratedFiles() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_BAZEL)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.cmd("./check_generated_files",
+		b.cmd(
+			b.taskDriver("check_generated_files", false),
 			"--local=false",
 			"--git_path=cipd_bin_packages/git",
 			"--project_id", "skia-swarming-bots",
@@ -1437,8 +1412,8 @@ func (b *jobBuilder) checkGeneratedFiles() {
 			"--bazel_arg=--config=for_linux_x64_with_rbe",
 			"--bazel_arg=--jobs=100",
 		)
-		b.cipd(specs.CIPD_PKGS_GIT_LINUX_AMD64...)
 		b.usesBazel("linux_x64")
+		b.usesGit()
 		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
 		b.serviceAccount(b.cfg.ServiceAccountHousekeeper)
 	})
@@ -1449,8 +1424,8 @@ func (b *jobBuilder) checkGeneratedFiles() {
 func (b *jobBuilder) goLinters() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_BAZEL)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.cmd("./go_linters",
+		b.cmd(
+			b.taskDriver("go_linters", false),
 			"--local=false",
 			"--git_path=cipd_bin_packages/git",
 			"--project_id", "skia-swarming-bots",
@@ -1460,8 +1435,8 @@ func (b *jobBuilder) goLinters() {
 			"--bazel_arg=--config=for_linux_x64_with_rbe",
 			"--bazel_arg=--jobs=100",
 		)
-		b.cipd(specs.CIPD_PKGS_GIT_LINUX_AMD64...)
 		b.usesBazel("linux_x64")
+		b.usesGit()
 		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
 		b.serviceAccount(b.cfg.ServiceAccountHousekeeper)
 	})
@@ -1471,8 +1446,8 @@ func (b *jobBuilder) goLinters() {
 func (b *jobBuilder) checkGnToBp() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_COMPILE)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.cmd("./run_gn_to_bp",
+		b.cmd(
+			b.taskDriver("run_gn_to_bp", false),
 			"--local=false",
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1502,8 +1477,8 @@ func (b *jobBuilder) housekeeper() {
 func (b *jobBuilder) g3FrameworkCanary() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_EMPTY)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.cmd("./g3_canary",
+		b.cmd(
+			b.taskDriver("g3_canary", false),
 			"--local=false",
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1515,7 +1490,7 @@ func (b *jobBuilder) g3FrameworkCanary() {
 			"--patch_server", specs.PLACEHOLDER_CODEREVIEW_SERVER,
 		)
 		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-		b.cipd(CIPD_PKG_LUCI_AUTH)
+		b.usesLUCIAuth()
 		b.serviceAccount("skia-g3-framework-compile@skia-swarming-bots.iam.gserviceaccount.com")
 		b.timeout(3 * time.Hour)
 		b.attempts(1)
@@ -1531,7 +1506,7 @@ func (b *jobBuilder) infra() {
 				"cpu:x86-64-Haswell_GCE",
 				"gpu:none",
 				fmt.Sprintf("machine_type:%s", MACHINE_TYPE_MEDIUM), // We don't have any small Windows instances.
-				fmt.Sprintf("os:%s", DEFAULT_OS_WIN),
+				fmt.Sprintf("os:%s", DEFAULT_OS_WIN_GCE),
 				fmt.Sprintf("pool:%s", b.cfg.Pool),
 			)
 		} else {
@@ -1599,10 +1574,10 @@ func (b *jobBuilder) codesize() {
 
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_EMPTY)
-		b.dep(b.buildTaskDrivers("linux", "amd64"), compileTaskName)
-		b.dep(b.buildTaskDrivers("linux", "amd64"), compileTaskNameNoPatch)
+		b.dep(compileTaskName)
+		b.dep(compileTaskNameNoPatch)
 		cmd := []string{
-			"./codesize",
+			b.taskDriver("codesize", false),
 			"--local=false",
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1638,7 +1613,7 @@ func (b *jobBuilder) codesize() {
 		b.cmd(cmd...)
 		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
 		b.cache(CACHES_WORKDIR...)
-		b.cipd(CIPD_PKG_LUCI_AUTH)
+		b.usesLUCIAuth()
 		b.asset("bloaty")
 		b.serviceAccount("skia-external-codesize@skia-swarming-bots.iam.gserviceaccount.com")
 		b.timeout(20 * time.Minute)
@@ -1832,8 +1807,8 @@ func (b *jobBuilder) dm() {
 func (b *jobBuilder) canary(rollerName, canaryCQKeyword, targetProjectBaseURL string) {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.cas(CAS_EMPTY)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
-		b.cmd("./canary",
+		b.cmd(
+			b.taskDriver("canary", false),
 			"--local=false",
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1848,7 +1823,7 @@ func (b *jobBuilder) canary(rollerName, canaryCQKeyword, targetProjectBaseURL st
 			"--patch_server", specs.PLACEHOLDER_CODEREVIEW_SERVER,
 		)
 		b.linuxGceDimensions(MACHINE_TYPE_SMALL)
-		b.cipd(CIPD_PKG_LUCI_AUTH)
+		b.usesLUCIAuth()
 		b.serviceAccount(b.cfg.ServiceAccountCanary)
 		b.timeout(3 * time.Hour)
 		b.attempts(1)
@@ -1862,8 +1837,8 @@ func (b *jobBuilder) puppeteer() {
 	b.addTask(b.Name, func(b *taskBuilder) {
 		b.defaultSwarmDimensions()
 		b.usesNode()
-		b.cipd(CIPD_PKG_LUCI_AUTH)
-		b.dep(b.buildTaskDrivers("linux", "amd64"), compileTaskName)
+		b.usesLUCIAuth()
+		b.dep(compileTaskName)
 		b.output(OUTPUT_PERF)
 		b.timeout(60 * time.Minute)
 		b.cas(CAS_PUPPETEER)
@@ -1876,7 +1851,7 @@ func (b *jobBuilder) puppeteer() {
 
 		if b.extraConfig("SkottieFrames") {
 			b.cmd(
-				"./perf_puppeteer_skottie_frames",
+				b.taskDriver("perf_puppeteer_skottie_frames", false),
 				"--project_id", "skia-swarming-bots",
 				"--git_hash", specs.PLACEHOLDER_REVISION,
 				"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1895,7 +1870,7 @@ func (b *jobBuilder) puppeteer() {
 			b.needsLottiesWithAssets()
 		} else if b.extraConfig("RenderSKP") {
 			b.cmd(
-				"./perf_puppeteer_render_skps",
+				b.taskDriver("perf_puppeteer_render_skps", false),
 				"--project_id", "skia-swarming-bots",
 				"--git_hash", specs.PLACEHOLDER_REVISION,
 				"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -1914,7 +1889,7 @@ func (b *jobBuilder) puppeteer() {
 			b.asset("skp")
 		} else if b.extraConfig("CanvasPerf") { // refers to the canvas_perf.js test suite
 			b.cmd(
-				"./perf_puppeteer_canvas",
+				b.taskDriver("perf_puppeteer_canvas", false),
 				"--project_id", "skia-swarming-bots",
 				"--git_hash", specs.PLACEHOLDER_REVISION,
 				"--task_id", specs.PLACEHOLDER_TASK_ID,
@@ -2088,8 +2063,7 @@ func (b *jobBuilder) compileWasmGMTests(compileName string) {
 		b.attempts(1)
 		b.usesDocker()
 		b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
-		b.cipd(CIPD_PKG_LUCI_AUTH)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
+		b.usesLUCIAuth()
 		b.output("wasm_out")
 		b.timeout(60 * time.Minute)
 		b.cas(CAS_COMPILE)
@@ -2100,7 +2074,7 @@ func (b *jobBuilder) compileWasmGMTests(compileName string) {
 		// when using puppeteer, stacktraces from exceptions are hard to get access to, so we do not
 		// even bother.
 		b.cmd(
-			"./compile_wasm_gm_tests",
+			b.taskDriver("compile_wasm_gm_tests", false),
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
 			"--task_name", compileName,
@@ -2121,15 +2095,14 @@ func (b *jobBuilder) runWasmGMTests() {
 		b.attempts(1)
 		b.usesNode()
 		b.swarmDimensions()
-		b.cipd(CIPD_PKG_LUCI_AUTH)
+		b.usesLUCIAuth()
 		b.cipd(CIPD_PKGS_GOLDCTL)
-		b.dep(b.buildTaskDrivers("linux", "amd64"))
 		b.dep(compileTaskName)
 		b.timeout(60 * time.Minute)
 		b.cas(CAS_WASM_GM)
 		b.serviceAccount(b.cfg.ServiceAccountUploadGM)
 		b.cmd(
-			"./run_wasm_gm_tests",
+			b.taskDriver("run_wasm_gm_tests", false),
 			"--project_id", "skia-swarming-bots",
 			"--task_id", specs.PLACEHOLDER_TASK_ID,
 			"--task_name", b.Name,
@@ -2169,6 +2142,7 @@ type labelAndSavedOutputDir struct {
 // Maps a shorthand version of a label (which can be an arbitrary string) to an absolute Bazel
 // label or "target pattern" https://bazel.build/docs/build#specifying-build-targets
 // The reason we need this mapping is because Buildbucket build names cannot have / or : in them.
+// TODO(borenet/kjlubick): Is there a way to generate a mapping using `bazel query`?
 var shorthandToLabel = map[string]labelAndSavedOutputDir{
 	"all_tests":                  {"//tests:linux_rbe_tests", ""},
 	"core":                       {"//:core", ""},
@@ -2180,20 +2154,19 @@ var shorthandToLabel = map[string]labelAndSavedOutputDir{
 	"modules_canvaskit":          {"//modules/canvaskit:canvaskit", ""},
 	"modules_canvaskit_js_tests": {"//modules/canvaskit:canvaskit_js_tests", ""},
 	"skottie_tool_gpu":           {"//modules/skottie:skottie_tool_gpu", ""},
-
-	// Note: these paths are relative to the WORKSPACE in //example/external_client
-	"decode_everything":          {"//:decode_everything", ""},
-	"path_combiner":              {"//:path_combiner", ""},
-	"png_decoder":                {"//:png_decoder", ""},
-	"shape_text":                 {"//:shape_text", ""},
-	"svg_with_harfbuzz":          {"//:svg_with_harfbuzz", ""},
-	"svg_with_primitive":         {"//:svg_with_primitive", ""},
-	"use_ganesh_gl":              {"//:use_ganesh_gl", ""},
-	"use_ganesh_vulkan":          {"//:use_ganesh_vulkan", ""},
-	"use_graphite_native_vulkan": {"//:use_graphite_native_vulkan", ""},
-	"use_skresources":            {"//:use_skresources", ""},
-	"write_text_to_png":          {"//:write_text_to_png", ""},
-	"write_to_pdf":               {"//:write_to_pdf", ""},
+	"viewer":                     {"//tools/viewer:viewer", ""},
+	"decode_everything":          {"//example/external_client:decode_everything", ""},
+	"path_combiner":              {"//example/external_client:path_combiner", ""},
+	"png_decoder":                {"//example/external_client:png_decoder", ""},
+	"shape_text":                 {"//example/external_client:shape_text", ""},
+	"svg_with_harfbuzz":          {"//example/external_client:svg_with_harfbuzz", ""},
+	"svg_with_primitive":         {"//example/external_client:svg_with_primitive", ""},
+	"use_ganesh_gl":              {"//example/external_client:use_ganesh_gl", ""},
+	"use_ganesh_vulkan":          {"//example/external_client:use_ganesh_vulkan", ""},
+	"use_graphite_native_vulkan": {"//example/external_client:use_graphite_native_vulkan", ""},
+	"use_skresources":            {"//example/external_client:use_skresources", ""},
+	"write_text_to_png":          {"//example/external_client:write_text_to_png", ""},
+	"write_to_pdf":               {"//example/external_client:write_to_pdf", ""},
 
 	// Currently there is no way to tell Bazel "only test go_test targets", so we must group them
 	// under a test_suite.
@@ -2236,15 +2209,29 @@ func (b *jobBuilder) bazelBuild() {
 	}
 
 	b.addTask(b.Name, func(b *taskBuilder) {
+		bazelCacheDir, ok := map[string]string{
+			// We only run builds in GCE.
+			"linux_x64":   bazelCacheDirOnGCELinux,
+			"windows_x64": bazelCacheDirOnWindows,
+		}[host]
+		if !ok {
+			panic("unknown Bazel cache dir for Bazel host " + host)
+		}
+
+		// Bazel git_repository rules shell out to git. Use the version from
+		// CIPD to ensure that we're not using an old locally-installed version.
+		b.usesGit()
+		b.addToPATH("cipd_bin_packages", "cipd_bin_packages/bin")
+
 		cmd := []string{
-			"bazel_build_task_driver/bazel_build",
+			b.taskDriver("bazel_build", host != "windows_x64"),
 			"--project_id=skia-swarming-bots",
 			"--task_id=" + specs.PLACEHOLDER_TASK_ID,
 			"--task_name=" + b.Name,
 			"--bazel_label=" + labelAndSavedOutputDir.label,
 			"--bazel_config=" + config,
-			"--bazel_cache_dir=" + bazelCacheDirOnGCELinux,
-			"--workdir=.",
+			"--bazel_cache_dir=" + bazelCacheDir,
+			"--workdir=./skia",
 		}
 
 		if labelAndSavedOutputDir.savedOutputDir != "" {
@@ -2258,16 +2245,6 @@ func (b *jobBuilder) bazelBuild() {
 		if host == "linux_x64" {
 			b.linuxGceDimensions(MACHINE_TYPE_MEDIUM)
 			b.usesBazel("linux_x64")
-			// Use a built task_driver from CIPD instead of building it from scratch. The
-			// task_driver should not need to change often, so using a CIPD version should reduce
-			// build latency.
-			// TODO(kjlubick) For now, this only has the linux version. We could build the task
-			//   driver for all hosts that we support running Bazel from in this CIPD package
-			//   if/when needed.
-			// TODO(kjlubick,lovisolo) Could we get our task drivers built automatically
-			// into CIPD instead of this being a manual process?
-			b.cipd(b.MustGetCipdPackageFromAsset("bazel_build_task_driver"))
-
 			if labelAndSavedOutputDir.savedOutputDir != "" {
 				// We assume that builds which require storing a subset of //bazel-bin to CAS are Android
 				// builds. We want such builds to use RBE, and we want to download the built top-level
@@ -2283,6 +2260,16 @@ func (b *jobBuilder) bazelBuild() {
 				cmd = append(cmd, "--bazel_arg=--jobs=100")
 				cmd = append(cmd, "--bazel_arg=--remote_download_minimal")
 			}
+		} else if host == "windows_x64" {
+			b.dimension(
+				"cpu:x86-64-Haswell_GCE",
+				"gpu:none",
+				fmt.Sprintf("machine_type:%s", MACHINE_TYPE_LARGE),
+				fmt.Sprintf("os:%s", DEFAULT_OS_WIN_GCE),
+				"pool:Skia",
+			)
+			b.usesBazel("windows_x64")
+			cmd = append(cmd, "--bazel_arg=--experimental_scale_timeouts=2.0")
 		} else {
 			panic("unsupported Bazel host " + host)
 		}
@@ -2350,7 +2337,8 @@ func (b *jobBuilder) bazelTest() {
 	}
 
 	b.addTask(b.Name, func(b *taskBuilder) {
-		cmd := []string{"./" + taskdriverName,
+		cmd := []string{
+			b.taskDriver(taskdriverName, false),
 			"--project_id=skia-swarming-bots",
 			"--task_id=" + specs.PLACEHOLDER_TASK_ID,
 			"--task_name=" + b.Name,
@@ -2456,9 +2444,14 @@ func (b *jobBuilder) bazelTest() {
 				"--patchset_order="+specs.PLACEHOLDER_PATCHSET)
 
 		case "external_client":
+			// For external_client, we want to test how an external user would
+			// build using Skia. Therefore, we change to the workspace in that
+			// directory and use labels relative to it.
+			pathInSkia := "example/external_client"
+			label := strings.Replace(labelAndSavedOutputDir.label, pathInSkia, "", -1)
 			cmd = append(cmd,
-				"--bazel_label="+labelAndSavedOutputDir.label,
-				"--path_in_skia=example/external_client",
+				"--bazel_label="+label,
+				"--path_in_skia="+pathInSkia,
 				"--bazel_cache_dir="+bazelCacheDir)
 			b.usesDocker()
 
@@ -2471,10 +2464,8 @@ func (b *jobBuilder) bazelTest() {
 		}
 
 		if host == "linux_x64" {
-			b.dep(b.buildTaskDrivers("linux", "amd64"))
 			b.usesBazel("linux_x64")
 		} else if host == "linux_arm64" || host == "on_rpi" {
-			b.dep(b.buildTaskDrivers("linux", "arm64"))
 			// The RPIs do not run Bazel directly, they have precompiled binary
 			// to run instead.
 		} else {

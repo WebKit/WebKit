@@ -9,8 +9,8 @@
 #define GrD3DUtil_DEFINED
 
 #include "include/core/SkImage.h"
-#include "include/gpu/GrTypes.h"
-#include "include/gpu/d3d/GrD3DTypes.h"
+#include "include/gpu/ganesh/GrTypes.h"
+#include "include/gpu/ganesh/d3d/GrD3DTypes.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 
 #include <string>
@@ -135,7 +135,7 @@ static constexpr int GrDxgiFormatStencilBits(DXGI_FORMAT format) {
     }
 }
 
-#if defined(SK_DEBUG) || defined(GR_TEST_UTILS)
+#if defined(SK_DEBUG) || defined(GPU_TEST_UTILS)
 static constexpr const char* GrDxgiFormatToStr(DXGI_FORMAT dxgiFormat) {
     switch (dxgiFormat) {
         case DXGI_FORMAT_R8G8B8A8_UNORM:           return "R8G8B8A8_UNORM";

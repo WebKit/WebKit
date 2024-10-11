@@ -20,10 +20,10 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSemaphore.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSemaphore.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/base/SkTemplates.h"
@@ -39,9 +39,9 @@
 #include <initializer_list>
 
 #ifdef SK_GL
-#include "include/gpu/gl/GrGLFunctions.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLGpu.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 #endif

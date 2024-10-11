@@ -1,4 +1,4 @@
-load("//bazel:skia_rules.bzl", "skia_cc_deps", "skia_cc_library", "skia_filegroup", "split_srcs_and_hdrs")
+load("//bazel:skia_rules.bzl", "skia_cc_library", "split_srcs_and_hdrs")
 
 package(
     default_applicable_licenses = ["//:license"],
@@ -20,28 +20,11 @@ split_srcs_and_hdrs(
     files = XML_FILES,
 )
 
-skia_filegroup(
-    name = "srcs",
-    srcs = [":_xml_srcs"],
-    visibility = ["//src:__pkg__"],
-)
-
-skia_filegroup(
-    name = "private_hdrs",
-    srcs = [":_xml_hdrs"],
-    visibility = ["//src:__pkg__"],
-)
-
-skia_cc_deps(
-    name = "deps",
-    visibility = ["//src:__pkg__"],
-    deps = ["@expat"],
-)
-
 skia_cc_library(
     name = "xml",
     srcs = [":_xml_srcs"],
     hdrs = [":_xml_hdrs"],
+    defines = ["SK_XML"],
     features = ["layering_check"],
     visibility = [
         "//modules/svg:__subpackages__",

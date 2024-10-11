@@ -11,9 +11,9 @@
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSpan.h"
 #include "include/core/SkSurface.h"
-#include "include/gpu/GrContextOptions.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrContextOptions.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTArray.h"
 #include "src/gpu/ganesh/GrGpu.h"
@@ -164,7 +164,7 @@ public:
         }
     }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     /** Reset GPU stats */
     void resetGpuStats() const;
 

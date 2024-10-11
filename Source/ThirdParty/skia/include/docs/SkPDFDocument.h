@@ -49,6 +49,7 @@ private:
     friend class ::SkPDFTagTree;
 
     std::unique_ptr<SkPDFArray> fAttrs;
+    std::vector<int> fNodeIds; // nodeIds referenced by fAttrs
 };
 
 /** A node in a PDF structure tree, giving a semantic representation
@@ -60,7 +61,6 @@ struct StructureElementNode {
     SkString fTypeString;
     std::vector<std::unique_ptr<StructureElementNode>> fChildVector;
     int fNodeId = 0;
-    std::vector<int> fAdditionalNodeIds;
     AttributeList fAttributes;
     SkString fAlt;
     SkString fLang;

@@ -33,13 +33,13 @@ public:
     // Textures or GPU only Buffers as well, we should keep a second list for Refs that we want to
     // put CommandBuffer refs on.
     void addResourceRef(sk_sp<Resource> resource);
-    void addTask(sk_sp<Task> task);
-    void addTasks(TaskList&& tasks);
+
+    TaskList* taskList() { return fRecording->fRootTaskList.get(); }
 
     uint32_t recorderID() const { return fRecording->fRecorderID; }
     uint32_t uniqueID() const { return fRecording->fUniqueID; }
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     bool isTargetProxyInstantiated() const;
     int numVolatilePromiseImages() const;
     int numNonVolatilePromiseImages() const;

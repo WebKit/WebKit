@@ -10,8 +10,8 @@
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkFont.h"
 #include "include/core/SkTypeface.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
 #include "src/base/SkUTF.h"
 #include "src/base/SkUtils.h"
 #include "src/core/SkStrikeCache.h"
@@ -20,8 +20,8 @@
 #include "src/text/GlyphRun.h"
 #include "src/text/gpu/StrikeCache.h"
 #include "src/text/gpu/TextBlob.h"
-#include "src/utils/SkTestCanvas.h"
 #include "tools/fonts/FontToolUtils.h"
+#include "tools/gpu/TestCanvas.h"
 #include "tools/text/gpu/TextBlobTools.h"
 
 // From Project Guttenberg. This is UTF-8 text.
@@ -29,7 +29,7 @@ static const char* gText =
         "Call me Ishmael.  Some years ago--never mind how long precisely";
 
 class FillBench {};
-template <> class SkTestCanvas<FillBench> {
+template <> class skiatest::TestCanvas<FillBench> {
 public:
     static SkDevice* GetDevice(SkCanvas* canvas) {
         return canvas->topDevice();
@@ -55,7 +55,7 @@ class DirectMaskGlyphVertexFillBenchmark : public Benchmark {
         SkPaint paint;
         auto glyphRunList = builder.textToGlyphRunList(font, paint, gText, len, {100, 100});
         SkASSERT_RELEASE(!glyphRunList.empty());
-        auto device = SkTestCanvas<FillBench>::GetDevice(canvas);
+        auto device = skiatest::TestCanvas<FillBench>::GetDevice(canvas);
         SkMatrix drawMatrix = view;
         const SkPoint drawOrigin = glyphRunList.origin();
         drawMatrix.preTranslate(drawOrigin.x(), drawOrigin.y());

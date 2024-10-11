@@ -53,13 +53,13 @@
 #include "tools/fonts/FontToolUtils.h"
 
 #if defined(SK_GANESH)
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "src/gpu/ganesh/GrDirectContextPriv.h"
 #include "tools/gpu/GrContextFactory.h"
 #endif
 
 #ifdef SK_GL
-#include "include/gpu/gl/GrGLFunctions.h"
+#include "include/gpu/ganesh/gl/GrGLFunctions.h"
 #include "src/gpu/ganesh/gl/GrGLGpu.h"
 #include "src/gpu/ganesh/gl/GrGLUtil.h"
 #endif

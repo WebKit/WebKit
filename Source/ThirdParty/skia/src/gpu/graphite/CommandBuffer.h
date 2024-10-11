@@ -31,6 +31,7 @@ class DrawPass;
 class SharedContext;
 class GraphicsPipeline;
 struct RenderPassDesc;
+class ResourceProvider;
 class Sampler;
 class Texture;
 class TextureProxy;
@@ -73,11 +74,20 @@ public:
     void addBuffersToAsyncMapOnSubmit(SkSpan<const sk_sp<Buffer>>);
     SkSpan<const sk_sp<Buffer>> buffersToAsyncMapOnSubmit() const;
 
+    // If any recorded draw requires a dst texture copy for blending, that texture must be provided
+    // in `dstCopy`; otherwise it should be null. The `dstCopyBounds` are in the same coordinate
+    // space of the logical viewport *before* any replay translation is applied.
+    //
+    // The logical viewport is always (0,0,viewportDims) and matches the "device" coordinate space
+    // of the higher-level SkDevices that recorded the rendering operations. The actual viewport
+    // is automatically adjusted by the replay translation.
     bool addRenderPass(const RenderPassDesc&,
                        sk_sp<Texture> colorTexture,
                        sk_sp<Texture> resolveTexture,
                        sk_sp<Texture> depthStencilTexture,
-                       SkRect viewport,
+                       const Texture* dstCopy,
+                       SkIRect dstCopyBounds,
+                       SkISize viewportDims,
                        const DrawPassList& drawPasses);
 
     bool addComputePass(DispatchGroupSpan dispatchGroups);
@@ -116,20 +126,36 @@ protected:
     CommandBuffer();
 
     SkISize fColorAttachmentSize;
+    // This is also the origin of the logical viewport relative to the target texture's (0,0) pixel
     SkIVector fReplayTranslation;
+
+    // The texture to use for implementing DstReadRequirement::kTextureCopy for the current render
+    // pass. This is a bare pointer since the CopyTask that initializes the texture's contents
+    // will have tracked the resource on the CommandBuffer already.
+    std::pair<const Texture*, const Sampler*> fDstCopy;
+    // Already includes replay translation and respects final color attachment bounds, but with
+    // dimensions that equal fDstCopy's width and height.
+    SkIRect fDstCopyBounds;
 
 private:
     // Release all tracked Resources
     void releaseResources();
 
+    // Subclasses will hold their backend-specific ResourceProvider directly to avoid virtual calls
+    // and access backend-specific behavior, but they can reflect it back to the base CommandBuffer
+    // if it needs to make generic resources.
+    virtual ResourceProvider* resourceProvider() const = 0;
+
     virtual void onResetCommandBuffer() = 0;
 
+    // Renderpass, viewport bounds have already been adjusted by the replay translation. The render
+    // pass bounds has been intersected with the color attachment bounds.
     virtual bool onAddRenderPass(const RenderPassDesc&,
                                  SkIRect renderPassBounds,
                                  const Texture* colorTexture,
                                  const Texture* resolveTexture,
                                  const Texture* depthStencilTexture,
-                                 SkRect viewport,
+                                 SkIRect viewport,
                                  const DrawPassList& drawPasses) = 0;
 
     virtual bool onAddComputePass(DispatchGroupSpan dispatchGroups) = 0;

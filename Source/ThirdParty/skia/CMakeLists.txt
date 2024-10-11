@@ -154,6 +154,7 @@ add_library(Skia STATIC
     src/codec/SkParseEncodedOrigin.cpp
     src/codec/SkPixmapUtils.cpp
     src/codec/SkPngCodec.cpp
+    src/codec/SkPngCodecBase.cpp
     src/codec/SkSampler.cpp
     src/codec/SkSwizzler.cpp
     src/codec/SkTiffUtility.cpp

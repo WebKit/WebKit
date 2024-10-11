@@ -13,7 +13,10 @@ use skrifa::{
     color::{Brush, ColorGlyphFormat, ColorPainter, Transform},
     instance::{Location, Size},
     metrics::{GlyphMetrics, Metrics},
-    outline::{DrawSettings, HintingInstance, LcdLayout, OutlinePen},
+    outline::{
+        pen::NullPen, DrawSettings, Engine, HintingInstance, HintingOptions, OutlinePen,
+        SmoothMode, Target,
+    },
     setting::VariationSetting,
     string::{LocalizedStrings, StringId},
     MetadataProvider, OutlineGlyphCollection, Tag,
@@ -24,8 +27,10 @@ use crate::bitmap::{bitmap_glyph, bitmap_metrics, has_bitmap_glyph, png_data, Br
 
 use crate::ffi::{
     AxisWrapper, BridgeFontStyle, BridgeLocalizedName, BridgeScalerMetrics, ClipBox,
-    ColorPainterWrapper, ColorStop, PaletteOverride, PathWrapper, SkiaDesignCoordinate,
+    ColorPainterWrapper, ColorStop, FfiPoint, PaletteOverride, SkiaDesignCoordinate,
 };
+
+const PATH_EXTRACTION_RESERVE: usize = 150;
 
 fn make_mapping_index<'a>(font_ref: &'a BridgeFontRef) -> Box<BridgeMappingIndex> {
     font_ref
@@ -41,24 +46,45 @@ unsafe fn make_hinting_instance<'a>(
     outlines: &BridgeOutlineCollection,
     size: f32,
     coords: &BridgeNormalizedCoords,
+    do_light_hinting: bool,
     do_lcd_antialiasing: bool,
     lcd_orientation_vertical: bool,
-    preserve_linear_metrics: bool,
+    force_autohinting: bool,
 ) -> Box<BridgeHintingInstance> {
     let hinting_instance = match &outlines.0 {
         Some(outlines) => {
-            let lcd_subpixel = match (do_lcd_antialiasing, lcd_orientation_vertical) {
-                (true, false) => Some(LcdLayout::Horizontal),
-                (true, true) => Some(LcdLayout::Vertical),
-                _ => None,
+            let smooth_mode = match (
+                do_light_hinting,
+                do_lcd_antialiasing,
+                lcd_orientation_vertical,
+            ) {
+                (true, _, _) => SmoothMode::Light,
+                (false, true, false) => SmoothMode::Lcd,
+                (false, true, true) => SmoothMode::VerticalLcd,
+                _ => SmoothMode::Normal,
             };
+
+            let hinting_target = Target::Smooth {
+                mode: smooth_mode,
+                // See https://docs.rs/skrifa/latest/skrifa/outline/enum.Target.html#variant.Smooth.field.mode
+                // Configure additional params to match FreeType.
+                symmetric_rendering: true,
+                preserve_linear_metrics: false,
+            };
+
+            let engine_type = if force_autohinting {
+                Engine::Auto(None)
+            } else {
+                Engine::AutoFallback
+            };
+
             HintingInstance::new(
                 outlines,
                 Size::new(size),
                 &coords.normalized_coords,
-                skrifa::outline::HintingMode::Smooth {
-                    lcd_subpixel,
-                    preserve_linear_metrics,
+                HintingOptions {
+                    engine: engine_type,
+                    target: hinting_target,
                 },
             )
             .ok()
@@ -115,57 +141,123 @@ fn fill_glyph_to_unicode_map(font_ref: &BridgeFontRef, map: &mut [u32]) {
     });
 }
 
-struct PathWrapperPen<'a> {
-    path_wrapper: Pin<&'a mut ffi::PathWrapper>,
+struct VerbsPointsPen<'a> {
+    verbs: &'a mut Vec<u8>,
+    points: &'a mut Vec<FfiPoint>,
+    started: bool,
+    current: FfiPoint,
 }
 
-// We need to wrap ffi::PathWrapper in PathWrapperPen and forward the path
-// recording calls to the path wrapper as we can't define trait implementations
-// inside the cxx::bridge section.
-impl<'a> OutlinePen for PathWrapperPen<'a> {
+impl FfiPoint {
+    fn new(x: f32, y: f32) -> Self {
+        Self { x, y }
+    }
+}
+
+// Values need to match SkPathVerb.
+#[repr(u8)]
+enum PathVerb {
+    MoveTo = 0,
+    LineTo = 1,
+    QuadTo = 2,
+    CubicTo = 4,
+    Close = 5,
+}
+
+impl<'a> VerbsPointsPen<'a> {
+    fn new(verbs: &'a mut Vec<u8>, points: &'a mut Vec<FfiPoint>) -> Self {
+        verbs.clear();
+        points.clear();
+        verbs.reserve(PATH_EXTRACTION_RESERVE);
+        points.reserve(PATH_EXTRACTION_RESERVE);
+        Self {
+            verbs,
+            points,
+            started: false,
+            current: FfiPoint::default(),
+        }
+    }
+
+    fn going_to(&mut self, point: &FfiPoint) {
+        if !self.started {
+            self.started = true;
+            self.verbs.push(PathVerb::MoveTo as u8);
+            self.points.push(self.current);
+        }
+        self.current = *point;
+    }
+
+    fn current_is_not(&self, point: &FfiPoint) -> bool {
+        self.current != *point
+    }
+}
+
+impl<'a> OutlinePen for VerbsPointsPen<'a> {
     fn move_to(&mut self, x: f32, y: f32) {
-        self.path_wrapper.as_mut().move_to(x, -y);
+        let pt0 = FfiPoint::new(x, -y);
+        if self.started {
+            self.close();
+            self.started = false;
+        }
+        self.current = pt0;
     }
 
     fn line_to(&mut self, x: f32, y: f32) {
-        self.path_wrapper.as_mut().line_to(x, -y);
+        let pt0 = FfiPoint::new(x, -y);
+        if self.current_is_not(&pt0) {
+            self.going_to(&pt0);
+            self.verbs.push(PathVerb::LineTo as u8);
+            self.points.push(pt0);
+        }
     }
 
     fn quad_to(&mut self, cx0: f32, cy0: f32, x: f32, y: f32) {
-        self.path_wrapper.as_mut().quad_to(cx0, -cy0, x, -y);
+        let pt0 = FfiPoint::new(cx0, -cy0);
+        let pt1 = FfiPoint::new(x, -y);
+        if self.current_is_not(&pt0) || self.current_is_not(&pt1) {
+            self.going_to(&pt1);
+            self.verbs.push(PathVerb::QuadTo as u8);
+            self.points.push(pt0);
+            self.points.push(pt1);
+        }
     }
 
     fn curve_to(&mut self, cx0: f32, cy0: f32, cx1: f32, cy1: f32, x: f32, y: f32) {
-        self.path_wrapper
-            .as_mut()
-            .curve_to(cx0, -cy0, cx1, -cy1, x, -y);
+        let pt0 = FfiPoint::new(cx0, -cy0);
+        let pt1 = FfiPoint::new(cx1, -cy1);
+        let pt2 = FfiPoint::new(x, -y);
+        if self.current_is_not(&pt0) || self.current_is_not(&pt1) || self.current_is_not(&pt2) {
+            self.going_to(&pt2);
+            self.verbs.push(PathVerb::CubicTo as u8);
+            self.points.push(pt0);
+            self.points.push(pt1);
+            self.points.push(pt2);
+        }
     }
 
     fn close(&mut self) {
-        self.path_wrapper.as_mut().close();
+        if let Some(verb) = self.verbs.last().cloned() {
+            if verb == PathVerb::QuadTo as u8
+                || verb == PathVerb::CubicTo as u8
+                || verb == PathVerb::LineTo as u8
+                || verb == PathVerb::MoveTo as u8
+            {
+                self.verbs.push(PathVerb::Close as u8);
+            }
+        }
     }
-}
-
-struct NoOpPen {}
-
-impl<'a> OutlinePen for NoOpPen {
-    fn move_to(&mut self, _x: f32, _y: f32) {}
-
-    fn line_to(&mut self, _x: f32, _y: f32) {}
-
-    fn quad_to(&mut self, _cx0: f32, _cy0: f32, _x: f32, _y: f32) {}
-
-    fn curve_to(&mut self, _cx0: f32, _cy0: f32, _cx1: f32, _cy1: f32, _x: f32, _y: f32) {}
-
-    fn close(&mut self) {}
 }
 
 struct ColorPainterImpl<'a> {
     color_painter_wrapper: Pin<&'a mut ffi::ColorPainterWrapper>,
+    clip_level: usize,
 }
 
 impl<'a> ColorPainter for ColorPainterImpl<'a> {
     fn push_transform(&mut self, transform: Transform) {
+        if self.clip_level > 0 {
+            return;
+        }
         self.color_painter_wrapper
             .as_mut()
             .push_transform(&ffi::Transform {
@@ -179,30 +271,51 @@ impl<'a> ColorPainter for ColorPainterImpl<'a> {
     }
 
     fn pop_transform(&mut self) {
+        if self.clip_level > 0 {
+            return;
+        }
         self.color_painter_wrapper.as_mut().pop_transform();
     }
 
     fn push_clip_glyph(&mut self, glyph: GlyphId) {
-        // TODO(drott): Handle large glyph ids in clip operation.
-        self.color_painter_wrapper
-            .as_mut()
-            .push_clip_glyph(glyph.to_u32().try_into().ok().unwrap_or_default());
+        if self.clip_level == 0 {
+            // TODO(drott): Handle large glyph ids in clip operation.
+            self.color_painter_wrapper
+                .as_mut()
+                .push_clip_glyph(glyph.to_u32().try_into().ok().unwrap_or_default());
+        }
+        if self.color_painter_wrapper.as_mut().is_bounds_mode() {
+            self.clip_level += 1;
+        }
     }
 
     fn push_clip_box(&mut self, clip_box: BoundingBox<f32>) {
-        self.color_painter_wrapper.as_mut().push_clip_rectangle(
-            clip_box.x_min,
-            clip_box.y_min,
-            clip_box.x_max,
-            clip_box.y_max,
-        );
+        if self.clip_level == 0 {
+            self.color_painter_wrapper.as_mut().push_clip_rectangle(
+                clip_box.x_min,
+                clip_box.y_min,
+                clip_box.x_max,
+                clip_box.y_max,
+            );
+        }
+        if self.color_painter_wrapper.as_mut().is_bounds_mode() {
+            self.clip_level += 1;
+        }
     }
 
     fn pop_clip(&mut self) {
-        self.color_painter_wrapper.as_mut().pop_clip();
+        if self.color_painter_wrapper.as_mut().is_bounds_mode() {
+            self.clip_level -= 1;
+        }
+        if self.clip_level == 0 {
+            self.color_painter_wrapper.as_mut().pop_clip();
+        }
     }
 
     fn fill(&mut self, fill_type: Brush) {
+        if self.clip_level > 0 {
+            return;
+        }
         let color_painter = self.color_painter_wrapper.as_mut();
         match fill_type {
             Brush::Solid {
@@ -284,6 +397,12 @@ impl<'a> ColorPainter for ColorPainterImpl<'a> {
     }
 
     fn fill_glyph(&mut self, glyph: GlyphId, brush_transform: Option<Transform>, brush: Brush) {
+        if self.color_painter_wrapper.as_mut().is_bounds_mode() {
+            self.push_clip_glyph(glyph);
+            self.pop_clip();
+            return;
+        }
+
         let color_painter = self.color_painter_wrapper.as_mut();
         let brush_transform = brush_transform.unwrap_or_default();
         match brush {
@@ -400,22 +519,29 @@ impl<'a> ColorPainter for ColorPainterImpl<'a> {
     }
 
     fn push_layer(&mut self, composite_mode: CompositeMode) {
+        if self.clip_level > 0 {
+            return;
+        }
         self.color_painter_wrapper
             .as_mut()
             .push_layer(composite_mode as u8);
     }
     fn pop_layer(&mut self) {
+        if self.clip_level > 0 {
+            return;
+        }
         self.color_painter_wrapper.as_mut().pop_layer();
     }
 }
 
-fn get_path(
+fn get_path_verbs_points(
     outlines: &BridgeOutlineCollection,
     glyph_id: u16,
     size: f32,
     coords: &BridgeNormalizedCoords,
     hinting_instance: &BridgeHintingInstance,
-    path_wrapper: Pin<&mut PathWrapper>,
+    verbs: &mut Vec<u8>,
+    points: &mut Vec<FfiPoint>,
     scaler_metrics: &mut BridgeScalerMetrics,
 ) -> bool {
     outlines
@@ -429,8 +555,8 @@ fn get_path(
                 _ => DrawSettings::unhinted(Size::new(size), &coords.normalized_coords),
             };
 
-            let mut pen_dump = PathWrapperPen { path_wrapper };
-            match glyph.draw(draw_settings, &mut pen_dump) {
+            let mut verbs_points_pen = VerbsPointsPen::new(verbs, points);
+            match glyph.draw(draw_settings, &mut verbs_points_pen) {
                 Err(_) => None,
                 Ok(metrics) => {
                     scaler_metrics.has_overlaps = metrics.has_overlaps;
@@ -439,6 +565,11 @@ fn get_path(
             }
         })
         .is_some()
+}
+
+fn shrink_verbs_points_if_needed(verbs: &mut Vec<u8>, points: &mut Vec<FfiPoint>) {
+    verbs.shrink_to(PATH_EXTRACTION_RESERVE);
+    points.shrink_to(PATH_EXTRACTION_RESERVE);
 }
 
 fn unhinted_advance_width_or_zero(
@@ -469,8 +600,8 @@ fn scaler_hinted_advance_width(
 
             let outlines = outlines.0.as_ref()?;
             let glyph = outlines.get(GlyphId::from(glyph_id))?;
-            let mut pen_dump = NoOpPen {};
-            let adjusted_metrics = glyph.draw(draw_settings, &mut pen_dump).ok()?;
+            let mut null_pen = NullPen {};
+            let adjusted_metrics = glyph.draw(draw_settings, &mut null_pen).ok()?;
             adjusted_metrics.advance_width.map(|adjusted_advance| {
                 *out_advance_width = adjusted_advance;
                 ()
@@ -841,11 +972,30 @@ fn make_font_ref_internal<'a>(font_data: &'a [u8], index: u32) -> Result<FontRef
 }
 
 fn make_font_ref<'a>(font_data: &'a [u8], index: u32) -> Box<BridgeFontRef<'a>> {
-    Box::new(BridgeFontRef(make_font_ref_internal(font_data, index).ok()))
+    let font = make_font_ref_internal(font_data, index).ok();
+    let has_any_color = font
+        .as_ref()
+        .map(|f| {
+            f.cbdt().is_ok() ||
+            f.sbix().is_ok() ||
+            // ColorGlyphCollection::get_with_format() first thing checks for presence of colr(),
+            // so we do the same:
+            f.colr().is_ok()
+        })
+        .unwrap_or_default();
+
+    Box::new(BridgeFontRef {
+        font,
+        has_any_color,
+    })
 }
 
 fn font_ref_is_valid(bridge_font_ref: &BridgeFontRef) -> bool {
-    bridge_font_ref.0.is_some()
+    bridge_font_ref.font.is_some()
+}
+
+fn has_any_color_table(bridge_font_ref: &BridgeFontRef) -> bool {
+    bridge_font_ref.has_any_color
 }
 
 fn get_outline_collection<'a>(font_ref: &'a BridgeFontRef<'a>) -> Box<BridgeOutlineCollection<'a>> {
@@ -916,6 +1066,9 @@ fn draw_colr_glyph(
 ) -> bool {
     let mut color_painter_impl = ColorPainterImpl {
         color_painter_wrapper: color_painter,
+        // In bounds mode, we do not need to track or forward to the client anything below the
+        // first clip layer, as the bounds cannot grow after that.
+        clip_level: 0,
     };
     font_ref
         .with_font(|f| {
@@ -1091,11 +1244,14 @@ fn italic_angle(font_ref: &BridgeFontRef) -> i32 {
         .unwrap_or_default()
 }
 
-pub struct BridgeFontRef<'a>(Option<FontRef<'a>>);
+pub struct BridgeFontRef<'a> {
+    font: Option<FontRef<'a>>,
+    has_any_color: bool,
+}
 
 impl<'a> BridgeFontRef<'a> {
     fn with_font<T>(&'a self, f: impl FnOnce(&'a FontRef) -> Option<T>) -> Option<T> {
-        f(self.0.as_ref()?)
+        f(self.font.as_ref()?)
     }
 }
 
@@ -1238,9 +1394,9 @@ mod bitmap {
     }
 
     pub fn has_bitmap_glyph(font_ref: &BridgeFontRef, glyph_id: u16) -> bool {
-        let glyph_id = GlyphId::from(glyph_id);
         font_ref
             .with_font(|font| {
+                let glyph_id = GlyphId::from(glyph_id);
                 let has_sbix = sbix_glyph(font, glyph_id, None).is_some();
                 let has_cblc = cblc_glyph(font, glyph_id, None).is_some();
                 Some(has_sbix || has_cblc)
@@ -1373,6 +1529,12 @@ mod ffi {
         strikeout_thickness: f32,
     }
 
+    #[derive(Clone, Copy, Default, PartialEq)]
+    struct FfiPoint {
+        x: f32,
+        y: f32,
+    }
+
     struct BridgeLocalizedName {
         string: String,
         language: String,
@@ -1475,6 +1637,9 @@ mod ffi {
         // accessible.
         fn font_ref_is_valid(bridge_font_ref: &BridgeFontRef) -> bool;
 
+        // Optimization to quickly rule out that the font has any color tables.
+        fn has_any_color_table(bridge_font_ref: &BridgeFontRef) -> bool;
+
         type BridgeOutlineCollection<'a>;
         unsafe fn get_outline_collection<'a>(
             font_ref: &'a BridgeFontRef<'a>,
@@ -1495,9 +1660,10 @@ mod ffi {
             outlines: &BridgeOutlineCollection,
             size: f32,
             coords: &BridgeNormalizedCoords,
+            do_light_hinting: bool,
             do_lcd_antialiasing: bool,
             lcd_orientation_vertical: bool,
-            preserve_linear_metrics: bool,
+            force_autohinting: bool,
         ) -> Box<BridgeHintingInstance>;
         unsafe fn make_mono_hinting_instance<'a>(
             outlines: &BridgeOutlineCollection,
@@ -1512,15 +1678,19 @@ mod ffi {
             codepoint: u32,
         ) -> u16;
 
-        fn get_path(
+        fn get_path_verbs_points(
             outlines: &BridgeOutlineCollection,
             glyph_id: u16,
             size: f32,
             coords: &BridgeNormalizedCoords,
             hinting_instance: &BridgeHintingInstance,
-            path_wrapper: Pin<&mut PathWrapper>,
+            verbs: &mut Vec<u8>,
+            points: &mut Vec<FfiPoint>,
             scaler_metrics: &mut BridgeScalerMetrics,
         ) -> bool;
+
+        fn shrink_verbs_points_if_needed(verbs: &mut Vec<u8>, points: &mut Vec<FfiPoint>);
+
         fn unhinted_advance_width_or_zero(
             font_ref: &BridgeFontRef,
             size: f32,
@@ -1649,27 +1819,6 @@ mod ffi {
 
         include!("src/ports/fontations/src/skpath_bridge.h");
 
-        type PathWrapper;
-
-        #[allow(dead_code)]
-        fn move_to(self: Pin<&mut PathWrapper>, x: f32, y: f32);
-        #[allow(dead_code)]
-        fn line_to(self: Pin<&mut PathWrapper>, x: f32, y: f32);
-        #[allow(dead_code)]
-        fn quad_to(self: Pin<&mut PathWrapper>, cx0: f32, cy0: f32, x: f32, y: f32);
-        #[allow(dead_code)]
-        fn curve_to(
-            self: Pin<&mut PathWrapper>,
-            cx0: f32,
-            cy0: f32,
-            cx1: f32,
-            cy1: f32,
-            x: f32,
-            y: f32,
-        );
-        #[allow(dead_code)]
-        fn close(self: Pin<&mut PathWrapper>);
-
         type AxisWrapper;
 
         fn populate_axis(
@@ -1685,6 +1834,7 @@ mod ffi {
 
         type ColorPainterWrapper;
 
+        fn is_bounds_mode(self: Pin<&mut ColorPainterWrapper>) -> bool;
         fn push_transform(self: Pin<&mut ColorPainterWrapper>, transform: &Transform);
         fn pop_transform(self: Pin<&mut ColorPainterWrapper>);
         fn push_clip_glyph(self: Pin<&mut ColorPainterWrapper>, glyph_id: u16);

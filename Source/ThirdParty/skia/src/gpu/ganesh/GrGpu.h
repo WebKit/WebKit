@@ -14,8 +14,8 @@
 #include "include/core/SkSpan.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/base/SkTArray.h"
 #include "include/private/gpu/ganesh/GrTypesPriv.h"
 #include "src/gpu/ganesh/GrCaps.h"
@@ -412,7 +412,10 @@ public:
     // Called before render tasks are executed during a flush.
     virtual void willExecute() {}
 
-    bool submitToGpu(GrSyncCpu sync);
+    bool submitToGpu() {
+        return this->submitToGpu(GrSubmitInfo());
+    }
+    bool submitToGpu(const GrSubmitInfo& info);
 
     virtual void submit(GrOpsRenderPass*) = 0;
 
@@ -504,7 +507,7 @@ public:
         int numReorderedDAGsOverBudget() const { return fNumReorderedDAGsOverBudget; }
         void incNumReorderedDAGsOverBudget() { fNumReorderedDAGsOverBudget++; }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
         void dump(SkString*);
         void dumpKeyValuePairs(
                 skia_private::TArray<SkString>* keys, skia_private::TArray<double>* values);
@@ -527,7 +530,7 @@ public:
 
 #else  // !GR_GPU_STATS
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
         void dump(SkString*) {}
         void dumpKeyValuePairs(skia_private::TArray<SkString>*, skia_private::TArray<double>*) {}
 #endif
@@ -620,7 +623,7 @@ public:
 
     virtual bool precompileShader(const SkData& key, const SkData& data) { return false; }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     /** Check a handle represents an actual texture in the backend API that has not been freed. */
     virtual bool isTestingOnlyBackendTexture(const GrBackendTexture&) const = 0;
 
@@ -843,7 +846,7 @@ private:
             SkSurfaces::BackendSurfaceAccess access,
             const skgpu::MutableTextureState* newState) {}
 
-    virtual bool onSubmitToGpu(GrSyncCpu sync) = 0;
+    virtual bool onSubmitToGpu(const GrSubmitInfo& info) = 0;
 
     void reportSubmitHistograms();
     virtual void onReportSubmitHistograms() {}

@@ -72,6 +72,7 @@ GRAPHITE_FILES = [
     "Image_Graphite.h",
     "Image_YUVA_Graphite.cpp",
     "Image_YUVA_Graphite.h",
+    "InternalDrawTypeFlags.h",
     "KeyContext.cpp",
     "KeyContext.h",
     "KeyHelpers.cpp",
@@ -83,9 +84,7 @@ GRAPHITE_FILES = [
     "PaintParamsKey.h",
     "PathAtlas.cpp",
     "PathAtlas.h",
-    "PipelineData.cpp",
     "PipelineData.h",
-    "PipelineDataCache.h",
     "ProxyCache.cpp",
     "ProxyCache.h",
     "QueueManager.cpp",
@@ -173,8 +172,8 @@ skia_cc_library(
         "//src/gpu/graphite/text:text_srcs",
         "//src/sksl:sksl_graphite_modules_hdrs",
         "//src/sksl:sksl_graphite_modules_srcs",
-        "//src/text/gpu:private_hdrs",
-        "//src/text/gpu:srcs",
+        "//src/text/gpu:gpu_hdrs",
+        "//src/text/gpu:gpu_srcs",
     ],
     hdrs = [
         ":_graphite_hdrs",
@@ -192,6 +191,49 @@ skia_cc_library(
     visibility = [
         "//src/gpu/graphite/mtl:__pkg__",
         "//src/gpu/graphite/vk:__pkg__",
+    ],
+    deps = [
+        "//:core",
+        "//src/base",
+        "//src/core:core_priv",
+        "//src/gpu",
+        "//src/sksl/codegen:gpu",
+    ],
+)
+
+skia_cc_library(
+    name = "graphite_TEST_UTIL",
+    testonly = True,
+    srcs = [
+        ":_graphite_srcs",
+        "//src/gpu/graphite/compute:compute_srcs",
+        "//src/gpu/graphite/geom:geom_srcs",
+        "//src/gpu/graphite/render:render_srcs",
+        "//src/gpu/graphite/task:task_srcs",
+        "//src/gpu/graphite/text:text_srcs",
+        "//src/sksl:sksl_graphite_modules_hdrs",
+        "//src/sksl:sksl_graphite_modules_srcs",
+        "//src/text/gpu:gpu_hdrs",
+        "//src/text/gpu:gpu_srcs",
+    ],
+    hdrs = [
+        ":_graphite_hdrs",
+        "//include/gpu:shared_gpu_hdrs",
+        "//include/gpu/graphite:public_hdrs",
+        "//src/gpu/graphite/compute:compute_hdrs",
+        "//src/gpu/graphite/geom:geom_hdrs",
+        "//src/gpu/graphite/render:render_hdrs",
+        "//src/gpu/graphite/task:task_hdrs",
+        "//src/gpu/graphite/text:text_hdrs",
+    ],
+    defines = [
+        "SK_GRAPHITE",
+        "GPU_TEST_UTILS",
+    ],
+    visibility = [
+        "//src/gpu/graphite/mtl:__pkg__",
+        "//src/gpu/graphite/vk:__pkg__",
+        "//tools:__subpackages__",
     ],
     deps = [
         "//:core",

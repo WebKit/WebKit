@@ -49,6 +49,16 @@ platform(
 )
 
 platform(
+    name = "windows_x64_hermetic",
+    constraint_values = [
+        "@platforms//os:windows",
+        "@platforms//cpu:x86_64",
+        ":cgo_off",
+        ":use_hermetic_toolchain",
+    ],
+)
+
+platform(
     name = "host_with_hermetic_toolchain",
     constraint_values = [
         ":cgo_off",  # Necessary to build locally (i.e. non-RBE builds).
@@ -73,6 +83,16 @@ platform(
     ],
 )
 
+# This platform covers only the ios hardware which is arm64.
+# Simulator support if any will be a separate platform.
+platform(
+    name = "ios",
+    constraint_values = [
+        "@platforms//os:ios",
+        "@platforms//cpu:arm64",
+    ],
+)
+
 # This constraint allows us to force Bazel to resolve our hermetic toolchain to build
 # the target and not a default one (e.g. on the Linux RBE instance). We do this by
 # adding the constraint to our platforms that describe the target we want Bazel to build for.
@@ -82,18 +102,6 @@ constraint_setting(name = "skia_hermetic_toolchain")
 constraint_value(
     name = "use_hermetic_toolchain",
     constraint_setting = ":skia_hermetic_toolchain",
-    visibility = ["//visibility:public"],
-)
-
-# This constraint allows us to have clang use a "trivial_abi" that saves code size but
-# breaks clients that aren't expecting it.
-# http://review.skia.org/633089
-# https://quuxplusone.github.io/blog/2018/05/02/trivial-abi-101/
-constraint_setting(name = "clang_abi_mode")
-
-constraint_value(
-    name = "trivial_abi",
-    constraint_setting = ":clang_abi_mode",
     visibility = ["//visibility:public"],
 )
 

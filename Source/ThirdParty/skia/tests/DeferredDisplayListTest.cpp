@@ -20,11 +20,11 @@
 #include "include/core/SkSurfaceProps.h"
 #include "include/core/SkTypes.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkImageGanesh.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/chromium/GrDeferredDisplayList.h"
@@ -53,13 +53,13 @@ struct GrContextOptions;
 
 #ifdef SK_GL
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #include "src/gpu/ganesh/gl/GrGLDefines.h"
 #endif
 
 #ifdef SK_VULKAN
 #include "include/gpu/ganesh/vk/GrVkBackendSurface.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/private/chromium/GrVkSecondaryCBDrawContext.h"
 #include "src/gpu/ganesh/vk/GrVkCaps.h"
 #include "tools/gpu/vk/VkTestHelper.h"

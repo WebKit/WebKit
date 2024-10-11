@@ -18,9 +18,9 @@
 #include "include/effects/SkGradientShader.h"
 #include "include/effects/SkRuntimeEffect.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/private/SkColorData.h"
 #include "include/private/base/SkAssert.h"
 #include "include/private/base/SkDebug.h"
@@ -61,7 +61,7 @@
 
 struct SkV4;
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include "src/base/SkRandom.h"
 #include "src/gpu/ganesh/GrTestUtils.h"
 #endif
@@ -980,7 +980,7 @@ std::unique_ptr<GrFragmentProcessor> MakeLinear(const SkLinearGradient& shader,
     return MakeGradientFP(shader, args, mRec, std::move(fp));
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 RandomParams::RandomParams(SkRandom* random) {
     // Set color count to min of 2 so that we don't trigger the const color optimization and make
     // a non-gradient processor.

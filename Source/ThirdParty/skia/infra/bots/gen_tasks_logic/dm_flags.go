@@ -174,9 +174,7 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 
 	sampleCount := 0
 	glPrefix := ""
-	if b.extraConfig("FakeWGPU") {
-		configs = append(configs, "grdawn_fakeWGPU")
-	} else if b.extraConfig("SwiftShader") {
+	if b.extraConfig("SwiftShader") {
 		configs = append(configs, "vk", "vkdmsaa")
 		// skbug.com/12826
 		skip(ALL, "test", ALL, "GrThreadSafeCache16Verts")
@@ -407,33 +405,40 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 			skip(ALL, "test", ALL, "PaintParamsKeyTestReduced")
 
 			if b.extraConfig("Dawn") {
+				baseConfig := ""
 				if b.extraConfig("D3D11") {
-					configs = []string{"grdawn_d3d11"}
+					baseConfig = "grdawn_d3d11"
+				} else if b.extraConfig("D3D12") {
+					baseConfig = "grdawn_d3d12"
+				} else if b.extraConfig("Metal") {
+					baseConfig = "grdawn_mtl"
+				} else if b.extraConfig("Vulkan") {
+					baseConfig = "grdawn_vk"
+				} else if b.extraConfig("GL") {
+					baseConfig = "grdawn_gl"
+				} else if b.extraConfig("GLES") {
+					baseConfig = "grdawn_gles"
 				}
-				if b.extraConfig("D3D12") {
-					configs = []string{"grdawn_d3d12"}
+
+				configs = []string{baseConfig}
+
+				if b.extraConfig("FakeWGPU") {
+					args = append(args, "--neverYieldToWebGPU")
+					args = append(args, "--useWGPUTextureView")
 				}
-				if b.extraConfig("Metal") {
-					configs = []string{"grdawn_mtl"}
+
+				if b.extraConfig("TintIR") {
+					args = append(args, "--useTintIR")
 				}
-				if b.extraConfig("Vulkan") {
-					configs = []string{"grdawn_vk"}
-				}
-				if b.extraConfig("GL") {
-					configs = []string{"grdawn_gl"}
-				}
-				if b.extraConfig("GLES") {
-					configs = []string{"grdawn_gles"}
-				}
+
 				// Shader doesn't compile
 				// https://skbug.com/14105
 				skip(ALL, "gm", ALL, "runtime_intrinsics_matrix")
 				// Crashes and failures
 				// https://skbug.com/14105
 				skip(ALL, "test", ALL, "BackendTextureTest")
-				skip(ALL, "test", ALL, "PaintParamsKeyTest")
 
-				if b.matchOs("Win10") || b.matchGpu("MaliG78", "Adreno620", "QuadroP400") {
+				if b.matchOs("Win10") || b.matchGpu("Adreno620", "MaliG78", "QuadroP400") {
 					// The Dawn Win10 and some Android/Linux device jobs OOMs (skbug.com/14410, b/318725123)
 					skip(ALL, "test", ALL, "BigImageTest_Graphite")
 				}
@@ -441,6 +446,63 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 					// The Dawn Pixel5 device job fails one compute test (b/318725123)
 					skip(ALL, "test", ALL, "Compute_AtomicOperationsOverArrayAndStructTest")
 				}
+
+				if b.extraConfig("GL") || b.extraConfig("GLES") {
+					// These GMs currently have rendering issues in Dawn compat.
+					skip(ALL, "gm", ALL, "aaclip")
+					skip(ALL, "gm", ALL, "backdrop_imagefilter_croprect_persp")
+					skip(ALL, "gm", ALL, "bigblurs")
+					skip(ALL, "gm", ALL, "blur2rectsnonninepatch")
+					skip(ALL, "gm", ALL, "blurredclippedcircle")
+					skip(ALL, "gm", ALL, "bug9331")
+					skip(ALL, "gm", ALL, "circular-clips")
+					skip(ALL, "gm", ALL, "clip_shader_persp")
+					skip(ALL, "gm", ALL, "clipcubic")
+					skip(ALL, "gm", ALL, "clippedcubic")
+					skip(ALL, "gm", ALL, "clippedcubic2")
+					skip(ALL, "gm", ALL, "complexclip_aa")
+					skip(ALL, "gm", ALL, "complexclip_aa_invert")
+					skip(ALL, "gm", ALL, "complexclip_aa_layer")
+					skip(ALL, "gm", ALL, "complexclip_aa_layer_invert")
+					skip(ALL, "gm", ALL, "complexclip_blur_tiled")
+					skip(ALL, "gm", ALL, "complexclip_bw")
+					skip(ALL, "gm", ALL, "complexclip_bw_invert")
+					skip(ALL, "gm", ALL, "complexclip_bw_layer")
+					skip(ALL, "gm", ALL, "complexclip_bw_layer_invert")
+					skip(ALL, "gm", ALL, "complexclip2")
+					skip(ALL, "gm", ALL, "complexclip2_path_aa")
+					skip(ALL, "gm", ALL, "complexclip2_path_bw")
+					skip(ALL, "gm", ALL, "complexclip2_rect_aa")
+					skip(ALL, "gm", ALL, "complexclip2_rrect_aa")
+					skip(ALL, "gm", ALL, "complexclip2_rrect_bw")
+					skip(ALL, "gm", ALL, "complexclip3_complex")
+					skip(ALL, "gm", ALL, "complexclip3_simple")
+					skip(ALL, "gm", ALL, "complexclip4_aa")
+					skip(ALL, "gm", ALL, "complexclip4_bw")
+					skip(ALL, "gm", ALL, "croppedrects")
+					skip(ALL, "gm", ALL, "filltypes")
+					skip(ALL, "gm", ALL, "filltypespersp")
+					skip(ALL, "gm", ALL, "glyph_pos_n_s")
+					skip(ALL, "gm", ALL, "mixedtextblobs")
+					skip(ALL, "gm", ALL, "parsedpaths")
+					skip(ALL, "gm", ALL, "pathinvfill")
+					skip(ALL, "gm", ALL, "persptext")
+					skip(ALL, "gm", ALL, "persptext_minimal")
+					skip(ALL, "gm", ALL, "pictureshader_persp")
+					skip(ALL, "gm", ALL, "rrect_clip_aa")
+					skip(ALL, "gm", ALL, "rrect_clip_bw")
+					skip(ALL, "gm", ALL, "simpleaaclip_path")
+					skip(ALL, "gm", ALL, "simpleaaclip_rect")
+					skip(ALL, "gm", ALL, "skbug_9319")
+					skip(ALL, "gm", ALL, "strokes_poly")
+					skip(ALL, "gm", ALL, "tall_stretched_bitmaps")
+					skip(ALL, "gm", ALL, "wacky_yuv_formats_frompixmaps")
+					skip(ALL, "gm", ALL, "windowrectangles")
+
+					// This GM is larger than Dawn compat's max texture size.
+					skip(ALL, "gm", ALL, "wacky_yuv_formats_domain")
+				}
+
 			} else if b.extraConfig("Native") {
 				if b.extraConfig("Metal") {
 					configs = []string{"grmtl"}
@@ -1473,13 +1535,14 @@ func (b *taskBuilder) dmFlags(internalHardwareLabel string) {
 	} else {
 		args = append(args, "--nonativeFonts")
 	}
-
 	if b.extraConfig("GDI") {
 		args = append(args, "--gdi")
 	}
-
 	if b.extraConfig("Fontations") {
 		args = append(args, "--fontations")
+	}
+	if b.extraConfig("AndroidNDKFonts") {
+		args = append(args, "--androidndkfonts")
 	}
 
 	// Let's make all tasks produce verbose output by default.

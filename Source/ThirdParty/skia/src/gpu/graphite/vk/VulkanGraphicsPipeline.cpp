@@ -54,6 +54,8 @@ static inline VkFormat attrib_type_to_vkformat(VertexAttribType type) {
             return VK_FORMAT_R32G32B32_SINT;
         case VertexAttribType::kInt4:
             return VK_FORMAT_R32G32B32A32_SINT;
+        case VertexAttribType::kUInt2:
+            return VK_FORMAT_R32G32_UINT;
         case VertexAttribType::kByte:
             return VK_FORMAT_R8_SINT;
         case VertexAttribType::kByte2:
@@ -447,7 +449,7 @@ static void setup_shader_stage_info(VkShaderStageFlagBits stage,
 
 static VkDescriptorSetLayout descriptor_data_to_layout(const VulkanSharedContext* sharedContext,
         const SkSpan<DescriptorData>& descriptorData) {
-    if (descriptorData.size() == 0) { return VK_NULL_HANDLE; }
+    if (descriptorData.empty()) { return VK_NULL_HANDLE; }
 
     VkDescriptorSetLayout setLayout;
     DescriptorDataToVkDescSetLayout(sharedContext, descriptorData, &setLayout);
@@ -647,56 +649,41 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
         return nullptr;
     }
 
+    skia_private::TArray<SamplerDesc> descContainer {};
     FragSkSLInfo fsSkSLInfo = BuildFragmentSkSL(sharedContext->caps(),
                                                 sharedContext->shaderCodeDictionary(),
                                                 runtimeDict,
                                                 step,
                                                 pipelineDesc.paintParamsID(),
                                                 useStorageBuffers,
-                                                renderPassDesc.fWriteSwizzle);
+                                                renderPassDesc.fWriteSwizzle,
+                                                &descContainer);
     std::string& fsSkSL = fsSkSLInfo.fSkSL;
     const bool localCoordsNeeded = fsSkSLInfo.fRequiresLocalCoords;
 
-    SkASSERT(rsrcProvider);
-    // Populate an array of immutable samplers where their index within the array indicates their
-    // binding index within the descriptor set. Nullptr indicates a "regular", dynamic sampler at
-    // that index.
+    // Populate an array of sampler ptrs where a sampler's index within the array indicates their
+    // binding index within the descriptor set. Initialize all values to nullptr, which represents a
+    // "regular", dynamic sampler at that index.
     skia_private::TArray<sk_sp<VulkanSampler>> immutableSamplers;
     immutableSamplers.push_back_n(fsSkSLInfo.fNumTexturesAndSamplers);
-    size_t dataIdx = 0, samplerIdx = 0;
-    const SkSpan<uint32_t> dataSpan = {fsSkSLInfo.fData};
-    while (dataIdx < dataSpan.size()) {
-        // Any legitimate immutable sampler will have a sampler description != 0.
-        if (fsSkSLInfo.fData[dataIdx] == 0) {
-            dataIdx++;
-            samplerIdx++;
-            continue;
+    SkASSERT(rsrcProvider);
+    // This logic relies upon Vulkan using combined texture/sampler bindings, which is necessary for
+    // ycbcr samplers per the Vulkan spec.
+    SkASSERT(!sharedContext->caps()->resourceBindingRequirements().fSeparateTextureAndSamplerBinding
+             && fsSkSLInfo.fNumTexturesAndSamplers == descContainer.size());
+    for (int i = 0; i < descContainer.size(); i++) {
+        // If a SamplerDesc is not equivalent to the default-initialized SamplerDesc, that indicates
+        // the usage of an immutable sampler. That sampler desc should then be used to obtain an
+        // actual immutable sampler from the resource provider and added at the proper index within
+        // immutableSamplers for inclusion in the pipeline layout.
+        if (descContainer.at(i) != SamplerDesc()) {
+            sk_sp<Sampler> immutableSampler =
+                    rsrcProvider->findOrCreateCompatibleSampler(descContainer.at(i));
+            sk_sp<VulkanSampler> vulkanSampler =
+                    sk_ref_sp<VulkanSampler>(static_cast<VulkanSampler*>(immutableSampler.get()));
+            SkASSERT(vulkanSampler);
+            immutableSamplers[i] = std::move(vulkanSampler);
         }
-
-        // Check whether the immutable sampler uses a known or external format to determine
-        // key stride.
-        uint32_t immutableSamplerInfo =
-                dataSpan[dataIdx] >> SamplerDesc::kImmutableSamplerInfoShift;
-        SkASSERT(immutableSamplerInfo != 0);
-        bool usesExternalFormat = static_cast<bool>(
-                ((immutableSamplerInfo & ycbcrPackaging::kUseExternalFormatMask) >>
-                        ycbcrPackaging::kUsesExternalFormatShift));
-        const int keyStride = usesExternalFormat ? ycbcrPackaging::kInt32sNeededExternalFormat
-                                                 : ycbcrPackaging::kInt32sNeededKnownFormat;
-
-        // Request a suitable immutable sampler from the resource provider
-        SamplerDesc samplerDesc;
-        memcpy(&samplerDesc,
-               &dataSpan.subspan(dataIdx, keyStride).front(),
-               sizeof(uint32_t) * keyStride);
-
-        sk_sp<Sampler> immutableSampler = rsrcProvider->findOrCreateCompatibleSampler(samplerDesc);
-        sk_sp<VulkanSampler> vulkanSampler =
-                sk_ref_sp<VulkanSampler>(static_cast<VulkanSampler*>(immutableSampler.get()));
-        SkASSERT(vulkanSampler);
-        immutableSamplers[samplerIdx++] = std::move(vulkanSampler);
-
-        dataIdx += keyStride;
     }
 
     bool hasFragmentSkSL = !fsSkSL.empty();
@@ -853,27 +840,17 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::Make(
     // After creating the pipeline object, we can clean up the VkShaderModule(s).
     destroy_shader_modules(sharedContext, vsModule, fsModule);
 
-#if defined(GRAPHITE_TEST_UTILS)
-    GraphicsPipeline::PipelineInfo pipelineInfo = {pipelineDesc.renderStepID(),
-                                                   pipelineDesc.paintParamsID(),
-                                                   std::move(vsSkSL),
-                                                   std::move(fsSkSL),
-                                                   "SPIR-V disassembly not available",
-                                                   "SPIR-V disassembly not available"};
-    GraphicsPipeline::PipelineInfo* pipelineInfoPtr = &pipelineInfo;
-#else
-    GraphicsPipeline::PipelineInfo* pipelineInfoPtr = nullptr;
+    PipelineInfo pipelineInfo{vsSkSLInfo, fsSkSLInfo};
+#if defined(GPU_TEST_UTILS)
+    pipelineInfo.fNativeVertexShader   = "SPIR-V disassembly not available";
+    pipelineInfo.fNativeFragmentShader = "SPIR-V disassmebly not available";
 #endif
 
     return sk_sp<VulkanGraphicsPipeline>(
             new VulkanGraphicsPipeline(sharedContext,
-                                       pipelineInfoPtr,
+                                       pipelineInfo,
                                        pipelineLayout,
                                        vkPipeline,
-                                       fsSkSLInfo.fHasPaintUniforms,
-                                       !step->uniforms().empty(),
-                                       fsSkSLInfo.fHasGradientBuffer,
-                                       fsSkSLInfo.fNumTexturesAndSamplers,
                                        /*ownsPipelineLayout=*/true,
                                        std::move(immutableSamplers)));
 }
@@ -1058,41 +1035,29 @@ sk_sp<VulkanGraphicsPipeline> VulkanGraphicsPipeline::MakeLoadMSAAPipeline(
         return nullptr;
     }
 
-    // TODO: If we want to track GraphicsPipeline::PipelineInfo in debug, we'll need to add
-    // PipelineDesc as an argument for this method. For now, just pass in nullptr.
+    // This is an internal shader, so don't bother filling in the shader code metadata
+    PipelineInfo pipelineInfo{};
     return sk_sp<VulkanGraphicsPipeline>(
             new VulkanGraphicsPipeline(sharedContext,
-                                       /*pipelineInfo=*/nullptr,
+                                       pipelineInfo,
                                        pipelineLayout,
                                        vkPipeline,
-                                       /*hasFragmentUniforms=*/false,
-                                       /*hasStepUniforms=*/false,
-                                       /*hasGradientBuffer=*/false,
-                                       /*numTextureSamplers*/0,
                                        /*ownsPipelineLayout=*/false,
                                        /*immutableSamplers=*/{}));
 }
 
 VulkanGraphicsPipeline::VulkanGraphicsPipeline(
-        const skgpu::graphite::SharedContext* sharedContext,
-        PipelineInfo* pipelineInfo,
+        const VulkanSharedContext* sharedContext,
+        const PipelineInfo& pipelineInfo,
         VkPipelineLayout pipelineLayout,
         VkPipeline pipeline,
-        bool hasFragmentUniforms,
-        bool hasStepUniforms,
-        bool hasGradientBuffer,
-        int numTextureSamplers,
         bool ownsPipelineLayout,
         skia_private::TArray<sk_sp<VulkanSampler>> immutableSamplers)
-        : GraphicsPipeline(sharedContext, pipelineInfo)
-        , fPipelineLayout(pipelineLayout)
-        , fPipeline(pipeline)
-        , fHasFragmentUniforms(hasFragmentUniforms)
-        , fHasStepUniforms(hasStepUniforms)
-        , fHasGradientBuffer(hasGradientBuffer)
-        , fNumTextureSamplers(numTextureSamplers)
-        , fOwnsPipelineLayout(ownsPipelineLayout)
-        , fImmutableSamplers(std::move(immutableSamplers)) {}
+    : GraphicsPipeline(sharedContext, pipelineInfo)
+    , fPipelineLayout(pipelineLayout)
+    , fPipeline(pipeline)
+    , fOwnsPipelineLayout(ownsPipelineLayout)
+    , fImmutableSamplers(std::move(immutableSamplers)) {}
 
 void VulkanGraphicsPipeline::freeGpuData() {
     auto sharedCtxt = static_cast<const VulkanSharedContext*>(this->sharedContext());

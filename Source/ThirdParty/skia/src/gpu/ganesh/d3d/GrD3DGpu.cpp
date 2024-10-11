@@ -9,8 +9,8 @@
 
 #include "include/core/SkColorSpace.h"
 #include "include/core/SkTextureCompressionType.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/d3d/GrD3DBackendContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/d3d/GrD3DBackendContext.h"
 #include "src/base/SkRectMemcpy.h"
 #include "src/core/SkCompressedDataUtils.h"
 #include "src/core/SkMipmap.h"
@@ -32,7 +32,7 @@
 #include "src/gpu/ganesh/d3d/GrD3DUtil.h"
 #include "src/sksl/SkSLCompiler.h"
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include <DXProgrammableCapture.h>
 #endif
 
@@ -98,7 +98,7 @@ GrD3DGpu::GrD3DGpu(GrDirectContext* direct, const GrContextOptions& contextOptio
     GR_D3D_CALL_ERRCHECK(fDevice->CreateFence(fCurrentFenceValue, D3D12_FENCE_FLAG_NONE,
                                               IID_PPV_ARGS(&fFence)));
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     HRESULT getAnalysis = DXGIGetDebugInterface1(0, IID_PPV_ARGS(&fGraphicsAnalysis));
     if (FAILED(getAnalysis)) {
         fGraphicsAnalysis = nullptr;
@@ -1650,7 +1650,7 @@ bool GrD3DGpu::compile(const GrProgramDesc&, const GrProgramInfo&) {
     return false;
 }
 
-#if defined(GR_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 bool GrD3DGpu::isTestingOnlyBackendTexture(const GrBackendTexture& tex) const {
     SkASSERT(GrBackendApi::kDirect3D == tex.backend());
 
@@ -1696,7 +1696,10 @@ void GrD3DGpu::deleteTestingOnlyBackendRenderTarget(const GrBackendRenderTarget&
 
     GrD3DTextureResourceInfo info;
     if (rt.getD3DTextureResourceInfo(&info)) {
-        this->submitToGpu(GrSyncCpu::kYes);
+        GrSubmitInfo submitInfo;
+        submitInfo.fSync = GrSyncCpu::kYes;
+
+        this->submitToGpu(submitInfo);
         // Nothing else to do here, will get cleaned up when the GrBackendRenderTarget
         // is deleted.
     }
@@ -1761,8 +1764,8 @@ void GrD3DGpu::takeOwnershipOfBuffer(sk_sp<GrGpuBuffer> buffer) {
     fCurrentDirectCommandList->addGrBuffer(std::move(buffer));
 }
 
-bool GrD3DGpu::onSubmitToGpu(GrSyncCpu sync) {
-    if (sync == GrSyncCpu::kYes) {
+bool GrD3DGpu::onSubmitToGpu(const GrSubmitInfo& info) {
+    if (info.fSync == GrSyncCpu::kYes) {
         return this->submitDirectCommandList(SyncQueue::kForce);
     } else {
         return this->submitDirectCommandList(SyncQueue::kSkip);

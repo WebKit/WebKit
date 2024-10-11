@@ -9,8 +9,8 @@
 
 #include "src/gpu/ganesh/d3d/GrD3DPipelineStateBuilder.h"
 
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/d3d/GrD3DTypes.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/d3d/GrD3DTypes.h"
 #include "src/core/SkReadBuffer.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/SkSLToBackend.h"
@@ -530,7 +530,8 @@ std::unique_ptr<GrD3DPipelineState> GrD3DPipelineStateBuilder::finalize() {
     this->finalizeShaders();
 
     SkSL::ProgramSettings settings;
-    settings.fSharpenTextures = true;
+    settings.fSharpenTextures =
+        this->gpu()->getContext()->priv().options().fSharpenMipmappedTextures;
     settings.fRTFlipOffset = fUniformHandler.getRTFlipOffset();
     settings.fRTFlipBinding = 0;
     settings.fRTFlipSet = 0;

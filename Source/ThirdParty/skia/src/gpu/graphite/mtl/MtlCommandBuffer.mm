@@ -9,18 +9,20 @@
 
 #include "include/gpu/graphite/BackendSemaphore.h"
 #include "include/gpu/graphite/mtl/MtlGraphiteTypes.h"
+#include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/TextureProxy.h"
+#include "src/gpu/graphite/UniformManager.h"
 #include "src/gpu/graphite/compute/DispatchGroup.h"
 #include "src/gpu/graphite/mtl/MtlBlitCommandEncoder.h"
 #include "src/gpu/graphite/mtl/MtlBuffer.h"
 #include "src/gpu/graphite/mtl/MtlCaps.h"
+#include "src/gpu/graphite/mtl/MtlCommandBuffer.h"
 #include "src/gpu/graphite/mtl/MtlComputeCommandEncoder.h"
 #include "src/gpu/graphite/mtl/MtlComputePipeline.h"
 #include "src/gpu/graphite/mtl/MtlGraphicsPipeline.h"
 #include "src/gpu/graphite/mtl/MtlRenderCommandEncoder.h"
-#include "src/gpu/graphite/mtl/MtlResourceProvider.h"
 #include "src/gpu/graphite/mtl/MtlSampler.h"
 #include "src/gpu/graphite/mtl/MtlSharedContext.h"
 #include "src/gpu/graphite/mtl/MtlTexture.h"
@@ -158,13 +160,14 @@ bool MtlCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
                                        const Texture* colorTexture,
                                        const Texture* resolveTexture,
                                        const Texture* depthStencilTexture,
-                                       SkRect viewport,
+                                       SkIRect viewport,
                                        const DrawPassList& drawPasses) {
     if (!this->beginRenderPass(renderPassDesc, colorTexture, resolveTexture, depthStencilTexture)) {
         return false;
     }
 
     this->setViewport(viewport.x(), viewport.y(), viewport.width(), viewport.height(), 0, 1);
+    this->updateIntrinsicUniforms(viewport);
 
     for (const auto& drawPass : drawPasses) {
         this->addDrawPass(drawPass.get());
@@ -479,6 +482,15 @@ void MtlCommandBuffer::bindGraphicsPipeline(const GraphicsPipeline* graphicsPipe
     fActiveRenderCommandEncoder->setDepthStencilState(depthStencilState);
     uint32_t stencilRefValue = mtlPipeline->stencilReferenceValue();
     fActiveRenderCommandEncoder->setStencilReferenceValue(stencilRefValue);
+
+    if (graphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
+        // The last texture binding is reserved for the dstCopy texture, which is not included in
+        // the list on each BindTexturesAndSamplers command. We can set it once now and any
+        // subsequent BindTexturesAndSamplers commands in a DrawPass will set the other N-1.
+        SkASSERT(fDstCopy.first && fDstCopy.second);
+        const int textureIndex = graphicsPipeline->numFragTexturesAndSamplers() - 1;
+        this->bindTextureAndSampler(fDstCopy.first, fDstCopy.second, textureIndex);
+    }
 }
 
 void MtlCommandBuffer::bindUniformBuffer(const BindBufferInfo& info, UniformSlot slot) {
@@ -591,22 +603,23 @@ void MtlCommandBuffer::setScissor(unsigned int left, unsigned int top,
 void MtlCommandBuffer::setViewport(float x, float y, float width, float height,
                                    float minDepth, float maxDepth) {
     SkASSERT(fActiveRenderCommandEncoder);
-    MTLViewport viewport = {x + fReplayTranslation.x(),
-                            y + fReplayTranslation.y(),
+    MTLViewport viewport = {x,
+                            y,
                             width,
                             height,
                             minDepth,
                             maxDepth};
     fActiveRenderCommandEncoder->setViewport(viewport);
+}
 
-    float invTwoW = 2.f / width;
-    float invTwoH = 2.f / height;
-    // Metal's framebuffer space has (0, 0) at the top left. This agrees with Skia's device coords.
-    // However, in NDC (-1, -1) is the bottom left. So we flip the origin here (assuming all
-    // surfaces we have are TopLeft origin).
-    float rtAdjust[4] = {invTwoW, -invTwoH, -1.f - x * invTwoW, 1.f + y * invTwoH};
-    fActiveRenderCommandEncoder->setVertexBytes(rtAdjust, 4 * sizeof(float),
-                                                MtlGraphicsPipeline::kIntrinsicUniformBufferIndex);
+void MtlCommandBuffer::updateIntrinsicUniforms(SkIRect viewport) {
+    UniformManager intrinsicValues{Layout::kMetal};
+    CollectIntrinsicUniforms(fSharedContext->caps(), viewport, fDstCopyBounds, &intrinsicValues);
+    SkSpan<const char> bytes = intrinsicValues.finish();
+    fActiveRenderCommandEncoder->setVertexBytes(
+            bytes.data(), bytes.size_bytes(), MtlGraphicsPipeline::kIntrinsicUniformBufferIndex);
+    fActiveRenderCommandEncoder->setFragmentBytes(
+            bytes.data(), bytes.size_bytes(), MtlGraphicsPipeline::kIntrinsicUniformBufferIndex);
 }
 
 void MtlCommandBuffer::setBlendConstants(float* blendConstants) {

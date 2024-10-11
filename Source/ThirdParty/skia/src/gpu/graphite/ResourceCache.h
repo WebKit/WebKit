@@ -17,7 +17,7 @@
 #include "src/gpu/GpuTypesPriv.h"
 #include "src/gpu/graphite/ResourceTypes.h"
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 #include <functional>
 #endif
 #include <vector>
@@ -34,7 +34,7 @@ class GraphiteResourceKey;
 class ProxyCache;
 class Resource;
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
 class Texture;
 #endif
 
@@ -82,9 +82,11 @@ public:
 
     size_t currentBudgetedBytes() const { return fBudgetedBytes; }
 
+    size_t currentPurgeableBytes() const { return fPurgeableBytes; }
+
     void dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const;
 
-#if defined(GRAPHITE_TEST_UTILS)
+#if defined(GPU_TEST_UTILS)
     void forceProcessReturnedResources() { this->processReturnedResources(); }
 
     void forcePurgeAsNeeded() { this->purgeAsNeeded(); }
@@ -172,6 +174,8 @@ private:
     // Our budget
     size_t fMaxBytes;
     size_t fBudgetedBytes = 0;
+
+    size_t fPurgeableBytes = 0;
 
     SingleOwner* fSingleOwner = nullptr;
 

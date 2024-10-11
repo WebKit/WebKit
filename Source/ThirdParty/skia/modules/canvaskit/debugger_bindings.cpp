@@ -36,11 +36,11 @@
 #include <emscripten/bind.h>
 
 #ifdef CK_ENABLE_WEBGL
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrDirectContext.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
-#include "include/gpu/gl/GrGLInterface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLInterface.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 
 #include <GL/gl.h>
 #include <emscripten/html5.h>

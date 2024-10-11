@@ -22,8 +22,8 @@ class VulkanSharedContext;
 #endif
 
 
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/vk/GrVkTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/vk/GrVkTypes.h"
 #include "include/gpu/vk/VulkanTypes.h"
 
 class GrDirectContext;

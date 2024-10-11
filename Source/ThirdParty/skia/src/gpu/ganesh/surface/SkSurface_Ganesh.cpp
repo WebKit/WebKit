@@ -16,11 +16,11 @@
 #include "include/core/SkSurface.h"
 #include "include/core/SkSurfaceProps.h"
 #include "include/gpu/GpuTypes.h"
-#include "include/gpu/GrBackendSurface.h"
-#include "include/gpu/GrContextThreadSafeProxy.h"
-#include "include/gpu/GrDirectContext.h"
-#include "include/gpu/GrRecordingContext.h"
-#include "include/gpu/GrTypes.h"
+#include "include/gpu/ganesh/GrBackendSurface.h"
+#include "include/gpu/ganesh/GrContextThreadSafeProxy.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
+#include "include/gpu/ganesh/GrRecordingContext.h"
+#include "include/gpu/ganesh/GrTypes.h"
 #include "include/gpu/ganesh/SkSurfaceGanesh.h"
 #include "include/private/base/SkTo.h"
 #include "include/private/chromium/GrDeferredDisplayList.h"
@@ -50,7 +50,7 @@
 
 #ifdef SK_IN_RENDERENGINE
 #include "include/gpu/ganesh/gl/GrGLBackendSurface.h"
-#include "include/gpu/gl/GrGLTypes.h"
+#include "include/gpu/ganesh/gl/GrGLTypes.h"
 #endif
 
 #include <algorithm>
@@ -504,7 +504,8 @@ bool SkSurface_Ganesh::replaceBackendTexture(const GrBackendTexture& backendText
     int sampleCnt = oldTexture->asRenderTarget()->numSamples();
     GrColorType grColorType = SkColorTypeToGrColorType(this->getCanvas()->imageInfo().colorType());
     if (!validate_backend_texture(
-                rContext->priv().caps(), backendTexture, sampleCnt, grColorType, true)) {
+                rContext->priv().caps(), backendTexture, sampleCnt, grColorType,
+                /* texturable= */ true)) {
         return false;
     }
 
@@ -705,7 +706,7 @@ sk_sp<SkSurface> WrapBackendRenderTarget(GrRecordingContext* rContext,
                                          ReleaseContext releaseContext) {
     auto releaseHelper = skgpu::RefCntedCallback::Make(relProc, releaseContext);
 
-    if (!rContext) {
+    if (!rContext || !rt.isValid()) {
         return nullptr;
     }
 

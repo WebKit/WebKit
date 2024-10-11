@@ -230,20 +230,14 @@ static void reset_object(T* dst, Args&&... args) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SkPDFDocument::SkPDFDocument(SkWStream* stream,
-                             SkPDF::Metadata metadata)
+SkPDFDocument::SkPDFDocument(SkWStream* stream, SkPDF::Metadata metadata)
     : SkDocument(stream)
-    , fMetadata(std::move(metadata)) {
-    constexpr float kDpiForRasterScaleOne = 72.0f;
-    if (fMetadata.fRasterDPI != kDpiForRasterScaleOne) {
-        fInverseRasterScale = kDpiForRasterScaleOne / fMetadata.fRasterDPI;
-        fRasterScale        = fMetadata.fRasterDPI / kDpiForRasterScaleOne;
-    }
-    if (fMetadata.fStructureElementTreeRoot) {
-        fTagTree.init(fMetadata.fStructureElementTreeRoot, fMetadata.fOutline);
-    }
-    fExecutor = fMetadata.fExecutor;
-}
+    , fMetadata(std::move(metadata))
+    , fRasterScale(fMetadata.fRasterDPI / SK_ScalarDefaultRasterDPI)
+    , fInverseRasterScale(SK_ScalarDefaultRasterDPI / fMetadata.fRasterDPI)
+    , fExecutor(fMetadata.fExecutor)
+    , fTagTree(fMetadata.fStructureElementTreeRoot, fMetadata.fOutline)
+{}
 
 SkPDFDocument::~SkPDFDocument() {
     // subclasses of SkDocument must call close() in their destructors.
@@ -399,6 +393,10 @@ void SkPDFDocument::onEndPage() {
     // The StructParents unique identifier for each page is just its
     // 0-based page index.
     page->insertInt("StructParents", SkToInt(this->currentPageIndex()));
+
+    // Tabs is PDF 1.5, but setting it checks an accessibility box.
+    page->insertName("Tabs", "S");
+
     fPages.emplace_back(std::move(page));
 }
 
@@ -578,11 +576,13 @@ int SkPDFDocument::createStructParentKeyForNodeId(int nodeId) {
 
 static std::vector<const SkPDFFont*> get_fonts(const SkPDFDocument& canon) {
     std::vector<const SkPDFFont*> fonts;
-    fonts.reserve(canon.fFontMap.count());
+    fonts.reserve(canon.fStrikes.count());
+    canon.fStrikes.foreach([&fonts](const sk_sp<SkPDFStrike>& strike) {
+        for (const auto& [unused, font] : strike->fFontMap) {
+            fonts.push_back(&font);
+        }
+    });
     // Sort so the output PDF is reproducible.
-    for (const auto& [unused, font] : canon.fFontMap) {
-        fonts.push_back(&font);
-    }
     std::sort(fonts.begin(), fonts.end(), [](const SkPDFFont* u, const SkPDFFont* v) {
         return u->indirectReference().fValue < v->indirectReference().fValue;
     });
