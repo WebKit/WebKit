@@ -142,8 +142,6 @@ private:
     void runFocusingStepsForAutofocus() final;
     HTMLElement* validationAnchorElement() final { return this; }
 
-    bool isFormControlElement() const final { return true; }
-
     // These functions can be called concurrently for ValidityState.
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
@@ -161,10 +159,6 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLFormControlElement)
     static bool isType(const WebCore::Element& element) { return element.isFormControlElement(); }
-    static bool isType(const WebCore::Node& node)
-    {
-        auto* element = dynamicDowncast<WebCore::Element>(node);
-        return element && isType(*element);
-    }
-    static bool isType(const WebCore::FormListedElement& element) { return element.isFormControlElement(); }
+    static bool isType(const WebCore::Node& node) { return node.isFormControlElement(); }
+    static bool isType(const WebCore::FormListedElement& listedElement) { return listedElement.asHTMLElement().isFormControlElement(); }
 SPECIALIZE_TYPE_TRAITS_END()

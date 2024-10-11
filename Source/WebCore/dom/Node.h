@@ -239,6 +239,8 @@ public:
     bool isSVGUnknownElement() const { return isSVGElement() && isUnknownElement(); }
     bool isMathMLUnknownElement() const { return isMathMLElement() && isUnknownElement(); }
 
+    bool isFormControlElement() const { return hasTypeFlag(TypeFlag::IsFormControlElement); }
+
     bool isPseudoElement() const { return pseudoId() != PseudoId::None; }
     bool isBeforePseudoElement() const { return pseudoId() == PseudoId::Before; }
     bool isAfterPseudoElement() const { return pseudoId() == PseudoId::After; }
@@ -361,9 +363,9 @@ public:
     bool hasInvalidRenderer() const { return hasStateFlag(StateFlag::HasInvalidRenderer); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStateFlag(StateFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
-    bool isEditingText() const { return isTextNode() && hasTypeFlag(TypeFlag::IsSpecialInternalNode); }
+    bool isEditingText() const { return isTextNode() && hasStateFlag(StateFlag::IsSpecialInternalNode); }
 
-    bool isDocumentFragmentForInnerOuterHTML() const { return isDocumentFragment() && hasTypeFlag(TypeFlag::IsSpecialInternalNode); }
+    bool isDocumentFragmentForInnerOuterHTML() const { return isDocumentFragment() && hasStateFlag(StateFlag::IsSpecialInternalNode); }
 
     bool hasHeldBackChildrenChanged() const { return hasStateFlag(StateFlag::HasHeldBackChildrenChanged); }
     void setHasHeldBackChildrenChanged() { setStateFlag(StateFlag::HasHeldBackChildrenChanged); }
@@ -609,7 +611,7 @@ protected:
         IsMathMLElement = 1 << 6,
         IsShadowRoot = 1 << 7,
         IsUnknownElement = 1 << 8,
-        IsSpecialInternalNode = 1 << 9, // DocumentFragment node for innerHTML/outerHTML or EditingText node.
+        IsFormControlElement = 1 << 9,
         HasCustomStyleResolveCallbacks = 1 << 10,
         HasDidMoveToNewDocument = 1 << 11,
     };
@@ -633,7 +635,9 @@ protected:
         HasHeldBackChildrenChanged = 1 << 9,
         HasStartedDeletion = 1 << 10,
         ContainsSelectionEndPoint = 1 << 11,
-        // 4 bits free.
+        IsSpecialInternalNode = 1 << 12, // DocumentFragment node for innerHTML/outerHTML or EditingText node.
+
+        // 3 bits free.
     };
 
     enum class ElementStateFlag : uint16_t {

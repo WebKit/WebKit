@@ -44,7 +44,6 @@ public:
 
     bool isFormListedElement() const final { return true; }
     bool isValidatedFormListedElement() const final { return true; }
-    bool isFormControlElement() const final { return false; }
 
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
     FormListedElement* asFormListedElement() final { return this; }
