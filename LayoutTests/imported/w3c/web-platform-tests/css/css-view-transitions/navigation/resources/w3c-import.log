@@ -18,8 +18,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/at-rule-opt-in-auto-with-types.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/at-rule-opt-in-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/at-rule-opt-in-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/auto-name-from-id.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/chromium-paint-holding-timeout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/common.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/custom-scrollbar.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/opt-in-style.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/opt-out-style.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/navigation/resources/outbound-before-render.html
