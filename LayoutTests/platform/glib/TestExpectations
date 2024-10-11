@@ -2982,14 +2982,9 @@ media/now-playing-status-without-media.html [ Skip ]
 fast/dom/Window/slow-unload-handler.html [ WontFix ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
-# Incomplete WebSpeech implementation, missing speech-to-text support.
+# Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
 http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ Skip ]
-
-# The current SDK doesn't ship any Spiel voice provider. The piper voice provider requires rust
-# nightly, which complicates integration in SDKs.
-fast/speechsynthesis/voices-non-mock.html [ Failure ]
-fast/speechsynthesis/speech-synthesis-real-client-version.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]

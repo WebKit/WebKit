@@ -120,15 +120,12 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebCore_LIBRARIES Libseccomp::Libseccomp)
 endif ()
 
-if (USE_SPIEL)
-    list(APPEND WebCore_SOURCES
-        platform/spiel/PlatformSpeechSynthesizerSpiel.cpp
-    )
+if (ENABLE_SPEECH_SYNTHESIS)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${SPIEL_INCLUDE_DIRS}
+        ${Flite_INCLUDE_DIRS}
     )
     list(APPEND WebCore_LIBRARIES
-        LibSpiel::LibSpiel
+        ${Flite_LIBRARIES}
     )
 endif ()
 

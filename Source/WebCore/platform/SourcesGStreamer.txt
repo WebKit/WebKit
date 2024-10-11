@@ -108,7 +108,9 @@ platform/gstreamer/GStreamerQuirkRealtek.cpp
 platform/gstreamer/GStreamerQuirkRialto.cpp
 platform/gstreamer/GStreamerQuirkWesteros.cpp
 platform/gstreamer/GStreamerQuirks.cpp
+platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp
 platform/gstreamer/VideoEncoderPrivateGStreamer.cpp @no-unify
+platform/gstreamer/WebKitFliteSourceGStreamer.cpp @no-unify
 
 platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 
