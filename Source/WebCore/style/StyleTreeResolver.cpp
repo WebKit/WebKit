@@ -1341,8 +1341,10 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
 
     // Mark anchor as eligible target for anchor-positioned elements
     if (isAnchor) {
-        for (auto& anchorName : style->anchorNames()) {
-            if (m_document->styleScope().anchorElements().add(element).isNewEntry) {
+        bool isNewAnchor = m_document->styleScope().anchorElements().add(element).isNewEntry;
+
+        if (isNewAnchor) {
+            for (auto& anchorName : style->anchorNames()) {
                 m_document->styleScope().anchorsForAnchorName().ensure(anchorName, [&] {
                     return Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> { };
                 }).iterator->value.append(element);
