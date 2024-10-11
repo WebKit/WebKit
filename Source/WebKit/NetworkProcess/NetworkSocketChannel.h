@@ -57,6 +57,7 @@ class WebSocketTask;
 class NetworkConnectionToWebProcess;
 class NetworkProcess;
 class NetworkSession;
+struct SharedPreferencesForWebProcess;
 
 class NetworkSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public CanMakeCheckedPtr<NetworkSocketChannel> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSocketChannel);
@@ -68,6 +69,7 @@ public:
     ~NetworkSocketChannel();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess();
 
     friend class WebSocketTask;
 
