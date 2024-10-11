@@ -33,6 +33,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 static uint8_t* copyBuffer(std::span<const uint8_t> buffer)
@@ -178,3 +180,5 @@ std::optional<Attachment> Decoder::takeLastAttachment()
 }
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

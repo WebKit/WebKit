@@ -42,6 +42,8 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // FIXME: Add daemon plist to repository.
 
 namespace WebKit {
@@ -152,3 +154,5 @@ int PCMDaemonMain(int argc, const char** argv)
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

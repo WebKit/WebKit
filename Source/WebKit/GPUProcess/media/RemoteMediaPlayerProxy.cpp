@@ -73,6 +73,8 @@
 
 #include <wtf/NativePromise.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -1325,5 +1327,7 @@ void RemoteMediaPlayerProxy::audioOutputDeviceChanged(String&& deviceId)
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

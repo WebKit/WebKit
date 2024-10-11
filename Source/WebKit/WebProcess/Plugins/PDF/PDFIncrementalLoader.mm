@@ -45,6 +45,8 @@
 
 #import "PDFKitSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -864,5 +866,7 @@ void PDFIncrementalLoader::logState(TextStream& ts)
 #endif
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)

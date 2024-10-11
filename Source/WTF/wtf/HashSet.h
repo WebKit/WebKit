@@ -20,6 +20,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <initializer_list>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -569,3 +573,5 @@ inline void HashSet<T, U, V, W>::checkConsistency() const
 } // namespace WTF
 
 using WTF::HashSet;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

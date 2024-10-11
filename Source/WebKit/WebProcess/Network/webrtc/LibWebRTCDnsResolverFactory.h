@@ -27,6 +27,10 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <WebCore/LibWebRTCMacros.h>
 
 ALLOW_COMMA_BEGIN
@@ -35,6 +39,8 @@ ALLOW_COMMA_END
 
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 

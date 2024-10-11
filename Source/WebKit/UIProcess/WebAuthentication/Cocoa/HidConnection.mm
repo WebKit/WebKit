@@ -33,6 +33,8 @@
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace fido;
 
@@ -160,5 +162,6 @@ void HidConnection::registerDataReceivedCallbackInternal()
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(WEB_AUTHN)

@@ -22,6 +22,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <limits.h>
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
@@ -1447,3 +1451,5 @@ using WTF::equal;
 using WTF::isUnicodeWhitespace;
 using WTF::deprecatedIsSpaceOrNewline;
 using WTF::deprecatedIsNotSpaceOrNewline;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

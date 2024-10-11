@@ -28,6 +28,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <mutex>
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
@@ -35,6 +39,8 @@
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSanitizerSupport.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

@@ -47,6 +47,8 @@
 #import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
     if (!coreScrollbarStyle)
@@ -1812,5 +1814,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
 }
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

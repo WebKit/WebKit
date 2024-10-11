@@ -23,6 +23,8 @@
 #include <array>
 #include <wtf/text/StringImpl.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 enum HexConversionMode { Lowercase, Uppercase };
@@ -92,3 +94,5 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, HexNumberBuffer);
 
 using WTF::hex;
 using WTF::Lowercase;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

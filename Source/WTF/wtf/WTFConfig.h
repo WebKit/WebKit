@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/ExportMacros.h>
@@ -32,6 +36,8 @@
 #include <wtf/PtrTag.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/Signals.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if USE(SYSTEM_MALLOC)
 namespace Gigacage {

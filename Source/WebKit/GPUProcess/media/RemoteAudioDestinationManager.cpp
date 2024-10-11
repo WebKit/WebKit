@@ -44,6 +44,8 @@
 #include <WebCore/WebAudioBufferList.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection->connection(), completion)
 
@@ -282,5 +284,7 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sha
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

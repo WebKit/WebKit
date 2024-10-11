@@ -30,6 +30,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // TrailingArray offers the feature trailing array in the derived class.
@@ -179,3 +181,5 @@ protected:
 } // namespace WTF
 
 using WTF::TrailingArray;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

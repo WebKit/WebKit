@@ -32,6 +32,8 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePassEncoderProxy);
@@ -123,5 +125,7 @@ void RemoteComputePassEncoderProxy::setLabelInternal(const String& label)
 }
 
 } // namespace WebKit::WebGPU
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS)

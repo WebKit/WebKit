@@ -65,6 +65,8 @@
 #include <WebCore/AuthenticatorTransport.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 using namespace Inspector;
@@ -2575,3 +2577,5 @@ std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemo
 #endif // !PLATFORM(COCOA)
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

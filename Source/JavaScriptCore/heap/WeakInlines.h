@@ -25,9 +25,13 @@
 
 #pragma once
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "JSCast.h"
 #include "WeakSetInlines.h"
 #include <wtf/Assertions.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
 

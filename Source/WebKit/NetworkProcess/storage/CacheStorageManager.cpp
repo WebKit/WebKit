@@ -36,6 +36,8 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 static constexpr auto cachesListFileName = "cacheslist"_s;
@@ -545,3 +547,5 @@ String CacheStorageManager::representationString()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

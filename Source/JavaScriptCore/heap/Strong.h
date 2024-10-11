@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "Handle.h"
 #include "HandleSet.h"
 #include "Heap.h"
@@ -200,3 +204,5 @@ template<typename P> struct HashTraits<JSC::Strong<P>> : SimpleClassHashTraits<J
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

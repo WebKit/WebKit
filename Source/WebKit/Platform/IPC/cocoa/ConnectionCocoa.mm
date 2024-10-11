@@ -48,8 +48,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
-
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace IPC {
 
@@ -635,3 +636,5 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
 }
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

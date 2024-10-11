@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "AllocatorForMode.h"
 #include "AllocatorInlines.h"
 #include "CompleteSubspaceInlines.h"
@@ -483,3 +487,5 @@ inline bool isWebAssemblyInstance(const JSCell* cell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

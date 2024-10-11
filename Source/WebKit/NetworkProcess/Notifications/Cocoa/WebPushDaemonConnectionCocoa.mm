@@ -36,6 +36,8 @@
 #import "WebPushDaemonConstants.h"
 #import <wtf/spi/darwin/XPCSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit::WebPushD { 
 
 void Connection::newConnectionWasInitialized() const
@@ -83,5 +85,7 @@ bool Connection::performSendWithAsyncReplyWithoutUsingIPCConnection(UniqueRef<IP
 }
 
 } // namespace WebKit::WebPushD
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA) && ENABLE(WEB_PUSH_NOTIFICATIONS)

@@ -44,6 +44,8 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(CF)
 typedef const struct __CFData* CFDataRef;
 #endif
@@ -343,3 +345,5 @@ WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);
 } // namespace WTF
 
 namespace FileSystem = WTF::FileSystemImpl;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

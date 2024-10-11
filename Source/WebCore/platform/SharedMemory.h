@@ -42,6 +42,8 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if PLATFORM(COCOA)
 OBJC_CLASS NSData;
 #endif
@@ -151,3 +153,5 @@ private:
 };
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

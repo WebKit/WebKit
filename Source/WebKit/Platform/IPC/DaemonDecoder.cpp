@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DaemonDecoder.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 namespace Daemon {
@@ -61,3 +63,5 @@ std::span<const uint8_t> Decoder::decodeFixedLengthReference(size_t size)
 } // namespace Daemon
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

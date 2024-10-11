@@ -31,6 +31,8 @@
 #include <wtf/Atomics.h>
 #include <wtf/Ref.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 class Decoder;
 class Encoder;
@@ -144,3 +146,5 @@ protected:
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

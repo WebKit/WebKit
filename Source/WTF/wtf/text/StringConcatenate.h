@@ -32,6 +32,8 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if defined(NDEBUG)
 #define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() do { } while (0)
 #else
@@ -659,3 +661,5 @@ using WTF::asASCIILowercase;
 using WTF::asASCIIUppercase;
 using WTF::interleave;
 using WTF::pad;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -64,6 +64,8 @@
 #include <boost/variant.hpp>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace brigand
 {
   template <class... T> struct list {};
@@ -2486,3 +2488,5 @@ namespace brigand
   template<std::uint64_t Value>
   struct double_ : real_<double, std::uint64_t,Value> {};
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

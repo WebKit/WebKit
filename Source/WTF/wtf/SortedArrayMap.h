@@ -28,6 +28,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // SortedArrayMap is a map like HashMap, but it's read-only. It uses much less memory than HashMap.
@@ -424,3 +426,5 @@ using WTF::PackedLettersLiteral;
 using WTF::SortedArrayMap;
 using WTF::SortedArraySet;
 using WTF::makeOptionalFromPointer;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -45,6 +45,8 @@
 
 OBJC_CLASS NSString;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class AdaptiveStringSearcherTables;
@@ -1501,3 +1503,5 @@ using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
 using WTF::nullStringView;
 using WTF::emptyStringView;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -30,6 +30,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 // For now, the only way to serialize/deserialize SecTrust objects is via
@@ -74,5 +76,7 @@ private:
 };
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

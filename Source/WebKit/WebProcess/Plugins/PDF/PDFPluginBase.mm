@@ -76,6 +76,8 @@
 
 #import "PDFKitSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1245,5 +1247,7 @@ std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN)

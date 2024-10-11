@@ -36,6 +36,8 @@
 #include <wtf/cf/VectorCF.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 // Session state keys.
@@ -1181,3 +1183,5 @@ bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState& sessi
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

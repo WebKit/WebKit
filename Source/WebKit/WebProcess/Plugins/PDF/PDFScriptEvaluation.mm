@@ -36,6 +36,8 @@
 #import <wtf/text/StringView.h>
 #import <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit::PDFScriptEvaluation {
 
 static bool isPrintScript(const String& script)
@@ -141,5 +143,7 @@ void runScripts(CGPDFDocumentRef document, PrintingCallback&& callback)
 }
 
 } // namespace WebKit::PDFScriptEvaluation
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN)

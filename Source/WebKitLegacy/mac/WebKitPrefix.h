@@ -30,6 +30,8 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <wtf/Platform.h>
+
 #include <TargetConditionals.h>
 
 #ifdef __cplusplus

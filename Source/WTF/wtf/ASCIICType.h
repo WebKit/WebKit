@@ -27,6 +27,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/LChar.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But in the WebKit project, all uses of those functions
 // are in code processing something that's not locale-specific. These equivalents
@@ -278,3 +280,5 @@ using WTF::toASCIILowerUnchecked;
 using WTF::toASCIIUpper;
 using WTF::upperNibbleToASCIIHexDigit;
 using WTF::upperNibbleToLowercaseASCIIHexDigit;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

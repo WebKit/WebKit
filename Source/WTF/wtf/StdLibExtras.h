@@ -43,6 +43,8 @@
 #include <wtf/IterationStatus.h>
 #include <wtf/TypeCasts.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #define SINGLE_ARG(...) __VA_ARGS__ // useful when a macro argument includes a comma
 
 // Use this macro to declare and define a debug-only global variable that may have a
@@ -1032,3 +1034,5 @@ using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;
 using WTF::Invocable;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

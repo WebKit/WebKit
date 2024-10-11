@@ -31,6 +31,8 @@
 #import <sys/mman.h>
 #import <sys/stat.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -118,3 +120,5 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

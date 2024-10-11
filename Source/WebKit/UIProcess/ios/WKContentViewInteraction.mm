@@ -216,6 +216,8 @@
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(BROWSERENGINEKIT)
 
 @interface WKUITextSelectionRect : UITextSelectionRect
@@ -15279,5 +15281,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

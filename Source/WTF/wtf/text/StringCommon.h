@@ -37,6 +37,8 @@
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 inline std::span<const LChar> span(const LChar& character)
@@ -1175,3 +1177,5 @@ using WTF::isLatin1;
 using WTF::span;
 using WTF::span8;
 using WTF::charactersContain;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

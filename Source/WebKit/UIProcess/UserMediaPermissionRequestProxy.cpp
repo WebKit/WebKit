@@ -29,6 +29,8 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -235,3 +237,5 @@ bool UserMediaPermissionRequestProxy::canRequestDisplayCapturePermission()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

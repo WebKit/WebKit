@@ -38,6 +38,8 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 static constexpr auto saltFileName = "salt"_s;
@@ -540,3 +542,4 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

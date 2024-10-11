@@ -29,6 +29,8 @@
 #include <wtf/SaturatedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class StringBuilder {
@@ -365,3 +367,5 @@ struct SerializeUsingStringBuilder {
 
 using WTF::StringBuilder;
 using WTF::SerializeUsingStringBuilder;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

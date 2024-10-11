@@ -33,6 +33,8 @@
 #include <wtf/Atomics.h>
 #include <wtf/Function.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 class SharedCARingBufferBase : public WebCore::CARingBuffer {
@@ -79,3 +81,5 @@ protected:
 }
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,6 +33,8 @@
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 struct ExceptionData;
 class CertificateInfo;
@@ -191,3 +193,5 @@ template<> struct Coder<WTF::String> {
 
 } // namespace Daemon
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

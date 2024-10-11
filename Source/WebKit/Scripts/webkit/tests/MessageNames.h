@@ -28,6 +28,8 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/text/ASCIILiteral.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 enum class ReceiverName : uint8_t {
@@ -282,3 +284,5 @@ template<> constexpr bool isValidEnum<IPC::MessageName, void>(std::underlying_ty
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "CoreIPCDateComponents.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 NSUInteger calendarUnitForComponentIndex[] = {
@@ -80,3 +82,4 @@ bool CoreIPCDateComponents::hasCorrectNumberOfComponentValues(const Vector<NSInt
 
 } // namespace WebKit
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -28,6 +28,8 @@
 
 #include <WebCore/SharedMemory.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -111,3 +113,5 @@ SharedStringHash* SharedStringHashTableReadOnly::findSlot(SharedStringHash share
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

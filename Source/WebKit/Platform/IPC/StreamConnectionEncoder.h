@@ -29,6 +29,8 @@
 #include "MessageNames.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 template<typename, typename> struct ArgumentCoder;
@@ -104,3 +106,5 @@ private:
 };
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

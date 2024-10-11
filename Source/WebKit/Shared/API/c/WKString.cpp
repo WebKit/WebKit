@@ -33,6 +33,8 @@
 #include <WebCore/WebCoreJITOperations.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WKTypeID WKStringGetTypeID()
 {
     return WebKit::toAPI(API::String::APIType);
@@ -144,3 +146,5 @@ JSStringRef WKStringCopyJSString(WKStringRef stringRef)
     WebCore::populateJITOperations();
     return OpaqueJSString::tryCreate(WebKit::toImpl(stringRef)->string()).leakRef();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

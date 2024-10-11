@@ -51,6 +51,8 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace API {
 using namespace WebKit::NetworkCache;
 using namespace FileSystem;
@@ -646,5 +648,7 @@ const std::error_category& contentRuleListStoreErrorCategory()
 }
 
 } // namespace API
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

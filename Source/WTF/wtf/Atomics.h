@@ -29,6 +29,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 ALWAYS_INLINE bool hasFence(std::memory_order order)
@@ -498,3 +500,5 @@ using WTF::InputAndValue;
 using WTF::inputAndValue;
 using WTF::ensurePointer;
 using WTF::opaqueMixture;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

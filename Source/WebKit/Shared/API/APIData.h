@@ -32,6 +32,8 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 OBJC_CLASS NSData;
 
 namespace API {
@@ -103,3 +105,5 @@ private:
 } // namespace API
 
 SPECIALIZE_TYPE_TRAITS_API_OBJECT(Data);
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

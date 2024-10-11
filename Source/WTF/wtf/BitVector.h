@@ -37,6 +37,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 class CachedBitVector;
 }
@@ -559,3 +561,5 @@ template<> struct HashTraits<BitVector> : public CustomHashTraits<BitVector> { }
 } // namespace WTF
 
 using WTF::BitVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

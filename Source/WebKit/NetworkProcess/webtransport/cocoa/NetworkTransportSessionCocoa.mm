@@ -35,6 +35,8 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint)
@@ -214,3 +216,5 @@ void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandl
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

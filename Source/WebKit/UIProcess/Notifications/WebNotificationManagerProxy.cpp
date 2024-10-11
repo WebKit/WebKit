@@ -40,6 +40,8 @@
 #include <WebCore/NotificationData.h>
 #include <WebCore/SecurityOriginData.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -387,3 +389,5 @@ void WebNotificationManagerProxy::getNotifications(const URL& url, const String&
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

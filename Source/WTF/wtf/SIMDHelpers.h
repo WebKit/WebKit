@@ -24,6 +24,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <bit>
 #include <optional>
 #include <wtf/StdLibExtras.h>
@@ -542,3 +546,5 @@ ALWAYS_INLINE const CharacterType* findInterleaved(std::span<const CharacterType
 }
 
 namespace SIMD = WTF::SIMD;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

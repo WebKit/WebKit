@@ -27,6 +27,10 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "LibWebRTCMacros.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "WebRTCProvider.h"
@@ -47,6 +51,8 @@ IGNORE_CLANG_WARNINGS_END
 ALLOW_COMMA_END
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace rtc {
 class NetworkManager;

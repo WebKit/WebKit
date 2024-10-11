@@ -35,6 +35,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 enum class MessageFlags : uint8_t;
@@ -134,3 +136,5 @@ inline void Encoder::encodeObject(const T& object)
 }
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

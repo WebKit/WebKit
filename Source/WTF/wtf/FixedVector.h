@@ -27,6 +27,8 @@
 
 #include <wtf/EmbeddedFixedVector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename T>
@@ -268,3 +270,5 @@ FixedVector<ReturnType> map(const FixedVector<T>& source, MapFunction&& mapFunct
 } // namespace WTF
 
 using WTF::FixedVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

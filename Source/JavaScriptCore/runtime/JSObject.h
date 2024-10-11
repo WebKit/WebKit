@@ -48,6 +48,8 @@
 #include "SparseArrayValueMap.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace DOMJIT {
 class Signature;
@@ -1811,3 +1813,5 @@ bool setterThatIgnoresPrototypeProperties(JSGlobalObject*, JSValue thisValue, JS
     static_assert(DerivedClass::destroy == BaseClass::destroy);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

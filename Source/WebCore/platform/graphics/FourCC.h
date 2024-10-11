@@ -27,6 +27,8 @@
 
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 struct FourCC {
@@ -72,3 +74,5 @@ template<> struct LogArgument<WebCore::FourCC> {
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

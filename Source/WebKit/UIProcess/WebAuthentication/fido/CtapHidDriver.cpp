@@ -35,6 +35,8 @@
 #include <wtf/WeakRandomNumber.h>
 #include <wtf/text/Base64.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace fido;
 
@@ -270,5 +272,7 @@ void CtapHidDriver::cancel()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUTHN)

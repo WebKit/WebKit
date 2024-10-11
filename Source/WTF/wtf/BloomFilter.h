@@ -28,6 +28,8 @@
 #include <array>
 #include <wtf/text/AtomString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BloomFilter);
@@ -264,3 +266,5 @@ bool CountingBloomFilter<keyBits>::isClear() const
 
 using WTF::BloomFilter;
 using WTF::CountingBloomFilter;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

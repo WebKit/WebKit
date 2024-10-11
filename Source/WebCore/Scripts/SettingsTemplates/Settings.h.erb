@@ -30,6 +30,8 @@
 #include "SettingsBase.h"
 #include <wtf/RefCounted.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class Page;
@@ -120,3 +122,5 @@ private:
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

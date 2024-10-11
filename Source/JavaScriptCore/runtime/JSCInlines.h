@@ -36,6 +36,10 @@
 // In fact, it can make a lot of sense: outside of JSC, this file becomes a kind of umbrella
 // header that pulls in most (all?) of the interesting things in JSC.
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "ExceptionHelpers.h"
 #include "GCIncomingRefCountedInlines.h"
 #include "HeapInlines.h"
@@ -55,3 +59,5 @@
 #include "ThrowScope.h"
 #include "WeakGCMapInlines.h"
 #include "WeakGCSetInlines.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

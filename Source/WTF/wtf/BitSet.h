@@ -29,6 +29,8 @@
 #include <string.h>
 #include <type_traits>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<size_t size>
@@ -528,3 +530,5 @@ inline void BitSet<bitSetSize, WordType>::dump(PrintStream& out) const
 } // namespace WTF
 
 // We can't do "using WTF::BitSet;" here because there is a function in the macOS SDK named BitSet() already.
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

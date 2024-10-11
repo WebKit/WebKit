@@ -30,6 +30,8 @@
 #include "APIDictionary.h"
 #include "WKAPICast.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WKTypeID WKDictionaryGetTypeID()
 {
     return WebKit::toAPI(API::Dictionary::APIType);
@@ -59,3 +61,5 @@ WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
     return WebKit::toAPI(&WebKit::toImpl(dictionaryRef)->keys().leakRef());
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

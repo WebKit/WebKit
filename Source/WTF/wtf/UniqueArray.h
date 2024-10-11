@@ -29,6 +29,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UniqueArray);
@@ -123,3 +125,5 @@ UniqueArray<T> makeUniqueArray(size_t size)
 
 using WTF::UniqueArray;
 using WTF::makeUniqueArray;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

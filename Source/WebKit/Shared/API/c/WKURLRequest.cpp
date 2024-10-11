@@ -31,6 +31,8 @@
 #include "WKData.h"
 #include <wtf/URL.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WKTypeID WKURLRequestGetTypeID()
 {
     return WebKit::toAPI(API::URLRequest::APIType);
@@ -67,3 +69,5 @@ void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)
 {
     API::URLRequest::setDefaultTimeoutInterval(timeoutInterval);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -30,6 +30,8 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 class CoreIPCSecAccessControl {
@@ -77,5 +79,7 @@ private:
 };
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(SEC_ACCESS_CONTROL)

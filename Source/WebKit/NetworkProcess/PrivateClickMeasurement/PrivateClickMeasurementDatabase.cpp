@@ -36,6 +36,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit::PCM {
 
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
@@ -733,3 +735,5 @@ void Database::addDestinationTokenColumnsIfNecessary()
 }
 
 } // namespace WebKit::PCM
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

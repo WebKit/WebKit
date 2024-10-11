@@ -29,6 +29,8 @@
 #include "SpaceSplitString.h"
 #include <wtf/TypeCasts.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class Attr;
@@ -357,3 +359,5 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::UniqueElementData)
     static bool isType(const WebCore::ElementData& elementData) { return elementData.isUnique(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -38,6 +38,8 @@
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit::Daemon {
 
 void Coder<WTF::WallTime>::encode(Encoder& encoder, const WTF::WallTime& instance)
@@ -310,3 +312,5 @@ std::optional<WebCore::RegistrableDomain> Coder<WebCore::RegistrableDomain, void
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

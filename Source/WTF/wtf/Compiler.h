@@ -592,3 +592,17 @@
 #else
 #define WTF_UNREACHABLE(...) __builtin_unreachable();
 #endif
+
+/* WTF_ALLOW_UNSAFE_BUFFER_USAGE */
+
+#if COMPILER(CLANG)
+#define WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"")
+
+#define WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
+    _Pragma("clang diagnostic pop")
+#else
+#define WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#define WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+#endif

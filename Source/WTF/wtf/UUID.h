@@ -37,6 +37,8 @@
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #ifdef __OBJC__
 @class NSUUID;
 #endif
@@ -220,3 +222,5 @@ private:
 using WTF::createVersion4UUIDString;
 using WTF::createVersion4UUIDStringWeak;
 using WTF::bootSessionUUIDString;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

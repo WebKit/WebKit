@@ -25,10 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <wtf/HashTraits.h>
 #include <wtf/UUID.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

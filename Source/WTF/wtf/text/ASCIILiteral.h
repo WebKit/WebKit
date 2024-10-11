@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <span>
 #include <string>
 #include <type_traits>
@@ -153,3 +157,5 @@ constexpr std::span<const LChar> operator"" _span(const char* characters, size_t
 } // namespace WTF
 
 using namespace WTF::StringLiterals;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

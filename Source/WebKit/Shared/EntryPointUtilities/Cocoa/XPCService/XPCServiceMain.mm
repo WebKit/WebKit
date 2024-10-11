@@ -49,6 +49,8 @@
 #import <WebKitAdditions/DyldCallbackAdditions.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 static Vector<String>& overrideLanguagesFromBootstrap()
@@ -278,3 +280,5 @@ int XPCServiceMain(int, const char**)
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -62,6 +62,8 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1172,3 +1174,5 @@ String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::Reques
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

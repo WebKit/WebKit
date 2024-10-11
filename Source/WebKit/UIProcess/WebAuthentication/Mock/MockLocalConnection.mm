@@ -39,6 +39,8 @@
 
 #import "LocalAuthenticationSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -177,5 +179,7 @@ RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpI
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUTHN)

@@ -33,6 +33,8 @@
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template <typename A, typename... B>
@@ -195,5 +197,7 @@ using WTF::createCFArray;
 using WTF::makeVector;
 using WTF::span;
 using WTF::toCFData;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

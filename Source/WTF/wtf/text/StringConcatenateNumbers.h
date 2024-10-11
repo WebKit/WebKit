@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <wtf/dtoa.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringConcatenate.h>
@@ -167,3 +171,5 @@ private:
 
 using WTF::FormattedNumber;
 using WTF::FormattedCSSNumber;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

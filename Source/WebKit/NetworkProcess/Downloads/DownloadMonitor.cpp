@@ -30,6 +30,8 @@
 #include "Logging.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #define DOWNLOAD_MONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - DownloadMonitor::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
@@ -129,3 +131,5 @@ void DownloadMonitor::timerFired()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

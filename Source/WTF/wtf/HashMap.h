@@ -20,10 +20,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <initializer_list>
 #include <wtf/Forward.h>
 #include <wtf/HashTable.h>
 #include <wtf/IteratorRange.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

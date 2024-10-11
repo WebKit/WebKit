@@ -39,6 +39,8 @@
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 namespace {
@@ -200,5 +202,7 @@ Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(c
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

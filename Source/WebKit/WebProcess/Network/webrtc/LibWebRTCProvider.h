@@ -31,6 +31,10 @@
 // renaming of more LibWebRTC-prefixed files in WebKit.
 // https://bugs.webkit.org/show_bug.cgi?id=243774
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(LIBWEBRTC)
 
 #include <wtf/TZoneMalloc.h>
@@ -46,6 +50,8 @@
 #else // !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
 #include <WebCore/WebRTCProvider.h>
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 

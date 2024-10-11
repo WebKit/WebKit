@@ -25,10 +25,16 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "JSDOMConvertResult.h"
 #include "JSDOMExceptionHandling.h"
 #include <JavaScriptCore/Error.h>
 #include <concepts>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 

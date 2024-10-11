@@ -27,6 +27,10 @@
 
 #if ENABLE(IPC_TESTING_API)
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "Decoder.h"
 #include "HandleMessage.h"
 #include <JavaScriptCore/JSArray.h>
@@ -38,6 +42,8 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/text/WTFString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 

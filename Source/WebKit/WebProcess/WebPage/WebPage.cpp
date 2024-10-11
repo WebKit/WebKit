@@ -463,6 +463,8 @@
 #include <pal/cf/CoreTextSoftLink.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -10132,3 +10134,5 @@ void WebPage::updateOpener(WebCore::FrameIdentifier frameID, WebCore::FrameIdent
 
 #undef WEBPAGE_RELEASE_LOG
 #undef WEBPAGE_RELEASE_LOG_ERROR
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

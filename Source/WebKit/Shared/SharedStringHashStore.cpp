@@ -30,6 +30,8 @@
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -210,3 +212,5 @@ void SharedStringHashStore::processPendingOperations()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -26,6 +26,8 @@
 #import "config.h"
 #import "SandboxInitializationParameters.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 SandboxInitializationParameters::SandboxInitializationParameters()
@@ -99,3 +101,5 @@ const char* SandboxInitializationParameters::value(size_t index) const
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

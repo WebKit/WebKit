@@ -36,6 +36,8 @@
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
 
@@ -390,5 +392,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

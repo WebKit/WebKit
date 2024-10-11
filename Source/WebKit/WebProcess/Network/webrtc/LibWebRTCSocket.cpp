@@ -40,6 +40,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCSocket);
@@ -179,5 +181,7 @@ void LibWebRTCSocket::suspend()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

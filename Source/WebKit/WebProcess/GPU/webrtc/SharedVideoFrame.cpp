@@ -39,6 +39,8 @@
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(LIBWEBRTC)
 
 ALLOW_COMMA_BEGIN
@@ -312,5 +314,7 @@ bool SharedVideoFrameReader::setSharedMemory(SharedMemory::Handle&& handle)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

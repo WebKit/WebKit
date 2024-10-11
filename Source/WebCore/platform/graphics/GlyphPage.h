@@ -27,8 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GlyphPage_h
-#define GlyphPage_h
+#pragma once
 
 #include "Font.h"
 #include "Glyph.h"
@@ -38,6 +37,8 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -144,4 +145,4 @@ private:
 
 } // namespace WebCore
 
-#endif // GlyphPage_h
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

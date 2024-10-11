@@ -43,6 +43,8 @@
 #include <sanitizer/asan_interface.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 class LLIntOffsetsExtractor;
 }
@@ -2105,3 +2107,5 @@ using WTF::copyToVectorSpecialization;
 using WTF::compactMap;
 using WTF::flatMap;
 using WTF::removeRepeatedElements;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -39,6 +39,8 @@
 #import <notify.h>
 #import <wtf/WallTime.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
     
 struct SystemMallocStats {
@@ -182,6 +184,8 @@ void WebMemorySampler::sendMemoryPressureEvent()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif
 

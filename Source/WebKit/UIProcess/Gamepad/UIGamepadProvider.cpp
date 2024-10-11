@@ -37,6 +37,8 @@
 #include <WebCore/PlatformGamepad.h>
 #include <wtf/NeverDestroyed.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -248,5 +250,7 @@ void UIGamepadProvider::platformStartMonitoringInput()
 #endif // !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX))
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GAMEPAD)

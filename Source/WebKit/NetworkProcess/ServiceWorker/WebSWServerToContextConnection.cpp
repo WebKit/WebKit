@@ -45,6 +45,8 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -443,3 +445,5 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
 
 #undef MESSAGE_CHECK
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

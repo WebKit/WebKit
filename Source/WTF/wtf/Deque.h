@@ -36,6 +36,8 @@
 #include <iterator>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename T, size_t inlineCapacity> class DequeIteratorBase;
@@ -814,3 +816,5 @@ inline T* DequeIteratorBase<T, inlineCapacity>::before() const
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -28,6 +28,8 @@
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Platform.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(SYSTEM_MALLOC) || !USE(TZONE_MALLOC)
 
 #include <wtf/FastMalloc.h>
@@ -94,3 +96,5 @@
 #define WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BTZONE_MALLOCED_IMPL_NESTED_TEMPLATE(name, CompactTZoneHeap)
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

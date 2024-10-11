@@ -52,6 +52,8 @@
 #include "ArgumentCodersUnix.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
@@ -811,3 +813,5 @@ template<typename T, typename Traits> struct ArgumentCoder<WTF::Markable<T, Trai
 };
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

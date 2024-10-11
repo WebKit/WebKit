@@ -37,6 +37,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -266,3 +268,5 @@ void BackgroundFetchStoreManager::retrieveResponseBody(const String& identifier,
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

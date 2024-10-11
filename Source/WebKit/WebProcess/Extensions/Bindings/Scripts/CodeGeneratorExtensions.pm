@@ -319,6 +319,8 @@ EOF
 #include "WebExtensionUtilities.h"
 #include <wtf/GetPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 ${implementationClassName}* to${implementationClassName}(JSContextRef context, JSValueRef value)
@@ -965,6 +967,9 @@ EOF
     push(@contents, <<EOF);
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 EOF
 
     push(@contents, <<EOF) if $conditionalString;

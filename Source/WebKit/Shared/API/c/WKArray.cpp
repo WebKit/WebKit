@@ -29,6 +29,8 @@
 #include "APIArray.h"
 #include "WKAPICast.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WKTypeID WKArrayGetTypeID()
 {
     return WebKit::toAPI(API::Array::APIType);
@@ -59,3 +61,5 @@ size_t WKArrayGetSize(WKArrayRef arrayRef)
 {
     return WebKit::toImpl(arrayRef)->size();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

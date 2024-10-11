@@ -30,6 +30,8 @@
 #import <Security/SecCertificate.h>
 #import <wtf/RetainPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 class CoreIPCSecCertificate {
@@ -77,5 +79,7 @@ private:
 };
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

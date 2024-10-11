@@ -37,6 +37,8 @@
 #include <sys/mman.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 static constexpr uint8_t defaultMessageFlags = 0;
@@ -199,3 +201,5 @@ bool Encoder::hasAttachments() const
 }
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

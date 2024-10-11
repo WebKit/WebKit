@@ -44,6 +44,8 @@
 #include <wtf/TypeTraits.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 struct CrossThreadCopierBaseHelper {
@@ -369,3 +371,5 @@ using WTF::CrossThreadCopierBaseHelper;
 using WTF::CrossThreadCopierBase;
 using WTF::CrossThreadCopier;
 using WTF::crossThreadCopy;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

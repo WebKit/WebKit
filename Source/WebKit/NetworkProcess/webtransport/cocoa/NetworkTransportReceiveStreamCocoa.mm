@@ -28,6 +28,8 @@
 
 #import "NetworkTransportSession.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 NetworkTransportReceiveStream::NetworkTransportReceiveStream(NetworkTransportSession& session, nw_connection_t connection)
@@ -65,3 +67,5 @@ void NetworkTransportReceiveStream::receiveLoop()
     }).get());
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -30,6 +30,8 @@
 #include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 class CoreIPCCFCharacterSet {
@@ -77,5 +79,7 @@ private:
 };
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA)

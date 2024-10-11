@@ -31,6 +31,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template <typename T>
@@ -188,3 +190,5 @@ public:
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

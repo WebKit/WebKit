@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "CatchScope.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -40,6 +44,8 @@
 #include "MathCommon.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringImpl.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace JSC {
 

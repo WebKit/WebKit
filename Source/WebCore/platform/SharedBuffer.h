@@ -52,6 +52,8 @@ typedef struct _GBytes GBytes;
 #include "GStreamerCommon.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if USE(FOUNDATION)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
@@ -426,3 +428,5 @@ RefPtr<SharedBuffer> utf8Buffer(const String&);
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedBuffer)
     static bool isType(const WebCore::FragmentedSharedBuffer& buffer) { return buffer.isContiguous(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

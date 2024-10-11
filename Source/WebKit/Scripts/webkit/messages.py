@@ -1527,6 +1527,8 @@ def generate_message_names_header(receivers):
     result.append('#include <wtf/EnumTraits.h>\n')
     result.append('#include <wtf/text/ASCIILiteral.h>\n')
     result.append('\n')
+    result.append('WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n')
+    result.append('\n')
     result.append('namespace IPC {\n')
     result.append('\n')
     result.append('enum class ReceiverName : uint8_t {')
@@ -1595,6 +1597,8 @@ def generate_message_names_header(receivers):
     result.append('}\n')
     result.append('\n')
     result.append('} // namespace WTF\n')
+    result.append('\n')
+    result.append('WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n')
     return ''.join(result)
 
 

@@ -49,6 +49,8 @@
 #include <wtf/win/DbgHelperWin.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class PrintStream;
@@ -197,3 +199,5 @@ void StackTrace::forEachFrame(Functor functor) const
 using WTF::StackTrace;
 using WTF::StackTraceSymbolResolver;
 using WTF::StackTracePrinter;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

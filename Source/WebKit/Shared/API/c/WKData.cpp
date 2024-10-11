@@ -29,6 +29,8 @@
 #include "APIData.h"
 #include "WKAPICast.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 WKTypeID WKDataGetTypeID()
 {
     return WebKit::toAPI(API::Data::APIType);
@@ -48,3 +50,5 @@ size_t WKDataGetSize(WKDataRef dataRef)
 {
     return WebKit::toImpl(dataRef)->size();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

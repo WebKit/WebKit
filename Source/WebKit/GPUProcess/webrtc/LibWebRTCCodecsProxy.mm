@@ -59,6 +59,8 @@ ALLOW_COMMA_END
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <WebCore/CoreVideoSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -559,5 +561,7 @@ void LibWebRTCCodecsProxy::updateSharedPreferencesForWebProcess(SharedPreference
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

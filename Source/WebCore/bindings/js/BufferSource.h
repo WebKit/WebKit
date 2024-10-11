@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <span>
@@ -36,6 +40,8 @@
 #include <wtf/cocoa/SpanCocoa.h>
 OBJC_CLASS NSData;
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 

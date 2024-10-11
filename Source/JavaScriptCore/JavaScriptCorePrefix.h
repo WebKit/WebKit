@@ -27,6 +27,8 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <wtf/Platform.h>
+
 #if defined(__APPLE__)
 #ifdef __cplusplus
 #define NULL __null

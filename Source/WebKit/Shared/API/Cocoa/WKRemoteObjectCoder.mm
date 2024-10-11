@@ -43,6 +43,8 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @interface NSURLError : NSError
 @end
 
@@ -1177,3 +1179,5 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

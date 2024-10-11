@@ -27,10 +27,16 @@
 
 #if USE(LIBWEBRTC)
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALLOW_COMMA_BEGIN
 
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
 
 ALLOW_COMMA_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

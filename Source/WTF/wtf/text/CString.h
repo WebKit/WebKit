@@ -33,6 +33,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
@@ -146,3 +148,5 @@ inline size_t CString::length() const
 } // namespace WTF
 
 using WTF::CString;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

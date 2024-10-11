@@ -46,6 +46,8 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 #define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
@@ -472,5 +474,7 @@ void NetworkRTCMonitor::deref()
 } // namespace WebKit
 
 #undef RTC_RELEASE_LOG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

@@ -24,6 +24,10 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
 
@@ -591,3 +595,5 @@ using WTF::reverseFind;
 using WTF::codePointCompareLessThan;
 
 #include <wtf/text/AtomString.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
