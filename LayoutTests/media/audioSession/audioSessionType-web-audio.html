@@ -17,7 +17,7 @@ promise_test(async (test) => {
         return;
 
     navigator.audioSession.type = "play-and-record";
-    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+    assert_equals(internals.audioSessionCategory(), "None");
 
     const audioCtx = new AudioContext();
     const oscillator = audioCtx.createOscillator();
@@ -29,6 +29,7 @@ promise_test(async (test) => {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     assert_equals(navigator.audioSession.type, "play-and-record");
+    await new Promise(resolve => setTimeout(resolve, 50));
     assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
 }, "AudioSession type with web audio");
         </script>
