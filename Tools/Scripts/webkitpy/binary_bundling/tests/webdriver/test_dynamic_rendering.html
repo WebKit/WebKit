@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Rendering Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: green;
+        }
+        #dynamic-content {
+            font-size: 20px;
+            color: blue;
+        }
+    </style>
+    <script>
+        // JavaScript function to dynamically add content
+        function loadDynamicContent() {
+            var dynamicDiv = document.getElementById('dynamic-content');
+            setTimeout(function() {
+                dynamicDiv.innerHTML = 'Dynamic content loaded!';
+            }, 2000);  // Simulating delay in loading dynamic content
+        }
+
+        window.onload = loadDynamicContent;
+    </script>
+</head>
+<body>
+    <h1>Page Loaded Successfully</h1>
+    <div id="dynamic-content">Waiting for dynamic content...</div>
+</body>
+</html>
