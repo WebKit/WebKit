@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -40,6 +41,7 @@
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
@@ -1764,6 +1766,70 @@ TEST(WKNavigation, HTTPSOnlyInitialLoad)
     EXPECT_EQ(loadCount, 1);
 
     EXPECT_WK_STREQ(@"https://site.example/notsecure", [webView URL].absoluteString);
+}
+
+TEST(WKNavigation, HTTPSOnlyNonHTTPSSecureSchemes)
+{
+    using namespace TestWebKitAPI;
+    constexpr auto httpsOnlyError = 305;
+    __block bool finishedSuccessfully { false };
+    __block bool didFailNavigation { false };
+    __block int errorCode { 0 };
+    __block bool didReceiveAuthenticationChallenge { false };
+    NSString *secureScheme = @"secure";
+
+    [TestProtocol registerWithScheme:secureScheme];
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().defaultWebpagePreferences._networkConnectionIntegrityPolicy = _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        didReceiveAuthenticationChallenge = true;
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        didFailNavigation = true;
+        errorCode = error.code;
+    };
+
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedSuccessfully = true;
+    };
+
+    webView.get().navigationDelegate = delegate.get();
+
+    auto url = [NSURL URLWithString:@"secure://bundle-file/simple.html"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    Util::run(&didFailNavigation);
+
+    EXPECT_FALSE(finishedSuccessfully);
+    EXPECT_EQ(errorCode, httpsOnlyError);
+    EXPECT_FALSE(didReceiveAuthenticationChallenge);
+
+    finishedSuccessfully = false;
+    didFailNavigation = false;
+    errorCode = 0;
+
+    [webView.get().configuration.processPool _registerURLSchemeAsSecure:secureScheme];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    Util::run(&finishedSuccessfully);
+
+    EXPECT_FALSE(didFailNavigation);
+    EXPECT_EQ(errorCode, 0);
+    EXPECT_FALSE(didReceiveAuthenticationChallenge);
+    EXPECT_WK_STREQ(url.absoluteString, webView.get().URL.absoluteString);
+
+    finishedSuccessfully = false;
+    didFailNavigation = false;
 }
 
 #if PLATFORM(MAC)
