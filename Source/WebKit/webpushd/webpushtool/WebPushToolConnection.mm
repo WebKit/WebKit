@@ -151,7 +151,7 @@ void Connection::sendAuditToken()
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
     auto xpcData = WebKit::encoderToXPCData(WTFMove(encoder));
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto dictionary = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, WebKit::WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebKit::WebPushD::protocolEncodedMessageKey, xpcData.get());
 

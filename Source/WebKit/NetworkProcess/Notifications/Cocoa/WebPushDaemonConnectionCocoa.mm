@@ -47,7 +47,7 @@ void Connection::newConnectionWasInitialized() const
 static OSObjectPtr<xpc_object_t> messageDictionaryFromEncoder(UniqueRef<IPC::Encoder>&& encoder)
 {
     auto xpcData = encoderToXPCData(WTFMove(encoder));
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto dictionary = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_uint64(dictionary.get(), WebPushD::protocolVersionKey, WebPushD::protocolVersionValue);
     xpc_dictionary_set_value(dictionary.get(), WebPushD::protocolEncodedMessageKey, xpcData.get());
 

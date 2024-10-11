@@ -68,7 +68,7 @@ RetainPtr<NSURL> currentExecutableDirectory()
 #if PLATFORM(IOS) || PLATFORM(VISION)
 static RetainPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 {
-    auto xpc = adoptNS(xpc_array_create(nullptr, 0));
+    auto xpc = adoptNS(xpc_array_create_empty());
     for (id value in array) {
         if ([value isKindOfClass:NSString.class])
             xpc_array_set_string(xpc.get(), XPC_ARRAY_APPEND, [value UTF8String]);
@@ -80,7 +80,7 @@ static RetainPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
 
 static RetainPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, id> *dictionary)
 {
-    auto xpc = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto xpc = adoptNS(xpc_dictionary_create_empty());
     for (NSString *key in dictionary) {
         ASSERT([key isKindOfClass:NSString.class]);
         const char* keyUTF8 = key.UTF8String;

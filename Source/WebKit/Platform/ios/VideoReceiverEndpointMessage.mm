@@ -65,7 +65,7 @@ VideoReceiverEndpointMessage VideoReceiverEndpointMessage::decode(xpc_object_t m
 
 OSObjectPtr<xpc_object_t> VideoReceiverEndpointMessage::encode() const
 {
-    OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    OSObjectPtr message = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, messageName().characters());
     xpc_dictionary_set_uint64(message.get(), processIdentifierKey.characters(), m_processIdentifier ? m_processIdentifier->toUInt64() : 0);
     xpc_dictionary_set_uint64(message.get(), mediaElementIdentifierKey.characters(), m_mediaElementIdentifier.toUInt64());
