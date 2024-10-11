@@ -730,6 +730,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void didInitializePlugin();
+    void pluginDidInstallPDFDocument(double initialScale);
 #endif
 
 #endif

@@ -1690,9 +1690,13 @@ public:
     void saveDataToFileInDownloadsFolder(String&& suggestedFilename, String&& mimeType, URL&& originatingURL, API::Data&);
     void savePDFToFileInDownloadsFolder(String&& suggestedFilename, URL&& originatingURL, std::span<const uint8_t>);
 
-#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+#if ENABLE(PDF_PLUGIN)
+#if PLATFORM(MAC)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, FrameInfoData&&, std::span<const uint8_t>, const String& pdfUUID);
     void showPDFContextMenu(const PDFContextMenu&, PDFPluginIdentifier, CompletionHandler<void(std::optional<int32_t>&&)>&&);
+#else
+    void pluginDidInstallPDFDocument(double initialScale);
+#endif
 #endif
 
     WebCore::IntRect visibleScrollerThumbRect() const;

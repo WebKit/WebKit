@@ -1720,6 +1720,13 @@ void WebPageProxy::setPromisedDataForImage(IPC::Connection&, const String&, Shar
     notImplemented();
 }
 
+#if ENABLE(PDF_PLUGIN)
+void WebPageProxy::pluginDidInstallPDFDocument(double initialScale)
+{
+    protectedPageClient()->pluginDidInstallPDFDocument(initialScale);
+}
+#endif
+
 #endif
 
 } // namespace WebKit

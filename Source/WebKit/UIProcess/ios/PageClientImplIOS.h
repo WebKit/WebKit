@@ -358,6 +358,10 @@ private:
     const String& spatialTrackingLabel() const final;
 #endif
 
+#if ENABLE(PDF_PLUGIN)
+    void pluginDidInstallPDFDocument(double initialScale) final;
+#endif
+
     void scheduleVisibleContentRectUpdate() final;
 
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }

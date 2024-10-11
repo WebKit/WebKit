@@ -1239,6 +1239,13 @@ void PageClientImpl::scheduleVisibleContentRectUpdate()
     [webView() _scheduleVisibleContentRectUpdate];
 }
 
+#if ENABLE(PDF_PLUGIN)
+void PageClientImpl::pluginDidInstallPDFDocument(double initialScale)
+{
+    [webView() _pluginDidInstallPDFDocument:initialScale];
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -3849,6 +3849,13 @@ static bool isLockdownModeWarningNeeded()
     _overriddenZoomScaleParameters = std::nullopt;
 }
 
+#if ENABLE(PDF_PLUGIN)
+- (void)_pluginDidInstallPDFDocument:(double)initialScale
+{
+    [_scrollView setZoomScale:initialScale];
+}
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>)
 #import <WebKitAdditions/WKWebViewIOSInternalAdditionsAfter.mm>
 #endif

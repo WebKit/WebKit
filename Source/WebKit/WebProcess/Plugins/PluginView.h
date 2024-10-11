@@ -90,6 +90,9 @@ public:
     void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     double pageScaleFactor() const;
     void pluginScaleFactorDidChange();
+#if PLATFORM(IOS_FAMILY)
+    void pluginDidInstallPDFDocument(double initialScaleFactor);
+#endif
 
     void topContentInsetDidChange();
 

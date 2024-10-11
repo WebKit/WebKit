@@ -321,6 +321,10 @@ public:
     virtual void removeAllPDFHUDs() = 0;
 #endif
 
+#if ENABLE(PDF_PLUGIN) && PLATFORM(IOS_FAMILY)
+    virtual void pluginDidInstallPDFDocument(double initialScale) { };
+#endif
+
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void (bool)>&&) { return false; }
     virtual void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(std::nullopt); }

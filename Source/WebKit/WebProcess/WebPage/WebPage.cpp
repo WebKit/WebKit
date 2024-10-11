@@ -2715,7 +2715,14 @@ void WebPage::setPluginScaleFactor(double scaleFactor, WebCore::IntPoint origin)
     if (RefPtr plugin = mainFramePlugIn())
         plugin->setPageScaleFactor(scaleFactor, origin);
 }
-#endif
+
+#if PLATFORM(IOS_FAMILY)
+void WebPage::pluginDidInstallPDFDocument(double initialScale)
+{
+    send(Messages::WebPageProxy::PluginDidInstallPDFDocument(initialScale));
+}
+#endif // PLATFORM(IOS_FAMILY)
+#endif // ENABLE(PDF_PLUGIN)
 
 void WebPage::setDeviceScaleFactor(float scaleFactor)
 {

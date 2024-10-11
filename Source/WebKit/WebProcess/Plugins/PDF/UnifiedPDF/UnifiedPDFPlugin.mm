@@ -272,8 +272,12 @@ void UnifiedPDFPlugin::installPDFDocument()
     if (isLocked())
         createPasswordEntryForm();
 
-    if (m_view)
+    if (m_view) {
         m_view->layerHostingStrategyDidChange();
+#if PLATFORM(IOS_FAMILY)
+        m_view->pluginDidInstallPDFDocument(pageScaleFactor());
+#endif
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:m_pdfMutationObserver.get() selector:@selector(formChanged:) name:mutationObserverNotificationString() object:m_pdfDocument.get()];
 
@@ -983,12 +987,16 @@ double UnifiedPDFPlugin::scaleForFitToView() const
 
 double UnifiedPDFPlugin::initialScale() const
 {
+#if PLATFORM(MAC)
     auto actualSizeScale = scaleForActualSize();
     auto fitToViewScale = scaleForFitToView();
     auto initialScale = std::max(actualSizeScale, fitToViewScale);
     // Only let actual size scaling scale down, not up.
     initialScale = std::min(initialScale, 1.0);
     return initialScale;
+#else
+    return 1.0;
+#endif
 }
 
 void UnifiedPDFPlugin::computeNormalizationFactor()
