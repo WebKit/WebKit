@@ -47,7 +47,12 @@ public:
     bool isValid() const;
     bool isInfinity() const;
     bool isZero() const;
+
+    CSSNumberishTime matchingZero() const;
+
     bool approximatelyEqualTo(const CSSNumberishTime&) const;
+    bool approximatelyLessThan(const CSSNumberishTime&) const;
+    bool approximatelyGreaterThan(const CSSNumberishTime&) const;
 
     CSSNumberishTime operator+(const CSSNumberishTime&) const;
     CSSNumberishTime operator-(const CSSNumberishTime&) const;

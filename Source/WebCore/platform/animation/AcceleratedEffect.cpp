@@ -359,7 +359,15 @@ void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& valu
         return (currentTime - *m_startTime) * m_playbackRate;
     }();
 
-    auto resolvedTiming = m_timing.resolve(localTime, m_playbackRate);
+    // FIXME: when we add threaded animaiton support support for scroll-driven animations,
+    // pass in the associated timeline's current time and duration.
+    auto resolvedTiming = m_timing.resolve({
+        std::nullopt,
+        std::nullopt,
+        { m_holdTime ? *m_holdTime : *m_startTime },
+        { localTime },
+        m_playbackRate
+    });
     if (!resolvedTiming.transformedProgress)
         return;
 

@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class WebAnimation;
+
 struct ResolvedEffectTiming {
     MarkableDouble currentIteration;
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
@@ -56,9 +58,17 @@ struct AnimationEffectTiming {
     CSSNumberishTime activeDuration { 0_s };
     CSSNumberishTime endTime { 0_s };
 
+    struct ResolutionData {
+        std::optional<CSSNumberishTime> timelineTime;
+        std::optional<CSSNumberishTime> timelineDuration;
+        std::optional<CSSNumberishTime> startTime;
+        std::optional<CSSNumberishTime> localTime;
+        double playbackRate { 0 };
+    };
+
     void updateComputedProperties();
-    BasicEffectTiming getBasicTiming(std::optional<CSSNumberishTime> localTime, double playbackRate) const;
-    ResolvedEffectTiming resolve(std::optional<CSSNumberishTime> localTime, double playbackRate) const;
+    BasicEffectTiming getBasicTiming(const ResolutionData&) const;
+    ResolvedEffectTiming resolve(const ResolutionData&) const;
 };
 
 } // namespace WebCore

@@ -94,27 +94,25 @@ EffectTiming AnimationEffect::getBindingsTiming() const
     return timing;
 }
 
-std::optional<CSSNumberishTime> AnimationEffect::localTime(std::optional<CSSNumberishTime> startTime) const
+AnimationEffectTiming::ResolutionData AnimationEffect::resolutionData(std::optional<CSSNumberishTime> startTime) const
 {
-    // 4.5.4. Local time
-    // https://drafts.csswg.org/web-animations-1/#local-time-section
+    if (!m_animation)
+        return { };
 
-    // The local time of an animation effect at a given moment is based on the first matching condition from the following:
-    // If the animation effect is associated with an animation, the local time is the current time of the animation.
-    // Otherwise, the local time is unresolved.
-    if (m_animation)
-        return m_animation->currentTime(startTime);
-    return std::nullopt;
-}
-
-double AnimationEffect::playbackRate() const
-{
-    return m_animation ? m_animation->playbackRate() : 1;
+    RefPtr animation = m_animation.get();
+    RefPtr timeline = animation->timeline();
+    return {
+        timeline ? timeline->currentTime() : std::nullopt,
+        timeline ? timeline->duration() : std::nullopt,
+        startTime ? startTime : animation->startTime(),
+        animation->currentTime(startTime),
+        animation->playbackRate()
+    };
 }
 
 BasicEffectTiming AnimationEffect::getBasicTiming(std::optional<CSSNumberishTime> startTime) const
 {
-    return m_timing.getBasicTiming(localTime(startTime), playbackRate());
+    return m_timing.getBasicTiming(resolutionData(startTime));
 }
 
 ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
@@ -126,8 +124,8 @@ ComputedEffectTiming AnimationEffect::getBindingsComputedTiming() const
 
 ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<CSSNumberishTime> startTime) const
 {
-    auto localTime = this->localTime(startTime);
-    auto resolvedTiming = m_timing.resolve(localTime, playbackRate());
+    auto data = resolutionData(startTime);
+    auto resolvedTiming = m_timing.resolve(data);
 
     ComputedEffectTiming computedTiming;
     computedTiming.delay = secondsToWebAnimationsAPITime(m_timing.delay);
@@ -140,7 +138,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<CSSNumberi
     computedTiming.easing = m_timing.timingFunction->cssText();
     computedTiming.endTime = m_timing.endTime;
     computedTiming.activeDuration = m_timing.activeDuration;
-    computedTiming.localTime = localTime;
+    computedTiming.localTime = data.localTime;
     computedTiming.simpleIterationProgress = resolvedTiming.simpleIterationProgress;
     computedTiming.progress = resolvedTiming.transformedProgress;
     computedTiming.currentIteration = resolvedTiming.currentIteration;

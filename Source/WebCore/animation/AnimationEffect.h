@@ -114,8 +114,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    std::optional<CSSNumberishTime> localTime(std::optional<CSSNumberishTime>) const;
-    double playbackRate() const;
+    AnimationEffectTiming::ResolutionData resolutionData(std::optional<CSSNumberishTime>) const;
     void normalizeSpecifiedTiming(std::variant<double, String>);
 
     AnimationEffectTiming m_timing;
