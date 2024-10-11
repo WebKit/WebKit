@@ -386,6 +386,7 @@ inline void HashSet<T, U, V, W>::clear()
 template<typename T, typename U, typename V, typename W>
 inline auto HashSet<T, U, V, W>::take(iterator it) -> TakeType
 {
+    static_assert(!ValueTraits::disablesGetAndTake);
     if (it == end())
         return ValueTraits::take(ValueTraits::emptyValue());
 

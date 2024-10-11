@@ -741,10 +741,10 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
     Vector<ServiceWorkerClientData> matchingClients;
     forEachClientForOrigin(worker.origin(), [&](auto& clientData) {
         if (!options.includeUncontrolled) {
-            auto registrationIdentifier = m_clientToControllingRegistration.get(clientData.identifier);
+            auto registrationIdentifier = m_clientToControllingRegistration.getOptional(clientData.identifier);
             if (worker.data().registrationIdentifier != registrationIdentifier)
                 return;
-            if (&worker != this->activeWorkerFromRegistrationID(registrationIdentifier))
+            if (&worker != this->activeWorkerFromRegistrationID(*registrationIdentifier))
                 return;
         }
         if (options.type != ServiceWorkerClientType::All && options.type != clientData.type)

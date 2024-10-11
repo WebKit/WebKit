@@ -40,6 +40,12 @@ template<typename T> struct GenericHashTraitsBase<false, T> {
     // The emptyValueIsZero flag is used to optimize allocation of empty hash tables with zeroed memory.
     static constexpr bool emptyValueIsZero = false;
 
+    // HashTable::get() / take() may return the empty value. Setting disablesGetAndTake to true
+    // will disable get() / take(), forcing them to use getOptional() / takeOptional(). This is
+    // useful when one doesn't want to expose the empty value is "invalid" and shouldn't be exposed
+    // to clients.
+    static constexpr bool disablesGetAndTake = false;
+
     // The hasIsEmptyValueFunction flag allows the hash table to automatically generate code to check
     // for the empty value when it can be done with the equality operator, but allows custom functions
     // for cases like String that need them.

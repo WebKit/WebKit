@@ -1293,8 +1293,8 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page, WebsiteDat
     RELEASE_ASSERT(iterator != m_sessionToPageIDsMap.end());
 
     auto pageID = page.identifier();
-    auto takenPageID = iterator->value.take(pageID);
-    ASSERT_UNUSED(takenPageID, takenPageID == pageID);
+    ASSERT(iterator->value.contains(pageID));
+    iterator->value.remove(pageID);
 
     if (iterator->value.isEmpty()) {
         m_sessionToPageIDsMap.remove(iterator);

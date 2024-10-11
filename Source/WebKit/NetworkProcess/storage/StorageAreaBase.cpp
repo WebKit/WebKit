@@ -49,7 +49,7 @@ StorageAreaBase::~StorageAreaBase() = default;
 
 void StorageAreaBase::addListener(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier identifier)
 {
-    ASSERT(!m_listeners.contains(connection) || m_listeners.get(connection) == identifier);
+    ASSERT(!m_listeners.contains(connection) || m_listeners.getOptional(connection) == identifier);
 
     m_listeners.add(connection, identifier);
 }

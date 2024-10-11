@@ -168,7 +168,7 @@ bool FileSystemStorageManager::acquireLockForFile(const String& path, WebCore::F
 
 bool FileSystemStorageManager::releaseLockForFile(const String& path, WebCore::FileSystemHandleIdentifier identifier)
 {
-    if (auto lockedByIdentifier = m_lockMap.get(path); lockedByIdentifier == identifier) {
+    if (auto lockedByIdentifier = m_lockMap.getOptional(path); lockedByIdentifier == identifier) {
         m_lockMap.remove(path);
         return true;
     }

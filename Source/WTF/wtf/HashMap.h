@@ -370,6 +370,7 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 template<typename HashTranslator, typename TYPE>
 auto HashMap<T, U, V, W, X, Y>::get(const TYPE& value) const -> MappedPeekType
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use getOptional() instead");
     auto* entry = const_cast<HashTableType&>(m_impl).template lookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
@@ -380,6 +381,7 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 template<typename HashTranslator, typename TYPE>
 auto HashMap<T, U, V, W, X, Y>::inlineGet(const TYPE& value) const -> MappedPeekType
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use getOptional() instead");
     auto* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
@@ -516,6 +518,7 @@ inline auto HashMap<T, U, V, W, X, Y>::getOptional(const KeyType& key) const -> 
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
 ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits, Y>::inlineGet(const KeyType& key) const -> MappedPeekType
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use getOptional() instead");
     KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
@@ -559,6 +562,7 @@ auto HashMap<T, U, V, W, MappedTraits, Y>::take(const KeyType& key) -> MappedTak
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
 auto HashMap<T, U, V, W, MappedTraits, Y>::take(iterator it) -> MappedTakeType
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use takeOptional() instead");
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());
     auto value = MappedTraits::take(WTFMove(it->value));
@@ -572,7 +576,9 @@ auto HashMap<T, U, V, W, MappedTraits, Y>::takeOptional(const KeyType& key) -> s
     auto it = find(key);
     if (it == end())
         return std::nullopt;
-    return take(it);
+    auto value = MappedTraits::take(WTFMove(it->value));
+    remove(it);
+    return value;
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits, typename Y>
@@ -606,6 +612,7 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 template<typename K>
 inline auto HashMap<T, U, V, W, X, Y>::inlineGet(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) const -> typename std::enable_if<IsSmartPtr<K>::value, MappedPeekType>::type
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use getOptional() instead");
     KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslator<KeyValuePairTraits, HashFunctions>>(key);
     if (!entry)
         return MappedTraits::peek(MappedTraits::emptyValue());
@@ -630,6 +637,7 @@ template<typename T, typename U, typename V, typename W, typename X, typename Y>
 template<typename K>
 inline auto HashMap<T, U, V, W, X, Y>::take(std::add_const_t<typename GetPtrHelper<K>::UnderlyingType>* key) -> typename std::enable_if<IsSmartPtr<K>::value, MappedTakeType>::type
 {
+    static_assert(!MappedTraits::disablesGetAndTake, "Use takeOptional() instead");
     iterator it = find(key);
     if (it == end())
         return MappedTraits::take(MappedTraits::emptyValue());

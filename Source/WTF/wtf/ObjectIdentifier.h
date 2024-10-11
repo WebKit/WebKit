@@ -221,6 +221,7 @@ struct ObjectIdentifierGenericBaseHash<UUID> {
 };
 
 template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct HashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> {
+    static constexpr bool disablesGetAndTake = supportsNullState == SupportsObjectIdentifierNullState::No;
     static ObjectIdentifierGeneric<T, U, V, supportsNullState> emptyValue() { return ObjectIdentifierGeneric<T, U, V, supportsNullState>(ObjectIdentifierGeneric<T, U, V, supportsNullState>::InvalidIdValue); }
     static bool isEmptyValue(const ObjectIdentifierGeneric<T, U, V, supportsNullState>& value) { return value.isHashTableEmptyValue(); }
 };
