@@ -32,15 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 
-namespace WebKit {
-class WebRTCMonitorObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebRTCMonitorObserver> : std::true_type { };
-}
-
 namespace IPC {
 class Connection;
 class Decoder;
@@ -53,6 +44,10 @@ struct NetworksChangedData;
 class WebRTCMonitorObserver : public CanMakeWeakPtr<WebRTCMonitorObserver> {
 public:
     virtual ~WebRTCMonitorObserver() = default;
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
     virtual void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) = 0;
     virtual void networkProcessCrashed() = 0;
 };

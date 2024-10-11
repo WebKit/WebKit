@@ -29,25 +29,16 @@
 
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Identified.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
 
 ALLOW_COMMA_BEGIN
 
 #include <webrtc/rtc_base/async_packet_socket.h>
 
 ALLOW_COMMA_END
-
-namespace WebKit {
-class LibWebRTCSocket;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LibWebRTCSocket> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -58,8 +49,9 @@ namespace WebKit {
 
 class LibWebRTCSocketFactory;
 
-class LibWebRTCSocket final : public rtc::AsyncPacketSocket, public CanMakeWeakPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
+class LibWebRTCSocket final : public rtc::AsyncPacketSocket, public CanMakeCheckedPtr<LibWebRTCSocket>, public Identified<WebCore::LibWebRTCSocketIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCSocket);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCSocket);
 public:
     enum class Type { UDP, ClientTCP, ServerConnectionTCP };
 

@@ -45,7 +45,7 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCNetworkManager);
 
-LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
+RefPtr<LibWebRTCNetworkManager> LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExecutionContextIdentifier identifier)
 {
     RefPtr document = Document::allDocumentsMap().get(identifier);
     if (!document)
@@ -65,7 +65,7 @@ LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExe
 void LibWebRTCNetworkManager::signalUsedInterface(WebCore::ScriptExecutionContextIdentifier contextIdentifier, String&& name)
 {
     callOnMainRunLoop([contextIdentifier, name = WTFMove(name).isolatedCopy()]() mutable {
-        if (auto* manager = LibWebRTCNetworkManager::getOrCreate(contextIdentifier))
+        if (RefPtr manager = LibWebRTCNetworkManager::getOrCreate(contextIdentifier))
             manager->signalUsedInterface(WTFMove(name));
     });
 }
