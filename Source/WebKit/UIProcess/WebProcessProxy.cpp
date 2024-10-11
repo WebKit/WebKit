@@ -196,6 +196,15 @@ RefPtr<WebProcessProxy> WebProcessProxy::processForIdentifier(ProcessIdentifier 
     return allProcessMap().get(identifier);
 }
 
+RefPtr<WebProcessProxy> WebProcessProxy::processForConnection(const IPC::Connection& connection)
+{
+    for (Ref webProcessProxy : allProcesses()) {
+        if (webProcessProxy->hasConnection(connection))
+            return webProcessProxy.ptr();
+    }
+    return nullptr;
+}
+
 auto WebProcessProxy::globalPageMap() -> WebPageProxyMap&
 {
     ASSERT(isMainThreadOrCheckDisabled());

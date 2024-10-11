@@ -220,6 +220,7 @@ public:
     static void setProcessCountLimit(unsigned);
 
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
+    static RefPtr<WebProcessProxy> processForConnection(const IPC::Connection&);
     static RefPtr<WebPageProxy> webPage(WebPageProxyIdentifier);
     static RefPtr<WebPageProxy> webPage(WebCore::PageIdentifier);
     static RefPtr<WebPageProxy> audioCapturingWebPage();

@@ -28,6 +28,7 @@
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "NotificationManagerMessageHandler.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPushDaemonConnection.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
@@ -75,7 +76,7 @@ public:
 
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge) final;
-
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
 private:
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;

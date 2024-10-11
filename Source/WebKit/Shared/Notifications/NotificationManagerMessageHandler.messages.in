@@ -20,14 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+[SharedPreferencesNeedsConnection]
 messages -> NotificationManagerMessageHandler NotRefCounted {
-    ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
-    CancelNotification(WebCore::SecurityOriginData origin, WTF::UUID notificationID)
-    ClearNotifications(Vector<WTF::UUID> notificationIDs)
-    DidDestroyNotification(WTF::UUID notificationID)
-    PageWasNotifiedOfNotificationPermission()
-    RequestPermission(WebCore::SecurityOriginData origin) -> (bool granted)
-    SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
-    GetPermissionState(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission)
-    GetPermissionStateSync(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission) Synchronous
+    [EnabledBy=NotificationsEnabled] ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
+    [EnabledBy=NotificationsEnabled] CancelNotification(WebCore::SecurityOriginData origin, WTF::UUID notificationID)
+    [EnabledBy=NotificationsEnabled] ClearNotifications(Vector<WTF::UUID> notificationIDs)
+    [EnabledBy=NotificationsEnabled] DidDestroyNotification(WTF::UUID notificationID)
+    [EnabledBy=NotificationsEnabled] PageWasNotifiedOfNotificationPermission()
+    [EnabledBy=NotificationsEnabled] RequestPermission(WebCore::SecurityOriginData origin) -> (bool granted)
+    [EnabledBy=NotificationsEnabled] SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
+    [EnabledBy=NotificationsEnabled] GetPermissionState(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission)
+    [EnabledBy=NotificationsEnabled] GetPermissionStateSync(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission) Synchronous
 }
