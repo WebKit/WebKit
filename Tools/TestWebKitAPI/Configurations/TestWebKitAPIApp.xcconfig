@@ -26,7 +26,8 @@
 PRODUCT_NAME = TestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPIApp;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/app/*;
+// FIXME: Re-enable on macOS once rdar://137765206 is resolved.
+EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=embedded*] = mac/app/*;
 
 GENERATE_INFOPLIST_FILE = YES;
