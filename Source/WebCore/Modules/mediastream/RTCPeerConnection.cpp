@@ -105,7 +105,11 @@ ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document
                 WTFLogLevel level = LogWebRTC.level;
                 if (level != WTFLogLevel::Debug && document.settings().webRTCMediaPipelineAdditionalLoggingEnabled())
                     level = WTFLogLevel::Info;
-                if (document.settings().webCodecsVideoEnabled() || document.settings().peerConnectionEnabled())
+                bool setLoggingLevel = document.settings().peerConnectionEnabled();
+#if ENABLE(WEB_CODECS)
+                setLoggingLevel = setLoggingLevel || document.settings().webCodecsVideoEnabled();
+#endif
+                if (setLoggingLevel)
                     page->webRTCProvider().setLoggingLevel(level);
             }
 #endif
