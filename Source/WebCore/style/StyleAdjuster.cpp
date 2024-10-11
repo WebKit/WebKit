@@ -699,7 +699,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasMask()
             || style.hasBackdropFilter()
             || style.hasBlendMode()
-            || style.viewTransitionName();
+            || !style.viewTransitionName().isNone();
         if (RefPtr element = m_element) {
             auto styleable = Styleable::fromElement(*element);
             forceToFlat |= styleable.capturedInViewTransition();

@@ -222,7 +222,7 @@ public:
     static std::optional<WebCore::Length> convertBlockStepSize(BuilderState&, const CSSValue&);
 
     static Vector<Style::ScopedName> convertViewTransitionClass(BuilderState&, const CSSValue&);
-    static std::optional<Style::ScopedName> convertViewTransitionName(BuilderState&, const CSSValue&);
+    static Style::ViewTransitionName convertViewTransitionName(BuilderState&, const CSSValue&);
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
     
     static Vector<AtomString> convertScrollTimelineName(BuilderState&, const CSSValue&);
@@ -2022,16 +2022,19 @@ inline Vector<Style::ScopedName> BuilderConverter::convertViewTransitionClass(Bu
     });
 }
 
-inline std::optional<Style::ScopedName> BuilderConverter::convertViewTransitionName(BuilderState& state, const CSSValue& value)
+inline Style::ViewTransitionName BuilderConverter::convertViewTransitionName(BuilderState& state, const CSSValue& value)
 {
     auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
     if (!primitiveValue)
-        return { };
+        return Style::ViewTransitionName::createWithNone();
 
     if (value.valueID() == CSSValueNone)
-        return std::nullopt;
+        return Style::ViewTransitionName::createWithNone();
 
-    return Style::ScopedName { AtomString { primitiveValue->stringValue() }, state.styleScopeOrdinal() };
+    if (value.valueID() == CSSValueAuto)
+        return Style::ViewTransitionName::createWithAuto(state.styleScopeOrdinal());
+
+    return Style::ViewTransitionName::createWithCustomIdent(state.styleScopeOrdinal(), AtomString { primitiveValue->stringValue() });
 }
 
 inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& builderState, const CSSValue& value)

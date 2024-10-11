@@ -215,13 +215,15 @@ private:
     // ActiveDOMObject.
     void stop() final;
 
+    bool isCrossDocument() { return m_isCrossDocument; }
+
     OrderedNamedElementsMap m_namedElements;
     ViewTransitionPhase m_phase { ViewTransitionPhase::PendingCapture };
     FloatSize m_initialLargeViewportSize;
     float m_initialPageZoom;
 
     RefPtr<ViewTransitionUpdateCallback>  m_updateCallback;
-    bool m_shouldCallUpdateCallback { false };
+    bool m_isCrossDocument { false };
 
     using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
     PromiseAndWrapper m_ready;

@@ -7627,9 +7627,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-t
 imported/w3c/web-platform-tests/css/css-view-transitions/nested/ [ Skip ]
 
 # 'auto' transition name
-imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id-shadow.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/auto-name-from-id.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/auto-name.html [ ImageOnlyFailure ]
+# Fails due to position:relative on view transition root.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id.html [ ImageOnlyFailure ]
 
 # Depends on overflow-clip-margin (unimplemented).

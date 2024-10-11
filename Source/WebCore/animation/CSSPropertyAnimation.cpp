@@ -4095,7 +4095,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<ScrollSnapStop>(CSSPropertyScrollSnapStop, &RenderStyle::scrollSnapStop, &RenderStyle::setScrollSnapStop),
         new DiscretePropertyWrapper<ScrollSnapType>(CSSPropertyScrollSnapType, &RenderStyle::scrollSnapType, &RenderStyle::setScrollSnapType),
         new DiscretePropertyWrapper<const Vector<Style::ScopedName>&>(CSSPropertyViewTransitionClass, &RenderStyle::viewTransitionClasses, &RenderStyle::setViewTransitionClasses),
-        new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
+        new DiscretePropertyWrapper<Style::ViewTransitionName>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName),
         new DiscretePropertyWrapper<FieldSizing>(CSSPropertyFieldSizing, &RenderStyle::fieldSizing, &RenderStyle::setFieldSizing),
         new DiscretePropertyWrapper<const Vector<AtomString>&>(CSSPropertyAnchorName, &RenderStyle::anchorNames, &RenderStyle::setAnchorNames),
         new DiscretePropertyWrapper<const AtomString&>(CSSPropertyPositionAnchor, &RenderStyle::positionAnchor, &RenderStyle::setPositionAnchor),

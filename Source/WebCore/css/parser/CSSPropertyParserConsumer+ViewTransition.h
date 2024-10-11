@@ -37,7 +37,6 @@ struct CSSParserContext;
 namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange&, const CSSParserContext&);
 
 // For @view-transition descriptor
 RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange&, const CSSParserContext&);

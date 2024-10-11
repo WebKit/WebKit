@@ -9339,9 +9339,7 @@
         "view-transition-name": {
             "codegen-properties": {
                 "converter": "ViewTransitionName",
-                "parser-function": "consumeViewTransitionName",
-                "parser-grammar-unused": "none | <custom-ident>",
-                "parser-grammar-unused-reason": "Needs support for applying restrictions to <custom-ident>. The <custom-ident> production used here excludes the keyword auto.",
+                "parser-grammar": "none | auto | <custom-ident>",
                 "settings-flag": "viewTransitionsEnabled"
             },
             "specification": {

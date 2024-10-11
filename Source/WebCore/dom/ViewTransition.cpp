@@ -64,7 +64,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ViewTransition);
 ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)
     , m_updateCallback(WTFMove(updateCallback))
-    , m_shouldCallUpdateCallback(true)
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
     , m_finished(createPromiseAndWrapper(document))
@@ -75,6 +74,7 @@ ViewTransition::ViewTransition(Document& document, RefPtr<ViewTransitionUpdateCa
 
 ViewTransition::ViewTransition(Document& document, Vector<AtomString>&& initialActiveTypes)
     : ActiveDOMObject(document)
+    , m_isCrossDocument(true)
     , m_ready(createPromiseAndWrapper(document))
     , m_updateCallbackDone(createPromiseAndWrapper(document))
     , m_finished(createPromiseAndWrapper(document))
@@ -226,7 +226,7 @@ void ViewTransition::callUpdateCallback()
     if (m_phase != ViewTransitionPhase::Done)
         m_phase = ViewTransitionPhase::UpdateCallbackCalled;
 
-    if (!m_shouldCallUpdateCallback)
+    if (m_isCrossDocument)
         return;
 
     Ref document = *this->document();
@@ -313,17 +313,27 @@ void ViewTransition::setupViewTransition()
     });
 }
 
-static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope)
+static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, Element& originatingElement, Style::Scope& documentScope, bool isCrossDocument)
 {
     if (renderer.isSkippedContent())
         return nullAtom();
     auto transitionName = renderer.style().viewTransitionName();
-    if (!transitionName)
+    if (transitionName.isNone())
         return nullAtom();
-    auto scope = Style::Scope::forOrdinal(originatingElement, transitionName->scopeOrdinal);
+    auto scope = Style::Scope::forOrdinal(originatingElement, transitionName.scopeOrdinal());
     if (!scope || scope != &documentScope)
         return nullAtom();
-    return transitionName->name;
+    if (transitionName.isCustomIdent())
+        return transitionName.customIdent();
+    ASSERT(transitionName.isAuto());
+    if (!renderer.element())
+        return nullAtom();
+    if (scope == &Style::Scope::forNode(*renderer.element()) && renderer.element()->hasID())
+        return renderer.element()->getIdAttribute();
+    if (isCrossDocument)
+        return nullAtom();
+
+    return makeAtomString("-ua-auto-"_s, String::number(renderer.element()->identifier().toRawValue()));
 }
 
 static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name, ListHashSet<AtomString>& usedTransitionNames)
@@ -459,7 +469,7 @@ ExceptionOr<void> ViewTransition::captureOldState()
             if (!styleable)
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope(), isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 
@@ -487,8 +497,8 @@ ExceptionOr<void> ViewTransition::captureOldState()
         ASSERT(styleable);
         capture.classList = effectiveViewTransitionClassList(renderer, styleable->element, document()->styleScope());
 
-        auto transitionName = renderer->style().viewTransitionName();
-        m_namedElements.add(transitionName->name, capture);
+        auto transitionName = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope(), isCrossDocument());
+        m_namedElements.add(transitionName, capture);
     }
 
     for (auto& renderer : captureRenderers)
@@ -509,7 +519,7 @@ ExceptionOr<void> ViewTransition::captureNewState()
             if (!styleable)
                 return { };
 
-            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope()); !name.isNull()) {
+            if (auto name = effectiveViewTransitionName(renderer, styleable->element, document()->styleScope(), isCrossDocument()); !name.isNull()) {
                 if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
                     return check.releaseException();
 

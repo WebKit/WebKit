@@ -4288,9 +4288,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
     case CSSPropertyViewTransitionName: {
         auto viewTransitionName = style.viewTransitionName();
-        if (!viewTransitionName)
+        if (viewTransitionName.isNone())
             return CSSPrimitiveValue::create(CSSValueNone);
-        return valueForScopedName(*viewTransitionName);
+        if (viewTransitionName.isAuto())
+            return CSSPrimitiveValue::create(CSSValueAuto);
+        return CSSPrimitiveValue::createCustomIdent(viewTransitionName.customIdent());
     }
     case CSSPropertyVisibility:
         return createConvertingToCSSValueID(style.visibility());

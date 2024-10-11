@@ -62,20 +62,6 @@ RefPtr<CSSValue> consumeViewTransitionClass(CSSParserTokenRange& range, const CS
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeViewTransitionName(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // <'view-transition-name'> = none | <custom-ident>
-    // https://drafts.csswg.org/css-view-transitions-1/#propdef-view-transition-name
-
-    // NOTE: The values none and auto are excluded from <custom-ident>.
-
-    if (auto noneValue = consumeIdent<CSSValueNone>(range))
-        return noneValue;
-    if (identMatches<CSSValueAuto>(range.peek().id()))
-        return nullptr;
-    return consumeCustomIdent(range);
-}
-
 RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, const CSSParserContext&)
 {
     // <'types'> = none | <custom-ident>+

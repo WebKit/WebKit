@@ -71,7 +71,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , offsetPath(RenderStyle::initialOffsetPath())
     // containerNames
     , viewTransitionClasses(RenderStyle::initialViewTransitionClasses())
-    // viewTransitionName
+    , viewTransitionName(RenderStyle::initialViewTransitionName())
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
