@@ -268,7 +268,8 @@ std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, Strin
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
     char buffer[PATH_MAX];
-    if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", temporaryFileDirectory(), prefix.utf8().data()) >= PATH_MAX)
+    int textLength = snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", temporaryFileDirectory(), prefix.utf8().data());
+    if (static_cast<unsigned>(textLength) >= PATH_MAX)
         goto end;
 
     handle = mkostemp(buffer, O_CLOEXEC);
