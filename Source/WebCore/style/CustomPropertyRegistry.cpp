@@ -28,6 +28,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "ComputedStyleDependencies.h"
 #include "Document.h"
 #include "Element.h"
 #include "KeyframeEffect.h"

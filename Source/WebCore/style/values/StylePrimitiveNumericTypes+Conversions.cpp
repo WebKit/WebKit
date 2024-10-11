@@ -35,7 +35,17 @@ namespace Style {
 
 // MARK: Conversions to "CSS"
 
-auto toCSS(const AnglePercentage& value, const RenderStyle& style) -> CSS::AnglePercentage
+auto ToCSS<Number>::operator()(const Number& value, const RenderStyle&) -> CSS::Number
+{
+    return { CSS::NumberRaw { value.value } };
+}
+
+auto ToCSS<Percentage>::operator()(const Percentage& value, const RenderStyle&) -> CSS::Percentage
+{
+    return { CSS::PercentageRaw { value.value } };
+}
+
+auto ToCSS<AnglePercentage>::operator()(const AnglePercentage& value, const RenderStyle& style) -> CSS::AnglePercentage
 {
     return value.value.switchOn(
         [&](Angle angle) -> CSS::AnglePercentage {
@@ -50,7 +60,7 @@ auto toCSS(const AnglePercentage& value, const RenderStyle& style) -> CSS::Angle
     );
 }
 
-auto toCSS(const LengthPercentage& value, const RenderStyle& style) -> CSS::LengthPercentage
+auto ToCSS<LengthPercentage>::operator()(const LengthPercentage& value, const RenderStyle& style) -> CSS::LengthPercentage
 {
     return value.value.switchOn(
         [&](Length length) -> CSS::LengthPercentage {
@@ -65,46 +75,94 @@ auto toCSS(const LengthPercentage& value, const RenderStyle& style) -> CSS::Leng
     );
 }
 
-auto toCSS(const PercentageOrNumber& value, const RenderStyle&) -> CSS::PercentageOrNumber
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentageRaw& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable&) -> AnglePercentage
 {
-    return WTF::switchOn(value,
-        [](Percentage percentage) { return WebCore::CSS::PercentageOrNumber { CSS::PercentageRaw { percentage.value } }; },
-        [](Number number) { return WebCore::CSS::PercentageOrNumber { CSS::NumberRaw { number.value } }; }
-    );
+    return AnglePercentage { canonicalize(value, conversionData) };
 }
 
-} // namespace Style
-
-namespace CSS {
-
-Style::AnglePercentage toStyle(const UnevaluatedCalc<AnglePercentageRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::UnevaluatedCalc<CSS::AnglePercentageRaw>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
 {
-    return calc.calc->anglePercentageValue(conversionData, symbolTable);
+    return AnglePercentage { value.calc->anglePercentageValue(conversionData, symbolTable) };
 }
 
-Style::AnglePercentage toStyle(const UnevaluatedCalc<AnglePercentageRaw>& calc, Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentage& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
 {
-    return toStyle(calc, Style::conversionData<AnglePercentageRaw>(state), symbolTable);
+    return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
 }
 
-Style::AnglePercentage toStyleNoConversionDataRequired(const UnevaluatedCalc<AnglePercentageRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentageRaw& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
 {
-    return calc.calc->anglePercentageValueNoConversionDataRequired(symbolTable);
+    return (*this)(value, conversionData<CSS::AnglePercentageRaw>(state), symbolTable);
 }
 
-Style::LengthPercentage toStyle(const UnevaluatedCalc<LengthPercentageRaw>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::UnevaluatedCalc<CSS::AnglePercentageRaw>& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
 {
-    return calc.calc->lengthPercentageValue(conversionData, symbolTable);
+    return (*this)(value, conversionData<CSS::AnglePercentageRaw>(state), symbolTable);
 }
 
-Style::LengthPercentage toStyle(const UnevaluatedCalc<LengthPercentageRaw>& calc, Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentage& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
 {
-    return toStyle(calc, Style::conversionData<LengthPercentageRaw>(state), symbolTable);
+    return (*this)(value, conversionData<CSS::AnglePercentageRaw>(state), symbolTable);
 }
 
-Style::LengthPercentage toStyleNoConversionDataRequired(const UnevaluatedCalc<LengthPercentageRaw>& calc, const CSSCalcSymbolTable& symbolTable)
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentageRaw& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) -> AnglePercentage
 {
-    return calc.calc->lengthPercentageValueNoConversionDataRequired(symbolTable);
+    return AnglePercentage { canonicalizeNoConversionDataRequired(value) };
+}
+
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::UnevaluatedCalc<CSS::AnglePercentageRaw>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
+{
+    return AnglePercentage { value.calc->anglePercentageValueNoConversionDataRequired(symbolTable) };
+}
+
+auto ToStyle<CSS::AnglePercentage>::operator()(const CSS::AnglePercentage& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> AnglePercentage
+{
+    return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentageRaw& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable&) -> LengthPercentage
+{
+    return LengthPercentage { canonicalize(value, conversionData) };
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return LengthPercentage { value.calc->lengthPercentageValue(conversionData, symbolTable) };
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentage& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentageRaw& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return (*this)(value, conversionData<CSS::LengthPercentageRaw>(state), symbolTable);
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw>& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return (*this)(value, conversionData<CSS::LengthPercentageRaw>(state), symbolTable);
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentage& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return (*this)(value, conversionData<CSS::LengthPercentageRaw>(state), symbolTable);
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentageRaw& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) -> LengthPercentage
+{
+    return LengthPercentage { canonicalizeNoConversionDataRequired(value) };
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw>& calc, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return LengthPercentage { calc.calc->lengthPercentageValueNoConversionDataRequired(symbolTable) };
+}
+
+auto ToStyle<CSS::LengthPercentage>::operator()(const CSS::LengthPercentage& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> LengthPercentage
+{
+    return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
 }
 
 } // namespace CSS

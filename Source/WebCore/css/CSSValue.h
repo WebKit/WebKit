@@ -43,20 +43,11 @@ class DeprecatedCSSOMValue;
 class Quad;
 class Rect;
 
+struct ComputedStyleDependencies;
 struct Counter;
 
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
-
-struct ComputedStyleDependencies {
-    Vector<CSSPropertyID> properties;
-    Vector<CSSPropertyID> rootProperties;
-    bool containerDimensions { false };
-    bool viewportDimensions { false };
-    bool anchors { false };
-
-    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions && !anchors; }
-};
 
 DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 class CSSValue {

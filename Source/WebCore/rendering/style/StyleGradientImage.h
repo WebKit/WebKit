@@ -26,165 +26,19 @@
 
 #pragma once
 
-#include "CSSGradientValue.h"
-#include "LengthSize.h"
-#include "StyleColor.h"
+#include "StyleGradient.h"
 #include "StyleGeneratedImage.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <utility>
-#include <variant>
 
 namespace WebCore {
 
-template<typename T> struct StyleGradientImageColorStop {
-    using Position = T;
-    using List = Vector<StyleGradientImageColorStop<T>>;
-
-    std::optional<StyleColor> color;
-    Position position;
-
-    bool operator==(const StyleGradientImageColorStop<T>&) const = default;
-};
-
-template<typename Stop> using StyleGradientImageColorStopList = Vector<Stop>;
-
-using StyleGradientImageAngularColorStop = StyleGradientImageColorStop<std::optional<Style::AnglePercentage>>;
-using StyleGradientImageAngularColorStopList = StyleGradientImageColorStopList<StyleGradientImageAngularColorStop>;
-
-using StyleGradientImageLinearColorStop = StyleGradientImageColorStop<std::optional<Style::LengthPercentage>>;
-using StyleGradientImageLinearColorStopList = StyleGradientImageColorStopList<StyleGradientImageLinearColorStop>;
-
-using StyleGradientImageDeprecatedColorStop = StyleGradientImageColorStop<Style::Number>;
-using StyleGradientImageDeprecatedColorStopList = StyleGradientImageColorStopList<StyleGradientImageDeprecatedColorStop>;
-
-// MARK: StyleGradientImageDeprecatedPosition
-
-using StyleGradientImageDeprecatedPosition = Style::SpaceSeparatedTuple<Style::PercentageOrNumber, Style::PercentageOrNumber>;
+class Gradient;
+class GradientColorStops;
 
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
-    struct LinearData {
-        using Horizontal = CSSLinearGradientValue::Horizontal;
-        using Vertical = CSSLinearGradientValue::Vertical;
-        using GradientLine = std::variant<std::monostate, Style::Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
-
-        GradientLine gradientLine;
-        CSSGradientRepeat repeating;
-        StyleGradientImageLinearColorStopList stops;
-
-        bool operator==(const LinearData&) const = default;
-    };
-    struct PrefixedLinearData {
-        using Horizontal = CSSPrefixedLinearGradientValue::Horizontal;
-        using Vertical = CSSPrefixedLinearGradientValue::Vertical;
-        using GradientLine = std::variant<std::monostate, Style::Angle, Horizontal, Vertical, std::pair<Horizontal, Vertical>>;
-
-        GradientLine gradientLine;
-        CSSGradientRepeat repeating;
-        StyleGradientImageLinearColorStopList stops;
-
-        bool operator==(const PrefixedLinearData&) const = default;
-    };
-    struct DeprecatedLinearData {
-        StyleGradientImageDeprecatedPosition first;
-        StyleGradientImageDeprecatedPosition second;
-        StyleGradientImageDeprecatedColorStopList stops;
-
-        bool operator==(const DeprecatedLinearData&) const = default;
-    };
-    struct RadialData {
-        using ShapeKeyword = CSSRadialGradientValue::ShapeKeyword;
-        using ExtentKeyword = CSSRadialGradientValue::ExtentKeyword;
-
-        struct Shape {
-            ShapeKeyword shape;
-            std::optional<Style::Position> position;
-            bool operator==(const Shape&) const = default;
-        };
-        struct Extent {
-            ExtentKeyword extent;
-            std::optional<Style::Position> position;
-            bool operator==(const Extent&) const = default;
-        };
-        struct Length {
-            Style::Length length; // <length [0,∞]>
-            std::optional<Style::Position> position;
-            bool operator==(const Length&) const = default;
-        };
-        struct CircleOfLength {
-            Style::Length length; // <length [0,∞]>
-            std::optional<Style::Position> position;
-            bool operator==(const CircleOfLength&) const = default;
-        };
-        struct CircleOfExtent {
-            ExtentKeyword extent;
-            std::optional<Style::Position> position;
-            bool operator==(const CircleOfExtent&) const = default;
-        };
-        struct Size {
-            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
-            std::optional<Style::Position> position;
-            bool operator==(const Size&) const = default;
-        };
-        struct EllipseOfSize {
-            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
-            std::optional<Style::Position> position;
-            bool operator==(const EllipseOfSize&) const = default;
-        };
-        struct EllipseOfExtent {
-            ExtentKeyword extent;
-            std::optional<Style::Position> position;
-            bool operator==(const EllipseOfExtent&) const = default;
-        };
-        using GradientBox = std::variant<std::monostate, Shape, Extent, Length, Size, CircleOfLength, CircleOfExtent, EllipseOfSize, EllipseOfExtent, Style::Position>;
-
-        GradientBox gradientBox;
-        CSSGradientRepeat repeating;
-        StyleGradientImageLinearColorStopList stops;
-
-        bool operator==(const RadialData&) const = default;
-    };
-    struct PrefixedRadialData {
-        using ShapeKeyword = CSSPrefixedRadialGradientValue::ShapeKeyword;
-        using ExtentKeyword = CSSPrefixedRadialGradientValue::ExtentKeyword;
-        using ShapeAndExtent = CSSPrefixedRadialGradientValue::ShapeAndExtent;
-        struct MeasuredSize {
-            Style::SpaceSeparatedTuple<Style::LengthPercentage, Style::LengthPercentage> size; // <length-percentage [0,∞]>, <length-percentage [0,∞]>
-            bool operator==(const MeasuredSize&) const = default;
-        };
-        using GradientBox = std::variant<std::monostate, ShapeKeyword, ExtentKeyword, ShapeAndExtent, MeasuredSize>;
-
-        GradientBox gradientBox;
-        std::optional<Style::Position> position;
-        CSSGradientRepeat repeating;
-        StyleGradientImageLinearColorStopList stops;
-
-        bool operator==(const PrefixedRadialData&) const = default;
-    };
-    struct DeprecatedRadialData {
-        StyleGradientImageDeprecatedPosition first;
-        StyleGradientImageDeprecatedPosition second;
-        Style::Number firstRadius;
-        Style::Number secondRadius;
-        StyleGradientImageDeprecatedColorStopList stops;
-
-        bool operator==(const DeprecatedRadialData&) const = default;
-    };
-    struct ConicData {
-        std::optional<Style::Angle> angle;
-        std::optional<Style::Position> position;
-        CSSGradientRepeat repeating;
-        StyleGradientImageAngularColorStopList stops;
-
-        bool operator==(const ConicData&) const = default;
-    };
-
-    using Data = std::variant<LinearData, DeprecatedLinearData, PrefixedLinearData, RadialData, DeprecatedRadialData, PrefixedRadialData, ConicData>;
-
-    static Ref<StyleGradientImage> create(Data data, CSSGradientColorInterpolationMethod colorInterpolationMethod)
+    static Ref<StyleGradientImage> create(Style::Gradient gradient)
     {
-        return adoptRef(*new StyleGradientImage(WTFMove(data), colorInterpolationMethod));
+        return adoptRef(*new StyleGradientImage(WTFMove(gradient)));
     }
     virtual ~StyleGradientImage();
 
@@ -194,7 +48,7 @@ public:
     static constexpr bool isFixedSize = false;
 
 private:
-    explicit StyleGradientImage(Data&&, CSSGradientColorInterpolationMethod);
+    explicit StyleGradientImage(Style::Gradient&&);
 
     Ref<CSSValue> computedStyleValue(const RenderStyle&) const final;
     bool isPending() const final;
@@ -205,19 +59,18 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    Ref<Gradient> createGradient(const LinearData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const PrefixedLinearData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const DeprecatedLinearData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const RadialData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const PrefixedRadialData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const DeprecatedRadialData&, const FloatSize&, const RenderStyle&) const;
-    Ref<Gradient> createGradient(const ConicData&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::LinearGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::PrefixedLinearGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::DeprecatedLinearGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::RadialGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::PrefixedRadialGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::DeprecatedRadialGradient&, const FloatSize&, const RenderStyle&) const;
+    Ref<WebCore::Gradient> createGradient(const Style::ConicGradient&, const FloatSize&, const RenderStyle&) const;
 
-    template<typename GradientAdapter, typename Stops> GradientColorStops computeStops(GradientAdapter&, const Stops&, const RenderStyle&, float maxLengthForRepeat, CSSGradientRepeat) const;
-    template<typename GradientAdapter, typename Stops> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const Stops&, const RenderStyle&) const;
+    template<typename GradientAdapter, typename StyleGradient> WebCore::GradientColorStops computeStops(GradientAdapter&, const StyleGradient&, const RenderStyle&, float maxLengthForRepeat) const;
+    template<typename GradientAdapter, typename StyleGradient> WebCore::GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const StyleGradient&, const RenderStyle&) const;
 
-    Data m_data;
-    CSSGradientColorInterpolationMethod m_colorInterpolationMethod;
+    Style::Gradient m_gradient;
     bool m_knownCacheableBarringFilter { false };
 };
 

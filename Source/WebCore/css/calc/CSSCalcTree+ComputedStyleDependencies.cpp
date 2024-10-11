@@ -29,7 +29,7 @@
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
-#include "CSSValue.h"
+#include "ComputedStyleDependencies.h"
 
 namespace WebCore {
 namespace CSSCalc {

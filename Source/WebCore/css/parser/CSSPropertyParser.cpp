@@ -75,6 +75,7 @@
 #include "CSSValuePair.h"
 #include "CSSVariableParser.h"
 #include "CSSVariableReferenceValue.h"
+#include "ComputedStyleDependencies.h"
 #include "FontFace.h"
 #include "ParsingUtilities.h"
 #include "Rect.h"

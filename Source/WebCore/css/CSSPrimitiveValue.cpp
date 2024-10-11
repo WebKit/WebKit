@@ -36,6 +36,7 @@
 #include "CalculationValue.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include "ComputedStyleDependencies.h"
 #include "ContainerQueryEvaluator.h"
 #include "FontCascade.h"
 #include "Length.h"

@@ -38,14 +38,14 @@ namespace WebCore {
 
 Style::Percentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
 {
-    return CSS::toStyle(percentage, conversionData, CSSCalcSymbolTable { });
+    return Style::toStyle(percentage, conversionData);
 }
 
 Style::Percentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
 {
     ASSERT(!requiresConversionData(percentage));
 
-    return CSS::toStyleNoConversionDataRequired(percentage, CSSCalcSymbolTable { });
+    return Style::toStyleNoConversionDataRequired(percentage);
 }
 
 static std::optional<Style::Percentage> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)

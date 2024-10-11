@@ -235,6 +235,7 @@ using LengthPercentage = PrimitiveNumeric<LengthPercentageRaw>;
 struct None {
     using Raw = NoneRaw;
 
+    constexpr None() = default;
     constexpr None(NoneRaw&&) { }
     constexpr None(const NoneRaw&) { }
 
@@ -285,13 +286,6 @@ template<typename T> bool isUnevaluatedCalc(const PrimitiveNumeric<T>& primitive
 template<typename T> auto simplifyUnevaluatedCalc(const PrimitiveNumeric<T>& primitive, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> PrimitiveNumeric<T>
 {
     return { simplifyUnevaluatedCalc(primitive.value, conversionData, symbolTable) };
-}
-
-// MARK: - CSSValue Visitation
-
-template<typename T> IterationStatus visitCSSValueChildren(const PrimitiveNumeric<T>& primitive, const Function<IterationStatus(CSSValue&)>& func)
-{
-    return visitCSSValueChildren(primitive.value, func);
 }
 
 // MARK: - Type List Modifiers

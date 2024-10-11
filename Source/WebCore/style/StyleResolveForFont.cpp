@@ -136,7 +136,7 @@ static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyPa
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(weight))
                 return normalWeightValue();
-            return FontSelectionValue(clampTo<float>(CSS::toStyleNoConversionDataRequired(weight, CSSCalcSymbolTable { }).value, 1, 1000));
+            return FontSelectionValue(clampTo<float>(toStyleNoConversionDataRequired(weight).value, 1, 1000));
         }
     );
 }
@@ -253,7 +253,7 @@ static ResolvedFontStyle fontStyleFromUnresolvedFontStyle(const CSSPropertyParse
                 return { .italic = std::nullopt, .axis = FontStyleAxis::slnt };
 
             return {
-                .italic = normalizedFontItalicValue(CSS::toStyleNoConversionDataRequired(angle, CSSCalcSymbolTable { }).value),
+                .italic = normalizedFontItalicValue(toStyleNoConversionDataRequired(angle).value),
                 .axis = FontStyleAxis::slnt
             };
         }
@@ -336,7 +336,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                         return { .size = 0.0f, .keyword = CSSValueInvalid };
 
                     return {
-                        .size = Style::evaluate(CSS::toStyleNoConversionDataRequired(calc, CSSCalcSymbolTable { }), parentSize),
+                        .size = Style::evaluate(toStyleNoConversionDataRequired(calc), parentSize),
                         .keyword = CSSValueInvalid
                     };
                 }

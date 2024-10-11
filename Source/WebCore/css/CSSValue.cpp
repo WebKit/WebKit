@@ -83,6 +83,7 @@
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
 #include "CSSViewValue.h"
+#include "ComputedStyleDependencies.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 #include "EventTarget.h"

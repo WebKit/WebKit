@@ -59,6 +59,7 @@
 #include "CSSValueList.h"
 #include "CSSVariableParser.h"
 #include "CSSViewTransitionRule.h"
+#include "ComputedStyleDependencies.h"
 #include "ContainerQueryParser.h"
 #include "Document.h"
 #include "Element.h"

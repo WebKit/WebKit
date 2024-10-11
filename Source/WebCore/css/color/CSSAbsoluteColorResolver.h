@@ -48,10 +48,10 @@ Color resolve(const CSSAbsoluteColorResolver<Descriptor>& absolute, const CSSToL
 {
     // Evaluated any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        CSS::toStyle(std::get<0>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        CSS::toStyle(std::get<1>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        CSS::toStyle(std::get<2>(absolute.components), conversionData, CSSCalcSymbolTable { }),
-        CSS::toStyle(std::get<3>(absolute.components), conversionData, CSSCalcSymbolTable { })
+        Style::toStyle(std::get<0>(absolute.components), conversionData),
+        Style::toStyle(std::get<1>(absolute.components), conversionData),
+        Style::toStyle(std::get<2>(absolute.components), conversionData),
+        Style::toStyle(std::get<3>(absolute.components), conversionData)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.
@@ -69,10 +69,10 @@ Color resolveNoConversionDataRequired(const CSSAbsoluteColorResolver<Descriptor>
 
     // Evaluated any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        CSS::toStyleNoConversionDataRequired(std::get<0>(absolute.components), CSSCalcSymbolTable { }),
-        CSS::toStyleNoConversionDataRequired(std::get<1>(absolute.components), CSSCalcSymbolTable { }),
-        CSS::toStyleNoConversionDataRequired(std::get<2>(absolute.components), CSSCalcSymbolTable { }),
-        CSS::toStyleNoConversionDataRequired(std::get<3>(absolute.components), CSSCalcSymbolTable { })
+        Style::toStyleNoConversionDataRequired(std::get<0>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<1>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<2>(absolute.components)),
+        Style::toStyleNoConversionDataRequired(std::get<3>(absolute.components))
     };
 
     // Normalize values into their numeric form, forming a validated typed color.

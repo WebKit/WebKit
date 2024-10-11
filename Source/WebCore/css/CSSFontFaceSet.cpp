@@ -344,7 +344,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(weight))
                 return normalWeightValue();
-            return FontSelectionValue(clampTo<float>(CSS::toStyleNoConversionDataRequired(weight, CSSCalcSymbolTable { }).value, 1, 1000));
+            return FontSelectionValue(clampTo<float>(Style::toStyleNoConversionDataRequired(weight).value, 1, 1000));
         }
     );
 
@@ -356,7 +356,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(percent))
                 return normalStretchValue();
-            return FontSelectionValue::clampFloat(CSS::toStyleNoConversionDataRequired(percent, CSSCalcSymbolTable { }).value);
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(percent).value);
         }
     );
 
@@ -378,7 +378,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(angle))
                 return std::nullopt;
-            return normalizedFontItalicValue(CSS::toStyleNoConversionDataRequired(angle, CSSCalcSymbolTable { }).value);
+            return normalizedFontItalicValue(Style::toStyleNoConversionDataRequired(angle).value);
         }
     );
 

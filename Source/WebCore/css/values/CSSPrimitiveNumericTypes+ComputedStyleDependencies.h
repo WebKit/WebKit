@@ -27,9 +27,6 @@
 #include "CSSPrimitiveNumericTypes.h"
 
 namespace WebCore {
-
-struct ComputedStyleDependencies;
-
 namespace CSS {
 
 // MARK: - Computed Style Dependencies
@@ -37,32 +34,28 @@ namespace CSS {
 // What properties does this value rely on (eg, font-size for em units)?
 
 // Core unit based dependency analysis.
-void collectComputedStyleDependencies(ComputedStyleDependencies&, CSSUnitType);
+template<> struct ComputedStyleDependenciesCollector<CSSUnitType> { void operator()(ComputedStyleDependencies& dependencies, CSSUnitType); };
 
 // Most raw primitives have no dependencies.
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const NumberRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const PercentageRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const AngleRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const TimeRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const FrequencyRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const ResolutionRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const FlexRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const AnglePercentageRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const NoneRaw&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const SymbolRaw&) { }
+template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<RawType> { constexpr void operator()(ComputedStyleDependencies&, const RawType&) { } };
 
 // The exception being LengthRaw/LengthPercentageRaw.
-void collectComputedStyleDependencies(ComputedStyleDependencies&, const LengthRaw&);
-void collectComputedStyleDependencies(ComputedStyleDependencies&, const LengthPercentageRaw&);
+template<> struct ComputedStyleDependenciesCollector<LengthRaw> { void operator()(ComputedStyleDependencies&, const LengthRaw&); };
+template<> struct ComputedStyleDependenciesCollector<LengthPercentageRaw> { void operator()(ComputedStyleDependencies&, const LengthPercentageRaw&); };
 
 // All primitives that can contain calc() may have dependencies, as calc() can contain relative lengths even in non-length contexts.
-template<typename T> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<T>& primitive)
-{
-    collectComputedStyleDependencies(dependencies, primitive.value);
-}
+template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<PrimitiveNumeric<RawType>> {
+    inline void operator()(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<RawType>& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.value);
+    }
+};
 
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const None&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Symbol&) { }
+// None/Symbol have trivially nothing to collect.
+template<> struct ComputedStyleDependenciesCollector<NoneRaw> { constexpr void operator()(ComputedStyleDependencies&, const NoneRaw&) { } };
+template<> struct ComputedStyleDependenciesCollector<None> { constexpr void operator()(ComputedStyleDependencies&, const None&) { } };
+template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
+template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
 
 } // namespace CSS
 } // namespace WebCore

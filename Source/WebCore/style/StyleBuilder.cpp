@@ -38,6 +38,7 @@
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
+#include "ComputedStyleDependencies.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "DocumentInlines.h"

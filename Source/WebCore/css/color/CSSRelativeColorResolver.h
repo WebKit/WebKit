@@ -68,10 +68,10 @@ Color resolve(const CSSRelativeColorResolver<Descriptor>& relative, const CSSToL
 
     // Evaluated any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        CSS::toStyle(std::get<0>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        CSS::toStyle(std::get<1>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        CSS::toStyle(std::get<2>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        CSS::toStyle(std::get<3>(componentsWithUnevaluatedCalc), conversionData, symbolTable)
+        Style::toStyle(std::get<0>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        Style::toStyle(std::get<1>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        Style::toStyle(std::get<2>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
+        Style::toStyle(std::get<3>(componentsWithUnevaluatedCalc), conversionData, symbolTable)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.
@@ -108,10 +108,10 @@ Color resolveNoConversionDataRequired(const CSSRelativeColorResolver<Descriptor>
 
     // Evaluated any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        CSS::toStyleNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
-        CSS::toStyleNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
-        CSS::toStyleNoConversionDataRequired(std::get<2>(componentsWithUnevaluatedCalc), symbolTable),
-        CSS::toStyleNoConversionDataRequired(std::get<3>(componentsWithUnevaluatedCalc), symbolTable)
+        Style::toStyleNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<2>(componentsWithUnevaluatedCalc), symbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<3>(componentsWithUnevaluatedCalc), symbolTable)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.

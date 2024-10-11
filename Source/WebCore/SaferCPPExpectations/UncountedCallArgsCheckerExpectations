@@ -907,7 +907,6 @@ css/CSSFontStyleRangeValue.h
 css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
 css/CSSGradientValue.cpp
-css/CSSGradientValue.h
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineValue.cpp
 css/CSSGroupingRule.cpp

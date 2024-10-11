@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include "CSSValueTypes.h"
 #include <optional>
 #include <variant>
 #include <wtf/Brigand.h>
@@ -155,24 +156,30 @@ template<typename T> decltype(auto) simplifyUnevaluatedCalc(const std::optional<
 
 // MARK: - Serialization
 
-template<typename T> void serializationForCSS(StringBuilder& builder, const UnevaluatedCalc<T>& unevaluatedCalc)
-{
-    unevaluatedCalcSerialization(builder, unevaluatedCalc.calc);
-}
+template<typename T> struct Serialize<UnevaluatedCalc<T>> {
+    inline void operator()(StringBuilder& builder, const UnevaluatedCalc<T>& value)
+    {
+        unevaluatedCalcSerialization(builder, value.calc);
+    }
+};
 
 // MARK: - Computed Style Dependencies
 
-template<typename T> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const UnevaluatedCalc<T>& calc)
-{
-    unevaluatedCalcCollectComputedStyleDependencies(dependencies, calc.calc);
-}
+template<typename T> struct ComputedStyleDependenciesCollector<UnevaluatedCalc<T>> {
+    inline void operator()(ComputedStyleDependencies& dependencies, const UnevaluatedCalc<T>& value)
+    {
+        unevaluatedCalcCollectComputedStyleDependencies(dependencies, value.calc);
+    }
+};
 
 // MARK: - CSSValue Visitation
 
-template<typename T> IterationStatus visitCSSValueChildren(const UnevaluatedCalc<T>& calc, const Function<IterationStatus(CSSValue&)>& func)
-{
-    return func(calc.calc.get());
-}
+template<typename T> struct CSSValueChildrenVisitor<UnevaluatedCalc<T>> {
+    inline IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const UnevaluatedCalc<T>& value)
+    {
+        return func(value.calc.get());
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore

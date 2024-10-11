@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSValueKeywords.h"
 #include <optional>
 #include <tuple>
 #include <utility>
@@ -33,7 +33,85 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+class CSSValue;
+struct ComputedStyleDependencies;
+
 namespace CSS {
+
+// Types can specialize this and set the value to true to be treated as "tuple-like"
+// for CSS value type algorithms.
+// NOTE: This gets automatically specialized when using the CSS_TUPLE_LIKE_CONFORMANCE macro.
+template<class> inline constexpr bool TreatAsTupleLike = false;
+
+// Helper type used to represent a constant identifier.
+template<CSSValueID C> struct Constant {
+    static constexpr auto value = C;
+
+    constexpr bool operator==(const Constant<C>&) const = default;
+};
+
+// Wraps a variable number of elements of a single type, semantically marking them as serializing as "space separated".
+template<typename T, size_t inlineCapacity = 0> struct SpaceSeparatedVector {
+    using Vector = WTF::Vector<T, inlineCapacity>;
+    using const_iterator = typename Vector::const_iterator;
+    using const_reverse_iterator = typename Vector::const_reverse_iterator;
+    using value_type = typename Vector::value_type;
+
+    SpaceSeparatedVector(std::initializer_list<T> initializerList)
+        : value { initializerList }
+    {
+    }
+
+    SpaceSeparatedVector(WTF::Vector<T, inlineCapacity>&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
+    bool operator==(const SpaceSeparatedVector<T, inlineCapacity>&) const = default;
+
+    WTF::Vector<T, inlineCapacity> value;
+};
+
+// Wraps a variable number of elements of a single type, semantically marking them as serializing as "comma separated".
+template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
+    using Vector = WTF::Vector<T, inlineCapacity>;
+    using const_iterator = typename Vector::const_iterator;
+    using const_reverse_iterator = typename Vector::const_reverse_iterator;
+    using value_type = typename Vector::value_type;
+
+    CommaSeparatedVector(std::initializer_list<T> initializerList)
+        : value { initializerList }
+    {
+    }
+
+    CommaSeparatedVector(WTF::Vector<T, inlineCapacity>&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
+    bool operator==(const CommaSeparatedVector<T, inlineCapacity>&) const = default;
+
+    WTF::Vector<T, inlineCapacity> value;
+};
 
 // Wraps a variadic list of types, semantically marking them as serializing as "space separated".
 template<typename... Ts> struct SpaceSeparatedTuple {
@@ -57,92 +135,342 @@ template<typename... Ts> struct SpaceSeparatedTuple {
     std::tuple<Ts...> value;
 };
 
-// MARK: Serialization
-
-template<typename T> void serializationForCSS(StringBuilder& builder, const std::optional<T>& optional)
+template<size_t I, typename... Ts> decltype(auto) get(const SpaceSeparatedTuple<Ts...>& tuple)
 {
-    if (!optional)
-        return;
-    serializationForCSS(builder, *optional);
+    return std::get<I>(tuple.value);
 }
 
-template<typename... Ts> void serializationForCSS(StringBuilder& builder, const std::variant<Ts...>& variant)
+// Wraps a variadic list of types, semantically marking them as serializing as "comma separated".
+template<typename... Ts> struct CommaSeparatedTuple {
+    constexpr CommaSeparatedTuple(Ts&&... values)
+        : value { std::make_tuple(std::forward<Ts>(values)...) }
+    {
+    }
+
+    constexpr CommaSeparatedTuple(const Ts&... values)
+        : value { std::make_tuple(values...) }
+    {
+    }
+
+    constexpr CommaSeparatedTuple(std::tuple<Ts...>&& tuple)
+        : value { WTFMove(tuple) }
+    {
+    }
+
+    constexpr bool operator==(const CommaSeparatedTuple<Ts...>&) const = default;
+
+    std::tuple<Ts...> value;
+};
+
+template<size_t I, typename... Ts> decltype(auto) get(const CommaSeparatedTuple<Ts...>& tuple)
 {
-    WTF::switchOn(variant, [&](auto& alternative) { serializationForCSS(builder, alternative); });
+    return std::get<I>(tuple.value);
 }
 
-template<typename... Ts> void serializationForCSS(StringBuilder& builder, const SpaceSeparatedTuple<Ts...>& tuple)
-{
-    auto separator = ""_s;
-    auto caller = WTF::makeVisitor(
-        [&]<typename T>(std::optional<T>& css) {
-            if (!css)
-                return;
-            builder.append(std::exchange(separator, " "_s));
-            serializationForCSS(builder, *css);
-        },
-        [&](auto& css) {
-            builder.append(std::exchange(separator, " "_s));
-            serializationForCSS(builder, css);
-        }
-    );
+// MARK: - Serialization
 
-    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, tuple.value);
+// All leaf types must implement the following conversions:
+//
+//    template<> struct WebCore::CSS::Serialize<CSSType> {
+//        void operator()(StringBuilder&, const CSSType&);
+//    };
+
+template<typename CSSType> struct Serialize;
+
+// Serialization Invokers
+template<typename CSSType> void serializationForCSS(StringBuilder& builder, const CSSType& value)
+{
+    Serialize<CSSType>{}(builder, value);
 }
+
+template<typename CSSType> String serializationForCSS(const CSSType& value)
+{
+    StringBuilder builder;
+    serializationForCSS(builder, value);
+    return builder.toString();
+}
+
+// Specialization for `std::optional`.
+template<typename CSSType> struct Serialize<std::optional<CSSType>> {
+    void operator()(StringBuilder& builder, const std::optional<CSSType>& value)
+    {
+        if (!value)
+            return;
+        serializationForCSS(builder, *value);
+    }
+};
+
+// Specialization for `std::variant`.
+template<typename... CSSTypes> struct Serialize<std::variant<CSSTypes...>> {
+    void operator()(StringBuilder& builder, const std::variant<CSSTypes...>& value)
+    {
+        WTF::switchOn(value, [&](auto& alternative) { serializationForCSS(builder, alternative); });
+    }
+};
+
+// Specialization for `Constant`.
+template<CSSValueID C> struct Serialize<Constant<C>> {
+    void operator()(StringBuilder& builder, const Constant<C>& value)
+    {
+        builder.append(nameLiteralForSerialization(value.value));
+    }
+};
+
+// Specialization for `SpaceSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct Serialize<SpaceSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(StringBuilder& builder, const SpaceSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        builder.append(interleave(value.value, [](auto& builder, auto& element) { serializationForCSS(builder, element); }, ' '));
+    }
+};
+
+// Specialization for `CommaSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct Serialize<CommaSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(StringBuilder& builder, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        builder.append(interleave(value.value, [](auto& builder, auto& element) { serializationForCSS(builder, element); }, ", "_s));
+    }
+};
+
+// Specialization for `SpaceSeparatedTuple`.
+template<typename... CSSTypes> struct Serialize<SpaceSeparatedTuple<CSSTypes...>> {
+    void operator()(StringBuilder& builder, const SpaceSeparatedTuple<CSSTypes...>& value)
+    {
+        auto separator = ""_s;
+        auto caller = WTF::makeVisitor(
+            [&]<typename T>(std::optional<T>& css) {
+                if (!css)
+                    return;
+                builder.append(std::exchange(separator, " "_s));
+                serializationForCSS(builder, *css);
+            },
+            [&](auto& css) {
+                builder.append(std::exchange(separator, " "_s));
+                serializationForCSS(builder, css);
+            }
+        );
+
+        WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedTuple`.
+template<typename... CSSTypes> struct Serialize<CommaSeparatedTuple<CSSTypes...>> {
+    void operator()(StringBuilder& builder, const CommaSeparatedTuple<CSSTypes...>& value)
+    {
+        auto separator = ""_s;
+        auto caller = WTF::makeVisitor(
+            [&]<typename T>(std::optional<T>& css) {
+                if (!css)
+                    return;
+                builder.append(std::exchange(separator, ", "_s));
+                serializationForCSS(builder, *css);
+            },
+            [&](auto& css) {
+                builder.append(std::exchange(separator, ", "_s));
+                serializationForCSS(builder, css);
+            }
+        );
+
+        WTF::apply([&](const auto& ...x) { (..., caller(x)); }, value.value);
+    }
+};
 
 // MARK: - Computed Style Dependencies
 
 // What properties does this value rely on (eg, font-size for em units)?
 
-template<typename T> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const std::optional<T>& optional)
+// All leaf types must implement the following conversions:
+//
+//    template<> struct WebCore::CSS::ComputedStyleDependenciesCollector<CSSType> {
+//        void operator()(ComputedStyleDependencies&, const CSSType&);
+//    };
+
+template<typename CSSType, typename Enabled = void> struct ComputedStyleDependenciesCollector;
+
+// ComputedStyleDependencies Invoker
+template<typename CSSType> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const CSSType& value)
 {
-    if (!optional)
-        return;
-    collectComputedStyleDependencies(dependencies, *optional);
+    ComputedStyleDependenciesCollector<CSSType>{}(dependencies, value);
 }
 
-template<typename... Ts> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const std::variant<Ts...>& variant)
+template<typename CSSType> auto collectComputedStyleDependenciesOnTupleLike(ComputedStyleDependencies& dependencies, const CSSType& value)
 {
-    WTF::switchOn(variant, [&](auto& alternative) { collectComputedStyleDependencies(dependencies, alternative); });
+    WTF::apply([&](const auto& ...x) { (..., collectComputedStyleDependencies(dependencies, x)); }, value);
 }
 
-template<typename... Ts> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const SpaceSeparatedTuple<Ts...>& value)
-{
-    WTF::apply([&](const auto& ...x) { (..., collectComputedStyleDependencies(dependencies, x)); }, value.value);
-}
+// Constrained for `TreatAsTupleLike`.
+template<typename CSSType> struct ComputedStyleDependenciesCollector<CSSType, std::enable_if_t<TreatAsTupleLike<CSSType>>> {
+    void operator()(ComputedStyleDependencies& dependencies, const CSSType& value)
+    {
+        collectComputedStyleDependenciesOnTupleLike(dependencies, value);
+    }
+};
+
+// Specialization for `std::optional`.
+template<typename CSSType> struct ComputedStyleDependenciesCollector<std::optional<CSSType>> {
+    void operator()(ComputedStyleDependencies& dependencies, const std::optional<CSSType>& value)
+    {
+        if (!value)
+            return;
+        collectComputedStyleDependencies(dependencies, *value);
+    }
+};
+
+// Specialization for `std::variant`.
+template<typename... CSSTypes> struct ComputedStyleDependenciesCollector<std::variant<CSSTypes...>> {
+    void operator()(ComputedStyleDependencies& dependencies, const std::variant<CSSTypes...>& value)
+    {
+        WTF::switchOn(value, [&](auto& alternative) { collectComputedStyleDependencies(dependencies, alternative); });
+    }
+};
+
+// Specialization for `Constant`.
+template<CSSValueID C> struct ComputedStyleDependenciesCollector<Constant<C>> {
+    constexpr void operator()(ComputedStyleDependencies&, const Constant<C>&)
+    {
+        // Nothing to do.
+    }
+};
+
+// Specialization for `SpaceSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct ComputedStyleDependenciesCollector<SpaceSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(ComputedStyleDependencies& dependencies, const SpaceSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        for (auto& element : value.value)
+            collectComputedStyleDependencies(dependencies, element);
+    }
+};
+
+// Specialization for `CommaSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct ComputedStyleDependenciesCollector<CommaSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(ComputedStyleDependencies& dependencies, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        for (auto& element : value.value)
+            collectComputedStyleDependencies(dependencies, element);
+    }
+};
+
+// Specialization for `SpaceSeparatedTuple`.
+template<typename... CSSTypes> struct ComputedStyleDependenciesCollector<SpaceSeparatedTuple<CSSTypes...>> {
+    void operator()(ComputedStyleDependencies& dependencies, const SpaceSeparatedTuple<CSSTypes...>& value)
+    {
+        collectComputedStyleDependenciesOnTupleLike(dependencies, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedTuple`.
+template<typename... CSSTypes> struct ComputedStyleDependenciesCollector<CommaSeparatedTuple<CSSTypes...>> {
+    void operator()(ComputedStyleDependencies& dependencies, const CommaSeparatedTuple<CSSTypes...>& value)
+    {
+        collectComputedStyleDependenciesOnTupleLike(dependencies, value.value);
+    }
+};
 
 // MARK: - CSSValue Visitation
 
-template<typename T> constexpr IterationStatus visitCSSValueChildren(const T&, const Function<IterationStatus(CSSValue&)>&)
+// All leaf types must implement the following conversions:
+//
+//    template<> struct WebCore::CSS::CSSValueChildrenVisitor<CSSType> {
+//        IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const CSSType&);
+//    };
+
+template<typename CSSType, typename Enabled = void> struct CSSValueChildrenVisitor;
+
+// CSSValueVisitor Invoker
+template<typename CSSType> IterationStatus visitCSSValueChildren(const Function<IterationStatus(CSSValue&)>& func, const CSSType& value)
 {
-    return IterationStatus::Continue;
+    return CSSValueChildrenVisitor<CSSType>{}(func, value);
 }
 
-template<typename T1, typename T2> IterationStatus visitCSSValueChildren(const SpaceSeparatedTuple<T1, T2>& pair, const Function<IterationStatus(CSSValue&)>& func)
+template<typename CSSType> IterationStatus visitCSSValueChildrenOnTupleLike(const Function<IterationStatus(CSSValue&)>& func, const CSSType& value)
 {
-    if (visitCSSValueChildren(get<0>(pair), func) == IterationStatus::Done)
-        return IterationStatus::Done;
-    if (visitCSSValueChildren(get<1>(pair), func) == IterationStatus::Done)
-        return IterationStatus::Done;
-    return IterationStatus::Continue;
+    // Process a single element of the tuple-like, updating result, and return true if result == IterationStatus::Done to
+    // short circuit the fold in the apply lambda.
+    auto process = [&](const auto& x, IterationStatus& result) -> bool {
+        result = visitCSSValueChildren(func, x);
+        return result == IterationStatus::Done;
+    };
+
+    return WTF::apply([&](const auto& ...x) {
+        auto result = IterationStatus::Continue;
+        (process(x, result) || ...);
+        return result;
+    }, value);
 }
 
-template<typename... Ts> IterationStatus visitCSSValueChildren(const std::variant<Ts...>& variant, const Function<IterationStatus(CSSValue&)>& func)
-{
-    return WTF::switchOn(variant, [&](const auto& alternative) { return visitCSSValueChildren(alternative, func); } );
-}
+// Constrained for `TreatAsTupleLike`.
+template<typename CSSType> struct CSSValueChildrenVisitor<CSSType, std::enable_if_t<TreatAsTupleLike<CSSType>>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CSSType& value)
+    {
+        return visitCSSValueChildrenOnTupleLike(func, value);
+    }
+};
 
-template<typename T> IterationStatus visitCSSValueChildren(const std::optional<T>& optional, const Function<IterationStatus(CSSValue&)>& func)
-{
-    return optional ? visitCSSValueChildren(*optional, func) : IterationStatus::Continue;
-}
+// Specialization for `std::optional`.
+template<typename CSSType> struct CSSValueChildrenVisitor<std::optional<CSSType>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const std::optional<CSSType>& value)
+    {
+        return value ? visitCSSValueChildren(func, *value) : IterationStatus::Continue;
+    }
+};
 
-// MARK: Support for treating aggregate types as Tuple-like
+// Specialization for `std::variant`.
+template<typename... CSSTypes> struct CSSValueChildrenVisitor<std::variant<CSSTypes...>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const std::variant<CSSTypes...>& value)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return visitCSSValueChildren(func, alternative); });
+    }
+};
 
-template<size_t I, typename... Ts> decltype(auto) get(const SpaceSeparatedTuple<Ts...>& value)
-{
-    return std::get<I>(value.value);
-}
+// Specialization for `Constant`.
+template<CSSValueID C> struct CSSValueChildrenVisitor<Constant<C>> {
+    constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const Constant<C>&)
+    {
+        return IterationStatus::Continue;
+    }
+};
+
+
+// Specialization for `SpaceSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct CSSValueChildrenVisitor<SpaceSeparatedVector<CSSType, inlineCapacity>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const SpaceSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        for (const auto& element : value.value) {
+            if (visitCSSValueChildren(func, element) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+};
+
+// Specialization for `CommaSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct CSSValueChildrenVisitor<CommaSeparatedVector<CSSType, inlineCapacity>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        for (const auto& element : value.value) {
+            if (visitCSSValueChildren(func, element) == IterationStatus::Done)
+                return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    }
+};
+
+// Specialization for `SpaceSeparatedTuple`.
+template<typename... CSSTypes> struct CSSValueChildrenVisitor<SpaceSeparatedTuple<CSSTypes...>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const SpaceSeparatedTuple<CSSTypes...>& value)
+    {
+        return visitCSSValueChildrenOnTupleLike(func, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedTuple`.
+template<typename... CSSTypes> struct CSSValueChildrenVisitor<CommaSeparatedTuple<CSSTypes...>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CommaSeparatedTuple<CSSTypes...>& value)
+    {
+        return visitCSSValueChildrenOnTupleLike(func, value.value);
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore
@@ -154,5 +482,22 @@ template<size_t I, typename... Ts> class tuple_element<I, WebCore::CSS::SpaceSep
 public:
     using type = tuple_element_t<I, tuple<Ts...>>;
 };
+
+template<typename... Ts> class tuple_size<WebCore::CSS::CommaSeparatedTuple<Ts...>> : public std::integral_constant<size_t, sizeof...(Ts)> { };
+template<size_t I, typename... Ts> class tuple_element<I, WebCore::CSS::CommaSeparatedTuple<Ts...>> {
+public:
+    using type = tuple_element_t<I, tuple<Ts...>>;
+};
+
+#define CSS_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
+    namespace std { \
+        template<> class tuple_size<WebCore::CSS::t> : public std::integral_constant<size_t, numberOfArguments> { }; \
+        template<size_t I> class tuple_element<I, WebCore::CSS::t> { \
+        public: \
+            using type = decltype(WebCore::CSS::get<I>(std::declval<WebCore::CSS::t>())); \
+        }; \
+    } \
+    template<> inline constexpr bool WebCore::CSS::TreatAsTupleLike<WebCore::CSS::t> = true; \
+\
 
 }

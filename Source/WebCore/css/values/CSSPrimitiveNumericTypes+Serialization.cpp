@@ -34,72 +34,28 @@ namespace CSS {
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const NumberRaw& value)
+void rawNumericSerialization(StringBuilder& builder, double value, CSSUnitType type)
 {
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
+    formatCSSNumberValue(builder, value, CSSPrimitiveValue::unitTypeString(type));
 }
 
-void serializationForCSS(StringBuilder& builder, const PercentageRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const AngleRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const LengthRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const TimeRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const FrequencyRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const ResolutionRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const FlexRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const AnglePercentageRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const LengthPercentageRaw& value)
-{
-    formatCSSNumberValue(builder, value.value, CSSPrimitiveValue::unitTypeString(value.type));
-}
-
-void serializationForCSS(StringBuilder& builder, const NoneRaw&)
+void Serialize<NoneRaw>::operator()(StringBuilder& builder, const NoneRaw&)
 {
     builder.append("none"_s);
 }
 
-void serializationForCSS(StringBuilder& builder, const SymbolRaw& value)
+void Serialize<None>::operator()(StringBuilder& builder, const None&)
+{
+    builder.append("none"_s);
+}
+
+void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
 }
 
-void serializationForCSS(StringBuilder& builder, const None&)
-{
-    builder.append("none"_s);
-}
 
-void serializationForCSS(StringBuilder& builder, const Symbol& value)
+void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
 }

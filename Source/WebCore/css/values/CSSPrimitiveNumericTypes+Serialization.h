@@ -31,26 +31,28 @@ namespace CSS {
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder&, const NumberRaw&);
-void serializationForCSS(StringBuilder&, const PercentageRaw&);
-void serializationForCSS(StringBuilder&, const AngleRaw&);
-void serializationForCSS(StringBuilder&, const LengthRaw&);
-void serializationForCSS(StringBuilder&, const TimeRaw&);
-void serializationForCSS(StringBuilder&, const FrequencyRaw&);
-void serializationForCSS(StringBuilder&, const ResolutionRaw&);
-void serializationForCSS(StringBuilder&, const FlexRaw&);
-void serializationForCSS(StringBuilder&, const AnglePercentageRaw&);
-void serializationForCSS(StringBuilder&, const LengthPercentageRaw&);
-void serializationForCSS(StringBuilder&, const NoneRaw&);
-void serializationForCSS(StringBuilder&, const SymbolRaw&);
+// Type-erased helper to allow for shared code.
+void rawNumericSerialization(StringBuilder&, double, CSSUnitType);
 
-template<typename T> void serializationForCSS(StringBuilder& builder, const PrimitiveNumeric<T>& primitive)
-{
-    serializationForCSS(builder, primitive.value);
-}
+template<RawNumeric RawType> struct Serialize<RawType> {
+    inline void operator()(StringBuilder& builder, const RawType& value)
+    {
+        rawNumericSerialization(builder, value.value, value.type);
+    }
+};
 
-void serializationForCSS(StringBuilder&, const Symbol&);
-void serializationForCSS(StringBuilder&, const None&);
+template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
+    inline void operator()(StringBuilder& builder, const PrimitiveNumeric<RawType>& value)
+    {
+        serializationForCSS(builder, value.value);
+    }
+};
+
+template<> struct Serialize<NoneRaw> { void operator()(StringBuilder&, const NoneRaw&); };
+template<> struct Serialize<None> { void operator()(StringBuilder&, const None&); };
+
+template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SymbolRaw&); };
+template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const Symbol&); };
 
 } // namespace CSS
 } // namespace WebCore

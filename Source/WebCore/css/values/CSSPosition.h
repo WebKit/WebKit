@@ -25,15 +25,18 @@
 #pragma once
 
 #include "CSSPrimitiveNumericTypes.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 namespace CSS {
 
-struct Left   {  constexpr bool operator==(const Left&) const = default;   };
-struct Right  {  constexpr bool operator==(const Right&) const = default;  };
-struct Top    {  constexpr bool operator==(const Top&) const = default;    };
-struct Bottom {  constexpr bool operator==(const Bottom&) const = default; };
-struct Center {  constexpr bool operator==(const Center&) const = default; };
+using Left   = Constant<CSSValueLeft>;
+using Right  = Constant<CSSValueRight>;
+using Top    = Constant<CSSValueTop>;
+using Bottom = Constant<CSSValueBottom>;
+using Center = Constant<CSSValueCenter>;
 
 using TwoComponentPositionHorizontal    = std::variant<Left, Right, Center, LengthPercentage>;
 using TwoComponentPositionVertical      = std::variant<Top, Bottom, Center, LengthPercentage>;
@@ -76,21 +79,9 @@ struct Position {
 
 bool isCenterPosition(const Position&);
 
-void serializationForCSS(StringBuilder&, const Left&);
-void serializationForCSS(StringBuilder&, const Right&);
-void serializationForCSS(StringBuilder&, const Top&);
-void serializationForCSS(StringBuilder&, const Bottom&);
-void serializationForCSS(StringBuilder&, const Center&);
-void serializationForCSS(StringBuilder&, const Position&);
-
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Left&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Right&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Top&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Bottom&) { }
-constexpr void collectComputedStyleDependencies(ComputedStyleDependencies&, const Center&) { }
-void collectComputedStyleDependencies(ComputedStyleDependencies&, const Position&);
-
-IterationStatus visitCSSValueChildren(const Position&, const Function<IterationStatus(CSSValue&)>&);
+template<> struct Serialize<Position> { void operator()(StringBuilder&, const Position&); };
+template<> struct ComputedStyleDependenciesCollector<Position> { void operator()(ComputedStyleDependencies&, const Position&); };
+template<> struct CSSValueChildrenVisitor<Position> { IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const Position&); };
 
 } // namespace CSS
 } // namespace WebCore

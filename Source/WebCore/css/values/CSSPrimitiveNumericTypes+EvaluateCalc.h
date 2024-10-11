@@ -32,7 +32,7 @@ namespace CSS {
 
 // MARK: - Evaluation
 
-// FIXME: Remove "evaluateCalc" family of functions once color code has moved to the "CSS::toStyle" family of functions.
+// FIXME: Remove "evaluateCalc" family of functions once color code has moved to the "toStyle" family of functions.
 
 template<RawNumeric T> auto evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<T>& calc, const CSSCalcSymbolTable& symbolTable) -> T
 {
