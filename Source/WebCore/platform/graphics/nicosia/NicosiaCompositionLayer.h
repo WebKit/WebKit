@@ -29,6 +29,7 @@
 #pragma once
 
 #include "Color.h"
+#include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "Damage.h"
 #include "FilterOperations.h"
@@ -38,7 +39,6 @@
 #include "FloatSize.h"
 #include "NicosiaAnimatedBackingStoreClient.h"
 #include "NicosiaAnimation.h"
-#include "NicosiaBackingStore.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
 #include "TextureMapperLayer.h"
@@ -143,7 +143,11 @@ public:
         WebCore::FloatRoundedRect backdropFiltersRect;
 
         RefPtr<WebCore::TextureMapperPlatformLayerProxy> contentLayer;
-        RefPtr<BackingStore> backingStore;
+        struct {
+            RefPtr<WebCore::CoordinatedBackingStoreProxy::Update> update;
+            bool shouldHaveBackingStore { false };
+            float scale { 1 };
+        } backingStore;
         struct {
             RefPtr<WebCore::CoordinatedImageBackingStore> store;
             bool isVisible { false };
@@ -164,8 +168,7 @@ public:
         WebCore::EventRegion eventRegion;
     };
 
-    template<typename T>
-    void flushState(const T& functor)
+    void flushState()
     {
         Locker locker { PlatformLayer::m_state.lock };
         auto& pending = m_state.pending;
@@ -231,8 +234,17 @@ public:
         if (pending.delta.eventRegionChanged)
             staging.eventRegion = pending.eventRegion;
 
-        if (pending.delta.backingStoreChanged)
-            staging.backingStore = pending.backingStore;
+        if (pending.delta.backingStoreChanged) {
+            if (staging.backingStore.update)
+                staging.backingStore.update->appendUpdate(pending.backingStore.update);
+            else
+                staging.backingStore.update = pending.backingStore.update;
+            pending.backingStore.update = nullptr;
+
+            staging.backingStore.shouldHaveBackingStore = pending.backingStore.shouldHaveBackingStore;
+            staging.backingStore.scale = pending.backingStore.scale;
+        }
+
         if (pending.delta.contentLayerChanged)
             staging.contentLayer = pending.contentLayer;
         if (pending.delta.imageBackingChanged)
@@ -243,8 +255,6 @@ public:
             staging.damage = pending.damage;
 
         pending.delta = { };
-
-        functor(staging);
     }
 
     template<typename T>
@@ -262,6 +272,13 @@ public:
     {
         Locker locker { PlatformLayer::m_state.lock };
         functor(m_state.pending);
+    }
+
+    template<typename T>
+    void accessStaging(const T& functor)
+    {
+        Locker locker { PlatformLayer::m_state.lock };
+        functor(m_state.staging);
     }
 
     template<typename T>

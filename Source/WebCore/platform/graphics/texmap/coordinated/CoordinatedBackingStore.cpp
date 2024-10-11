@@ -102,10 +102,8 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
     WTFEndSignpost(this, CoordinatedSwapBuffers);
 }
 
-void CoordinatedBackingStore::createTile(uint32_t id, float scale)
+void CoordinatedBackingStore::createTile(uint32_t id)
 {
-    // FIXME: scale set shouldn't be done in createTile, it sould be moved to resize().
-    m_scale = scale;
     m_tiles.add(id, CoordinatedBackingStoreTile(m_scale));
 }
 
@@ -122,9 +120,10 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
     it->value.addUpdate({ WTFMove(buffer), sourceRect, tileRect, offset });
 }
 
-void CoordinatedBackingStore::resize(const FloatSize& size)
+void CoordinatedBackingStore::resize(const FloatSize& size, float scale)
 {
     m_size = size;
+    m_scale = scale;
 }
 
 void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
