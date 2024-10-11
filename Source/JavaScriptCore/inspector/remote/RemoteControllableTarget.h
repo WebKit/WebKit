@@ -28,6 +28,7 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "JSExportMacros.h"
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,13 +42,13 @@ class FrontendChannel;
 
 using TargetID = unsigned;
 
-class RemoteControllableTarget {
+class JS_EXPORT_PRIVATE RemoteControllableTarget : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteControllableTarget> {
 public:
-    JS_EXPORT_PRIVATE RemoteControllableTarget();
-    JS_EXPORT_PRIVATE virtual ~RemoteControllableTarget();
+    RemoteControllableTarget();
+    virtual ~RemoteControllableTarget();
 
-    JS_EXPORT_PRIVATE void init();
-    JS_EXPORT_PRIVATE void update();
+    void init();
+    void update();
 
     virtual void connect(FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) = 0;
     virtual void disconnect(FrontendChannel&) = 0;

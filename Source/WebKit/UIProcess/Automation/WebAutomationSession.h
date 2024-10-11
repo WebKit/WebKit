@@ -103,9 +103,6 @@ public:
 using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
 class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public IPC::MessageReceiver
-#if ENABLE(REMOTE_INSPECTOR)
-    , public Inspector::RemoteAutomationTarget
-#endif
     , public Inspector::AutomationBackendDispatcherHandler
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     , public SimulatedInputDispatcher::Client
@@ -114,6 +111,26 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
 public:
     WebAutomationSession();
     ~WebAutomationSession();
+
+#if ENABLE(REMOTE_INSPECTOR)
+    class Debuggable : public Inspector::RemoteAutomationTarget {
+    public:
+        static Ref<Debuggable> create(WebAutomationSession&);
+
+        void sessionDestroyed();
+
+    // Inspector::RemoteAutomationTarget API
+    String name() const;
+    void dispatchMessageFromRemote(String&& message);
+    void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
+    void disconnect(Inspector::FrontendChannel&);
+
+    private:
+        explicit Debuggable(WebAutomationSession&);
+
+        WebAutomationSession* m_session;
+    };
+#endif // ENABLE(REMOTE_INSPECTOR)
 
     void setClient(std::unique_ptr<API::AutomationSessionClient>&&);
 
@@ -138,12 +155,16 @@ public:
     bool shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
 
 #if ENABLE(REMOTE_INSPECTOR)
-    // Inspector::RemoteAutomationTarget API
     String name() const { return m_sessionIdentifier; }
     void dispatchMessageFromRemote(String&& message);
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     void disconnect(Inspector::FrontendChannel&);
+
+    void init();
+    bool isPaired() const;
+    bool isPendingTermination() const;
 #endif
+
     void terminate();
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
@@ -375,6 +396,7 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
+    Ref<Debuggable> m_debuggable;
 #endif
 
 };

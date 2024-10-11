@@ -3570,7 +3570,7 @@ private:
 
     const std::unique_ptr<WebPageInspectorController> m_inspectorController;
 #if ENABLE(REMOTE_INSPECTOR)
-    std::unique_ptr<WebPageDebuggable> m_inspectorDebuggable;
+    RefPtr<WebPageDebuggable> m_inspectorDebuggable;
 #endif
 
     std::optional<SpellDocumentTag> m_spellDocumentTag;

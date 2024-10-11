@@ -372,7 +372,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_alternativeTextClient(WTFMove(pageConfiguration.alternativeTextClient))
     , m_consoleClient(makeUniqueRef<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_inspectorDebuggable(makeUniqueRef<PageDebuggable>(*this))
+    , m_inspectorDebuggable(PageDebuggable::create(*this))
 #endif
     , m_socketProvider(WTFMove(pageConfiguration.socketProvider))
     , m_cookieJar(WTFMove(pageConfiguration.cookieJar))
@@ -502,6 +502,9 @@ Page::~Page()
     }
 
     m_inspectorController->inspectedPageDestroyed();
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable->detachFromPage();
+#endif
 
     forEachLocalFrame([] (LocalFrame& frame) {
         frame.willDetachPage();
