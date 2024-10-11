@@ -97,8 +97,8 @@ private:
     FileSystem::Salt m_salt;
     CheckedRef<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
-    Vector<std::unique_ptr<CacheStorageCache>> m_caches;
-    HashMap<WebCore::DOMCacheIdentifier, std::unique_ptr<CacheStorageCache>> m_removedCaches;
+    Vector<Ref<CacheStorageCache>> m_caches;
+    HashMap<WebCore::DOMCacheIdentifier, Ref<CacheStorageCache>> m_removedCaches;
     HashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
     HashSet<IPC::Connection::UniqueID> m_activeConnections;
     Ref<WorkQueue> m_queue;

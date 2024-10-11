@@ -65,6 +65,11 @@ static Ref<CacheStorageStore> createStore(const String& uniqueName, const String
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageCache);
 
+Ref<CacheStorageCache> CacheStorageCache::create(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
+{
+    return adoptRef(*new CacheStorageCache(manager, name, uniqueName, path, WTFMove(queue)));
+}
+
 CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String& name, const String& uniqueName, const String& path, Ref<WorkQueue>&& queue)
     : m_manager(manager)
     , m_name(name)
