@@ -79,9 +79,14 @@ LayoutUnit FlexFormattingUtils::columnGapValue(const ElementBox& flexContainer, 
 
 LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexItem) const
 {
-    if (auto minimumSize = flexItem.mainAxis().minimumSize)
-        return *minimumSize;
-    return formattingContext().integrationUtils().minContentLogicalWidth(downcast<ElementBox>(flexItem.layoutBox()));
+    if (auto mainAxisMinimumWidth = flexItem.mainAxis().minimumSize)
+        return *mainAxisMinimumWidth;
+
+    auto minimumContentSize = formattingContext().integrationUtils().minContentLogicalWidth(downcast<ElementBox>(flexItem.layoutBox()));
+    if (auto mainAxisWidth = flexItem.mainAxis().size)
+        return std::min(*mainAxisWidth, minimumContentSize);
+
+    return minimumContentSize;
 }
 
 std::optional<LayoutUnit> FlexFormattingUtils::usedMaxiumMainSize(const LogicalFlexItem& flexItem) const

@@ -37,6 +37,7 @@ public:
 
         std::optional<LayoutUnit> definiteFlexBasis;
 
+        std::optional<LayoutUnit> size;
         std::optional<LayoutUnit> maximumSize;
         std::optional<LayoutUnit> minimumSize;
 
