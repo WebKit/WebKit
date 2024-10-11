@@ -58,27 +58,27 @@ TEST(WKWebExtensionAPIScripting, ErrorsExecuteScript)
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertThrows(() => browser.scripting.executeScript(), /a required argument is missing/i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({}), /missing required keys: 'target'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target' : {}}), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 'j'}}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target' : { }}), /missing required keys: 'tabId'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 'bad'}}), /'tabId' is expected to be a number, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0}, 'func': () => { console.log('function') }, 'function': () => {console.log('function')}}), /it cannot specify both 'func' and 'function'. Please use 'func'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, 'func': () => { console.log('function') }, 'function': () => {console.log('function')}}), /it cannot specify both 'func' and 'function'. Please use 'func'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
 
         @"const notAFunction = null",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }}), /it must specify either 'func' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: [0]}), /'files' is expected to be an array of strings, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }}), /it must specify either 'func' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, args: ['args'], files: [0]}), /'files' is expected to be an array of strings, but a number was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, allFrames: true, frameIds: [0] }, files: ['path/to/file']}), /it cannot specify both 'allFrames' and 'frameIds'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be an array of numbers, but a string was provided./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: [-1] }, files: ['path/to/file']}), /'-1' is not a frame identifier./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, allFrames: true, frameIds: [0] }, files: ['path/to/file']}), /it cannot specify both 'allFrames' and 'frameIds'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be an array of numbers, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1, frameIds: [-1] }, files: ['path/to/file']}), /'-1' is not a frame identifier./i)",
 
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, world: 'world', files: ['path/to/file']}), /it must specify either 'ISOLATED' or 'MAIN'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 1 }, world: 'world', files: ['path/to/file']}), /it must specify either 'isolated' or 'main'./i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -92,17 +92,17 @@ TEST(WKWebExtensionAPIScripting, ErrorsCSS)
         @"browser.test.assertThrows(() => browser.scripting.insertCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({ target: {} }), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 0 }}), /it must specify either 'css' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }}), /it must specify either 'css' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: '1' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
         @"browser.test.assertThrows(() => browser.scripting.insertCSS({target: { tabId: 1 }, css: 'body { color: red }', origin: 'bad' }), /'origin' value is invalid, because it must specify either 'AUTHOR' or 'USER'/i);",
 
         @"browser.test.assertThrows(() => browser.scripting.removeCSS(), /a required argument is missing./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({}), /missing required keys: 'target'./i)",
         @"browser.test.assertThrows(() => browser.scripting.removeCSS({ target: {} }), /missing required keys: 'tabId'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 0 } }), /it must specify either 'css' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: '0' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 1 }, files: ['path/to/file'], css: 'css'}), /it cannot specify both 'css' and 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 1 } }), /it must specify either 'css' or 'files'./i)",
+        @"browser.test.assertThrows(() => browser.scripting.removeCSS({target: { tabId: 'bad' }, files: ['path/to/file'], css: 'css'}), /'tabId' is expected to be a number, but a string was provided./i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -126,12 +126,12 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
 
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ] }]), /it must specify at least one 'css' or 'js' file/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], runAt: 'invalid_runAt' }]), /it must specify either 'document_start', 'document_end', or 'document_idle'/i)",
-        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'isolated' or 'main'/i)",
         @"browser.test.assertThrows(() => browser.scripting.registerContentScripts([{ id: '0', matches: [ '*://*/*' ], css: ['style.css'], cssOrigin: 'bad' }]), /'cssOrigin' value is invalid, because it must specify either 'author' or 'user'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '_0' }]), /it must not start with '_'/i)",
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ ], js: ['path/to/file'] }]), /it must not be empty/i)",
-        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
+        @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'isolated' or 'main'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts([]), /an object is expected/i)",
         @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
@@ -659,13 +659,10 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"  const tabId = details.tabId",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js', 'changeBackgroundFontScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -847,13 +844,10 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  const tabId = details.tabId",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -865,7 +859,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  expectedResults[0].allFrames = true",
         @"  expectedResults[0].persistAcrossSessions = false",
         @"  expectedResults[0].runAt = 'document_start'",
-        @"  expectedResults[0].world = 'MAIN'",
+        @"  expectedResults[0].world = 'main'",
 
         @"  browser.test.assertDeepEq(results, expectedResults)",
 
@@ -928,13 +922,10 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"browser.webNavigation.onCompleted.addListener(async () => {",
 
         @"  var expectedResults = [{",
-        @"    allFrames: false,",
         @"    id: '1',",
         @"    js: ['changeBackgroundColorScript.js'],",
         @"    matches: ['*://localhost/*'],",
         @"    persistAcrossSessions: true,",
-        @"    runAt: 'document_idle',",
-        @"    world: 'ISOLATED'",
         @"  }]",
 
         @"  var results",
@@ -954,7 +945,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"  await browser.scripting.registerContentScripts([{ id: '2', matches: ['*://localhost/*'], js: ['changeBackgroundFontScript.js'], runAt: 'document_start', world: 'MAIN' }])",
 
         @"  results = await browser.scripting.getRegisteredContentScripts({ 'ids': ['1', '2'] })",
-        @"  expectedResults.push({ allFrames: false, id: '2', js: ['changeBackgroundFontScript.js'], matches: ['*://localhost/*'], persistAcrossSessions: true, runAt: 'document_start', world: 'MAIN' })",
+        @"  expectedResults.push({ id: '2', js: ['changeBackgroundFontScript.js'], matches: ['*://localhost/*'], persistAcrossSessions: true, runAt: 'document_start', world: 'main' })",
         @"  browser.test.assertDeepEq(results, expectedResults)",
 
         @"  await browser.scripting.unregisterContentScripts()",

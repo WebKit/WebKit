@@ -1136,7 +1136,7 @@ ${indentString}}
 EOF
     }
 
-    if ($signature->type->name eq "any" && $signature->extendedAttributes->{"NSArray"}) {
+    if ($signature->type->name eq "array") {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1234,7 +1234,7 @@ EOF
 EOF
     }
 
-    if ($signature->type->name eq "any" && $signature->extendedAttributes->{"NSArray"} && !$signature->extendedAttributes->{"Optional"}) {
+    if ($signature->type->name eq "array" && !$signature->extendedAttributes->{"Optional"}) {
         $hasExceptions = 1;
 
         push(@$contents, <<EOF);
@@ -1370,7 +1370,6 @@ sub _javaScriptTypeCondition
     return "isDictionary(context, ${argument}) || JSValueIsString(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"DOMString"};
     return "(!JSValueIsNull(context, ${argument}) && !JSValueIsUndefined(context, ${argument}) && !JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
     return "isDictionary(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSDictionary"};
-    return "JSValueIsArray(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSArray"};
     return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && $signature->extendedAttributes->{"NSObject"};
     return "JSValueIsObject(context, ${argument})${nullOrUndefined}" if $idlTypeName eq "any" && !$signature->extendedAttributes->{"ValuesAllowed"};
     return "(JSValueIsObject(context, ${argument}) && JSObjectIsFunction(context, JSValueToObject(context, ${argument}, nullptr)))${nullOrUndefined}" if $idlTypeName eq "function";
@@ -1391,7 +1390,7 @@ sub _platformType
     $idlTypeName = $idlType->name if ref($idlType) eq "IDLType";
 
     return "RefPtr<WebExtensionCallbackHandler>" if $idlTypeName eq "function" && $signature->extendedAttributes->{"CallbackHandler"};
-    return "NSArray" if $idlTypeName eq "array" && $signature && $signature->extendedAttributes->{"NSArray"};
+    return "NSArray" if $idlTypeName eq "array";
     return "NSString" if $idlTypeName eq "any" && $signature->extendedAttributes->{"Serialization"};
     return "NSDictionary" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSDictionary"};
     return "NSObject" if $idlTypeName eq "any" && $signature && $signature->extendedAttributes->{"NSObject"};
@@ -1424,8 +1423,6 @@ sub _platformTypeConstructor
         return "toNSDictionary(context, $argumentName, NullValuePolicy::Allowed, ValuePolicy::StopAtTopLevel)" if $signature->extendedAttributes->{"NSDictionary"} && $signature->extendedAttributes->{"NSDictionary"} eq "StopAtTopLevel";
         return "toNSDictionary(context, $argumentName, NullValuePolicy::Allowed)" if $signature->extendedAttributes->{"NSDictionary"} && $signature->extendedAttributes->{"NSDictionary"} eq "NullAllowed";
         return "toNSDictionary(context, $argumentName, NullValuePolicy::NotAllowed)" if $signature->extendedAttributes->{"NSDictionary"};
-        return "toNSArray(context, $argumentName, $arrayType.class)" if $signature->extendedAttributes->{"NSArray"} && $arrayType;
-        return "toNSArray(context, $argumentName)" if $signature->extendedAttributes->{"NSArray"};
         return "toNSObject(context, $argumentName, Nil, NullValuePolicy::Allowed, ValuePolicy::StopAtTopLevel)" if $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"NSObject"} eq "StopAtTopLevel";
         return "toNSObject(context, $argumentName, Nil, NullValuePolicy::Allowed)" if $signature->extendedAttributes->{"NSObject"} && $signature->extendedAttributes->{"NSObject"} eq "NullAllowed";
         return "toNSObject(context, $argumentName)" if $signature->extendedAttributes->{"NSObject"};

@@ -308,7 +308,10 @@ void WebExtensionContext::loadRegisteredContentScripts()
         }
 
         Vector<WebExtensionRegisteredScriptParameters> parametersVector;
-        WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
+        if (!WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector, &errorMessage)) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to parse injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
+            return;
+        }
 
         DynamicInjectedContentsMap injectedContentsMap;
         createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContentsMap, nil, &errorMessage);

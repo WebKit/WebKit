@@ -65,8 +65,8 @@ static constexpr auto contentScriptsAllFramesManifestKey = "all_frames"_s;
 static constexpr auto contentScriptsJSManifestKey = "js"_s;
 static constexpr auto contentScriptsCSSManifestKey = "css"_s;
 static constexpr auto contentScriptsWorldManifestKey = "world"_s;
-static constexpr auto contentScriptsIsolatedManifestKey = "ISOLATED"_s;
-static constexpr auto contentScriptsMainManifestKey = "MAIN"_s;
+static constexpr auto contentScriptsIsolatedManifestKey = "isolated"_s;
+static constexpr auto contentScriptsMainManifestKey = "main"_s;
 static constexpr auto contentScriptsCSSOriginManifestKey = "css_origin"_s;
 static constexpr auto contentScriptsAuthorManifestKey = "author"_s;
 static constexpr auto contentScriptsUserManifestKey = "user"_s;
@@ -1047,18 +1047,18 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
 
         auto contentWorldType = WebExtensionContentWorldType::ContentScript;
         auto worldString = injectedContentObject->getString(contentScriptsWorldManifestKey);
-        if (!worldString || worldString == contentScriptsIsolatedManifestKey)
+        if (!worldString || equalIgnoringASCIICase(worldString, contentScriptsIsolatedManifestKey))
             contentWorldType = WebExtensionContentWorldType::ContentScript;
-        else if (worldString == contentScriptsMainManifestKey)
+        else if (equalIgnoringASCIICase(worldString, contentScriptsMainManifestKey))
             contentWorldType = WebExtensionContentWorldType::Main;
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `world` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'world' value")));
 
         auto styleLevel = WebCore::UserStyleLevel::Author;
         auto cssOriginString = injectedContentObject->getString(contentScriptsCSSOriginManifestKey);
-        if (!cssOriginString || cssOriginString == contentScriptsAuthorManifestKey)
+        if (!cssOriginString || equalIgnoringASCIICase(cssOriginString, contentScriptsAuthorManifestKey))
             styleLevel = WebCore::UserStyleLevel::Author;
-        else if (cssOriginString == contentScriptsUserManifestKey)
+        else if (equalIgnoringASCIICase(cssOriginString, contentScriptsUserManifestKey))
             styleLevel = WebCore::UserStyleLevel::User;
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `css_origin` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'css_origin' value")));
