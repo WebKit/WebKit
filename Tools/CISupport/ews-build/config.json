@@ -184,6 +184,8 @@
     { "name": "ews248", "platform": "mac-sonoma" },
     { "name": "ews249", "platform": "mac-sonoma" },
     { "name": "ews250", "platform": "mac-sonoma" },
+    { "name": "ews251", "platform": "mac-ventura"},
+    { "name": "ews252", "platform": "mac-ventura"},
     { "name": "webkit-cq-01", "platform": "mac-ventura" },
     { "name": "webkit-cq-02", "platform": "mac-ventura" },
     { "name": "webkit-cq-03", "platform": "mac-ventura" },
@@ -383,7 +385,7 @@
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
       "factory": "JSCBuildAndTestsFactory", "platform": "mac-ventura",
       "configuration": "release", "runTests": "true",
-      "workernames": ["ews127", "ews128"]
+      "workernames": ["ews127", "ews128", "ews251", "ews252"]
     },
     {
       "name": "JSC-Tests-arm64-EWS", "shortname": "jsc-arm64", "icon": "buildAndTest",
