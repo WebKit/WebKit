@@ -568,7 +568,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
     if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
-        bytesPerRow = size.height ? (data.size() / size.height) : data.size();
+        bytesPerRow = std::max<uint32_t>(size.height ? (data.size() / size.height) : data.size(), Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()));
 
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D:
