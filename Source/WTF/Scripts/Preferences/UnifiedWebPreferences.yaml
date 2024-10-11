@@ -6173,6 +6173,7 @@ ScreenOrientationAPIEnabled:
       default: WebKit::defaultShouldEnableScreenOrientationAPI()
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 ScreenOrientationLockingAPIEnabled:
   type: bool
