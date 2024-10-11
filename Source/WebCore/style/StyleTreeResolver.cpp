@@ -305,6 +305,9 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         }
     }
 
+    if (update.style->display() == DisplayType::None)
+        return { WTFMove(update), descendantsToResolve };
+
     auto resolveAndAddPseudoElementStyle = [&](const PseudoElementIdentifier& pseudoElementIdentifier) {
         auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementIdentifier, update, parent().isInDisplayNoneTree);
         auto pseudoElementChange = [&] {
@@ -378,8 +381,8 @@ inline bool supportsFirstLineAndLetterPseudoElement(const RenderStyle& style)
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element, const PseudoElementIdentifier& pseudoElementIdentifier, const ElementUpdate& elementUpdate, IsInDisplayNoneTree isInDisplayNoneTree)
 {
-    if (elementUpdate.style->display() == DisplayType::None)
-        return { };
+    ASSERT(elementUpdate.style->display() != DisplayType::None);
+
     if (pseudoElementIdentifier.pseudoId == PseudoId::Backdrop && !element.isInTopLayer())
         return { };
     if (pseudoElementIdentifier.pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
