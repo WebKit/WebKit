@@ -1404,8 +1404,7 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
 }
 
-// FIX-ME rdar://137267779
-TEST(SiteIsolation, DISABLED_RunOpenPanel)
+TEST(SiteIsolation, RunOpenPanel)
 {
     HTTPServer server({
         { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
@@ -1429,7 +1428,9 @@ TEST(SiteIsolation, DISABLED_RunOpenPanel)
     [webView waitForPendingMouseEvents];
     Util::run(&fileSelected);
 
-    EXPECT_WK_STREQ("test", [webView objectByEvaluatingJavaScript:@"document.getElementsByTagName('input')[0].files[0].name" inFrame:[webView firstChildFrame]]);
+    NSString *js = @"function f() { try { return document.getElementsByTagName('input')[0].files[0].name } catch (e) { return 'exception: ' + e; } }; f()";
+    while (![[webView objectByEvaluatingJavaScript:js inFrame:[webView firstChildFrame]] isEqualToString:@"test"])
+        Util::spinRunLoop();
 }
 
 TEST(SiteIsolation, CancelOpenPanel)
