@@ -69,7 +69,7 @@ private:
 class NumericOp final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(NumericOp);
 public:
-    enum Opcode { OP_Add, OP_Sub, OP_Mul, OP_Div, OP_Mod };
+    enum class Opcode : uint8_t { Add, Sub, Mul, Div, Mod };
     NumericOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
 private:
@@ -82,7 +82,7 @@ private:
 class EqTestOp final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(EqTestOp);
 public:
-    enum Opcode { OP_EQ, OP_NE, OP_GT, OP_LT, OP_GE, OP_LE };
+    enum class Opcode : uint8_t { Eq, Ne, Gt, Lt, Ge, Le };
     EqTestOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
     Value evaluate() const override;
 
@@ -96,7 +96,7 @@ private:
 class LogicalOp final : public Expression {
     WTF_MAKE_TZONE_ALLOCATED(LogicalOp);
 public:
-    enum Opcode { OP_And, OP_Or };
+    enum class Opcode : bool { And, Or };
     LogicalOp(Opcode, std::unique_ptr<Expression> lhs, std::unique_ptr<Expression> rhs);
 
 private:

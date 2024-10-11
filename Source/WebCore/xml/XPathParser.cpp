@@ -300,22 +300,22 @@ inline Parser::Token Parser::nextTokenInternal()
     case '-':
         return makeTokenAndAdvance(MINUS);
     case '=':
-        return makeTokenAndAdvance(EQOP, EqTestOp::OP_EQ);
+        return makeTokenAndAdvance(EQOP, EqTestOp::Opcode::Eq);
     case '!':
         if (peekAheadHelper() == '=')
-            return makeTokenAndAdvance(EQOP, EqTestOp::OP_NE, 2);
+            return makeTokenAndAdvance(EQOP, EqTestOp::Opcode::Ne, 2);
         return Token(XPATH_ERROR);
     case '<':
         if (peekAheadHelper() == '=')
-            return makeTokenAndAdvance(RELOP, EqTestOp::OP_LE, 2);
-        return makeTokenAndAdvance(RELOP, EqTestOp::OP_LT);
+            return makeTokenAndAdvance(RELOP, EqTestOp::Opcode::Le, 2);
+        return makeTokenAndAdvance(RELOP, EqTestOp::Opcode::Lt);
     case '>':
         if (peekAheadHelper() == '=')
-            return makeTokenAndAdvance(RELOP, EqTestOp::OP_GE, 2);
-        return makeTokenAndAdvance(RELOP, EqTestOp::OP_GT);
+            return makeTokenAndAdvance(RELOP, EqTestOp::Opcode::Ge, 2);
+        return makeTokenAndAdvance(RELOP, EqTestOp::Opcode::Gt);
     case '*':
         if (isBinaryOperatorContext())
-            return makeTokenAndAdvance(MULOP, NumericOp::OP_Mul);
+            return makeTokenAndAdvance(MULOP, NumericOp::Opcode::Mul);
         ++m_nextPos;
         return Token(NAMETEST, "*"_s);
     case '$': { // $ QName
@@ -339,9 +339,9 @@ inline Parser::Token Parser::nextTokenInternal()
         if (name == "or"_s)
             return Token(OR);
         if (name == "mod"_s)
-            return Token(MULOP, NumericOp::OP_Mod);
+            return Token(MULOP, NumericOp::Opcode::Mod);
         if (name == "div"_s)
-            return Token(MULOP, NumericOp::OP_Div);
+            return Token(MULOP, NumericOp::Opcode::Div);
     }
 
     // See whether we are at a :

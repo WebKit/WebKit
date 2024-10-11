@@ -96,15 +96,15 @@ Value NumericOp::evaluate() const
     }
 
     switch (m_opcode) {
-        case OP_Add:
+    case Opcode::Add:
             return leftVal + rightVal;
-        case OP_Sub:
+    case Opcode::Sub:
             return leftVal - rightVal;
-        case OP_Mul:
+    case Opcode::Mul:
             return leftVal * rightVal;
-        case OP_Div:
+    case Opcode::Div:
             return leftVal / rightVal;
-        case OP_Mod:
+    case Opcode::Mod:
             return fmod(leftVal, rightVal);
     }
 
@@ -187,8 +187,8 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
     
     // Neither side is a NodeSet.
     switch (m_opcode) {
-        case OP_EQ:
-        case OP_NE:
+    case Opcode::Eq:
+    case Opcode::Ne:
             bool equal;
             if (lhs.isBoolean() || rhs.isBoolean())
                 equal = lhs.toBoolean() == rhs.toBoolean();
@@ -197,16 +197,16 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
             else
                 equal = lhs.toString() == rhs.toString();
 
-            if (m_opcode == OP_EQ)
+            if (m_opcode == Opcode::Eq)
                 return equal;
             return !equal;
-        case OP_GT:
+    case Opcode::Gt:
             return lhs.toNumber() > rhs.toNumber();
-        case OP_GE:
+    case Opcode::Ge:
             return lhs.toNumber() >= rhs.toNumber();
-        case OP_LT:
+    case Opcode::Lt:
             return lhs.toNumber() < rhs.toNumber();
-        case OP_LE:
+    case Opcode::Le:
             return lhs.toNumber() <= rhs.toNumber();
     }
 
@@ -236,7 +236,7 @@ LogicalOp::LogicalOp(Opcode opcode, std::unique_ptr<Expression> lhs, std::unique
 
 inline bool LogicalOp::shortCircuitOn() const
 {
-    return m_opcode != OP_And;
+    return m_opcode != Opcode::And;
 }
 
 Value LogicalOp::evaluate() const
@@ -299,7 +299,7 @@ bool evaluatePredicate(const Expression& expression)
 
     // foo[3] means foo[position()=3]
     if (result.isNumber())
-        return EqTestOp(EqTestOp::OP_EQ, Function::create("position"_s), makeUnique<Number>(result.toNumber())).evaluate().toBoolean();
+        return EqTestOp(EqTestOp::Opcode::Eq, Function::create("position"_s), makeUnique<Number>(result.toNumber())).evaluate().toBoolean();
 
     return result.toBoolean();
 }

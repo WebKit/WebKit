@@ -1988,14 +1988,14 @@ yyreduce:
   case 51:
 #line 426 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_Or, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
+        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::Opcode::Or, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
     ;}
     break;
 
   case 53:
 #line 435 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::OP_And, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
+        (yyval.expression) = new WebCore::XPath::LogicalOp(WebCore::XPath::LogicalOp::Opcode::And, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
     ;}
     break;
 
@@ -2016,14 +2016,14 @@ yyreduce:
   case 59:
 #line 462 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Add, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
+        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::Opcode::Add, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
     ;}
     break;
 
   case 60:
 #line 467 "XPathGrammar.y"
     {
-        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::OP_Sub, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
+        (yyval.expression) = new WebCore::XPath::NumericOp(WebCore::XPath::NumericOp::Opcode::Sub, std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(1) - (3)].expression)), std::unique_ptr<WebCore::XPath::Expression>((yyvsp[(3) - (3)].expression)));
     ;}
     break;
 
