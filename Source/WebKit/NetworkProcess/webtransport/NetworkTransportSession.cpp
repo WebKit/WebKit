@@ -130,4 +130,12 @@ void NetworkTransportSession::receiveBidirectionalStream()
     // FIXME: Implement and send Messages::WebTransportSession::ReceiveBidirectionalStream.
 }
 
+std::optional<SharedPreferencesForWebProcess> NetworkTransportSession::sharedPreferencesForWebProcess() const
+{
+    if (auto connectionToWebProcess = m_connectionToWebProcess.get())
+        return connectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
+
 }

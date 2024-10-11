@@ -44,6 +44,7 @@ class NetworkTransportBidirectionalStream;
 class NetworkTransportReceiveStream;
 class NetworkTransportSendStream;
 
+struct SharedPreferencesForWebProcess;
 struct WebTransportSessionIdentifierType;
 struct WebTransportStreamIdentifierType;
 
@@ -72,6 +73,7 @@ public:
     void receiveBidirectionalStream();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 private:
     template<typename... Args> static Ref<NetworkTransportSession> create(Args&&... args) { return adoptRef(*new NetworkTransportSession(std::forward<Args>(args)...)); }
 #if PLATFORM(COCOA)
