@@ -31,7 +31,6 @@
 #include "HWndDC.h"
 #include "Image.h"
 #include "IntPoint.h"
-#include "SystemInfo.h"
 #include <wtf/win/GDIObject.h>
 
 #include <windows.h>
@@ -58,67 +57,29 @@ SharedCursor::~SharedCursor()
 static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
 {
     IntPoint effectiveHotSpot = determineHotSpot(img, hotSpot);
-    static bool doAlpha = windowsVersion() >= WindowsXP;
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
 
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
-    if (doAlpha) {
-        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
+    auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
 
-        img->adapter().getHBITMAP(hCursor.get());
-        HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
-        SetBkMode(workingDC.get(), TRANSPARENT);
-        SelectObject(workingDC.get(), hOldBitmap);
+    img->adapter().getHBITMAP(hCursor.get());
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
+    SetBkMode(workingDC.get(), TRANSPARENT);
+    SelectObject(workingDC.get(), hOldBitmap);
 
-        Vector<unsigned char, 128> maskBits;
-        maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
-        auto hMask = adoptGDIObject(::CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
+    Vector<unsigned char, 128> maskBits;
+    maskBits.fill(0xff, (img->width() + 7) / 8 * img->height());
+    auto hMask = adoptGDIObject(::CreateBitmap(img->width(), img->height(), 1, 1, maskBits.data()));
 
-        ICONINFO ii;
-        ii.fIcon = FALSE;
-        ii.xHotspot = effectiveHotSpot.x();
-        ii.yHotspot = effectiveHotSpot.y();
-        ii.hbmMask = hMask.get();
-        ii.hbmColor = hCursor.get();
+    ICONINFO ii;
+    ii.fIcon = FALSE;
+    ii.xHotspot = effectiveHotSpot.x();
+    ii.yHotspot = effectiveHotSpot.y();
+    ii.hbmMask = hMask.get();
+    ii.hbmColor = hCursor.get();
 
-        return SharedCursor::create(::CreateIconIndirect(&ii));
-    } else {
-        // Platform doesn't support alpha blended cursors, so we need
-        // to create the mask manually
-        auto andMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
-        auto xorMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
-        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
-
-        img->adapter().getHBITMAP(hCursor.get());
-        BITMAP cursor;
-        GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
-        auto andMask = adoptGDIObject(::CreateBitmap(cursor.bmWidth, cursor.bmHeight, 1, 1, 0));
-        auto xorMask = adoptGDIObject(::CreateCompatibleBitmap(dc, cursor.bmWidth, cursor.bmHeight));
-        HBITMAP oldCursor = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
-        HBITMAP oldAndMask = (HBITMAP)SelectObject(andMaskDC.get(), andMask.get());
-        HBITMAP oldXorMask = (HBITMAP)SelectObject(xorMaskDC.get(), xorMask.get());
-
-        SetBkColor(workingDC.get(), RGB(0, 0, 0));  
-        BitBlt(andMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC.get(), 0, 0, SRCCOPY);
-    
-        SetBkColor(xorMaskDC.get(), RGB(255, 255, 255));
-        SetTextColor(xorMaskDC.get(), RGB(255, 255, 255));
-        BitBlt(xorMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, andMaskDC.get(), 0, 0, SRCCOPY);
-        BitBlt(xorMaskDC.get(), 0, 0, cursor.bmWidth, cursor.bmHeight, workingDC.get(), 0, 0, SRCAND);
-
-        SelectObject(workingDC.get(), oldCursor);
-        SelectObject(andMaskDC.get(), oldAndMask);
-        SelectObject(xorMaskDC.get(), oldXorMask);
-
-        ICONINFO icon { };
-        icon.fIcon = FALSE;
-        icon.xHotspot = effectiveHotSpot.x();
-        icon.yHotspot = effectiveHotSpot.y();
-        icon.hbmMask = andMask.get();
-        icon.hbmColor = xorMask.get();
-        return SharedCursor::create(CreateIconIndirect(&icon));
-    }
+    return SharedCursor::create(::CreateIconIndirect(&ii));
 }
 
 static Ref<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorName)

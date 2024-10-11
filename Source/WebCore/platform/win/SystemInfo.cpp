@@ -34,81 +34,24 @@ namespace WebCore {
 
 IGNORE_CLANG_WARNINGS_BEGIN("deprecated-declarations")
 
-WindowsVersion windowsVersion(int* major, int* minor)
+static std::tuple<int, int> windowsVersion()
 {
     static bool initialized = false;
-    static WindowsVersion version;
     static int majorVersion, minorVersion;
 
     if (!initialized) {
         initialized = true;
-        OSVERSIONINFOEX versionInfo;
-        ZeroMemory(&versionInfo, sizeof(versionInfo));
+        OSVERSIONINFOEX versionInfo { };
         versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
         GetVersionEx(reinterpret_cast<OSVERSIONINFO*>(&versionInfo));
         majorVersion = versionInfo.dwMajorVersion;
         minorVersion = versionInfo.dwMinorVersion;
-
-        if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32s)
-            version = Windows3_1;
-        else if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
-            if (!minorVersion)
-                version = Windows95;
-            else
-                version = (minorVersion == 10) ? Windows98 : WindowsME;
-        } else {
-            if (majorVersion == 5) {
-                if (!minorVersion)
-                    version = Windows2000;
-                else
-                    version = (minorVersion == 1) ? WindowsXP : WindowsServer2003;
-            } else if (majorVersion >= 6) {
-                if (versionInfo.wProductType == VER_NT_WORKSTATION)
-                    version = (majorVersion == 6 && !minorVersion) ? WindowsVista : Windows7;
-                else
-                    version = WindowsServer2008;
-            } else
-                version = (majorVersion == 4) ? WindowsNT4 : WindowsNT3;
-        }
     }
 
-    if (major)
-        *major = majorVersion;
-    if (minor)
-        *minor = minorVersion;
-    return version;
+    return { majorVersion, minorVersion };
 }
 
 IGNORE_CLANG_WARNINGS_END
-
-static String osVersionForUAString()
-{
-    int major, minor;
-    WindowsVersion version = windowsVersion(&major, &minor);
-    switch (version) {
-    case WindowsCE1:
-    case WindowsCE2:
-    case WindowsCE3:
-        return "Windows CE"_s;
-    case WindowsCE4:
-        return "Windows CE .NET"_s;
-    case Windows3_1:
-        return "Windows 3.1"_s;
-    case Windows95:
-        return "Windows 95"_s;
-    case Windows98:
-        return "Windows 98"_s;
-    case WindowsME:
-        return "Windows 98; Win 9x 4.90"_s;
-    case WindowsNT4:
-        return "WinNT4.0"_s;
-    default:
-        break;
-    }
-
-    auto familyName = (version >= WindowsNT3) ? "Windows NT "_s : "Windows CE "_s;
-    return makeString(familyName, major, '.', minor);
-}
 
 static bool isWOW64()
 {
@@ -138,19 +81,10 @@ static WORD processorArchitecture()
 
     if (!initialized) {
         initialized = true;
-        HMODULE kernel32Module = GetModuleHandleA("kernel32.dll");
-        if (!kernel32Module)
-            return architecture;
-        typedef VOID (WINAPI* GetNativeSystemInfoFunc)(LPSYSTEM_INFO);
-        GetNativeSystemInfoFunc getNativeSystemInfo = reinterpret_cast<GetNativeSystemInfoFunc>((void*)::GetProcAddress(kernel32Module, "GetNativeSystemInfo"));
-        if (getNativeSystemInfo) {
-            SYSTEM_INFO systemInfo;
-            ZeroMemory(&systemInfo, sizeof(systemInfo));
-            getNativeSystemInfo(&systemInfo);
-            architecture = systemInfo.wProcessorArchitecture;
-        }
+        SYSTEM_INFO systemInfo { };
+        GetNativeSystemInfo(&systemInfo);
+        architecture = systemInfo.wProcessorArchitecture;
     }
-
     return architecture;
 }
 
@@ -162,12 +96,13 @@ static String architectureTokenForUAString()
         return "; Win64; x64"_s;
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_IA64)
         return "; Win64; IA64"_s;
-    return String();
+    return { };
 }
 
 String windowsVersionForUAString()
 {
-    return makeString(osVersionForUAString(), architectureTokenForUAString());
+    auto [major, minor] = windowsVersion();
+    return makeString("Windows NT "_s, major, '.', minor, architectureTokenForUAString());
 }
 
 } // namespace WebCore
