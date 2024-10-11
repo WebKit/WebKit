@@ -47,11 +47,6 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
     FrameView::setFrameRect(newRect);
 }
 
-void RemoteFrameView::compositedBoundsChanged(const IntPoint& contentsOffset)
-{
-    m_frame->client().compositedBoundsChanged(contentsOffset);
-}
-
 // FIXME: Implement all the stubs below.
 
 bool RemoteFrameView::isScrollableOrRubberbandable()

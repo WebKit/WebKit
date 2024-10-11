@@ -1002,8 +1002,10 @@ void RenderLayerBacking::updateAfterWidgetResize()
     if (!renderWidget)
         return;
 
-    if (RefPtr widget = renderWidget->widget())
-        widget->compositedBoundsChanged(flooredIntPoint(contentsBox().location()));
+    if (auto* innerCompositor = RenderLayerCompositor::frameContentsCompositor(*renderWidget)) {
+        innerCompositor->frameViewDidChangeSize();
+        innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
+    }
 
     if (auto* contentsLayer = layerForContents())
         contentsLayer->setPosition(flooredIntPoint(contentsBox().location()));

@@ -2620,7 +2620,6 @@ private:
 #endif
 
     void updateRemoteFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
-    void frameCompositedBoundsChanged(WebCore::FrameIdentifier, WebCore::IntPoint);
     void updateSandboxFlags(IPC::Connection&, WebCore::FrameIdentifier, WebCore::SandboxFlags);
 
     void didDestroyNavigation(WebCore::NavigationIdentifier);

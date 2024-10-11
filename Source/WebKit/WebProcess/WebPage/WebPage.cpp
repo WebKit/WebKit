@@ -3399,28 +3399,6 @@ void WebPage::updateFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize
     }
 }
 
-void WebPage::frameCompositedBoundsChanged(WebCore::FrameIdentifier frameID, WebCore::IntPoint contentsOffset)
-{
-    if (!m_page)
-        return;
-
-    ASSERT(m_page->settings().siteIsolationEnabled());
-    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
-    if (!webFrame)
-        return;
-
-    RefPtr frame = webFrame->coreLocalFrame();
-    if (!frame)
-        return;
-
-    RefPtr frameView = frame->view();
-    if (!frameView)
-        return;
-
-    frameView->compositedBoundsChanged(contentsOffset);
-}
-
-
 void WebPage::tryMarkLayersVolatile(CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr drawingArea = m_drawingArea;

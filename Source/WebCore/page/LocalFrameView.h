@@ -124,8 +124,6 @@ public:
     void setContentsSize(const IntSize&) final;
     void updateContentsSize() final;
 
-    WEBCORE_EXPORT void compositedBoundsChanged(const IntPoint& contentsOffset) final;
-
     const LocalFrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
     LocalFrameViewLayoutContext& layoutContext() { return m_layoutContext; }
     CheckedRef<const LocalFrameViewLayoutContext> checkedLayoutContext() const;
