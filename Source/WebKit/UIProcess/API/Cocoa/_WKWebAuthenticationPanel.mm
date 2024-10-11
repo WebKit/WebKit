@@ -268,12 +268,19 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     if (byRpId)
         [query setObject:byRpId forKey:bridge_cast(kSecAttrLabel)];
     if (byCredentialId)
-        [query setObject:byCredentialId forKey:bridge_cast(kSecAttrApplicationLabel)];
+        [query setObject:byCredentialId forKey:bridge_cast(kSecAttrAlias)];
 
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:bridge_cast(kSecAttrAlias)];
+        [query setObject:byCredentialId forKey:bridge_cast(kSecAttrApplicationLabel)];
+        status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    }
+
     if (status && status != errSecItemNotFound)
         return nullptr;
+
     auto retainAttributesArray = adoptCF(attributesArrayRef);
 
     auto result = adoptNS([[NSMutableArray alloc] init]);
@@ -292,9 +299,12 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         }
         auto& username = it->second.getString();
 
+        id credentialID = attributes[bridge_cast(kSecAttrAlias)];
+        if (!credentialID)
+            credentialID = attributes[bridge_cast(kSecAttrApplicationLabel)];
         auto credential = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
             username, _WKLocalAuthenticatorCredentialNameKey,
-            attributes[bridge_cast(kSecAttrApplicationLabel)], _WKLocalAuthenticatorCredentialIDKey,
+            credentialID, _WKLocalAuthenticatorCredentialIDKey,
             attributes[bridge_cast(kSecAttrLabel)], _WKLocalAuthenticatorCredentialRelyingPartyIDKey,
             attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastModificationDateKey,
             attributes[bridge_cast(kSecAttrCreationDate)], _WKLocalAuthenticatorCredentialCreationDateKey,
@@ -386,12 +396,16 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     auto deleteQuery = adoptNS([[NSMutableDictionary alloc] init]);
     [deleteQuery setDictionary:@{
         (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
-        (__bridge id)kSecAttrApplicationLabel: credentialID,
+        (__bridge id)kSecAttrAlias: credentialID,
         (__bridge id)kSecUseDataProtectionKeychain: @YES,
         (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny
     }];
     updateQueryForGroupIfNecessary(deleteQuery.get(), group);
 
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
+
+    [deleteQuery removeObjectForKey:bridge_cast(kSecAttrAlias)];
+    [deleteQuery setObject:credentialID forKey:bridge_cast(kSecAttrApplicationLabel)];
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery.get());
 #endif
 }
@@ -410,7 +424,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     [query setDictionary:@{
         (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
         (__bridge id)kSecReturnAttributes: @YES,
-        (__bridge id)kSecAttrApplicationLabel: credentialID,
+        (__bridge id)kSecAttrAlias: credentialID,
         (__bridge id)kSecReturnPersistentRef : bridge_id_cast(kCFBooleanTrue),
         (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
@@ -419,10 +433,17 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:bridge_cast(kSecAttrAlias)];
+        [query setObject:credentialID forKey:bridge_cast(kSecAttrApplicationLabel)];
+        status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    }
+
     if (status && status != errSecItemNotFound) {
         ASSERT_NOT_REACHED();
         return;
     }
+
     auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
     auto decodedResponse = cbor::CBORReader::read(makeVector(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
     if (!decodedResponse || !decodedResponse->isMap()) {
@@ -473,7 +494,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     [query setDictionary:@{
         (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
         (__bridge id)kSecReturnAttributes: @YES,
-        (__bridge id)kSecAttrApplicationLabel: credentialID,
+        (__bridge id)kSecAttrAlias: credentialID,
         (__bridge id)kSecReturnPersistentRef : bridge_id_cast(kCFBooleanTrue),
         (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
@@ -482,6 +503,12 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:(__bridge id)kSecAttrAlias];
+        [query setObject:credentialID forKey:(__bridge id)kSecAttrApplicationLabel];
+        status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    }
+
     if (status && status != errSecItemNotFound) {
         ASSERT_NOT_REACHED();
         return;
@@ -621,7 +648,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         (id)kSecClassKey, (id)kSecClass,
         (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
         (id)rp, (id)kSecAttrLabel,
-        nsCredentialId.get(), (id)kSecAttrApplicationLabel,
+        nsCredentialId.get(), (id)kSecAttrAlias,
         @YES, (id)kSecUseDataProtectionKeychain,
         nil
     ]);
@@ -631,6 +658,12 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
         [query setObject:accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
 
     OSStatus status = SecItemCopyMatching(bridge_cast(query.get()), nullptr);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:(id)kSecAttrAlias];
+        [query setObject:nsCredentialId.get() forKey:(id)kSecAttrApplicationLabel];
+        status = SecItemCopyMatching(bridge_cast(query.get()), nullptr);
+    }
+
     if (!status) {
         // Credential with same id already exists, duplicate key.
         createNSErrorFromWKErrorIfNecessary(error, WKErrorDuplicateCredential);
@@ -675,7 +708,7 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 #if ENABLE(WEB_AUTHN)
     auto query = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)kSecClassKey, (id)kSecClass,
-        credentialID, (id)kSecAttrApplicationLabel,
+        credentialID, (id)kSecAttrAlias,
         (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
         @YES, (id)kSecReturnRef,
         @YES, (id)kSecUseDataProtectionKeychain,
@@ -686,10 +719,17 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
 
     CFTypeRef privateKeyRef = nullptr;
     OSStatus status = SecItemCopyMatching(bridge_cast(query.get()), &privateKeyRef);
+    if (status == errSecItemNotFound) {
+        [query removeObjectForKey:bridge_cast(kSecAttrAlias)];
+        [query setObject:credentialID forKey:bridge_cast(kSecAttrApplicationLabel)];
+        status = SecItemCopyMatching(bridge_cast(query.get()), &privateKeyRef);
+    }
+
     if (status && status != errSecItemNotFound) {
         createNSErrorFromWKErrorIfNecessary(error, WKErrorCredentialNotFound);
         return nullptr;
     }
+
     auto privateKey = adoptCF(privateKeyRef);
     CFErrorRef errorRef = nullptr;
     auto privateKeyRep = adoptCF(SecKeyCopyExternalRepresentation((__bridge SecKeyRef)((id)privateKeyRef), &errorRef));
