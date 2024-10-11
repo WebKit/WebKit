@@ -284,20 +284,22 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     FrameLoadRequest frameLoadRequest { *mainFrame->document(), mainFrame->document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
-    bool created;
     WindowFeatures features;
-    RefPtr frame = dynamicDowncast<LocalFrame>(WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), features, created));
+    auto [frame, created] = WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), features);
     if (!frame)
         return;
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+    if (!localFrame)
+        return;
 
-    ASSERT(frame->opener() == mainFrame.ptr());
-    frame->page()->setOpenedByDOM();
-    frame->page()->setOpenedByDOMWithOpener(true);
+    ASSERT(localFrame->opener() == mainFrame.ptr());
+    localFrame->page()->setOpenedByDOM();
+    localFrame->page()->setOpenedByDOMWithOpener(true);
 
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
-    ResourceRequest resourceRequest { frame->document()->completeURL(url) };
+    ResourceRequest resourceRequest { localFrame->document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest2 { mainFrame->protectedDocument().releaseNonNull(), mainFrame->document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };
-    frame->loader().changeLocation(WTFMove(frameLoadRequest2));
+    localFrame->loader().changeLocation(WTFMove(frameLoadRequest2));
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)

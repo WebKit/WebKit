@@ -2586,8 +2586,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->protectedSecurityOrigin(), WTFMove(resourceRequest), frameName, initiatedByMainFrame };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
 
-    bool created;
-    RefPtr newFrame = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), windowFeatures, created);
+    auto [newFrame, created] = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), windowFeatures);
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
@@ -2597,7 +2596,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         newFrame->page()->setOpenedByDOMWithOpener(true);
     }
 
-    if (created)
+    if (created == CreatedNewPage::Yes)
         newFrame->protectedPage()->setOpenedByDOM();
 
     RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
@@ -2607,7 +2606,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (prepareDialogFunction && localNewFrame)
         prepareDialogFunction(*localNewFrame->document()->protectedWindow());
 
-    if (created) {
+    if (created == CreatedNewPage::Yes) {
         ResourceRequest resourceRequest { completedURL, referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         FrameLoader::addSameSiteInfoToRequestIfNeeded(resourceRequest, openerFrame.protectedDocument().get());
         FrameLoadRequest frameLoadRequest { activeWindow.protectedDocument().releaseNonNull(), activeWindow.document()->protectedSecurityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };

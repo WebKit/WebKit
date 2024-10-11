@@ -4649,16 +4649,14 @@ bool LocalFrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures& features, bool& created)
+std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures& features)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
     ASSERT(request.resourceRequest().httpMethod() == "GET"_s);
 
-    created = false;
-
     // FIXME: Provide line number information with respect to the opener's document.
     if (request.resourceRequest().url().protocolIsJavaScript() && !openerFrame.protectedDocument()->checkedContentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url().string(), { }, request.resourceRequest().url().string(), nullptr))
-        return nullptr;
+        return { nullptr, CreatedNewPage::No };
 
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {
         if (RefPtr frame = openerFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.protectedDocument().get())) {
@@ -4667,7 +4665,7 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
                     page->chrome().focus();
             }
             frame->updateOpener(openerFrame);
-            return frame;
+            return { frame, CreatedNewPage::No };
         }
     }
 
@@ -4686,7 +4684,7 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
     if (isDocumentSandboxed(openerFrame, SandboxFlag::Popups)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
         openerFrame.protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked opening '"_s, request.resourceRequest().url().stringCenterEllipsizedToLength(), "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set."_s));
-        return nullptr;
+        return { nullptr, CreatedNewPage::No };
     }
 
     // FIXME: Setting the referrer should be the caller's responsibility.
@@ -4697,7 +4695,7 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
 
     RefPtr oldPage = openerFrame.page();
     if (!oldPage)
-        return nullptr;
+        return { nullptr, CreatedNewPage::No };
 
 #if PLATFORM(GTK)
     features.oldWindowRect = oldPage->chrome().windowRect();
@@ -4708,7 +4706,7 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
     RefPtr page = oldPage->chrome().createWindow(openerFrame, features, action);
     if (!page)
-        return nullptr;
+        return { nullptr, CreatedNewPage::No };
 
     Ref frame = page->mainFrame();
 
@@ -4716,11 +4714,10 @@ RefPtr<Frame> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, 
         frame->tree().setSpecifiedName(request.frameName());
 
     if (!frame->page())
-        return nullptr;
+        return { nullptr, CreatedNewPage::No };
     page->chrome().show();
 
-    created = true;
-    return frame;
+    return { WTFMove(frame), CreatedNewPage::Yes };
 }
 
 // At the moment, we do not actually create a new browsing context / frame. We merely make it so that existing windowProxy for the
