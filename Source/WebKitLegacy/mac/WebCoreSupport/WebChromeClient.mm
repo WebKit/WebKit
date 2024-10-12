@@ -55,6 +55,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <Foundation/Foundation.h>
+#import <WebCore/Chrome.h>
 #import <WebCore/ColorChooser.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
@@ -252,7 +253,7 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& features, const NavigationAction&)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& features, const NavigationAction&)
 {
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
@@ -315,6 +316,8 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatur
         if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
             effectiveSandboxFlags = { };
         newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        newPage->chrome().show();
+        newPage->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
     }
 
     return newPage;

@@ -62,6 +62,7 @@ struct NavigationActionData {
     bool openedByDOMWithOpener { false };
     bool hasOpener { false };
     bool isPerformingHTTPFallback { false };
+    String openedMainFrameName;
     WebCore::SecurityOriginData requesterOrigin;
     WebCore::SecurityOriginData requesterTopOrigin;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;

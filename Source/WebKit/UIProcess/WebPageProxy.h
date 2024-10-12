@@ -3257,6 +3257,7 @@ private:
     String m_customUserAgent;
     String m_customTextEncodingName;
     String m_overrideContentSecurityPolicy;
+    String m_openedMainFrameName;
 
     RefPtr<WebInspectorUIProxy> m_inspector;
 

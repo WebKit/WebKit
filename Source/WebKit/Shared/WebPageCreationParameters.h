@@ -325,6 +325,7 @@ struct WebPageCreationParameters {
 
     std::optional<RemotePageParameters> remotePageParameters { };
     WebCore::FrameIdentifier mainFrameIdentifier;
+    String openedMainFrameName;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier { };
     WebCore::SandboxFlags initialSandboxFlags;
     std::optional<WebCore::WindowFeatures> windowFeatures { };

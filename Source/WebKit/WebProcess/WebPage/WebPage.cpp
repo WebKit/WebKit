@@ -1107,8 +1107,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     setLinkDecorationFilteringData(WTFMove(parameters.linkDecorationFilteringData));
     setAllowedQueryParametersForAdvancedPrivacyProtections(WTFMove(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
 #endif
-    if (parameters.windowFeatures)
+    if (parameters.windowFeatures) {
         m_page->applyWindowFeatures(*parameters.windowFeatures);
+        m_page->chrome().show();
+    }
+    m_page->mainFrame().tree().setSpecifiedName(AtomString(parameters.openedMainFrameName));
 }
 
 void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& parameters)

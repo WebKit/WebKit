@@ -138,6 +138,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.openedByDOMWithOpener(),
         hasOpener,
         isPerformingHTTPFallback == IsPerformingHTTPFallback::Yes,
+        { },
         requester.securityOrigin->data(),
         requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),

@@ -4701,21 +4701,18 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
     features.oldWindowRect = oldPage->chrome().windowRect();
 #endif
 
+    String openedMainFrameName = isBlankTargetFrameName(request.frameName()) ? String() : request.frameName();
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request);
     NavigationAction action { request.requester(), request.resourceRequest(), request.initiatedByMainFrame(), request.isRequestFromClientOrUserInput(), NavigationType::Other, shouldOpenExternalURLsPolicy };
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    RefPtr page = oldPage->chrome().createWindow(openerFrame, features, action);
+    RefPtr page = oldPage->chrome().createWindow(openerFrame, openedMainFrameName, features, action);
     if (!page)
         return { nullptr, CreatedNewPage::No };
 
     Ref frame = page->mainFrame();
 
-    if (!isBlankTargetFrameName(request.frameName()))
-        frame->tree().setSpecifiedName(request.frameName());
-
     if (!frame->page())
         return { nullptr, CreatedNewPage::No };
-    page->chrome().show();
 
     return { WTFMove(frame), CreatedNewPage::Yes };
 }

@@ -134,6 +134,16 @@ void PageConfiguration::setOpenedSite(const WebCore::Site& site)
     m_data.openedSite = site;
 }
 
+const WTF::String& PageConfiguration::openedMainFrameName() const
+{
+    return m_data.openedMainFrameName;
+}
+
+void PageConfiguration::setOpenedMainFrameName(const WTF::String& name)
+{
+    m_data.openedMainFrameName = name;
+}
+
 auto PageConfiguration::openerInfo() const -> const std::optional<OpenerInfo>&
 {
     return m_data.openerInfo;

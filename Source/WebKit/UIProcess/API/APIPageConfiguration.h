@@ -120,6 +120,9 @@ public:
     const WebCore::Site& openedSite() const;
     void setOpenedSite(const WebCore::Site&);
 
+    const WTF::String& openedMainFrameName() const;
+    void setOpenedMainFrameName(const WTF::String&);
+
     WebCore::SandboxFlags initialSandboxFlags() const;
     void setInitialSandboxFlags(WebCore::SandboxFlags);
 
@@ -516,6 +519,7 @@ private:
         WeakPtr<WebKit::WebPageProxy> relatedPage;
         std::optional<OpenerInfo> openerInfo;
         WebCore::Site openedSite;
+        WTF::String openedMainFrameName;
         std::optional<WebCore::WindowFeatures> windowFeatures;
         WebCore::SandboxFlags initialSandboxFlags;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;
