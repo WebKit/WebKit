@@ -83,9 +83,10 @@ enum class LayerContentsType : uint8_t {
     CachedIOSurface,
 };
 
-class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
+class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore>, public CanMakeCheckedPtr<RemoteLayerBackingStore> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerBackingStore);
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerBackingStore);
 public:
     RemoteLayerBackingStore(PlatformCALayerRemote&);
     virtual ~RemoteLayerBackingStore();

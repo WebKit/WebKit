@@ -32,8 +32,9 @@
 
 namespace WebKit {
 
-class RemoteLayerWithInProcessRenderingBackingStore : public RemoteLayerBackingStore {
+class RemoteLayerWithInProcessRenderingBackingStore final : public RemoteLayerBackingStore {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithInProcessRenderingBackingStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerWithInProcessRenderingBackingStore);
 public:
     using RemoteLayerBackingStore::RemoteLayerBackingStore;
 

@@ -29,21 +29,13 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
-class RemoteLayerWithRemoteRenderingBackingStore;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerWithRemoteRenderingBackingStore> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteDisplayListRecorderProxy;
 class RemoteImageBufferSetProxy;
 
-class RemoteLayerWithRemoteRenderingBackingStore : public RemoteLayerBackingStore {
+class RemoteLayerWithRemoteRenderingBackingStore final : public RemoteLayerBackingStore {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerWithRemoteRenderingBackingStore);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteLayerWithRemoteRenderingBackingStore);
 public:
     RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote&);
     ~RemoteLayerWithRemoteRenderingBackingStore();
