@@ -1270,7 +1270,14 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         // we have already saved away the scroll and doc state for the long slow load,
         // but it's not an obvious case.
 
+        std::optional<WTF::UUID> uuid;
+        if (historyHandling == NavigationHistoryBehavior::Replace) {
+            if (RefPtr currentItem = m_frame->checkedHistory()->currentItem())
+                uuid = currentItem->uuidIdentifier();
+        }
         m_frame->checkedHistory()->updateBackForwardListForFragmentScroll();
+        if (uuid)
+            m_frame->checkedHistory()->currentItem()->setUUIDIdentifier(*uuid);
 
         if (!document->hasRecentUserInteractionForNavigationFromJS() && !documentLoader()->triggeringAction().isRequestFromClientOrUserInput()) {
             if (RefPtr currentItem = m_frame->history().currentItem())

@@ -130,6 +130,8 @@ void HistoryItem::reset()
     m_formContentType = String();
 
     clearChildren();
+
+    m_uuidIdentifier = WTF::UUID::createVersion4Weak();
 }
 
 const String& HistoryItem::urlString() const

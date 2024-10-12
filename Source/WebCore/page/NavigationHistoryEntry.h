@@ -45,7 +45,7 @@ public:
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
-    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), historyItem->urlString())); }
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), historyItem->urlString(), historyItem->uuidIdentifier())); }
     static Ref<NavigationHistoryEntry> create(ScriptExecutionContext*, const NavigationHistoryEntry&);
 
     const String& url() const;
@@ -60,7 +60,7 @@ public:
     HistoryItem& associatedHistoryItem() const { return m_associatedHistoryItem; }
 
 private:
-    NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&&, String urlString, RefPtr<SerializedScriptValue>&& state = { }, WTF::UUID key = WTF::UUID::createVersion4(), WTF::UUID = WTF::UUID::createVersion4());
+    NavigationHistoryEntry(ScriptExecutionContext*, Ref<HistoryItem>&&, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state = { }, WTF::UUID = WTF::UUID::createVersion4());
 
     enum EventTargetInterfaceType eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;

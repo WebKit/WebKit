@@ -86,6 +86,7 @@ public:
 
     const BackForwardItemIdentifier& identifier() const { return m_identifier; }
     const WTF::UUID& uuidIdentifier() const { return m_uuidIdentifier; }
+    void setUUIDIdentifier(const WTF::UUID& uuidIdentifier) { m_uuidIdentifier = uuidIdentifier; }
 
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();

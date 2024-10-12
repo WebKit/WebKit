@@ -40,7 +40,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem, String urlString, RefPtr<SerializedScriptValue>&& state, WTF::UUID key, WTF::UUID id)
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
     : ContextDestructionObserver(context)
     , m_urlString(urlString)
     , m_key(key)
@@ -56,7 +56,7 @@ Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContex
     RefPtr state = historyItem->navigationAPIStateObject();
     if (!state)
         state = other.m_state;
-    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, WTFMove(state), other.m_associatedHistoryItem->uuidIdentifier(), other.m_id));
+    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, other.m_key, WTFMove(state), other.m_id));
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const
@@ -82,7 +82,7 @@ String NavigationHistoryEntry::key() const
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
         return nullString();
-    return m_associatedHistoryItem->uuidIdentifier().toString();
+    return m_key.toString();
 }
 
 String NavigationHistoryEntry::id() const

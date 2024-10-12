@@ -1,4 +1,4 @@
 
 
-FAIL entries() after setting a srcdoc attribute assert_not_equals: got disallowed value "8ad74782-f402-4540-a51a-ee9b0d6d3f35"
+PASS entries() after setting a srcdoc attribute
 

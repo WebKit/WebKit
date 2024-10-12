@@ -126,7 +126,7 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
         bool shouldProcessPreviousNavigationEntries = [&]() {
             if (!previousNavigation->m_entries.size())
                 return false;
-            if (navigationType != NavigationNavigationType::Reload && navigationType != NavigationNavigationType::Push)
+            if (navigationType == NavigationNavigationType::Traverse)
                 return false;
             if (!frame()->document()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->document()->protectedSecurityOrigin()))
                 return false;

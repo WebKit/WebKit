@@ -1,4 +1,4 @@
 
 
-FAIL navigation.activation after replace assert_equals: expected "bda7783c-e584-483e-ad30-88339ca06c57" but got "eb3c4530-37d5-4f6b-84e8-152ccfdf7c72"
+FAIL navigation.activation after replace assert_equals: expected 1 but got 2
 
