@@ -146,14 +146,8 @@ bool isDeclaredUTI(const String& UTI)
 void setImageSourceAllowableTypes(const Vector<String>& supportedImageTypes)
 {
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
-    // A WebPage might be reinitialized. So restrict ImageIO to the default and
-    // the additional supported image formats only once.
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [supportedImageTypes] {
-        auto allowableTypes = createNSArray(supportedImageTypes);
-        auto status = CGImageSourceSetAllowableTypes((__bridge CFArrayRef)allowableTypes.get());
-        RELEASE_ASSERT_WITH_MESSAGE(supportedImageTypes.isEmpty() || status == noErr, "CGImageSourceSetAllowableTypes() returned error: %d.", status);
-    });
+    auto allowableTypes = createNSArray(supportedImageTypes);
+    CGImageSourceSetAllowableTypes((__bridge CFArrayRef)allowableTypes.get());
 #else
     UNUSED_PARAM(supportedImageTypes);
 #endif

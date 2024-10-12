@@ -46,8 +46,6 @@ namespace WebCore {
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
 {
     static NeverDestroyed defaultSupportedImageTypes = [] {
-        // Changes to supported formats may require updates in Info.plist
-        // accepted formats for macOS clients such as Safari or MiniBrowse.
         static constexpr std::array defaultSupportedImageTypes = {
             "com.compuserve.gif"_s,
             "com.microsoft.bmp"_s,
