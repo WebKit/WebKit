@@ -1173,9 +1173,6 @@ void AXIsolatedTree::applyPendingChanges()
     Locker locker { m_changeLogLock };
 
     if (UNLIKELY(m_queuedForDestruction)) {
-        // Protect this until we have fully self-destructed.
-        Ref protectedThis { *this };
-
         for (const auto& object : m_readerThreadNodeMap.values())
             object->detach(AccessibilityDetachmentType::CacheDestroyed);
 
