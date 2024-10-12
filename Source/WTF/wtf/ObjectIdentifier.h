@@ -227,8 +227,32 @@ struct ObjectIdentifierGenericBaseHash<UUID> {
 };
 
 template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct HashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V, supportsNullState>> {
-    static ObjectIdentifierGeneric<T, U, V, supportsNullState> emptyValue() { return ObjectIdentifierGeneric<T, U, V, supportsNullState>(ObjectIdentifierGeneric<T, U, V, supportsNullState>::InvalidIdValue); }
-    static bool isEmptyValue(const ObjectIdentifierGeneric<T, U, V, supportsNullState>& value) { return value.isHashTableEmptyValue(); }
+    using ValueType = ObjectIdentifierGeneric<T, U, V, supportsNullState>;
+    static ValueType emptyValue() { return ValueType { ValueType::InvalidIdValue }; }
+    static bool isEmptyValue(ValueType value) { return value.isHashTableEmptyValue(); }
+};
+
+template<typename T, typename U, typename V> struct HashTraits<ObjectIdentifierGeneric<T, U, V, SupportsObjectIdentifierNullState::No>> : SimpleClassHashTraits<ObjectIdentifierGeneric<T, U, V, SupportsObjectIdentifierNullState::No>> {
+    using ValueType = ObjectIdentifierGeneric<T, U, V, SupportsObjectIdentifierNullState::No>;
+    using PeekType = std::optional<ValueType>;
+    using TakeType = std::optional<ValueType>;
+
+    static ValueType emptyValue() { return ValueType { ValueType::InvalidIdValue }; }
+    static bool isEmptyValue(ValueType value) { return value.isHashTableEmptyValue(); }
+
+    static PeekType peek(ValueType identifier)
+    {
+        if (isEmptyValue(identifier))
+            return std::nullopt;
+        return identifier;
+    }
+
+    static TakeType take(ValueType identifier)
+    {
+        if (isEmptyValue(identifier))
+            return std::nullopt;
+        return identifier;
+    }
 };
 
 template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct DefaultHash<ObjectIdentifierGeneric<T, U, V, supportsNullState>> : ObjectIdentifierGenericBaseHash<V> { };
