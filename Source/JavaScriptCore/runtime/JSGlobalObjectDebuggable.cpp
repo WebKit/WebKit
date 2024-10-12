@@ -50,78 +50,51 @@ Ref<JSGlobalObjectDebuggable> JSGlobalObjectDebuggable::create(JSGlobalObject& g
 
 JSGlobalObjectDebuggable::JSGlobalObjectDebuggable(JSGlobalObject& globalObject)
     : m_globalObject(&globalObject)
-    , m_globalObjectRunLoop(RunLoop::current())
 {
-}
-
-void JSGlobalObjectDebuggable::callOnGlobalObjectRunLoopAndWait(Function<void()>&& function) const
-{
-    if (&RunLoop::current() == m_globalObjectRunLoop.ptr()) {
-        function();
-        return;
-    }
-    BinarySemaphore semaphore;
-    m_globalObjectRunLoop->dispatch([function = WTFMove(function), &semaphore] {
-        function();
-        semaphore.signal();
-    });
-    semaphore.wait();
 }
 
 String JSGlobalObjectDebuggable::name() const
 {
-    String name;
-    callOnGlobalObjectRunLoopAndWait([this, protectedThis = Ref { *this }, &name] {
-        if (m_globalObject)
-            name = m_globalObject->name().isolatedCopy();
-    });
+    String name = m_globalObject->name();
     return name.isEmpty() ? "JSContext"_s : name;
 }
 
 void JSGlobalObjectDebuggable::connect(FrontendChannel& frontendChannel, bool automaticInspection, bool immediatelyPause)
 {
-    callOnGlobalObjectRunLoopAndWait([this, protectedThis = Ref { *this }, &frontendChannel, automaticInspection, immediatelyPause] {
-        if (!m_globalObject)
-            return;
+    if (!m_globalObject)
+        return;
 
-        JSLockHolder locker(&m_globalObject->vm());
-        m_globalObject->inspectorController().connectFrontend(frontendChannel, automaticInspection, immediatelyPause);
-    });
+    JSLockHolder locker(&m_globalObject->vm());
+    m_globalObject->inspectorController().connectFrontend(frontendChannel, automaticInspection, immediatelyPause);
 }
 
 void JSGlobalObjectDebuggable::disconnect(FrontendChannel& frontendChannel)
 {
-    callOnGlobalObjectRunLoopAndWait([this, protectedThis = Ref { *this }, &frontendChannel] {
-        if (!m_globalObject)
-            return;
+    if (!m_globalObject)
+        return;
 
-        JSLockHolder locker(&m_globalObject->vm());
+    JSLockHolder locker(&m_globalObject->vm());
 
-        m_globalObject->inspectorController().disconnectFrontend(frontendChannel);
-    });
+    m_globalObject->inspectorController().disconnectFrontend(frontendChannel);
 }
 
 void JSGlobalObjectDebuggable::dispatchMessageFromRemote(String&& message)
 {
-    callOnGlobalObjectRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
-        if (!m_globalObject)
-            return;
+    if (!m_globalObject)
+        return;
 
-        JSLockHolder locker(&m_globalObject->vm());
+    JSLockHolder locker(&m_globalObject->vm());
 
-        m_globalObject->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
-    });
+    m_globalObject->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
 }
 
 void JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection()
 {
-    callOnGlobalObjectRunLoopAndWait([this, protectedThis = Ref { *this }] {
-        if (!m_globalObject)
-            return;
+    if (!m_globalObject)
+        return;
 
-        JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject->vm());
-        RemoteInspectionTarget::pauseWaitingForAutomaticInspection();
-    });
+    JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject->vm());
+    RemoteInspectionTarget::pauseWaitingForAutomaticInspection();
 }
 
 void JSGlobalObjectDebuggable::globalObjectDestroyed()
