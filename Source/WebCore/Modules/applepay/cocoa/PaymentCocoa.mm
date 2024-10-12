@@ -55,10 +55,10 @@ static ApplePayPayment::Token convert(PKPaymentToken *paymentToken)
 
     result.paymentMethod = PaymentMethod(paymentToken.paymentMethod).toApplePayPaymentMethod();
 
-    if (NSString *transactionIdentifier = paymentToken.transactionIdentifier)
-        result.transactionIdentifier = transactionIdentifier;
-    if (NSData *paymentData = paymentToken.paymentData)
-        result.paymentData = String::fromUTF8(span(paymentData));
+    if (RetainPtr<NSString> transactionIdentifier = paymentToken.transactionIdentifier)
+        result.transactionIdentifier = transactionIdentifier.get();
+    if (RetainPtr<NSData> paymentData = paymentToken.paymentData)
+        result.paymentData = String::fromUTF8(span(paymentData.get()));
 
     return result;
 }

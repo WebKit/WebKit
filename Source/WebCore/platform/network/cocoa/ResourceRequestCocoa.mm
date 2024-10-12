@@ -212,15 +212,15 @@ void ResourceRequest::doUpdateResourceRequest()
 
 void ResourceRequest::doUpdateResourceHTTPBody()
 {
-    if (NSData* bodyData = [m_nsRequest HTTPBody])
-        m_httpBody = FormData::create(span(bodyData));
-    else if (NSInputStream* bodyStream = [m_nsRequest HTTPBodyStream]) {
-        FormData* formData = httpBodyFromStream(bodyStream);
+    if (RetainPtr bodyData = [m_nsRequest HTTPBody])
+        m_httpBody = FormData::create(span(bodyData.get()));
+    else if (RetainPtr bodyStream = [m_nsRequest HTTPBodyStream]) {
+        RefPtr formData = httpBodyFromStream(bodyStream.get());
         // There is no FormData object if a client provided a custom data stream.
         // We shouldn't be looking at http body after client callbacks.
         ASSERT(formData);
         if (formData)
-            m_httpBody = formData;
+            m_httpBody = WTFMove(formData);
     }
 }
 
