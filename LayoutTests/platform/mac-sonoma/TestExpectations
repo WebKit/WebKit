@@ -4,3 +4,7 @@
 
 # Times out due to missing PKMerchantCategoryCode platform support.
 http/tests/paymentrequest/paymentrequest-merchantCategoryCode.https.html [ Skip ]
+
+# linkedOnOrAfter(Sequoa) for Cross Origin Redirect Downloads.
+http/tests/download/anchor-download-redirect-cross-origin.html
+http/tests/download/anchor-download-redirect-cross-origin-top-level.html

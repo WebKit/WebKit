@@ -22,3 +22,7 @@ pdf/pdf-plugin-printing.html [ Skip ]
 pdf/annotations/checkbox-set-active.html [ Skip ]
 pdf/annotations/radio-buttons-select-second.html [ Skip ]
 pdf/annotations/dropdown-select-second-option.html [ Skip ]
+
+# linkedOnOrAfter(Sequoa) for Cross Origin Redirect Downloads.
+http/tests/download/anchor-download-redirect-cross-origin.html
+http/tests/download/anchor-download-redirect-cross-origin-top-level.html

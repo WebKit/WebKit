@@ -239,6 +239,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::UseCFNetworkNetworkLoader);
         disableBehavior(SDKAlignedBehavior::BrowsingContextControllerSPIAccessRemoved);
         disableBehavior(SDKAlignedBehavior::BlocksConnectionsToAddressWithOnlyZeros);
+        disableBehavior(SDKAlignedBehavior::BlockCrossOriginRedirectDownloads);
     }
 
     disableAdditionalSDKAlignedBehaviors(behaviors);

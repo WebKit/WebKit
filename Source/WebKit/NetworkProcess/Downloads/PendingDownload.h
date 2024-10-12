@@ -53,9 +53,9 @@ class NetworkSession;
 class PendingDownload : public RefCountedAndCanMakeWeakPtr<PendingDownload>, public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(PendingDownload);
 public:
-    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute)
+    static Ref<PendingDownload> create(IPC::Connection* connection, NetworkLoadParameters&& networkLoadParameters, DownloadID downloadID, NetworkSession& networkSession, const String& suggestedName, WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::ProcessIdentifier> webProcessId)
     {
-        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute));
+        return adoptRef(*new PendingDownload(connection, WTFMove(networkLoadParameters), downloadID, networkSession, suggestedName, fromDownloadAttribute, webProcessId));
     }
 
     static Ref<PendingDownload> create(IPC::Connection* connection, Ref<NetworkLoad>&& networkLoad, ResponseCompletionHandler&& responseCompletionHandler, DownloadID downloadID, const WebCore::ResourceRequest& resourceRequest, const WebCore::ResourceResponse& resourceResponse)
@@ -77,7 +77,7 @@ public:
 #endif
 
 private:    
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName, WebCore::FromDownloadAttribute, std::optional<WebCore::ProcessIdentifier>);
     PendingDownload(IPC::Connection*, Ref<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     // NetworkLoadClient.
@@ -101,8 +101,7 @@ private:
     bool m_isAllowedToAskUserForCredentials;
     bool m_isDownloadCancelled = false;
     WebCore::FromDownloadAttribute m_fromDownloadAttribute;
-    bool m_isFullWebBrowser = true;
-
+    std::optional<WebCore::ProcessIdentifier> m_webProcessID;
 
 #if PLATFORM(COCOA)
     URL m_progressURL;

@@ -47,13 +47,17 @@ DownloadManager::DownloadManager(Client& client)
 
 DownloadManager::~DownloadManager() = default;
 
-void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute)
+void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebCore::ProcessIdentifier> webProcessID)
 {
     auto* networkSession = client().networkSession(sessionID);
     if (!networkSession)
         return;
 
     NetworkLoadParameters parameters;
+    if (frameID)
+        parameters.webFrameID = *frameID;
+    if (pageID)
+        parameters.webPageID = *pageID;
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
@@ -63,7 +67,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
     }
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
-    m_pendingDownloads.add(downloadID, PendingDownload::create(m_client->parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName, fromDownloadAttribute));
+    m_pendingDownloads.add(downloadID, PendingDownload::create(m_client->parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName, fromDownloadAttribute, webProcessID));
 }
 
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)

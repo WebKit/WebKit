@@ -68,6 +68,25 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkSession& networkSessi
 {
 }
 
+std::optional<WebCore::FrameIdentifier> NetworkLoad::webFrameID() const
+{
+    if (parameters().webFrameID)
+        return parameters().webFrameID;
+    return std::nullopt;
+}
+
+std::optional<WebCore::PageIdentifier> NetworkLoad::webPageID() const
+{
+    if (parameters().webPageID)
+        return parameters().webPageID;
+    return std::nullopt;
+}
+
+Ref<NetworkProcess> NetworkLoad::networkProcess()
+{
+    return m_networkProcess;
+}
+
 void NetworkLoad::start()
 {
     if (!m_task)
@@ -177,12 +196,12 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
         m_task = nullptr;
         WebCore::NetworkLoadMetrics emptyMetrics;
         didCompleteWithError(ResourceError { errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl }, emptyMetrics);
-        
+
         if (completionHandler)
             completionHandler({ });
         return;
     }
-    
+
     redirectResponse.setSource(ResourceResponse::Source::Network);
 
     auto oldRequest = WTFMove(m_currentRequest);

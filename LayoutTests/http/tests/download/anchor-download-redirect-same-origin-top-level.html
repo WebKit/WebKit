@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setShouldLogDownloadCallbacks(true);
+        testRunner.waitUntilDownloadFinished();
+    }
+</script>
+</head>
+<body>
+<a id="a" href="/resources/redirect.py?url=/download/resources/sample-render.html" download>Download</a>
+<script>
+    document.getElementById("a").click();
+</script>
+</body>
+</html>
+

@@ -68,6 +68,7 @@
 #include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MessagePort.h>
+#include <WebCore/NavigationScheduler.h>
 #include <WebCore/Page.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
@@ -329,6 +330,17 @@ void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, Mes
             if (RefPtr document = localMainFrame->document())
                 document->addConsoleMessage(source, level, message);
     });
+}
+
+void NetworkProcessConnection::loadCancelledDownloadRedirectRequestInFrame(WebCore::ResourceRequest&& request, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID)
+{
+    if (RefPtr webPage = WebProcess::singleton().webPage(pageID); webPage && WebProcess::singleton().webFrame(frameID)) {
+        LoadParameters loadParameters;
+        loadParameters.frameIdentifier = frameID;
+        loadParameters.request = request;
+        webPage->loadRequest(WTFMove(loadParameters));
+    } else
+        RELEASE_LOG_ERROR(Process, "Trying to load Invalid page or frame for %s", request.url().string().utf8().data());
 }
 
 #if ENABLE(WEB_RTC)

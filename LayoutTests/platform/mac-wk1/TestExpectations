@@ -27,8 +27,6 @@ editing/pasteboard/file-input-files-access-promise.html [ Pass ]
 fast/shadow-dom/dragging-element-with-shadow-tree.html [ Pass ]
 fast/shadow-dom/dragging-element-inside-shadow-tree.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
-http/tests/download/anchor-download-redirect-cross-origin.html [ Skip ]
-http/tests/download/anchor-download-redirect-same-origin.html [ Skip ]
 
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 
@@ -1008,6 +1006,10 @@ webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-se
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ Skip ]
 webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Skip ]
+
+# no support for waitUntilDownloadFinished on WK1.
+http/tests/download/anchor-download-redirect-same-origin-top-level.html [ Skip ]
+http/tests/download/anchor-download-redirect-same-origin.html [ Skip ]
 
 webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html [ Skip ]
 webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
