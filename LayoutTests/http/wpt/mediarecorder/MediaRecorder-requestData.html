@@ -63,6 +63,7 @@
         const recorder = new MediaRecorder(video);
         let nonEmptyBlobCount = 0;
         recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_equals(blobEvent.data.type, "video/mp4");
             if (blobEvent.data.size <= 0 && checkForEmptyBlobCount())
                 return;
             if (++nonEmptyBlobCount <= 1)
@@ -87,6 +88,37 @@
             assert_not_reached();
         }, 5000);
     }, 'Verify MediaRecorder requestData returns data progressively');
+
+    async_test(t => {
+        const video = createVideoStream();
+        const recorder = new MediaRecorder(video, { mimeType: 'video/webm; codecs=vp8' });
+        let nonEmptyBlobCount = 0;
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_equals(blobEvent.data.type, "video/webm; codecs=\"vp8\"");
+            if (blobEvent.data.size <= 0 && checkForEmptyBlobCount())
+                return;
+            if (++nonEmptyBlobCount <= 1)
+                return;
+            recorder.stop();
+            clearTimeout(timeout);
+            clearInterval(interval);
+            t.done();
+        });
+        drawStartTime = Date.now();
+        doRedImageDraw();
+
+        recorder.start();
+
+        let interval = setInterval(() => {
+             recorder.requestData();
+        }, 500);
+
+        let timeout = setTimeout(() => {
+            console.log("Got non empty blobs: " + nonEmptyBlobCount);
+            recorder.stop();
+            assert_not_reached();
+        }, 5000);
+    }, 'Verify MediaRecorder with WebM requestData returns data progressively');
 </script>
 </body>
 </html>

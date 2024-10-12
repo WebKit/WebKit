@@ -7,6 +7,13 @@ PASS MediaRecorder.isTypeSupported - 'video/mp4;codecs="mP4a.40.1"'
 PASS MediaRecorder.isTypeSupported - 'audio/mp4;codecs="avc1.4d002a, opus"'
 PASS MediaRecorder.isTypeSupported - 'audio/mp4;codecs="opus"'
 PASS MediaRecorder.isTypeSupported - 'audio/webm'
+PASS MediaRecorder.isTypeSupported - 'audio/webm; codecs="opus"'
+PASS MediaRecorder.isTypeSupported - 'audio/webm; codecs="vorbis"'
 PASS MediaRecorder.isTypeSupported - 'video/webm'
+PASS MediaRecorder.isTypeSupported - 'video/webm; codecs="vp8"'
+PASS MediaRecorder.isTypeSupported - 'video/webm; codecs="vp8,opus"'
+PASS MediaRecorder.isTypeSupported - 'video/webm; codecs="vp8,vorbis"'
+PASS MediaRecorder.isTypeSupported - 'video/webm; codecs="vp09,opus"'
+PASS MediaRecorder.isTypeSupported - 'video/webm; codecs="vp09,vorbis"'
 PASS MediaRecorder mimeType
 

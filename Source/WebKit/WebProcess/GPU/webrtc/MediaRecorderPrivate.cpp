@@ -176,12 +176,12 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
 
 void MediaRecorderPrivate::fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::FetchData { }, [completionHandler = WTFMove(completionHandler), mimeType = mimeType()](auto&& data, double timeCode) mutable {
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorder::FetchData { }, [completionHandler = WTFMove(completionHandler)](String&& mimeType, auto&& data, double timeCode) mutable {
         // FIXME: If completion handler is called following a GPUProcess connection being closed, we should fail the MediaRecorder.
         RefPtr<FragmentedSharedBuffer> buffer;
         if (data.size())
             buffer = SharedBuffer::create(data);
-        completionHandler(WTFMove(buffer), mimeType, timeCode);
+        completionHandler(WTFMove(buffer), WTFMove(mimeType), timeCode);
     }, identifier());
 }
 

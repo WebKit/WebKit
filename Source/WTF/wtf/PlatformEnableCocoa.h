@@ -1065,3 +1065,7 @@
 #if __has_include(<os/lock.h>) && !defined(ENABLE_UNFAIR_LOCK)
 #define ENABLE_UNFAIR_LOCK 1
 #endif
+
+#if !defined(ENABLE_MEDIA_RECORDER_WEBM) && ENABLE(MEDIA_RECORDER) && ENABLE(OPUS) && ENABLE(WEB_CODECS)
+#define ENABLE_MEDIA_RECORDER_WEBM 1
+#endif

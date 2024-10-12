@@ -343,6 +343,10 @@
 #define ENABLE_MEDIA_RECORDER 0
 #endif
 
+#if !defined(ENABLE_MEDIA_RECORDER_WEBM)
+#define ENABLE_MEDIA_RECORDER_WEBM 0
+#endif
+
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 0
 #endif

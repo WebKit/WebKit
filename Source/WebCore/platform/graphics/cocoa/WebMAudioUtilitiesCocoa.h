@@ -28,8 +28,9 @@
 #if PLATFORM(COCOA)
 
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
-class AudioStreamDescription;
+struct AudioStreamBasicDescription;
 
 namespace WebCore {
 
@@ -66,6 +67,7 @@ static constexpr size_t kOpusMinimumFrameDataSize = 2;
 bool parseOpusPrivateData(std::span<const uint8_t> privateData, SharedBuffer& frameData, OpusCookieContents&);
 bool parseOpusTOCData(const SharedBuffer& frameData, OpusCookieContents&);
 RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
+Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription&);
 
 }
 

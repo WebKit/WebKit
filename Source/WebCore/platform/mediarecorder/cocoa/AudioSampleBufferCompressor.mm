@@ -33,6 +33,7 @@
 #include <AudioToolbox/AudioFormat.h>
 #include <Foundation/Foundation.h>
 #include <algorithm>
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Scope.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
@@ -42,20 +43,21 @@
 
 namespace WebCore {
 
-RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject)
+RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject, AudioFormatID format)
 {
-    Ref compressor = adoptRef(*new AudioSampleBufferCompressor());
+    Ref compressor = adoptRef(*new AudioSampleBufferCompressor(format));
     if (!compressor->initialize(callback, callbackObject))
         return nullptr;
     return compressor;
 }
 
-AudioSampleBufferCompressor::AudioSampleBufferCompressor()
+AudioSampleBufferCompressor::AudioSampleBufferCompressor(AudioFormatID format)
     : m_serialDispatchQueue(WorkQueue::create("com.apple.AudioSampleBufferCompressor"_s))
     , m_lowWaterTime(PAL::CMTimeMakeWithSeconds(LOW_WATER_TIME_IN_SECONDS, 1000))
     , m_currentNativePresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_currentOutputPresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_remainingPrimeDuration(PAL::kCMTimeInvalid)
+    , m_outputCodecType(format)
 {
 }
 
@@ -128,7 +130,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
 
     memset(&m_destinationFormat, 0, sizeof(AudioStreamBasicDescription));
     m_destinationFormat.mFormatID = outputFormatID;
-    m_destinationFormat.mSampleRate = m_sourceFormat.mSampleRate;
+    m_destinationFormat.mSampleRate = outputFormatID == kAudioFormatOpus ? 48000 : m_sourceFormat.mSampleRate;
     m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
 
     UInt32 size = sizeof(m_destinationFormat);
@@ -180,19 +182,17 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
         return false;
     }
 
-    if (m_destinationFormat.mFormatID == kAudioFormatMPEG4AAC) {
-        bool shouldSetDefaultOutputBitRate = true;
-        if (m_outputBitRate) {
-            auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_outputBitRate), &m_outputBitRate.value());
-            RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
-            shouldSetDefaultOutputBitRate = !!error;
-        }
-        if (shouldSetDefaultOutputBitRate) {
-            auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
-            size = sizeof(outputBitRate);
-            if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
-                RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting default kAudioConverterEncodeBitRate failed with %d", error);
-        }
+    bool shouldSetDefaultOutputBitRate = true;
+    if (m_outputBitRate) {
+        auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, sizeof(*m_outputBitRate), &m_outputBitRate.value());
+        RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
+        shouldSetDefaultOutputBitRate = !!error;
+    }
+    if (shouldSetDefaultOutputBitRate) {
+        auto outputBitRate = defaultOutputBitRate(m_destinationFormat);
+        size = sizeof(outputBitRate);
+        if (auto error = PAL::AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
+            RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting default kAudioConverterEncodeBitRate failed with %d", error);
     }
 
     if (!m_destinationFormat.mBytesPerPacket) {
@@ -543,7 +543,7 @@ void AudioSampleBufferCompressor::addSampleBuffer(CMSampleBufferRef buffer)
     });
 }
 
-CMSampleBufferRef AudioSampleBufferCompressor::getOutputSampleBuffer()
+CMSampleBufferRef AudioSampleBufferCompressor::getOutputSampleBuffer() const
 {
     return (CMSampleBufferRef)(const_cast<void*>(PAL::CMBufferQueueGetHead(m_outputBufferQueue.get())));
 }
@@ -556,6 +556,11 @@ RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::takeOutputSampleBuffer
 unsigned AudioSampleBufferCompressor::bitRate() const
 {
     return m_outputBitRate.value_or(0);
+}
+
+bool AudioSampleBufferCompressor::isEmpty() const
+{
+    return m_outputBufferQueue && PAL::CMBufferQueueIsEmpty(m_outputBufferQueue.get());
 }
 
 }

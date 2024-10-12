@@ -55,7 +55,7 @@ std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
 
-    auto writer = MediaRecorderPrivateWriter::create(!!selectedTracks.audioTrack, !!selectedTracks.videoTrack, options);
+    RefPtr writer = MediaRecorderPrivateWriter::create(!!selectedTracks.audioTrack, !!selectedTracks.videoTrack, options);
     if (!writer)
         return nullptr;
 

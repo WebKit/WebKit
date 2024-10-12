@@ -28,7 +28,7 @@ messages -> RemoteMediaRecorder NotRefCounted {
     AudioSamplesStorageChanged(struct WebKit::ConsumerSharedCARingBufferHandle storageHandle, WebCore::CAAudioStreamDescription description)
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
     VideoFrameAvailable(struct WebKit::SharedVideoFrame frame)
-    FetchData() -> (std::span<const uint8_t> buffer, double timeCode)
+    FetchData() -> (String mimeType, std::span<const uint8_t> buffer, double timeCode)
     StopRecording() -> ()
     Pause() -> ()
     Resume() -> ()

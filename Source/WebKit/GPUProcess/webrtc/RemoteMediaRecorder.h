@@ -77,7 +77,7 @@ private:
     void audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&&, const WebCore::CAAudioStreamDescription&);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
     void videoFrameAvailable(SharedVideoFrame&&);
-    void fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&&);
+    void fetchData(CompletionHandler<void(String mimeType, std::span<const uint8_t>, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
