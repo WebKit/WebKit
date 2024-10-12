@@ -1024,10 +1024,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::RowGroup:
     case AccessibilityRole::RowHeader:
     case AccessibilityRole::Row:
-    case AccessibilityRole::RubyBase:
-    case AccessibilityRole::RubyBlock:
     case AccessibilityRole::RubyInline:
-    case AccessibilityRole::RubyRun:
     case AccessibilityRole::RubyText:
     case AccessibilityRole::ScrollArea:
     case AccessibilityRole::ScrollBar:

@@ -1,75 +1,62 @@
-<!-- webkit-test-runner [ CSSBasedRubyEnabled=true ] -->
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-    <head>
-        <script src="../../resources/js-test-pre.js"></script>
-    </head>
-    <body>
-        <ruby id="rubyElemId">
-            <rb>basetext</rb>
-            <rp>(</rp>
-            <rt>rubytext</rt>
-            <rp>)</rp>
-        </ruby>
-        
-        <script>
-            if (window.accessibilityController) {
-                description("This tests that the ruby containers are exposed with the appropriate hierarchy and roles.")
-                // At the moment, this is implemented only for OSX.
-                var platform = accessibilityController.platformName;
-                if ("mac" == platform) {
-                    // Expected values for roles and subroles.
-                    var expectedRubyRole = "AXRole: AXGroup"; // all ruby containers have AXGroup role
-                    var expectedRubyInlineSubrole = "AXSubrole: AXRubyInline";
-                    var expectedRubyBlockSubrole = "AXSubrole: AXRubyBlock";
-                    var expectedRubyTextSubrole = "AXSubrole: AXRubyText";
-                    var expectedRubyBaseSubrole = "AXSubrole: AXRubyBase";
-                    
-                    // Try inline style first, block style second
-                    var rubyElem = document.getElementById("rubyElemId");
-                    shouldBeTrue("rubyElem != null");
-                    checkHierarchyAndRoles(rubyElem);
-                    
-                    rubyElem.style.position = "absolute";
-                    checkHierarchyAndRoles(rubyElem);
-                    
-                    function checkHierarchyAndRoles(rubyElem) {
-                        axRuby = window.accessibilityController.accessibleElementById("rubyElemId");
-                        shouldBeTrue("axRuby != null");
-                        role = axRuby.role;
-                        subrole = axRuby.subrole;
-                        shouldBe("role", "expectedRubyRole");
-                        if (rubyElem.style.position != "absolute") {
-                            shouldBe("subrole", "expectedRubyInlineSubrole");
-                        }
-                        else {
-                            shouldBe("subrole", "expectedRubyBlockSubrole");
-                            axRuby = axRuby.childAtIndex(0);
-                            role = axRuby.role;
-                            subrole = axRuby.subrole;
-                            shouldBe("role", "expectedRubyRole");
-                            shouldBe("subrole", "expectedRubyInlineSubrole");
-                        }
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
 
-                        // RubyBase
-                        axRubyBase = axRuby.childAtIndex(0);
-                        shouldBeTrue("axRubyBase != null");
-                        role = axRubyBase.role;
-                        subrole = axRubyBase.subrole;
-                        shouldBe("role", "expectedRubyRole");
-                        shouldBe("subrole", "expectedRubyBaseSubrole");
+<ruby id="ruby">
+    <rb>basetext</rb>
+    <rp>(</rp>
+    <rt id="rt">rubytext</rt>
+    <rp>)</rp>
+</ruby>
 
-                        // RubyText
-                        axRubyText = axRuby.childAtIndex(1);
-                        shouldBeTrue("axRubyText != null");
-                        role = axRubyText.role;
-                        subrole = axRubyText.subrole;
-                        shouldBe("role", "expectedRubyRole");
-                        shouldBe("subrole", "expectedRubyTextSubrole");
-                    }
-                }
-            }
-        </script>
-        <script src="../../resources/js-test-post.js"></script>
-    </body>
+<script>
+var output = "This tests that the ruby containers are exposed with the appropriate hierarchy and roles.\n\n";
+
+function logId(axElement) {
+    const id = axElement.domIdentifier;
+    if (id)
+        output += `Testing #${id}\n`;
+    else
+        output += `Testing AX element with no ID\n`;
+}
+
+if (window.accessibilityController) {
+     // All ruby containers have the AXGroup role.
+    var expectedRubyRole = "AXRole: AXGroup";
+    var expectedRubyInlineSubrole = "AXSubrole: AXRubyInline";
+    var expectedRubyTextSubrole = "AXSubrole: AXRubyText";
+
+    // Try inline style first, block style second.
+    checkHierarchyAndRoles(/* expectInline */ true);
+    document.getElementById("ruby").style.position = "absolute";
+    checkHierarchyAndRoles(/* expectInline */ false);
+
+    function checkHierarchyAndRoles(expectInline) {
+        axRuby = accessibilityController.accessibleElementById("ruby");
+        logId(axRuby);
+        output += expect("axRuby.role", "expectedRubyRole");
+        if (expectInline)
+            output += expect("axRuby.subrole", "expectedRubyInlineSubrole");
+        else {
+            axRuby = axRuby.childAtIndex(0);
+            logId(axRuby);
+            output += expect("axRuby.role", "expectedRubyRole");
+            output += expect("axRuby.subrole", "expectedRubyInlineSubrole");
+        }
+
+        // Test AXRubyText.
+        axRubyText = axRuby.childAtIndex(1);
+        logId(axRubyText);
+        output += expect("axRubyText.role", "expectedRubyRole");
+        output += expect("axRubyText.subrole", "expectedRubyTextSubrole");
+    }
+    debug(output);
+}
+</script>
+</body>
 </html>
+

@@ -359,10 +359,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Model:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::RowGroup:
-    case AccessibilityRole::RubyBase:
-    case AccessibilityRole::RubyBlock:
     case AccessibilityRole::RubyInline:
-    case AccessibilityRole::RubyRun:
     case AccessibilityRole::RubyText:
     case AccessibilityRole::SliderThumb:
     case AccessibilityRole::SpinButtonPart:

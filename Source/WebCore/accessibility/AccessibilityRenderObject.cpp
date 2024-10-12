@@ -2163,16 +2163,14 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isRenderOrLegacyRenderSVGRoot())
         return AccessibilityRole::SVGRoot;
     
-    // Check for Ruby elements
     switch (m_renderer->style().display()) {
     case DisplayType::Ruby:
         return AccessibilityRole::RubyInline;
-    case DisplayType::RubyBlock:
-        return AccessibilityRole::RubyBlock;
     case DisplayType::RubyAnnotation:
         return AccessibilityRole::RubyText;
+    case DisplayType::RubyBlock:
     case DisplayType::RubyBase:
-        return AccessibilityRole::RubyBase;
+        return AccessibilityRole::Group;
     default:
         break;
     }

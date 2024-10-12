@@ -422,14 +422,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return "AXSubscriptStyleGroup"_s;
 
     switch (role) {
-    case AccessibilityRole::RubyBase:
-        return "AXRubyBase"_s;
-    case AccessibilityRole::RubyBlock:
-        return "AXRubyBlock"_s;
     case AccessibilityRole::RubyInline:
         return "AXRubyInline"_s;
-    case AccessibilityRole::RubyRun:
-        return "AXRubyRun"_s;
     case AccessibilityRole::RubyText:
         return "AXRubyText"_s;
     default:
@@ -951,10 +945,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Switch, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::SearchField, NSAccessibilityTextFieldRole },
         { AccessibilityRole::Pre, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyBase, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyBlock, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyInline, NSAccessibilityGroupRole },
-        { AccessibilityRole::RubyRun, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyText, NSAccessibilityGroupRole },
         { AccessibilityRole::Details, NSAccessibilityGroupRole },
         { AccessibilityRole::Summary, NSAccessibilityDisclosureTriangleRole },

@@ -1,29 +1,20 @@
 This tests that the ruby containers are exposed with the appropriate hierarchy and roles.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+Testing #ruby
+PASS: axRuby.role === expectedRubyRole
+PASS: axRuby.subrole === expectedRubyInlineSubrole
+Testing #rt
+PASS: axRubyText.role === expectedRubyRole
+PASS: axRubyText.subrole === expectedRubyTextSubrole
+Testing #ruby
+PASS: axRuby.role === expectedRubyRole
+Testing AX element with no ID
+PASS: axRuby.role === expectedRubyRole
+PASS: axRuby.subrole === expectedRubyInlineSubrole
+Testing #rt
+PASS: axRubyText.role === expectedRubyRole
+PASS: axRubyText.subrole === expectedRubyTextSubrole
 
-
-PASS rubyElem != null is true
-PASS axRuby != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyInlineSubrole
-PASS axRubyBase != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyBaseSubrole
-PASS axRubyText != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyTextSubrole
-PASS axRuby != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyBlockSubrole
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyInlineSubrole
-PASS axRubyBase != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyBaseSubrole
-PASS axRubyText != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyTextSubrole
 PASS successfullyParsed is true
 
 TEST COMPLETE
