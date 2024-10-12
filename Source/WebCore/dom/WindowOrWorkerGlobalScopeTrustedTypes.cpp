@@ -85,22 +85,6 @@ TrustedTypePolicyFactory* WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(DO
     return DOMWindowTrustedTypes::from(*localWindow)->trustedTypes();
 }
 
-class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerGlobalScopeTrustedTypes);
-public:
-    explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
-    virtual ~WorkerGlobalScopeTrustedTypes() = default;
-
-    static WorkerGlobalScopeTrustedTypes* from(WorkerGlobalScope&);
-    TrustedTypePolicyFactory* trustedTypes() const;
-
-private:
-    static ASCIILiteral supplementName() { return WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName(); }
-
-    WeakRef<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
-    mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
-};
-
 WorkerGlobalScopeTrustedTypes::WorkerGlobalScopeTrustedTypes(WorkerGlobalScope& scope)
     : m_scope(scope)
 {
@@ -117,10 +101,18 @@ WorkerGlobalScopeTrustedTypes* WorkerGlobalScopeTrustedTypes::from(WorkerGlobalS
     return supplement;
 }
 
+WorkerGlobalScopeTrustedTypes::~WorkerGlobalScopeTrustedTypes() = default;
+
+void WorkerGlobalScopeTrustedTypes::prepareForDestruction()
+{
+    m_trustedTypes = nullptr;
+    m_scope = nullptr;
+}
+
 TrustedTypePolicyFactory* WorkerGlobalScopeTrustedTypes::trustedTypes() const
 {
-    if (!m_trustedTypes)
-        m_trustedTypes = TrustedTypePolicyFactory::create(m_scope.get());
+    if (!m_trustedTypes && m_scope)
+        m_trustedTypes = TrustedTypePolicyFactory::create(Ref { *m_scope });
     return m_trustedTypes.get();
 }
 

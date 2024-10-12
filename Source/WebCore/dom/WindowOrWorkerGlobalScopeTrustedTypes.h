@@ -42,4 +42,23 @@ public:
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };
 
+class WorkerGlobalScopeTrustedTypes : public Supplement<WorkerGlobalScope> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WorkerGlobalScopeTrustedTypes);
+public:
+    explicit WorkerGlobalScopeTrustedTypes(WorkerGlobalScope&);
+    virtual ~WorkerGlobalScopeTrustedTypes();
+
+    static WorkerGlobalScopeTrustedTypes* from(WorkerGlobalScope&);
+    TrustedTypePolicyFactory* trustedTypes() const;
+
+    void prepareForDestruction();
+
+    static ASCIILiteral supplementName() { return WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName(); }
+
+private:
+    WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
+    mutable RefPtr<TrustedTypePolicyFactory> m_trustedTypes;
+};
+
+
 } // namespace WebCore

@@ -101,13 +101,7 @@ public:
     {
         ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
         ASSERT(!m_supplements.get(key));
-        m_supplements.set(key, WTFMove(supplement));
-    }
-
-    void removeSupplement(ASCIILiteral key)
-    {
-        ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
-        m_supplements.remove(key);
+        m_supplements.add(key, WTFMove(supplement));
     }
 
     Supplement<T>* requireSupplement(ASCIILiteral key)

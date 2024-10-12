@@ -162,7 +162,8 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-    removeSupplement(WindowOrWorkerGlobalScopeTrustedTypes::workerGlobalSupplementName());
+    if (auto* trustedTypes = static_cast<WorkerGlobalScopeTrustedTypes*>(requireSupplement(WorkerGlobalScopeTrustedTypes::supplementName())))
+        trustedTypes->prepareForDestruction();
 
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
