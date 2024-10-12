@@ -91,7 +91,7 @@ private:
     //    go through it. All tasks posted from the worker object's thread to the worker context's
     //    thread contain the RefPtr<ThreadableLoaderClientWrapper> object, so the
     //    ThreadableLoaderClientWrapper instance is there until all tasks are executed.
-    class MainThreadBridge final : public ThreadableLoaderClient {
+    class MainThreadBridge final : public RefCounted<MainThreadBridge>, public ThreadableLoaderClient {
         WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MainThreadBridge);
     public:
@@ -138,9 +138,10 @@ private:
     WorkerThreadableLoader(WorkerOrWorkletGlobalScope&, ThreadableLoaderClient&, const String& taskMode, ResourceRequest&&, const ThreadableLoaderOptions&, const String& referrer);
 
     void computeIsDone() final;
+    WorkerThreadableLoader::MainThreadBridge& bridge();
 
     Ref<ThreadableLoaderClientWrapper> m_workerClientWrapper;
-    MainThreadBridge& m_bridge; // FIXME: Use a smart pointer.
+    Ref<MainThreadBridge> m_bridge;
 };
 
 } // namespace WebCore
