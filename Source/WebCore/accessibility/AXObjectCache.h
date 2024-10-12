@@ -549,6 +549,14 @@ public:
     Ref<Document> protectedDocument() const;
     constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
+#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void objectBecameIgnored(AXID axID)
+    {
+        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+            tree->objectBecameIgnored(axID);
+    }
+#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool);
 #endif

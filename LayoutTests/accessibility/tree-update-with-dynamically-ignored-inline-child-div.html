@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<main id="main">
+    <div>
+        <span>
+            <!-- Note that #div-1 has only inline renderer children (a span) to start. -->
+            <div id="div-1"><span>Foo</span></div>
+        </span>
+    </div>
+</main>
+
+<script>
+var output = "This test ensures that we properly update the accessibility tree when an object becomes dynamically ignored in the middle of handling children updates for it.\n\n";
+
+// See similiar test, tree-update-with-dynamically-ignored-tabindex-child.html, for detailed comments on how both these
+// tests exercise a bug in our accessibility tree updates. The only difference between these tests is that this one
+// aims to exercise the following condition in AccessibilityRenderObject::computeIsIgnored():
+//
+// https://github.com/WebKit/WebKit/blob/aafd675c6a611d09090e6c575448a71778ead010/Source/WebCore/accessibility/AccessibilityRenderObject.cpp#L1304#L1306
+//
+// While tree-update-with-dynamically-ignored-tabindex-child.html aims to exercise this condition:
+//
+// https://github.com/WebKit/WebKit/blob/aafd675c6a611d09090e6c575448a71778ead010/Source/WebCore/accessibility/AccessibilityRenderObject.cpp#L1341#L1342
+//
+// That way, if we change or remove either of these conditions, we are less likely to lose test coverage for the core
+// bug represented by this test.
+
+function createDiv(text) {
+    const div = document.createElement("div");
+    div.id = text.toLowerCase();
+    div.innerText = text;
+    div.setAttribute("role", "presentation");
+    return div;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += dumpAXSearchTraversal(webArea);
+
+    var searchOutput;
+    const red = createDiv("Red");
+    const blue = createDiv("Blue");
+    const green = createDiv("Green")
+    setTimeout(async function() {
+        // Add a block child (importantly: not inline), making #div-1 ignored.
+        document.getElementById("div-1").appendChild(red);
+        document.getElementById("main").appendChild(blue);
+        await waitFor(() => {
+            searchOutput = dumpAXSearchTraversal(webArea);
+            return searchOutput && searchOutput.includes("Red") && searchOutput.includes("Blue");
+        });
+
+        // If our implementation is wrong, we will never find our green div in the accessibility tree.
+        document.getElementById("div-1").appendChild(green);
+        await waitFor(() => {
+            searchOutput = dumpAXSearchTraversal(webArea);
+            return searchOutput && searchOutput.includes("Green");
+        });
+        output += searchOutput;
+
+        debug(output);
+        document.getElementById("main").style.visibility = "hidden";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+
