@@ -635,6 +635,28 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_nearest, double, (double operand))
     return std::nearbyint(operand);
 }
 
+#if OS(LINUX) && !defined(__GLIBC__)
+static inline float roundevenf(float operand)
+{
+    float rounded = roundf(operand);
+    if (fabsf(operand - rounded) == 0.5f) {
+        if (fmod(rounded, 2.0f) != 0.0f)
+            return rounded - copysignf(1.0f, operand);
+    }
+    return rounded;
+}
+
+static inline double roundeven(double operand)
+{
+    double rounded = round(operand);
+    if (fabs(operand - rounded) == 0.5) {
+        if (fmod(rounded, 2.0) != 0.0)
+            return rounded - copysign(1.0, operand);
+    }
+    return rounded;
+}
+#endif
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_roundeven, float, (float operand)) { return roundevenf(operand); }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f64_roundeven, double, (double operand)) { return roundeven(operand); }
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(f32_trunc, float, (float operand)) { return std::trunc(operand); }
