@@ -37,8 +37,8 @@ STRIP_STYLE = debugging;
 
 SKIP_INSTALL[sdk=macosx*] = YES;
 
-EXCLUDED_SOURCE_FILE_NAMES[config=Production] = $(inherited) *.appex
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited) *.appex;
+EXCLUDED_SOURCE_FILE_NAMES[config=Production] = $(inherited) *.appex;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited);
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(inherited) ios/* AppDelegate.m *.appex;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = $(inherited) ios/Launch.storyboard *.appex;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=watch*] = $(inherited) ios/Launch.storyboard *.appex;
