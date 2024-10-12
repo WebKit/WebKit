@@ -69,7 +69,7 @@ private:
     CheckedRef<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
-    HashMap<WebCore::FileSystemHandleIdentifier, std::unique_ptr<FileSystemStorageHandle>> m_handles;
+    HashMap<WebCore::FileSystemHandleIdentifier, RefPtr<FileSystemStorageHandle>> m_handles;
     HashMap<String, WebCore::FileSystemHandleIdentifier> m_lockMap;
 };
 

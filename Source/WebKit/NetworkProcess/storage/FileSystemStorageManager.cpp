@@ -93,7 +93,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
         }
     }
 
-    auto newHandle = FileSystemStorageHandle::create(*this, type, WTFMove(path), WTFMove(name));
+    RefPtr newHandle = FileSystemStorageHandle::create(*this, type, WTFMove(path), WTFMove(name));
     if (!newHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
     auto newHandleIdentifier = newHandle->identifier();

@@ -45,7 +45,7 @@ constexpr uint64_t defaultCapacityStep = 128 * MB;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandle);
 
-std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
+RefPtr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
 {
     bool canAccess = false;
     switch (type) {
@@ -65,7 +65,7 @@ std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSys
     if (!canAccess)
         return nullptr;
 
-    return std::unique_ptr<FileSystemStorageHandle>(new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
+    return adoptRef(*new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
 }
 
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)

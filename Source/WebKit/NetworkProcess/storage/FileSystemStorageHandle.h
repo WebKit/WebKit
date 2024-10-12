@@ -30,17 +30,9 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class FileSystemStorageHandle;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::FileSystemStorageHandle> : std::true_type { };
-}
 
 namespace IPC {
 class SharedFileHandle;
@@ -51,11 +43,11 @@ namespace WebKit {
 class FileSystemStorageManager;
 enum class FileSystemStorageError : uint8_t;
 
-class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager>, public Identified<WebCore::FileSystemHandleIdentifier> {
+class FileSystemStorageHandle final : public RefCounted<FileSystemStorageHandle>, public CanMakeWeakPtr<FileSystemStorageHandle, WeakPtrFactoryInitialization::Eager>, public Identified<WebCore::FileSystemHandleIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageHandle);
 public:
     enum class Type : uint8_t { File, Directory, Any };
-    static std::unique_ptr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
+    static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
 
     const String& path() const { return m_path; }
     Type type() const { return m_type; }
