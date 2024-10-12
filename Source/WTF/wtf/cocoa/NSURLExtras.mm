@@ -324,10 +324,7 @@ BOOL isUserVisibleURL(NSString *string)
 {
     // Return true if the userVisibleString function is guaranteed to not change the passed-in URL.
     // This function is used to optimize all the most common cases where we don't need the userVisibleString algorithm.
-
-    char buffer[1024];
-    auto success = CFStringGetCString(bridge_cast(string), buffer, sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    auto characters = [string UTF8String];
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.
