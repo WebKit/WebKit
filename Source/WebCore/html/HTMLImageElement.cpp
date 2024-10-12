@@ -483,8 +483,6 @@ void HTMLImageElement::didAttachRenderers()
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer());
     if (!renderImage)
         return;
-    if (m_imageLoader->hasPendingBeforeLoadEvent())
-        return;
 
 #if ENABLE(SERVICE_CONTROLS)
     ImageControlsMac::updateImageControls(*this);
