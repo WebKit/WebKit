@@ -4656,7 +4656,7 @@ bool LocalFrameLoaderClient::hasHTMLView() const
     return true;
 }
 
-std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures& features)
+std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&& request, WindowFeatures&& features)
 {
     ASSERT(!features.dialog || request.frameName().isEmpty());
     ASSERT(request.resourceRequest().httpMethod() == "GET"_s);
@@ -4674,17 +4674,6 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
             frame->updateOpener(openerFrame);
             return { frame, CreatedNewPage::No };
         }
-    }
-
-    // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
-    if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
-        request.setFrameName(blankTargetFrameName());
-        features.noopener = true;
-    }
-
-    if (openerFrame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && request.resourceRequest().url().protocolIsBlob() && !openerFrame.document()->protectedSecurityOrigin()->isSameOriginAs(openerFrame.document()->protectedTopOrigin())) {
-        request.setFrameName(blankTargetFrameName());
-        features.noopener = true;
     }
 
     // Sandboxed frames cannot open new auxiliary browsing contexts.

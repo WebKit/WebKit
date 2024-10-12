@@ -2586,11 +2586,22 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->protectedSecurityOrigin(), WTFMove(resourceRequest), frameName, initiatedByMainFrame };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(activeDocument->shouldOpenExternalURLsPolicyToPropagate());
 
-    auto [newFrame, created] = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), windowFeatures);
+    // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
+    if (openerFrame.document()->shouldForceNoOpenerBasedOnCOOP()) {
+        frameLoadRequest.setFrameName(blankTargetFrameName());
+        windowFeatures.noopener = true;
+    }
+
+    if (openerFrame.document()->settingsValues().blobRegistryTopOriginPartitioningEnabled && frameLoadRequest.resourceRequest().url().protocolIsBlob() && !openerFrame.document()->protectedSecurityOrigin()->isSameOriginAs(openerFrame.document()->protectedTopOrigin())) {
+        frameLoadRequest.setFrameName(blankTargetFrameName());
+        windowFeatures.noopener = true;
+    }
+    bool noopener = windowFeatures.wantsNoOpener();
+
+    auto [newFrame, created] = WebCore::createWindow(openerFrame, WTFMove(frameLoadRequest), WTFMove(windowFeatures));
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
-    bool noopener = windowFeatures.wantsNoOpener();
     if (!noopener) {
         ASSERT(!newFrame->opener() || newFrame->opener() == &openerFrame);
         newFrame->page()->setOpenedByDOMWithOpener(true);

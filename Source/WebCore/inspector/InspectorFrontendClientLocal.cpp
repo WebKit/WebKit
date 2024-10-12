@@ -284,8 +284,7 @@ void InspectorFrontendClientLocal::openURLExternally(const String& url)
 
     FrameLoadRequest frameLoadRequest { *mainFrame->document(), mainFrame->document()->securityOrigin(), { }, blankTargetFrameName(), InitiatedByMainFrame::Unknown };
 
-    WindowFeatures features;
-    auto [frame, created] = WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), features);
+    auto [frame, created] = WebCore::createWindow(mainFrame, WTFMove(frameLoadRequest), { });
     if (!frame)
         return;
     RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());

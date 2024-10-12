@@ -546,6 +546,6 @@ private:
 // FIXME: Consider making this function part of an appropriate class (not FrameLoader)
 // and moving it to a more appropriate location.
 enum class CreatedNewPage : bool { No, Yes };
-std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&&, WindowFeatures&);
+std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, FrameLoadRequest&&, WindowFeatures&&);
 
 } // namespace WebCore
