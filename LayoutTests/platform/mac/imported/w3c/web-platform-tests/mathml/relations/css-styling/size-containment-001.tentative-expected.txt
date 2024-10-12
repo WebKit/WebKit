@@ -9,8 +9,8 @@ FAIL intrinsic size of mfrac with contain: size; contain-intrinsic-inline-size: 
 FAIL inline-size of mfrac with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 76.875
 PASS intrinsic size of mi with contain: size; contain-intrinsic-inline-size: 111px;
 PASS inline-size of mi with contain: size; contain-intrinsic-inline-size: 111px;
-FAIL intrinsic size of mmultiscripts with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL inline-size of mmultiscripts with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
+FAIL intrinsic size of mmultiscripts with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL inline-size of mmultiscripts with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
 PASS intrinsic size of mn with contain: size; contain-intrinsic-inline-size: 111px;
 PASS inline-size of mn with contain: size; contain-intrinsic-inline-size: 111px;
 PASS intrinsic size of mo with contain: size; contain-intrinsic-inline-size: 111px;
@@ -27,12 +27,12 @@ PASS intrinsic size of ms with contain: size; contain-intrinsic-inline-size: 111
 PASS inline-size of ms with contain: size; contain-intrinsic-inline-size: 111px;
 FAIL intrinsic size of mstyle with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 76.875
 FAIL inline-size of mstyle with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 76.875
-FAIL intrinsic size of msub with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL inline-size of msub with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL intrinsic size of msubsup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL inline-size of msubsup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL intrinsic size of msup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
-FAIL inline-size of msup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 135.15625
+FAIL intrinsic size of msub with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL inline-size of msub with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL intrinsic size of msubsup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL inline-size of msubsup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL intrinsic size of msup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
+FAIL inline-size of msup with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 132.03125
 PASS intrinsic size of mtext with contain: size; contain-intrinsic-inline-size: 111px;
 PASS inline-size of mtext with contain: size; contain-intrinsic-inline-size: 111px;
 FAIL intrinsic size of munder with contain: size; contain-intrinsic-inline-size: 111px; assert_equals: expected 111 but got 76.875

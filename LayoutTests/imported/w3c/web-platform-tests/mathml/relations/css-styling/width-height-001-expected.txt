@@ -19,10 +19,10 @@ PASS width and height properties on mi
 PASS inline-size and block-size properties on mi
 PASS width and height properties on mi (content overflowing)
 PASS width property on mi (preferred width)
-FAIL width and height properties on mmultiscripts assert_approx_equals: width expected 500 +/- 1 but got 135.15625
-FAIL inline-size and block-size properties on mmultiscripts assert_approx_equals: width expected 600 +/- 1 but got 135.15625
-FAIL width and height properties on mmultiscripts (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 135.15625
-FAIL width property on mmultiscripts (preferred width) assert_approx_equals: expected 300 +/- 1 but got 135.15625
+FAIL width and height properties on mmultiscripts assert_approx_equals: width expected 500 +/- 1 but got 132.03125
+FAIL inline-size and block-size properties on mmultiscripts assert_approx_equals: width expected 600 +/- 1 but got 132.03125
+FAIL width and height properties on mmultiscripts (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 132.03125
+FAIL width property on mmultiscripts (preferred width) assert_approx_equals: expected 300 +/- 1 but got 132.03125
 PASS width and height properties on mn
 PASS inline-size and block-size properties on mn
 PASS width and height properties on mn (content overflowing)
@@ -67,18 +67,18 @@ FAIL width and height properties on mstyle assert_approx_equals: width expected 
 FAIL inline-size and block-size properties on mstyle assert_approx_equals: width expected 600 +/- 1 but got 76.875
 FAIL width and height properties on mstyle (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 76.875
 FAIL width property on mstyle (preferred width) assert_approx_equals: expected 300 +/- 1 but got 76.875
-FAIL width and height properties on msub assert_approx_equals: width expected 500 +/- 1 but got 135.15625
-FAIL inline-size and block-size properties on msub assert_approx_equals: width expected 600 +/- 1 but got 135.15625
-FAIL width and height properties on msub (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 135.15625
-FAIL width property on msub (preferred width) assert_approx_equals: expected 300 +/- 1 but got 135.15625
-FAIL width and height properties on msubsup assert_approx_equals: width expected 500 +/- 1 but got 135.15625
-FAIL inline-size and block-size properties on msubsup assert_approx_equals: width expected 600 +/- 1 but got 135.15625
-FAIL width and height properties on msubsup (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 135.15625
-FAIL width property on msubsup (preferred width) assert_approx_equals: expected 300 +/- 1 but got 135.15625
-FAIL width and height properties on msup assert_approx_equals: width expected 500 +/- 1 but got 135.15625
-FAIL inline-size and block-size properties on msup assert_approx_equals: width expected 600 +/- 1 but got 135.15625
-FAIL width and height properties on msup (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 135.15625
-FAIL width property on msup (preferred width) assert_approx_equals: expected 300 +/- 1 but got 135.15625
+FAIL width and height properties on msub assert_approx_equals: width expected 500 +/- 1 but got 132.03125
+FAIL inline-size and block-size properties on msub assert_approx_equals: width expected 600 +/- 1 but got 132.03125
+FAIL width and height properties on msub (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 132.03125
+FAIL width property on msub (preferred width) assert_approx_equals: expected 300 +/- 1 but got 132.03125
+FAIL width and height properties on msubsup assert_approx_equals: width expected 500 +/- 1 but got 132.03125
+FAIL inline-size and block-size properties on msubsup assert_approx_equals: width expected 600 +/- 1 but got 132.03125
+FAIL width and height properties on msubsup (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 132.03125
+FAIL width property on msubsup (preferred width) assert_approx_equals: expected 300 +/- 1 but got 132.03125
+FAIL width and height properties on msup assert_approx_equals: width expected 500 +/- 1 but got 132.03125
+FAIL inline-size and block-size properties on msup assert_approx_equals: width expected 600 +/- 1 but got 132.03125
+FAIL width and height properties on msup (content overflowing) assert_approx_equals: width expected 2 +/- 1 but got 132.03125
+FAIL width property on msup (preferred width) assert_approx_equals: expected 300 +/- 1 but got 132.03125
 PASS width and height properties on mtable
 PASS inline-size and block-size properties on mtable
 PASS width property on mtable (preferred width)

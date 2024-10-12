@@ -24,12 +24,12 @@ layer at (0,0) size 800x157
               RenderMathMLSpace {mspace} at (2,0) size 16x1
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,82) size 784x43
-        RenderMathMLMath {math} at (0,0) size 150x43
-          RenderMathMLRow {mstyle} at (0,0) size 150x43
-            RenderMathMLUnderOver {mover} at (0,0) size 150x43
-              RenderMathMLOperator {mo} at (0,1) size 150x42
+        RenderMathMLMath {math} at (0,0) size 142x43
+          RenderMathMLRow {mstyle} at (0,0) size 142x43
+            RenderMathMLUnderOver {mover} at (0,0) size 142x43
+              RenderMathMLOperator {mo} at (0,1) size 142x42
                 RenderBlock (anonymous) at (0,0) size 1x4
                   RenderText {#text} at (0,-3) size 1x0
                     text run at (0,-3) width 1: "\x{219C}"
-              RenderMathMLSpace {mspace} at (0,0) size 150x1
+              RenderMathMLSpace {mspace} at (0,0) size 142x1
         RenderText {#text} at (0,0) size 0x0

@@ -30,8 +30,8 @@ AXPlatformAttributes: tag:mi
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 30.0000, -14.0000 }
-AXSize: { 11.0000, 81.0000 }
+AXPosition:  { 30.0000, -12.0000 }
+AXSize: { 10.0000, 76.0000 }
 AXTitle:
 AXDescription:
 AXValue: D
@@ -49,8 +49,8 @@ AXPlatformAttributes: multiscript-type:post, tag:mi
 AXRole: AXSuperscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 30.0000, -26.0000 }
-AXSize: { 10.0000, 80.0000 }
+AXPosition:  { 30.0000, -23.0000 }
+AXSize: { 9.00000, 75.0000 }
 AXTitle:
 AXDescription:
 AXValue: C
@@ -68,8 +68,8 @@ AXPlatformAttributes: multiscript-type:post, tag:mi
 AXRole: AXSubscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 8.00000, -14.0000 }
-AXSize: { 10.0000, 81.0000 }
+AXPosition:  { 8.00000, -12.0000 }
+AXSize: { 10.0000, 76.0000 }
 AXTitle:
 AXDescription:
 AXValue: B
@@ -87,8 +87,8 @@ AXPlatformAttributes: multiscript-type:pre, tag:mi
 AXRole: AXSuperscript
 AXParent: AXSection
 AXChildren: 0
-AXPosition:  { 8.00000, -26.0000 }
-AXSize: { 10.0000, 80.0000 }
+AXPosition:  { 8.00000, -23.0000 }
+AXSize: { 10.0000, 75.0000 }
 AXTitle:
 AXDescription:
 AXValue: A
