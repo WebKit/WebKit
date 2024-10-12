@@ -185,7 +185,6 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSS::Gradient
 
 void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearGradient& gradient)
 {
-    builder.append(gradient.repeating == GradientRepeat::Repeating ? "repeating-linear-gradient("_s : "linear-gradient("_s);
     bool wroteSomething = false;
 
     WTF::switchOn(gradient.gradientLine,
@@ -231,26 +230,22 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
         builder.append(", "_s);
 
     serializationForCSS(builder, gradient.stops);
-
-    builder.append(')');
 }
 
 // MARK: - PrefixedLinearGradient
 
 void Serialize<PrefixedLinearGradient>::operator()(StringBuilder& builder, const PrefixedLinearGradient& gradient)
 {
-    builder.append(gradient.repeating == GradientRepeat::Repeating ? "-webkit-repeating-linear-gradient("_s : "-webkit-linear-gradient("_s);
     serializationForCSS(builder, gradient.gradientLine);
     builder.append(", "_s);
     serializationForCSS(builder, gradient.stops);
-    builder.append(')');
 }
 
 // MARK: - DeprecatedLinearGradient
 
 void Serialize<DeprecatedLinearGradient>::operator()(StringBuilder& builder, const DeprecatedLinearGradient& gradient)
 {
-    builder.append("-webkit-gradient(linear, "_s);
+    builder.append("linear, "_s);
 
     serializationForCSS(builder, gradient.gradientLine);
 
@@ -258,8 +253,6 @@ void Serialize<DeprecatedLinearGradient>::operator()(StringBuilder& builder, con
         builder.append(", "_s);
         serializationForCSS(builder, gradient.stops);
     }
-
-    builder.append(')');
 }
 
 // MARK: - RadialGradient
@@ -269,7 +262,7 @@ void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, cons
     auto lengthBefore = builder.length();
 
     WTF::switchOn(ellipse.size,
-        [&](const SpaceSeparatedTuple<LengthPercentage, LengthPercentage>& size) {
+        [&](const SpaceSeparatedArray<LengthPercentage, 2>& size) {
             serializationForCSS(builder, size);
         },
         [&](const RadialGradient::Extent& extent) {
@@ -315,8 +308,6 @@ void Serialize<RadialGradient::Circle>::operator()(StringBuilder& builder, const
 
 void Serialize<RadialGradient>::operator()(StringBuilder& builder, const RadialGradient& gradient)
 {
-    builder.append(gradient.repeating == GradientRepeat::Repeating ? "repeating-radial-gradient("_s : "radial-gradient("_s);
-
     auto lengthBefore = builder.length();
     serializationForCSS(builder, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
@@ -328,8 +319,6 @@ void Serialize<RadialGradient>::operator()(StringBuilder& builder, const RadialG
         builder.append(", "_s);
 
     serializationForCSS(builder, gradient.stops);
-
-    builder.append(')');
 }
 
 // MARK: - PrefixedRadialGradient
@@ -343,7 +332,7 @@ void Serialize<PrefixedRadialGradient::Ellipse>::operator()(StringBuilder& build
 
     if (ellipse.size) {
         WTF::switchOn(*ellipse.size,
-            [&](const SpaceSeparatedTuple<LengthPercentage, LengthPercentage>& size) {
+            [&](const SpaceSeparatedArray<LengthPercentage, 2>& size) {
                 builder.append(", "_s);
                 serializationForCSS(builder, size);
             },
@@ -368,8 +357,6 @@ void Serialize<PrefixedRadialGradient::Circle>::operator()(StringBuilder& builde
 
 void Serialize<PrefixedRadialGradient>::operator()(StringBuilder& builder, const PrefixedRadialGradient& gradient)
 {
-    builder.append(gradient.repeating == GradientRepeat::Repeating ? "-webkit-repeating-radial-gradient("_s : "-webkit-radial-gradient("_s);
-
     auto lengthBefore = builder.length();
     serializationForCSS(builder, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
@@ -378,8 +365,6 @@ void Serialize<PrefixedRadialGradient>::operator()(StringBuilder& builder, const
         builder.append(", "_s);
 
     serializationForCSS(builder, gradient.stops);
-
-    builder.append(')');
 }
 
 // MARK: - DeprecatedRadialGradient
@@ -397,7 +382,7 @@ void Serialize<DeprecatedRadialGradient::GradientBox>::operator()(StringBuilder&
 
 void Serialize<DeprecatedRadialGradient>::operator()(StringBuilder& builder, const DeprecatedRadialGradient& gradient)
 {
-    builder.append("-webkit-gradient(radial, "_s);
+    builder.append("radial, "_s);
 
     serializationForCSS(builder, gradient.gradientBox);
 
@@ -405,8 +390,6 @@ void Serialize<DeprecatedRadialGradient>::operator()(StringBuilder& builder, con
         builder.append(", "_s);
         serializationForCSS(builder, gradient.stops);
     }
-
-    builder.append(')');
 }
 
 // MARK: - ConicGradient
@@ -442,8 +425,6 @@ void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, c
 
 void Serialize<ConicGradient>::operator()(StringBuilder& builder, const ConicGradient& gradient)
 {
-    builder.append(gradient.repeating == GradientRepeat::Repeating ? "repeating-conic-gradient("_s : "conic-gradient("_s);
-
     auto lengthBefore = builder.length();
     serializationForCSS(builder, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
@@ -455,8 +436,6 @@ void Serialize<ConicGradient>::operator()(StringBuilder& builder, const ConicGra
         builder.append(", "_s);
 
     serializationForCSS(builder, gradient.stops);
-
-    builder.append(')');
 }
 
 } // namespace CSS

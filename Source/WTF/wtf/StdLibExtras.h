@@ -432,6 +432,11 @@ bool findBitInWord(T word, size_t& startOrResultIndex, size_t endIndex, bool val
     return false;
 }
 
+// Used to check if a variadic list of compile time predicates are all true.
+template<bool... Bs> inline constexpr bool all =
+    std::is_same_v<std::integer_sequence<bool, true, Bs...>,
+                   std::integer_sequence<bool, Bs..., true>>;
+
 // Visitor adapted from http://stackoverflow.com/questions/25338795/is-there-a-name-for-this-tuple-creation-idiom
 
 template<class A, class... B> struct Visitor : Visitor<A>, Visitor<B...> {

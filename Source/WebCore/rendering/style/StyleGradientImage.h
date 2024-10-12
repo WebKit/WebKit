@@ -59,17 +59,6 @@ private:
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
 
-    Ref<WebCore::Gradient> createGradient(const Style::LinearGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::PrefixedLinearGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::DeprecatedLinearGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::RadialGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::PrefixedRadialGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::DeprecatedRadialGradient&, const FloatSize&, const RenderStyle&) const;
-    Ref<WebCore::Gradient> createGradient(const Style::ConicGradient&, const FloatSize&, const RenderStyle&) const;
-
-    template<typename GradientAdapter, typename StyleGradient> WebCore::GradientColorStops computeStops(GradientAdapter&, const StyleGradient&, const RenderStyle&, float maxLengthForRepeat) const;
-    template<typename GradientAdapter, typename StyleGradient> WebCore::GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const StyleGradient&, const RenderStyle&) const;
-
     Style::Gradient m_gradient;
     bool m_knownCacheableBarringFilter { false };
 };

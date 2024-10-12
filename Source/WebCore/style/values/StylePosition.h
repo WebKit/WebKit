@@ -38,23 +38,18 @@ using Center = CSS::Center;
 
 struct Position  {
     Position(LengthPercentage&& horizontal, LengthPercentage&& vertical)
-        : value { std::make_tuple(WTFMove(horizontal), WTFMove(vertical)) }
+        : value { WTFMove(horizontal), WTFMove(vertical) }
     {
     }
 
-    Position(const LengthPercentage& horizontal, const LengthPercentage& vertical)
-        : value { std::make_tuple(horizontal, vertical) }
-    {
-    }
-
-    Position(SpaceSeparatedTuple<LengthPercentage, LengthPercentage>&& tuple)
-        : value { WTFMove(tuple) }
+    Position(SpaceSeparatedArray<LengthPercentage, 2>&& array)
+        : value { WTFMove(array) }
     {
     }
 
     bool operator==(const Position&) const = default;
 
-    SpaceSeparatedTuple<LengthPercentage, LengthPercentage> value;
+    SpaceSeparatedArray<LengthPercentage, 2> value;
 };
 
 template<size_t I> const auto& get(const Position& position)

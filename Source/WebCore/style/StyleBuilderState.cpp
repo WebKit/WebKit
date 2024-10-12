@@ -114,20 +114,8 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
         return crossfadeValue->createStyleImage(*this);
     if (auto* filterImageValue = dynamicDowncast<CSSFilterImageValue>(value))
         return filterImageValue->createStyleImage(*this);
-    if (auto* linearGradientValue = dynamicDowncast<CSSLinearGradientValue>(value))
-        return linearGradientValue->createStyleImage(*this);
-    if (auto* linearGradientValue = dynamicDowncast<CSSPrefixedLinearGradientValue>(value))
-        return linearGradientValue->createStyleImage(*this);
-    if (auto* linearGradientValue = dynamicDowncast<CSSDeprecatedLinearGradientValue>(value))
-        return linearGradientValue->createStyleImage(*this);
-    if (auto* radialGradientvalue = dynamicDowncast<CSSRadialGradientValue>(value))
-        return radialGradientvalue->createStyleImage(*this);
-    if (auto* radialGradientvalue = dynamicDowncast<CSSPrefixedRadialGradientValue>(value))
-        return radialGradientvalue->createStyleImage(*this);
-    if (auto* radialGradientvalue = dynamicDowncast<CSSDeprecatedRadialGradientValue>(value))
-        return radialGradientvalue->createStyleImage(*this);
-    if (auto conicGradientValue = dynamicDowncast<CSSConicGradientValue>(value))
-        return conicGradientValue->createStyleImage(*this);
+    if (auto* gradientValue = dynamicDowncast<CSSGradientValue>(value))
+        return gradientValue->createStyleImage(*this);
     if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(value))
         return paintImageValue->createStyleImage(*this);
     return nullptr;

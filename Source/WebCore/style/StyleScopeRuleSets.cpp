@@ -412,7 +412,7 @@ SelectorsForStyleAttribute ScopeRuleSets::selectorsForStyleAttribute() const
     return *m_cachedSelectorsForStyleAttribute;
 }
 
-bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>& predicate)
+bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const WTF::Function<bool(RuleSet&)>& predicate)
 {
     if (m_authorStyle && predicate(*m_authorStyle))
         return true;

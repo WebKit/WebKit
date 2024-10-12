@@ -48,63 +48,71 @@ template<typename TupleLike> static bool styleImageIsUncacheableOnTupleLike(cons
 }
 
 template<typename CSSType> struct StyleImageIsUncacheable<std::optional<CSSType>> {
-    bool operator()(const std::optional<CSSType>& value) { return value && styleImageIsUncacheable(*value); }
+    bool operator()(const auto& value) { return value && styleImageIsUncacheable(*value); }
+};
+
+template<CSSValueID C, typename CSSType> struct StyleImageIsUncacheable<FunctionNotation<C, CSSType>> {
+    bool operator()(const auto& value) { return styleImageIsUncacheable(value.parameters); }
 };
 
 template<typename CSSType, size_t inlineCapacity> struct StyleImageIsUncacheable<SpaceSeparatedVector<CSSType, inlineCapacity>> {
-    bool operator()(const SpaceSeparatedVector<CSSType, inlineCapacity>& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
+    bool operator()(const auto& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
 };
 
 template<typename CSSType, size_t inlineCapacity> struct StyleImageIsUncacheable<CommaSeparatedVector<CSSType, inlineCapacity>> {
-    bool operator()(const CommaSeparatedVector<CSSType, inlineCapacity>& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
+    bool operator()(const auto& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
+};
+
+template<typename CSSType, size_t N> struct StyleImageIsUncacheable<SpaceSeparatedArray<CSSType, N>> {
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
+};
+
+template<typename CSSType, size_t N> struct StyleImageIsUncacheable<CommaSeparatedArray<CSSType, N>> {
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
 };
 
 template<typename... CSSTypes> struct StyleImageIsUncacheable<SpaceSeparatedTuple<CSSTypes...>> {
-    bool operator()(const SpaceSeparatedTuple<CSSTypes...>& value) { return styleImageIsUncacheableOnTupleLike(value); }
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
 };
 
 template<typename... CSSTypes> struct StyleImageIsUncacheable<CommaSeparatedTuple<CSSTypes...>> {
-    bool operator()(const CommaSeparatedTuple<CSSTypes...>& value) { return styleImageIsUncacheableOnTupleLike(value); }
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
 };
 
 template<typename... CSSTypes> struct StyleImageIsUncacheable<std::variant<CSSTypes...>> {
-    bool operator()(const std::variant<CSSTypes...>& value) { return WTF::switchOn(value, [](const auto& alternative) { return styleImageIsUncacheable(alternative); }); }
+    bool operator()(const auto& value) { return WTF::switchOn(value, [](const auto& alternative) { return styleImageIsUncacheable(alternative); }); }
 };
 
 template<> struct StyleImageIsUncacheable<CSSUnitType> {
-    bool operator()(const CSSUnitType& value) { return conversionToCanonicalUnitRequiresConversionData(value); }
+    bool operator()(const auto& value) { return conversionToCanonicalUnitRequiresConversionData(value); }
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<CSSType> {
-    constexpr bool operator()(const CSSType& value) { return styleImageIsUncacheable(value.type); }
+    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.type); }
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<UnevaluatedCalc<CSSType>> {
-    constexpr bool operator()(const UnevaluatedCalc<CSSType>& value) { return value.calc->requiresConversionData(); }
+    constexpr bool operator()(const auto& value) { return value.calc->requiresConversionData(); }
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<PrimitiveNumeric<CSSType>> {
-    constexpr bool operator()(const PrimitiveNumeric<CSSType>& value) { return styleImageIsUncacheable(value.value); }
+    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
-    constexpr bool operator()(const Constant<C>&) { return false; }
+    constexpr bool operator()(const auto&) { return false; }
 };
 
 template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
-    constexpr bool operator()(const GradientColorInterpolationMethod&) { return false; }
-};
-
-template<> struct StyleImageIsUncacheable<GradientRepeat> {
-    constexpr bool operator()(const GradientRepeat&) { return false; }
+    constexpr bool operator()(const auto&) { return false; }
 };
 
 template<> struct StyleImageIsUncacheable<Position> {
-    bool operator()(const Position& value) { return styleImageIsUncacheable(value.value); }
+    bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
 };
 
 template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSSType>> {
-    bool operator()(const GradientColorStop<CSSType>& value)
+    bool operator()(const auto& value)
     {
         if (styleImageIsUncacheable(value.position))
             return true;
@@ -115,7 +123,7 @@ template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSST
 };
 
 template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct StyleImageIsUncacheable<CSSType> {
-    bool operator()(const CSSType& value) { return styleImageIsUncacheableOnTupleLike(value); }
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
 };
 
 } // namespace (anonymous)
@@ -123,149 +131,26 @@ template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct StyleImag
 
 // MARK: -
 
-template<typename T> RefPtr<StyleImage> getOrCreateStyleImage(const T& gradient, RefPtr<StyleImage>& cachedStyleImage, Style::BuilderState& state)
+RefPtr<StyleImage> CSSGradientValue::createStyleImage(Style::BuilderState& state) const
 {
-    if (cachedStyleImage)
-        return cachedStyleImage;
+    if (m_cachedStyleImage)
+        return m_cachedStyleImage;
 
     auto styleImage = StyleGradientImage::create(
-        Style::toStyle(gradient, state)
+        Style::toStyle(m_gradient, state)
     );
-    if (!CSS::styleImageIsUncacheable(gradient))
-        cachedStyleImage = styleImage.ptr();
+    if (!CSS::styleImageIsUncacheable(m_gradient))
+        m_cachedStyleImage = styleImage.ptr();
 
     return styleImage;
 }
 
-RefPtr<StyleImage> CSSLinearGradientValue::createStyleImage(Style::BuilderState& state) const
+String CSSGradientValue::customCSSText() const
 {
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
+    return CSS::serializationForCSS(m_gradient);
 }
 
-RefPtr<StyleImage> CSSPrefixedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-RefPtr<StyleImage> CSSDeprecatedLinearGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-RefPtr<StyleImage> CSSRadialGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-RefPtr<StyleImage> CSSPrefixedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-RefPtr<StyleImage> CSSDeprecatedRadialGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-RefPtr<StyleImage> CSSConicGradientValue::createStyleImage(Style::BuilderState& state) const
-{
-    return getOrCreateStyleImage(m_gradient, m_cachedStyleImage, state);
-}
-
-// MARK: - Linear.
-
-String CSSLinearGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: - Prefixed Linear.
-
-String CSSPrefixedLinearGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSPrefixedLinearGradientValue::equals(const CSSPrefixedLinearGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: - Deprecated Linear.
-
-String CSSDeprecatedLinearGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSDeprecatedLinearGradientValue::equals(const CSSDeprecatedLinearGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: - Radial.
-
-String CSSRadialGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: Prefixed Radial.
-
-String CSSPrefixedRadialGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSPrefixedRadialGradientValue::equals(const CSSPrefixedRadialGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: - Deprecated Radial.
-
-String CSSDeprecatedRadialGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSDeprecatedRadialGradientValue::equals(const CSSDeprecatedRadialGradientValue& other) const
-{
-    return m_gradient == other.m_gradient;
-}
-
-// MARK: - Conic
-
-String CSSConicGradientValue::customCSSText() const
-{
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_gradient);
-    return builder.toString();
-}
-
-bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const
+bool CSSGradientValue::equals(const CSSGradientValue& other) const
 {
     return m_gradient == other.m_gradient;
 }

@@ -93,6 +93,9 @@ template<CSSValueID C> using Constant = CSS::Constant<C>;
 // Specialize TreatAsNonConverting for Constant<C>, to indicate that its type does not change from the CSS representation.
 template<CSSValueID C> inline constexpr bool TreatAsNonConverting<Constant<C>> = true;
 
+// Helper type used to represent a CSS function.
+template<CSSValueID C, typename T> using FunctionNotation = CSS::FunctionNotation<C, T>;
+
 // Wraps a variable number of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T, size_t inlineCapacity = 0> struct SpaceSeparatedVector {
     using Vector = WTF::Vector<T, inlineCapacity>;
@@ -124,7 +127,7 @@ template<typename T, size_t inlineCapacity = 0> struct SpaceSeparatedVector {
     WTF::Vector<T, inlineCapacity> value;
 };
 
-// Wraps a variable number of elements of a single type, semantically marking them as serializing as "comma separated".
+// Wraps a variable size list of elements of a single type, semantically marking them as serializing as "comma separated".
 template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
     using Vector = WTF::Vector<T, inlineCapacity>;
     using const_iterator = typename Vector::const_iterator;
@@ -155,8 +158,70 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
     WTF::Vector<T, inlineCapacity> value;
 };
 
+// Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "space separated".
+template<typename T, size_t N> struct SpaceSeparatedArray {
+    using Array = std::array<T, N>;
+
+    template<typename...Ts>
+        requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+    constexpr SpaceSeparatedArray(Ts&&... values)
+        : value { std::forward<Ts>(values)... }
+    {
+    }
+
+    constexpr SpaceSeparatedArray(std::array<T, N>&& array)
+        : value { WTFMove(array) }
+    {
+    }
+
+    constexpr bool operator==(const SpaceSeparatedArray<T, N>&) const = default;
+
+    std::array<T, N> value;
+};
+
+template<class T, class... Ts>
+    requires (WTF::all<std::is_same_v<T, Ts>...>)
+SpaceSeparatedArray(T, Ts...) -> SpaceSeparatedArray<T, 1 + sizeof...(Ts)>;
+
+template<size_t I, typename T, size_t N> decltype(auto) get(const SpaceSeparatedArray<T, N>& array)
+{
+    return std::get<I>(array.value);
+}
+
+// Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "comma separated".
+template<typename T, size_t N> struct CommaSeparatedArray {
+    using Array = std::array<T, N>;
+
+    template<typename...Ts>
+        requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+    constexpr CommaSeparatedArray(Ts&&... values)
+        : value { std::forward<Ts>(values)... }
+    {
+    }
+
+    constexpr CommaSeparatedArray(std::array<T, N>&& array)
+        : value { WTFMove(array) }
+    {
+    }
+
+    constexpr bool operator==(const CommaSeparatedArray<T, N>&) const = default;
+
+    std::array<T, N> value;
+};
+
+template<class T, class... Ts>
+    requires (WTF::all<std::is_same_v<T, Ts>...>)
+CommaSeparatedArray(T, Ts...) -> CommaSeparatedArray<T, 1 + sizeof...(Ts)>;
+
+template<size_t I, typename T, size_t N> decltype(auto) get(const CommaSeparatedArray<T, N>& array)
+{
+    return std::get<I>(array.value);
+}
+
 // Wraps a variadic list of types, semantically marking them as serializing as "space separated".
 template<typename... Ts> struct SpaceSeparatedTuple {
+    using Tuple = std::tuple<Ts...>;
+
     constexpr SpaceSeparatedTuple(Ts&&... values)
         : value { std::make_tuple(std::forward<Ts>(values)...) }
     {
@@ -184,6 +249,8 @@ template<size_t I, typename... Ts> decltype(auto) get(const SpaceSeparatedTuple<
 
 // Wraps a variadic list of types, semantically marking them as serializing as "comma separated".
 template<typename... Ts> struct CommaSeparatedTuple {
+    using Tuple = std::tuple<Ts...>;
+
     constexpr CommaSeparatedTuple(Ts&&... values)
         : value { std::make_tuple(std::forward<Ts>(values)...) }
     {
@@ -259,6 +326,14 @@ template<typename... StyleTypes> struct ToCSS<std::variant<StyleTypes...>> {
     }
 };
 
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename StyleType> struct ToCSS<FunctionNotation<Name, StyleType>> {
+    decltype(auto) operator()(const FunctionNotation<Name, StyleType>& value, const RenderStyle& style)
+    {
+        return FunctionNotation<Name, CSSType<StyleType>> { toCSS(value.parameters, style) };
+    }
+};
+
 // Specialization for `SpaceSeparatedVector`.
 template<typename StyleType, size_t inlineCapacity> struct ToCSS<SpaceSeparatedVector<StyleType, inlineCapacity>> {
     using Result = CSS::SpaceSeparatedVector<CSSType<StyleType>, inlineCapacity>;
@@ -279,19 +354,43 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<CommaSeparatedV
     }
 };
 
+// Specialization for `SpaceSeparatedArray`.
+template<typename StyleType, size_t N> struct ToCSS<SpaceSeparatedArray<StyleType, N>> {
+    using Result = CSS::SpaceSeparatedArray<CSSType<StyleType>, N>;
+
+    decltype(auto) operator()(const SpaceSeparatedArray<StyleType, N>& value, const RenderStyle& style)
+    {
+        return Result { toCSSOnTupleLike<typename Result::Array>(value.value, style) };
+    }
+};
+
+// Specialization for `CommaSeparatedArray`.
+template<typename StyleType, size_t N> struct ToCSS<CommaSeparatedArray<StyleType, N>> {
+    using Result = CSS::CommaSeparatedArray<CSSType<StyleType>, N>;
+
+    decltype(auto) operator()(const CommaSeparatedArray<StyleType, N>& value, const RenderStyle& style)
+    {
+        return Result { toCSSOnTupleLike<typename Result::Array>(value.value, style) };
+    }
+};
+
 // Specialization for `SpaceSeparatedTuple`.
 template<typename... StyleTypes> struct ToCSS<SpaceSeparatedTuple<StyleTypes...>> {
+    using Result = CSS::SpaceSeparatedTuple<CSSType<StyleTypes>...>;
+
     decltype(auto) operator()(const SpaceSeparatedTuple<StyleTypes...>& value, const RenderStyle& style)
     {
-        return CSS::SpaceSeparatedTuple { WTF::apply([&](const auto& ...x) { return CSSTuple<StyleTypes...> { toCSS(x, style)... }; }, value.value) };
+        return Result { toCSSOnTupleLike<typename Result::Tuple>(value.value, style) };
     }
 };
 
 // Specialization for `CommaSeparatedTuple`.
 template<typename... StyleTypes> struct ToCSS<CommaSeparatedTuple<StyleTypes...>> {
+    using Result = CSS::CommaSeparatedTuple<CSSType<StyleTypes>...>;
+
     decltype(auto) operator()(const CommaSeparatedTuple<StyleTypes...>& value, const RenderStyle& style)
     {
-        return CSS::CommaSeparatedTuple { WTF::apply([&](const auto& ...x) { return CSSTuple<StyleTypes...> { toCSS(x, style)... }; }, value.value) };
+        return Result { toCSSOnTupleLike<typename Result::Tuple>(value.value, style) };
     }
 };
 
@@ -407,6 +506,22 @@ template<typename... CSSTypes> struct ToStyle<std::variant<CSSTypes...>> {
     }
 };
 
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename CSSType> struct ToStyle<CSS::FunctionNotation<Name, CSSType>> {
+    decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return FunctionNotation<Name, StyleType<CSSType>> { toStyleNoConversionDataRequired(value.parameters, symbolTable) };
+    }
+};
+
 // Specialization for `SpaceSeparatedVector`.
 template<typename CSSType, size_t inlineCapacity> struct ToStyle<CSS::SpaceSeparatedVector<CSSType, inlineCapacity>> {
     using Result = SpaceSeparatedVector<StyleType<CSSType>, inlineCapacity>;
@@ -443,35 +558,75 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CSS::CommaSepar
     }
 };
 
+// Specialization for `SpaceSeparatedArray`.
+template<typename CSSType, size_t N> struct ToStyle<CSS::SpaceSeparatedArray<CSSType, N>> {
+    using Result = SpaceSeparatedArray<StyleType<CSSType>, N>;
+
+    decltype(auto) operator()(const CSS::SpaceSeparatedArray<CSSType, N>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleOnTupleLike<typename Result::Array>(value, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::SpaceSeparatedArray<CSSType, N>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleOnTupleLike<typename Result::Array>(value, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::SpaceSeparatedArray<CSSType, N>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleNoConversionDataRequiredOnTupleLike<typename Result::Array>(value, symbolTable) };
+    }
+};
+
+// Specialization for `CommaSeparatedArray`.
+template<typename CSSType, size_t N> struct ToStyle<CSS::CommaSeparatedArray<CSSType, N>> {
+    using Result = CommaSeparatedArray<StyleType<CSSType>, N>;
+
+    decltype(auto) operator()(const CSS::CommaSeparatedArray<CSSType, N>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleOnTupleLike<typename Result::Array>(value, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::CommaSeparatedArray<CSSType, N>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleOnTupleLike<typename Result::Array>(value, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::CommaSeparatedArray<CSSType, N>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleNoConversionDataRequiredOnTupleLike<typename Result::Array>(value, symbolTable) };
+    }
+};
+
 // Specialization for `SpaceSeparatedTuple`.
 template<typename... CSSTypes> struct ToStyle<CSS::SpaceSeparatedTuple<CSSTypes...>> {
+    using Result = SpaceSeparatedTuple<StyleType<CSSTypes>...>;
+
     decltype(auto) operator()(const CSS::SpaceSeparatedTuple<CSSTypes...>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
     {
-        return SpaceSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyle(x, conversionData, symbolTable)... }; }, value.value) };
+        return Result { toStyleOnTupleLike<typename Result::Tuple>(value, conversionData, symbolTable) };
     }
     decltype(auto) operator()(const CSS::SpaceSeparatedTuple<CSSTypes...>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
-        return SpaceSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyle(x, builderState, symbolTable)... }; }, value.value) };
+        return Result { toStyleOnTupleLike<typename Result::Tuple>(value, builderState, symbolTable) };
     }
     decltype(auto) operator()(const CSS::SpaceSeparatedTuple<CSSTypes...>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
-        return SpaceSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyleNoConversionDataRequired(x, symbolTable)... }; }, value.value) };
+        return Result { toStyleNoConversionDataRequiredOnTupleLike<typename Result::Tuple>(value, symbolTable) };
     }
 };
 
 // Specialization for `CommaSeparatedTuple`.
 template<typename... CSSTypes> struct ToStyle<CSS::CommaSeparatedTuple<CSSTypes...>> {
+    using Result = CommaSeparatedTuple<StyleType<CSSTypes>...>;
+
     decltype(auto) operator()(const CSS::CommaSeparatedTuple<CSSTypes...>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
     {
-        return CommaSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyle(x, conversionData, symbolTable)... }; }, value.value) };
+        return Result { toStyleOnTupleLike<typename Result::Tuple>(value, conversionData, symbolTable) };
     }
     decltype(auto) operator()(const CSS::CommaSeparatedTuple<CSSTypes...>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
-        return CommaSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyle(x, builderState, symbolTable)... }; }, value.value) };
+        return Result { toStyleOnTupleLike<typename Result::Tuple>(value, builderState, symbolTable) };
     }
     decltype(auto) operator()(const CSS::CommaSeparatedTuple<CSSTypes...>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
-        return CommaSeparatedTuple { WTF::apply([&](const auto& ...x) { return StyleTuple<CSSTypes...> { toStyleNoConversionDataRequired(x, symbolTable)... }; }, value.value) };
+        return Result { toStyleNoConversionDataRequiredOnTupleLike<typename Result::Tuple>(value, symbolTable) };
     }
 };
 
@@ -479,6 +634,18 @@ template<typename... CSSTypes> struct ToStyle<CSS::CommaSeparatedTuple<CSSTypes.
 } // namespace WebCore
 
 namespace std {
+
+template<typename T, size_t N> class tuple_size<WebCore::Style::SpaceSeparatedArray<T, N>> : public std::integral_constant<size_t, N> { };
+template<size_t I, typename T, size_t N> class tuple_element<I, WebCore::Style::SpaceSeparatedArray<T, N>> {
+public:
+    using type = T;
+};
+
+template<typename T, size_t N> class tuple_size<WebCore::Style::CommaSeparatedArray<T, N>> : public std::integral_constant<size_t, N> { };
+template<size_t I, typename T, size_t N> class tuple_element<I, WebCore::Style::CommaSeparatedArray<T, N>> {
+public:
+    using type = T;
+};
 
 template<typename... Ts> class tuple_size<WebCore::Style::SpaceSeparatedTuple<Ts...>> : public std::integral_constant<size_t, sizeof...(Ts)> { };
 template<size_t I, typename... Ts> class tuple_element<I, WebCore::Style::SpaceSeparatedTuple<Ts...>> {

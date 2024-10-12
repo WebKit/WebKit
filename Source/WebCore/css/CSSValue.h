@@ -71,15 +71,12 @@ public:
     bool isCalcValue() const { return m_classType == ClassType::Calculation; }
     bool isCanvasValue() const { return m_classType == ClassType::Canvas; }
     bool isCircle() const { return m_classType == ClassType::Circle; }
-    bool isConicGradientValue() const { return m_classType == ClassType::ConicGradient; }
     bool isContentDistributionValue() const { return m_classType == ClassType::ContentDistribution; }
     bool isCounter() const { return m_classType == ClassType::Counter; }
     bool isCrossfadeValue() const { return m_classType == ClassType::Crossfade; }
     bool isCubicBezierTimingFunctionValue() const { return m_classType == ClassType::CubicBezierTimingFunction; }
     bool isCursorImageValue() const { return m_classType == ClassType::CursorImage; }
     bool isCustomPropertyValue() const { return m_classType == ClassType::CustomProperty; }
-    bool isDeprecatedLinearGradientValue() const { return m_classType == ClassType::DeprecatedLinearGradient; }
-    bool isDeprecatedRadialGradientValue() const { return m_classType == ClassType::DeprecatedRadialGradient; }
     bool isEllipse() const { return m_classType == ClassType::Ellipse; }
     bool isFilterImageValue() const { return m_classType == ClassType::FilterImage; }
     bool isFontFaceSrcLocalValue() const { return m_classType == ClassType::FontFaceSrcLocal; }
@@ -92,6 +89,7 @@ public:
     bool isFontVariantAlternatesValue() const { return m_classType == ClassType::FontVariantAlternates; }
     bool isFontVariationValue() const { return m_classType == ClassType::FontVariation; }
     bool isFunctionValue() const { return m_classType == ClassType::Function; }
+    bool isGradientValue() const { return m_classType == ClassType::Gradient; }
     bool isGridAutoRepeatValue() const { return m_classType == ClassType::GridAutoRepeat; }
     bool isGridIntegerRepeatValue() const { return m_classType == ClassType::GridIntegerRepeat; }
     bool isGridLineNamesValue() const { return m_classType == ClassType::GridLineNames; }
@@ -102,7 +100,6 @@ public:
     bool isImageValue() const { return m_classType == ClassType::Image; }
     bool isInsetShape() const { return m_classType == ClassType::InsetShape; }
     bool isLineBoxContainValue() const { return m_classType == ClassType::LineBoxContain; }
-    bool isLinearGradientValue() const { return m_classType == ClassType::LinearGradient; }
     bool isLinearTimingFunctionValue() const { return m_classType == ClassType::LinearTimingFunction; }
     bool isNamedImageValue() const { return m_classType == ClassType::NamedImage; }
     bool isOffsetRotateValue() const { return m_classType == ClassType::OffsetRotate; }
@@ -110,11 +107,8 @@ public:
     bool isPath() const { return m_classType == ClassType::Path; }
     bool isPendingSubstitutionValue() const { return m_classType == ClassType::PendingSubstitutionValue; }
     bool isPolygon() const { return m_classType == ClassType::Polygon; }
-    bool isPrefixedLinearGradientValue() const { return m_classType == ClassType::PrefixedLinearGradient; }
-    bool isPrefixedRadialGradientValue() const { return m_classType == ClassType::PrefixedRadialGradient; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
-    bool isRadialGradientValue() const { return m_classType == ClassType::RadialGradient; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
     bool isRectShape() const { return m_classType == ClassType::RectShape; }
@@ -135,8 +129,7 @@ public:
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
 
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
-    bool isGradientValue() const { return m_classType >= ClassType::LinearGradient && m_classType <= ClassType::PrefixedRadialGradient; }
-    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::PrefixedRadialGradient; }
+    bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::Gradient; }
     bool isImplicitInitialValue() const { return m_isImplicitInitialValue; }
     bool containsVector() const { return m_classType >= ClassType::ValueList; }
 
@@ -222,13 +215,7 @@ protected:
         NamedImage,
         Crossfade,
         FilterImage,
-        LinearGradient,
-        RadialGradient,
-        ConicGradient,
-        DeprecatedLinearGradient,
-        DeprecatedRadialGradient,
-        PrefixedLinearGradient,
-        PrefixedRadialGradient,
+        Gradient,
 
         // Timing function classes.
         LinearTimingFunction,

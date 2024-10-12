@@ -34,17 +34,15 @@ namespace Style {
 class BuilderState;
 }
 
-// MARK: - Linear.
-
-class CSSLinearGradientValue final : public CSSValue {
+class CSSGradientValue final : public CSSValue {
 public:
-    static Ref<CSSLinearGradientValue> create(CSS::LinearGradient&& gradient)
+    static Ref<CSSGradientValue> create(CSS::Gradient&& gradient)
     {
-        return adoptRef(*new CSSLinearGradientValue(WTFMove(gradient)));
+        return adoptRef(*new CSSGradientValue(WTFMove(gradient)));
     }
 
     String customCSSText() const;
-    bool equals(const CSSLinearGradientValue&) const;
+    bool equals(const CSSGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
@@ -53,237 +51,23 @@ public:
     }
 
 private:
-    CSSLinearGradientValue(CSS::LinearGradient&& gradient)
-        : CSSValue(ClassType::LinearGradient)
+    CSSGradientValue(CSS::Gradient&& gradient)
+        : CSSValue(ClassType::Gradient)
         , m_gradient(WTFMove(gradient))
     {
     }
 
-    CSSLinearGradientValue(const CSSLinearGradientValue& other)
-        : CSSValue(ClassType::LinearGradient)
+    CSSGradientValue(const CSSGradientValue& other)
+        : CSSValue(ClassType::Gradient)
         , m_gradient(other.m_gradient)
         , m_cachedStyleImage(other.m_cachedStyleImage)
     {
     }
 
-    CSS::LinearGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-class CSSPrefixedLinearGradientValue final : public CSSValue {
-public:
-    static Ref<CSSPrefixedLinearGradientValue> create(CSS::PrefixedLinearGradient&& gradient)
-    {
-        return adoptRef(*new CSSPrefixedLinearGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSPrefixedLinearGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    CSSPrefixedLinearGradientValue(CSS::PrefixedLinearGradient&& gradient)
-        : CSSValue(ClassType::PrefixedLinearGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSPrefixedLinearGradientValue(const CSSPrefixedLinearGradientValue& other)
-        : CSSValue(ClassType::PrefixedLinearGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::PrefixedLinearGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-class CSSDeprecatedLinearGradientValue final : public CSSValue {
-public:
-    static Ref<CSSDeprecatedLinearGradientValue> create(CSS::DeprecatedLinearGradient&& gradient)
-    {
-        return adoptRef(*new CSSDeprecatedLinearGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSDeprecatedLinearGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    CSSDeprecatedLinearGradientValue(CSS::DeprecatedLinearGradient&& gradient)
-        : CSSValue(ClassType::DeprecatedLinearGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSDeprecatedLinearGradientValue(const CSSDeprecatedLinearGradientValue& other)
-        : CSSValue(ClassType::DeprecatedLinearGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::DeprecatedLinearGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-// MARK: - Radial.
-
-class CSSRadialGradientValue final : public CSSValue {
-public:
-    static Ref<CSSRadialGradientValue> create(CSS::RadialGradient&& gradient)
-    {
-        return adoptRef(*new CSSRadialGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSRadialGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    CSSRadialGradientValue(CSS::RadialGradient&& gradient)
-        : CSSValue(ClassType::RadialGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSRadialGradientValue(const CSSRadialGradientValue& other)
-        : CSSValue(ClassType::RadialGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::RadialGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-class CSSPrefixedRadialGradientValue final : public CSSValue {
-public:
-    static Ref<CSSPrefixedRadialGradientValue> create(CSS::PrefixedRadialGradient&& gradient)
-    {
-        return adoptRef(*new CSSPrefixedRadialGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSPrefixedRadialGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    CSSPrefixedRadialGradientValue(CSS::PrefixedRadialGradient&& gradient)
-        : CSSValue(ClassType::PrefixedRadialGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSPrefixedRadialGradientValue(const CSSPrefixedRadialGradientValue& other)
-        : CSSValue(ClassType::PrefixedRadialGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::PrefixedRadialGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-class CSSDeprecatedRadialGradientValue final : public CSSValue {
-public:
-    static Ref<CSSDeprecatedRadialGradientValue> create(CSS::DeprecatedRadialGradient&& gradient)
-    {
-        return adoptRef(*new CSSDeprecatedRadialGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSDeprecatedRadialGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    CSSDeprecatedRadialGradientValue(CSS::DeprecatedRadialGradient&& gradient)
-        : CSSValue(ClassType::DeprecatedRadialGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSDeprecatedRadialGradientValue(const CSSDeprecatedRadialGradientValue& other)
-        : CSSValue(ClassType::DeprecatedRadialGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::DeprecatedRadialGradient m_gradient;
-    mutable RefPtr<StyleImage> m_cachedStyleImage;
-};
-
-// MARK: - Conic.
-
-class CSSConicGradientValue final : public CSSValue {
-public:
-    static Ref<CSSConicGradientValue> create(CSS::ConicGradient&& gradient)
-    {
-        return adoptRef(*new CSSConicGradientValue(WTFMove(gradient)));
-    }
-
-    String customCSSText() const;
-    bool equals(const CSSConicGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        return CSS::visitCSSValueChildren(func, m_gradient);
-    }
-
-private:
-    explicit CSSConicGradientValue(CSS::ConicGradient&& gradient)
-        : CSSValue(ClassType::ConicGradient)
-        , m_gradient(WTFMove(gradient))
-    {
-    }
-
-    CSSConicGradientValue(const CSSConicGradientValue& other)
-        : CSSValue(ClassType::ConicGradient)
-        , m_gradient(other.m_gradient)
-        , m_cachedStyleImage(other.m_cachedStyleImage)
-    {
-    }
-
-    CSS::ConicGradient m_gradient;
+    CSS::Gradient m_gradient;
     mutable RefPtr<StyleImage> m_cachedStyleImage;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSLinearGradientValue, isLinearGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSRadialGradientValue, isRadialGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSConicGradientValue, isConicGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSDeprecatedLinearGradientValue, isDeprecatedLinearGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSDeprecatedRadialGradientValue, isDeprecatedRadialGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPrefixedLinearGradientValue, isPrefixedLinearGradientValue())
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSPrefixedRadialGradientValue, isPrefixedRadialGradientValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSGradientValue, isGradientValue())

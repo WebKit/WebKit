@@ -107,7 +107,7 @@ public:
 
     bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
 
-    bool hasMatchingUserOrAuthorStyle(const Function<bool(RuleSet&)>&);
+    bool hasMatchingUserOrAuthorStyle(const WTF::Function<bool(RuleSet&)>&);
 
 private:
     void collectFeatures() const;

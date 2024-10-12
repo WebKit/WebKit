@@ -118,8 +118,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCanvasValue>(*this));
     case Circle:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCircleValue>(*this));
-    case ConicGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSConicGradientValue>(*this));
     case ContentDistribution:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSContentDistributionValue>(*this));
     case Counter:
@@ -132,10 +130,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCursorImageValue>(*this));
     case CustomProperty:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCustomPropertyValue>(*this));
-    case DeprecatedLinearGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSDeprecatedLinearGradientValue>(*this));
-    case DeprecatedRadialGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSDeprecatedRadialGradientValue>(*this));
     case Ellipse:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSEllipseValue>(*this));
     case FilterImage:
@@ -160,6 +154,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontVariationValue>(*this));
     case Function:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFunctionValue>(*this));
+    case Gradient:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSGradientValue>(*this));
     case GridAutoRepeat:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSGridAutoRepeatValue>(*this));
     case GridIntegerRepeat:
@@ -180,18 +176,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSInsetShapeValue>(*this));
     case LineBoxContain:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSLineBoxContainValue>(*this));
-    case LinearGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSLinearGradientValue>(*this));
     case LinearTimingFunction:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSLinearTimingFunctionValue>(*this));
     case NamedImage:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSNamedImageValue>(*this));
-    case PrefixedLinearGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPrefixedLinearGradientValue>(*this));
-    case PrefixedRadialGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPrefixedRadialGradientValue>(*this));
-    case RadialGradient:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSRadialGradientValue>(*this));
     case OffsetRotate:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSOffsetRotateValue>(*this));
     case Path:
