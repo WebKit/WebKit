@@ -36,19 +36,10 @@
 OBJC_CLASS BEMediaEnvironment;
 
 namespace WebKit {
-class MediaCapability;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MediaCapability> : std::true_type { };
-}
-
-namespace WebKit {
 
 class ExtensionCapabilityGrant;
 
-class MediaCapability final : public ExtensionCapability, public CanMakeWeakPtr<MediaCapability> {
+class MediaCapability final : public ExtensionCapability {
     WTF_MAKE_NONCOPYABLE(MediaCapability);
 public:
     explicit MediaCapability(URL&&);
