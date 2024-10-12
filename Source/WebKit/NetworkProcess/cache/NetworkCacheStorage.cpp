@@ -39,7 +39,8 @@
 #include <wtf/PageBlock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>

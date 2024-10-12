@@ -27,19 +27,17 @@
 
 #include <utility>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WTF::Persistence {
 
-template<typename> struct Coder;
 class Decoder;
 class Encoder;
+
+template<typename> struct Coder;
 
 template<typename T, typename U> struct Coder<std::pair<T, U>> {
     template<typename Encoder>
@@ -311,6 +309,21 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
     }
 };
 
+template<size_t Size> struct Coder<std::array<uint8_t, Size>> {
+    template<typename Encoder> static void encodeForPersistence(Encoder& encoder, const std::array<uint8_t, Size>& array)
+    {
+        encoder.encodeFixedLengthData(array);
+    }
+
+    template<typename Decoder> static std::optional<std::array<uint8_t, Size>> decodeForPersistence(Decoder& decoder)
+    {
+        std::array<uint8_t, Size> array;
+        if (!decoder.decodeFixedLengthData(array))
+            return std::nullopt;
+        return array;
+    }
+};
+
 #define DECLARE_CODER(class) \
 template<> struct Coder<class> { \
     WTF_EXPORT_PRIVATE static void encodeForPersistence(Encoder&, const class&); \
@@ -321,7 +334,6 @@ DECLARE_CODER(AtomString);
 DECLARE_CODER(CString);
 DECLARE_CODER(Seconds);
 DECLARE_CODER(String);
-DECLARE_CODER(SHA1::Digest);
 DECLARE_CODER(URL);
 DECLARE_CODER(WallTime);
 

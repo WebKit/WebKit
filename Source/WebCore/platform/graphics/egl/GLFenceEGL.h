@@ -28,22 +28,29 @@ namespace WebCore {
 class GLFenceEGL final : public GLFence {
 public:
     static std::unique_ptr<GLFence> create();
+    explicit GLFenceEGL(EGLSync);
+
 #if OS(UNIX)
     static std::unique_ptr<GLFence> createExportable();
     static std::unique_ptr<GLFence> importFD(WTF::UnixFileDescriptor&&);
-#endif
     GLFenceEGL(EGLSync, bool);
-    virtual ~GLFenceEGL();
+#endif
+
+    ~GLFenceEGL() final;
 
 private:
-    void clientWait() override;
-    void serverWait() override;
+    void clientWait() final;
+    void serverWait() final;
+
 #if OS(UNIX)
-    WTF::UnixFileDescriptor exportFD() override;
+    WTF::UnixFileDescriptor exportFD() final;
 #endif
 
     EGLSync m_sync { nullptr };
+
+#if OS(UNIX)
     bool m_isExportable { false };
+#endif
 };
 
 } // namespace WebCore

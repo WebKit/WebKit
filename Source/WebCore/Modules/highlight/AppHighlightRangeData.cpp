@@ -40,7 +40,8 @@
 #include "TextIterator.h"
 #include "WebCorePersistentCoders.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 

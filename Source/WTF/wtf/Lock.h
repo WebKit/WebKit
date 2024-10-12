@@ -26,10 +26,10 @@
 #pragma once
 
 #include <mutex>
+#include <wtf/Forward.h>
 #include <wtf/LockAlgorithm.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 #if ENABLE(UNFAIR_LOCK)

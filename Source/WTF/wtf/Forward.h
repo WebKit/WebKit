@@ -197,6 +197,7 @@ using WTF::RefPtr;
 using WTF::RetainPtr;
 using WTF::SHA1;
 using WTF::ScopedLambda;
+using WTF::Seconds;
 using WTF::SerialFunctionDispatcher;
 using WTF::String;
 using WTF::StringBuffer;
@@ -211,6 +212,7 @@ using WTF::URL;
 using WTF::UncheckedKeyHashMap;
 using WTF::UniqueRef;
 using WTF::Vector;
+using WTF::WallTime;
 using WTF::WeakPtr;
 using WTF::WeakRef;
 

@@ -34,6 +34,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Seconds.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -367,23 +368,23 @@ bool CookieJarDB::hasCookies(const URL& url)
     return statement.step() == SQLITE_ROW;
 }
 
-std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const std::optional<bool>& httpOnly, const std::optional<bool>& secure, const std::optional<bool>& session)
+std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestURL, std::optional<bool> httpOnly, std::optional<bool> secure, std::optional<bool> session)
 {
     if (!isEnabled() || !m_database.isOpen())
         return std::nullopt;
 
-    String requestHost = requestUrl.host().convertToASCIILowercase();
+    String requestHost = requestURL.host().convertToASCIILowercase();
     if (requestHost.isEmpty())
         return std::nullopt;
 
-    if (!checkCookieAcceptPolicy(firstParty, requestUrl))
+    if (!checkCookieAcceptPolicy(firstParty, requestURL))
         return std::nullopt;
 
-    String requestPath = requestUrl.path().toString();
+    String requestPath = requestURL.path().toString();
     if (requestPath.isEmpty())
         requestPath = "/"_s;
 
-    RegistrableDomain registrableDomain { requestUrl };
+    RegistrableDomain registrableDomain { requestURL };
 
     auto pstmt = m_database.prepareStatement("SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
         "(NOT ((session = 0) AND (expires < ?)))"
@@ -570,6 +571,11 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     }
 
     return setCookie(*cookie);
+}
+
+bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source)
+{
+    return setCookie(firstParty, url, body, source, std::nullopt);
 }
 
 HashSet<String> CookieJarDB::allDomains()

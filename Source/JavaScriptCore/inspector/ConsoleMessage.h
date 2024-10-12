@@ -32,10 +32,10 @@
 
 #include "ConsoleTypes.h"
 #include "Strong.h"
-#include <wtf/Forward.h>
 #include <wtf/Logger.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

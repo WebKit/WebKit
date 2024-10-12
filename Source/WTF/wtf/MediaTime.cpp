@@ -37,6 +37,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
@@ -134,6 +135,11 @@ MediaTime MediaTime::createWithDouble(double doubleTime, uint32_t timeScale)
     while (doubleTime * timeScale >= maxPlusOne<int64_t>)
         timeScale /= 2;
     return MediaTime(static_cast<int64_t>(std::round(doubleTime * timeScale)), timeScale, Valid);
+}
+
+MediaTime MediaTime::createWithSeconds(Seconds seconds)
+{
+    return createWithDouble(seconds.value());
 }
 
 float MediaTime::toFloat() const
@@ -619,6 +625,16 @@ String MediaTimeRange::toJSONString() const
     object->setObject("end"_s, end.toJSONObject());
 
     return object->toJSONString();
+}
+
+String LogArgument<MediaTime>::toString(const MediaTime& time)
+{
+    return time.toJSONString();
+}
+
+String LogArgument<MediaTimeRange>::toString(const MediaTimeRange& range)
+{
+    return range.toJSONString();
 }
 
 TextStream& operator<<(TextStream& stream, const MediaTime& time)

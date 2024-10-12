@@ -33,7 +33,7 @@
 #include <algorithm>
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/UTF8Conversion.h>
 

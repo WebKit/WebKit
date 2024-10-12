@@ -37,6 +37,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 
 @class LegacyTileLayer;
 

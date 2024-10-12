@@ -32,14 +32,12 @@
 #pragma once
 
 #include "ArgList.h"
-#include "Exception.h"
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 #include "Strong.h"
 #include "StrongInlines.h"
 #include <wtf/Expected.h>
-#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

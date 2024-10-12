@@ -32,7 +32,8 @@
 #include "IOSurface.h"
 #include "Logging.h"
 #include <wtf/Scope.h>
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 #if USE(LIBWEBRTC)
 

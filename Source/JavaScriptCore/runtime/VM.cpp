@@ -606,12 +606,12 @@ void VM::disableSamplingProfiler()
     }
 }
 
-RefPtr<JSON::Value> VM::takeSamplingProfilerSamplesAsJSON()
+String VM::takeSamplingProfilerSamplesAsJSONString()
 {
-    SamplingProfiler* profiler = samplingProfiler();
+    auto* profiler = samplingProfiler();
     if (!profiler)
-        return nullptr;
-    return profiler->stackTracesAsJSON();
+        return { };
+    return profiler->stackTracesAsJSONString();
 }
 
 #endif // ENABLE(SAMPLING_PROFILER)
