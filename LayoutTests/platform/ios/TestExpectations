@@ -931,6 +931,8 @@ http/tests/security/listener/xss-window-onclick-shortcut.html [ Skip ]
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm
 imported/blink/fast/css/border-current-color.html [ Skip ]
 imported/blink/fast/css/crash-corner-present.html [ Skip ]
+imported/blink/fast/events/click-focus-anchor-no-ring.html [ Skip ]
+imported/blink/fast/events/click-focus-svganchor-no-ring.html [ Skip ]
 imported/blink/fast/events/popup-forwarded-gesture.html [ Skip ]
 imported/blink/fast/images/image-hover-display-alt.html [ Skip ]
 imported/blink/fast/replaced/viewport-percentage-height-with-dynamic-container-height.html [ Skip ]
