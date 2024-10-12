@@ -33,6 +33,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageHandleRegistry);
 
+Ref<FileSystemStorageHandleRegistry> FileSystemStorageHandleRegistry::create()
+{
+    return adoptRef(*new FileSystemStorageHandleRegistry);
+}
+
 FileSystemStorageHandleRegistry::FileSystemStorageHandleRegistry() = default;
 
 void FileSystemStorageHandleRegistry::registerHandle(WebCore::FileSystemHandleIdentifier identifier, FileSystemStorageHandle& handle)
@@ -51,10 +56,7 @@ void FileSystemStorageHandleRegistry::unregisterHandle(WebCore::FileSystemHandle
 
 FileSystemStorageHandle* FileSystemStorageHandleRegistry::getHandle(WebCore::FileSystemHandleIdentifier identifier)
 {
-    if (auto handle = m_handles.get(identifier))
-        return handle.get();
-
-    return nullptr;
+    return m_handles.get(identifier).get();
 }
 
 } // namespace WebKit

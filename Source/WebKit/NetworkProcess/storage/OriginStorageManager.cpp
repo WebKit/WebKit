@@ -111,7 +111,7 @@ private:
     String m_rootPath;
     String m_identifier;
     StorageBucketMode m_mode { StorageBucketMode::BestEffort };
-    std::unique_ptr<FileSystemStorageManager> m_fileSystemStorageManager;
+    RefPtr<FileSystemStorageManager> m_fileSystemStorageManager;
     std::unique_ptr<LocalStorageManager> m_localStorageManager;
     String m_customLocalStoragePath;
     String m_resolvedLocalStoragePath;
@@ -141,8 +141,8 @@ OriginStorageManager::StorageBucket::StorageBucket(const String& rootPath, const
 
 void OriginStorageManager::StorageBucket::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    if (m_fileSystemStorageManager)
-        m_fileSystemStorageManager->connectionClosed(connection);
+    if (RefPtr fileSystemStorageManager = m_fileSystemStorageManager)
+        fileSystemStorageManager->connectionClosed(connection);
 
     if (m_localStorageManager)
         m_localStorageManager->connectionClosed(connection);
@@ -215,7 +215,7 @@ String OriginStorageManager::StorageBucket::typeStoragePath(StorageType type) co
 FileSystemStorageManager& OriginStorageManager::StorageBucket::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, FileSystemStorageManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_fileSystemStorageManager)
-        m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath(StorageType::FileSystem), registry, WTFMove(quotaCheckFunction));
+        m_fileSystemStorageManager = FileSystemStorageManager::create(typeStoragePath(StorageType::FileSystem), registry, WTFMove(quotaCheckFunction));
 
     return *m_fileSystemStorageManager;
 }
@@ -278,7 +278,8 @@ bool OriginStorageManager::StorageBucket::isActive() const
 {
     // We cannot remove the bucket if it has in-memory data, otherwise session
     // data may be lost.
-    return (m_fileSystemStorageManager && m_fileSystemStorageManager->isActive())
+    RefPtr fileSystemStorageManager = m_fileSystemStorageManager;
+    return (fileSystemStorageManager && fileSystemStorageManager->isActive())
         || (m_localStorageManager && m_localStorageManager->isActive())
         || (m_sessionStorageManager && m_sessionStorageManager->isActive())
         || (m_idbStorageManager && m_idbStorageManager->isActive())

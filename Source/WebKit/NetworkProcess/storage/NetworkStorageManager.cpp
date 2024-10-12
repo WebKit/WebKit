@@ -202,7 +202,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
         m_backupExclusionPeriod = defaultBackupExclusionPeriod;
 #endif
         setStorageSiteValidationEnabledInternal(storageSiteValidationEnabled);
-        m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
+        m_fileSystemStorageHandleRegistry = FileSystemStorageHandleRegistry::create();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
         m_cacheStorageRegistry = makeUnique<CacheStorageRegistry>();

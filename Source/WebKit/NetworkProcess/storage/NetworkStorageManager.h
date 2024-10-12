@@ -274,7 +274,7 @@ private:
     bool m_closed { false };
     HashMap<WebCore::ClientOrigin, std::unique_ptr<OriginStorageManager>> m_originStorageManagers WTF_GUARDED_BY_CAPABILITY(workQueue());
     ThreadSafeWeakHashSet<IPC::Connection> m_connections;
-    std::unique_ptr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
+    RefPtr<FileSystemStorageHandleRegistry> m_fileSystemStorageHandleRegistry;
     std::unique_ptr<StorageAreaRegistry> m_storageAreaRegistry;
     std::unique_ptr<IDBStorageRegistry> m_idbStorageRegistry;
     std::unique_ptr<CacheStorageRegistry> m_cacheStorageRegistry;
