@@ -128,18 +128,19 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL,
     , m_resourceBaseURL(resourceBaseURL)
     , m_manifestJSON(JSON::Value::null())
 {
-    RELEASE_ASSERT(m_bundle || m_resourceBaseURL);
+    RELEASE_ASSERT(m_bundle || !m_resourceBaseURL.isEmpty());
 
     auto *bundleResourceURL = m_bundle.get().resourceURL.URLByStandardizingPath.absoluteURL;
-    if (!m_resourceBaseURL && bundleResourceURL)
+    if (m_resourceBaseURL.isEmpty() && bundleResourceURL)
         m_resourceBaseURL = bundleResourceURL;
 
 #if PLATFORM(MAC)
     m_shouldValidateResourceData = m_bundle && [m_resourceBaseURL isEqual:bundleResourceURL];
 #endif
 
-    RELEASE_ASSERT(m_resourceBaseURL.get().isFileURL);
-    RELEASE_ASSERT(m_resourceBaseURL.get().hasDirectoryPath);
+    RELEASE_ASSERT(m_resourceBaseURL.protocolIsFile());
+    RELEASE_ASSERT(m_resourceBaseURL.hasPath());
+    RELEASE_ASSERT(m_resourceBaseURL.path().right(1) == "/"_s);
 
     outError = nullptr;
 
@@ -149,21 +150,21 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL,
     }
 }
 
-WebExtension::WebExtension(NSDictionary *manifest, NSDictionary *resources)
+WebExtension::WebExtension(NSDictionary *manifest, Resources&& resources)
     : m_manifestJSON(JSON::Value::null())
-    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    , m_resources(WTFMove(resources))
 {
     RELEASE_ASSERT(manifest);
 
-    NSData *manifestData = encodeJSONData(manifest);
+    auto *manifestData = encodeJSONData(manifest);
     RELEASE_ASSERT(manifestData);
 
-    [m_resources setObject:manifestData forKey:@"manifest.json"];
+    m_resources.set("manifest.json"_s, API::Data::createWithoutCopying(manifestData));
 }
 
-WebExtension::WebExtension(NSDictionary *resources)
+WebExtension::WebExtension(Resources&& resources)
     : m_manifestJSON(JSON::Value::null())
-    , m_resources([resources mutableCopy] ?: [NSMutableDictionary dictionary])
+    , m_resources(WTFMove(resources))
 {
 }
 
@@ -214,14 +215,13 @@ NSDictionary *WebExtension::manifest()
     m_parsedManifest = true;
 
     RefPtr<API::Error> error;
-    NSData *manifestData = resourceDataForPath(@"manifest.json", error);
-    if (!manifestData) {
-        if (error)
-            recordError(*error);
+    RefPtr manifestData = resourceDataForPath("manifest.json"_s, error);
+    if (!manifestData || error) {
+        recordErrorIfNeeded(error);
         return nil;
     }
 
-    if (!parseManifest(manifestData))
+    if (!parseManifest(static_cast<NSData *>(manifestData->wrapper())))
         return nil;
 
     return m_manifest.get();
@@ -306,27 +306,6 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-NSURL *WebExtension::resourceFileURLForPath(NSString *path)
-{
-    ASSERT(path);
-
-    if ([path hasPrefix:@"/"])
-        path = [path substringFromIndex:1];
-
-    if (!path.length || !m_resourceBaseURL)
-        return nil;
-
-    NSURL *resourceURL = [NSURL fileURLWithPath:path.stringByRemovingPercentEncoding isDirectory:NO relativeToURL:m_resourceBaseURL.get()].URLByStandardizingPath;
-
-    // Don't allow escaping the base URL with "../".
-    if (![resourceURL.absoluteString hasPrefix:m_resourceBaseURL.get().absoluteString]) {
-        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %{private}@", resourceURL);
-        return nil;
-    }
-
-    return resourceURL;
-}
-
 UTType *WebExtension::resourceTypeForPath(NSString *path)
 {
     UTType *result;
@@ -339,122 +318,83 @@ UTType *WebExtension::resourceTypeForPath(NSString *path)
         }
     } else if (auto *fileExtension = path.pathExtension; fileExtension.length)
         result = [UTType typeWithFilenameExtension:fileExtension];
-    else if (auto *fileURL = resourceFileURLForPath(path))
+    else if (auto *fileURL = static_cast<NSURL *>(resourceFileURLForPath(path)))
         [fileURL getResourceValue:&result forKey:NSURLContentTypeKey error:nil];
 
     return result;
 }
 
-NSString *WebExtension::resourceStringForPath(NSString *path, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
-    ASSERT(path);
-
-    // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
-    if ([path hasPrefix:@"/"])
-        path = [path substringFromIndex:1];
-
-    if (NSString *cachedString = objectForKey<NSString>(m_resources, path))
-        return cachedString;
-
-    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return generatedBackgroundContent();
-
-    NSData *data = resourceDataForPath(path, outError, CacheResult::No, suppressErrors);
-    if (!data)
-        return nil;
-
-    NSString *string;
-    [NSString stringEncodingForData:data encodingOptions:nil convertedString:&string usedLossyConversion:nil];
-    if (!string)
-        return nil;
-
-    if (cacheResult == CacheResult::Yes) {
-        if (!m_resources)
-            m_resources = [NSMutableDictionary dictionary];
-        [m_resources setObject:string forKey:path];
-    }
-
-    return string;
-}
-
-NSData *WebExtension::resourceDataForPath(NSString *path, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
-{
-    ASSERT(path);
+    ASSERT(originalPath);
 
     outError = nullptr;
 
-    if ([path hasPrefix:@"data:"]) {
-        if (auto base64Range = [path rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
-            auto *base64String = [path substringFromIndex:NSMaxRange(base64Range)];
-            return [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+    String path = originalPath;
+
+    // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    auto *cocoaPath = static_cast<NSString *>(path);
+
+    if ([cocoaPath hasPrefix:@"data:"]) {
+        if (auto base64Range = [cocoaPath rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
+            auto *base64String = [cocoaPath substringFromIndex:NSMaxRange(base64Range)];
+            auto *data = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
+            return API::Data::createWithoutCopying(data);
         }
 
-        if (auto commaRange = [path rangeOfString:@","]; commaRange.location != NSNotFound) {
-            auto *urlEncodedString = [path substringFromIndex:NSMaxRange(commaRange)];
+        if (auto commaRange = [cocoaPath rangeOfString:@","]; commaRange.location != NSNotFound) {
+            auto *urlEncodedString = [cocoaPath substringFromIndex:NSMaxRange(commaRange)];
             auto *decodedString = [urlEncodedString stringByRemovingPercentEncoding];
-            return [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+            auto *data = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+            return API::Data::createWithoutCopying(data);
         }
 
-        ASSERT([path isEqualToString:@"data:"]);
-        return [NSData data];
+        ASSERT([cocoaPath isEqualToString:@"data:"]);
+        return API::Data::create(std::span<const uint8_t> { });
     }
 
     // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
-    if ([path hasPrefix:@"/"])
-        path = [path substringFromIndex:1];
+    if ([cocoaPath hasPrefix:@"/"])
+        cocoaPath = [cocoaPath substringFromIndex:1];
 
-    if (id cachedObject = [m_resources objectForKey:path]) {
-        if (auto *cachedData = dynamic_objc_cast<NSData>(cachedObject))
-            return cachedData;
+    if (RefPtr cachedObject = m_resources.get(path))
+        return cachedObject;
 
-        if (auto *cachedString = dynamic_objc_cast<NSString>(cachedObject))
-            return [cachedString dataUsingEncoding:NSUTF8StringEncoding];
+    if ([cocoaPath isEqualToString:generatedBackgroundPageFilename] || [cocoaPath isEqualToString:generatedBackgroundServiceWorkerFilename])
+        return API::Data::create(generatedBackgroundContent().utf8().span());
 
-        ASSERT(isValidJSONObject(cachedObject, JSONOptions::FragmentsAllowed));
-
-        auto *result = encodeJSONData(cachedObject, JSONOptions::FragmentsAllowed);
-        RELEASE_ASSERT(result);
-
-        // Cache the JSON data, so it can be fetched quicker next time.
-        [m_resources setObject:result forKey:path];
-
-        return result;
-    }
-
-    if ([path isEqualToString:generatedBackgroundPageFilename] || [path isEqualToString:generatedBackgroundServiceWorkerFilename])
-        return [static_cast<NSString *>(generatedBackgroundContent()) dataUsingEncoding:NSUTF8StringEncoding];
-
-    NSURL *resourceURL = resourceFileURLForPath(path);
+    auto *resourceURL = static_cast<NSURL *>(resourceFileURLForPath(path));
     if (!resourceURL) {
         if (suppressErrors == SuppressNotFoundErrors::No && outError)
-            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)path));
-        return nil;
+            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)cocoaPath));
+        return nullptr;
     }
 
     NSError *fileReadError;
     NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
     if (!resultData) {
         if (suppressErrors == SuppressNotFoundErrors::No && outError)
-            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)path), API::Error::create(fileReadError));
-        return nil;
+            outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)cocoaPath), API::Error::create(fileReadError));
+        return nullptr;
     }
 
 #if PLATFORM(MAC)
     NSError *validationError;
     if (!validateResourceData(resourceURL, resultData, &validationError)) {
         if (outError)
-            outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)path), API::Error::create(validationError));
-        return nil;
+            outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)cocoaPath), API::Error::create(validationError));
+        return nullptr;
     }
 #endif
 
-    if (cacheResult == CacheResult::Yes) {
-        if (!m_resources)
-            m_resources = [NSMutableDictionary dictionary];
-        [m_resources setObject:resultData forKey:path];
-    }
+    Ref data = API::Data::createWithoutCopying(resultData);
+    if (cacheResult == CacheResult::Yes)
+        m_resources.set(path, data);
 
-    return resultData;
+    return data;
 }
 
 void WebExtension::recordError(Ref<API::Error> error)
@@ -742,9 +682,11 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath, RefPtr<API::Error>& 
 {
     ASSERT(imagePath);
 
-    NSData *imageData = resourceDataForPath(imagePath, outError);
-    if (!imageData)
+    RefPtr data = resourceDataForPath(imagePath, outError);
+    if (!data || outError)
         return nil;
+
+    auto *imageData = static_cast<NSData *>(data->wrapper());
 
     CocoaImage *result;
 

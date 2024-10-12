@@ -154,7 +154,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest, WebKit::toDataMap(resources));
 
     return self;
 }
@@ -166,7 +166,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self, resources);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, WebKit::toDataMap(resources));
 
     return self;
 }

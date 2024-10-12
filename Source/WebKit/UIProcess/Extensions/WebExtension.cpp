@@ -29,6 +29,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "WebExtensionUtilities.h"
+#include <WebCore/TextResourceDecoder.h>
 
 namespace WebKit {
 
@@ -243,6 +244,57 @@ void WebExtension::populateWebAccessibleResourcesIfNeeded()
         parseWebAccessibleResourcesVersion3();
     else
         parseWebAccessibleResourcesVersion2();
+}
+
+URL WebExtension::resourceFileURLForPath(const String& originalPath)
+{
+    ASSERT(originalPath);
+
+    String path = originalPath;
+
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    if (!path.length() || m_resourceBaseURL.isNull())
+        return { };
+
+    auto resourcePath = FileSystem::realPath(URL(m_resourceBaseURL, path).fileSystemPath());
+
+    // Don't allow escaping the base URL with "../".
+    if (!resourcePath.startsWith(m_resourceBaseURL.fileSystemPath())) {
+        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", resourcePath.utf8().data());
+        return { };
+    }
+
+    return URL::fileURLWithFileSystemPath(resourcePath);
+}
+
+String WebExtension::resourceStringForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+{
+    ASSERT(originalPath);
+
+    String path = originalPath;
+
+    // Remove leading slash to normalize the path for lookup/storage in the cache dictionary.
+    if (path.startsWith('/'))
+        path = path.substring(1);
+
+    if (RefPtr cachedData = m_resources.get(path))
+        return String::fromUTF8(cachedData->span());
+
+    if (path == generatedBackgroundPageFilename || path == generatedBackgroundServiceWorkerFilename)
+        return generatedBackgroundContent();
+
+    RefPtr data = resourceDataForPath(path, outError, cacheResult, suppressErrors);
+    if (!data)
+        return nullString();
+
+    if (!data->size())
+        return emptyString();
+
+    auto mimeType = MIMETypeRegistry::mimeTypeForPath(path);
+    RefPtr decoder = TextResourceDecoder::create(mimeType, { }, true);
+    return decoder->decode(data->span());
 }
 
 static int toAPI(WebExtension::Error error)

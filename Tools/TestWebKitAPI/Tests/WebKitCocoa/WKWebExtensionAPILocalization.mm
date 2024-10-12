@@ -97,11 +97,11 @@ static auto *baseURLString = @"test-extension://76C788B8-3374-400D-8259-40E5B9DF
 TEST(WKWebExtensionAPILocalization, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertRejects(() => browser.i18n.getMessage(''), /'message' argument should not be an empty string./)",
-        @"browser.test.assertRejects(() => browser.i18n.getMessage(), /'message' argument is invalid because a string is expected./)",
-        @"browser.test.assertRejects(() => browser.i18n.getMessage(123), /'message' argument is invalid because a string is expected./)",
-        @"browser.test.assertRejects(() => browser.i18n.getMessage(null), /'message' argument is invalid because a string is expected./)",
-        @"browser.test.assertRejects(() => browser.i18n.getMessage(undefined), /'message' argument is invalid because a string is expected./)",
+        @"browser.test.assertThrows(() => browser.i18n.getMessage(''), /'name' value is invalid, because it cannot be empty/i)",
+        @"browser.test.assertThrows(() => browser.i18n.getMessage(), /a required argument is missing/i)",
+        @"browser.test.assertThrows(() => browser.i18n.getMessage(123), /'name' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.i18n.getMessage(null), /'name' value is invalid, because a string is expected/i)",
+        @"browser.test.assertThrows(() => browser.i18n.getMessage(undefined), /'name' value is invalid, because a string is expected/i)",
 
         // Finish
         @"browser.test.notifyPass()",

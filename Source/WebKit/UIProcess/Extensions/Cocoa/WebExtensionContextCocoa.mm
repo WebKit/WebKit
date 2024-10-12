@@ -35,6 +35,7 @@
 #import "APIArray.h"
 #import "APIContentRuleList.h"
 #import "APIContentRuleListStore.h"
+#import "APIData.h"
 #import "APIPageConfiguration.h"
 #import "CocoaHelpers.h"
 #import "ContextMenuContextData.h"
@@ -43,6 +44,7 @@
 #import "PageLoadStateObserver.h"
 #import "ResourceLoadInfo.h"
 #import "WKNSArray.h"
+#import "WKNSData.h"
 #import "WKNSError.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
@@ -4352,13 +4354,13 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
         for (NSString *scriptPath : injectedContentData.scriptPaths) {
             RefPtr<API::Error> error;
-            auto *scriptString = extension->resourceStringForPath(scriptPath, error, WebExtension::CacheResult::Yes);
+            auto scriptString = extension->resourceStringForPath(scriptPath, error, WebExtension::CacheResult::Yes);
             if (!scriptString) {
                 recordError(::WebKit::wrapper(error));
                 continue;
             }
 
-            auto userScript = API::UserScript::create(WebCore::UserScript { scriptString, URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
+            Ref userScript = API::UserScript::create(WebCore::UserScript { WTFMove(scriptString), URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
             originInjectedScripts.append(userScript);
 
             for (auto& userContentController : userContentControllers)
@@ -4376,13 +4378,13 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
         for (NSString *styleSheetPath : injectedContentData.styleSheetPaths) {
             RefPtr<API::Error> error;
-            auto *styleSheetString = extension->resourceStringForPath(styleSheetPath, error, WebExtension::CacheResult::Yes);
+            auto styleSheetString = extension->resourceStringForPath(styleSheetPath, error, WebExtension::CacheResult::Yes);
             if (!styleSheetString) {
                 recordError(::WebKit::wrapper(error));
                 continue;
             }
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
+            Ref userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { WTFMove(styleSheetString), URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, styleLevel, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
             for (auto& userContentController : userContentControllers)
@@ -4645,13 +4647,13 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
                 continue;
 
             RefPtr<API::Error> error;
-            auto *jsonData = extension->resourceDataForPath(ruleset.jsonPath, error);
-            if (!jsonData) {
+            RefPtr jsonData = extension->resourceDataForPath(ruleset.jsonPath, error);
+            if (!jsonData || error) {
                 recordError(::WebKit::wrapper(*error));
                 continue;
             }
 
-            [allJSONData addObject:jsonData];
+            [allJSONData addObject:jsonData->wrapper()];
         }
 
         applyDeclarativeNetRequestRules();

@@ -537,4 +537,43 @@ HashSet<String> toImpl(NSSet *set)
     return result;
 }
 
+HashMap<String, Ref<API::Data>> toDataMap(NSDictionary *dictionary)
+{
+    HashMap<String, Ref<API::Data>> result;
+    result.reserveInitialCapacity(dictionary.count);
+
+    for (id key in dictionary) {
+        String keyString = dynamic_objc_cast<NSString>(key);
+        if (keyString.isEmpty()) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        id value = dictionary[key];
+        if (auto *valueString = dynamic_objc_cast<NSString>(value)) {
+            result.add(keyString, API::Data::create(String(valueString).utf8().span()));
+            continue;
+        }
+
+        if (auto *valueData = dynamic_objc_cast<NSData>(value)) {
+            result.add(keyString, API::Data::createWithoutCopying(valueData));
+            continue;
+        }
+
+        if (isValidJSONObject(value, JSONOptions::FragmentsAllowed)) {
+            NSError *error;
+            auto *jsonData = encodeJSONData(value, JSONOptions::FragmentsAllowed, &error);
+            if (!jsonData || error)
+                continue;
+
+            result.add(keyString, API::Data::createWithoutCopying(jsonData));
+            continue;
+        }
+
+        ASSERT_NOT_REACHED();
+    }
+
+    return result;
+}
+
 } // namespace WebKit
