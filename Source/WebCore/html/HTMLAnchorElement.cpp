@@ -115,29 +115,6 @@ bool HTMLAnchorElement::isInteractiveContent() const
     return isLink();
 }
 
-static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
-{
-    if (!renderer)
-        return false;
-
-    // Before calling absoluteRects, check for the common case where borderBoundingBox
-    // is non-empty, since this is a faster check and almost always returns true.
-    // FIXME: Why do we need to call absoluteRects at all?
-    if (!renderer->borderBoundingBox().isEmpty())
-        return true;
-
-    // FIXME: Since all we are checking is whether the rects are empty, could we just
-    // pass in 0,0 for the layout point instead of calling localToAbsolute?
-    Vector<LayoutRect> rects;
-    renderer->boundingRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
-    for (auto& rect : rects) {
-        if (!rect.isEmpty())
-            return true;
-    }
-
-    return false;
-}
-
 bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (!isFocusable())
@@ -150,8 +127,6 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (isLink() && !document().frame()->eventHandler().tabsToLinks(event))
         return false;
     return HTMLElement::isKeyboardFocusable(event);
-
-    return hasNonEmptyBox(renderBoxModelObject());
 }
 
 static void appendServerMapMousePosition(StringBuilder& url, Event& event)
