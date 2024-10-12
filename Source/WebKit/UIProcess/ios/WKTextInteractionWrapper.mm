@@ -91,14 +91,16 @@
 - (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
 {
 #if USE(BROWSERENGINEKIT)
-    return [_asyncTextInteraction textSelectionDisplayInteraction];
-#else
+    if (_asyncTextInteraction)
+        return [_asyncTextInteraction textSelectionDisplayInteraction];
+#endif
+
     for (id<UIInteraction> interaction in _view.interactions) {
         if (RetainPtr selectionInteraction = dynamic_objc_cast<UITextSelectionDisplayInteraction>(interaction))
             return selectionInteraction.get();
     }
+
     return nil;
-#endif
 }
 
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
