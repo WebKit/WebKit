@@ -26,7 +26,8 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
-#include "MediaRecorderPrivateWriter.h"
+#include "AudioStreamDescription.h"
+
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
@@ -53,34 +54,38 @@ class MediaTime;
 namespace WebCore {
 
 class AudioSampleBufferCompressor;
+class AudioStreamDescription;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
+class VideoFrame;
 class VideoSampleBufferCompressor;
+struct MediaRecorderPrivateOptions;
 
-class MediaRecorderPrivateWriterAVFObjC : public MediaRecorderPrivateWriter {
+class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateWriter, WTF::DestructionThread::Main> {
 public:
-    static Ref<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo);
-    ~MediaRecorderPrivateWriterAVFObjC();
+    static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
+    ~MediaRecorderPrivateWriter();
+
+    void appendVideoFrame(VideoFrame&);
+    void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
+    void stopRecording();
+    void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&);
+
+    void pause();
+    void resume();
+
+    void appendData(std::span<const uint8_t>);
+
+    const String& mimeType() const;
+    unsigned audioBitRate() const;
+    unsigned videoBitRate() const;
+
+    void close();
 
 private:
-    MediaRecorderPrivateWriterAVFObjC(bool hasAudio, bool hasVideo);
-    bool initialize(const MediaRecorderPrivateOptions&) final;
+    MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
 
-    void appendVideoFrame(VideoFrame&) final;
-    void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t) final;
-    void stopRecording() final;
-    void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&) final;
-
-    void pause() final;
-    void resume() final;
-
-    void appendData(std::span<const uint8_t>) final;
-
-    const String& mimeType() const final;
-    unsigned audioBitRate() const final;
-    unsigned videoBitRate() const final;
-
-    void close() final;
+    bool initialize(const MediaRecorderPrivateOptions&);
 
     static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);

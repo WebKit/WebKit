@@ -43,9 +43,8 @@ public:
 
 #if ENABLE(MEDIA_RECORDER)
     virtual std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
-    bool isSupported(const String&);
+    virtual bool isSupported(const String&);
 #endif
-    bool isWebMAndSupported(const String&);
 };
 
 }

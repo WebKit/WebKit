@@ -1148,7 +1148,6 @@ webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
 webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 media/video-seek-to-current-time.html [ Pass Failure ]
 
-webkit.org/b/281295 http/wpt/mediarecorder/MediaRecorder-requestData.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mimeType.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
 webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]

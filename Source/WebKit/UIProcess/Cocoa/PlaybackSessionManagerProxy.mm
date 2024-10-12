@@ -646,7 +646,7 @@ void PlaybackSessionManagerProxy::seekableRangesVectorChanged(PlaybackSessionCon
     Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
         ASSERT(isfinite(range.first));
-        ASSERT(!isfinite(range.second) || range.second >= range.first);
+        ASSERT(range.second >= range.first);
         timeRanges->add(range.first, range.second);
     }
 

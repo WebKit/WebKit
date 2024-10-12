@@ -37,21 +37,20 @@ namespace WebCore {
 
 class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor, WTF::DestructionThread::Main> {
 public:
-    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, AudioFormatID = kAudioFormatMPEG4AAC);
+    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject);
     ~AudioSampleBufferCompressor();
 
-    bool isEmpty() const;
     void setBitsPerSecond(unsigned);
     void finish() { flushInternal(true); }
     void flush() { flushInternal(false); }
     void addSampleBuffer(CMSampleBufferRef);
-    CMSampleBufferRef getOutputSampleBuffer() const;
+    CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
 
     unsigned bitRate() const;
 
 private:
-    explicit AudioSampleBufferCompressor(AudioFormatID);
+    AudioSampleBufferCompressor();
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
     UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
@@ -93,7 +92,7 @@ private:
     RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
     size_t m_sampleBlockBufferSize { 0 };
     size_t m_currentOffsetInSampleBlockBuffer { 0 };
-    const AudioFormatID m_outputCodecType;
+    AudioFormatID m_outputCodecType { kAudioFormatMPEG4AAC };
     std::optional<unsigned> m_outputBitRate;
 };
 
