@@ -1038,6 +1038,8 @@ template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarkers()
 {
     auto markedTexts = MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration);
+    if (markedTexts.isEmpty())
+        return;
 
     auto spellingErrorStyle = m_renderer.spellingErrorPseudoStyle();
     if (spellingErrorStyle && !spellingErrorStyle->textDecorationsInEffect().isEmpty()) {
