@@ -319,6 +319,53 @@ inline JSArray* constructArrayNegativeIndexed(JSGlobalObject* globalObject, Arra
     return ArrayAllocationProfile::updateLastAllocationFor(profile, array);
 }
 
+ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globalObject, JSString* pattern, size_t initialLength)
+{
+    if (initialLength >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)
+        return nullptr;
+
+    VM& vm = globalObject->vm();
+    Structure* structure = globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
+    if (UNLIKELY(!hasContiguous(structure->indexingType())))
+        return nullptr;
+
+    unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
+    void* temp = vm.auxiliarySpace().allocate(
+        vm,
+        Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)),
+        nullptr, AllocationFailureMode::ReturnNull);
+    if (UNLIKELY(!temp))
+        return nullptr;
+    Butterfly* butterfly = Butterfly::fromBase(temp, 0, 0);
+    butterfly->setVectorLength(vectorLength);
+    butterfly->setPublicLength(initialLength);
+
+#if OS(DARWIN)
+    memset_pattern8(static_cast<void*>(butterfly->contiguous().data()), &pattern, sizeof(EncodedJSValue) * initialLength);
+#else
+    for (unsigned i = 0; i < initialLength; ++i)
+        butterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(pattern);
+#endif
+    return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+}
+
+ALWAYS_INLINE JSArray* createPatternFilledArray(JSGlobalObject* globalObject, JSString* pattern, size_t count)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (JSArray* array = tryCreateContiguousArrayWithPattern(globalObject, pattern, count); LIKELY(array))
+        return array;
+
+    JSArray* array = constructEmptyArray(globalObject, nullptr, count);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (size_t i = 0, arrayIndex = 0; i < count; ++i) {
+        array->putDirectIndex(globalObject, arrayIndex++, pattern);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return array;
+}
+
 template<typename... Args>
 inline JSArray* createTuple(JSGlobalObject* globalObject, Args&&... args)
 {

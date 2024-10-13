@@ -39,11 +39,6 @@ void RegExpSubstringGlobalAtomCache::visitAggregateImpl(Visitor& visitor)
 
 DEFINE_VISIT_AGGREGATE(RegExpSubstringGlobalAtomCache);
 
-bool RegExpSubstringGlobalAtomCache::hasValidPattern(JSString* string, RegExp* regExp)
-{
-    return string->isSubstring() && regExp->global() && regExp->hasValidAtom();
-}
-
 JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObject, JSRopeString* substring, RegExp* regExp)
 {
     VM& vm = globalObject->vm();
@@ -94,16 +89,10 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
         return jsNull();
 
     // Construct the array
-    JSArray* array = constructEmptyArray(globalObject, nullptr, numberOfMatches);
+    const String& pattern = regExp->atom();
+    ASSERT(!pattern.isEmpty());
+    JSArray* array = createPatternFilledArray(globalObject, jsString(vm, pattern), numberOfMatches);
     RETURN_IF_EXCEPTION(scope, { });
-
-    const String& atom = regExp->atom();
-    ASSERT(!atom.isEmpty() && !atom.isNull());
-    JSString* atomString = atom.length() == 1 ? jsSingleCharacterString(vm, atom[0]) : jsNontrivialString(vm, atom);
-    for (size_t i = 0, arrayIndex = 0; i < numberOfMatches; ++i) {
-        array->putDirectIndex(globalObject, arrayIndex++, atomString);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
 
     // Cache
     {

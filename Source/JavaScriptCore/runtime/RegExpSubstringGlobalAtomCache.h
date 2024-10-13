@@ -43,7 +43,6 @@ class RegExp;
 //     str.substring(0, 60).match(regExp);
 class RegExpSubstringGlobalAtomCache {
 public:
-    static bool hasValidPattern(JSString*, RegExp*);
     JSValue collectMatches(JSGlobalObject*, JSRopeString* substring, RegExp*);
 
     DECLARE_VISIT_AGGREGATE;
