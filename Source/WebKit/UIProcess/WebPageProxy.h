@@ -2429,7 +2429,7 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    const std::optional<MediaCapability>& mediaCapability() const;
+    const MediaCapability* mediaCapability() const;
     void resetMediaCapability();
     void updateMediaCapability();
 #endif
@@ -3119,7 +3119,7 @@ private:
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    void setMediaCapability(std::optional<MediaCapability>&&);
+    void setMediaCapability(RefPtr<MediaCapability>&&);
     void deactivateMediaCapability(MediaCapability&);
     bool shouldActivateMediaCapability() const;
     bool shouldDeactivateMediaCapability() const;

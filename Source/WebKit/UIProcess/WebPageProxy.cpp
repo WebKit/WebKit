@@ -10781,7 +10781,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    setMediaCapability(std::nullopt);
+    setMediaCapability(nullptr);
 #endif
 
 #if ENABLE(WRITING_TOOLS)
@@ -14333,7 +14333,7 @@ void WebPageProxy::gpuProcessDidFinishLaunching()
     if (RefPtr pageClient = this->pageClient())
         pageClient->gpuProcessDidFinishLaunching();
 #if ENABLE(EXTENSION_CAPABILITIES)
-    if (auto& mediaCapability = this->mediaCapability()) {
+    if (RefPtr mediaCapability = this->mediaCapability()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "gpuProcessDidFinishLaunching[envID=%{public}s]: updating media capability", mediaCapability->environmentIdentifier().utf8().data());
         updateMediaCapability();
     }

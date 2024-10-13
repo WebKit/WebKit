@@ -418,7 +418,7 @@ public:
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
-    std::optional<MediaCapability> mediaCapability;
+    RefPtr<MediaCapability> mediaCapability;
 #endif
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

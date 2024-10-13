@@ -1119,14 +1119,14 @@ bool WebPageProxy::shouldAllowAutoFillForCellularIdentifiers() const
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
-const std::optional<MediaCapability>& WebPageProxy::mediaCapability() const
+const MediaCapability* WebPageProxy::mediaCapability() const
 {
-    return internals().mediaCapability;
+    return internals().mediaCapability.get();
 }
 
-void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capability)
+void WebPageProxy::setMediaCapability(RefPtr<MediaCapability>&& capability)
 {
-    if (auto oldCapability = std::exchange(internals().mediaCapability, std::nullopt))
+    if (RefPtr oldCapability = std::exchange(internals().mediaCapability, nullptr))
         deactivateMediaCapability(*oldCapability);
 
     internals().mediaCapability = WTFMove(capability);
@@ -1157,17 +1157,18 @@ void WebPageProxy::resetMediaCapability()
     URL currentURL { this->currentURL() };
 
     if (!hasRunningProcess() || !currentURL.isValid()) {
-        setMediaCapability(std::nullopt);
+        setMediaCapability(nullptr);
         return;
     }
 
-    if (!mediaCapability() || !protocolHostAndPortAreEqual(mediaCapability()->webPageURL(), currentURL))
-        setMediaCapability(MediaCapability { WTFMove(currentURL) });
+    RefPtr mediaCapability = this->mediaCapability();
+    if (!mediaCapability || !protocolHostAndPortAreEqual(mediaCapability->webPageURL(), currentURL))
+        setMediaCapability(MediaCapability::create(WTFMove(currentURL)));
 }
 
 void WebPageProxy::updateMediaCapability()
 {
-    auto& mediaCapability = internals().mediaCapability;
+    RefPtr mediaCapability = internals().mediaCapability;
     if (!mediaCapability)
         return;
 
@@ -1201,7 +1202,8 @@ bool WebPageProxy::shouldActivateMediaCapability() const
 
 bool WebPageProxy::shouldDeactivateMediaCapability() const
 {
-    if (!mediaCapability() || !mediaCapability()->isActivatingOrActive())
+    RefPtr mediaCapability = this->mediaCapability();
+    if (!mediaCapability || !mediaCapability->isActivatingOrActive())
         return false;
 
     if (internals().mediaState & WebCore::MediaProducer::MediaCaptureMask)

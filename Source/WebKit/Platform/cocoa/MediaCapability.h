@@ -30,6 +30,7 @@
 #include "ExtensionCapability.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
@@ -39,21 +40,14 @@ namespace WebKit {
 class MediaCapability;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MediaCapability> : std::true_type { };
-}
-
 namespace WebKit {
 
 class ExtensionCapabilityGrant;
 
-class MediaCapability final : public ExtensionCapability, public CanMakeWeakPtr<MediaCapability> {
+class MediaCapability final : public ExtensionCapability, public RefCountedAndCanMakeWeakPtr<MediaCapability> {
     WTF_MAKE_NONCOPYABLE(MediaCapability);
 public:
-    explicit MediaCapability(URL&&);
-    MediaCapability(MediaCapability&&) = default;
-    MediaCapability& operator=(MediaCapability&&) = default;
+    static Ref<MediaCapability> create(URL&&);
 
     enum class State : uint8_t {
         Inactive,
@@ -74,6 +68,8 @@ public:
     BEMediaEnvironment *platformMediaEnvironment() const { return m_mediaEnvironment.get(); }
 
 private:
+    explicit MediaCapability(URL&&);
+
     State m_state { State::Inactive };
     URL m_webPageURL;
     RetainPtr<BEMediaEnvironment> m_mediaEnvironment;

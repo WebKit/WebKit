@@ -1306,7 +1306,7 @@ RefPtr<WebProcessProxy> WebProcessPool::webProcessForCapabilityGranter(const Ext
 
     auto index = processes().findIf([&](auto& process) {
         return process->pages().containsIf([&](auto& page) {
-            if (auto& mediaCapability = page->mediaCapability())
+            if (RefPtr mediaCapability = page->mediaCapability())
                 return mediaCapability->environmentIdentifier() == environmentIdentifier;
             return false;
         });
