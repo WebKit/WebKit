@@ -67,7 +67,7 @@ RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;
 void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    m_extensionController = makeUnique<WebInspectorUIExtensionController>(*this, m_page->identifier());
+    m_extensionController = WebInspectorUIExtensionController::create(*this, m_page->identifier());
 #endif
 
     m_debuggableInfo = WTFMove(debuggableInfo);
@@ -297,34 +297,26 @@ bool RemoteWebInspectorUI::supportsWebExtensions()
 
 void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const WebCore::FrameIdentifier& frameID)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
 }
 
 void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didHideExtensionTab(extensionID, extensionTabID);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didHideExtensionTab(extensionID, extensionTabID);
 }
 
 void RemoteWebInspectorUI::didNavigateExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, const URL& newURL)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->didNavigateExtensionTab(extensionID, extensionTabID, newURL);
 }
 
 void RemoteWebInspectorUI::inspectedPageDidNavigate(const URL& newURL)
 {
-    if (!m_extensionController)
-        return;
-
-    m_extensionController->inspectedPageDidNavigate(newURL);
+    if (RefPtr extensionController = m_extensionController)
+        extensionController->inspectedPageDidNavigate(newURL);
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 

@@ -191,7 +191,7 @@ private:
     CheckedPtr<WebCore::InspectorController> m_frontendController;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    std::unique_ptr<WebInspectorUIExtensionController> m_extensionController;
+    RefPtr<WebInspectorUIExtensionController> m_extensionController;
 #endif
 
     RefPtr<IPC::Connection> m_backendConnection;

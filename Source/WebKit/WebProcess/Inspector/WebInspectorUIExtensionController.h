@@ -35,18 +35,10 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class WebInspectorUIExtensionController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebInspectorUIExtensionController> : std::true_type { };
-}
 
 namespace JSC {
 class JSValue;
@@ -62,11 +54,16 @@ namespace WebKit {
 class WebInspectorUI;
 
 class WebInspectorUIExtensionController
-    : public IPC::MessageReceiver {
+    : public IPC::MessageReceiver
+    , public RefCounted<WebInspectorUIExtensionController> {
     WTF_MAKE_TZONE_ALLOCATED(WebInspectorUIExtensionController);
     WTF_MAKE_NONCOPYABLE(WebInspectorUIExtensionController);
 public:
-    WebInspectorUIExtensionController(WebCore::InspectorFrontendClient&, WebCore::PageIdentifier);
+    static Ref<WebInspectorUIExtensionController> create(WebCore::InspectorFrontendClient& inspectorFrontend, WebCore::PageIdentifier pageIdentifier)
+    {
+        return adoptRef(*new WebInspectorUIExtensionController(inspectorFrontend, pageIdentifier));
+    }
+
     ~WebInspectorUIExtensionController();
 
     // Implemented in generated WebInspectorUIExtensionControllerMessageReceiver.cpp
@@ -91,6 +88,8 @@ public:
     void inspectedPageDidNavigate(const URL&);
 
 private:
+    WebInspectorUIExtensionController(WebCore::InspectorFrontendClient&, WebCore::PageIdentifier);
+
     JSC::JSObject* unwrapEvaluationResultAsObject(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult) const;
     std::optional<Inspector::ExtensionError> parseExtensionErrorFromEvaluationResult(WebCore::InspectorFrontendAPIDispatcher::EvaluationResult) const;
 
