@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -6425,6 +6425,8 @@
 		63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationCoreLocationProvider.h; sourceTree = "<group>"; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
+		67AD7CB22CBB361C00B9B22B /* WebExtensionPermission.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionPermission.h; sourceTree = "<group>"; };
+		67AD7CB32CBB361D00B9B22B /* WebExtensionPermission.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionPermission.cpp; sourceTree = "<group>"; };
 		6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesPrivate.h; sourceTree = "<group>"; };
 		6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManager.h; sourceTree = "<group>"; };
 		6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManager.cpp; sourceTree = "<group>"; };
@@ -13732,6 +13734,8 @@
 		B6114A8A293AE03600380B1B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				67AD7CB32CBB361D00B9B22B /* WebExtensionPermission.cpp */,
+				67AD7CB22CBB361C00B9B22B /* WebExtensionPermission.h */,
 				B6217BB0299C39F000498BF8 /* _WKWebExtensionLocalization.h */,
 				B6217BB1299C3AE300498BF8 /* _WKWebExtensionLocalization.mm */,
 				B6D75B1C2B1FD0BE00BC932E /* _WKWebExtensionRegisteredScriptsSQLiteStore.h */,
@@ -20265,9 +20269,7 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -20283,25 +20285,19 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-			);
+			platformFilter = ios;
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

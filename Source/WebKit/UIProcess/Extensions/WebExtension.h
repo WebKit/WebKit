@@ -47,18 +47,12 @@ OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
 OBJC_CLASS NSLocale;
-OBJC_CLASS NSMutableArray;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS UTType;
 OBJC_CLASS WKWebExtension;
-OBJC_CLASS WKWebExtensionMatchPattern;
 OBJC_CLASS _WKWebExtensionLocalization;
-
-#ifdef __OBJC__
-#include "WKWebExtensionPermission.h"
-#endif
 
 namespace API {
 class Data;

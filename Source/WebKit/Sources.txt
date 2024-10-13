@@ -305,6 +305,7 @@ Shared/Authentication/AuthenticationManager.cpp
 
 Shared/Databases/IndexedDB/IDBUtilities.cpp
 
+Shared/Extensions/WebExtensionPermission.cpp
 Shared/Extensions/WebExtensionUtilities.cpp
 
 Shared/Gamepad/GamepadData.cpp
