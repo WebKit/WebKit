@@ -473,7 +473,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             auto borderBoxLogicalTopLeft = toLayoutPoint(lineBox.logicalRect().topLeft() + logicalRect.topLeft());
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 // Inline boxes need special (stretchy) box geometry handling.
-                setInlineBoxGeometry(boxGeometry, { borderBoxLogicalTopLeft, logicalRect.size() }, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
+                setInlineBoxGeometry(lineRun.layoutBox(), boxGeometry, { borderBoxLogicalTopLeft, logicalRect.size() }, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
                 return;
             }
             boxGeometry.setTopLeft(borderBoxLogicalTopLeft);
@@ -643,7 +643,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     auto inlineBoxLeftInInlineDirectionVisualOrder = isHorizontalWritingMode ? displayBox.left() : displayBox.top();
     auto logicalWidthForBiDiFragment = isHorizontalWritingMode ? displayBox.width() : displayBox.height();
     auto logicalTopRelativeToRoot = lineBox().logicalRect().top() + logicalRect.top();
-    setInlineBoxGeometry(boxGeometry, { logicalTopRelativeToRoot, inlineBoxLeftInInlineDirectionVisualOrder, logicalWidthForBiDiFragment, logicalRect.height() }, isFirstBox);
+    setInlineBoxGeometry(layoutBox, boxGeometry, { logicalTopRelativeToRoot, inlineBoxLeftInInlineDirectionVisualOrder, logicalWidthForBiDiFragment, logicalRect.height() }, isFirstBox);
     if (inlineBox->hasContent())
         displayBox.setHasContent();
 }
@@ -770,7 +770,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 // Such inline boxes should also be handled here.
                 if (!lineBox.hasContent()) {
                     // FIXME: It's expected to not have any inline boxes on empty lines. They make the line taller. We should reconsider this.
-                    setInlineBoxGeometry(formattingContext().geometryForBox(layoutBox), { { }, { } }, true);
+                    setInlineBoxGeometry(layoutBox, formattingContext().geometryForBox(layoutBox), { { }, { } }, true);
                     continue;
                 }
                 auto isEmptyInlineBox = [&] {
@@ -860,7 +860,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
             // these trailing runs have their content on the subsequent line(s).
             auto& inlineBox = lineBox.inlineLevelBoxFor(lineRun);
             appendInlineBoxDisplayBox(lineRun, inlineBox, { { }, m_displayLine.right(), { }, { } }, boxes);
-            setInlineBoxGeometry(formattingContext().geometryForBox(lineRun.layoutBox()), { { }, lineBox.logicalRect().right(), { }, { } }, inlineBox.isFirstBox());
+            setInlineBoxGeometry(lineRun.layoutBox(), formattingContext().geometryForBox(lineRun.layoutBox()), { { }, lineBox.logicalRect().right(), { }, { } }, inlineBox.isFirstBox());
         }
     };
     handleTrailingOpenInlineBoxes();
@@ -1156,15 +1156,26 @@ void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displ
     }
 }
 
-void InlineDisplayContentBuilder::setInlineBoxGeometry(Layout::BoxGeometry& boxGeometry, const InlineRect& logicalRect, bool isFirstInlineBoxFragment)
+void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& inlineBox, Layout::BoxGeometry& boxGeometry, const InlineRect& logicalRect, bool isFirstInlineBoxFragment)
 {
-    auto enclosingLogicalRect = Rect { toLayoutPoint(logicalRect.topLeft()), { LayoutUnit::fromFloatCeil(logicalRect.width()), LayoutUnit::fromFloatCeil(logicalRect.height()) } };
-    if (!isFirstInlineBoxFragment)
-        enclosingLogicalRect.expandToContain(BoxGeometry::borderBoxRect(boxGeometry));
+    ASSERT(inlineBox.isInlineBox());
 
-    boxGeometry.setTopLeft(enclosingLogicalRect.topLeft());
-    boxGeometry.setContentBoxWidth(enclosingLogicalRect.width() - boxGeometry.horizontalBorderAndPadding());
-    boxGeometry.setContentBoxHeight(enclosingLogicalRect.height() - boxGeometry.verticalBorderAndPadding());
+    auto borderBoxSize = LayoutSize { };
+    if (!inlineBox.isRubyBase())
+        borderBoxSize = { LayoutUnit::fromFloatCeil(logicalRect.width()), LayoutUnit::fromFloatCeil(logicalRect.height()) };
+    else {
+        // While flooring here may produce fractional overflow, it ensures ruby content would never trigger incorrect wrapping triggered by
+        // inflated annotation boxes inside a shrink-to-fit container (where annotation box is sized to the ruby base but it also imposes a required minimum width)
+        borderBoxSize = { LayoutUnit::fromFloatFloor(logicalRect.width()), LayoutUnit::fromFloatFloor(logicalRect.height()) };
+    }
+
+    auto borderBoxRect = Rect { toLayoutPoint(logicalRect.topLeft()), borderBoxSize };
+    if (!isFirstInlineBoxFragment)
+        borderBoxRect.expandToContain(BoxGeometry::borderBoxRect(boxGeometry));
+
+    boxGeometry.setTopLeft(borderBoxRect.topLeft());
+    boxGeometry.setContentBoxWidth(borderBoxRect.width() - boxGeometry.horizontalBorderAndPadding());
+    boxGeometry.setContentBoxHeight(borderBoxRect.height() - boxGeometry.verticalBorderAndPadding());
 }
 
 InlineRect InlineDisplayContentBuilder::flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode writingMode) const
