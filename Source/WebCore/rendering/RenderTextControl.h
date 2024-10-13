@@ -104,3 +104,4 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControl, isRenderTextControl())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTextControlInnerContainer, isRenderTextControlInnerContainer())

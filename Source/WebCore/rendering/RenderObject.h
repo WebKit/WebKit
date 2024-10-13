@@ -463,6 +463,7 @@ public:
     bool isRenderReplica() const { return type() == Type::Replica; }
 
     bool isRenderSlider() const { return type() == Type::Slider; }
+    bool isRenderSliderContainer() const { return type() == Type::SliderContainer; }
     bool isRenderTable() const;
     bool isRenderTableCell() const { return type() == Type::TableCell; }
     bool isRenderTableCol() const { return type() == Type::TableCol; }
@@ -473,6 +474,7 @@ public:
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
+    bool isRenderTextControlInnerContainer() const { return type() == Type::TextControlInnerContainer; }
     bool isRenderVideo() const { return type() == Type::Video; }
     bool isRenderViewTransitionCapture() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsViewTransitionCapture); }
     bool isRenderWidget() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsWidget); }

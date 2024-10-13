@@ -42,8 +42,11 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderMenuList.h"
+#include "RenderSlider.h"
 #include "RenderStyleSetters.h"
 #include "RenderTable.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "TextUtil.h"
 
@@ -74,8 +77,8 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return Layout::Box::NodeType::ListMarker;
         if (is<RenderReplaced>(renderer))
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
-        if (is<RenderButton>(renderer))
-            return Layout::Box::NodeType::InputButton;
+        if (is<RenderButton>(renderer) || is<RenderMenuList>(renderer) || is<RenderTextControlInnerContainer>(renderer) || is<RenderSlider>(renderer) || renderer.isRenderSliderContainer())
+            return Layout::Box::NodeType::ImplicitFlexBox;
         if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
             return renderLineBreak->isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
         if (is<RenderTable>(renderer))
