@@ -10066,8 +10066,8 @@ void Document::removeTopLayerElement(Element& element)
 HTMLDialogElement* Document::activeModalDialog() const
 {
     for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (auto* dialogElement = dynamicDowncast<HTMLDialogElement>(element.get()))
-            return dialogElement;
+        if (RefPtr dialog = dynamicDowncast<HTMLDialogElement>(element.get()); dialog && dialog->isModal())
+            return dialog.get();
     }
 
     return nullptr;

@@ -6543,6 +6543,7 @@ webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/closed-dialog-does-not-block-mouse-events.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/popover-dialog-does-not-block-mouse-events.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-inlines.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-ancestor-is-inert.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-does-not-block-mouse-events.html [ Failure ]
