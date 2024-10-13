@@ -74,6 +74,28 @@
         }, 2000);
     }, 'Verify MediaRecorder is working in GPUProcess');
 
+    async_test(t => {
+        const video = createVideoStream();
+        const recorder = new MediaRecorder(video, { mimeType: 'video/webm' });
+        let mode = 0;
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_equals(blobEvent.data.type, 'video/webm; codecs="vp8"');
+            assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+            assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+            assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+            assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+            assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+            t.done();
+        });
+        drawStartTime = Date.now();
+        doRedImageDraw();
+        recorder.start();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        setTimeout(() => {
+            recorder.stop();
+        }, 2000);
+    }, 'Verify MediaRecorder WebM is working in GPUProcess');
 </script>
 </body>
 </html>

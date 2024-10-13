@@ -50,6 +50,11 @@ bool MediaRecorder::isTypeSupported(Document& document, const String& value)
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER_TRANSCODER)
     auto* page = document.page();
+
+#if ENABLE(MEDIA_RECORDER_WEBM)
+    if (!document.settings().mediaRecorderEnabledWebM() && page && page->mediaRecorderProvider().isWebMAndSupported(value))
+        return false;
+#endif
     return page && page->mediaRecorderProvider().isSupported(value);
 #else
     UNUSED_PARAM(document);

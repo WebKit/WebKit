@@ -2177,7 +2177,6 @@ if (APPLE)
         Source/third_party/libwebm/m2ts/vpxpes2ts.cc
         Source/third_party/libwebm/m2ts/vpxpes2ts_main.cc
         Source/third_party/libwebm/sample_muxer_metadata.cc
-        Source/third_party/libwebm/mkvmuxer/mkvwriter.cc
         Source/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
         Source/third_party/libwebm/mkvmuxer/mkvmuxer.cc
         Source/third_party/libwebm/vttdemux.cc
@@ -2192,7 +2191,6 @@ if (APPLE)
         Source/third_party/libwebm/common/file_util.cc
         Source/third_party/libwebm/common/video_frame.cc
         Source/third_party/libwebm/common/webm_endian.cc
-        Source/third_party/libwebm/mkvmuxer_sample.cc
         Source/third_party/libwebm/mkvparser/mkvreader.cc
         Source/third_party/libwebm/mkvparser/mkvparser.cc
         Source/third_party/libwebm/webm_parser/demo/demo.cc
@@ -2224,6 +2222,7 @@ if (APPLE)
     add_library(webm STATIC ${webm_SOURCES})
     set(webm_INCLUDE_DIRECTORIES
         Source/third_party/libwebm
+        Source/third_party/libwebm/mkvmuxer
         Source/third_party/libwebm/webm_parser
         Source/third_party/libwebm/webm_parser/include
     )
@@ -2233,9 +2232,14 @@ if (APPLE)
     set(webm_PRIVATE_HEADERS_DIR "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders/webm")
     file(MAKE_DIRECTORY ${webm_PRIVATE_HEADERS_DIR})
     file(COPY
+        Source/third_party/libwebm/mkvmuxer/mkvmuxer.h
+        Source/third_party/libwebm/mkvmuxer/mkvmuxertypes.h
+        Source/third_party/libwebm/mkvmuxer/mkvmuxerutil.h
+        Source/third_party/libwebm/mkvmuxer/mkvwriter.h
         Source/third_party/libwebm/webm_parser/include/webm/callback.h
         Source/third_party/libwebm/webm_parser/include/webm/status.h
         Source/third_party/libwebm/common/vp9_header_parser.h
+        Source/third_party/libwebm/common/webmids.h
         Source/third_party/libwebm/webm_parser/include/webm/dom_types.h
         Source/third_party/libwebm/webm_parser/include/webm/id.h
         Source/third_party/libwebm/webm_parser/include/webm/element.h

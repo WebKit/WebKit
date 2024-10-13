@@ -26,5 +26,5 @@ CLANG_WARN_ENUM_CONVERSION = YES;
 CLANG_WARN_INT_CONVERSION = YES;
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 
-HEADER_SEARCH_PATHS = Source/third_party/libwebm Source/third_party/libwebm/webm_parser Source/third_party/libwebm/webm_parser/include;
+HEADER_SEARCH_PATHS = Source/third_party/libwebm Source/third_party/libwebm/common Source/third_party/libwebm/mkvmuxer Source/third_party/libwebm/webm_parser Source/third_party/libwebm/webm_parser/include;
 USE_HEADERMAP = NO;

@@ -105,10 +105,10 @@ void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFram
         protectedWriter()->appendVideoFrame(*frame);
 }
 
-void RemoteMediaRecorder::fetchData(CompletionHandler<void(std::span<const uint8_t>, double)>&& completionHandler)
+void RemoteMediaRecorder::fetchData(CompletionHandler<void(String, std::span<const uint8_t>, double)>&& completionHandler)
 {
-    protectedWriter()->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
-        completionHandler(data ? data->makeContiguous()->span() : std::span<const uint8_t> { }, timeCode);
+    protectedWriter()->fetchData([completionHandler = WTFMove(completionHandler), mimeType = protectedWriter()->mimeType()](auto&& data, auto timeCode) mutable {
+        completionHandler(WTFMove(mimeType), data ? data->makeContiguous()->span() : std::span<const uint8_t> { }, timeCode);
     });
 }
 

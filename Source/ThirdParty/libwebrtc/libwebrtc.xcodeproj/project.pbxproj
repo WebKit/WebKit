@@ -3384,6 +3384,14 @@
 		44FD16802AEA36BB003636CB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44FD167F2AEA36BB003636CB /* AppKit.framework */; platformFilters = (macos, ); };
 		44FD16842AEA3770003636CB /* gl_renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44FD16822AEA376F003636CB /* gl_renderer.cc */; };
 		44FD16862AEA37E6003636CB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44FD16852AEA37E6003636CB /* OpenGL.framework */; platformFilters = (macos, ); };
+		514C7F062CACC70600808ADE /* mkvmuxerutil.cc in Sources */ = {isa = PBXBuildFile; fileRef = 514C7F022CACC70600808ADE /* mkvmuxerutil.cc */; };
+		514C7F072CACC70600808ADE /* mkvmuxer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 514C7EFF2CACC70600808ADE /* mkvmuxer.cc */; };
+		514C7F092CACC70600808ADE /* mkvmuxerutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F012CACC70600808ADE /* mkvmuxerutil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		514C7F0B2CACC70600808ADE /* mkvmuxertypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F002CACC70600808ADE /* mkvmuxertypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		514C7F0C2CACC70600808ADE /* mkvmuxer.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7EFE2CACC70600808ADE /* mkvmuxer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		514C7F142CB0CB2400808ADE /* webmids.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F132CB0CB2400808ADE /* webmids.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		514C7F172CB1759300808ADE /* mkvwriter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 514C7F162CB1759300808ADE /* mkvwriter.cc */; };
+		514C7F182CB1759300808ADE /* mkvwriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C7F152CB1759300808ADE /* mkvwriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C0073111E5513E70042215A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730C1E5513E70042215A /* CoreMedia.framework */; };
 		5C0073121E5513E70042215A /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C00730D1E5513E70042215A /* CoreVideo.framework */; };
 		5C0073141E5514020042215A /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C0073131E5514020042215A /* VideoToolbox.framework */; };
@@ -5173,6 +5181,22 @@
 				"$(OBJECT_FILE_DIR_normal)/$(CURRENT_ARCH)/$(INPUT_FILE_BASE).o",
 			);
 			script = "set -e\nSOURCE_DIR=\"${SRCROOT}/Source/third_party/libvpx/source\"\nSOURCE_FILE=\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.asm\"\nOBJECT_FILE=\"${OBJECT_FILE_DIR_normal}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.o\"\n\"${BUILT_PRODUCTS_DIR}/yasm\" -fmacho64 -I \"${SOURCE_DIR}/config\" -I \"${SOURCE_DIR}/config/mac/x64\" -I \"${SOURCE_DIR}/libvpx\" -o \"${OBJECT_FILE}.tmp\" \"${SOURCE_FILE}\"\ncmp -s \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\" && rm -f \"${OBJECT_FILE}.tmp\" || mv \"${OBJECT_FILE}.tmp\" \"${OBJECT_FILE}\"\n[[ \"${SOURCE_FILE}\" -nt \"${OBJECT_FILE}\" ]] && touch \"${OBJECT_FILE}\" || true\n";
+		};
+		51DA3FE32CB58200002C095E /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*/libwebm/common/*.h */libwebm/mkvmuxer/*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFileLists = (
+				"",
+			);
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_DIR:base)/$(INPUT_FILE_NAME)",
+			);
+			script = "cp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDC901FB27C6BB28008685BF /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -9612,6 +9636,14 @@
 		44FD16822AEA376F003636CB /* gl_renderer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gl_renderer.cc; sourceTree = "<group>"; };
 		44FD16832AEA376F003636CB /* gl_renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gl_renderer.h; sourceTree = "<group>"; };
 		44FD16852AEA37E6003636CB /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		514C7EFE2CACC70600808ADE /* mkvmuxer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mkvmuxer.h; sourceTree = "<group>"; };
+		514C7EFF2CACC70600808ADE /* mkvmuxer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mkvmuxer.cc; sourceTree = "<group>"; };
+		514C7F002CACC70600808ADE /* mkvmuxertypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mkvmuxertypes.h; sourceTree = "<group>"; };
+		514C7F012CACC70600808ADE /* mkvmuxerutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mkvmuxerutil.h; sourceTree = "<group>"; };
+		514C7F022CACC70600808ADE /* mkvmuxerutil.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mkvmuxerutil.cc; sourceTree = "<group>"; };
+		514C7F132CB0CB2400808ADE /* webmids.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = webmids.h; sourceTree = "<group>"; };
+		514C7F152CB1759300808ADE /* mkvwriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mkvwriter.h; sourceTree = "<group>"; };
+		514C7F162CB1759300808ADE /* mkvwriter.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mkvwriter.cc; sourceTree = "<group>"; };
 		5C0073091E5513E70042215A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5C00730A1E5513E70042215A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5C00730B1E5513E70042215A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -16896,6 +16928,20 @@
 			path = gl;
 			sourceTree = "<group>";
 		};
+		514C7F052CACC70600808ADE /* mkvmuxer */ = {
+			isa = PBXGroup;
+			children = (
+				514C7EFF2CACC70600808ADE /* mkvmuxer.cc */,
+				514C7EFE2CACC70600808ADE /* mkvmuxer.h */,
+				514C7F002CACC70600808ADE /* mkvmuxertypes.h */,
+				514C7F022CACC70600808ADE /* mkvmuxerutil.cc */,
+				514C7F012CACC70600808ADE /* mkvmuxerutil.h */,
+				514C7F162CB1759300808ADE /* mkvwriter.cc */,
+				514C7F152CB1759300808ADE /* mkvwriter.h */,
+			);
+			path = mkvmuxer;
+			sourceTree = "<group>";
+		};
 		5C0885111E4A99C200403995 /* include */ = {
 			isa = PBXGroup;
 			children = (
@@ -20069,6 +20115,7 @@
 			isa = PBXGroup;
 			children = (
 				CDFD2F9224C4B2F90048DAC3 /* common */,
+				514C7F052CACC70600808ADE /* mkvmuxer */,
 				CDEBB19224C0191800ADBD44 /* webm_parser */,
 			);
 			path = libwebm;
@@ -20200,6 +20247,7 @@
 			children = (
 				CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */,
 				CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */,
+				514C7F132CB0CB2400808ADE /* webmids.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -20916,10 +20964,15 @@
 				CDFD2FC924C4DAF70048DAC3 /* file_reader.h in Headers */,
 				CDFD2FCA24C4DAF70048DAC3 /* id.h in Headers */,
 				CDFD2FCB24C4DAF70048DAC3 /* istream_reader.h in Headers */,
+				514C7F0C2CACC70600808ADE /* mkvmuxer.h in Headers */,
+				514C7F0B2CACC70600808ADE /* mkvmuxertypes.h in Headers */,
+				514C7F092CACC70600808ADE /* mkvmuxerutil.h in Headers */,
+				514C7F182CB1759300808ADE /* mkvwriter.h in Headers */,
 				CDFD2FCC24C4DAF70048DAC3 /* reader.h in Headers */,
 				CDFD2FCD24C4DAF70048DAC3 /* status.h in Headers */,
 				416008B425DBCEC300E892FE /* vp9_header_parser.h in Headers */,
 				CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Headers */,
+				514C7F142CB0CB2400808ADE /* webmids.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23700,6 +23753,7 @@
 				CDEBB11724C0187400ADBD44 /* Frameworks */,
 			);
 			buildRules = (
+				51DA3FE32CB58200002C095E /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -25121,6 +25175,9 @@
 				CDEBB4C024C019C400ADBD44 /* id_parser.cc in Sources */,
 				CDEBB4BF24C019C400ADBD44 /* istream_reader.cc in Sources */,
 				CDEBB4B724C019C400ADBD44 /* master_parser.cc in Sources */,
+				514C7F072CACC70600808ADE /* mkvmuxer.cc in Sources */,
+				514C7F062CACC70600808ADE /* mkvmuxerutil.cc in Sources */,
+				514C7F172CB1759300808ADE /* mkvwriter.cc in Sources */,
 				CDEBB4C424C019C400ADBD44 /* parser_utils.cc in Sources */,
 				CDEBB4C724C019C400ADBD44 /* segment_parser.cc in Sources */,
 				CDEBB4BD24C019C400ADBD44 /* size_parser.cc in Sources */,

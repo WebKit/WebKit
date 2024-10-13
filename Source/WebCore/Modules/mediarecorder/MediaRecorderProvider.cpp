@@ -69,16 +69,16 @@ bool MediaRecorderProvider::isSupported(const String& value)
     ContentType mimeType(value);
 #if PLATFORM(COCOA)
     auto containerType = mimeType.containerType();
-    if (!equalLettersIgnoringASCIICase(containerType, "audio/mp4"_s) && !equalLettersIgnoringASCIICase(containerType, "video/mp4"_s))
-        return false;
-
-    for (auto& item : mimeType.codecs()) {
-        auto codec = StringView(item).trim(isASCIIWhitespace<UChar>);
-        // FIXME: We should further validate parameters.
-        if (!startsWithLettersIgnoringASCIICase(codec, "avc1"_s) && !startsWithLettersIgnoringASCIICase(codec, "mp4a"_s))
-            return false;
+    if (equalLettersIgnoringASCIICase(containerType, "audio/mp4"_s) || equalLettersIgnoringASCIICase(containerType, "video/mp4"_s)) {
+        for (auto& codec : mimeType.codecs()) {
+            // FIXME: We should further validate parameters.
+            if (!startsWithLettersIgnoringASCIICase(codec, "avc1"_s) && !startsWithLettersIgnoringASCIICase(codec, "mp4a"_s))
+                return false;
+        }
+        return true;
     }
-    return true;
+    return isWebMAndSupported(value);
+
 #elif USE(GSTREAMER_TRANSCODER)
     return MediaRecorderPrivateGStreamer::isTypeSupported(mimeType);
 #else
@@ -87,5 +87,28 @@ bool MediaRecorderProvider::isSupported(const String& value)
 #endif
 }
 
+bool MediaRecorderProvider::isWebMAndSupported(const String& mimeType)
+{
+    ContentType contentType(mimeType);
+    auto containerType = contentType.containerType();
+    if (!equalLettersIgnoringASCIICase(containerType, "audio/webm"_s) && !equalLettersIgnoringASCIICase(containerType, "video/webm"_s))
+        return false;
+#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER_WEBM)
+    for (auto& codec : contentType.codecs()) {
+        // FIXME: We should further validate parameters.
+        bool isVP9 = codec.startsWith("vp09"_s) || equal(codec, "vp9"_s) || equal(codec, "vp9.0"_s);
+        bool isVP8 = codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp8.0"_s);
+        bool isOpus = codec == "opus"_s;
+        if (!isVP9 && !isVP8 && !isOpus)
+            return false;
+    }
+    return true;
+#elif USE(GSTREAMER_TRANSCODER)
+    return MediaRecorderPrivateGStreamer::isTypeSupported(contentType);
+#else
+    UNUSED_VARIABLE(contentType);
+    return false;
+#endif
+}
 #endif
 }

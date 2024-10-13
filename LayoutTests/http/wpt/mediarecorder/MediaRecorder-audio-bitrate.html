@@ -7,9 +7,9 @@
 </head>
 <body>
 <script>
-    async function record(stream, bitRate)
+    function record(stream, bitRate, mimeType)
     {
-        const recorder = new MediaRecorder(stream, { audioBitsPerSecond : bitRate });
+        const recorder = new MediaRecorder(stream, { mimetype: mimeType, audioBitsPerSecond : bitRate });
         const promise = new Promise((resolve, reject) => {
             recorder.ondataavailable = (e) => resolve(e.data);
             setTimeout(reject, 5000);
@@ -24,7 +24,7 @@
         const bitRates = [128000, 192000, 256000, 12000, 24000, 108555];
         let promises = [];
         bitRates.forEach(bitRate => {
-            promises.push(record(stream, bitRate));
+            promises.push(record(stream, bitRate, 'audio/mp4'));
         });
 
         let blobs = new Array(bitRates.length).fill(0);
@@ -39,6 +39,27 @@
         });
         assert_greater_than(blobs[2].size, blobs[0].size);
     }, "Various audio bitrates");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+        const bitRates = [128000, 192000, 256000, 12000, 24000, 108555];
+        let promises = [];
+        bitRates.forEach(bitRate => {
+            promises.push(record(stream, bitRate, 'audio/webm'));
+        });
+
+        let blobs = new Array(bitRates.length).fill(0);
+        promises.forEach(async (promise, index) => {
+            blobs[index] = await promise;
+        });
+        await Promise.all(promises);
+
+        let counter = 0;
+        blobs.forEach(blob => {
+            assert_not_equals(blob.size, 0, "bitrate " + bitRates[counter++]);
+        });
+        assert_greater_than(blobs[2].size, blobs[0].size);
+    }, "Various audio bitrates with WebM");
 </script>
 </body>
 </html>

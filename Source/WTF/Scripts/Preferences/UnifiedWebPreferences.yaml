@@ -4772,6 +4772,22 @@ MediaRecorderEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
+MediaRecorderEnabledWebM:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "MediaRecorder WebM"
+  humanReadableDescription: "Enable WebM support with MediaRecorder"
+  condition: ENABLE(MEDIA_RECORDER_WEBM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 MediaSessionCaptureToggleAPIEnabled:
   type: bool
   status: stable

@@ -38,7 +38,7 @@
 #import "SystemBattery.h"
 #import "VideoConfiguration.h"
 #import <JavaScriptCore/DataView.h>
-#import <webm/vp9_header_parser.h>
+#import <webm/common/vp9_header_parser.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
