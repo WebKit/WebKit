@@ -3,8 +3,6 @@
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
 
-  <include href="../gstreamer/jhbuild.modules"/>
-
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
       <dep package="atk"/>
@@ -15,7 +13,6 @@
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
-      <dep package="libspiel"/>
       <dep package="libvpx"/>
       <dep package="manette"/>
       <dep package="wayland"/>
@@ -34,7 +31,6 @@
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
-      <dep package="libspiel"/>
       <dep package="libvpx"/>
       <dep package="openxr"/>
       <dep package="wayland"/>
@@ -44,29 +40,47 @@
   </metamodule>
 
   <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
-  <!-- Git repositories. -->
-  <repository type="git" name="aomedia.googlesource.com"
-      href="https://aomedia.googlesource.com"/>
-  <repository type="git" name="chromium.googlesource.com"
-      href="https://chromium.googlesource.com"/>
-  <repository type="git" name="git.freedesktop.org"
-      href="https://gitlab.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
-  <!-- Tarball repositories. -->
-  <repository type="tarball" name="download.gnome.org"
-      href="https://download.gnome.org"/>
   <repository type="tarball" name="github-tarball"
       href="https://github.com"/>
+  <repository type="tarball" name="sourceware.org-mirror"
+      href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
+  <repository type="tarball" name="download.gnome.org"
+      href="https://download.gnome.org"/>
+  <repository type="git" name="git.gnome.org"
+      href="https://git.gnome.org/browse/"/>
+  <repository type="tarball" name="cairographics.org"
+      href="http://cairographics.org"/>
+  <repository type="tarball" name="freedesktop.org"
+      href="http://www.freedesktop.org"/>
+  <repository type="tarball" name="xorg"
+      href="http://xorg.freedesktop.org"/>
+  <repository type="tarball" name="xmlsoft.org"
+      href="http://xmlsoft.org"/>
+  <repository type="tarball" name="savannah.gnu.org"
+      href="http://download.savannah.gnu.org/releases/"/>
+ <repository type="tarball" name="dri.freedesktop.org"
+      href="https://dri.freedesktop.org"/>
+  <repository type="tarball" name="mesa.freedesktop.org"
+      href="https://mesa.freedesktop.org"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="https://gitlab.freedesktop.org"/>
+  <repository type="tarball" name="llvm.org"
+      href="http://llvm.org"/>
+  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
+      href="http://webkitgtk.org/jhbuild_mirror/"/>
+  <repository type="tarball" name="gnupg.org"
+      href="https://www.gnupg.org/ftp/gcrypt/"/>
 
-  <!-- meson 0.64.0 required to build libspeechprovider-1.0.1 -->
+  <!-- meson 0.62.2 required to build gstreamer-1.22.7 -->
   <if condition-set="require-meson">
     <distutils id="meson" python3="1">
       <branch module="mesonbuild/meson"
-              version="0.64.0"
-              tag="0.64.0"
+              version="0.62.2"
+              tag="0.62.2"
               checkoutdir="meson-${version}"
               repo="github.com"/>
     </distutils>
@@ -138,18 +152,6 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <!-- libspiel 1.0.1 requires GLib 2.76.0 and GStreamer 1.9.2 -->
-  <meson id="libspiel" mesonargs="-Ddocs=false -Dtests=false -Dlibspeechprovider:docs=false -Dlibspeechprovider:introspection=false">
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="gstreamer"/>
-    </dependencies>
-    <branch module="project-spiel/libspiel.git"
-            tag="SPIEL_1_0_1"
-            checkoutdir="lispiel-1.0.1"
-            repo="github.com" />
-  </meson>
-
   <!-- libmanette >= 0.2.4 required for GamePad support -->
   <meson id="manette" mesonargs="-Dintrospection=false -Dvapi=false">
     <pkg-config>manette-0.2.pc</pkg-config>
@@ -180,25 +182,23 @@
             hash="sha256:965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"/>
   </autotools>
 
-  <!-- Glib 2.76 is required by libspiel 1.0.1 -->
-  <meson id="glib" mesonargs="-Dlibmount=disabled -Dselinux=disabled -Dgtk_doc=false -Dtests=false">
+  <meson id="glib"
+         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
     <pkg-config>glib-2.0.pc</pkg-config>
-    <branch module="/sources/glib/2.76/glib-${version}.tar.xz"
-            version="2.76.0"
-            checkoutdir="glib-${version}"
+    <branch module="/sources/glib/2.72/glib-${version}.tar.xz"
+            version="2.72.4"
             repo="download.gnome.org"
-            hash="sha256:525bb703b807142e1aee5ccf222c344e8064b21c0c45677ef594e587874c6797"/>
+            hash="sha256:8848aba518ba2f4217d144307a1d6cb9afcc92b54e5c13ac1f8c4d4608e96f0e">
+    </branch>
   </meson>
 
   <meson id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/sources/glib-networking/2.72/glib-networking-${version}.tar.xz"
-            version="2.72.0"
-            checkoutdir="glib-networking-${version}"
+    <branch module="/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
             repo="download.gnome.org"
-            hash="sha256:100aaebb369285041de52da422b6b716789d5e4d7549a3a71ba587b932e0823b"/>
+            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
   </meson>
 
   <!-- atk needed to build with A11y support -->
