@@ -441,8 +441,10 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
             return g_variant_new_string(atspiObject->description().data());
         if (!g_strcmp0(propertyName, "Locale"))
             return g_variant_new_string(atspiObject->locale().utf8().data());
-        if (!g_strcmp0(propertyName, "AccessibleId"))
-            return g_variant_new_string(atspiObject->m_coreObject ? String::number(atspiObject->m_coreObject->objectID().toUInt64()).utf8().data() : "");
+        if (!g_strcmp0(propertyName, "AccessibleId")) {
+            auto objectID = atspiObject->m_coreObject->objectID();
+            return g_variant_new_string(atspiObject->m_coreObject ? String::number(objectID ? objectID->toUInt64() : 0).utf8().data() : "");
+        }
         if (!g_strcmp0(propertyName, "Parent"))
             return atspiObject->parentReference();
         if (!g_strcmp0(propertyName, "ChildCount"))

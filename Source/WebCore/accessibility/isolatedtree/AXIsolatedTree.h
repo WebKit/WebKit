@@ -292,7 +292,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, AXPropertyName);
 using AXPropertyNameSet = HashSet<AXPropertyName, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 // If this type is modified, the switchOn statment in AXIsolatedObject::setProperty must be updated as well.
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>
+using AXPropertyValueVariant = std::variant<std::nullptr_t, Markable<AXID>, String, bool, int, unsigned, double, float, uint64_t, WallTime, DateComponentsType, AccessibilityButtonState, Color, std::shared_ptr<URL>, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<Markable<AXID>, Markable<AXID>>>, Vector<String>, std::shared_ptr<Path>, OptionSet<AXAncestorFlag>, InsideLink, Vector<Vector<Markable<AXID>>>, CharacterRange, std::pair<Markable<AXID>, CharacterRange>
 #if PLATFORM(COCOA)
     , RetainPtr<NSAttributedString>
     , RetainPtr<id>
@@ -362,10 +362,10 @@ public:
 
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> rootWebArea();
-    AXID focusedNodeID();
+    std::optional<AXID> focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
-    RefPtr<AXIsolatedObject> objectForID(const AXID) const;
+    RefPtr<AXIsolatedObject> objectForID(std::optional<AXID>) const;
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
 
     void generateSubtree(AccessibilityObject&);
@@ -390,7 +390,8 @@ public:
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
     void removeNode(const AccessibilityObject&);
     // Removes the given node and all its descendants from m_nodeMap.
-    void removeSubtreeFromNodeMap(AXID axID, AccessibilityObject*);
+    void removeSubtreeFromNodeMap(std::optional<AXID>, AccessibilityObject*);
+
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     void objectBecameIgnored(AXID axID)
     {
@@ -423,7 +424,7 @@ public:
     // of the IsolatedTree.
     // Focused node updates in AXObjectCache use setFocusNodeID.
     void setRootNode(AXIsolatedObject*) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void setFocusedNodeID(AXID);
+    void setFocusedNodeID(std::optional<AXID>);
 
     // Relationships between objects.
     std::optional<ListHashSet<AXID>> relatedObjectIDsFor(const AXIsolatedObject&, AXRelationType);
@@ -501,7 +502,7 @@ private:
 
     // Stores the parent ID and children IDS for a given IsolatedObject.
     struct ParentChildrenIDs {
-        AXID parentID;
+        Markable<AXID> parentID;
         Vector<AXID> childrenIDs;
     };
     // Only accessed on the main thread.
@@ -546,9 +547,9 @@ private:
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     HashSet<AXID> m_pendingProtectedFromDeletionIDs WTF_GUARDED_BY_LOCK(m_changeLogLock);
     HashMap<AXID, AXID> m_pendingParentUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
-    AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    Markable<AXID> m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
-    AXID m_focusedNodeID;
+    Markable<AXID> m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
     std::atomic<double> m_processingProgress { 1 };
 

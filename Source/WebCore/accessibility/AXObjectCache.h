@@ -322,7 +322,7 @@ public:
     void remove(RenderObject*);
     void remove(Node&);
     void remove(Widget*);
-    void remove(AXID);
+    void remove(std::optional<AXID>);
 
 #if !PLATFORM(COCOA) && !USE(ATSPI)
     void detachWrapper(AXCoreObject*, AccessibilityDetachmentType);
@@ -440,7 +440,7 @@ public:
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
-    Node* nodeForID(const AXID) const;
+    Node* nodeForID(std::optional<AXID>) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void onPaint(const RenderObject&, IntRect&&) const;
@@ -830,7 +830,7 @@ private:
     bool m_deferredRegenerateIsolatedTree { false };
     Ref<AXGeometryManager> m_geometryManager;
     DeferrableOneShotTimer m_selectedTextRangeTimer;
-    AXID m_lastDebouncedTextRangeObject;
+    Markable<AXID> m_lastDebouncedTextRangeObject;
 
     Timer m_updateTreeSnapshotTimer;
 #endif
@@ -851,7 +851,7 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    AXID m_lastTextFieldAXID;
+    Markable<AXID> m_lastTextFieldAXID;
     VisibleSelection m_lastSelection;
 #endif
 };
@@ -868,12 +868,12 @@ inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs)
     });
 }
 
-inline Node* AXObjectCache::nodeForID(const AXID axID) const
+inline Node* AXObjectCache::nodeForID(std::optional<AXID> axID) const
 {
-    if (!axID.isValid())
+    if (!axID)
         return nullptr;
 
-    auto* object = m_objects.get(axID);
+    auto* object = m_objects.get(*axID);
     return object ? object->node() : nullptr;
 }
 

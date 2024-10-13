@@ -84,15 +84,15 @@ struct TextMarkerData {
         memset(static_cast<void*>(this), 0, sizeof(*this));
     }
 
-    TextMarkerData(AXID axTreeID, AXID axObjectID,
+    TextMarkerData(std::optional<AXID> axTreeID, std::optional<AXID> axObjectID,
         unsigned offsetParam = 0,
         Position::AnchorType anchorTypeParam = Position::PositionIsOffsetInAnchor,
         Affinity affinityParam = Affinity::Downstream,
         unsigned charStart = 0, unsigned charOffset = 0, bool ignoredParam = false)
     {
         memset(static_cast<void*>(this), 0, sizeof(*this));
-        treeID = axTreeID.toUInt64();
-        objectID = axObjectID.toUInt64();
+        treeID = axTreeID ? axTreeID->toUInt64() : 0;
+        objectID = axObjectID ? axObjectID->toUInt64() : 0;
         offset = offsetParam;
         anchorType = anchorTypeParam;
         affinity = affinityParam;
@@ -106,14 +106,14 @@ struct TextMarkerData {
 
     friend bool operator==(const TextMarkerData&, const TextMarkerData&) = default;
 
-    AXID axTreeID() const
+    std::optional<AXID> axTreeID() const
     {
-        return LegacyNullableObjectIdentifier<AXIDType>(treeID);
+        return treeID ? std::optional { ObjectIdentifier<AXIDType>(treeID) } : std::nullopt;
     }
 
-    AXID axObjectID() const
+    std::optional<AXID> axObjectID() const
     {
-        return LegacyNullableObjectIdentifier<AXIDType>(objectID);
+        return objectID ? std::optional { ObjectIdentifier<AXIDType>(objectID) } : std::nullopt;
     }
 };
 
@@ -141,7 +141,7 @@ public:
 #if PLATFORM(COCOA)
     AXTextMarker(PlatformTextMarkerData);
 #endif
-    AXTextMarker(AXID treeID, AXID objectID, unsigned offset)
+    AXTextMarker(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned offset)
         : m_data({ treeID, objectID, offset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, offset })
     { }
     AXTextMarker(const AXCoreObject& object, unsigned offset)
@@ -162,10 +162,10 @@ public:
     operator PlatformTextMarkerData() const { return platformData().autorelease(); }
 #endif
 
-    AXID treeID() const { return AXID { m_data.treeID }; }
-    AXID objectID() const { return AXID { m_data.objectID }; }
+    std::optional<AXID> treeID() const { return m_data.axTreeID(); }
+    std::optional<AXID> objectID() const { return m_data.axObjectID(); }
     unsigned offset() const { return m_data.offset; }
-    bool isNull() const { return !treeID().isValid() || !objectID().isValid(); }
+    bool isNull() const { return !treeID() || !objectID(); }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     // FIXME: Currently, the logic for serving text APIs off the main-thread requires isolated objects, but should eventually be refactored to work with AXCoreObjects.
     RefPtr<AXIsolatedObject> isolatedObject() const;
@@ -253,8 +253,8 @@ public:
 #if PLATFORM(MAC)
     AXTextMarkerRange(AXTextMarkerRangeRef);
 #endif
-    AXTextMarkerRange(AXID treeID, AXID objectID, const CharacterRange&);
-    AXTextMarkerRange(AXID treeID, AXID objectID, unsigned offset, unsigned length);
+    AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, const CharacterRange&);
+    AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
     operator bool() const { return m_start && m_end; }
@@ -280,7 +280,7 @@ public:
 
     AXTextMarker start() const { return m_start; }
     AXTextMarker end() const { return m_end; }
-    bool isConfinedTo(AXID) const;
+    bool isConfinedTo(std::optional<AXID>) const;
     bool isConfined() const;
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -294,7 +294,7 @@ private:
     AXTextMarker m_end;
 };
 
-inline AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, const CharacterRange& range)
+inline AXTextMarkerRange::AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, const CharacterRange& range)
     : AXTextMarkerRange(treeID, objectID, range.location, range.location + range.length)
 { }
 

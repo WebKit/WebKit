@@ -239,13 +239,13 @@ bool AccessibilityTableCell::isRowHeader() const
     return false;
 }
     
-AXID AccessibilityTableCell::rowGroupAncestorID() const
+std::optional<AXID> AccessibilityTableCell::rowGroupAncestorID() const
 {
     auto* rowGroup = Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
         return ancestor.hasTagName(theadTag) || ancestor.hasTagName(tbodyTag) || ancestor.hasTagName(tfootTag);
     });
     if (!rowGroup)
-        return { };
+        return std::nullopt;
 
     return rowGroup->objectID();
 }

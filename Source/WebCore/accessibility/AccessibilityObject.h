@@ -67,7 +67,7 @@ class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<Accessibi
 public:
     virtual ~AccessibilityObject();
 
-    AXID treeID() const final;
+    std::optional<AXID> treeID() const final;
     String dbg() const final;
 
     // After constructing an AccessibilityObject, it must be given a
@@ -153,7 +153,7 @@ public:
     AXCoreObject* headerContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
-    virtual Vector<Vector<AXID>> cellSlots() { return { }; }
+    virtual Vector<Vector<Markable<AXID>>> cellSlots() { return { }; }
 
     // Table cell support.
     bool isTableCell() const override { return false; }

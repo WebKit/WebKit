@@ -295,21 +295,21 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (void)attachAXObject:(AccessibilityObject&)axObject
 {
-    ASSERT(!_identifier.isValid() || _identifier == axObject.objectID());
+    ASSERT(!_identifier || *_identifier == axObject.objectID());
     m_axObject = axObject;
-    if (!_identifier.isValid())
+    if (!_identifier)
         _identifier = m_axObject->objectID();
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)attachIsolatedObject:(AXIsolatedObject*)isolatedObject
 {
-    ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
+    ASSERT(isolatedObject && (!_identifier || *_identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
     if (isMainThread())
         m_isolatedObjectInitialized = true;
 
-    if (!_identifier.isValid())
+    if (!_identifier)
         _identifier = m_isolatedObject.get()->objectID();
 }
 
@@ -322,7 +322,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 - (void)detach
 {
     ASSERT(isMainThread());
-    _identifier = { };
+    _identifier = std::nullopt;
     m_axObject = nullptr;
 }
 

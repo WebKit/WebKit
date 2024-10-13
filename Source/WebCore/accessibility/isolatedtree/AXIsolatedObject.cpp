@@ -56,10 +56,10 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     , m_cachedTree(tree)
 {
     ASSERT(isMainThread());
-    ASSERT(objectID().isValid());
+    ASSERT(objectID());
 
-    auto* axParent = axObject->parentInCoreTree();
-    m_parentID = axParent ? axParent->objectID() : AXID();
+    if (auto* axParent = axObject->parentInCoreTree())
+        m_parentID = axParent->objectID();
 
     // Allocate a capacity based on the minimum properties an object has (based on measurements from a real webpage).
     m_propertyMap.reserveInitialCapacity(12);
@@ -81,7 +81,7 @@ String AXIsolatedObject::dbg() const
 {
     return makeString(
         "{role: "_s, accessibilityRoleToString(roleValue()),
-        ", ID "_s, objectID().loggingString(), '}'
+        ", ID "_s, objectID() ? objectID()->loggingString() : ""_s, '}'
     );
 }
 
@@ -199,7 +199,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsNonLayerSVGObject, object.isNonLayerSVGObject());
 
     RefPtr geometryManager = tree()->geometryManager();
-    std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
+    std::optional frame = geometryManager ? geometryManager->cachedRectForID(*object.objectID()) : std::nullopt;
     if (frame)
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
     else if (object.isScrollView() || object.isWebArea() || object.isScrollbar()) {
@@ -381,7 +381,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
         auto range = object.textInputMarkedTextMarkerRange();
         if (auto characterRange = range.characterRange(); range && characterRange)
-            setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<AXID, CharacterRange>(range.start().objectID(), *characterRange));
+            setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<Markable<AXID>, CharacterRange>(*range.start().objectID(), *characterRange));
 
         bool isNonNativeTextControl = object.isNonNativeTextControl();
         setProperty(AXPropertyName::CanBeMultilineTextField, canBeMultilineTextField(object, isNonNativeTextControl));
@@ -431,10 +431,10 @@ bool AXIsolatedObject::canBeMultilineTextField(AccessibilityObject& object, bool
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
-    ASSERT(objectID().isValid());
+    ASSERT(objectID());
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectForID(objectID()) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(*objectID()) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
@@ -450,14 +450,14 @@ void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject&
         return;
 
     auto idPairs = pairs.map([](auto& mathPair) {
-        return std::pair { mathPair.first ? mathPair.first->objectID() : AXID(), mathPair.second ? mathPair.second->objectID() : AXID() };
+        return std::pair { mathPair.first ? Markable { mathPair.first->objectID() } : std::nullopt, mathPair.second ? Markable { mathPair.second->objectID() } : std::nullopt };
     });
     setProperty(propertyName, WTFMove(idPairs));
 }
 
 void AXIsolatedObject::setObjectProperty(AXPropertyName propertyName, AXCoreObject* object)
 {
-    setProperty(propertyName, object ? object->objectID() : AXID());
+    setProperty(propertyName, object ? Markable { object->objectID() } : std::nullopt);
 }
 
 void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, const AccessibilityChildrenVector& objects)
@@ -554,7 +554,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
 
     bool isDefaultValue = WTF::switchOn(value,
         [](std::nullptr_t&) { return true; },
-        [](AXID typedValue) { return !typedValue.isValid(); },
+        [](Markable<AXID> typedValue) { return !typedValue; },
         [&](String& typedValue) {
             // We use a null stringValue to indicate when the string value is different than the text content.
             if (propertyName == AXPropertyName::StringValue)
@@ -581,7 +581,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         },
         [](Vector<AccessibilityText>& typedValue) { return typedValue.isEmpty(); },
         [](Vector<AXID>& typedValue) { return typedValue.isEmpty(); },
-        [](Vector<std::pair<AXID, AXID>>& typedValue) { return typedValue.isEmpty(); },
+        [](Vector<std::pair<Markable<AXID>, Markable<AXID>>>& typedValue) { return typedValue.isEmpty(); },
         [](Vector<String>& typedValue) { return typedValue.isEmpty(); },
         [](std::shared_ptr<Path>& typedValue) { return !typedValue || typedValue->isEmpty(); },
         [](OptionSet<AXAncestorFlag>& typedValue) { return typedValue.isEmpty(); },
@@ -590,10 +590,10 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         [](RetainPtr<id>& typedValue) { return !typedValue; },
 #endif
         [](InsideLink& typedValue) { return typedValue == InsideLink(); },
-        [](Vector<Vector<AXID>>& typedValue) { return typedValue.isEmpty(); },
+        [](Vector<Vector<Markable<AXID>>>& typedValue) { return typedValue.isEmpty(); },
         [](CharacterRange& typedValue) { return !typedValue.location && !typedValue.length; },
-        [](std::pair<AXID, CharacterRange>& typedValue) {
-            return !typedValue.first.isValid() && !typedValue.second.location && !typedValue.second.length;
+        [](std::pair<Markable<AXID>, CharacterRange>& typedValue) {
+            return !typedValue.first && !typedValue.second.location && !typedValue.second.length;
         },
 #if ENABLE(AX_THREAD_TEXT_APIS)
         [](AXTextRuns& runs) { return !runs.size(); },
@@ -704,7 +704,7 @@ void AXIsolatedObject::setSelectedChildren(const AccessibilityChildrenVector& se
 
 bool AXIsolatedObject::isDetachedFromParent()
 {
-    if (parent().isValid())
+    if (parent())
         return false;
 
     // Check whether this is the root node, in which case we should return false.
@@ -720,15 +720,15 @@ AXIsolatedObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, un
     if (cellSlotsIterator == m_propertyMap.end())
         return nullptr;
 
-    AXID cellID = WTF::switchOn(cellSlotsIterator->value,
-        [&] (Vector<Vector<AXID>>& cellSlots) {
+    auto cellID = WTF::switchOn(cellSlotsIterator->value,
+        [&] (Vector<Vector<Markable<AXID>>>& cellSlots) -> std::optional<AXID> {
             if (rowIndex >= cellSlots.size() || columnIndex >= cellSlots[rowIndex].size())
-                return AXID();
+                return std::nullopt;
             return cellSlots[rowIndex][columnIndex];
         },
-        [] (auto&) { return AXID(); }
+        [] (auto&) -> std::optional<AXID> { return std::nullopt; }
     );
-    return cellID ? tree()->objectForID(cellID).get() : nullptr;
+    return cellID ? tree()->objectForID(*cellID).get() : nullptr;
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -933,14 +933,14 @@ SRGBA<uint8_t> AXIsolatedObject::colorValue() const
 
 AXIsolatedObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) const
 {
-    AXID axID = Accessibility::retrieveValueFromMainThread<AXID>([&point, this] () -> AXID {
+    auto axID = Accessibility::retrieveValueFromMainThread<std::optional<AXID>>([&point, this] () -> std::optional<AXID> {
         if (auto* object = associatedAXObject()) {
             object->updateChildrenIfNecessary();
             if (auto* axObject = object->accessibilityHitTest(point))
                 return axObject->objectID();
         }
 
-        return { };
+        return std::nullopt;
     });
 
     return tree()->objectForID(axID).get();
@@ -958,9 +958,9 @@ IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) c
 AXIsolatedObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
-    AXID nodeID = WTF::switchOn(value,
-        [] (AXID& typedValue) -> AXID { return typedValue; },
-        [] (auto&) { return AXID(); }
+    auto nodeID = WTF::switchOn(value,
+        [] (Markable<AXID>& typedValue) -> std::optional<AXID> { return typedValue; },
+        [] (auto&) { return std::optional<AXID> { }; }
     );
 
     return tree()->objectForID(nodeID).get();
@@ -1843,7 +1843,7 @@ bool AXIsolatedObject::hasSameStyle(const AXCoreObject& otherObject) const
 
 AXTextMarkerRange AXIsolatedObject::textInputMarkedTextMarkerRange() const
 {
-    auto value = optionalAttributeValue<std::pair<AXID, CharacterRange>>(AXPropertyName::TextInputMarkedTextMarkerRange);
+    auto value = optionalAttributeValue<std::pair<Markable<AXID>, CharacterRange>>(AXPropertyName::TextInputMarkedTextMarkerRange);
     if (!value)
         return { };
 

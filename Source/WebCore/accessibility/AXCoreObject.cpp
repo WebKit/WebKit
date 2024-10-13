@@ -365,8 +365,8 @@ bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)
     if (!otherTableCell)
         return false;
 
-    AXID ancestorID = rowGroupAncestorID();
-    return ancestorID.isValid() && ancestorID == otherTableCell->rowGroupAncestorID();
+    auto ancestorID = rowGroupAncestorID();
+    return ancestorID && *ancestorID == otherTableCell->rowGroupAncestorID();
 }
 
 bool AXCoreObject::isTableCellInSameColGroup(AXCoreObject* tableCell)

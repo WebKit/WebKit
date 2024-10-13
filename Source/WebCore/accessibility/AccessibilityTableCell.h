@@ -47,7 +47,7 @@ public:
     bool isColumnHeader() const override;
     bool isRowHeader() const override;
 
-    AXID rowGroupAncestorID() const final;
+    std::optional<AXID> rowGroupAncestorID() const final;
 
     virtual AccessibilityTable* parentTable() const;
 

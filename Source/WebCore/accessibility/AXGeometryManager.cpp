@@ -64,15 +64,15 @@ std::optional<IntRect> AXGeometryManager::cachedRectForID(AXID axID)
     return std::nullopt;
 }
 
-void AXGeometryManager::cacheRect(AXID axID, IntRect&& rect)
+void AXGeometryManager::cacheRect(std::optional<AXID> axID, IntRect&& rect)
 {
     // We shouldn't call this method on a geometry manager that has no page ID.
     ASSERT(m_cache->pageID());
     ASSERT(AXObjectCache::isIsolatedTreeEnabled());
 
-    if (!axID.isValid())
+    if (!axID)
         return;
-    auto rectIterator = m_cachedRects.find(axID);
+    auto rectIterator = m_cachedRects.find(*axID);
 
     bool rectChanged = false;
     if (rectIterator != m_cachedRects.end()) {
@@ -81,7 +81,7 @@ void AXGeometryManager::cacheRect(AXID axID, IntRect&& rect)
             rectIterator->value = rect;
     } else {
         rectChanged = true;
-        m_cachedRects.set(axID, rect);
+        m_cachedRects.set(*axID, rect);
     }
 
     if (!rectChanged)
@@ -90,7 +90,7 @@ void AXGeometryManager::cacheRect(AXID axID, IntRect&& rect)
     RefPtr tree = AXIsolatedTree::treeForPageID(*m_cache->pageID());
     if (!tree)
         return;
-    tree->updateFrame(axID, WTFMove(rect));
+    tree->updateFrame(*axID, WTFMove(rect));
 }
 
 void AXGeometryManager::scheduleObjectRegionsUpdate(bool scheduleImmediately)

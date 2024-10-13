@@ -102,7 +102,7 @@ struct ScrollRectToVisibleOptions;
 enum class DateComponentsType : uint8_t;
 
 enum class AXIDType { };
-using AXID = LegacyNullableObjectIdentifier<AXIDType>;
+using AXID = ObjectIdentifier<AXIDType>;
 
 enum class AXAncestorFlag : uint8_t {
     // When the flags aren't initialized, it means the object hasn't been inserted into the tree,
@@ -733,8 +733,8 @@ public:
     virtual String dbg() const = 0;
 
     void setObjectID(AXID axID) { m_id = axID; }
-    AXID objectID() const { return m_id; }
-    virtual AXID treeID() const = 0;
+    std::optional<AXID> objectID() const { return m_id; }
+    virtual std::optional<AXID> treeID() const = 0;
     virtual ProcessID processID() const = 0;
 
     // When the corresponding WebCore object that this accessible object
@@ -808,7 +808,7 @@ public:
     virtual bool isRowHeader() const { return false; }
     bool isTableCellInSameRowGroup(AXCoreObject*);
     bool isTableCellInSameColGroup(AXCoreObject*);
-    virtual AXID rowGroupAncestorID() const { return { }; }
+    virtual std::optional<AXID> rowGroupAncestorID() const { return std::nullopt; }
     virtual String cellScope() const { return { }; }
     // Returns the start location and row span of the cell.
     virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
@@ -1389,7 +1389,7 @@ public:
 
 protected:
     AXCoreObject() = default;
-    explicit AXCoreObject(AXID axID)
+    explicit AXCoreObject(std::optional<AXID> axID)
         : m_id(axID)
     { }
 
@@ -1398,7 +1398,7 @@ private:
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 
-    AXID m_id;
+    Markable<AXID> m_id;
 #if PLATFORM(COCOA)
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
@@ -1412,8 +1412,8 @@ private:
 
 inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objects)
 {
-    return objects.map([] (const auto& object) {
-        return object ? object->objectID() : AXID();
+    return WTF::map(objects, [](auto& object) {
+        return *object->objectID();
     });
 }
 
@@ -1617,11 +1617,11 @@ template<typename U> inline void performFunctionOnMainThread(U&& lambda)
 
 template<typename T, typename U> inline T retrieveValueFromMainThread(U&& lambda)
 {
-    T value;
+    std::optional<T> value;
     callOnMainThreadAndWait([&value, &lambda] {
         value = lambda();
     });
-    return value;
+    return *value;
 }
 
 #if PLATFORM(COCOA)

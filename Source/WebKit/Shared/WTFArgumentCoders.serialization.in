@@ -59,8 +59,6 @@ header: <wtf/text/AtomString.h>
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
 }
 
-header: <wtf/ObjectIdentifier.h>
-template: enum class WebCore::AXIDType
 template: enum class WebCore::MediaSessionGroupIdentifierType
 template: enum class WebCore::MediaUniqueIdentifierType
 template: enum class WebCore::PushSubscriptionIdentifierType
@@ -75,7 +73,9 @@ template: struct WebCore::PlaybackTargetClientContextIdentifierType
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
+header: <wtf/ObjectIdentifier.h>
 template: class WebKit::WebURLSchemeHandler
+template: enum class WebCore::AXIDType
 template: enum class WebCore::BackgroundFetchRecordIdentifierType
 template: enum class WebCore::ElementIdentifierType
 template: enum class WebCore::FetchIdentifierType

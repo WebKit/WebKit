@@ -39,11 +39,11 @@
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXTextMarker);
 
-static AXID nodeID(AXObjectCache& cache, Node* node)
+static std::optional<AXID> nodeID(AXObjectCache& cache, Node* node)
 {
     if (RefPtr object = cache.getOrCreate(node))
         return object->objectID();
-    return { };
+    return std::nullopt;
 }
 
 TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam)
@@ -53,7 +53,8 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const VisiblePosition& visi
     memset(static_cast<void*>(this), 0, sizeof(*this));
     treeID = cache.treeID().toUInt64();
     auto position = visiblePosition.deepEquivalent();
-    objectID = nodeID(cache, position.anchorNode()).toUInt64();
+    auto optionalObjectID = nodeID(cache, position.anchorNode());
+    objectID = optionalObjectID ? optionalObjectID->toUInt64() : 0;
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
     anchorType = position.anchorType();
     affinity = visiblePosition.affinity();
@@ -68,7 +69,8 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& char
 
     memset(static_cast<void*>(this), 0, sizeof(*this));
     treeID = cache.treeID().toUInt64();
-    objectID = nodeID(cache, characterOffsetParam.node.get()).toUInt64();
+    auto optionalObjectID = nodeID(cache, characterOffsetParam.node.get());
+    objectID = optionalObjectID ? optionalObjectID->toUInt64() : 0;
     auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam);
     auto position = visiblePosition.deepEquivalent();
     offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
@@ -132,7 +134,7 @@ AXTextMarker::operator CharacterOffset() const
     if (!cache)
         return { };
 
-    RefPtr object = cache->objectForID(m_data.axObjectID());
+    RefPtr object = m_data.axObjectID() ? cache->objectForID(*m_data.axObjectID()) : nullptr;
     if (!object)
         return { };
 
@@ -195,7 +197,7 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
     }
 #endif
     auto tree = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
-    return tree ? tree->objectForID(objectID()) : nullptr;
+    return tree ? tree->objectForID(*objectID()) : nullptr;
 }
 
 String AXTextMarker::debugDescription() const
@@ -203,8 +205,8 @@ String AXTextMarker::debugDescription() const
     auto separator = ", "_s;
     RefPtr object = this->object();
     return makeString(
-        "treeID "_s, treeID().loggingString()
-        , separator, "objectID "_s, objectID().loggingString()
+        "treeID "_s, treeID() ? treeID()->loggingString() : ""_s
+        , separator, "objectID "_s, objectID() ? objectID()->loggingString() : ""_s
         , separator, "role "_s, object ? accessibilityRoleToString(object->roleValue()) : "no object"_str
         , isIgnored() ? makeString(separator, "ignored"_s) : ""_s
         , separator, "anchor "_s, m_data.anchorType
@@ -251,7 +253,7 @@ AXTextMarkerRange::AXTextMarkerRange(AXTextMarker&& start, AXTextMarker&& end)
     m_end = reverse ? WTFMove(start) : WTFMove(end);
 }
 
-AXTextMarkerRange::AXTextMarkerRange(AXID treeID, AXID objectID, unsigned start, unsigned end)
+AXTextMarkerRange::AXTextMarkerRange(std::optional<AXID> treeID, std::optional<AXID> objectID, unsigned start, unsigned end)
 {
     if (start > end)
         std::swap(start, end);
@@ -360,7 +362,7 @@ std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMark
     return result;
 }
 
-bool AXTextMarkerRange::isConfinedTo(AXID objectID) const
+bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
 {
     return m_start.objectID() == objectID
         && m_end.objectID() == objectID

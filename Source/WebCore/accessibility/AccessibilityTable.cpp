@@ -413,7 +413,7 @@ void AccessibilityTable::recomputeIsExposable()
     }
 }
 
-Vector<Vector<AXID>> AccessibilityTable::cellSlots()
+Vector<Vector<Markable<AXID>>> AccessibilityTable::cellSlots()
 {
     updateChildrenIfNecessary();
     return m_cellSlots;
@@ -542,7 +542,7 @@ void AccessibilityTable::addChildren()
 
             // Step 6: While the slot with coordinate (xcurrent, ycurrent) already has a cell assigned to it, increase xcurrent by 1.
             ensureRowAndColumn(yCurrent, xCurrent);
-            while (m_cellSlots[yCurrent][xCurrent].isValid()) {
+            while (m_cellSlots[yCurrent][xCurrent]) {
                 xCurrent += 1;
                 ensureRowAndColumn(yCurrent, xCurrent);
             }
@@ -863,8 +863,8 @@ AccessibilityObject* AccessibilityTable::cellForColumnAndRow(unsigned column, un
     if (row >= m_cellSlots.size() || column >= m_cellSlots[row].size())
         return nullptr;
 
-    if (AXID cellID = m_cellSlots[row][column])
-        return axObjectCache()->objectForID(cellID);
+    if (auto cellID = m_cellSlots[row][column])
+        return axObjectCache()->objectForID(*cellID);
     return nullptr;
 }
 
