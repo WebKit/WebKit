@@ -1838,4 +1838,18 @@ String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
     return { };
 }
 
+bool Quirks::shouldHideCoarsePointerCharacteristics() const
+{
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    if (!needsQuirks())
+        return false;
+
+    auto topDomain = RegistrableDomain(m_document->topDocument().url()).string();
+    if (topDomain == "disneyplus.com"_s)
+        return true;
+#endif
+
+    return false;
+}
+
 }

@@ -202,6 +202,8 @@ public:
 
     String scriptToEvaluateBeforeRunningScriptFromURL(const URL&);
 
+    bool shouldHideCoarsePointerCharacteristics() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;

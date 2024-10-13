@@ -485,7 +485,7 @@ const FeatureSchema& pointer()
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))
                 identifiers.append(CSSValueFine);
-            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse))
+            if (pointerCharacteristics.contains(PointerCharacteristics::Coarse) && !context.document->quirks().shouldHideCoarsePointerCharacteristics())
                 identifiers.append(CSSValueCoarse);
             if (identifiers.isEmpty())
                 identifiers.append(CSSValueNone);
