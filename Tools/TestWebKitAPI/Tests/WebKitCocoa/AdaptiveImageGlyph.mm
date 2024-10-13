@@ -31,12 +31,14 @@
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
+#import <CoreText/CTAdaptiveImageGlyphPriv.h>
 #import <UIFoundation/NSAdaptiveImageGlyph.h>
 #import <UIFoundation/NSAttributedString_Private.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/FontCocoa.h>
 #import <WebKit/WebKitPrivate.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <pal/spi/cocoa/UIFoundationSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UITextInput_Private.h>
@@ -392,14 +394,14 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 24374U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"png"]);
-    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 3292U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -415,13 +417,13 @@ TEST(AdaptiveImageGlyph, InsertAndRemoveWKAttachments)
     auto removedHEICAttachmentInfo = [removedAttachments objectAtIndex:0].info;
     EXPECT_WK_STREQ(removedHEICAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([removedHEICAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_GE(removedHEICAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(removedHEICAttachmentInfo.data.length, 24374U);
     EXPECT_TRUE(removedHEICAttachmentInfo.shouldPreserveFidelity);
 
     auto removedPNGAttachmentInfo =  [removedAttachments objectAtIndex:1].info;
     EXPECT_WK_STREQ(removedPNGAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([removedPNGAttachmentInfo.name containsString:@"png"]);
-    EXPECT_GE(removedPNGAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(removedPNGAttachmentInfo.data.length, 3292U);
     EXPECT_FALSE(removedPNGAttachmentInfo.shouldPreserveFidelity);
 }
 
@@ -472,14 +474,14 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsOnPaste)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 24374U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"dog in a spacesuit"]);
-    EXPECT_GE(pngAttachmentInfo.data.length, 42126U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 42451U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -527,13 +529,13 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsCopyFromWebViewPasteToWebView)
     auto heicAttachment = [insertedAttachments objectAtIndex:0];
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
-    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 24374U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
-    auto pngAttachmentInfo =  pngAttachment.info;
+    auto pngAttachmentInfo = pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
-    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 3292U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[pasteWebView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -583,14 +585,14 @@ TEST(AdaptiveImageGlyph, InsertWKAttachmentsMovingParagraphs)
     auto heicAttachmentInfo = heicAttachment.info;
     EXPECT_WK_STREQ(heicAttachmentInfo.contentType, "image/heic");
     EXPECT_TRUE([heicAttachmentInfo.name containsString:@"heic"]);
-    EXPECT_GE(heicAttachmentInfo.data.length, 23499U);
+    EXPECT_GE(heicAttachmentInfo.data.length, 24374U);
     EXPECT_TRUE(heicAttachmentInfo.shouldPreserveFidelity);
 
     auto pngAttachment = [insertedAttachments objectAtIndex:1];
     auto pngAttachmentInfo =  pngAttachment.info;
     EXPECT_WK_STREQ(pngAttachmentInfo.contentType, "image/png");
     EXPECT_TRUE([pngAttachmentInfo.name containsString:@"png"]);
-    EXPECT_GE(pngAttachmentInfo.data.length, 2986U);
+    EXPECT_GE(pngAttachmentInfo.data.length, 3292U);
     EXPECT_FALSE(pngAttachmentInfo.shouldPreserveFidelity);
 
     EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"document.querySelector('source').attachmentIdentifier"] isEqualToString:heicAttachment.uniqueIdentifier]);
@@ -751,6 +753,10 @@ TEST(AdaptiveImageGlyph, ContentsAsAttributedString)
     [webView insertAdaptiveImageGlyph:adaptiveImageGlyph.get()];
     [webView waitForNextPresentationUpdate];
 
+    // Clear the content identifier -> adaptive image glyph cache in order to actually
+    // test the reconstruction of adaptive image glyphs across the process boundary.
+    [CTAdaptiveImageGlyph flushInstanceCache];
+
     RetainPtr attributedString = [webView contentsAsAttributedString];
     EXPECT_NOT_NULL(attributedString.get());
 
@@ -760,6 +766,18 @@ TEST(AdaptiveImageGlyph, ContentsAsAttributedString)
             foundAdaptiveImageGlyph = YES;
             EXPECT_TRUE([[value contentIdentifier] isEqualToString:[adaptiveImageGlyph contentIdentifier]]);
             EXPECT_TRUE([[value contentDescription] isEqualToString:[adaptiveImageGlyph contentDescription]]);
+
+#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
+            RetainPtr<NSDictionary> provenance = [adaptiveImageGlyph strikes].firstObject.provenance;
+
+            // FIXME: Remove the conditional once rdar://137757841 is in a build.
+            if ([provenance count]) {
+                EXPECT_WK_STREQ([provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCCredit], "Apple Image Playground");
+                EXPECT_WK_STREQ([provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType], "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia");
+                EXPECT_TRUE([provenance isEqualToDictionary:[value strikes].firstObject.provenance]);
+            }
+#endif
+
             // Reconstruction is lossy, so data cannot be compared directly against the original.
             EXPECT_NOT_NULL([value imageContent]);
         }
