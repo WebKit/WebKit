@@ -135,21 +135,6 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const ConstraintsForFlexCont
     return computeFlexItemRects();
 }
 
-LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem) const
-{
-    // 9.2.3 E Otherwise, size the item into the available space using its used flex basis in place of its main size,
-    // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
-    // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
-    // The flex base size is the item’s resulting main size.
-    if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { };
-    }
-
-    auto& flexItemBox = downcast<ElementBox>(flexItem.layoutBox());
-    return formattingContext().integrationUtils().maxContentLogicalWidth(flexItemBox);
-}
-
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalFlexItems& flexItems, bool isSizedUnderMinMaxConstraints) const
 {
     auto flexBaseAndHypotheticalMainSizeList = FlexBaseAndHypotheticalMainSizeList { };
@@ -181,11 +166,22 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return { };
             }
-            // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
-            auto usedMainContentSize = maxContentForFlexItem(flexItem);
+            // E Otherwise, size the item into the available space using its used flex basis in place of its main size,
+            // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
+            // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
+            // The flex base size is the item’s resulting main size.
+            auto maxContentSize = [&]() -> LayoutUnit {
+                if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
+                    ASSERT_NOT_IMPLEMENTED_YET();
+                    return { };
+                }
+
+                auto& flexItemBox = downcast<ElementBox>(flexItem.layoutBox());
+                return formattingContext().integrationUtils().maxContentSize(flexItemBox);
+            }();
             if (!flexItem.isContentBoxBased())
-                usedMainContentSize += flexItem.mainAxis().borderAndPadding;
-            return usedMainContentSize;
+                maxContentSize += flexItem.mainAxis().borderAndPadding;
+            return maxContentSize;
         };
         auto flexBaseSize = computedFlexBase();
         // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).

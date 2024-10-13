@@ -44,13 +44,15 @@ void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, 
     m_globalLayoutState.layoutWithFormattingContextForBox(box, widthConstraint);
 }
 
-LayoutUnit IntegrationUtils::maxContentLogicalWidth(const ElementBox& box) const
+LayoutUnit IntegrationUtils::maxContentSize(const ElementBox& box) const
 {
+    ASSERT(box.isFlexItem());
     return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
 }
 
-LayoutUnit IntegrationUtils::minContentLogicalWidth(const ElementBox& box) const
+LayoutUnit IntegrationUtils::minContentSize(const ElementBox& box) const
 {
+    ASSERT(box.isFlexItem());
     return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
 }
 

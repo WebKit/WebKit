@@ -82,7 +82,7 @@ LayoutUnit FlexFormattingUtils::usedMinimumMainSize(const LogicalFlexItem& flexI
     if (auto mainAxisMinimumWidth = flexItem.mainAxis().minimumSize)
         return *mainAxisMinimumWidth;
 
-    auto minimumContentSize = formattingContext().integrationUtils().minContentLogicalWidth(downcast<ElementBox>(flexItem.layoutBox()));
+    auto minimumContentSize = formattingContext().integrationUtils().minContentSize(downcast<ElementBox>(flexItem.layoutBox()));
     if (auto mainAxisWidth = flexItem.mainAxis().size)
         return std::min(*mainAxisWidth, minimumContentSize);
 
