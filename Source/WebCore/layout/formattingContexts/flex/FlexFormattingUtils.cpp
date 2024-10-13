@@ -43,7 +43,7 @@ bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& fle
 {
     ASSERT(flexContainer.isFlexBox());
     auto flexDirection = flexContainer.style().flexDirection();
-    return flexDirection == FlexDirection::Row || flexContainer.style().flexDirection() == FlexDirection::RowReverse;
+    return flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
 }
 
 bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)
