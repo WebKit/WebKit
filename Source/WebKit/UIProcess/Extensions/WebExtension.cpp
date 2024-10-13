@@ -108,6 +108,14 @@ static constexpr auto webAccessibleResourcesManifestKey = "web_accessible_resour
 static constexpr auto webAccessibleResourcesResourcesManifestKey = "resources"_s;
 static constexpr auto webAccessibleResourcesMatchesManifestKey = "matches"_s;
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+static constexpr auto sidebarActionManifestKey = "sidebar_action"_s;
+static constexpr auto sidePanelManifestKey = "side_panel"_s;
+static constexpr auto sidebarActionTitleManifestKey = "default_title"_s;
+static constexpr auto sidebarActionPathManifestKey = "default_panel"_s;
+static constexpr auto sidePanelPathManifestKey = "default_path"_s;
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
 bool WebExtension::manifestParsedSuccessfully()
 {
     if (m_parsedManifest)
@@ -1147,12 +1155,83 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
     }
 }
 
-#if ENABLE(WK_WEB_EXTENSION_SIDEBAR)
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+bool WebExtension::hasSidebarAction()
+{
+    if (RefPtr manifestObject = this->manifestObject())
+        return manifestObject->getValue(sidebarActionManifestKey);
+
+    return false;
+}
+
 bool WebExtension::hasSidePanel()
 {
     return hasRequestedPermission(WebExtensionPermission::sidePanel());
 }
-#endif // ENABLE(WK_WEB_EXTENSION_SIDEBAR)
+
+bool WebExtension::hasAnySidebar()
+{
+    return hasSidebarAction() || hasSidePanel();
+}
+
+RefPtr<WebCore::Icon> WebExtension::sidebarIcon(WebCore::FloatSize idealSize)
+{
+    // FIXME: <https://webkit.org/b/276833> implement this
+    return nullptr;
+}
+
+const String& WebExtension::sidebarDocumentPath()
+{
+    populateSidebarPropertiesIfNeeded();
+    return m_sidebarDocumentPath;
+}
+
+const String& WebExtension::sidebarTitle()
+{
+    populateSidebarPropertiesIfNeeded();
+    return m_sidebarTitle;
+}
+
+void WebExtension::populateSidebarPropertiesIfNeeded()
+{
+    if (m_parsedManifestSidebarProperties)
+        return;
+
+    m_parsedManifestSidebarProperties = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // sidePanel documentation: https://developer.chrome.com/docs/extensions/reference/manifest#side-panel
+    // see "Examples" header -> "Side Panel" tab (doesn't mention `default_path` key elsewhere)
+    // sidebarAction documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/sidebar_action
+
+    if (RefPtr sidebarActionObject = manifestObject->getObject(sidebarActionManifestKey)) {
+        populateSidebarActionProperties(sidebarActionObject);
+        return;
+    }
+
+    if (RefPtr sidePanelObject = manifestObject->getObject(sidePanelManifestKey))
+        populateSidePanelProperties(sidePanelObject);
+}
+
+void WebExtension::populateSidebarActionProperties(const JSON::Object& sidebarActionObject)
+{
+    // FIXME: <https://webkit.org/b/276833> implement sidebar icon parsing
+    m_sidebarIconsCache = nullptr;
+    m_sidebarTitle = sidebarActionObject.getString(sidebarActionTitleManifestKey);
+    m_sidebarDocumentPath = sidebarActionObject.getString(sidebarActionPathManifestKey);
+}
+
+void WebExtension::populateSidePanelProperties(const JSON::Object& sidePanelObject)
+{
+    // Since sidePanel cannot set a default title or icon from the manifest, setting these to null here is intentional.
+    m_sidebarIconsCache = nullptr;
+    m_sidebarTitle = nullString();
+    m_sidebarDocumentPath = sidePanelObject.getString(sidePanelPathManifestKey);
+}
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
 const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 {
