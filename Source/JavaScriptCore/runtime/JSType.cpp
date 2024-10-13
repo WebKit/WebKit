@@ -124,6 +124,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(MaxJSType)
     CASE(JSWrapForValidIteratorType)
     CASE(JSRegExpStringIteratorType)
+    CASE(JSAsyncFromSyncIteratorType)
     }
 }
 

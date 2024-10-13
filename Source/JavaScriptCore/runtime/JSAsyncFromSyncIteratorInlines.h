@@ -31,7 +31,7 @@ namespace JSC {
 
 inline Structure* JSAsyncFromSyncIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSAsyncFromSyncIteratorType, StructureFlags), info());
 }
 
 } // namespace JSC

@@ -52,6 +52,8 @@ function next(value)
 {
     "use strict";
 
+    @assert(@isAsyncFromSyncIterator(this));
+
     var promise = @newPromise();
 
     if (!@isObject(this) || !@isObject(@getAsyncFromSyncIteratorInternalField(this, @asyncFromSyncIteratorFieldSyncIterator))) {
@@ -76,6 +78,8 @@ function next(value)
 function return(value)
 {
     "use strict";
+
+    @assert(@isAsyncFromSyncIterator(this));
 
     var promise = @newPromise();
 
@@ -120,6 +124,8 @@ function return(value)
 function throw(exception)
 {
     "use strict";
+
+    @assert(@isAsyncFromSyncIterator(this));
 
     var promise = @newPromise();
 
