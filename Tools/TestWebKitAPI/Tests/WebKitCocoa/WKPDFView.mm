@@ -33,6 +33,7 @@
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
+#import "UnifiedPDFTestHelpers.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -196,14 +197,26 @@ TEST(WKPDFView, BackgroundColor)
 
 TEST(WKWebView, IsDisplayingPDF)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
-    [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
-    [webView _test_waitForDidFinishNavigation];
-    EXPECT_TRUE([webView _isDisplayingPDF]);
+    auto runTest = [](const auto& webView) {
+        [webView loadData:pdfData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
+        [webView _test_waitForDidFinishNavigation];
+        EXPECT_TRUE([webView _isDisplayingPDF]);
 
-    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
-    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
-    EXPECT_FALSE([webView _isDisplayingPDF]);
+        [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
+        [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
+        EXPECT_FALSE([webView _isDisplayingPDF]);
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:adoptNS([WKWebViewConfiguration new]).get()]);
+
+    runTest(webView);
+
+#if ENABLE(UNIFIED_PDF)
+    if constexpr (TestWebKitAPI::unifiedPDFForTestingEnabled) {
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+        runTest(webView);
+    }
+#endif
 }
 
 #endif

@@ -32,6 +32,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/ColorSerialization.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -40,26 +41,6 @@
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
-
-#if ENABLE(UNIFIED_PDF_FOR_TESTING)
-#define UNIFIED_PDF_TEST(name) TEST(UnifiedPDF, name)
-#else
-#define UNIFIED_PDF_TEST(name) TEST(UnifiedPDF, DISABLED_##name)
-#endif
-
-static RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF()
-{
-    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"])
-            [[configuration preferences] _setEnabled:NO forFeature:feature];
-    }
-
-    return configuration;
-}
 
 #if PLATFORM(MAC)
 
@@ -167,20 +148,6 @@ UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
     }];
 
     Util::run(&done);
-}
-
-// FIXME: Combine this test with the WKWebView.IsDisplayingPDF test.
-UNIFIED_PDF_TEST(WKWebView_IsDisplayingPDF)
-{
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
-    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
-    [webView loadData:pdfData.get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.apple.com/testPath"]];
-    [webView _test_waitForDidFinishNavigation];
-    EXPECT_TRUE([webView _isDisplayingPDF]);
-
-    [webView loadHTMLString:@"<meta name='viewport' content='width=device-width'><h1>hello world</h1>" baseURL:[NSURL URLWithString:@"https://www.apple.com/1"]];
-    [webView _test_waitForDidFinishNavigationWithoutPresentationUpdate];
-    EXPECT_FALSE([webView _isDisplayingPDF]);
 }
 
 } // namespace TestWebKitAPI

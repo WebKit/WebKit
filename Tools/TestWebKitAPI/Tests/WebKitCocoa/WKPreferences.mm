@@ -26,6 +26,8 @@
 #import "config.h"
 
 #import "DeprecatedGlobalValues.h"
+#import "PlatformUtilities.h"
+#import "Test.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKPreferencesPrivate.h>
 

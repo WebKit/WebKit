@@ -30,9 +30,9 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
-#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFindDelegate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -350,22 +350,6 @@ TEST(WebKit, FindTextInImageOverlay)
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if HAVE(UIFINDINTERACTION)
-
-#if ENABLE(UNIFIED_PDF)
-static RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingFindInUnifiedPDF()
-{
-    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"])
-            [[configuration preferences] _setEnabled:NO forFeature:feature];
-    }
-
-    return configuration;
-}
-#endif
 
 // FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
 @interface WKWebView () <UITextSearching>
@@ -1067,7 +1051,7 @@ TEST(WebKit, FindInPDFAfterFindInPage)
 
 TEST(WebKit, FindInUnifiedPDF)
 {
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
 
     RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request.get()];
@@ -1081,7 +1065,7 @@ TEST(WebKit, FindInUnifiedPDF)
 
 TEST(WebKit, FindInUnifiedPDFAfterReload)
 {
-    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
 
     auto searchForText = [&] {
         RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
@@ -1107,7 +1091,7 @@ TEST(WebKit, FindInUnifiedPDFAfterReload)
 
 TEST(WebKit, FindInUnifiedPDFAfterFindInPage)
 {
-    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configurationForWebViewTestingFindInUnifiedPDF().get()]);
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
     [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
 
     RetainPtr findInteraction = [webView findInteraction];
