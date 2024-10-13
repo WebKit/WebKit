@@ -236,9 +236,9 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
     }
     
     if (auto* pendingDownload = m_task->pendingDownload())
-        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
+        m_networkProcess->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTFMove(completionHandler));
     else
-        m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        m_networkProcess->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
 }
 
 void NetworkLoad::didReceiveInformationalResponse(ResourceResponse&& response)
@@ -256,7 +256,7 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLega
     }
 
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
-        m_networkProcess->authenticationManager().negotiatedLegacyTLS(*m_parameters.webPageProxyID);
+        m_networkProcess->protectedAuthenticationManager()->negotiatedLegacyTLS(*m_parameters.webPageProxyID);
     
     notifyDidReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
 }

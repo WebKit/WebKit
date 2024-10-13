@@ -161,7 +161,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 {
     NetworkProcessPlatformStrategies::initialize();
 
-    addSupplement<AuthenticationManager>();
+    addSupplementWithoutRefCountedCheck<AuthenticationManager>();
     addSupplement<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     addSupplement<LegacyCustomProtocolManager>();
@@ -188,6 +188,11 @@ NetworkProcess::~NetworkProcess() = default;
 AuthenticationManager& NetworkProcess::authenticationManager()
 {
     return *supplement<AuthenticationManager>();
+}
+
+Ref<AuthenticationManager> NetworkProcess::protectedAuthenticationManager()
+{
+    return authenticationManager();
 }
 
 DownloadManager& NetworkProcess::downloadManager()

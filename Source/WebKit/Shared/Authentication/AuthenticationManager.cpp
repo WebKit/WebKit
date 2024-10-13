@@ -65,6 +65,16 @@ AuthenticationManager::AuthenticationManager(NetworkProcess& process)
 
 AuthenticationManager::~AuthenticationManager() = default;
 
+void AuthenticationManager::ref() const
+{
+    return m_process->ref();
+}
+
+void AuthenticationManager::deref() const
+{
+    return m_process->deref();
+}
+
 inline Ref<NetworkProcess> AuthenticationManager::protectedProcess() const
 {
     ASSERT(RunLoop::isMain());

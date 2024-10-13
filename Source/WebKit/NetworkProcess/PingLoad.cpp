@@ -154,7 +154,7 @@ void PingLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negotiat
 {
     PING_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().authenticationManager().didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        m_networkLoadChecker->networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, m_parameters.webPageProxyID,  m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };
