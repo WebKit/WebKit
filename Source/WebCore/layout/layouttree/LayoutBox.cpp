@@ -364,6 +364,14 @@ const Box* Box::nextInFlowOrFloatingSibling() const
     return nextSibling;
 }
 
+const Box* Box::nextOutOfFlowSibling() const
+{
+    auto* nextSibling = this->nextSibling();
+    while (nextSibling && !nextSibling->isOutOfFlowPositioned())
+        nextSibling = nextSibling->nextSibling();
+    return nextSibling;
+}
+
 const Box* Box::previousInFlowSibling() const
 {
     auto* previousSibling = this->previousSibling();
@@ -376,6 +384,14 @@ const Box* Box::previousInFlowOrFloatingSibling() const
 {
     auto* previousSibling = this->previousSibling();
     while (previousSibling && !(previousSibling->isInFlow() || previousSibling->isFloatingPositioned()))
+        previousSibling = previousSibling->previousSibling();
+    return previousSibling;
+}
+
+const Box* Box::previousOutOfFlowSibling() const
+{
+    auto* previousSibling = this->previousSibling();
+    while (previousSibling && !previousSibling->isOutOfFlowPositioned())
         previousSibling = previousSibling->previousSibling();
     return previousSibling;
 }

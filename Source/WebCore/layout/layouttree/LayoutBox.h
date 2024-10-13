@@ -159,9 +159,11 @@ public:
     const Box* nextSibling() const { return m_nextSibling.get(); }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;
+    const Box* nextOutOfFlowSibling() const;
     const Box* previousSibling() const { return m_previousSibling.get(); }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
+    const Box* previousOutOfFlowSibling() const;
     bool isDescendantOf(const ElementBox&) const;
 
     // FIXME: This is currently needed for style updates.

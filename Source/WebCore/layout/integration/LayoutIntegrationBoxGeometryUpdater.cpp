@@ -391,8 +391,8 @@ void BoxGeometryUpdater::setFormattingContextContentGeometry(std::optional<Layou
     }
 
     if (rootLayoutBox().establishesFlexFormattingContext()) {
-        for (auto* flexItem = rootLayoutBox().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling())
-            updateBoxGeometry(downcast<RenderElement>(*flexItem->rendererForIntegration()), availableLogicalWidth, intrinsicWidthMode);
+        for (auto* flexItemOrOutOfFlowPositionedChild = rootLayoutBox().firstChild(); flexItemOrOutOfFlowPositionedChild; flexItemOrOutOfFlowPositionedChild = flexItemOrOutOfFlowPositionedChild->nextSibling())
+            updateBoxGeometry(downcast<RenderElement>(*flexItemOrOutOfFlowPositionedChild->rendererForIntegration()), availableLogicalWidth, intrinsicWidthMode);
         return;
     }
 

@@ -62,9 +62,11 @@ public:
     const Box* firstChild() const { return m_firstChild.get(); }
     const Box* firstInFlowChild() const;
     const Box* firstInFlowOrFloatingChild() const;
+    const Box* firstOutOfFlowChild() const;
     const Box* lastChild() const { return m_lastChild.get(); }
     const Box* lastInFlowChild() const;
     const Box* lastInFlowOrFloatingChild() const;
+    const Box* lastOutOfFlowChild() const;
 
     // FIXME: This is currently needed for style updates.
     Box* firstChild() { return m_firstChild.get(); }

@@ -56,6 +56,7 @@ void FlexFormattingContext::layout(const ConstraintsForFlexContent& constraints)
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
     auto flexItemRects = FlexLayout { *this }.layout(constraints, logicalFlexItems);
     setFlexItemsGeometry(logicalFlexItems, flexItemRects, constraints);
+    positionOutOfFlowChildren();
 }
 
 IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstraints()
@@ -243,6 +244,13 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         flexItemGeometry.setContentBoxWidth(contentBoxWidth);
         flexItemGeometry.setContentBoxHeight(contentBoxHeight);
     }
+}
+
+void FlexFormattingContext::positionOutOfFlowChildren()
+{
+    // FIXME: Implement out-of-flow positioning.
+    for (auto* outOfFlowChild = root().firstOutOfFlowChild(); outOfFlowChild; outOfFlowChild = outOfFlowChild->nextOutOfFlowSibling())
+        m_globalLayoutState.ensureGeometryForBox(*outOfFlowChild).setTopLeft({ });
 }
 
 const BoxGeometry& FlexFormattingContext::geometryForFlexItem(const Box& flexItem) const
