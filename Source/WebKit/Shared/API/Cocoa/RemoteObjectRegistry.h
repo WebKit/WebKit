@@ -47,6 +47,9 @@ class RemoteObjectRegistry : public IPC::MessageReceiver {
 public:
     virtual ~RemoteObjectRegistry();
 
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+
     virtual void sendInvocation(const RemoteObjectInvocation&);
     void sendReplyBlock(uint64_t replyID, const UserData& blockInvocation);
     void sendUnusedReply(uint64_t replyID);
@@ -56,8 +59,8 @@ protected:
     using MessageSender = std::variant<std::reference_wrapper<WebProcessProxy>, std::reference_wrapper<WebPage>>;
 private:
     virtual RefPtr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) { return nullptr; }
-    virtual MessageSender messageSender() = 0;
-    virtual uint64_t messageDestinationID() = 0;
+    virtual std::optional<MessageSender> messageSender() = 0;
+    virtual std::optional<uint64_t> messageDestinationID() = 0;
     template<typename M> void send(M&&);
 
     // IPC::MessageReceiver

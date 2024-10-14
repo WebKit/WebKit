@@ -50,21 +50,28 @@ WebRemoteObjectRegistry::~WebRemoteObjectRegistry()
 
 void WebRemoteObjectRegistry::close()
 {
-    Ref page { m_page.get() };
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     if (page->remoteObjectRegistry() == this) {
         WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), page->identifier());
         page->setRemoteObjectRegistry(nullptr);
     }
 }
 
-auto WebRemoteObjectRegistry::messageSender() -> MessageSender
+auto WebRemoteObjectRegistry::messageSender() -> std::optional<MessageSender>
 {
-    return m_page.get();
+    if (m_page)
+        return *m_page;
+    return std::nullopt;
 }
 
-uint64_t WebRemoteObjectRegistry::messageDestinationID()
+std::optional<uint64_t> WebRemoteObjectRegistry::messageDestinationID()
 {
-    return m_page.get().webPageProxyIdentifier().toUInt64();
+    if (m_page)
+        return m_page->webPageProxyIdentifier().toUInt64();
+    return std::nullopt;
 }
 
 } // namespace WebKit

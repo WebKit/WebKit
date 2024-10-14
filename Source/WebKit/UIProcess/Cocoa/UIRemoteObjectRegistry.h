@@ -26,28 +26,37 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class UIRemoteObjectRegistry final : public RemoteObjectRegistry {
+class UIRemoteObjectRegistry final : public RemoteObjectRegistry, public RefCounted<UIRemoteObjectRegistry> {
     WTF_MAKE_TZONE_ALLOCATED(UIRemoteObjectRegistry);
 public:
-    UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
+    static Ref<UIRemoteObjectRegistry> create(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
+    {
+        return adoptRef(*new UIRemoteObjectRegistry(remoteObjectRegistry, page));
+    }
+
     ~UIRemoteObjectRegistry();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void sendInvocation(const RemoteObjectInvocation&) final;
 
 private:
-    Ref<WebPageProxy> protectedPage();
-    MessageSender messageSender() final;
-    uint64_t messageDestinationID() final;
+    UIRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);
+
+    std::optional<MessageSender> messageSender() final;
+    std::optional<uint64_t> messageDestinationID() final;
     RefPtr<ProcessThrottler::BackgroundActivity> backgroundActivity(ASCIILiteral) final;
 
-    WeakRef<WebPageProxy> m_page;
+    WeakPtr<WebPageProxy> m_page;
 };
 
 } // namespace WebKit

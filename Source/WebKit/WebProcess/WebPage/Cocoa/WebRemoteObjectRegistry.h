@@ -26,35 +26,36 @@
 #pragma once
 
 #include "RemoteObjectRegistry.h"
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakRef.h>
-
-namespace WebKit {
-class WebRemoteObjectRegistry;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebRemoteObjectRegistry> : std::true_type { };
-}
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class WebPage;
 
-class WebRemoteObjectRegistry final : public RemoteObjectRegistry {
+class WebRemoteObjectRegistry final : public RemoteObjectRegistry, public RefCounted<WebRemoteObjectRegistry> {
     WTF_MAKE_TZONE_ALLOCATED(WebRemoteObjectRegistry);
 public:
-    WebRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPage&);
+    static Ref<WebRemoteObjectRegistry> create(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPage& page)
+    {
+        return adoptRef(*new WebRemoteObjectRegistry(remoteObjectRegistry, page));
+    }
+
     ~WebRemoteObjectRegistry();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
     
     void close();
     
 private:
-    MessageSender messageSender() final;
-    uint64_t messageDestinationID() final;
+    WebRemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPage&);
 
-    WeakRef<WebPage> m_page;
+    std::optional<MessageSender> messageSender() final;
+    std::optional<uint64_t> messageDestinationID() final;
+
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit
