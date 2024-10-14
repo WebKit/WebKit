@@ -36,6 +36,7 @@
 #include "IDLTypes.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/RefCounted.h>
@@ -57,11 +58,9 @@ namespace Style {
 struct ResolutionContext;
 }
 
-class WebAnimation : public RefCounted<WebAnimation>, public EventTarget, public ActiveDOMObject {
+class WebAnimation : public ConcreteRefCounted<RefCounted<WebAnimation>, ActiveDOMObject>, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebAnimation);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<WebAnimation> create(Document&, AnimationEffect*);
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();

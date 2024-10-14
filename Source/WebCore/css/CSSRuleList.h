@@ -22,6 +22,7 @@
 #pragma once
 
 #include <wtf/AbstractRefCounted.h>
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -47,10 +48,8 @@ protected:
     CSSRuleList();
 };
 
-class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
+class StaticCSSRuleList final : public ConcreteRefCounted<RefCounted<StaticCSSRuleList>, CSSRuleList> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 
     Vector<RefPtr<CSSRule>>& rules() { return m_rules; }

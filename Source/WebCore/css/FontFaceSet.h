@@ -29,6 +29,7 @@
 #include "CSSFontFaceSet.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -38,11 +39,9 @@ template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
 class DOMException;
 
-class FontFaceSet final : public RefCounted<FontFaceSet>, private FontEventClient, public EventTarget, public ActiveDOMObject {
+class FontFaceSet final : public ConcreteRefCounted<RefCounted<FontFaceSet>, ActiveDOMObject>, public EventTarget, private FontEventClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(FontFaceSet);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<FontFaceSet> create(ScriptExecutionContext&, const Vector<Ref<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(ScriptExecutionContext&, CSSFontFaceSet& backing);
     virtual ~FontFaceSet();

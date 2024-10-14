@@ -27,6 +27,7 @@
 
 #include "CSSFontFace.h"
 #include "FontCache.h"
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -40,11 +41,9 @@ class FontPaletteValues;
 class FontRanges;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
-class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFaceClient {
+class CSSSegmentedFontFace final : public ConcreteRefCounted<RefCounted<CSSSegmentedFontFace>, CSSFontFaceClient> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSSegmentedFontFace);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<CSSSegmentedFontFace> create()
     {
         return adoptRef(*new CSSSegmentedFontFace());

@@ -24,6 +24,7 @@
 #include "ComputedStyleExtractor.h"
 #include "PseudoElementIdentifier.h"
 #include "RenderStyleConstants.h"
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -34,11 +35,9 @@ namespace WebCore {
 class Element;
 class MutableStyleProperties;
 
-class CSSComputedStyleDeclaration final : public CSSStyleDeclaration, public RefCounted<CSSComputedStyleDeclaration> {
+class CSSComputedStyleDeclaration final : public ConcreteRefCounted<RefCounted<CSSComputedStyleDeclaration>, CSSStyleDeclaration> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     enum class AllowVisited : bool { No, Yes };
     WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, AllowVisited);
     static Ref<CSSComputedStyleDeclaration> create(Element&, const std::optional<Style::PseudoElementIdentifier>&);

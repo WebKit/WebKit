@@ -30,6 +30,7 @@
 #include "ClientOrigin.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -42,7 +43,7 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
-class BroadcastChannel : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BroadcastChannel>, public EventTarget, public ActiveDOMObject {
+class BroadcastChannel : public ConcreteRefCounted<ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<BroadcastChannel>, ActiveDOMObject>, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(BroadcastChannel);
 public:
     static Ref<BroadcastChannel> create(ScriptExecutionContext& context, const String& name)
@@ -52,10 +53,6 @@ public:
         return channel;
     }
     ~BroadcastChannel();
-
-    // ActiveDOMObject.
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     BroadcastChannelIdentifier identifier() const;
     String name() const;

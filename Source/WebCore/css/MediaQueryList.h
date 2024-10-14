@@ -23,6 +23,7 @@
 #include "EventTarget.h"
 #include "MediaQuery.h"
 #include "MediaQueryMatcher.h"
+#include <wtf/ConcreteRefCounted.h>
 
 namespace WebCore {
 
@@ -35,11 +36,9 @@ class MediaQueryEvaluator;
 // retrieve the current value of the given media query and to add/remove listeners that
 // will be called whenever the value of the query changes.
 
-class MediaQueryList final : public RefCounted<MediaQueryList>, public EventTarget, public ActiveDOMObject {
+class MediaQueryList final : public ConcreteRefCounted<RefCounted<MediaQueryList>, ActiveDOMObject>, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaQueryList);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<MediaQueryList> create(Document&, MediaQueryMatcher&, MQ::MediaQueryList&&, bool matches);
     ~MediaQueryList();
 

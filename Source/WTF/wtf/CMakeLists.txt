@@ -49,6 +49,7 @@ set(WTF_PUBLIC_HEADERS
     CompilationThread.h
     Compiler.h
     CompletionHandler.h
+    ConcreteRefCounted.h
     ConcurrentBuffer.h
     ConcurrentPtrHashSet.h
     ConcurrentVector.h

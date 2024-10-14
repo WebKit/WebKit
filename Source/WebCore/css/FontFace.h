@@ -31,6 +31,7 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include <variant>
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,10 +44,8 @@ namespace WebCore {
 
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
-class FontFace final : public RefCounted<FontFace>, public ActiveDOMObject, public CSSFontFaceClient {
+class FontFace final : public ConcreteRefCounted<RefCounted<FontFace>, ActiveDOMObject, CSSFontFaceClient> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     struct Descriptors {
         String style;
         String weight;

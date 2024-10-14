@@ -27,6 +27,7 @@
 
 #include "CSSFontFace.h"
 #include <variant>
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/HashMap.h>
 #include <wtf/Observer.h>
 #include <wtf/Vector.h>
@@ -57,10 +58,8 @@ struct FontEventClient : public CanMakeWeakPtr<FontEventClient> {
     virtual void completedLoading() = 0;
 };
 
-class CSSFontFaceSet final : public RefCounted<CSSFontFaceSet>, public CSSFontFaceClient {
+class CSSFontFaceSet final : public ConcreteRefCounted<RefCounted<CSSFontFaceSet>, CSSFontFaceClient> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
-
     static Ref<CSSFontFaceSet> create(CSSFontSelector* owningFontSelector = nullptr)
     {
         return adoptRef(*new CSSFontFaceSet(owningFontSelector));

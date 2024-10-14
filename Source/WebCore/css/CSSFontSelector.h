@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include "WebKitFontFamilyNames.h"
 #include <memory>
+#include <wtf/ConcreteRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -50,9 +51,8 @@ class StyleRuleFontFace;
 class StyleRuleFontFeatureValues;
 class StyleRuleFontPaletteValues;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
+class CSSFontSelector final : public ConcreteRefCounted<FontSelector, CSSFontFaceClient, ActiveDOMObject> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
     USING_CAN_MAKE_WEAKPTR(FontSelector);
 
     using FontSelector::ref;
