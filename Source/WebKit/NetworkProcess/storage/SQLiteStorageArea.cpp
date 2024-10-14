@@ -68,6 +68,11 @@ ASCIILiteral SQLiteStorageArea::statementString(StatementType type) const
     return ""_s;
 }
 
+Ref<SQLiteStorageArea> SQLiteStorageArea::create(unsigned quota, const WebCore::ClientOrigin& origin, const String& path, Ref<WorkQueue>&& workQueue)
+{
+    return adoptRef(*new SQLiteStorageArea(quota, origin, path, WTFMove(workQueue)));
+}
+
 SQLiteStorageArea::SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin& origin, const String& path, Ref<WorkQueue>&& workQueue)
     : StorageAreaBase(quota, origin)
     , m_path(path)

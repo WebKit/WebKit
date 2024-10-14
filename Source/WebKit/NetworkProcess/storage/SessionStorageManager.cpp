@@ -55,13 +55,13 @@ bool SessionStorageManager::hasDataInMemory() const
 
 void SessionStorageManager::clearData()
 {
-    for (auto& storageArea : m_storageAreas.values())
+    for (Ref storageArea : m_storageAreas.values())
         storageArea->clear();
 }
 
 void SessionStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    for (auto& storageArea : m_storageAreas.values())
+    for (Ref storageArea : m_storageAreas.values())
         storageArea->removeListener(connection);
 }
 
@@ -75,10 +75,10 @@ void SessionStorageManager::removeNamespace(StorageNamespaceIdentifier namespace
     m_registry->unregisterStorageArea(*identifier);
 }
 
-StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<MemoryStorageArea> storageArea, StorageNamespaceIdentifier namespaceIdentifier)
+StorageAreaIdentifier SessionStorageManager::addStorageArea(Ref<MemoryStorageArea>&& storageArea, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = storageArea->identifier();
-    m_registry->registerStorageArea(identifier, *storageArea);
+    m_registry->registerStorageArea(identifier, storageArea);
     m_storageAreasByNamespace.add(namespaceIdentifier, identifier);
     m_storageAreas.add(identifier, WTFMove(storageArea));
 
@@ -88,12 +88,10 @@ StorageAreaIdentifier SessionStorageManager::addStorageArea(std::unique_ptr<Memo
 std::optional<StorageAreaIdentifier> SessionStorageManager::connectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, StorageNamespaceIdentifier namespaceIdentifier)
 {
     auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
-    if (!identifier) {
-        auto newStorageArea = makeUnique<MemoryStorageArea>(origin);
-        identifier = addStorageArea(WTFMove(newStorageArea), namespaceIdentifier);
-    }
+    if (!identifier)
+        identifier = addStorageArea(MemoryStorageArea::create(origin), namespaceIdentifier);
 
-    auto storageArea = m_storageAreas.get(*identifier);
+    RefPtr storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
         return std::nullopt;
 
@@ -108,7 +106,7 @@ void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::U
     if (!identifier)
         return;
 
-    auto* storageArea = m_storageAreas.get(*identifier);
+    RefPtr storageArea = m_storageAreas.get(*identifier);
     if (!storageArea)
         return;
 
@@ -117,7 +115,7 @@ void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::U
 
 void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)
 {
-    if (auto* storageArea = m_storageAreas.get(identifier))
+    if (RefPtr storageArea = m_storageAreas.get(identifier))
         storageArea->removeListener(connection);
 }
 
@@ -127,7 +125,7 @@ void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNa
     if (!identifier)
         return;
 
-    if (auto storageArea = m_storageAreas.get(*identifier))
+    if (RefPtr storageArea = m_storageAreas.get(*identifier))
         addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
 }
 

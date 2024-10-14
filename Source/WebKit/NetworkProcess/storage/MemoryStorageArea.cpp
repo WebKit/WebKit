@@ -31,6 +31,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MemoryStorageArea);
 
+Ref<MemoryStorageArea> MemoryStorageArea::create(const WebCore::ClientOrigin& origin, StorageAreaBase::StorageType type)
+{
+    return adoptRef(*new MemoryStorageArea(origin, type));
+}
+
 MemoryStorageArea::MemoryStorageArea(const WebCore::ClientOrigin& origin, StorageAreaBase::StorageType type)
     : StorageAreaBase(WebCore::StorageMap::noQuota, origin)
     , m_map(WebCore::StorageMap(WebCore::StorageMap::noQuota))
@@ -87,11 +92,10 @@ Expected<void, StorageError> MemoryStorageArea::clear(IPC::Connection::UniqueID 
     return { };
 }
 
-std::unique_ptr<MemoryStorageArea> MemoryStorageArea::clone() const
+Ref<MemoryStorageArea> MemoryStorageArea::clone() const
 {
-    auto storageArea = makeUnique<MemoryStorageArea>(origin(), m_storageType);
+    Ref storageArea = MemoryStorageArea::create(origin(), m_storageType);
     storageArea->m_map = m_map;
-
     return storageArea;
 }
 

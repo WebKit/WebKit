@@ -59,11 +59,6 @@ void StorageAreaBase::removeListener(IPC::Connection::UniqueID connection)
     m_listeners.remove(connection);
 }
 
-bool StorageAreaBase::hasListeners() const
-{
-    return !m_listeners.isEmpty();
-}
-
 void StorageAreaBase::notifyListenersAboutClear()
 {
     for (auto& [connection, identifier] : m_listeners)
