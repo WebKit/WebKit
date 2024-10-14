@@ -158,7 +158,7 @@ WebAutomationSession::~WebAutomationSession()
     ASSERT(!m_client);
     ASSERT(!m_processPool);
 #if ENABLE(REMOTE_INSPECTOR)
-    m_debuggable->sessionDestroyed();
+    protectedDebuggable()->sessionDestroyed();
 #endif
 }
 
