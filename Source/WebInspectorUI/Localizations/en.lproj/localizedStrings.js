@@ -581,7 +581,7 @@ localizedStrings["Disable Rule"] = "Disable Rule";
 localizedStrings["Disable all breakpoints (%s)"] = "Disable all breakpoints (%s)";
 localizedStrings["Disable cross-origin restrictions"] = "Disable cross-origin restrictions";
 localizedStrings["Disable paint flashing"] = "Disable paint flashing";
-localizedStrings["Disable site-specific hacks"] = "Disable site-specific hacks";
+localizedStrings["Disable site-specific quirks"] = "Disable site-specific quirks";
 localizedStrings["Disabled"] = "Disabled";
 /* Property value for `font-variant-ligatures: no-common-ligatures`. */
 localizedStrings["Disabled Common @ Font Details Sidebar Property Value"] = "Disabled Common";

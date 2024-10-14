@@ -64,7 +64,7 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
             settingsGroups.push({
                 name: WI.UIString("Compatibility"),
                 settings: [
-                    {name: WI.UIString("Disable site-specific hacks"), setting: InspectorBackend.Enum.Page.Setting.NeedsSiteSpecificQuirks, value: false},
+                    {name: WI.UIString("Disable site-specific quirks"), setting: InspectorBackend.Enum.Page.Setting.NeedsSiteSpecificQuirks, value: false},
                 ],
             });
 
