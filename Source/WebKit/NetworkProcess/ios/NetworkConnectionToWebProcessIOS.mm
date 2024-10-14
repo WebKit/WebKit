@@ -40,7 +40,7 @@ namespace WebKit {
 WebPaymentCoordinatorProxy& NetworkConnectionToWebProcess::paymentCoordinator()
 {
     if (!m_paymentCoordinator)
-        m_paymentCoordinator = makeUnique<WebPaymentCoordinatorProxy>(*this);
+        m_paymentCoordinator = WebPaymentCoordinatorProxy::create(*this);
     return *m_paymentCoordinator;
 }
 

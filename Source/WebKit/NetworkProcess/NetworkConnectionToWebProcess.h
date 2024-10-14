@@ -148,6 +148,11 @@ public:
     static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
+    using IPC::Connection::Client::ptrCount;
+    using IPC::Connection::Client::ptrCountWithoutThreadCheck;
+    using IPC::Connection::Client::incrementPtrCount;
+    using IPC::Connection::Client::decrementPtrCount;
+
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
 
@@ -492,7 +497,7 @@ private:
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
-    std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
+    RefPtr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 

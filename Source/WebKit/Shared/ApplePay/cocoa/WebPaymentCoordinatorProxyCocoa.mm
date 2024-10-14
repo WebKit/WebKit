@@ -57,11 +57,16 @@
 
 namespace WebKit {
 
+Ref<WebPaymentCoordinatorProxy> WebPaymentCoordinatorProxy::create(WebPaymentCoordinatorProxy::Client& client)
+{
+    return adoptRef(*new WebPaymentCoordinatorProxy(client));
+}
+
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
     : m_client(client)
     , m_canMakePaymentsQueue(WorkQueue::create("com.apple.WebKit.CanMakePayments"_s))
 {
-    m_client.paymentCoordinatorAddMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName(), *this);
+    client.paymentCoordinatorAddMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName(), *this);
 }
 
 WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
@@ -69,7 +74,8 @@ WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
     if (!canBegin())
         didReachFinalState();
 
-    m_client.paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
+    if (CheckedPtr client = m_client.get())
+        client->paymentCoordinatorRemoveMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName());
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
@@ -79,7 +85,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         return completionHandler(false);
 #endif
 
-    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, checkedClient()->paymentCoordinatorSourceApplicationSecondaryIdentifier(*this), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -333,21 +339,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
 
-    auto& boundInterfaceIdentifier = m_client.paymentCoordinatorBoundInterfaceIdentifier(*this);
+    CheckedPtr client = m_client.get();
+    auto& boundInterfaceIdentifier = client->paymentCoordinatorBoundInterfaceIdentifier(*this);
     if (!boundInterfaceIdentifier.isEmpty())
         [result setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
-    auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this);
+    auto& bundleIdentifier = client->paymentCoordinatorSourceApplicationBundleIdentifier(*this);
     if (!bundleIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
         [result setSourceApplicationBundleIdentifier:bundleIdentifier];
 
-    auto& secondaryIdentifier = m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this);
+    auto& secondaryIdentifier = client->paymentCoordinatorSourceApplicationSecondaryIdentifier(*this);
     if (!secondaryIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
         [result setSourceApplicationSecondaryIdentifier:secondaryIdentifier];
 
 #if PLATFORM(IOS_FAMILY)
-    auto& serviceType = m_client.paymentCoordinatorCTDataConnectionServiceType(*this);
+    auto& serviceType = client->paymentCoordinatorCTDataConnectionServiceType(*this);
     if (!serviceType.isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
         [result setCTDataConnectionServiceType:serviceType];
 #endif
@@ -516,7 +523,7 @@ void WebPaymentCoordinatorProxy::platformEndApplePaySetup()
 
 void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupConfiguration& configuration, const PaymentSetupFeatures& features, CompletionHandler<void(bool)>&& reply)
 {
-    UIViewController *presentingViewController = m_client.paymentCoordinatorPresentingViewController(*this);
+    UIViewController *presentingViewController = checkedClient()->paymentCoordinatorPresentingViewController(*this);
     if (!presentingViewController) {
         reply(false);
         return;

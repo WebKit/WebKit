@@ -1492,7 +1492,7 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if ENABLE(APPLE_PAY)
     ASSERT(!internals().paymentCoordinator);
-    internals().paymentCoordinator = makeUnique<WebPaymentCoordinatorProxy>(internals());
+    internals().paymentCoordinator = WebPaymentCoordinatorProxy::create(internals());
 #endif
 
 #if USE(SYSTEM_PREVIEW)

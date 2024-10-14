@@ -62,7 +62,8 @@ Ref<WorkQueue> WebPaymentCoordinatorProxy::protectedCanMakePaymentsQueue() const
 
 IPC::Connection* WebPaymentCoordinatorProxy::messageSenderConnection() const
 {
-    return m_client.paymentCoordinatorConnection(*this);
+    CheckedPtr client = m_client.get();
+    return client ? client->paymentCoordinatorConnection(*this) : nullptr;
 }
 
 uint64_t WebPaymentCoordinatorProxy::messageSenderDestinationID() const
@@ -279,7 +280,8 @@ void WebPaymentCoordinatorProxy::presenterDidSelectShippingContact(PaymentAuthor
 
 CocoaWindow* WebPaymentCoordinatorProxy::presentingWindowForPaymentAuthorization(PaymentAuthorizationPresenter&) const
 {
-    return m_client.paymentCoordinatorPresentingWindow(*this);
+    CheckedPtr client = m_client.get();
+    return client ? client->paymentCoordinatorPresentingWindow(*this) : nullptr;
 }
 
 void WebPaymentCoordinatorProxy::presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod& paymentMethod)

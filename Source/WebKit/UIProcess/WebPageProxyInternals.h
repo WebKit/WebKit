@@ -268,9 +268,15 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 #endif
 {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
 
 public:
     virtual ~Internals();
+
+    uint32_t ptrCount() const { return WebPopupMenuProxy::Client::ptrCount(); }
+    uint32_t ptrCountWithoutThreadCheck() const { return WebPopupMenuProxy::Client::ptrCountWithoutThreadCheck(); }
+    void incrementPtrCount() const { WebPopupMenuProxy::Client::incrementPtrCount(); }
+    void decrementPtrCount() const { WebPopupMenuProxy::Client::decrementPtrCount(); }
 
     WeakRef<WebPageProxy> page;
     OptionSet<WebCore::ActivityState> activityState;
@@ -331,7 +337,7 @@ public:
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
 
 #if ENABLE(APPLE_PAY)
-    std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;
+    RefPtr<WebPaymentCoordinatorProxy> paymentCoordinator;
 #endif
 
 #if PLATFORM(COCOA)
