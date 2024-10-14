@@ -1956,7 +1956,6 @@ style/Styleable.cpp
 style/Styleable.h
 style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
-style/values/StylePrimitiveNumericTypes+Conversions.cpp
 style/values/StylePrimitiveNumericTypes.h
 svg/SVGAElement.cpp
 svg/SVGAElement.h

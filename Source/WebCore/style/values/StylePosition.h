@@ -37,19 +37,19 @@ using Bottom = CSS::Bottom;
 using Center = CSS::Center;
 
 struct Position  {
-    Position(LengthPercentage&& horizontal, LengthPercentage&& vertical)
+    Position(LengthPercentage<>&& horizontal, LengthPercentage<>&& vertical)
         : value { WTFMove(horizontal), WTFMove(vertical) }
     {
     }
 
-    Position(SpaceSeparatedArray<LengthPercentage, 2>&& array)
+    Position(SpaceSeparatedArray<LengthPercentage<>, 2>&& array)
         : value { WTFMove(array) }
     {
     }
 
     bool operator==(const Position&) const = default;
 
-    SpaceSeparatedArray<LengthPercentage, 2> value;
+    SpaceSeparatedArray<LengthPercentage<>, 2> value;
 };
 
 template<size_t I> const auto& get(const Position& position)

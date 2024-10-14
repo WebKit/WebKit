@@ -318,7 +318,7 @@ Tree fromCalculationValue(const CalculationValue& calculationValue, const Render
         .type = type,
         .category = category,
         .stage = CSSCalc::Stage::Computed,
-        .range = range
+        .range = { range.min, range.max }
     };
 }
 
@@ -344,7 +344,13 @@ Ref<CalculationValue> toCalculationValue(const Tree& tree, const EvaluationOptio
     };
     auto root = toCalculationValue(simplifiedTree.root, conversionOptions);
 
-    return CalculationValue::create(Calculation::Tree { .root = WTFMove(root), .category = category, .range = range });
+    return CalculationValue::create(
+        Calculation::Tree {
+            .root = WTFMove(root),
+            .category = category,
+            .range = { range.min, range.max }
+        }
+    );
 }
 
 } // namespace CSSCalc

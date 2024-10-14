@@ -7978,7 +7978,7 @@
             "codegen-properties": {
                 "converter": "MarqueeSpeed",
                 "internal-only": true,
-                "parser-grammar": "<time [0,inf] unitless-allowed>"
+                "parser-grammar": "<time [0,inf]>"
             },
             "status": "non-standard"
         },

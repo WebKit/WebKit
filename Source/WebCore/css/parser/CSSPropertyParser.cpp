@@ -1890,7 +1890,7 @@ static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParse
     CSSValueListBuilder x;
     CSSValueListBuilder y;
     do {
-        auto position = consumePositionCoordinates(range, context, UnitlessQuirk::Allow, property == CSSPropertyMaskPosition ? PositionSyntax::Position : PositionSyntax::BackgroundPosition, NegativePercentagePolicy::Allow);
+        auto position = consumePositionCoordinates(range, context, UnitlessQuirk::Allow, property == CSSPropertyMaskPosition ? PositionSyntax::Position : PositionSyntax::BackgroundPosition);
         if (!position)
             return false;
         x.append(WTFMove(position->x));

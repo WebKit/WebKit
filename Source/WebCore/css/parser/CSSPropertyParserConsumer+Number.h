@@ -25,13 +25,13 @@
 #pragma once
 
 #include "CSSPropertyParserOptions.h"
+#include "Length.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {

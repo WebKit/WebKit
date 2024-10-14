@@ -67,7 +67,7 @@ void Serialize<GradientLinearColorStop>::operator()(StringBuilder& builder, cons
 
 void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, const GradientDeprecatedColorStop& stop)
 {
-    auto appendRaw = [&](const auto& color, NumberRaw raw) {
+    auto appendRaw = [&](const auto& color, NumberRaw<> raw) {
         if (!raw.value)
             builder.append("from("_s, color->cssText(), ')');
         else if (raw.value == 1)
@@ -84,22 +84,22 @@ void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, 
     };
 
     WTF::switchOn(stop.position,
-        [&](const Number& number) {
+        [&](const Number<>& number) {
             return WTF::switchOn(number.value,
-                [&](NumberRaw raw) {
+                [&](NumberRaw<> raw) {
                     appendRaw(stop.color, raw);
                 },
-                [&](const UnevaluatedCalc<NumberRaw>& calc) {
+                [&](const UnevaluatedCalc<NumberRaw<>>& calc) {
                     appendCalc(calc);
                 }
             );
         },
-        [&](const Percentage& percentage) {
+        [&](const Percentage<>& percentage) {
             return WTF::switchOn(percentage.value,
-                [&](PercentageRaw raw) {
+                [&](PercentageRaw<> raw) {
                     appendRaw(stop.color, { raw.value / 100.0 });
                 },
-                [&](const UnevaluatedCalc<PercentageRaw>& calc) {
+                [&](const UnevaluatedCalc<PercentageRaw<>>& calc) {
                     appendCalc(calc);
                 }
             );
@@ -188,16 +188,16 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
     bool wroteSomething = false;
 
     WTF::switchOn(gradient.gradientLine,
-        [&](const Angle& angle) {
+        [&](const Angle<>& angle) {
             WTF::switchOn(angle.value,
-                [&](const AngleRaw& angleRaw) {
+                [&](const AngleRaw<>& angleRaw) {
                     if (CSSPrimitiveValue::computeDegrees(angleRaw.type, angleRaw.value) == 180)
                         return;
 
                     serializationForCSS(builder, angleRaw);
                     wroteSomething = true;
                 },
-                [&](const UnevaluatedCalc<AngleRaw>& angleCalc) {
+                [&](const UnevaluatedCalc<AngleRaw<>>& angleCalc) {
                     serializationForCSS(builder, angleCalc);
                     wroteSomething = true;
                 }
@@ -262,7 +262,7 @@ void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, cons
     auto lengthBefore = builder.length();
 
     WTF::switchOn(ellipse.size,
-        [&](const SpaceSeparatedArray<LengthPercentage, 2>& size) {
+        [&](const RadialGradient::Ellipse::Size& size) {
             serializationForCSS(builder, size);
         },
         [&](const RadialGradient::Extent& extent) {
@@ -286,7 +286,7 @@ void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, cons
 void Serialize<RadialGradient::Circle>::operator()(StringBuilder& builder, const RadialGradient::Circle& circle)
 {
     WTF::switchOn(circle.size,
-        [&](const Length& length) {
+        [&](const RadialGradient::Circle::Length& length) {
             serializationForCSS(builder, length);
         },
         [&](const RadialGradient::Extent& extent) {
@@ -332,7 +332,7 @@ void Serialize<PrefixedRadialGradient::Ellipse>::operator()(StringBuilder& build
 
     if (ellipse.size) {
         WTF::switchOn(*ellipse.size,
-            [&](const SpaceSeparatedArray<LengthPercentage, 2>& size) {
+            [&](const PrefixedRadialGradient::Ellipse::Size& size) {
                 builder.append(", "_s);
                 serializationForCSS(builder, size);
             },
@@ -400,14 +400,14 @@ void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, c
 
     if (gradientBox.angle) {
         WTF::switchOn(gradientBox.angle->value,
-            [&](const AngleRaw& angleRaw) {
+            [&](const AngleRaw<>& angleRaw) {
                 if (angleRaw.value) {
                     builder.append("from "_s);
                     serializationForCSS(builder, angleRaw);
                     wroteSomething = true;
                 }
             },
-            [&](const UnevaluatedCalc<AngleRaw>& angleCalc) {
+            [&](const UnevaluatedCalc<AngleRaw<>>& angleCalc) {
                 builder.append("from "_s);
                 serializationForCSS(builder, angleCalc);
                 wroteSomething = true;

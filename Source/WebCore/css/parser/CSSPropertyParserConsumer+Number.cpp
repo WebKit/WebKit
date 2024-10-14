@@ -27,46 +27,11 @@
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
 #include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
-
-std::optional<CSS::NumberRaw> validatedRange(CSS::NumberRaw value, CSSPropertyParserOptions options)
-{
-    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
-        return std::nullopt;
-    return value;
-}
-
-std::optional<CSS::UnevaluatedCalc<CSS::NumberRaw>> NumberKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    auto rangeCopy = range;
-    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Number, WTFMove(symbolsAllowed), options)) {
-        range = rangeCopy;
-        return {{ value.releaseNonNull() }};
-    }
-
-    return std::nullopt;
-}
-
-std::optional<CSS::NumberRaw> NumberKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    if (auto validatedValue = validatedRange(CSS::NumberRaw { range.peek().numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-    return std::nullopt;
-}
 
 // MARK: - Consumer functions
 
@@ -74,9 +39,10 @@ RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange& range, const CSSPar
 {
     const auto options = CSSPropertyParserOptions {
         .parserMode = context.mode,
-        .valueRange = valueRange
     };
-    return CSSPrimitiveValueResolver<CSS::Number>::consumeAndResolve(range, context, { }, { }, options);
+    if (valueRange == ValueRange::All)
+        return CSSPrimitiveValueResolver<CSS::Number<CSS::All>>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Number<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

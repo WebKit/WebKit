@@ -544,30 +544,15 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 {
     // [ <color> && <percentage [0,100]>? ]
 
-    std::optional<CSSUnresolvedColorMix::Component::Percentage> percentage;
-
-    if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
-        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
-            auto value = rawValue->value;
-            if (value < 0.0 || value > 100.0)
-                return std::nullopt;
-        }
-        percentage = percent;
-    }
+    auto percentage = MetaConsumer<CSSUnresolvedColorMix::Component::Percentage>::consume(args, state.context, { }, { });
 
     auto originColor = consumeColor(args, state);
     if (!originColor)
         return std::nullopt;
 
     if (!percentage) {
-        if (auto percent = MetaConsumer<CSS::Percentage>::consume(args, state.context, { }, { })) {
-            if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percent->value))) {
-                auto value = rawValue->value;
-                if (value < 0.0 || value > 100.0)
-                    return std::nullopt;
-            }
+        if (auto percent = MetaConsumer<CSSUnresolvedColorMix::Component::Percentage>::consume(args, state.context, { }, { }))
             percentage = percent;
-        }
     }
 
     return CSSUnresolvedColorMix::Component {
@@ -579,7 +564,7 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Component& mixComponent)
 {
     if (auto percentage = mixComponent.percentage) {
-        if (CSS::PercentageRaw* rawValue = std::get_if<CSS::PercentageRaw>(&(percentage->value)))
+        if (auto* rawValue = percentage->raw())
             return rawValue->value == 0.0;
     }
     return false;

@@ -106,5 +106,4 @@ FloatSize StyleGradientImage::fixedSize(const RenderElement&) const
     return { };
 }
 
-
 } // namespace WebCore

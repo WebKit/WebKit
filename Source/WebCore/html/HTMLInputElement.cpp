@@ -2275,10 +2275,10 @@ static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
         Style::FunctionNotation<CSSValueLinearGradient, Style::LinearGradient> {
             .parameters = {
                 .colorInterpolationMethod = Style::GradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied),
-                .gradientLine = { Style::Angle { 90 } },
+                .gradientLine = { Style::Angle<> { 90 } },
                 .stops = {
-                    { Color::black,            Style::LengthPercentage { Style::Percentage { 50 } } },
-                    { Color::transparentBlack, Style::LengthPercentage { Style::Percentage { 100 } } }
+                    { Color::black,            Style::LengthPercentage<> { Style::Percentage<> { 50 } } },
+                    { Color::transparentBlack, Style::LengthPercentage<> { Style::Percentage<> { 100 } } }
                 }
             }
         }

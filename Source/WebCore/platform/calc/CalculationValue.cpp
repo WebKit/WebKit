@@ -56,7 +56,7 @@ Calculation::NumericValue CalculationValue::evaluate(Calculation::NumericValue p
     auto result = Calculation::evaluate(m_tree, percentResolutionLength);
     if (std::isnan(result))
         return 0;
-    return m_tree.range == ValueRange::NonNegative && result < 0 ? 0 : result;
+    return std::clamp(result, m_tree.range.min, m_tree.range.max);
 }
 
 Calculation::Tree CalculationValue::copyTree() const

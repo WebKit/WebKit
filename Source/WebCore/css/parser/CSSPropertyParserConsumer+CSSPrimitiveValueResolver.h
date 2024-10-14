@@ -47,7 +47,7 @@ struct CSSPrimitiveValueResolverBase {
         return CSSPrimitiveValue::create(value.value, value.type);
     }
 
-    template<typename IntType, CSS::IntegerValueRange integerRange> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
+    template<typename IntType, CSS::Range integerRange> static RefPtr<CSSPrimitiveValue> resolve(CSS::IntegerRaw<IntType, integerRange> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
         return CSSPrimitiveValue::createInteger(value.value);
     }

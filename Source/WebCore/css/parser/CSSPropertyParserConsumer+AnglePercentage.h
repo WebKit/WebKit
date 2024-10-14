@@ -25,21 +25,20 @@
 #pragma once
 
 #include "CSSPropertyParserOptions.h"
+#include "Length.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class CSSParserTokenRange;
 class CSSPrimitiveValue;
-
+class CSSParserTokenRange;
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-// MARK: - AnglePercentage
-RefPtr<CSSPrimitiveValue> consumeAnglePercentage(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
+RefPtr<CSSPrimitiveValue> consumeAnglePercentage(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -57,8 +57,8 @@ using MetaConsumerVariantOrSingle = std::conditional_t<
 >;
 
 /// The result of a meta consume.
-/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle, CSS::Percentage, CSS::None>`), which will yield a
-/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle, CSS::Percentage, CSS::None>`) or the type
+/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`), which will yield a
+/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`) or the type
 /// itself if only a single type was specified.
 template<typename... Ts>
 struct MetaConsumeResult {
@@ -159,7 +159,7 @@ struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
 // An example use that attempts to consumer either a <number> or <percentage>
 // looks like:
 //
-//    auto result = MetaConsumer<CSS::Percentage, CSS::Number>::consume(range, ...);
+//    auto result = MetaConsumer<CSS::Percentage<R>, CSS::Number<R>>::consume(range, ...);
 //
 // (Argument list elided for brevity)
 template<typename... Ts>

@@ -34,8 +34,10 @@ namespace WebCore {
 
 struct CSSColorMixResolver {
     struct Component {
+        using Percentage = Style::Percentage<CSS::Range{0, 100}>;
+
         Color color;
-        std::optional<Style::Percentage> percentage;
+        std::optional<Percentage> percentage;
     };
 
     ColorInterpolationMethod colorInterpolationMethod;

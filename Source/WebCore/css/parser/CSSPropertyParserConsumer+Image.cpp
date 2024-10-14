@@ -78,14 +78,14 @@ template<CSSValueID zeroValue, CSSValueID oneHundredValue> static std::optional<
 {
     if (range.peek().type() == IdentToken) {
         if (consumeIdent<zeroValue>(range))
-            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 0 } } };
+            return CSS::PercentageOrNumber { CSS::Percentage<> { CSS::PercentageRaw<> { 0 } } };
         if (consumeIdent<oneHundredValue>(range))
-            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 100 } } };
+            return CSS::PercentageOrNumber { CSS::Percentage<> { CSS::PercentageRaw<> { 100 } } };
         if (consumeIdent<CSSValueCenter>(range))
-            return CSS::PercentageOrNumber { CSS::Percentage { CSS::PercentageRaw { 50 } } };
+            return CSS::PercentageOrNumber { CSS::Percentage<> { CSS::PercentageRaw<> { 50 } } };
         return std::nullopt;
     }
-    return MetaConsumer<CSS::Percentage, CSS::Number>::consume(range, context, { }, { });
+    return MetaConsumer<CSS::Percentage<>, CSS::Number<>>::consume(range, context, { }, { });
 }
 
 static std::optional<CSS::DeprecatedGradientPosition> consumeDeprecatedGradientPosition(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -125,13 +125,13 @@ static std::optional<CSS::GradientDeprecatedColorStop> consumeDeprecatedGradient
     std::optional<CSS::GradientDeprecatedColorStopPosition> position;
     switch (id) {
     case CSSValueFrom:
-        position = CSS::NumberRaw { 0 };
+        position = CSS::NumberRaw<> { 0 };
         break;
     case CSSValueTo:
-        position = CSS::NumberRaw { 1 };
+        position = CSS::NumberRaw<> { 1 };
         break;
     case CSSValueColorStop:
-        position = MetaConsumer<CSS::Percentage, CSS::Number>::consume(args, context, { }, { });
+        position = MetaConsumer<CSS::Percentage<>, CSS::Number<>>::consume(args, context, { }, { });
         if (!position)
             return std::nullopt;
         if (!consumeCommaIncludingWhitespace(args))
@@ -199,10 +199,6 @@ static RefPtr<CSSValue> consumeDeprecatedLinearGradient(CSSParserTokenRange& ran
 
 static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    constexpr auto radiusConsumeOptions = CSSPropertyParserOptions {
-        .valueRange = ValueRange::NonNegative
-    };
-
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
@@ -213,7 +209,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto firstRadius = MetaConsumer<CSS::Number>::consume(range, context, { }, radiusConsumeOptions);
+    auto firstRadius = MetaConsumer<CSS::Number<CSS::Nonnegative>>::consume(range, context, { }, { });
     if (!firstRadius)
         return nullptr;
 
@@ -227,7 +223,7 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& ran
     if (!consumeCommaIncludingWhitespace(range))
         return nullptr;
 
-    auto secondRadius = MetaConsumer<CSS::Number>::consume(range, context, { }, radiusConsumeOptions);
+    auto secondRadius = MetaConsumer<CSS::Number<CSS::Nonnegative>>::consume(range, context, { }, { });
     if (!secondRadius)
         return nullptr;
 
@@ -316,7 +312,7 @@ template<SupportsColorHints supportsColorHints> static std::optional<CSS::Gradie
     };
 
     return consumeColorStopList<supportsColorHints, CSS::GradientLinearColorStop>(range, context, [&](auto& range) {
-        return MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options);
+        return MetaConsumer<CSS::LengthPercentage<>>::consume(range, context, { }, options);
     });
 }
 
@@ -329,7 +325,7 @@ template<SupportsColorHints supportsColorHints> static std::optional<CSS::Gradie
     };
 
     return consumeColorStopList<supportsColorHints, CSS::GradientAngularColorStop>(range, context, [&](auto& range) {
-        return MetaConsumer<CSS::AnglePercentage>::consume(range, context, { }, options);
+        return MetaConsumer<CSS::AnglePercentage<>>::consume(range, context, { }, options);
     });
 }
 
@@ -437,7 +433,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedLinearGradient(
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions)) {
+    if (auto angle = MetaConsumer<CSS::Angle<>>::consume(range, context, { }, angleConsumeOptions)) {
         gradientLine = WTF::switchOn(WTFMove(angle->value), [](auto&& value) -> CSS::PrefixedLinearGradient::GradientLine { return value; });
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
@@ -556,12 +552,11 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedRadialGradient(
 
         const auto options = CSSPropertyParserOptions {
             .parserMode = context.mode,
-            .valueRange = ValueRange::NonNegative,
             .unitlessZero = UnitlessZeroQuirk::Allow
         };
 
-        if (auto length1 = MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options)) {
-            auto length2 = MetaConsumer<CSS::LengthPercentage>::consume(range, context, { }, options);
+        if (auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, context, { }, options)) {
+            auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(range, context, { }, options);
             if (!length2)
                 return std::nullopt;
             if (!consumeCommaIncludingWhitespace(range))
@@ -673,7 +668,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeLinearGradient(CSSParse
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    if (auto angle = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions))
+    if (auto angle = MetaConsumer<CSS::Angle<>>::consume(range, context, { }, angleConsumeOptions))
         gradientLine = WTFMove(angle);
     else if (range.peek().id() == CSSValueTo) {
         auto keywordGradientLine = consumeKeywordGradientLine(range);
@@ -746,7 +741,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
 
     std::optional<ShapeKeyword> shape;
 
-    using Size = std::variant<CSS::RadialGradient::Extent, CSS::Length, CSS::SpaceSeparatedArray<CSS::LengthPercentage, 2>>;
+    using Size = std::variant<CSS::RadialGradient::Extent, CSS::Length<CSS::Nonnegative>, CSS::SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>>;
     std::optional<Size> size;
 
     // First part of grammar, the size/shape clause:
@@ -775,16 +770,15 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
         } else {
             const auto options = CSSPropertyParserOptions {
                 .parserMode = context.mode,
-                .valueRange = ValueRange::NonNegative,
                 .unitlessZero = UnitlessZeroQuirk::Allow
             };
             auto rangeCopy = range;
-            auto length1 = MetaConsumer<CSS::LengthPercentage>::consume(rangeCopy, context, { }, options);
+            auto length1 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, context, { }, options);
             if (!length1)
                 break;
             if (size)
                 return nullptr;
-            if (auto length2 = MetaConsumer<CSS::LengthPercentage>::consume(rangeCopy, context, { }, options)) {
+            if (auto length2 = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, context, { }, options)) {
                 size = CSS::SpaceSeparatedArray { WTFMove(*length1), WTFMove(*length2) };
                 range = rangeCopy;
 
@@ -793,7 +787,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
             } else {
                 // Reset to before the first length-percentage, and re-parse to make sure it is a valid <length [0,∞]> production.
                 rangeCopy = range;
-                auto length = MetaConsumer<CSS::Length>::consume(rangeCopy, context, { }, options);
+                auto length = MetaConsumer<CSS::Length<CSS::Nonnegative>>::consume(rangeCopy, context, { }, options);
                 if (!length)
                     return nullptr;
                 size = WTFMove(*length);
@@ -833,11 +827,11 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                             .position = WTFMove(position),
                         };
                     },
-                    [&](CSS::Length&&) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::Length<CSS::Nonnegative>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
                         // Ellipses must have two length-percentages specified.
                         return std::nullopt;
                     },
-                    [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
                         return CSS::RadialGradient::Ellipse {
                             .size = WTFMove(size),
                             .position = WTFMove(position),
@@ -853,13 +847,13 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                             .position = WTFMove(position),
                         };
                     },
-                    [&](CSS::Length&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::Length<CSS::Nonnegative>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
                         return CSS::RadialGradient::Circle {
                             .size = WTFMove(length),
                             .position = WTFMove(position),
                         };
                     },
-                    [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage, 2>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
+                    [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&&) -> std::optional<CSS::RadialGradient::GradientBox> {
                         // Circles must have a maximum of only one length specified.
                         return std::nullopt;
                     }
@@ -891,13 +885,13 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
                         .position = WTFMove(position),
                     };
                 },
-                [&](CSS::Length&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
+                [&](CSS::Length<CSS::Nonnegative>&& length) -> std::optional<CSS::RadialGradient::GradientBox> {
                     return CSS::RadialGradient::Circle {
                         .size = WTFMove(length),
                         .position = WTFMove(position),
                     };
                 },
-                [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
+                [&](CSS::SpaceSeparatedArray<CSS::LengthPercentage<CSS::Nonnegative>, 2>&& size) -> std::optional<CSS::RadialGradient::GradientBox> {
                     return CSS::RadialGradient::Ellipse {
                         .size = WTFMove(size),
                         .position = WTFMove(position),
@@ -948,14 +942,14 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeConicGradient(CSSParser
             return nullptr;
     }
 
-    std::optional<CSS::Angle> angle;
+    std::optional<CSS::Angle<>> angle;
     if (consumeIdent<CSSValueFrom>(range)) {
         const auto angleConsumeOptions = CSSPropertyParserOptions {
             .parserMode = context.mode,
             .unitless = UnitlessQuirk::Forbid,
             .unitlessZero = UnitlessZeroQuirk::Allow
         };
-        angle = MetaConsumer<CSS::Angle>::consume(range, context, { }, angleConsumeOptions);
+        angle = MetaConsumer<CSS::Angle<>>::consume(range, context, { }, angleConsumeOptions);
         if (!angle)
             return nullptr;
     }
@@ -1122,7 +1116,7 @@ template<> struct ConsumerDefinition<ImageSetTypeFunction> {
 
 // MARK: Image Set Resolution + Type Function
 
-static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
+static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // [ <resolution> || type(<string>) ]
     //
@@ -1132,12 +1126,11 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
     // <image-set-option> = [ <image> | <string> ] [ <resolution> || type(<string>) ]?
 
     const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange,
         .unitless = UnitlessQuirk::Allow,
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    auto result = MetaConsumer<CSS::Resolution, ImageSetTypeFunction>::consume(range, context, { }, options);
+    auto result = MetaConsumer<CSS::Resolution<>, ImageSetTypeFunction>::consume(range, context, { }, options);
     if (!result)
         return { };
 
@@ -1145,7 +1138,7 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
         [&](const ImageSetTypeFunction& typeFunction) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(typeFunction.value);
         },
-        [&](const auto& resolution) -> RefPtr<CSSPrimitiveValue> {
+        [&](const CSS::Resolution<>& resolution) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValueResolverBase::resolve(resolution, CSSCalcSymbolTable { }, options);
         }
     );
@@ -1165,7 +1158,7 @@ static RefPtr<CSSImageSetOptionValue> consumeImageSetOption(CSSParserTokenRange&
 
     // Optional resolution and type in any order.
     for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-        if (auto optionalArgument = consumeImageSetResolutionOrTypeFunction(range, context, ValueRange::NonNegative)) {
+        if (auto optionalArgument = consumeImageSetResolutionOrTypeFunction(range, context)) {
             if ((resolution && optionalArgument->isResolution()) || (type && optionalArgument->isString()))
                 return nullptr;
 

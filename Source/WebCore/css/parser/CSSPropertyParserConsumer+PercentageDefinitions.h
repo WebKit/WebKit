@@ -24,38 +24,21 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSUnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
-struct CSSParserContext;
-struct CSSPropertyParserOptions;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::PercentageRaw> validatedRange(CSS::PercentageRaw, CSSPropertyParserOptions);
-
-struct PercentageKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<CSS::UnevaluatedCalc<CSS::PercentageRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+struct PercentageValidator {
+    template<auto R> static bool isValid(CSS::PercentageRaw<R> raw, CSSPropertyParserOptions)
+    {
+        return isValidCanonicalValue(raw);
+    }
 };
 
-struct PercentageKnownTokenTypePercentConsumer {
-    static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<CSS::PercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<CSS::Percentage> {
-    using FunctionToken = PercentageKnownTokenTypeFunctionConsumer;
-    using PercentageToken = PercentageKnownTokenTypePercentConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Percentage<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Percentage<R>>;
+    using PercentageToken = PercentageConsumer<CSS::Percentage<R>, PercentageValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

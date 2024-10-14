@@ -34,7 +34,7 @@ namespace CSS {
 // Replaces the symbol with a value from the symbol table. This is only relevant
 // for Symbol, so a catchall overload that implements the identity function is
 // provided to allow generic replacement.
-Number replaceSymbol(Symbol, const CSSCalcSymbolTable&);
+Number<> replaceSymbol(Symbol, const CSSCalcSymbolTable&);
 
 template<typename T> constexpr auto replaceSymbol(T value, const CSSCalcSymbolTable&) -> T
 {

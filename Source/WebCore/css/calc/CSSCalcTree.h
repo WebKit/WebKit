@@ -25,8 +25,8 @@
 #pragma once
 
 #include "CSSCalcType.h"
-#include "CSSUnits.h"
 #include "CSSPrimitiveNumericTypes.h"
+#include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include "CalculationTree.h"
 #include <variant>
@@ -209,7 +209,7 @@ struct Tree {
     Type type;
     Calculation::Category category;
     Stage stage;
-    ValueRange range;
+    CSS::Range range;
 
     // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::doubleValueDeprecated` that the evaluation results will be incorrect.
     bool requiresConversionData = false;

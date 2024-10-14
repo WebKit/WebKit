@@ -25,22 +25,21 @@
 #pragma once
 
 #include "CSSPropertyParserOptions.h"
+#include "Length.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSPrimitiveValue;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-// MARK: - LengthPercentage
-RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid, AnchorPolicy = AnchorPolicy::Forbid, AnchorSizePolicy = AnchorSizePolicy::Forbid);
-RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange&, const CSSParserContext&, CSSParserMode overrideParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, NegativePercentagePolicy = NegativePercentagePolicy::Forbid, AnchorPolicy = AnchorPolicy::Forbid, AnchorSizePolicy = AnchorSizePolicy::Forbid);
+RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, AnchorPolicy = AnchorPolicy::Forbid, AnchorSizePolicy = AnchorSizePolicy::Forbid);
+RefPtr<CSSPrimitiveValue> consumeLengthPercentage(CSSParserTokenRange&, const CSSParserContext&, CSSParserMode overrideParserMode, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Allow, AnchorPolicy = AnchorPolicy::Forbid, AnchorSizePolicy = AnchorSizePolicy::Forbid);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

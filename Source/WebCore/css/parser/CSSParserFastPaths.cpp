@@ -34,6 +34,7 @@
 #include "CSSFunctionValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyParser.h"
@@ -49,7 +50,7 @@
 
 namespace WebCore {
 
-bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, ValueRange& valueRange)
+bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, CSS::Range& range)
 {
     switch (propertyId) {
     case CSSPropertyFontSize:
@@ -73,7 +74,7 @@ bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, Valu
     case CSSPropertyRx:
     case CSSPropertyRy:
     case CSSPropertyShapeMargin:
-        valueRange = ValueRange::NonNegative;
+        range = CSS::Nonnegative;
         return true;
     case CSSPropertyBottom:
     case CSSPropertyCx:
@@ -95,7 +96,7 @@ bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, Valu
     case CSSPropertyMarginInlineStart:
     case CSSPropertyX:
     case CSSPropertyY:
-        valueRange = ValueRange::All;
+        range = CSS::All;
         return true;
     default:
         return false;
@@ -181,7 +182,7 @@ static inline bool parseSimpleNumberOrPercentage(std::span<const CharacterType> 
     return true;
 }
 
-static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode cssParserMode, ValueRange valueRange)
+static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode cssParserMode, CSS::Range valueRange)
 {
     ASSERT(!string.isEmpty());
 
@@ -202,7 +203,7 @@ static RefPtr<CSSValue> parseSimpleLengthValue(StringView string, CSSParserMode 
         unit = CSSUnitType::CSS_PX;
     }
 
-    if (number < 0 && valueRange == ValueRange::NonNegative)
+    if (number < valueRange.min || number > valueRange.max)
         return nullptr;
 
     if (std::isinf(number))
@@ -603,12 +604,16 @@ template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseLegac
     if (characters.empty() || characters.front() != ')')
         return std::nullopt;
 
-    auto parsedColor = StyleColorParseType<HSLFunctionLegacy>(Style::Angle { narrowPrecisionToFloat(CSSPrimitiveValue::computeDegrees(angleUnit, hue)) }, Style::Percentage { narrowPrecisionToFloat(*saturation) }, Style::Percentage { narrowPrecisionToFloat(*lightness) }, Style::Number { narrowPrecisionToFloat(alpha) });
+    auto parsedColor = StyleColorParseType<HSLFunctionLegacy> {
+        Style::Angle<>      { narrowPrecisionToFloat(CSSPrimitiveValue::computeDegrees(angleUnit, hue)) },
+        Style::Percentage<> { narrowPrecisionToFloat(*saturation) },
+        Style::Percentage<> { narrowPrecisionToFloat(*lightness) },
+        Style::Number<>     { narrowPrecisionToFloat(alpha) }
+    };
     auto typedColor = convertToTypedColor<HSLFunctionLegacy>(parsedColor, 1.0);
     auto resultColor = convertToColor<HSLFunctionLegacy, CSSColorFunctionForm::Absolute>(typedColor, 0);
     return resultColor.tryGetAsSRGBABytes();
 }
-
 
 template<typename CharacterType>
 static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const CharacterType> characters, bool strict)
@@ -1090,7 +1095,7 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
     if (CSSProperty::isColorProperty(propertyID))
         return parseColor(string, context);
 
-    auto valueRange = ValueRange::All;
+    auto valueRange = CSS::All;
     if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange)) {
         auto result = parseSimpleLengthValue(string, context.mode, valueRange);
         if (result)

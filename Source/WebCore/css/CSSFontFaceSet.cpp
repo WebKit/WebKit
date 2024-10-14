@@ -340,11 +340,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
                 return normalWeightValue();
             }
         },
-        [&](const CSS::Number& weight) {
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWeightNumber& weight) {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(weight))
                 return normalWeightValue();
-            return FontSelectionValue(clampTo<float>(Style::toStyleNoConversionDataRequired(weight).value, 1, 1000));
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(weight).value);
         }
     );
 
@@ -352,7 +352,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
         [&](CSSValueID ident) -> FontSelectionValue {
             return *fontStretchValue(ident);
         },
-        [&](const CSS::Percentage& percent) -> FontSelectionValue  {
+        [&](const CSSPropertyParserHelpers::UnresolvedFontStretchPercentage& percent) -> FontSelectionValue  {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(percent))
                 return normalStretchValue();
@@ -374,11 +374,11 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
                 return std::nullopt;
             }
         },
-        [&](const CSS::Angle& angle) -> std::optional<FontSelectionValue> {
+        [&](const CSSPropertyParserHelpers::UnresolvedFontStyleObliqueAngle& angle) -> std::optional<FontSelectionValue> {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(angle))
                 return std::nullopt;
-            return normalizedFontItalicValue(Style::toStyleNoConversionDataRequired(angle).value);
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(angle).value);
         }
     );
 

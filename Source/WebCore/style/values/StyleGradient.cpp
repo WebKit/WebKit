@@ -73,7 +73,7 @@ static auto toCSSColorStopPosition(const GradientAngularColorStop::Position& pos
 
 static auto toCSSColorStopPosition(const GradientDeprecatedColorStop::Position& position, const RenderStyle&) -> CSS::GradientDeprecatedColorStopPosition
 {
-    return CSS::NumberRaw { position.value };
+    return CSS::NumberRaw<> { position.value };
 }
 
 template<typename CSSStop, typename StyleStop> static auto toCSSColorStop(const StyleStop& stop, const RenderStyle& style) -> CSSStop
@@ -121,11 +121,11 @@ static auto toStyleStopPosition(const CSS::GradientAngularColorStopPosition& pos
 static auto toStyleStopPosition(const CSS::GradientDeprecatedColorStopPosition& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStopPosition
 {
     return WTF::switchOn(position,
-        [&](const CSS::Number& number) {
+        [&](const CSS::Number<>& number) {
             return toStyle(number, state, symbolTable);
         },
-        [&](const CSS::Percentage& percentage) {
-            return Number { toStyle(percentage, state, symbolTable).value / 100.0f };
+        [&](const CSS::Percentage<>& percentage) {
+            return Number<> { toStyle(percentage, state, symbolTable).value / 100.0f };
         }
     );
 }
@@ -171,12 +171,12 @@ static std::optional<float> resolveColorStopPosition(const GradientLinearColorSt
         return std::nullopt;
 
     return position->value.switchOn(
-        [&](Length length) -> std::optional<float> {
+        [&](Length<> length) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
             return length.value / gradientLength;
         },
-        [&](Percentage percentage) -> std::optional<float> {
+        [&](Percentage<> percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
         [&](const CalculationValue& calc) -> std::optional<float> {
@@ -193,10 +193,10 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
         return std::nullopt;
 
     return position->value.switchOn(
-        [](Angle angle) -> std::optional<float> {
+        [](Angle<> angle) -> std::optional<float> {
             return angle.value / 360.0;
         },
-        [](Percentage percentage) -> std::optional<float> {
+        [](Percentage<> percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
         [](const CalculationValue& calc) -> std::optional<float> {
@@ -209,7 +209,6 @@ static float resolveColorStopPosition(const GradientDeprecatedColorStop::Positio
 {
     return static_cast<float>(position.value);
 }
-
 
 struct ResolvedGradientStop {
     Color color;
@@ -690,7 +689,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     };
 }
 
-static inline float positionFromValue(const LengthPercentage& coordinate, float widthOrHeight)
+static inline float positionFromValue(const LengthPercentage<>& coordinate, float widthOrHeight)
 {
     return evaluate(coordinate, widthOrHeight);
 }
@@ -698,8 +697,8 @@ static inline float positionFromValue(const LengthPercentage& coordinate, float 
 static inline float positionFromValue(const PercentageOrNumber& coordinate, float widthOrHeight)
 {
     return WTF::switchOn(coordinate,
-        [&](Number number) -> float { return number.value; },
-        [&](Percentage percentage) -> float { return percentage.value / 100.0f * widthOrHeight; }
+        [&](Number<> number) -> float { return number.value; },
+        [&](Percentage<> percentage) -> float { return percentage.value / 100.0f * widthOrHeight; }
     );
 }
 
@@ -768,7 +767,7 @@ static std::pair<FloatPoint, FloatPoint> endPointsFromAngleForPrefixedVariants(f
     return endPointsFromAngle(90 - angleDeg, size);
 }
 
-static float resolveRadius(const LengthPercentage& radius, float widthOrHeight)
+static float resolveRadius(const LengthPercentage<CSS::Nonnegative>& radius, float widthOrHeight)
 {
     return evaluate(radius, widthOrHeight);
 }
@@ -864,7 +863,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     ASSERT(!size.isEmpty());
 
     auto [point0, point1] = WTF::switchOn(linear.parameters.gradientLine,
-        [&](const Angle& angle) -> std::pair<FloatPoint, FloatPoint> {
+        [&](const Angle<>& angle) -> std::pair<FloatPoint, FloatPoint> {
             return endPointsFromAngle(angle.value, size);
         },
         [&](const Horizontal& horizontal) -> std::pair<FloatPoint, FloatPoint> {
@@ -914,7 +913,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     ASSERT(!size.isEmpty());
 
     auto [point0, point1] = WTF::switchOn(linear.parameters.gradientLine,
-        [&](const Angle& angle) -> std::pair<FloatPoint, FloatPoint> {
+        [&](const Angle<>& angle) -> std::pair<FloatPoint, FloatPoint> {
             return endPointsFromAngleForPrefixedVariants(angle.value, size);
         },
         [&](const Horizontal& horizontal) -> std::pair<FloatPoint, FloatPoint> {

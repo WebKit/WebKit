@@ -551,7 +551,7 @@ static RefPtr<CSSValue> consumeAutoOrLengthPercentage(CSSParserTokenRange& range
 {
     if (range.peek().id() == CSSValueAuto)
         return consumeIdent(range);
-    return consumeLengthPercentage(range, context, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, NegativePercentagePolicy::Forbid, anchorPolicy, anchorSizePolicy);
+    return consumeLengthPercentage(range, context, ValueRange::All, unitless, UnitlessZeroQuirk::Allow, anchorPolicy, anchorSizePolicy);
 }
 
 RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID currentShorthand)

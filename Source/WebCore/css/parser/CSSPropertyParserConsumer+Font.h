@@ -59,25 +59,25 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Font
 
 // normal | italic | oblique <angle [-90deg,90deg]>?
-using UnresolvedFontStyleObliqueAngle = CSS::Angle; // CSS::Angle<_(-90º,90º)>
-using UnresolvedFontStyle = std::variant<CSSValueID, CSS::Angle>;
+using UnresolvedFontStyleObliqueAngle = CSS::Angle<CSS::Range{-90, 90}>;
+using UnresolvedFontStyle = std::variant<CSSValueID, UnresolvedFontStyleObliqueAngle>;
 
 // normal | small-caps
 using UnresolvedFontVariantCaps = CSSValueID;
 
 // normal | bold | bolder | lighter | <number [1,1000]>
-using UnresolvedFontWeightNumber = CSS::Number;
-using UnresolvedFontWeight = std::variant<CSSValueID, CSS::Number>;
+using UnresolvedFontWeightNumber = CSS::Number<CSS::Range{1, 1000}>;
+using UnresolvedFontWeight = std::variant<CSSValueID, UnresolvedFontWeightNumber>;
 
 // normal | <percentage [0,∞]> | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
-using UnresolvedFontStretchPercentage = CSS::Percentage;
-using UnresolvedFontStretch = std::variant<CSSValueID, CSS::Percentage>;
+using UnresolvedFontStretchPercentage = CSS::Percentage<CSS::Nonnegative>;
+using UnresolvedFontStretch = std::variant<CSSValueID, UnresolvedFontStretchPercentage>;
 
 // <absolute-size> | <relative-size> | <length-percentage [0,∞]>
-using UnresolvedFontSize = std::variant<CSSValueID, CSS::LengthPercentage>;
+using UnresolvedFontSize = std::variant<CSSValueID, CSS::LengthPercentage<CSS::Nonnegative>>;
 
 // normal | <number [0,∞]> | <length-percentage [0,∞]>
-using UnresolvedFontLineHeight = std::variant<CSSValueID, CSS::Number, CSS::LengthPercentage>;
+using UnresolvedFontLineHeight = std::variant<CSSValueID, CSS::Number<CSS::Nonnegative>, CSS::LengthPercentage<CSS::Nonnegative>>;
 
 // [ <family-name> | <generic-family> ]#
 using UnresolvedFontFamilyName = std::variant<CSSValueID, AtomString>;

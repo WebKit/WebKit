@@ -36,26 +36,26 @@
 
 namespace WebCore {
 
-Style::Percentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
+ResolvedColorMixPercentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage& percentage, const CSSToLengthConversionData& conversionData)
 {
     return Style::toStyle(percentage, conversionData);
 }
 
-Style::Percentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
+ResolvedColorMixPercentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage& percentage)
 {
     ASSERT(!requiresConversionData(percentage));
 
     return Style::toStyleNoConversionDataRequired(percentage);
 }
 
-static std::optional<Style::Percentage> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)
+static std::optional<ResolvedColorMixPercentage> resolveComponentPercentage(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage, const CSSToLengthConversionData& conversionData)
 {
     if (!percentage)
         return std::nullopt;
     return resolveComponentPercentage(*percentage, conversionData);
 }
 
-static std::optional<Style::Percentage> resolveComponentPercentageNoConversionDataRequired(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
+static std::optional<ResolvedColorMixPercentage> resolveComponentPercentageNoConversionDataRequired(const std::optional<CSSUnresolvedColorMix::Component::Percentage>& percentage)
 {
     if (!percentage)
         return std::nullopt;
@@ -131,8 +131,8 @@ Color createColor(const CSSUnresolvedColorMix& unresolved, CSSUnresolvedColorRes
     if (!component2Color.isValid())
         return { };
 
-    std::optional<Style::Percentage> percentage1;
-    std::optional<Style::Percentage> percentage2;
+    std::optional<ResolvedColorMixPercentage> percentage1;
+    std::optional<ResolvedColorMixPercentage> percentage2;
     if (requiresConversionData(unresolved.mixComponents1.percentage) || requiresConversionData(unresolved.mixComponents2.percentage)) {
         if (!state.conversionData)
             return { };

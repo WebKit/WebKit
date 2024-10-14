@@ -33,6 +33,24 @@
 namespace WebCore {
 namespace CSS {
 
+// Representation for `CSS bracketed range notation`. Represents a closed range between (and including) `min` and `max`.
+// https://drafts.csswg.org/css-values-4/#numeric-ranges
+struct Range {
+    // Convenience to allow for a shorter spelling of the appropriate infinity.
+    static constexpr auto infinity = std::numeric_limits<double>::infinity();
+
+    double min { -infinity };
+    double max {  infinity };
+
+    constexpr bool operator==(const Range&) const = default;
+};
+
+// Constant value for `[−∞,∞]`.
+inline constexpr auto All = Range { -Range::infinity, Range::infinity };
+
+// Constant value for `[0,∞]`.
+inline constexpr auto Nonnegative = Range { 0, Range::infinity };
+
 // Concept for use in generic contexts to filter on *Raw types.
 template<typename T> concept RawNumeric = requires(T raw) {
     { raw.type } -> std::convertible_to<CSSUnitType>;
@@ -41,124 +59,159 @@ template<typename T> concept RawNumeric = requires(T raw) {
 
 // MARK: Number Primitives Raw
 
-enum class IntegerValueRange : uint8_t { All, Positive, NonNegative };
-template<typename IntType, IntegerValueRange Range> struct IntegerRaw {
+template<typename T, Range R> struct IntegerRaw {
+    using IntType = T;
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Integer;
     static constexpr auto type = CSSUnitType::CSS_INTEGER;
     IntType value;
 
-    constexpr bool operator==(const IntegerRaw<IntType, Range>&) const = default;
+    constexpr bool operator==(const IntegerRaw<T, R>&) const = default;
 };
 
-struct NumberRaw {
+template<Range R = All> struct NumberRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Number;
     static constexpr auto type = CSSUnitType::CSS_NUMBER;
     double value;
 
-    constexpr bool operator==(const NumberRaw&) const = default;
+    constexpr NumberRaw(double value)
+        : value { value }
+    {
+    }
+
+    // Constructor is required to allow generic code to uniformly initialize primitives with a CSSUnitType.
+    constexpr NumberRaw(CSSUnitType, double value)
+        : value { value }
+    {
+    }
+
+    constexpr bool operator==(const NumberRaw<R>&) const = default;
 };
-template<typename T> struct IsNumberRaw : public std::integral_constant<bool, std::is_same_v<T, NumberRaw>> { };
 
 // MARK: Percentage Primitive Raw
 
-struct PercentageRaw {
+template<Range R = All> struct PercentageRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Percentage;
     static constexpr auto type = CSSUnitType::CSS_PERCENTAGE;
     double value;
 
-    constexpr bool operator==(const PercentageRaw&) const = default;
+    constexpr PercentageRaw(double value)
+        : value { value }
+    {
+    }
+
+    // Constructor is required to allow generic code to uniformly initialize primitives with a CSSUnitType.
+    constexpr PercentageRaw(CSSUnitType, double value)
+        : value { value }
+    {
+    }
+
+    constexpr bool operator==(const PercentageRaw<R>&) const = default;
 };
-template<typename T> struct IsPercentageRaw : public std::integral_constant<bool, std::is_same_v<T, PercentageRaw>> { };
 
 // MARK: Dimension Primitives Raw
 
-struct AngleRaw {
+template<Range R = All> struct AngleRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Angle;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const AngleRaw&) const = default;
+    constexpr bool operator==(const AngleRaw<R>&) const = default;
 };
-template<typename T> struct IsAngleRaw : public std::integral_constant<bool, std::is_same_v<T, AngleRaw>> { };
 
-struct LengthRaw {
+double canonicalizeAngle(double value, CSSUnitType);
+
+template<Range R = All> struct LengthRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Length;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const LengthRaw&) const = default;
+    constexpr bool operator==(const LengthRaw<R>&) const = default;
 };
-template<typename T> struct IsLengthRaw : public std::integral_constant<bool, std::is_same_v<T, LengthRaw>> { };
 
-struct TimeRaw {
+double canonicalizeLengthNoConversionDataRequired(double, CSSUnitType);
+double canonicalizeLength(double, CSSUnitType, const CSSToLengthConversionData&);
+float canonicalizeAndClampLengthNoConversionDataRequired(double, CSSUnitType);
+float canonicalizeAndClampLength(double, CSSUnitType, const CSSToLengthConversionData&);
+
+template<Range R = All> struct TimeRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Time;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const TimeRaw&) const = default;
+    constexpr bool operator==(const TimeRaw<R>&) const = default;
 };
-template<typename T> struct IsTimeRaw : public std::integral_constant<bool, std::is_same_v<T, TimeRaw>> { };
 
-struct FrequencyRaw {
+double canonicalizeTime(double, CSSUnitType);
+
+template<Range R = All> struct FrequencyRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Frequency;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const FrequencyRaw&) const = default;
+    constexpr bool operator==(const FrequencyRaw<R>&) const = default;
 };
-template<typename T> struct IsFrequencyRaw : public std::integral_constant<bool, std::is_same_v<T, FrequencyRaw>> { };
 
-struct ResolutionRaw {
+double canonicalizeFrequency(double, CSSUnitType);
+
+template<Range R = Nonnegative> struct ResolutionRaw {
+    static_assert(R.min >= 0, "<resolution> values must always have a minimum range of at least 0.");
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Resolution;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const ResolutionRaw&) const = default;
+    constexpr bool operator==(const ResolutionRaw<R>&) const = default;
 };
-template<typename T> struct IsResolutionRaw : public std::integral_constant<bool, std::is_same_v<T, ResolutionRaw>> { };
 
-struct FlexRaw {
+double canonicalizeResolution(double, CSSUnitType);
+
+template<Range R = All> struct FlexRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::Flex;
     static constexpr auto type = CSSUnitType::CSS_FR;
     double value;
 
-    constexpr bool operator==(const FlexRaw&) const = default;
+    constexpr bool operator==(const FlexRaw<R>&) const = default;
 };
-template<typename T> struct IsFlexRaw : public std::integral_constant<bool, std::is_same_v<T, FlexRaw>> { };
 
 // MARK: Dimension + Percentage Primitives Raw
 
-struct AnglePercentageRaw {
+template<Range R = All> struct AnglePercentageRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::AnglePercentage;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const AnglePercentageRaw&) const = default;
+    constexpr bool operator==(const AnglePercentageRaw<R>&) const = default;
 };
-template<typename T> struct IsAnglePercentageRaw : public std::integral_constant<bool, std::is_same_v<T, AnglePercentageRaw>> { };
 
-struct LengthPercentageRaw {
+template<Range R = All> struct LengthPercentageRaw {
+    static constexpr auto range = R;
     static constexpr auto category = Calculation::Category::LengthPercentage;
     CSSUnitType type;
     double value;
 
-    constexpr bool operator==(const LengthPercentageRaw&) const = default;
+    constexpr bool operator==(const LengthPercentageRaw<R>&) const = default;
 };
-template<typename T> struct IsLengthPercentageRaw : public std::integral_constant<bool, std::is_same_v<T, LengthPercentageRaw>> { };
 
 // MARK: Additional Numeric Adjacent Types Raw
 
 struct NoneRaw {
     constexpr bool operator==(const NoneRaw&) const = default;
 };
-template<typename T> struct IsNoneRaw : public std::integral_constant<bool, std::is_same_v<T, NoneRaw>> { };
 
 struct SymbolRaw {
     CSSValueID value;
 
     constexpr bool operator==(const SymbolRaw&) const = default;
 };
-template<typename T> struct IsSymbolRaw : public std::integral_constant<bool, std::is_same_v<T, SymbolRaw>> { };
 
 // MARK: - Numeric Primitives (Raw + UnevaluatedCalc)
 
@@ -169,7 +222,10 @@ template<typename T> concept CSSNumeric = requires(T css) {
 };
 
 template<RawNumeric T> struct PrimitiveNumeric {
+    static constexpr auto range = T::range;
+    static constexpr auto category = T::category;
     using Raw = T;
+    using Calc = UnevaluatedCalc<T>;
 
     PrimitiveNumeric(std::variant<T, UnevaluatedCalc<T>>&& value)
         : value { WTFMove(value) }
@@ -203,32 +259,35 @@ template<RawNumeric T> struct PrimitiveNumeric {
 
     bool operator==(const PrimitiveNumeric<T>&) const = default;
 
+    const T* raw() const { return std::get_if<T>(&value); }
+    const UnevaluatedCalc<T>* calc() const { return std::get_if<Calc>(&value); }
+
     std::variant<T, UnevaluatedCalc<T>> value;
 };
 
 // MARK: Number Primitive
 
-template<typename IntType, IntegerValueRange Range> using Integer = PrimitiveNumeric<IntegerRaw<IntType, Range>>;
+template<typename IntType, Range R> using Integer = PrimitiveNumeric<IntegerRaw<IntType, R>>;
 
-using Number = PrimitiveNumeric<NumberRaw>;
+template<Range R = All> using Number = PrimitiveNumeric<NumberRaw<R>>;
 
 // MARK: Percentage Primitive
 
-using Percentage = PrimitiveNumeric<PercentageRaw>;
+template<Range R = All> using Percentage = PrimitiveNumeric<PercentageRaw<R>>;
 
 // MARK: Dimension Primitives
 
-using Angle = PrimitiveNumeric<AngleRaw>;
-using Length = PrimitiveNumeric<LengthRaw>;
-using Time = PrimitiveNumeric<TimeRaw>;
-using Frequency = PrimitiveNumeric<FrequencyRaw>;
-using Resolution = PrimitiveNumeric<ResolutionRaw>;
-using Flex = PrimitiveNumeric<FlexRaw>;
+template<Range R = All> using Angle = PrimitiveNumeric<AngleRaw<R>>;
+template<Range R = All> using Length = PrimitiveNumeric<LengthRaw<R>>;
+template<Range R = All> using Time = PrimitiveNumeric<TimeRaw<R>>;
+template<Range R = All> using Frequency = PrimitiveNumeric<FrequencyRaw<R>>;
+template<Range R = Nonnegative> using Resolution = PrimitiveNumeric<ResolutionRaw<R>>;
+template<Range R = All> using Flex = PrimitiveNumeric<FlexRaw<R>>;
 
 // MARK: Dimension + Percentage Primitives
 
-using AnglePercentage = PrimitiveNumeric<AnglePercentageRaw>;
-using LengthPercentage = PrimitiveNumeric<LengthPercentageRaw>;
+template<Range R = All> using AnglePercentage = PrimitiveNumeric<AnglePercentageRaw<R>>;
+template<Range R = All> using LengthPercentage = PrimitiveNumeric<LengthPercentageRaw<R>>;
 
 // MARK: Additional Numeric Adjacent Types
 
@@ -241,7 +300,6 @@ struct None {
 
     constexpr bool operator==(const None&) const = default;
 };
-template<typename T> struct IsNone : public std::integral_constant<bool, std::is_same_v<T, None>> { };
 
 struct Symbol {
     using Raw = SymbolRaw;
@@ -265,7 +323,7 @@ template<typename T> struct IsSymbol : public std::integral_constant<bool, std::
 // MARK: Additional Common Groupings
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
-using PercentageOrNumber = std::variant<Percentage, Number>;
+using PercentageOrNumber = std::variant<Percentage<>, Number<>>;
 
 // MARK: - Requires Conversion Data
 
@@ -309,16 +367,16 @@ namespace Type {
 // MARK: Raw type -> CSS type mapping (CSS type -> Raw type directly available via typename CSSType::Raw).
 
 template<typename> struct RawToCSSMapping;
-template<> struct RawToCSSMapping<NumberRaw> { using CSS = Number; };
-template<> struct RawToCSSMapping<PercentageRaw> { using CSS = Percentage; };
-template<> struct RawToCSSMapping<AngleRaw> { using CSS = Angle; };
-template<> struct RawToCSSMapping<LengthRaw> { using CSS = Length; };
-template<> struct RawToCSSMapping<TimeRaw> { using CSS = Time; };
-template<> struct RawToCSSMapping<FrequencyRaw> { using CSS = Frequency; };
-template<> struct RawToCSSMapping<ResolutionRaw> { using CSS = Resolution; };
-template<> struct RawToCSSMapping<FlexRaw> { using CSS = Flex; };
-template<> struct RawToCSSMapping<AnglePercentageRaw> { using CSS = AnglePercentage; };
-template<> struct RawToCSSMapping<LengthPercentageRaw> { using CSS = LengthPercentage; };
+template<auto R> struct RawToCSSMapping<NumberRaw<R>>           { using CSS = Number<R>; };
+template<auto R> struct RawToCSSMapping<PercentageRaw<R>>       { using CSS = Percentage<R>; };
+template<auto R> struct RawToCSSMapping<AngleRaw<R>>            { using CSS = Angle<R>; };
+template<auto R> struct RawToCSSMapping<LengthRaw<R>>           { using CSS = Length<R>; };
+template<auto R> struct RawToCSSMapping<TimeRaw<R>>             { using CSS = Time<R>; };
+template<auto R> struct RawToCSSMapping<FrequencyRaw<R>>        { using CSS = Frequency<R>; };
+template<auto R> struct RawToCSSMapping<ResolutionRaw<R>>       { using CSS = Resolution<R>; };
+template<auto R> struct RawToCSSMapping<FlexRaw<R>>             { using CSS = Flex<R>; };
+template<auto R> struct RawToCSSMapping<AnglePercentageRaw<R>>  { using CSS = AnglePercentage<R>; };
+template<auto R> struct RawToCSSMapping<LengthPercentageRaw<R>> { using CSS = LengthPercentage<R>; };
 template<> struct RawToCSSMapping<NoneRaw> { using CSS = None; };
 template<> struct RawToCSSMapping<SymbolRaw> { using CSS = Symbol; };
 

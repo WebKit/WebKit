@@ -24,50 +24,30 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSPrimitiveNumericTypes.h"
+#include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSUnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
-struct CSSParserContext;
-struct CSSPropertyParserOptions;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::AnglePercentageRaw> validatedRange(CSS::AnglePercentageRaw, CSSPropertyParserOptions);
+struct AnglePercentageValidator {
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions options)
+    {
+        return AngleValidator::isValid(unitType, options);
+    }
 
-struct AnglePercentageKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<CSS::UnevaluatedCalc<CSS::AnglePercentageRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    template<auto R> static bool isValid(CSS::AnglePercentageRaw<R> raw, CSSPropertyParserOptions)
+    {
+        // Values other than 0 and +/-∞ are not supported for <angle-percentage> numeric ranges currently.
+        return isValidNonCanonicalizableDimensionValue(raw);
+    }
 };
 
-struct AnglePercentageKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<CSS::AnglePercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct AnglePercentageKnownTokenTypePercentConsumer {
-    static constexpr CSSParserTokenType tokenType = PercentageToken;
-    static std::optional<CSS::AnglePercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct AnglePercentageKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<CSS::AnglePercentageRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<CSS::AnglePercentage> {
-    using FunctionToken = AnglePercentageKnownTokenTypeFunctionConsumer;
-    using DimensionToken = AnglePercentageKnownTokenTypeDimensionConsumer;
-    using PercentageToken = AnglePercentageKnownTokenTypePercentConsumer;
-    using NumberToken = AnglePercentageKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::AnglePercentage<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::AnglePercentage<R>>;
+    using DimensionToken = DimensionConsumer<CSS::AnglePercentage<R>, AnglePercentageValidator>;
+    using PercentageToken = PercentageConsumer<CSS::AnglePercentage<R>, AnglePercentageValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::AnglePercentage<R>, AnglePercentageValidator, CSSUnitType::CSS_DEG>;
 };
 
 } // namespace CSSPropertyParserHelpers

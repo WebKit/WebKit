@@ -144,7 +144,7 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange& range, const CSSParser
         .type = root->type,
         .category = parserOptions.category,
         .stage = CSSCalc::Stage::Specified,
-        .range = parserOptions.propertyOptions.valueRange,
+        .range = parserOptions.range,
         .requiresConversionData = state.requiresConversionData
     };
 
@@ -747,6 +747,7 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
 
         auto percentageOptions = ParserOptions {
             .category = Calculation::Category::Percentage,
+            .range = CSS::All,
             .allowedSymbols = { },
             .propertyOptions = { },
         };

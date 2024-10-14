@@ -91,11 +91,11 @@ template<typename T> inline bool GradientColorStop<T>::operator==(const Gradient
     return compareCSSValuePtr(color, other.color) && position == other.position;
 }
 
-using GradientAngularColorStopPosition = std::optional<AnglePercentage>;
+using GradientAngularColorStopPosition = std::optional<AnglePercentage<>>;
 using GradientAngularColorStop = GradientColorStop<GradientAngularColorStopPosition>;
 using GradientAngularColorStopList = GradientColorStopList<GradientAngularColorStop>;
 
-using GradientLinearColorStopPosition = std::optional<LengthPercentage>;
+using GradientLinearColorStopPosition = std::optional<LengthPercentage<>>;
 using GradientLinearColorStop = GradientColorStop<GradientLinearColorStopPosition>;
 using GradientLinearColorStopList = GradientColorStopList<GradientLinearColorStop>;
 
@@ -118,7 +118,7 @@ template<> struct CSSValueChildrenVisitor<GradientDeprecatedColorStop> { Iterati
 // MARK: - LinearGradient
 
 struct LinearGradient {
-    using GradientLine = std::variant<Angle, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
+    using GradientLine = std::variant<Angle<>, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
 
     GradientColorInterpolationMethod colorInterpolationMethod;
     GradientLine gradientLine;
@@ -142,7 +142,7 @@ template<size_t I> const auto& get(const LinearGradient& gradient)
 // MARK: - PrefixedLinearGradient
 
 struct PrefixedLinearGradient {
-    using GradientLine = std::variant<Angle, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
+    using GradientLine = std::variant<Angle<>, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
 
     GradientColorInterpolationMethod colorInterpolationMethod;
     GradientLine gradientLine;
@@ -192,13 +192,13 @@ template<size_t I> const auto& get(const DeprecatedLinearGradient& gradient)
 struct RadialGradient {
     using Extent = RadialGradientExtent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage, 2>; // <length-percentage [0,∞]>
+        using Size = SpaceSeparatedArray<LengthPercentage<Nonnegative>, 2>;
         std::variant<Size, Extent> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;
     };
     struct Circle {
-        using Length = CSS::Length; // <length [0,∞]>
+        using Length = CSS::Length<Nonnegative>;
         std::variant<Length, Extent> size;
         std::optional<Position> position;
         bool operator==(const Circle&) const = default;
@@ -247,7 +247,7 @@ template<size_t I> const auto& get(const RadialGradient& gradient)
 struct PrefixedRadialGradient {
     using Extent = PrefixedRadialGradientExtent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage, 2>; // <length-percentage [0,∞]>
+        using Size = SpaceSeparatedArray<LengthPercentage<Nonnegative>, 2>;
         std::optional<std::variant<Size, Extent>> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;
@@ -301,9 +301,9 @@ template<size_t I> const auto& get(const PrefixedRadialGradient& gradient)
 struct DeprecatedRadialGradient {
     struct GradientBox {
         DeprecatedGradientPosition first;
-        Number firstRadius; // <number [0,∞]>
+        Number<Nonnegative> firstRadius;
         DeprecatedGradientPosition second;
-        Number secondRadius; // <number [0,∞]>
+        Number<Nonnegative> secondRadius;
 
         bool operator==(const GradientBox&) const = default;
     };
@@ -344,7 +344,7 @@ template<size_t I> const auto& get(const DeprecatedRadialGradient& gradient)
 
 struct ConicGradient {
     struct GradientBox {
-        std::optional<Angle> angle;
+        std::optional<Angle<>> angle;
         std::optional<Position> position;
 
         bool operator==(const GradientBox&) const = default;

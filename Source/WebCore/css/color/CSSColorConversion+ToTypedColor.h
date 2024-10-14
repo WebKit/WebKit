@@ -31,9 +31,9 @@
 namespace WebCore {
 
 // This file implements support for converting style resolved parsed values (e.g. tuple
-// of `std::variant<Style::Number, Style::Percentage, ...>`) into typed colors (e.g. `SRGBA<float>`).
+// of `std::variant<Style::Number<>, Style::Percentage<>, ...>`) into typed colors (e.g. `SRGBA<float>`).
 
-template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Number number)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Number<> number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     constexpr auto multiplier = info.numberMultiplier;
@@ -52,7 +52,7 @@ template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(
         return std::clamp(number.value * multiplier, min, max);
 }
 
-template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Percentage percent)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Percentage<> percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     constexpr auto multiplier = info.percentMultiplier * info.numberMultiplier;
@@ -69,7 +69,7 @@ template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(
         return std::clamp(percent.value * multiplier, min, max);
 }
 
-template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Angle angle)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::Angle<> angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);

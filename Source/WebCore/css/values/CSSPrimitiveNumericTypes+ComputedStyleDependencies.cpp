@@ -134,15 +134,5 @@ void ComputedStyleDependenciesCollector<CSSUnitType>::operator()(ComputedStyleDe
     }
 }
 
-void ComputedStyleDependenciesCollector<LengthRaw>::operator()(ComputedStyleDependencies& dependencies, const LengthRaw& length)
-{
-    collectComputedStyleDependencies(dependencies, length.type);
-}
-
-void ComputedStyleDependenciesCollector<LengthPercentageRaw>::operator()(ComputedStyleDependencies& dependencies, const LengthPercentageRaw& lengthPercentage)
-{
-    collectComputedStyleDependencies(dependencies, lengthPercentage.type);
-}
-
 } // namespace CSS
 } // namespace WebCore

@@ -81,6 +81,15 @@ struct Blend;
 
 using NumericValue = double;
 
+struct Range {
+    NumericValue min;
+    NumericValue max;
+
+    constexpr bool operator==(const Range&) const = default;
+};
+
+inline constexpr auto All = Range { -std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity() };
+
 template<typename Op>
 concept Leaf = requires(Op) {
     Op::isLeaf == true;
@@ -179,7 +188,7 @@ using Children = Vector<Child>;
 struct Tree {
     Child root;
     Category category;
-    ValueRange range;
+    Range range;
 
     bool operator==(const Tree&) const = default;
 };

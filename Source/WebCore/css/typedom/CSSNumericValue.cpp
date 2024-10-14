@@ -463,6 +463,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, Str
             auto parserContext = CSSParserContext { document };
             auto parserOptions = CSSCalc::ParserOptions {
                 .category = Calculation::Category::LengthPercentage,
+                .range = CSS::All,
                 .allowedSymbols = { },
                 .propertyOptions = { },
             };

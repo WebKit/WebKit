@@ -40,8 +40,8 @@ bool is50Percent(const StyleColorMix::Component::Percentage&);
 bool sumTo100Percent(const CSSUnresolvedColorMix::Component::Percentage&, const CSSUnresolvedColorMix::Component::Percentage&);
 bool sumTo100Percent(const StyleColorMix::Component::Percentage&, const StyleColorMix::Component::Percentage&);
 
-std::optional<CSS::PercentageRaw> subtractFrom100Percent(const CSSUnresolvedColorMix::Component::Percentage&);
-std::optional<CSS::PercentageRaw> subtractFrom100Percent(const StyleColorMix::Component::Percentage&);
+std::optional<CSS::PercentageRaw<>> subtractFrom100Percent(const CSSUnresolvedColorMix::Component::Percentage&);
+std::optional<CSS::PercentageRaw<>> subtractFrom100Percent(const StyleColorMix::Component::Percentage&);
 
 void serializeColorMixColor(StringBuilder&, const CSSUnresolvedColorMix::Component&);
 void serializeColorMixColor(StringBuilder&, const StyleColorMix::Component&);

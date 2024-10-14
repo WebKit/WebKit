@@ -38,12 +38,12 @@ using Top    = Constant<CSSValueTop>;
 using Bottom = Constant<CSSValueBottom>;
 using Center = Constant<CSSValueCenter>;
 
-using TwoComponentPositionHorizontal    = std::variant<Left, Right, Center, LengthPercentage>;
-using TwoComponentPositionVertical      = std::variant<Top, Bottom, Center, LengthPercentage>;
+using TwoComponentPositionHorizontal    = std::variant<Left, Right, Center, LengthPercentage<>>;
+using TwoComponentPositionVertical      = std::variant<Top, Bottom, Center, LengthPercentage<>>;
 using TwoComponentPosition              = SpaceSeparatedTuple<TwoComponentPositionHorizontal, TwoComponentPositionVertical>;
 
-using FourComponentPositionHorizontal   = SpaceSeparatedTuple<std::variant<Left, Right>, LengthPercentage>;
-using FourComponentPositionVertical     = SpaceSeparatedTuple<std::variant<Top, Bottom>, LengthPercentage>;
+using FourComponentPositionHorizontal   = SpaceSeparatedTuple<std::variant<Left, Right>, LengthPercentage<>>;
+using FourComponentPositionVertical     = SpaceSeparatedTuple<std::variant<Top, Bottom>, LengthPercentage<>>;
 using FourComponentPosition             = SpaceSeparatedTuple<FourComponentPositionHorizontal, FourComponentPositionVertical>;
 
 struct Position {

@@ -27,90 +27,51 @@
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
 
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
-#include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
-
-std::optional<CSS::PercentageRaw> validatedRange(CSS::PercentageRaw value, CSSPropertyParserOptions options)
-{
-    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
-        return std::nullopt;
-    if (std::isinf(value.value))
-        return std::nullopt;
-    return value;
-}
-
-std::optional<CSS::UnevaluatedCalc<CSS::PercentageRaw>> PercentageKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    auto rangeCopy = range;
-    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Percentage, WTFMove(symbolsAllowed), options)) {
-        range = rangeCopy;
-        return {{ value.releaseNonNull() }};
-    }
-
-    return std::nullopt;
-}
-
-std::optional<CSS::PercentageRaw> PercentageKnownTokenTypePercentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == PercentageToken);
-
-    if (auto validatedValue = validatedRange(CSS::PercentageRaw { range.peek().numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-    return std::nullopt;
-}
 
 // MARK: - Consumer functions
 
 RefPtr<CSSPrimitiveValue> consumePercentage(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
 {
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
-    return CSSPrimitiveValueResolver<CSS::Percentage>::consumeAndResolve(range, context, { }, { }, options);
+    if (valueRange == ValueRange::All)
+        return CSSPrimitiveValueResolver<CSS::Percentage<CSS::All>>::consumeAndResolve(range, context, { }, { }, { });
+    return CSSPrimitiveValueResolver<CSS::Percentage<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
 RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
 {
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
-    return CSSPrimitiveValueResolver<CSS::Percentage, CSS::Number>::consumeAndResolve(range, context, { }, { }, options);
+    if (valueRange == ValueRange::All)
+        return CSSPrimitiveValueResolver<CSS::Percentage<CSS::All>, CSS::Number<CSS::All>>::consumeAndResolve(range, context, { }, { }, { });
+    return CSSPrimitiveValueResolver<CSS::Percentage<CSS::Nonnegative>, CSS::Number<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
-RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
+template<auto R> static RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    auto& token = range.peek();
+    using NumberConsumer = ConsumerDefinition<CSS::Number<R>>;
+    using PercentageConsumer = ConsumerDefinition<CSS::Percentage<R>>;
 
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = valueRange
-    };
+    auto& token = range.peek();
 
     switch (token.type()) {
     case FunctionToken:
-        if (auto value = NumberKnownTokenTypeFunctionConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<CSS::Number>::resolve(*value, { }, options);
-        if (auto value = PercentageKnownTokenTypeFunctionConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<CSS::Percentage>::resolve(*value, { }, options);
+        if (auto value = NumberConsumer::FunctionToken::consume(range, context, { }, { }))
+            return CSSPrimitiveValueResolver<CSS::Number<R>>::resolve(*value, { }, { });
+        if (auto value = PercentageConsumer::FunctionToken::consume(range, context, { }, { }))
+            return CSSPrimitiveValueResolver<CSS::Percentage<R>>::resolve(*value, { }, { });
         break;
 
     case NumberToken:
-        if (auto value = NumberKnownTokenTypeNumberConsumer::consume(range, context, { }, options))
-            return CSSPrimitiveValueResolver<CSS::Number>::resolve(*value, { }, options);
+        if (auto value = NumberConsumer::NumberToken::consume(range, context, { }, { }))
+            return CSSPrimitiveValueResolver<CSS::Number<R>>::resolve(*value, { }, { });
         break;
 
     case PercentageToken:
-        if (auto value = PercentageKnownTokenTypePercentConsumer::consume(range, context, { }, options))
+        if (auto value = PercentageConsumer::PercentageToken::consume(range, context, { }, { }))
             return CSSPrimitiveValue::create(value->value / 100.0);
         break;
 
@@ -119,6 +80,13 @@ RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRa
     }
 
     return nullptr;
+}
+
+RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
+{
+    if (valueRange == ValueRange::All)
+        return consumePercentageDividedBy100OrNumber<CSS::All>(range, context);
+    return consumePercentageDividedBy100OrNumber<CSS::Nonnegative>(range, context);
 }
 
 } // namespace CSSPropertyParserHelpers

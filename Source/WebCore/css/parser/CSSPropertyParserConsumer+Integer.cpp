@@ -34,37 +34,36 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<typename IntType, CSS::IntegerValueRange integerRange>
+template<typename IntType, CSS::Range R>
 static RefPtr<CSSPrimitiveValue> consumeIntegerType(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return CSSPrimitiveValueResolver<CSS::Integer<IntType, integerRange>>::consumeAndResolve(range, context, { }, { }, { });
+    return CSSPrimitiveValueResolver<CSS::Integer<IntType, R>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, CSS::IntegerValueRange::All>(range, context);
+    return consumeIntegerType<int, CSS::All>(range, context);
 }
 
 RefPtr<CSSPrimitiveValue> consumeNonNegativeInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<int, CSS::IntegerValueRange::NonNegative>(range, context);
+    return consumeIntegerType<int, CSS::Range{0, CSS::Range::infinity}>(range, context);
 }
 
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeIntegerType<unsigned, CSS::IntegerValueRange::Positive>(range, context);
+    return consumeIntegerType<unsigned, CSS::Range{1, CSS::Range::infinity}>(range, context);
 }
 
-RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context, CSS::IntegerValueRange valueRange)
+RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange& range, const CSSParserContext& context, const CSS::Range& valueRange)
 {
-    switch (valueRange) {
-    case CSS::IntegerValueRange::All:
+    if (valueRange == CSS::All)
         return consumeInteger(range, context);
-    case CSS::IntegerValueRange::Positive:
-        return consumePositiveInteger(range, context);
-    case CSS::IntegerValueRange::NonNegative:
+    if (valueRange == CSS::Range{0, CSS::Range::infinity})
         return consumeNonNegativeInteger(range, context);
-    }
+    if (valueRange == CSS::Range{1, CSS::Range::infinity})
+        return consumePositiveInteger(range, context);
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 

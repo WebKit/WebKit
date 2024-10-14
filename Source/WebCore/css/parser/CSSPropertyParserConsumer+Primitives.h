@@ -31,9 +31,6 @@ struct CSSPropertyParserOptions;
 
 namespace CSSPropertyParserHelpers {
 
-// FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
-bool shouldAcceptUnitlessValue(double, CSSPropertyParserOptions);
-
 // MARK: - Comma
 // FIXME: Rename to `consumeComma`.
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange&);

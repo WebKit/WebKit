@@ -27,71 +27,14 @@
 #include "CSSPropertyParserConsumer+ResolutionDefinitions.h"
 
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserOptions.h"
-#include "CalculationCategory.h"
-#include "Length.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::ResolutionRaw> validatedRange(CSS::ResolutionRaw value, CSSPropertyParserOptions options)
-{
-    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
-        return std::nullopt;
-    return value;
-}
-
-std::optional<CSS::UnevaluatedCalc<CSS::ResolutionRaw>> ResolutionKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    auto rangeCopy = range;
-    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Resolution, WTFMove(symbolsAllowed), options)) {
-        range = rangeCopy;
-        return {{ value.releaseNonNull() }};
-    }
-
-    return std::nullopt;
-}
-
-std::optional<CSS::ResolutionRaw> ResolutionKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == DimensionToken);
-
-    auto& token = range.peek();
-
-    auto unitType = token.unitType();
-    switch (unitType) {
-    case CSSUnitType::CSS_DPPX:
-    case CSSUnitType::CSS_X:
-    case CSSUnitType::CSS_DPI:
-    case CSSUnitType::CSS_DPCM:
-        break;
-
-    default:
-        return std::nullopt;
-    }
-
-    if (auto validatedValue = validatedRange(CSS::ResolutionRaw { unitType, token.numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-
-    return std::nullopt;
-}
-
-// MARK: - Consumer functions
-
 RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    const auto options = CSSPropertyParserOptions {
-        .valueRange = ValueRange::NonNegative
-    };
-    return CSSPrimitiveValueResolver<CSS::Resolution>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::Resolution<>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
 } // namespace CSSPropertyParserHelpers

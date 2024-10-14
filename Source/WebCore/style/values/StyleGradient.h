@@ -74,15 +74,15 @@ template<typename T> struct GradientColorStop {
 };
 template<typename T> GradientColorStop(auto color, T position) -> GradientColorStop<T>;
 
-using GradientAngularColorStopPosition = std::optional<AnglePercentage>;
+using GradientAngularColorStopPosition = std::optional<AnglePercentage<>>;
 using GradientAngularColorStop = GradientColorStop<GradientAngularColorStopPosition>;
 using GradientAngularColorStopList = GradientColorStopList<GradientAngularColorStop>;
 
-using GradientLinearColorStopPosition = std::optional<LengthPercentage>;
+using GradientLinearColorStopPosition = std::optional<LengthPercentage<>>;
 using GradientLinearColorStop = GradientColorStop<GradientLinearColorStopPosition>;
 using GradientLinearColorStopList = GradientColorStopList<GradientLinearColorStop>;
 
-using GradientDeprecatedColorStopPosition = Number;
+using GradientDeprecatedColorStopPosition = Number<>;
 using GradientDeprecatedColorStop = GradientColorStop<GradientDeprecatedColorStopPosition>;
 using GradientDeprecatedColorStopList = GradientColorStopList<GradientDeprecatedColorStop>;
 
@@ -97,7 +97,7 @@ template<> struct ToStyle<CSS::GradientDeprecatedColorStop> { auto operator()(co
 // MARK: - LinearGradient
 
 struct LinearGradient {
-    using GradientLine = std::variant<Angle, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
+    using GradientLine = std::variant<Angle<>, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
 
     GradientColorInterpolationMethod colorInterpolationMethod;
     GradientLine gradientLine;
@@ -121,7 +121,7 @@ DEFINE_CSS_STYLE_MAPPING(CSS::LinearGradient, LinearGradient)
 // MARK: - PrefixedLinearGradient
 
 struct PrefixedLinearGradient {
-    using GradientLine = std::variant<Angle, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
+    using GradientLine = std::variant<Angle<>, Horizontal, Vertical, SpaceSeparatedTuple<Horizontal, Vertical>>;
 
     GradientColorInterpolationMethod colorInterpolationMethod;
     GradientLine gradientLine;
@@ -171,13 +171,13 @@ DEFINE_CSS_STYLE_MAPPING(CSS::DeprecatedLinearGradient, DeprecatedLinearGradient
 struct RadialGradient {
     using Extent = CSS::RadialGradient::Extent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage, 2>; // <length-percentage [0,∞]>
+        using Size = SpaceSeparatedArray<LengthPercentage<CSS::Nonnegative>, 2>;
         std::variant<Size, Extent> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;
     };
     struct Circle {
-        using Length = Style::Length; // <length [0,∞]>
+        using Length = Style::Length<CSS::Nonnegative>;
         std::variant<Length, Extent> size;
         std::optional<Position> position;
         bool operator==(const Circle&) const = default;
@@ -226,7 +226,7 @@ DEFINE_CSS_STYLE_MAPPING(CSS::RadialGradient, RadialGradient)
 struct PrefixedRadialGradient {
     using Extent = CSS::PrefixedRadialGradient::Extent;
     struct Ellipse {
-        using Size = SpaceSeparatedArray<LengthPercentage, 2>; // <length-percentage [0,∞]>
+        using Size = SpaceSeparatedArray<LengthPercentage<CSS::Nonnegative>, 2>;
         std::optional<std::variant<Size, Extent>> size;
         std::optional<Position> position;
         bool operator==(const Ellipse&) const = default;
@@ -280,9 +280,9 @@ DEFINE_CSS_STYLE_MAPPING(CSS::PrefixedRadialGradient, PrefixedRadialGradient)
 struct DeprecatedRadialGradient {
     struct GradientBox {
         DeprecatedGradientPosition first;
-        Number firstRadius; // <number [0,∞]>
+        Number<CSS::Nonnegative> firstRadius;
         DeprecatedGradientPosition second;
-        Number secondRadius; // <number [0,∞]>
+        Number<CSS::Nonnegative> secondRadius;
 
         bool operator==(const GradientBox&) const = default;
     };
@@ -323,7 +323,7 @@ DEFINE_CSS_STYLE_MAPPING(CSS::DeprecatedRadialGradient, DeprecatedRadialGradient
 
 struct ConicGradient {
     struct GradientBox {
-        std::optional<Angle> angle;
+        std::optional<Angle<>> angle;
         std::optional<Position> position;
 
         bool operator==(const GradientBox&) const = default;

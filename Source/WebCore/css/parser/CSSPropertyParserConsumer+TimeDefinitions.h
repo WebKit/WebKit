@@ -24,44 +24,36 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSUnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-
-struct CSSParserContext;
-struct CSSPropertyParserOptions;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::TimeRaw> validatedRange(CSS::TimeRaw, CSSPropertyParserOptions);
+struct TimeValidator {
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions)
+    {
+        switch (unitType) {
+        case CSSUnitType::CSS_MS:
+        case CSSUnitType::CSS_S:
+            return true;
 
-struct TimeKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<CSS::UnevaluatedCalc<CSS::TimeRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+        default:
+            return false;
+        }
+    }
+
+    template<auto R> static bool isValid(CSS::TimeRaw<R> raw, CSSPropertyParserOptions)
+    {
+        return isValidDimensionValue(raw, [&] {
+            auto canonicalValue = CSS::canonicalizeTime(raw.value, raw.type);
+            return canonicalValue >= raw.range.min && canonicalValue <= raw.range.max;
+        });
+    }
 };
 
-struct TimeKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<CSS::TimeRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct TimeKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<CSS::TimeRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<CSS::Time> {
-    using FunctionToken = TimeKnownTokenTypeFunctionConsumer;
-    using DimensionToken = TimeKnownTokenTypeDimensionConsumer;
-    using NumberToken = TimeKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Time<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Time<R>>;
+    using DimensionToken = DimensionConsumer<CSS::Time<R>, TimeValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

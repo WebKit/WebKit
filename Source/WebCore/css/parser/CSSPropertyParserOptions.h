@@ -26,22 +26,18 @@
 #pragma once
 
 #include "CSSParserMode.h"
-#include "Length.h"
 
 namespace WebCore {
 
 enum class AnchorPolicy : bool { Forbid, Allow };
 enum class AnchorSizePolicy : bool { Forbid, Allow };
-enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk : bool { Allow, Forbid };
 enum class UnitlessZeroQuirk : bool { Allow, Forbid };
 
 struct CSSPropertyParserOptions {
     CSSParserMode parserMode                    { HTMLStandardMode };
-    ValueRange valueRange                       { ValueRange::All };
     AnchorPolicy anchorPolicy                   { AnchorPolicy::Forbid };
     AnchorSizePolicy anchorSizePolicy           { AnchorSizePolicy::Forbid };
-    NegativePercentagePolicy negativePercentage { NegativePercentagePolicy::Forbid };
     UnitlessQuirk unitless                      { UnitlessQuirk::Forbid };
     UnitlessZeroQuirk unitlessZero              { UnitlessZeroQuirk::Forbid };
 };

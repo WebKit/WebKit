@@ -87,13 +87,6 @@ template<typename T> static Ref<CSSPrimitiveValue> resolveToCSSPrimitiveValue(CS
     return WTF::switchOn(WTFMove(primitive.value), [](auto&& alternative) { return CSSPrimitiveValueResolverBase::resolve(WTFMove(alternative), { }, { }); }).releaseNonNull();
 }
 
-#if ENABLE(VARIATION_FONTS)
-static bool isFontStyleAngleInRange(double angleInDegrees)
-{
-    return angleInDegrees >= -90 && angleInDegrees <= 90;
-}
-#endif
-
 static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
     auto* document = dynamicDowncast<Document>(context);
@@ -123,40 +116,41 @@ static bool isIntegerAndDivisibleBy100(double value)
     ASSERT(value <= 1000);
     return static_cast<int>(value / 100) * 100 == value;
 }
-#endif
 
-static std::optional<CSS::NumberRaw> validateFontWeightNumber(CSS::NumberRaw number)
+static std::optional<UnresolvedFontWeightNumber::Raw> validateFontWeightNumber(UnresolvedFontWeightNumber::Raw number)
 {
-    if (!(number.value >= 1 && number.value <= 1000))
-        return std::nullopt;
-#if !ENABLE(VARIATION_FONTS)
     if (!isIntegerAndDivisibleBy100(number.value))
         return std::nullopt;
-#endif
     return number;
 }
+#endif
 
 static std::optional<UnresolvedFontWeightNumber> consumeFontWeightNumberUnresolved(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto rangeCopy = range;
 
     auto options = CSSPropertyParserOptions { };
-    auto number = MetaConsumer<CSS::Number>::consume(rangeCopy, context, { }, options);
+    auto number = MetaConsumer<UnresolvedFontWeightNumber>::consume(rangeCopy, context, { }, options);
     if (!number)
         return std::nullopt;
 
+#if !ENABLE(VARIATION_FONTS)
+    // Additional validation is needed for the legacy path.
     auto result = WTF::switchOn(WTFMove(number->value),
-        [](CSS::NumberRaw&& number) -> std::optional<UnresolvedFontWeightNumber> {
+        [](UnresolvedFontWeightNumber::Raw&& number) -> std::optional<UnresolvedFontWeightNumber> {
             if (auto validated = validateFontWeightNumber(WTFMove(number)))
                 return { { WTFMove(*validated) } };
             return std::nullopt;
         },
-        [](CSS::UnevaluatedCalc<CSS::NumberRaw>&& calc) -> std::optional<UnresolvedFontWeightNumber> {
+        [](UnresolvedFontWeightNumber::Calc&& calc) -> std::optional<UnresolvedFontWeightNumber> {
             return { { WTFMove(calc) } };
         }
     );
-    if (!result)
+    if (!number)
         return std::nullopt;
+#else
+    auto result = WTFMove(number);
+#endif
 
     range = rangeCopy;
     return result;
@@ -187,37 +181,17 @@ RefPtr<CSSValue> consumeFontWeight(CSSParserTokenRange& range, const CSSParserCo
 
 #if ENABLE(VARIATION_FONTS)
 
-static std::optional<CSS::AngleRaw> validateStyleAngle(CSS::AngleRaw styleAngle)
-{
-    if (!isFontStyleAngleInRange(CSSPrimitiveValue::computeDegrees(styleAngle.type, styleAngle.value)))
-        return std::nullopt;
-    return styleAngle;
-}
-
 static std::optional<UnresolvedFontStyleObliqueAngle> consumeFontStyleAngleUnresolved(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto rangeCopy = range;
 
     auto options = CSSPropertyParserOptions { .parserMode = context.mode };
-    auto angle = MetaConsumer<CSS::Angle>::consume(rangeCopy, context, { }, options);
+    auto angle = MetaConsumer<UnresolvedFontStyleObliqueAngle>::consume(rangeCopy, context, { }, options);
     if (!angle)
         return std::nullopt;
 
-    auto result = WTF::switchOn(WTFMove(angle->value),
-        [](CSS::AngleRaw&& angle) -> std::optional<UnresolvedFontStyleObliqueAngle> {
-            if (auto validated = validateStyleAngle(WTFMove(angle)))
-                return { { WTFMove(*validated) } };
-            return std::nullopt;
-        },
-        [](CSS::UnevaluatedCalc<CSS::AngleRaw>&& calc) -> std::optional<UnresolvedFontStyleObliqueAngle> {
-            return { { WTFMove(calc) } };
-        }
-    );
-    if (!result)
-        return std::nullopt;
-
     range = rangeCopy;
-    return result;
+    return angle;
 }
 
 #endif
@@ -414,8 +388,8 @@ static std::optional<UnresolvedFontSize> consumeFontSizeUnresolved(CSSParserToke
 
     auto rangeCopy = range;
 
-    auto options = CSSPropertyParserOptions { .parserMode = context.mode, .valueRange = ValueRange::NonNegative };
-    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage>::consume(rangeCopy, context, { }, options);
+    auto options = CSSPropertyParserOptions { .parserMode = context.mode };
+    auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, context, { }, options);
     if (!lengthPercentage)
         return std::nullopt;
 
@@ -438,8 +412,8 @@ static std::optional<UnresolvedFontLineHeight> consumeLineHeightUnresolved(CSSPa
 
     auto rangeCopy = range;
 
-    auto options = CSSPropertyParserOptions { .parserMode = context.mode, .valueRange = ValueRange::NonNegative };
-    auto lineHeight = MetaConsumer<CSS::Number, CSS::LengthPercentage>::consume(rangeCopy, context, { }, options);
+    auto options = CSSPropertyParserOptions { .parserMode = context.mode };
+    auto lineHeight = MetaConsumer<CSS::Number<CSS::Nonnegative>, CSS::LengthPercentage<CSS::Nonnegative>>::consume(rangeCopy, context, { }, options);
     if (!lineHeight)
         return std::nullopt;
 

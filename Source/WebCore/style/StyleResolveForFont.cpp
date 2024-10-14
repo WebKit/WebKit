@@ -132,11 +132,11 @@ static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyPa
                 return normalWeightValue();
             }
         },
-        [&](const CSS::Number& weight) {
+        [&](const CSSPropertyParserHelpers::UnresolvedFontWeightNumber& weight) {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(weight))
                 return normalWeightValue();
-            return FontSelectionValue(clampTo<float>(toStyleNoConversionDataRequired(weight).value, 1, 1000));
+            return FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(weight).value);
         }
     );
 }
@@ -247,13 +247,13 @@ static ResolvedFontStyle fontStyleFromUnresolvedFontStyle(const CSSPropertyParse
             ASSERT_NOT_REACHED();
             return { .italic = std::nullopt, .axis = FontStyleAxis::slnt };
         },
-        [](const CSS::Angle& angle) -> ResolvedFontStyle {
+        [](const CSSPropertyParserHelpers::UnresolvedFontStyleObliqueAngle& angle) -> ResolvedFontStyle {
             // FIXME: Figure out correct behavior when conversion data is required.
             if (requiresConversionData(angle))
                 return { .italic = std::nullopt, .axis = FontStyleAxis::slnt };
 
             return {
-                .italic = normalizedFontItalicValue(toStyleNoConversionDataRequired(angle).value),
+                .italic = FontSelectionValue::clampFloat(Style::toStyleNoConversionDataRequired(angle).value),
                 .axis = FontStyleAxis::slnt
             };
         }
@@ -304,12 +304,12 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
             ASSERT_NOT_REACHED();
             return { .size = 0.0f, .keyword = CSSValueInvalid };
         },
-        [&](const CSS::LengthPercentage& lengthPercentage) -> ResolvedFontSize {
+        [&](const CSS::LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
             return WTF::switchOn(lengthPercentage.value,
-                [&](const CSS::LengthPercentageRaw& lengthPercentage) -> ResolvedFontSize {
+                [&](const CSS::LengthPercentageRaw<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
                     if (lengthPercentage.type == CSSUnitType::CSS_PERCENTAGE) {
                         return {
-                            .size = Style::evaluate(Style::Percentage { narrowPrecisionToFloat(lengthPercentage.value) }, parentSize),
+                            .size = Style::evaluate(Style::Percentage<> { narrowPrecisionToFloat(lengthPercentage.value) }, parentSize),
                             .keyword = CSSValueInvalid
                         };
                     }
@@ -330,13 +330,13 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                         .keyword = CSSValueInvalid
                     };
                 },
-                [&](const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw>& calc) -> ResolvedFontSize {
+                [&](const CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<CSS::Nonnegative>>& calc) -> ResolvedFontSize {
                     // FIXME: Figure out correct behavior when conversion data is required.
                     if (requiresConversionData(calc))
                         return { .size = 0.0f, .keyword = CSSValueInvalid };
 
                     return {
-                        .size = Style::evaluate(toStyleNoConversionDataRequired(calc), parentSize),
+                        .size = Style::evaluate(Style::toStyleNoConversionDataRequired(calc), parentSize),
                         .keyword = CSSValueInvalid
                     };
                 }

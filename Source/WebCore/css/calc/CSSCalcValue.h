@@ -42,19 +42,6 @@ namespace Calculation {
 enum class Category : uint8_t;
 }
 
-namespace Style {
-struct Angle;
-struct AnglePercentage;
-struct Flex;
-struct Frequency;
-struct Length;
-struct LengthPercentage;
-struct Number;
-struct Percentage;
-struct Resolution;
-struct Time;
-}
-
 class CSSCalcSymbolTable;
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;
@@ -69,11 +56,10 @@ struct Length;
 enum CSSValueID : uint16_t;
 
 enum class CSSUnitType : uint8_t;
-enum class ValueRange : uint8_t;
 
 class CSSCalcValue final : public CSSValue {
 public:
-    static RefPtr<CSSCalcValue> parse(CSSParserTokenRange&, const CSSParserContext&, Calculation::Category, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+    static RefPtr<CSSCalcValue> parse(CSSParserTokenRange&, const CSSParserContext&, Calculation::Category, CSS::Range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
 
     static Ref<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
     static Ref<CSSCalcValue> create(CSSCalc::Tree&&);
@@ -98,28 +84,6 @@ public:
     Ref<CalculationValue> createCalculationValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
 
-    Style::Number numberValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Number numberValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Percentage percentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Percentage percentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Angle angleValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Angle angleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Length lengthValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Length lengthValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Time timeValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Time timeValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Frequency frequencyValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Frequency frequencyValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Resolution resolutionValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Resolution resolutionValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::Flex flexValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::Flex flexValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-
-    Style::LengthPercentage lengthPercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::LengthPercentage lengthPercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Style::AnglePercentage anglePercentageValueNoConversionDataRequired(const CSSCalcSymbolTable&) const;
-    Style::AnglePercentage anglePercentageValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
     String customCSSText() const;
@@ -127,7 +91,6 @@ public:
 
     void dump(TextStream&) const;
 
-    // Used by Typed CSSOM.
     const CSSCalc::Tree& tree() const { return m_tree; }
 
 private:

@@ -37,14 +37,14 @@ auto ToCSS<Position>::operator()(const Position& value, const RenderStyle& style
     return CSS::TwoComponentPosition { toCSS(get<0>(value), style), toCSS(get<1>(value), style) };
 }
 
-static LengthPercentage makeLengthPercentageForRoot(Calculation::Child&& root)
+static LengthPercentage<> makeLengthPercentageForRoot(Calculation::Child&& root)
 {
-    return LengthPercentage {
+    return LengthPercentage<> {
         CalculationValue::create(
             Calculation::Tree {
                 .root = WTFMove(root),
                 .category = Calculation::Category::LengthPercentage,
-                .range = ValueRange::All
+                .range = Calculation::All
             }
         )
     };
@@ -52,15 +52,15 @@ static LengthPercentage makeLengthPercentageForRoot(Calculation::Child&& root)
 
 auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> Position
 {
-    auto convertTo100PercentMinus = [](LengthPercentage value) -> LengthPercentage {
+    auto convertTo100PercentMinus = [](LengthPercentage<> value) -> LengthPercentage<> {
         return value.value.switchOn(
-            [](const Length& length) {
+            [](const Length<>& length) {
                 if (!length.value)
-                    return LengthPercentage { Percentage { 100 } };
+                    return LengthPercentage<> { Percentage<> { 100 } };
                 return makeLengthPercentageForRoot(Calculation::subtract(Calculation::percentage(100), Calculation::dimension(length.value)));
             },
-            [](const Percentage& percentage) {
-                return LengthPercentage { Percentage { 100 - percentage.value } };
+            [](const Percentage<>& percentage) {
+                return LengthPercentage<> { Percentage<> { 100 - percentage.value } };
             },
             [](const CalculationValue& calculation) {
                 return makeLengthPercentageForRoot(Calculation::subtract(Calculation::percentage(100), calculation.copyRoot()));
@@ -72,29 +72,29 @@ auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, BuilderSt
         [&](const CSS::TwoComponentPosition& twoComponent) {
             auto horizontal = WTF::switchOn(get<0>(twoComponent),
                 [&](CSS::Left) {
-                    return LengthPercentage { Percentage { 0 } };
+                    return LengthPercentage<> { Percentage<> { 0 } };
                 },
                 [&](CSS::Right)  {
-                    return LengthPercentage { Percentage { 100 } };
+                    return LengthPercentage<> { Percentage<> { 100 } };
                 },
                 [&](CSS::Center)  {
-                    return LengthPercentage { Percentage { 50 } };
+                    return LengthPercentage<> { Percentage<> { 50 } };
                 },
-                [&](const CSS::LengthPercentage& value) {
+                [&](const CSS::LengthPercentage<>& value) {
                     return toStyle(value, state, symbolTable);
                 }
             );
             auto vertical = WTF::switchOn(get<1>(twoComponent),
                 [&](CSS::Top) {
-                    return LengthPercentage { Percentage { 0 } };
+                    return LengthPercentage<> { Percentage<> { 0 } };
                 },
                 [&](CSS::Bottom) {
-                    return LengthPercentage { Percentage { 100 } };
+                    return LengthPercentage<> { Percentage<> { 100 } };
                 },
                 [&](CSS::Center) {
-                    return LengthPercentage { Percentage { 50 } };
+                    return LengthPercentage<> { Percentage<> { 50 } };
                 },
-                [&](const CSS::LengthPercentage& value) {
+                [&](const CSS::LengthPercentage<>& value) {
                     return toStyle(value, state, symbolTable);
                 }
             );

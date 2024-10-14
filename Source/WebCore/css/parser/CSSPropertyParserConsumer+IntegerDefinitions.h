@@ -24,81 +24,42 @@
 
 #pragma once
 
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
-#include "CSSParserToken.h"
-#include "CSSParserTokenRange.h"
-#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSPropertyParserOptions.h"
-#include "CalculationCategory.h"
-#include "Length.h"
-#include <limits>
-#include <optional>
-#include <wtf/Brigand.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-constexpr double computeMinimumValue(CSS::IntegerValueRange range)
-{
-    switch (range) {
-    case CSS::IntegerValueRange::All:
-        return -std::numeric_limits<double>::infinity();
-    case CSS::IntegerValueRange::NonNegative:
-        return 0.0;
-    case CSS::IntegerValueRange::Positive:
-        return 1.0;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return 0.0;
-}
-
-template<typename IntType, CSS::IntegerValueRange integerRange>
-std::optional<CSS::IntegerRaw<IntType, integerRange>> validatedRange(CSS::IntegerRaw<IntType, integerRange> value, CSSPropertyParserOptions)
-{
-    return value;
-}
-
-template<typename IntType, CSS::IntegerValueRange integerRange>
-struct IntegerKnownTokenTypeFunctionConsumer {
-    using RawType = CSS::IntegerRaw<IntType, integerRange>;
-
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<CSS::UnevaluatedCalc<RawType>> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+struct IntegerValidator {
+    template<auto R> static bool isValid(CSS::NumberRaw<R> raw, CSSPropertyParserOptions)
     {
-        ASSERT(range.peek().type() == FunctionToken);
-
-        auto rangeCopy = range;
-        if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::Integer, WTFMove(symbolsAllowed), options)) {
-            range = rangeCopy;
-            return {{ value.releaseNonNull() }};
-        }
-        return std::nullopt;
+        return isValidCanonicalValue(raw);
     }
 };
 
-template<typename IntType, CSS::IntegerValueRange integerRange>
-struct IntegerKnownTokenTypeNumberConsumer {
-    using RawType = CSS::IntegerRaw<IntType, integerRange>;
-
+template<typename Integer, typename Validator> struct NumberConsumerForIntegerValues {
     static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<RawType> consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+
+    static std::optional<typename Integer::Raw> consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
     {
         ASSERT(range.peek().type() == NumberToken);
 
-        if (range.peek().numericValueType() == NumberValueType || range.peek().numericValue() < computeMinimumValue(integerRange))
+        if (range.peek().numericValueType() != IntegerValueType)
             return std::nullopt;
-        return RawType { clampTo<IntType>(range.consumeIncludingWhitespace().numericValue()) };
+
+        // Validate the value using a CSS::NumberRaw since it has the same range semantics
+        // but keeps the value a double.
+        auto numberValue = CSS::NumberRaw<Integer::range> { range.peek().numericValue() };
+        if (!Validator::isValid(numberValue, options))
+            return std::nullopt;
+
+        return typename Integer::Raw { clampTo<typename Integer::Raw::IntType>(range.consumeIncludingWhitespace().numericValue()) };
     }
 };
 
-template<typename IntType, CSS::IntegerValueRange integerRange>
-struct ConsumerDefinition<CSS::Integer<IntType, integerRange>> {
-    using FunctionToken = IntegerKnownTokenTypeFunctionConsumer<IntType, integerRange>;
-    using NumberToken = IntegerKnownTokenTypeNumberConsumer<IntType, integerRange>;
+template<typename IntType, CSS::Range R>
+struct ConsumerDefinition<CSS::Integer<IntType, R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<IntType, R>>;
+    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<IntType, R>, IntegerValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

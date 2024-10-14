@@ -32,13 +32,13 @@ namespace CSS {
 
 // MARK: - Symbol replacement
 
-Number replaceSymbol(Symbol symbol, const CSSCalcSymbolTable& symbolTable)
+Number<> replaceSymbol(Symbol symbol, const CSSCalcSymbolTable& symbolTable)
 {
     auto result = symbolTable.get(symbol.value);
 
     // We should only get here if the symbol was previously looked up in the symbol table.
     ASSERT(result);
-    return NumberRaw { result->value };
+    return NumberRaw<> { result->value };
 }
 
 } // namespace CSS

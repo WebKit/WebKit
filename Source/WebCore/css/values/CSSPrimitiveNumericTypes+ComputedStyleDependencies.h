@@ -37,15 +37,31 @@ namespace CSS {
 template<> struct ComputedStyleDependenciesCollector<CSSUnitType> { void operator()(ComputedStyleDependencies& dependencies, CSSUnitType); };
 
 // Most raw primitives have no dependencies.
-template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<RawType> { constexpr void operator()(ComputedStyleDependencies&, const RawType&) { } };
+template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<RawType> {
+    constexpr void operator()(ComputedStyleDependencies&, const RawType&)
+    {
+        // Nothing to do.
+    }
+};
 
 // The exception being LengthRaw/LengthPercentageRaw.
-template<> struct ComputedStyleDependenciesCollector<LengthRaw> { void operator()(ComputedStyleDependencies&, const LengthRaw&); };
-template<> struct ComputedStyleDependenciesCollector<LengthPercentageRaw> { void operator()(ComputedStyleDependencies&, const LengthPercentageRaw&); };
+template<auto R> struct ComputedStyleDependenciesCollector<LengthRaw<R>> {
+    void operator()(ComputedStyleDependencies& dependencies, const LengthRaw<R>& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.type);
+    }
+};
+template<auto R> struct ComputedStyleDependenciesCollector<LengthPercentageRaw<R>> {
+    void operator()(ComputedStyleDependencies& dependencies, const LengthPercentageRaw<R>& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.type);
+    }
+
+};
 
 // All primitives that can contain calc() may have dependencies, as calc() can contain relative lengths even in non-length contexts.
 template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<PrimitiveNumeric<RawType>> {
-    inline void operator()(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<RawType>& value)
+    void operator()(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<RawType>& value)
     {
         collectComputedStyleDependencies(dependencies, value.value);
     }

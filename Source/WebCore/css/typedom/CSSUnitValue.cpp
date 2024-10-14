@@ -137,8 +137,8 @@ RefPtr<CSSValue> CSSUnitValue::toCSSValue() const
 // FIXME: This function could be mostly generated from CSSProperties.json.
 static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value, CSSUnitType unit)
 {
-    ValueRange valueRange = ValueRange::All;
-    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange) && valueRange == ValueRange::NonNegative && value < 0)
+    CSS::Range valueRange = CSS::All;
+    if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange) && (value < valueRange.min || value > valueRange.max))
         return true;
 
     switch (propertyID) {
@@ -217,10 +217,10 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     }
 }
 
-static ValueRange rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
+static CSS::Range rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
 {
     // FIXME: Merge with isValueOutOfRangeForProperty.
-    ValueRange valueRange = ValueRange::All;
+    auto valueRange = CSS::All;
     if (CSSParserFastPaths::isSimpleLengthPropertyID(propertyID, valueRange))
         return valueRange;
 
@@ -288,12 +288,12 @@ static ValueRange rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
     case CSSPropertyOrphans:        // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
     case CSSPropertyWidows:         // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
     case CSSPropertyColumnCount:    // FIXME: Support more fine-grain ranges: `<integer [1,∞]>`
-        return ValueRange::NonNegative;
+        return CSS::Nonnegative;
 
     case CSSPropertyOrder:          // FIXME: Support more fine-grain ranges: `<integer>`
     case CSSPropertyZIndex:         // FIXME: Support more fine-grain ranges: `<integer>`
     default:
-        return ValueRange::All;
+        return CSS::All;
     }
 }
 

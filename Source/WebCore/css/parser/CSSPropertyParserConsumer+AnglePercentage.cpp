@@ -27,105 +27,22 @@
 #include "CSSPropertyParserConsumer+AnglePercentageDefinitions.h"
 
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcSymbolsAllowed.h"
-#include "CSSCalcValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
-#include "CSSPropertyParserConsumer+AngleDefinitions.h"
-#include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+PercentageDefinitions.h"
-#include "CSSPropertyParserHelpers.h"
-#include "CalculationCategory.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::AnglePercentageRaw> validatedRange(CSS::AnglePercentageRaw value, CSSPropertyParserOptions options)
-{
-    if (options.valueRange == ValueRange::NonNegative && value.value < 0)
-        return std::nullopt;
-    if (std::isinf(value.value))
-        return std::nullopt;
-    return value;
-}
-
-std::optional<CSS::UnevaluatedCalc<CSS::AnglePercentageRaw>> AnglePercentageKnownTokenTypeFunctionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == FunctionToken);
-
-    auto rangeCopy = range;
-    if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Calculation::Category::AnglePercentage, WTFMove(symbolsAllowed), options)) {
-        range = rangeCopy;
-        return {{ value.releaseNonNull() }};
-    }
-    return std::nullopt;
-}
-
-std::optional<CSS::AnglePercentageRaw> AnglePercentageKnownTokenTypeDimensionConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == DimensionToken);
-
-    auto& token = range.peek();
-
-    auto unitType = token.unitType();
-    switch (unitType) {
-    case CSSUnitType::CSS_DEG:
-    case CSSUnitType::CSS_RAD:
-    case CSSUnitType::CSS_GRAD:
-    case CSSUnitType::CSS_TURN:
-        break;
-    default:
-        return std::nullopt;
-    }
-
-    if (auto validatedValue = validatedRange(CSS::AnglePercentageRaw { unitType, token.numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-
-    return std::nullopt;
-}
-
-std::optional<CSS::AnglePercentageRaw> AnglePercentageKnownTokenTypePercentConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == PercentageToken);
-
-    if (auto validatedValue = validatedRange(CSS::AnglePercentageRaw { CSSUnitType::CSS_PERCENTAGE, range.peek().numericValue() }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-    return std::nullopt;
-}
-
-
-std::optional<CSS::AnglePercentageRaw> AnglePercentageKnownTokenTypeNumberConsumer::consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions options)
-{
-    ASSERT(range.peek().type() == NumberToken);
-
-    auto numericValue = range.peek().numericValue();
-    if (!shouldAcceptUnitlessValue(numericValue, options))
-        return std::nullopt;
-
-    if (auto validatedValue = validatedRange(CSS::AnglePercentageRaw { CSSUnitType::CSS_DEG, numericValue }, options)) {
-        range.consumeIncludingWhitespace();
-        return validatedValue;
-    }
-    return std::nullopt;
-}
-
-
-// MARK: - Consumer functions
-
-RefPtr<CSSPrimitiveValue> consumeAnglePercentage(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero, NegativePercentagePolicy negativePercentage)
+RefPtr<CSSPrimitiveValue> consumeAnglePercentage(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
     const auto options = CSSPropertyParserOptions {
         .parserMode = context.mode,
-        .valueRange = valueRange,
-        .negativePercentage = negativePercentage,
         .unitless = unitless,
         .unitlessZero = unitlessZero
     };
-
-    return CSSPrimitiveValueResolver<CSS::AnglePercentage>::consumeAndResolve(range, context, { }, { }, options);
+    if (valueRange == ValueRange::All)
+        return CSSPrimitiveValueResolver<CSS::AnglePercentage<CSS::All>>::consumeAndResolve(range, context, { }, { }, options);
+    return CSSPrimitiveValueResolver<CSS::AnglePercentage<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, options);
 }
 
 } // namespace CSSPropertyParserHelpers

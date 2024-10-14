@@ -45,8 +45,6 @@ public:
 
     Calculation::NumericValue evaluate(Calculation::NumericValue percentResolutionLength) const;
 
-    ValueRange range() const { return m_tree.range; }
-
     const Calculation::Tree& tree() const { return m_tree; }
     Calculation::Tree copyTree() const;
     Calculation::Child copyRoot() const;

@@ -37,44 +37,44 @@ namespace WebCore {
 // MARK: - normalizeAndClampNumericComponents
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeAndClampNumericComponents(CSS::NumberRaw number)
+CSS::Number<> normalizeAndClampNumericComponents(CSS::NumberRaw<> number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.type == ColorComponentType::Angle)
-        return CSS::NumberRaw { normalizeHue(number.value) };
+        return CSS::NumberRaw<> { normalizeHue(number.value) };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { number.value };
+        return CSS::NumberRaw<> { number.value };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { std::min(number.value, info.max) };
+        return CSS::NumberRaw<> { std::min(number.value, info.max) };
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { std::max(number.value, info.min) };
+        return CSS::NumberRaw<> { std::max(number.value, info.min) };
     else
-        return CSS::NumberRaw { std::clamp(number.value, info.min, info.max) };
+        return CSS::NumberRaw<> { std::clamp(number.value, info.min, info.max) };
 }
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeAndClampNumericComponents(CSS::PercentageRaw percent)
+CSS::Number<> normalizeAndClampNumericComponents(CSS::PercentageRaw<> percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { percent.value * info.percentMultiplier };
+        return CSS::NumberRaw<> { percent.value * info.percentMultiplier };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { std::min(percent.value * info.percentMultiplier, info.max) };
+        return CSS::NumberRaw<> { std::min(percent.value * info.percentMultiplier, info.max) };
     else if constexpr (info.max == std::numeric_limits<double>::infinity())
-        return CSS::NumberRaw { std::max(percent.value * info.percentMultiplier, info.min) };
+        return CSS::NumberRaw<> { std::max(percent.value * info.percentMultiplier, info.min) };
     else
-        return CSS::NumberRaw { std::clamp(percent.value * info.percentMultiplier, info.min, info.max) };
+        return CSS::NumberRaw<> { std::clamp(percent.value * info.percentMultiplier, info.min, info.max) };
 }
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeAndClampNumericComponents(CSS::AngleRaw angle)
+CSS::Number<> normalizeAndClampNumericComponents(CSS::AngleRaw<> angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);
 
-    return CSS::NumberRaw { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
+    return CSS::NumberRaw<> { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
 }
 
 template<typename Descriptor, unsigned Index>
@@ -111,31 +111,31 @@ auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::op
 // MARK: - normalizeNumericComponents
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeNumericComponents(CSS::NumberRaw number)
+CSS::Number<> normalizeNumericComponents(CSS::NumberRaw<> number)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
     if constexpr (info.type == ColorComponentType::Angle)
-        return CSS::NumberRaw { normalizeHue(number.value) };
+        return CSS::NumberRaw<> { normalizeHue(number.value) };
     else
-        return CSS::NumberRaw { number.value };
+        return CSS::NumberRaw<> { number.value };
 }
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeNumericComponents(CSS::PercentageRaw percent)
+CSS::Number<> normalizeNumericComponents(CSS::PercentageRaw<> percent)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
 
-    return CSS::NumberRaw { percent.value * info.percentMultiplier };
+    return CSS::NumberRaw<> { percent.value * info.percentMultiplier };
 }
 
 template<typename Descriptor, unsigned Index>
-CSS::Number normalizeNumericComponents(CSS::AngleRaw angle)
+CSS::Number<> normalizeNumericComponents(CSS::AngleRaw<> angle)
 {
     constexpr auto info = std::get<Index>(Descriptor::components);
     static_assert(info.type == ColorComponentType::Angle);
 
-    return CSS::NumberRaw { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
+    return CSS::NumberRaw<> { normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)) };
 }
 
 template<typename Descriptor, unsigned Index>

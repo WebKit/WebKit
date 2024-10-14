@@ -25,20 +25,20 @@
 #pragma once
 
 #include "CSSPropertyParserOptions.h"
+#include "Length.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSPrimitiveValue;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All, UnitlessQuirk = UnitlessQuirk::Forbid);
+RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

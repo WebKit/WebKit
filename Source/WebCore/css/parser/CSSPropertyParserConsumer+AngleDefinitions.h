@@ -24,42 +24,39 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
-#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
-#include "CSSUnevaluatedCalc.h"
-#include <optional>
-#include <wtf/Brigand.h>
 
 namespace WebCore {
-
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-struct CSSPropertyParserOptions;
-
 namespace CSSPropertyParserHelpers {
 
-std::optional<CSS::AngleRaw> validatedRange(CSS::AngleRaw, CSSPropertyParserOptions);
+struct AngleValidator {
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions)
+    {
+        switch (unitType) {
+        case CSSUnitType::CSS_DEG:
+        case CSSUnitType::CSS_RAD:
+        case CSSUnitType::CSS_GRAD:
+        case CSSUnitType::CSS_TURN:
+            return true;
 
-struct AngleKnownTokenTypeFunctionConsumer {
-    static constexpr CSSParserTokenType tokenType = FunctionToken;
-    static std::optional<CSS::UnevaluatedCalc<CSS::AngleRaw>> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
+        default:
+            return false;
+        }
+    }
+
+    template<auto R> static bool isValid(CSS::AngleRaw<R> raw, CSSPropertyParserOptions)
+    {
+        return isValidDimensionValue(raw, [&] {
+            auto canonicalValue = CSS::canonicalizeAngle(raw.value, raw.type);
+            return canonicalValue >= raw.range.min && canonicalValue <= raw.range.max;
+        });
+    }
 };
 
-struct AngleKnownTokenTypeDimensionConsumer {
-    static constexpr CSSParserTokenType tokenType = DimensionToken;
-    static std::optional<CSS::AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-struct AngleKnownTokenTypeNumberConsumer {
-    static constexpr CSSParserTokenType tokenType = NumberToken;
-    static std::optional<CSS::AngleRaw> consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-};
-
-template<> struct ConsumerDefinition<CSS::Angle> {
-    using FunctionToken = AngleKnownTokenTypeFunctionConsumer;
-    using DimensionToken = AngleKnownTokenTypeDimensionConsumer;
-    using NumberToken = AngleKnownTokenTypeNumberConsumer;
+template<auto R> struct ConsumerDefinition<CSS::Angle<R>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Angle<R>>;
+    using DimensionToken = DimensionConsumer<CSS::Angle<R>, AngleValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::Angle<R>, AngleValidator, CSSUnitType::CSS_DEG>;
 };
 
 } // namespace CSSPropertyParserHelpers

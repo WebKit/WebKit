@@ -31,19 +31,6 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-bool shouldAcceptUnitlessValue(double value, CSSPropertyParserOptions options)
-{
-    // FIXME: Presentational HTML attributes shouldn't use the CSS parser for lengths.
-
-    if (!value && options.unitlessZero == UnitlessZeroQuirk::Allow)
-        return true;
-
-    if (isUnitlessValueParsingEnabledForMode(options.parserMode))
-        return true;
-
-    return options.parserMode == HTMLQuirksMode && options.unitless == UnitlessQuirk::Allow;
-}
-
 bool consumeCommaIncludingWhitespace(CSSParserTokenRange& range)
 {
     CSSParserToken value = range.peek();

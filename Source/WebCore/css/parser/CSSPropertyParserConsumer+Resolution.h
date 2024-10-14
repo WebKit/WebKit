@@ -30,7 +30,6 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {

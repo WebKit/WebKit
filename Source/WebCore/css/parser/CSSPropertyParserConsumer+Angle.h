@@ -24,25 +24,19 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSPropertyParserOptions.h"
-#include <optional>
-#include <wtf/RefPtr.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class CSSCalcSymbolTable;
 class CSSPrimitiveValue;
 class CSSParserTokenRange;
-struct CSSParserContext;
-
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
-// MARK: - Angle
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, const CSSParserContext&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 
 } // namespace CSSPropertyParserHelpers

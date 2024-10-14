@@ -48,7 +48,7 @@ struct SerializationState {
 
     GroupingParenthesis groupingParenthesis = GroupingParenthesis::Include;
     Stage stage = Stage::Specified;
-    ValueRange range = ValueRange::All;
+    CSS::Range range = CSS::All;
 };
 
 struct ParenthesisSaver {
@@ -245,10 +245,10 @@ static Vector<ChildRepresentation, 16> generateSortedChildrenMap(const Children&
 // MARK: Math Function
 // https://drafts.csswg.org/css-values-4/#serialize-a-math-function
 
-static double clampValue(double value, ValueRange range)
+static double clampValue(double value, CSS::Range range)
 {
     value = std::isnan(value) ? 0 : value;
-    return range == ValueRange::NonNegative && value < 0 ? 0 : value;
+    return std::clamp(value, range.min, range.max);
 }
 
 void serializeMathFunction(StringBuilder& builder, const Child& fn, SerializationState& state)

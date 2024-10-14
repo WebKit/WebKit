@@ -42,7 +42,7 @@ struct CSSUnresolvedColorMix {
     struct Component {
         bool operator==(const Component&) const;
 
-        using Percentage = CSS::Percentage;
+        using Percentage = CSS::Percentage<CSS::Range{0, 100}>;
 
         UniqueRef<CSSUnresolvedColor> color;
         std::optional<Percentage> percentage;
@@ -55,8 +55,10 @@ struct CSSUnresolvedColorMix {
     Component mixComponents2;
 };
 
-Style::Percentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage&, const CSSToLengthConversionData&);
-Style::Percentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage&);
+using ResolvedColorMixPercentage = Style::Percentage<CSS::Range{0, 100}>;
+
+ResolvedColorMixPercentage resolveComponentPercentage(const CSSUnresolvedColorMix::Component::Percentage&, const CSSToLengthConversionData&);
+ResolvedColorMixPercentage resolveComponentPercentageNoConversionDataRequired(const CSSUnresolvedColorMix::Component::Percentage&);
 
 void serializationForCSS(StringBuilder&, const CSSUnresolvedColorMix&);
 String serializationForCSS(const CSSUnresolvedColorMix&);

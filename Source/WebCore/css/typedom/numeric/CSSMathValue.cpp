@@ -48,7 +48,7 @@ RefPtr<CSSValue> CSSMathValue::toCSSValue() const
         .type = type,
         .category = *category,
         .stage = CSSCalc::Stage::Specified,
-        .range = ValueRange::All
+        .range = CSS::All
     }));
 }
 
