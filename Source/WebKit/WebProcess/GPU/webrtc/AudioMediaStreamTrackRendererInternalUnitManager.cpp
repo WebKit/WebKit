@@ -43,20 +43,30 @@
 #include <mach/mach_time.h>
 #include <wtf/Deque.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
-class AudioMediaStreamTrackRendererInternalUnitManagerProxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public CanMakeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
+class AudioMediaStreamTrackRendererInternalUnitManagerProxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public RefCountedAndCanMakeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 public:
-    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client&);
+    static Ref<AudioMediaStreamTrackRendererInternalUnitManagerProxy> create(Client& client)
+    {
+        return adoptRef(*new AudioMediaStreamTrackRendererInternalUnitManagerProxy(client));
+    }
+
     ~AudioMediaStreamTrackRendererInternalUnitManagerProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     enum class IsClosed : bool { No, Yes };
     void reset(IsClosed);
 
 private:
+    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client&);
+
     // AudioMediaStreamTrackRendererUnit::InternalUnit API.
     void start() final;
     void stop() final;
@@ -70,7 +80,7 @@ private:
     void startThread();
     void createRemoteUnit();
 
-    Client& m_client;
+    WeakPtr<Client> m_client;
 
     Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
 
@@ -102,9 +112,9 @@ void AudioMediaStreamTrackRendererInternalUnitManager::remove(AudioMediaStreamTr
     m_proxies.remove(proxy.identifier());
 }
 
-UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
+Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
 {
-    return makeUniqueRef<AudioMediaStreamTrackRendererInternalUnitManagerProxy>(client);
+    return AudioMediaStreamTrackRendererInternalUnitManagerProxy::create(client);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::reset(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -232,6 +242,10 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::startThread()
     ASSERT(!m_thread);
     m_shouldStopThread = false;
     auto threadLoop = [this]() mutable {
+        RefPtr client = m_client.get();
+        if (!client)
+            return;
+
         m_writeOffset = 0;
         do {
             // If wait fails, the semaphore on the other side was probably destroyed and we should just exit here and wait to launch a new thread.
@@ -243,7 +257,7 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::startThread()
             auto& bufferList = *m_buffer->list();
 
             AudioUnitRenderActionFlags flags = 0;
-            m_client.render(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
+            client->render(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
 
             if (flags == kAudioUnitRenderAction_OutputIsSilence)
                 WebCore::AudioSampleBufferList::zeroABL(bufferList, static_cast<size_t>(m_frameChunkSize * m_description->bytesPerFrame()));
@@ -259,7 +273,9 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::reset(IsClosed isClo
 {
     stopThread();
     m_didClose = isClosed == IsClosed::Yes;
-    m_client.reset();
+
+    if (RefPtr client = m_client.get())
+        client->reset();
     if (m_isPlaying)
         start();
 }

@@ -64,6 +64,9 @@ public:
 
     ~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void start(ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
     void stop();
     void setAudioOutputDevice(const String&);
@@ -91,9 +94,11 @@ private:
     OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
     void reset() final;
 
+    Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> protectedLocalUnit() { return m_localUnit; }
+
     AudioMediaStreamTrackRendererInternalUnitIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
-    UniqueRef<WebCore::AudioMediaStreamTrackRendererInternalUnit> m_localUnit;
+    Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> m_localUnit;
     uint64_t m_readOffset { 0 };
     uint64_t m_generateOffset { 0 };
     uint64_t m_frameChunkSize { 0 };
@@ -171,7 +176,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
     , m_shouldRegisterAsSpeakerSamplesProducer(shouldRegisterAsSpeakerSamplesProducer)
 {
     WebCore::AudioSession::sharedSession().addInterruptionObserver(*this);
-    m_localUnit->retrieveFormatDescription([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)](auto&& description) mutable {
+    protectedLocalUnit()->retrieveFormatDescription([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)](auto&& description) mutable {
         if (!weakThis || !description) {
             RELEASE_LOG_IF(!description, WebRTC, "RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit unable to get format description");
             callback(std::nullopt, 0);
@@ -232,19 +237,19 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::start(ConsumerS
             return;
     }
 
-    m_localUnit->start();
+    protectedLocalUnit()->start();
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::stop()
 {
     m_isPlaying = false;
     WebCore::CoreAudioCaptureSourceFactory::singleton().unregisterSpeakerSamplesProducer(*this);
-    m_localUnit->stop();
+    protectedLocalUnit()->stop();
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::setAudioOutputDevice(const String& deviceId)
 {
-    m_localUnit->setAudioOutputDevice(deviceId);
+    protectedLocalUnit()->setAudioOutputDevice(deviceId);
 }
 
 OSStatus RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::render(size_t sampleCount, AudioBufferList& list, uint64_t, double, AudioUnitRenderActionFlags& flags)
@@ -273,14 +278,14 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::captureUnitIsSt
 {
     // Capture unit is starting and audio will be rendered through it and not by our local unit so stop the local unit.
     if (m_isPlaying && WebCore::CoreAudioCaptureSourceFactory::singleton().shouldAudioCaptureUnitRenderAudio())
-        m_localUnit->stop();
+        protectedLocalUnit()->stop();
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::captureUnitHasStopped()
 {
     // Capture unit has stopped and audio will no longer be rendered through it so start the local unit.
     if (m_isPlaying && !WebCore::CoreAudioSharedUnit::singleton().isSuspended())
-        m_localUnit->start();
+        protectedLocalUnit()->start();
 }
 
 // Background thread.
@@ -292,7 +297,7 @@ OSStatus RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::produceSpea
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::beginAudioSessionInterruption()
 {
     if (m_isPlaying)
-        m_localUnit->stop();
+        protectedLocalUnit()->stop();
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::endAudioSessionInterruption(WebCore::AudioSession::MayResume)
@@ -303,7 +308,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::endAudioSession
     if (m_shouldRegisterAsSpeakerSamplesProducer && (WebCore::CoreAudioSharedUnit::singleton().isRunning() || WebCore::CoreAudioSharedUnit::singleton().isSuspended()))
         return;
 
-    m_localUnit->start();
+    protectedLocalUnit()->start();
 }
 
 } // namespace WebKit

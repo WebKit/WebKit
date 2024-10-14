@@ -35,21 +35,26 @@
 #include "CoreAudioCaptureDeviceManager.h"
 #include "Logging.h"
 #include <Accelerate/Accelerate.h>
-#include <pal/cf/AudioToolboxSoftLink.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
 #include <wtf/Lock.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#include <pal/cf/AudioToolboxSoftLink.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
-class LocalAudioMediaStreamTrackRendererInternalUnit final : public AudioMediaStreamTrackRendererInternalUnit {
+class LocalAudioMediaStreamTrackRendererInternalUnit final : public AudioMediaStreamTrackRendererInternalUnit, public RefCounted<LocalAudioMediaStreamTrackRendererInternalUnit>  {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(LocalAudioMediaStreamTrackRendererInternalUnit);
 public:
-    static UniqueRef<AudioMediaStreamTrackRendererInternalUnit> create(Client& client)
+    static Ref<AudioMediaStreamTrackRendererInternalUnit> create(Client& client)
     {
-        return UniqueRef<LocalAudioMediaStreamTrackRendererInternalUnit> { *new LocalAudioMediaStreamTrackRendererInternalUnit { client } };
+        return adoptRef(*new LocalAudioMediaStreamTrackRendererInternalUnit(client));
     }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit LocalAudioMediaStreamTrackRendererInternalUnit(Client&);
@@ -64,7 +69,7 @@ private:
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 sampleCount, AudioBufferList*);
     static OSStatus renderingCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 sampleCount, AudioBufferList*);
 
-    Client& m_client;
+    WeakPtr<Client> m_client;
     std::optional<CAAudioStreamDescription> m_outputDescription;
     AudioComponentInstance m_remoteIOUnit { nullptr };
     bool m_isStarted { false };
@@ -266,13 +271,17 @@ static void clipAudioBufferList(AudioBufferList& list, AudioStreamDescription::P
 
 OSStatus LocalAudioMediaStreamTrackRendererInternalUnit::render(AudioUnitRenderActionFlags* actionFlags, const AudioTimeStamp* timeStamp, UInt32 sampleCount, AudioBufferList* ioData)
 {
+    RefPtr client = m_client.get();
+    if (!client)
+        return kAudio_ParamError;
+
     auto sampleTime = timeStamp->mSampleTime;
     // If we observe an irregularity in the timeline, we trigger a reset.
     if (m_sampleTime && (m_sampleTime + 2 * sampleCount < sampleTime || sampleTime <= m_sampleTime))
-        m_client.reset();
+        client->reset();
     m_sampleTime = sampleTime < std::numeric_limits<Float64>::max() - sampleCount ? sampleTime : 0;
 
-    auto result = m_client.render(sampleCount, *ioData, sampleTime, timeStamp->mHostTime, *actionFlags);
+    auto result = client->render(sampleCount, *ioData, sampleTime, timeStamp->mHostTime, *actionFlags);
     // FIXME: We should probably introduce a limiter to limit the amount of clipping.
     clipAudioBufferList(*ioData, m_outputDescription->format());
     return result;
@@ -291,7 +300,7 @@ void AudioMediaStreamTrackRendererInternalUnit::setCreateFunction(CreateFunction
     createInternalUnit = function;
 }
 
-UniqueRef<AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnit::create(Client& client)
+Ref<AudioMediaStreamTrackRendererInternalUnit> AudioMediaStreamTrackRendererInternalUnit::create(Client& client)
 {
     return createInternalUnit(client);
 }

@@ -51,7 +51,7 @@ AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit()
 
 void AudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& deviceID)
 {
-    m_internalUnit->setAudioOutputDevice(deviceID);
+    protectedInternalUnit()->setAudioOutputDevice(deviceID);
 }
 
 void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
@@ -101,7 +101,7 @@ void AudioMediaStreamTrackRendererUnit::start()
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::start");
     ASSERT(isMainThread());
 
-    m_internalUnit->start();
+    protectedInternalUnit()->start();
 }
 
 void AudioMediaStreamTrackRendererUnit::stop()
@@ -109,7 +109,7 @@ void AudioMediaStreamTrackRendererUnit::stop()
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::stop");
     ASSERT(isMainThread());
 
-    m_internalUnit->stop();
+    protectedInternalUnit()->stop();
 }
 
 void AudioMediaStreamTrackRendererUnit::reset()
@@ -131,7 +131,7 @@ void AudioMediaStreamTrackRendererUnit::reset()
 void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     ASSERT(isMainThread());
-    m_internalUnit->retrieveFormatDescription(WTFMove(callback));
+    protectedInternalUnit()->retrieveFormatDescription(WTFMove(callback));
 }
 
 void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
