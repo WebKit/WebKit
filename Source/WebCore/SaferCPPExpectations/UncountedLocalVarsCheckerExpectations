@@ -1169,7 +1169,6 @@ platform/mock/MockRealtimeMediaSourceCenter.cpp
 platform/mock/MockRealtimeVideoSource.cpp
 platform/network/BlobRegistryImpl.cpp
 platform/network/FormData.cpp
-platform/network/cocoa/ResourceRequestCocoa.mm
 platform/text/BidiContext.cpp
 platform/text/BidiResolver.h
 plugins/DOMPluginArray.cpp
