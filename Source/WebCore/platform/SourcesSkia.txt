@@ -53,6 +53,7 @@ platform/graphics/skia/ImageBufferSkiaAcceleratedBackend.cpp
 platform/graphics/skia/ImageBufferSkiaSurfaceBackend.cpp
 platform/graphics/skia/ImageBufferSkiaUnacceleratedBackend.cpp
 platform/graphics/skia/ImageBufferUtilitiesSkia.cpp
+platform/graphics/skia/IntRectSkia.cpp
 platform/graphics/skia/NativeImageSkia.cpp
 platform/graphics/skia/PathSkia.cpp
 platform/graphics/skia/PatternSkia.cpp
