@@ -33,6 +33,7 @@
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerThreadProxy.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -50,10 +51,8 @@ class SWContextManager {
 public:
     WEBCORE_EXPORT static SWContextManager& singleton();
 
-    class Connection {
+    class Connection : public AbstractRefCounted {
     public:
-        DECLARE_VIRTUAL_REFCOUNTED;
-
         virtual ~Connection() { }
 
         virtual void establishConnection(CompletionHandler<void()>&&) = 0;

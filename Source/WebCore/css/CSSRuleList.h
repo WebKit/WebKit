@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -31,12 +32,10 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleSheet;
 
-class CSSRuleList {
+class CSSRuleList : public AbstractRefCounted {
     WTF_MAKE_NONCOPYABLE(CSSRuleList);
 public:
     virtual ~CSSRuleList();
-
-    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual unsigned length() const = 0;
     virtual CSSRule* item(unsigned index) const = 0;

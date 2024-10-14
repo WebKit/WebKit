@@ -27,6 +27,7 @@
 
 #include "JSDOMPromiseDeferredForward.h"
 #include "PushSubscription.h"
+#include <wtf/AbstractRefCounted.h>
 
 namespace WebCore {
 
@@ -34,10 +35,8 @@ class PushSubscription;
 
 enum class PushPermissionState : uint8_t;
 
-class PushSubscriptionOwner {
+class PushSubscriptionOwner : public AbstractRefCounted {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~PushSubscriptionOwner() = default;
 
     virtual bool isActive() const = 0;

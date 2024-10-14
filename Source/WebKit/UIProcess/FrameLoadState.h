@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 
@@ -32,11 +33,9 @@ namespace WebKit {
 
 enum class IsMainFrame : bool;
 
-class FrameLoadStateObserver : public CanMakeWeakPtr<FrameLoadStateObserver> {
+class FrameLoadStateObserver : public AbstractRefCountedAndCanMakeWeakPtr<FrameLoadStateObserver> {
 public:
     virtual ~FrameLoadStateObserver() = default;
-
-    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual void didReceiveProvisionalURL(const URL&) { }
     virtual void didStartProvisionalLoad(const URL&) { }

@@ -24,6 +24,7 @@
 #include "CSSPropertyNames.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebCore {
@@ -36,12 +37,10 @@ class MutableStyleProperties;
 class StyleProperties;
 class StyledElement;
 
-class CSSStyleDeclaration : public ScriptWrappable, public CanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
+class CSSStyleDeclaration : public ScriptWrappable, public AbstractRefCountedAndCanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~CSSStyleDeclaration() = default;
 
     virtual StyledElement* parentElement() const { return nullptr; }

@@ -31,6 +31,7 @@
 #include "Settings.h"
 #include "TextFlags.h"
 #include <memory>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
@@ -204,10 +205,8 @@ private:
     Timer m_timeoutTimer;
 };
 
-class CSSFontFaceClient : public CanMakeWeakPtr<CSSFontFaceClient> {
+class CSSFontFaceClient : public AbstractRefCountedAndCanMakeWeakPtr<CSSFontFaceClient> {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~CSSFontFaceClient() = default;
     virtual void fontLoaded(CSSFontFace&) { }
     virtual void fontStateChanged(CSSFontFace&, CSSFontFace::Status /*oldState*/, CSSFontFace::Status /*newState*/) { }

@@ -27,8 +27,8 @@
 
 #if ENABLE(CONTENT_FILTERING)
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ContentFilterClient;
@@ -46,10 +46,8 @@ class ResourceError;
 class SharedBuffer;
 class SubstituteData;
 
-class ContentFilterClient : public CanMakeWeakPtr<ContentFilterClient> {
+class ContentFilterClient : public AbstractRefCountedAndCanMakeWeakPtr<ContentFilterClient> {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~ContentFilterClient() = default;
 
     virtual void dataReceivedThroughContentFilter(const SharedBuffer&, size_t) = 0;

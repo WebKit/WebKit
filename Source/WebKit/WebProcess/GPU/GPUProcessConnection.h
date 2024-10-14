@@ -39,6 +39,7 @@
 #include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/SharedMemory.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
@@ -123,10 +124,8 @@ public:
     void createGPU(WebGPUIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGPU(WebGPUIdentifier);
 
-    class Client {
+    class Client : public AbstractRefCounted {
     public:
-        DECLARE_VIRTUAL_REFCOUNTED;
-
         virtual ~Client() = default;
 
         virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;

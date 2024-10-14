@@ -28,6 +28,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "TaskSource.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Assertions.h>
 #include <wtf/CancellableTask.h>
 #include <wtf/Forward.h>
@@ -49,10 +50,8 @@ enum class ReasonForSuspension : uint8_t {
     PageWillBeSuspended,
 };
 
-class WEBCORE_EXPORT ActiveDOMObject : public ContextDestructionObserver {
+class WEBCORE_EXPORT ActiveDOMObject : public AbstractRefCounted, public ContextDestructionObserver {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     // The suspendIfNeeded must be called exactly once after object construction to update
     // the suspended state to match that of the ScriptExecutionContext.
     void suspendIfNeeded();

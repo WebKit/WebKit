@@ -35,6 +35,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <pal/SessionID.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -60,10 +61,8 @@ using RedirectCompletionHandler = CompletionHandler<void(WebCore::ResourceReques
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 using ResponseCompletionHandler = CompletionHandler<void(WebCore::PolicyAction)>;
 
-class NetworkDataTaskClient : public CanMakeWeakPtr<NetworkDataTaskClient> {
+class NetworkDataTaskClient : public AbstractRefCountedAndCanMakeWeakPtr<NetworkDataTaskClient> {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) = 0;
     virtual void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) = 0;
     virtual void didReceiveInformationalResponse(WebCore::ResourceResponse&&) { };

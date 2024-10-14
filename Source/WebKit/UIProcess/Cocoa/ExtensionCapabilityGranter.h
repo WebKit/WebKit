@@ -27,6 +27,7 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -45,9 +46,8 @@ class MediaCapability;
 class WebPageProxy;
 class WebProcessProxy;
 
-struct ExtensionCapabilityGranterClient : public CanMakeWeakPtr<ExtensionCapabilityGranterClient> {
+struct ExtensionCapabilityGranterClient : public AbstractRefCountedAndCanMakeWeakPtr<ExtensionCapabilityGranterClient> {
     virtual ~ExtensionCapabilityGranterClient() = default;
-    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
     virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;

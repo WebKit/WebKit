@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,20 @@
 
 #pragma once
 
-#include <span>
-#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/CanMakeWeakPtr.h>
 
-namespace WebCore {
+namespace WTF {
 
-class ResourceError;
-class ResourceResponse;
-class SharedBuffer;
-
-class BackgroundFetchRecordLoaderClient : public AbstractRefCountedAndCanMakeWeakPtr<BackgroundFetchRecordLoaderClient> {
-public:
-    virtual ~BackgroundFetchRecordLoaderClient() = default;
-
-    virtual void didSendData(uint64_t) = 0;
-    virtual void didReceiveResponse(ResourceResponse&&) = 0;
-    virtual void didReceiveResponseBodyChunk(const SharedBuffer&) = 0;
-    virtual void didFinish(const ResourceError&) = 0;
+template<typename T>
+class AbstractRefCountedAndCanMakeWeakPtr : public AbstractRefCounted, public CanMakeWeakPtr<T> {
 };
 
-class BackgroundFetchRecordLoader : public AbstractRefCounted {
-public:
-    virtual ~BackgroundFetchRecordLoader() = default;
-
-    virtual void abort() = 0;
+template<typename T>
+class AbstractRefCountedAndCanMakeSingleThreadWeakPtr : public AbstractRefCounted, public CanMakeSingleThreadWeakPtr<T> {
 };
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::AbstractRefCountedAndCanMakeWeakPtr;
+using WTF::AbstractRefCountedAndCanMakeSingleThreadWeakPtr;

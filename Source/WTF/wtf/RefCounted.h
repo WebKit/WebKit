@@ -39,10 +39,6 @@ namespace WTF {
 #define CHECK_REF_COUNTED_LIFECYCLE 0
 #endif
 
-#define DECLARE_VIRTUAL_REFCOUNTED \
-    virtual void ref() const = 0; \
-    virtual void deref() const = 0;
-
 #define DEFINE_VIRTUAL_REFCOUNTED \
     void ref() const final { RefCounted::ref(); } \
     void deref() const final { RefCounted::deref(); }

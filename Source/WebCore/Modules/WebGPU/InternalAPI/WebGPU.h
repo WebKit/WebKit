@@ -27,6 +27,7 @@
 
 #include "WebGPURequestAdapterOptions.h"
 #include <optional>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -73,10 +74,8 @@ class XRView;
 
 struct PresentationContextDescriptor;
 
-class GPU {
+class GPU : public AbstractRefCounted {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;

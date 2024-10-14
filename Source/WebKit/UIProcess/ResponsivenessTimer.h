@@ -26,6 +26,7 @@
 #ifndef ResponsivenessTimer_h
 #define ResponsivenessTimer_h
 
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakRef.h>
 
@@ -33,10 +34,8 @@ namespace WebKit {
 
 class ResponsivenessTimer {
 public:
-    class Client : public CanMakeWeakPtr<Client> {
+    class Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
     public:
-        DECLARE_VIRTUAL_REFCOUNTED;
-
         virtual ~Client() { }
         virtual void didBecomeUnresponsive() = 0;
         virtual void didBecomeResponsive() = 0;

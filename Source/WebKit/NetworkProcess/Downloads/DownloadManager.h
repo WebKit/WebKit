@@ -34,6 +34,7 @@
 #include "UseDownloadPlaceholder.h"
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -70,10 +71,8 @@ class DownloadManager : public CanMakeCheckedPtr<DownloadManager> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DownloadManager);
 public:
-    class Client {
+    class Client : public AbstractRefCounted {
     public:
-        DECLARE_VIRTUAL_REFCOUNTED;
-
         virtual ~Client() { }
 
         // CheckedPtr interface

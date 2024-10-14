@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,19 @@
 
 #pragma once
 
-#include <span>
-#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
+namespace WTF {
 
-namespace WebCore {
-
-class ResourceError;
-class ResourceResponse;
-class SharedBuffer;
-
-class BackgroundFetchRecordLoaderClient : public AbstractRefCountedAndCanMakeWeakPtr<BackgroundFetchRecordLoaderClient> {
+// Use this class when an abstract base class needs refcounting, and the
+// refcounting implementation will be in a concrete subclass.
+class AbstractRefCounted {
 public:
-    virtual ~BackgroundFetchRecordLoaderClient() = default;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
-    virtual void didSendData(uint64_t) = 0;
-    virtual void didReceiveResponse(ResourceResponse&&) = 0;
-    virtual void didReceiveResponseBodyChunk(const SharedBuffer&) = 0;
-    virtual void didFinish(const ResourceError&) = 0;
+protected:
+    virtual ~AbstractRefCounted() = default;
 };
 
-class BackgroundFetchRecordLoader : public AbstractRefCounted {
-public:
-    virtual ~BackgroundFetchRecordLoader() = default;
+} // namespace WTF
 
-    virtual void abort() = 0;
-};
-
-} // namespace WebCore
+using WTF::AbstractRefCounted;

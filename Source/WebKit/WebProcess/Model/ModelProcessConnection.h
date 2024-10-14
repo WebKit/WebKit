@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiverMap.h"
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -64,10 +65,8 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    class Client {
+    class Client : public AbstractRefCounted {
     public:
-        DECLARE_VIRTUAL_REFCOUNTED;
-
         virtual ~Client() = default;
 
         virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;

@@ -1,4 +1,6 @@
 set(WTF_PUBLIC_HEADERS
+    AbstractRefCounted.h
+    AbstractRefCountedAndCanMakeWeakPtr.h
     ASCIICType.h
     AccessibleAddress.h
     AggregateLogger.h

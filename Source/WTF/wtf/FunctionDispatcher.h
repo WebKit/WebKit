@@ -52,7 +52,8 @@ public:
 // A RefCountedSerialFunctionDispatcher guarantees that a dispatched function will always be run.
 class RefCountedSerialFunctionDispatcher : public SerialFunctionDispatcher {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 inline void assertIsCurrent(const SerialFunctionDispatcher& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)

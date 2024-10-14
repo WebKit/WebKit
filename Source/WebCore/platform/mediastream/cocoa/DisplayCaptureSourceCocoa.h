@@ -31,8 +31,8 @@
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "UserActivity.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Observer.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
@@ -58,15 +58,13 @@ class CaptureDeviceInfo;
 class ImageTransferSessionVT;
 class PixelBufferConformerCV;
 
-class CapturerObserver : public CanMakeWeakPtr<CapturerObserver> {
+class CapturerObserver : public AbstractRefCountedAndCanMakeWeakPtr<CapturerObserver> {
 public:
     virtual ~CapturerObserver() = default;
 
     virtual void capturerIsRunningChanged(bool) { }
     virtual void capturerFailed() { };
     virtual void capturerConfigurationChanged() { };
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 };
 
 class DisplayCaptureSourceCocoa final

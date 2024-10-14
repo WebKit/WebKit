@@ -29,6 +29,7 @@
 
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCProvider.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
 
@@ -41,12 +42,9 @@ namespace WebKit {
 
 struct NetworksChangedData;
 
-class WebRTCMonitorObserver : public CanMakeWeakPtr<WebRTCMonitorObserver> {
+class WebRTCMonitorObserver : public AbstractRefCountedAndCanMakeWeakPtr<WebRTCMonitorObserver> {
 public:
     virtual ~WebRTCMonitorObserver() = default;
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual void networksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&) = 0;
     virtual void networkProcessCrashed() = 0;

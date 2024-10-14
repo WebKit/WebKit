@@ -31,6 +31,7 @@
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/AuthenticatorResponse.h>
 #include <WebCore/ExceptionData.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -47,7 +48,7 @@ namespace WebKit {
 class Authenticator;
 using AuthenticatorObserverRespond = std::variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>;
 
-class AuthenticatorObserver : public CanMakeWeakPtr<AuthenticatorObserver> {
+class AuthenticatorObserver : public AbstractRefCountedAndCanMakeWeakPtr<AuthenticatorObserver> {
 public:
     virtual ~AuthenticatorObserver() = default;
     virtual void respondReceived(AuthenticatorObserverRespond&&) = 0;
@@ -58,12 +59,9 @@ public:
     virtual void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) = 0;
     virtual void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) = 0;
     virtual void cancelRequest() = 0;
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 };
 
-class Authenticator : public RefCounted<Authenticator>, public CanMakeWeakPtr<Authenticator> {
+class Authenticator : public RefCountedAndCanMakeWeakPtr<Authenticator> {
 public:
     virtual ~Authenticator() = default;
 

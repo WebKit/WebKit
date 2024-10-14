@@ -28,6 +28,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -36,11 +37,9 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class PageLoadStateObserverBase : public CanMakeWeakPtr<PageLoadStateObserverBase> {
+class PageLoadStateObserverBase : public AbstractRefCountedAndCanMakeWeakPtr<PageLoadStateObserverBase> {
 public:
     virtual ~PageLoadStateObserverBase() = default;
-
-    DECLARE_VIRTUAL_REFCOUNTED;
 
     virtual void willChangeIsLoading() = 0;
     virtual void didChangeIsLoading() = 0;

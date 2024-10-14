@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformLayer.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -43,10 +44,8 @@ enum class VideoFrameRotation : uint16_t;
 
 using LayerHostingContextID = uint32_t;
 
-class SampleBufferDisplayLayerClient : public CanMakeWeakPtr<SampleBufferDisplayLayerClient> {
+class SampleBufferDisplayLayerClient : public AbstractRefCountedAndCanMakeWeakPtr<SampleBufferDisplayLayerClient> {
 public:
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     virtual ~SampleBufferDisplayLayerClient() = default;
     virtual void sampleBufferDisplayLayerStatusDidFail() = 0;
 #if PLATFORM(IOS_FAMILY)

@@ -33,6 +33,7 @@
 #include "PlatformTimeRanges.h"
 #include "ProcessIdentity.h"
 #include <optional>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -43,13 +44,11 @@ namespace WebCore {
 
 class VideoFrame;
 
-class MediaPlayerPrivateInterface {
+// MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
+// to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
+// virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
+class MediaPlayerPrivateInterface : public AbstractRefCounted {
 public:
-    // MediaPlayerPrivateInterface subclasses should be ref-counted, but each subclass may choose whether
-    // to be RefCounted or ThreadSafeRefCounted. Therefore, each subclass must implement a pair of
-    // virtual ref()/deref() methods. See NullMediaPlayerPrivate for an example.
-    DECLARE_VIRTUAL_REFCOUNTED;
-
     WEBCORE_EXPORT MediaPlayerPrivateInterface();
     WEBCORE_EXPORT virtual ~MediaPlayerPrivateInterface();
 

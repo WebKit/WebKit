@@ -31,6 +31,7 @@
 #pragma once
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 
@@ -38,13 +39,10 @@ namespace WebCore {
 
 struct DateTimeChooserParameters;
 
-class DateTimeChooser : public CanMakeWeakPtr<DateTimeChooser> {
+class DateTimeChooser : public AbstractRefCountedAndCanMakeWeakPtr<DateTimeChooser> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DateTimeChooser);
 public:
     virtual ~DateTimeChooser() = default;
-
-    virtual void ref() const = 0;
-    virtual void deref() const = 0;
 
     virtual void endChooser() = 0;
     virtual void showChooser(const DateTimeChooserParameters&) = 0;
