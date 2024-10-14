@@ -88,6 +88,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/change-css-property-while-animating-fill-freeze.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/change-css-property-while-animating-fill-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/change-target-while-animating-SVG-property.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/conditional-processing-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/conditional-processing-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/correct-events-for-short-animations-with-syncbases.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/custom-events.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/cyclic-syncbase-2.html
@@ -125,6 +127,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeat-iteration-event-004.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeat-iteration-event-005.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeat-iteration-event-006.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeatcount-attribute-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeatcount-numeric-limit.tentative.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/repeatn-remove-add-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/restart-never-and-begin-click.html
@@ -141,6 +144,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/single-values-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/slider-switch.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/spaces-at-end-of-path-data.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/stop-animation-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svg-style-animate-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgangle-animation-deg-to-grad.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgangle-animation-deg-to-rad.html
@@ -217,6 +222,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgstring-animation-fallback-to-discrete.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransform-animation-1.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/svgtransform-animation-discrete.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-01.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switching-animated-target-to-unknown-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-remove-add-while-running.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2-expected.html

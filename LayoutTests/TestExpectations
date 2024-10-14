@@ -2158,6 +2158,10 @@ imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.h
 # Imported W3C SVG failed tests
 imported/w3c/web-platform-tests/svg/animations/beginelement-instance-time-1.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/correct-events-for-short-animations-with-syncbases.html [ Skip ]
+imported/w3c/web-platform-tests/svg/animations/conditional-processing-01.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/animations/switch-animation-01.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/import/color-prop-04-t-manual.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/import/struct-dom-01-b-manual.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/import/struct-use-01-t-manual.svg [ Skip ]
