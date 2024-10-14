@@ -258,7 +258,6 @@ UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm
 UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm
 UIProcess/API/mac/WKWebViewMac.mm
 UIProcess/API/mac/WKWebViewTestingMac.mm
-UIProcess/BackgroundProcessResponsivenessTimer.cpp
 UIProcess/BrowsingContextGroup.cpp
 UIProcess/Cocoa/AutomationClient.mm
 UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm
@@ -519,7 +518,6 @@ WebProcess/WebCoreSupport/WebNotificationClient.cpp
 WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp
-WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp
 WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm
 WebProcess/WebCoreSupport/mac/WebDragClientMac.mm

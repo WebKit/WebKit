@@ -76,7 +76,6 @@ WebProcess/InjectedBundle/API/c/WKBundle.cpp
 WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePage.cpp
 WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm
-WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp
 WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
 WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 WebProcess/InjectedBundle/InjectedBundle.cpp
