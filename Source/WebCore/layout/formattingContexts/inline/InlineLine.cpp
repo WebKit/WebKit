@@ -165,21 +165,21 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
 
 const Box* Line::removeOverflowingOutOfFlowContent()
 {
-    auto lastTrailingOpaqueItemIndex = std::optional<size_t> { };
+    auto lastTrailingOutOfFlowItemIndex = std::optional<size_t> { };
     for (size_t index = m_runs.size(); index--;) {
         auto& run = m_runs[index];
-        if (run.isOpaque()) {
-            lastTrailingOpaqueItemIndex = index;
+        if (run.isOpaque() && run.layoutBox().isOutOfFlowPositioned()) {
+            lastTrailingOutOfFlowItemIndex = index;
             continue;
         }
         if (!run.logicalWidth() && (run.isInlineBoxStart() || run.isInlineBoxEnd()))
             continue;
         break;
     }
-    if (!lastTrailingOpaqueItemIndex)
+    if (!lastTrailingOutOfFlowItemIndex)
         return { };
-    auto* lastTrailingOpaqueBox = &m_runs[*lastTrailingOpaqueItemIndex].layoutBox();
-    m_runs.remove(*lastTrailingOpaqueItemIndex, m_runs.size() - *lastTrailingOpaqueItemIndex);
+    auto* lastTrailingOpaqueBox = &m_runs[*lastTrailingOutOfFlowItemIndex].layoutBox();
+    m_runs.remove(*lastTrailingOutOfFlowItemIndex, m_runs.size() - *lastTrailingOutOfFlowItemIndex);
     ASSERT(!m_runs.isEmpty());
     return lastTrailingOpaqueBox;
 }
