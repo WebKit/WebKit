@@ -84,7 +84,9 @@ private:
     void pageWasNotifiedOfNotificationPermission() final { }
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
 
-    std::unique_ptr<WebPushD::Connection> m_connection;
+    RefPtr<WebPushD::Connection> protectedConnection() const;
+
+    RefPtr<WebPushD::Connection> m_connection;
 };
 
 } // namespace WebKit

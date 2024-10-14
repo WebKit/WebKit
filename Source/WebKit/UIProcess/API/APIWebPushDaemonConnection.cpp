@@ -38,7 +38,7 @@ namespace API {
 
 WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceName, WebKit::WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    : m_connection(makeUniqueRef<WebKit::WebPushD::Connection>(machServiceName.utf8(), WTFMove(configuration)))
+    : m_connection(WebKit::WebPushD::Connection::create(machServiceName.utf8(), WTFMove(configuration)))
 #endif
 {
 }
@@ -46,16 +46,23 @@ WebPushDaemonConnection::WebPushDaemonConnection(const WTF::String& machServiceN
 void WebPushDaemonConnection::getPushPermissionState(const WTF::URL& scopeURL, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(SecurityOriginData::fromURL(scopeURL)), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushPermissionState(SecurityOriginData::fromURL(scopeURL)), WTFMove(completionHandler));
 #else
     completionHandler(WebCore::PushPermissionState::Denied);
 #endif
 }
 
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+Ref<WebKit::WebPushD::Connection> WebPushDaemonConnection::protectedConnection() const
+{
+    return m_connection;
+}
+#endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
+
 void WebPushDaemonConnection::requestPushPermission(const WTF::URL& scopeURL, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(SecurityOriginData::fromURL(scopeURL)), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(SecurityOriginData::fromURL(scopeURL)), WTFMove(completionHandler));
 #else
     completionHandler(false);
 #endif
@@ -64,14 +71,14 @@ void WebPushDaemonConnection::requestPushPermission(const WTF::URL& scopeURL, Co
 void WebPushDaemonConnection::setAppBadge(const WTF::URL& scopeURL, std::optional<uint64_t> badge)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetAppBadge(SecurityOriginData::fromURL(scopeURL), badge));
+    protectedConnection()->sendWithoutUsingIPCConnection(Messages::PushClientConnection::SetAppBadge(SecurityOriginData::fromURL(scopeURL), badge));
 #endif
 }
 
 void WebPushDaemonConnection::subscribeToPushService(const WTF::URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SubscribeToPushService(scopeURL, applicationServerKey), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SubscribeToPushService(scopeURL, applicationServerKey), WTFMove(completionHandler));
 #else
     completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::UnknownError, "Cannot subscribe to push service"_s }));
 #endif
@@ -80,7 +87,7 @@ void WebPushDaemonConnection::subscribeToPushService(const WTF::URL& scopeURL, c
 void WebPushDaemonConnection::unsubscribeFromPushService(const WTF::URL& scopeURL, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::UnsubscribeFromPushService(scopeURL, std::nullopt), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::UnsubscribeFromPushService(scopeURL, std::nullopt), WTFMove(completionHandler));
 #else
     completionHandler(false);
 #endif
@@ -89,7 +96,7 @@ void WebPushDaemonConnection::unsubscribeFromPushService(const WTF::URL& scopeUR
 void WebPushDaemonConnection::getPushSubscription(const WTF::URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushSubscription(WTFMove(scopeURL)), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPushSubscription(WTFMove(scopeURL)), WTFMove(completionHandler));
 #else
     completionHandler(std::optional<WebCore::PushSubscriptionData> { });
 #endif
@@ -98,7 +105,7 @@ void WebPushDaemonConnection::getPushSubscription(const WTF::URL& scopeURL, Comp
 void WebPushDaemonConnection::getNextPendingPushMessage(CompletionHandler<void(const std::optional<WebKit::WebPushMessage>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessage(), WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetPendingPushMessage(), WTFMove(completionHandler));
 #else
     completionHandler(std::nullopt);
 #endif
@@ -107,7 +114,7 @@ void WebPushDaemonConnection::getNextPendingPushMessage(CompletionHandler<void(c
 void WebPushDaemonConnection::showNotification(const WebCore::NotificationData& notificationData, CompletionHandler<void()>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notificationData, { } }, WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::ShowNotification { notificationData, { } }, WTFMove(completionHandler));
 #else
     completionHandler();
 #endif
@@ -116,7 +123,7 @@ void WebPushDaemonConnection::showNotification(const WebCore::NotificationData& 
 void WebPushDaemonConnection::getNotifications(const WTF::URL& scopeURL, const WTF::String& tag, CompletionHandler<void(const Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { scopeURL, tag }, WTFMove(completionHandler));
+    protectedConnection()->sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::GetNotifications { scopeURL, tag }, WTFMove(completionHandler));
 #else
     completionHandler({ });
 #endif
@@ -125,7 +132,7 @@ void WebPushDaemonConnection::getNotifications(const WTF::URL& scopeURL, const W
 void WebPushDaemonConnection::cancelNotification(const WTF::URL& scopeURL, const WTF::UUID& uuid)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    m_connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification(SecurityOriginData::fromURL(scopeURL), uuid));
+    protectedConnection()->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification(SecurityOriginData::fromURL(scopeURL), uuid));
 #endif
 }
 

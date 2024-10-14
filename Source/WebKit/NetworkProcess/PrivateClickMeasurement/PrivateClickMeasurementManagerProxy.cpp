@@ -41,7 +41,7 @@ void ManagerProxy::sendMessage(Args&&... args) const
 {
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
-    m_connection.send(messageType, encoder.takeBuffer());
+    protectedConnection()->send(messageType, encoder.takeBuffer());
 }
 
 template<typename... Args> struct ReplyCaller;
@@ -67,7 +67,7 @@ void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& 
 {
     Daemon::Encoder encoder;
     encoder.encode(std::forward<Args>(args)...);
-    m_connection.sendWithReply(messageType, encoder.takeBuffer(), [completionHandler = WTFMove(completionHandler)] (auto replyBuffer) mutable {
+    protectedConnection()->sendWithReply(messageType, encoder.takeBuffer(), [completionHandler = WTFMove(completionHandler)] (auto replyBuffer) mutable {
         Daemon::Decoder decoder(WTFMove(replyBuffer));
         ReplyCaller<ReplyArgs...>::callReply(WTFMove(decoder), WTFMove(completionHandler));
     });
@@ -79,7 +79,13 @@ Ref<ManagerProxy> ManagerProxy::create(const String& machServiceName, NetworkSes
 }
 
 ManagerProxy::ManagerProxy(const String& machServiceName, NetworkSession& networkSession)
-    : m_connection(machServiceName.utf8(), networkSession) { }
+    : m_connection(Connection::create(machServiceName.utf8(), networkSession))
+{ }
+
+Ref<Connection> ManagerProxy::protectedConnection() const
+{
+    return m_connection;
+}
 
 void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm, CompletionHandler<void()>&& completionHandler)
 {

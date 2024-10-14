@@ -37,6 +37,11 @@ namespace WebKit::WebPushD {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
+Ref<Connection> Connection::create(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
+{
+    return adoptRef(*new Connection(WTFMove(machServiceName), WTFMove(configuration)));
+}
+
 Connection::Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
     : Daemon::ConnectionToMachService<ConnectionTraits>(WTFMove(machServiceName))
     , m_configuration(WTFMove(configuration))

@@ -52,12 +52,14 @@ struct ConnectionTraits {
     static constexpr auto protocolEncodedMessageKey { WebPushD::protocolEncodedMessageKey };
 };
 
-class Connection : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {
+class Connection final : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(Connection);
 public:
-    Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
+    static Ref<Connection> create(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
 
 private:
+    Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
+
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final { return nullptr; }

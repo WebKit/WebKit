@@ -71,7 +71,9 @@ private:
     template<MessageType messageType, typename... Args, typename... ReplyArgs>
     void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
 
-    Connection m_connection;
+    Ref<Connection> protectedConnection() const;
+
+    Ref<Connection> m_connection;
 };
 
 } // namespace PCM
