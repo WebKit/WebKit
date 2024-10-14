@@ -118,9 +118,6 @@ test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
 test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
   default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/compare/argument-duration-out-of-range.js:
-  default: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: string with days > max is out of range (first argument) Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/compare/exhaustive.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -139,36 +136,21 @@ test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
 test/built-ins/Temporal/Duration/from/argument-duration-max.js:
   default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
   strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-test/built-ins/Temporal/Duration/from/argument-duration-out-of-range.js:
-  default: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/from/argument-duration-precision-exact-numerical-values.js:
   default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«PT9007199254740992.000424S», «PT9007199254740991.975424S») to be true'
   strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«PT9007199254740992.000424S», «PT9007199254740991.975424S») to be true'
-test/built-ins/Temporal/Duration/out-of-range.js:
-  default: 'Test262Error: years > max Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: years > max Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/add/argument-duration-max.js:
-  default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-  strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
-test/built-ins/Temporal/Duration/prototype/add/argument-duration-out-of-range.js:
-  default: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
+  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
 test/built-ins/Temporal/Duration/prototype/add/argument-duration-precision-exact-numerical-values.js:
-  default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive: ℝ(𝔽(x)) operation after balancing brings total over limit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive: ℝ(𝔽(x)) operation after balancing brings total over limit Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
+  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
 test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/add/precision-no-floating-point-loss.js:
   default: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
   strict mode: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-test/built-ins/Temporal/Duration/prototype/add/result-out-of-range-1.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/add/result-out-of-range-2.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/round/end-of-month-round-up.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -181,18 +163,12 @@ test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-combin
 test/built-ins/Temporal/Duration/prototype/round/next-day-out-of-range.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(86400_0000_0000_000_000_000n, \"UTC\")')"
-test/built-ins/Temporal/Duration/prototype/round/out-of-range-when-converting-from-normalized-duration.js:
-  default: 'Test262Error: nanoseconds component after balancing as a float64-representable integer is out of range Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: nanoseconds component after balancing as a float64-representable integer is out of range Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/round/precision-exact-in-round-duration.js:
   default: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
   strict mode: 'Test262Error: hours result: Expected SameValue(«100000», «100001») to be true'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-string-limits.js:
   default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/round/result-out-of-range.js:
-  default: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: result is out of range Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/round/round-and-balance-calendar-units-with-increment-disallowed.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -203,26 +179,17 @@ test/built-ins/Temporal/Duration/prototype/round/rounding-is-noop.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\", \"iso8601\")')"
 test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-max.js:
-  default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«-9007199254740994», «-9007199254740992») to be true'
-  strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«-9007199254740994», «-9007199254740992») to be true'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-out-of-range.js:
-  default: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: string with days > max is out of range Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
+  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
 test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-precision-exact-numerical-values.js:
-  default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive: ℝ(𝔽(x)) operation after balancing brings total over limit Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive: ℝ(𝔽(x)) operation after balancing brings total over limit Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
+  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
 test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
   default: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
   strict mode: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
 test/built-ins/Temporal/Duration/prototype/subtract/precision-no-floating-point-loss.js:
   default: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
   strict mode: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-test/built-ins/Temporal/Duration/prototype/subtract/result-out-of-range-1.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/prototype/subtract/result-out-of-range-2.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/toString/max-value.js:
   default: 'Test262Error: values do not lose precision intermediately Expected SameValue(«PT9007199254740.992S», «PT9007199254740.993S») to be true'
   strict mode: 'Test262Error: values do not lose precision intermediately Expected SameValue(«PT9007199254740.992S», «PT9007199254740.993S») to be true'
@@ -1084,15 +1051,6 @@ test/intl402/DateTimeFormat/timezone-legacy-non-iana.js:
 test/intl402/DateTimeFormat/timezone-not-canonicalized.js:
   default: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
   strict mode: 'Test262Error: Expected SameValue(«Asia/Calcutta», «Asia/Kolkata») to be true'
-test/intl402/DurationFormat/prototype/format/duration-out-of-range-1.js:
-  default: 'Test262Error: Duration "years" throws when value is 4294967296 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Duration "years" throws when value is 4294967296 Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DurationFormat/prototype/format/duration-out-of-range-2.js:
-  default: 'Test262Error: Duration "days" throws when value is 104249991375 Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Duration "days" throws when value is 104249991375 Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/DurationFormat/prototype/format/duration-out-of-range-3.js:
-  default: 'Test262Error: Duration "{"days":104249991374,"hours":7,"minutes":36,"seconds":31,"milliseconds":999,"microseconds":999,"nanoseconds":1000}" throws Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Duration "{"days":104249991374,"hours":7,"minutes":36,"seconds":31,"milliseconds":999,"microseconds":999,"nanoseconds":1000}" throws Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/DurationFormat/prototype/format/precision-exact-mathematical-values.js:
   default: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
   strict mode: 'Test262Error: Duration is {"seconds":10000000,"nanoseconds":1} Expected SameValue(«0:00:10,000,000.000000002», «0:00:10,000,000.000000001») to be true'
