@@ -1026,7 +1026,6 @@ page/OpportunisticTaskScheduler.cpp
 page/Page.cpp
 page/PageColorSampler.cpp
 page/PageConsoleClient.cpp
-page/PageDebuggable.cpp
 page/PageGroup.cpp
 page/PageGroupLoadDeferrer.cpp
 page/PageOverlayController.cpp

@@ -128,7 +128,7 @@ public:
     private:
         explicit Debuggable(WebAutomationSession&);
 
-        WebAutomationSession* m_session;
+        WeakPtr<WebAutomationSession> m_session;
     };
 #endif // ENABLE(REMOTE_INSPECTOR)
 
@@ -324,6 +324,7 @@ private:
 
     Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
     Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
+    Ref<Debuggable> protectedDebuggable() const;
 
     WeakPtr<WebProcessPool> m_processPool;
 

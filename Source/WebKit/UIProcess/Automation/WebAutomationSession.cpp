@@ -106,8 +106,8 @@ String WebAutomationSession::Debuggable::name() const
 {
     String name;
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &name] {
-        if (m_session)
-            name = m_session->name().isolatedCopy();
+        if (RefPtr session = m_session.get())
+            name = session->name().isolatedCopy();
     });
     return name;
 }
@@ -115,24 +115,24 @@ String WebAutomationSession::Debuggable::name() const
 void WebAutomationSession::Debuggable::dispatchMessageFromRemote(String&& message)
 {
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
-        if (m_session)
-            m_session->dispatchMessageFromRemote(WTFMove(message));
+        if (RefPtr session = m_session.get())
+            session->dispatchMessageFromRemote(WTFMove(message));
     });
 }
 
 void WebAutomationSession::Debuggable::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &channel, isAutomaticConnection, immediatelyPause] {
-        if (m_session)
-            m_session->connect(channel, isAutomaticConnection, immediatelyPause);
+        if (RefPtr session = m_session.get())
+            session->connect(channel, isAutomaticConnection, immediatelyPause);
     });
 }
 
 void WebAutomationSession::Debuggable::disconnect(Inspector::FrontendChannel& channel)
 {
     callOnMainRunLoopAndWait([this, protectedThis = Ref { *this }, &channel] {
-        if (m_session)
-            m_session->disconnect(channel);
+        if (RefPtr session = m_session.get())
+            session->disconnect(channel);
     });
 }
 #endif // ENABLE(REMOTE_INSPECTOR)
@@ -201,7 +201,7 @@ void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isA
     m_remoteChannel = &channel;
     protectedFrontendRouter()->connectFrontend(channel);
 
-    m_debuggable->setIsPaired(true);
+    protectedDebuggable()->setIsPaired(true);
 }
 
 void WebAutomationSession::disconnect(Inspector::FrontendChannel& channel)
@@ -212,7 +212,7 @@ void WebAutomationSession::disconnect(Inspector::FrontendChannel& channel)
 
 void WebAutomationSession::init()
 {
-    m_debuggable->init();
+    protectedDebuggable()->init();
 }
 
 bool WebAutomationSession::isPaired() const
@@ -256,7 +256,7 @@ void WebAutomationSession::terminate()
         protectedFrontendRouter()->disconnectFrontend(*channel);
     }
 
-    m_debuggable->setIsPaired(false);
+    protectedDebuggable()->setIsPaired(false);
 #endif
 
     if (m_client)
@@ -2555,6 +2555,11 @@ Ref<Inspector::FrontendRouter> WebAutomationSession::protectedFrontendRouter() c
 Ref<Inspector::BackendDispatcher> WebAutomationSession::protectedBackendDispatcher() const
 {
     return m_backendDispatcher;
+}
+
+Ref<WebAutomationSession::Debuggable> WebAutomationSession::protectedDebuggable() const
+{
+    return m_debuggable;
 }
 
 #if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)

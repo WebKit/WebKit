@@ -28,6 +28,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 // All of these methods should be called on the Main Thread.
 // Used to send messages to the WorkerInspector on the WorkerThread.
@@ -55,7 +56,7 @@ public:
     void sendMessageFromWorkerToFrontend(String&&);
 
 private:
-    ServiceWorkerThreadProxy& m_serviceWorkerThreadProxy;
+    ThreadSafeWeakPtr<ServiceWorkerThreadProxy> m_serviceWorkerThreadProxy;
     Inspector::FrontendChannel* m_channel { nullptr };
 };
 

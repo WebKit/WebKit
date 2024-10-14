@@ -30,6 +30,7 @@
 #include <JavaScriptCore/RemoteInspectionTarget.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -61,7 +62,7 @@ public:
 private:
     explicit PageDebuggable(Page&);
 
-    Page* m_page;
+    WeakPtr<Page> m_page;
     String m_nameOverride;
 };
 

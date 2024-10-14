@@ -57,10 +57,11 @@ String PageDebuggable::name() const
 {
     String name;
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &name] {
-        if (!m_page)
+        RefPtr page = m_page.get();
+        if (!page)
             return;
 
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return;
 
@@ -76,10 +77,11 @@ String PageDebuggable::url() const
 {
     String url;
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &url] {
-        if (!m_page)
+        RefPtr page = m_page.get();
+        if (!page)
             return;
 
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return;
 
@@ -105,32 +107,32 @@ bool PageDebuggable::hasLocalDebugger() const
 void PageDebuggable::connect(FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &channel, isAutomaticConnection, immediatelyPause] {
-        if (m_page)
-            m_page->inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
+        if (RefPtr page = m_page.get())
+            page->inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
     });
 }
 
 void PageDebuggable::disconnect(FrontendChannel& channel)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &channel] {
-        if (m_page)
-            m_page->inspectorController().disconnectFrontend(channel);
+        if (RefPtr page = m_page.get())
+            page->inspectorController().disconnectFrontend(channel);
     });
 }
 
 void PageDebuggable::dispatchMessageFromRemote(String&& message)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
-        if (m_page)
-            m_page->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+        if (RefPtr page = m_page.get())
+            page->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
     });
 }
 
 void PageDebuggable::setIndicating(bool indicating)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, indicating] {
-        if (m_page)
-            m_page->inspectorController().setIndicating(indicating);
+        if (RefPtr page = m_page.get())
+            page->inspectorController().setIndicating(indicating);
     });
 }
 
