@@ -133,7 +133,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<CSSNumberi
     computedTiming.fill = m_timing.fill == FillMode::Auto ? FillMode::None : m_timing.fill;
     computedTiming.iterationStart = m_timing.iterationStart;
     computedTiming.iterations = m_timing.iterations;
-    computedTiming.duration = durationAPIValue(m_timing.iterationDuration, IsComputed::Yes);
+    computedTiming.duration = durationAPIValue(m_timing.intrinsicIterationDuration, IsComputed::Yes);
     computedTiming.direction = m_timing.direction;
     computedTiming.easing = m_timing.timingFunction->cssText();
     computedTiming.endTime = m_timing.endTime;
@@ -260,7 +260,15 @@ void AnimationEffect::normalizeSpecifiedTiming(std::variant<double, String> dura
 
 void AnimationEffect::updateStaticTimingProperties()
 {
-    m_timing.updateComputedProperties();
+    m_timing.updateComputedProperties([&]() {
+        if (RefPtr animation = m_animation.get()) {
+            if (RefPtr timeline = animation->timeline()) {
+                if (timeline->isProgressBased())
+                    return AnimationEffectTiming::IsProgressBased::Yes;
+            }
+        }
+        return AnimationEffectTiming::IsProgressBased::No;
+    }());
 }
 
 ExceptionOr<void> AnimationEffect::setIterationStart(double iterationStart)
@@ -383,14 +391,13 @@ Seconds AnimationEffect::timeToNextTick(const BasicEffectTiming& timing) const
 
 void AnimationEffect::animationTimelineDidChange(const AnimationTimeline*)
 {
-    if (!m_hasAutoDuration)
-        return;
-
-    if (auto percentage = iterationDuration().percentage())
-        normalizeSpecifiedTiming(*percentage);
-    else {
-        ASSERT(iterationDuration().time());
-        normalizeSpecifiedTiming(iterationDuration().time()->seconds());
+    if (m_hasAutoDuration) {
+        if (auto percentage = iterationDuration().percentage())
+            normalizeSpecifiedTiming(*percentage);
+        else {
+            ASSERT(iterationDuration().time());
+            normalizeSpecifiedTiming(iterationDuration().time()->seconds());
+        }
     }
 
     updateStaticTimingProperties();

@@ -55,6 +55,7 @@ struct AnimationEffectTiming {
     Seconds delay { 0_s };
     Seconds endDelay { 0_s };
     CSSNumberishTime iterationDuration { 0_s };
+    CSSNumberishTime intrinsicIterationDuration { 0_s };
     CSSNumberishTime activeDuration { 0_s };
     CSSNumberishTime endTime { 0_s };
 
@@ -66,7 +67,8 @@ struct AnimationEffectTiming {
         double playbackRate { 0 };
     };
 
-    void updateComputedProperties();
+    enum class IsProgressBased : bool { No, Yes };
+    void updateComputedProperties(IsProgressBased);
     BasicEffectTiming getBasicTiming(const ResolutionData&) const;
     ResolvedEffectTiming resolve(const ResolutionData&) const;
 };

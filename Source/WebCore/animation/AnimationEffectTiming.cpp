@@ -30,22 +30,28 @@
 
 namespace WebCore {
 
-void AnimationEffectTiming::updateComputedProperties()
+void AnimationEffectTiming::updateComputedProperties(IsProgressBased isProgressBased)
 {
+    // https://drafts.csswg.org/web-animations-2/#intrinsic-iteration-duration
+    if (isProgressBased == IsProgressBased::Yes && iterations)
+        intrinsicIterationDuration = CSSNumberishTime::fromPercentage(100) / iterations;
+    else
+        intrinsicIterationDuration = iterationDuration;
+
     // 3.8.2. Calculating the active duration
     // https://drafts.csswg.org/web-animations-1/#calculating-the-active-duration
 
     // The active duration is calculated as follows:
     // active duration = iteration duration × iteration count
     // If either the iteration duration or iteration count are zero, the active duration is zero.
-    if (iterationDuration.isZero() || !iterations)
+    if (intrinsicIterationDuration.isZero() || !iterations)
         activeDuration = 0_s;
     else
-        activeDuration = iterationDuration * iterations;
+        activeDuration = intrinsicIterationDuration * iterations;
 
     // 3.5.3 The active interval
     // https://drafts.csswg.org/web-animations-1/#end-time
-    if (iterationDuration.percentage())
+    if (intrinsicIterationDuration.percentage())
         endTime = activeDuration;
     else {
         // The end time of an animation effect is the result of evaluating max(start delay + active duration + end delay, 0).
@@ -213,10 +219,10 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(const ResolutionData& data) 
         auto overallProgress = [&]() {
             // If the iteration duration is zero, if the animation effect is in the before phase, let overall progress be zero,
             // otherwise, let it be equal to the iteration count.
-            if (iterationDuration.isZero())
+            if (intrinsicIterationDuration.isZero())
                 return phase == AnimationEffectPhase::Before ? 0 : iterations;
             // Otherwise, let overall progress be the result of calculating active time / iteration duration.
-            return *activeTime / iterationDuration;
+            return *activeTime / intrinsicIterationDuration;
         }();
 
         // 3. Return the result of calculating overall progress + iteration start.
@@ -333,7 +339,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(const ResolutionData& data) 
         if (!directedProgress)
             return { std::nullopt, before };
 
-        if (!iterationDuration.isZero()) {
+        if (!intrinsicIterationDuration.isZero()) {
             // 2. Calculate the value of the before flag as follows:
             // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
             // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
@@ -346,7 +352,7 @@ ResolvedEffectTiming AnimationEffectTiming::resolve(const ResolutionData& data) 
             // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
             //    input progress value and before flag as the before flag.
             auto transformProgressDuration = [&]() {
-                if (auto time = iterationDuration.time())
+                if (auto time = intrinsicIterationDuration.time())
                     return time->seconds();
                 return 1.0;
             };

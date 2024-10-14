@@ -6324,6 +6324,7 @@ struct WebCore::AnimationEffectTiming {
     Seconds delay;
     Seconds endDelay;
     WebCore::CSSNumberishTime iterationDuration;
+    WebCore::CSSNumberishTime intrinsicIterationDuration;
     WebCore::CSSNumberishTime activeDuration;
     WebCore::CSSNumberishTime endTime;
 };
