@@ -254,7 +254,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
             break;
         }
         case FlexDirection::ColumnReverse: {
-            auto visualBottom = flexContainerContentBoxPosition.y() + constraints.crossAxis().availableSize.value_or(logicalWidth);
+            auto visualBottom = flexContainerContentBoxPosition.y() + constraints.mainAxis().availableSize.value_or(logicalWidth);
             borderBoxTopLeft = { flexContainerContentBoxPosition.x() + logicalRect.top(), visualBottom - logicalRect.right() };
             break;
         }
