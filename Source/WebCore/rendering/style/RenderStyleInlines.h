@@ -56,6 +56,7 @@
 #include "StyleVisitedLinkColorData.h"
 #include "UnicodeBidi.h"
 #include "ViewTimeline.h"
+#include "WebAnimationTypes.h"
 
 #if ENABLE(APPLE_PAY)
 #include "ApplePayButtonPart.h"
@@ -519,6 +520,8 @@ inline Vector<Style::ScopedName> RenderStyle::initialViewTransitionClasses() { r
 inline Style::ViewTransitionName RenderStyle::initialViewTransitionName() { return Style::ViewTransitionName::createWithNone(); }
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
 inline const TimelineScope RenderStyle::initialTimelineScope() { return { }; }
+inline const SingleTimelineRange RenderStyle::initialAnimationRangeStart() { return { SingleTimelineRange::Name::Normal, Length() }; }
+inline const SingleTimelineRange RenderStyle::initialAnimationRangeEnd() { return { SingleTimelineRange::Name::Normal, Length() }; }
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialLetterSpacing() { return zeroLength(); }
@@ -685,6 +688,8 @@ inline const Vector<ScrollAxis>& RenderStyle::viewTimelineAxes() const { return 
 inline const Vector<ViewTimelineInsets>& RenderStyle::viewTimelineInsets() const { return m_nonInheritedData->rareData->viewTimelineInsets; }
 inline const Vector<AtomString>& RenderStyle::viewTimelineNames() const { return m_nonInheritedData->rareData->viewTimelineNames; }
 inline const TimelineScope& RenderStyle::timelineScope() const { return m_nonInheritedData->rareData->timelineScope; }
+inline const SingleTimelineRange& RenderStyle::animationRangeStart() const { return m_nonInheritedData->rareData->animationRangeStart; }
+inline const SingleTimelineRange& RenderStyle::animationRangeEnd() const { return m_nonInheritedData->rareData->animationRangeEnd; }
 inline std::optional<ScrollbarColor> RenderStyle::scrollbarColor() const { return m_rareInheritedData->scrollbarColor.asOptional(); }
 inline const StyleColor& RenderStyle::scrollbarThumbColor() const { return m_rareInheritedData->scrollbarColor->thumbColor; }
 inline const StyleColor& RenderStyle::scrollbarTrackColor() const { return m_rareInheritedData->scrollbarColor->trackColor; }

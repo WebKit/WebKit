@@ -1071,6 +1071,12 @@ nearest
 root
 self
 view
+// cover
+// contain
+entry
+exit
+entry-crossing
+exit-crossing
 
 //
 // CSS_PROP_ZOOM

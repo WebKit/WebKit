@@ -1557,6 +1557,45 @@
                 "url": "https://www.w3.org/TR/css3-animations/#animation-play-state-property"
             }
         },
+        "animation-range": {
+            "codegen-properties": {
+                "longhands": [
+                    "animation-range-start",
+                    "animation-range-end"
+                ],
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#animation-range"
+            }
+        },
+        "animation-range-start": {
+            "codegen-properties": {
+                "converter": "AnimationRangeStart",
+                "parser-function": "consumeAnimationRangeStart",
+                "parser-grammar-unused": "[ normal | <length-percentage> | [ <custom-ident> || <length-percentage>?] ]#",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start"
+            }
+        },
+        "animation-range-end": {
+            "codegen-properties": {
+                "converter": "AnimationRangeEnd",
+                "parser-function": "consumeAnimationRangeEnd",
+                "parser-grammar-unused": "[ normal | <length-percentage> | [ <custom-ident> || <length-percentage>? ] ]#",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-end"
+            }
+        },
         "animation-timeline": {
             "values": [
                 "auto",

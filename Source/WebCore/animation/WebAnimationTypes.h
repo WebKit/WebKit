@@ -29,6 +29,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "EventTarget.h"
+#include "TimelineRangeOffset.h"
 #include <wtf/BitSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -47,8 +48,6 @@ class CSSKeywordValue;
 class CSSTransition;
 class StyleOriginatedAnimation;
 class WebAnimation;
-
-struct TimelineRangeOffset;
 
 struct WebAnimationsMarkableDoubleTraits {
     static bool isEmptyValue(double value)

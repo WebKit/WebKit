@@ -262,6 +262,7 @@ struct MasonryAutoFlow;
 struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
+struct SingleTimelineRange;
 
 struct ScrollSnapAlign;
 struct ScrollSnapType;
@@ -996,6 +997,14 @@ public:
     static inline const TimelineScope initialTimelineScope();
     inline const TimelineScope& timelineScope() const;
     inline void setTimelineScope(const TimelineScope&);
+
+    static inline const SingleTimelineRange initialAnimationRangeStart();
+    inline const SingleTimelineRange& animationRangeStart() const;
+    inline void setAnimationRangeStart(const SingleTimelineRange&);
+
+    static inline const SingleTimelineRange initialAnimationRangeEnd();
+    inline const SingleTimelineRange& animationRangeEnd() const;
+    inline void setAnimationRangeEnd(const SingleTimelineRange&);
 
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;

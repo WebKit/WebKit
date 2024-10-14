@@ -2772,6 +2772,44 @@ bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
     return true;
 }
 
+
+bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
+{
+    // FIXME: Add extra handling for animation range sequences.
+    RefPtr start = consumeAnimationRangeStart(m_range, m_context);
+    if (!start)
+        return false;
+
+    RefPtr<CSSValue> end;
+    m_range.consumeWhitespace();
+    if (m_range.atEnd()) {
+        // From the spec: If <'animation-range-end'> is omitted and <'animation-range-start'> includes a component, then
+        // animation-range-end is set to that same and 100%. Otherwise, any omitted longhand is set to its initial value.
+        auto rangeEndValueForStartValue = [](const CSSValue& value) {
+            RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+            if (primitiveValue && SingleTimelineRange::isOffsetValue(downcast<CSSPrimitiveValue>(value)))
+                return CSSPrimitiveValue::create(CSSValueNormal);
+            return CSSPrimitiveValue::create(value.valueID());
+        };
+
+        if (RefPtr startPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(start))
+            end = rangeEndValueForStartValue(*startPrimitiveValue);
+        else {
+            RefPtr startPair = downcast<CSSValuePair>(start);
+            end = rangeEndValueForStartValue(startPair->first());
+        }
+    } else {
+        end = consumeAnimationRangeEnd(m_range, m_context);
+        m_range.consumeWhitespace();
+        if (!m_range.atEnd() || !end)
+            return false;
+    }
+
+    addProperty(CSSPropertyAnimationRangeStart, CSSPropertyAnimationRange, WTFMove(start), important);
+    addProperty(CSSPropertyAnimationRangeEnd, CSSPropertyAnimationRange, WTFMove(end), important);
+    return true;
+}
+
 bool CSSPropertyParser::consumeScrollTimelineShorthand(bool important)
 {
     CSSValueListBuilder namesList;
@@ -3074,6 +3112,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeViewTimelineShorthand(important);
     case CSSPropertyWhiteSpace:
         return consumeWhiteSpaceShorthand(important);
+    case CSSPropertyAnimationRange:
+        return consumeAnimationRangeShorthand(important);
     default:
         return false;
     }

@@ -86,6 +86,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
+#include "TimelineRange.h"
 #include "TransformOperationData.h"
 #include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
@@ -3207,6 +3208,36 @@ static Ref<CSSValue> valueForTimelineScopeNames(const Vector<AtomString>& names)
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
+static Ref<CSSValue> valueForSingleAnimationRange(const RenderStyle& style, const SingleTimelineRange& range, SingleTimelineRange::Type type)
+{
+    CSSValueListBuilder list;
+    if (range.name != SingleTimelineRange::Name::Omitted)
+        list.append(CSSPrimitiveValue::create(SingleTimelineRange::valueID(range.name)));
+    if (!SingleTimelineRange::isDefault(range.offset, type))
+        list.append(ComputedStyleExtractor::zoomAdjustedPixelValueForLength(range.offset, style));
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> valueForAnimationRange(const RenderStyle& style)
+{
+    CSSValueListBuilder list;
+    auto rangeStart = style.animationRangeStart();
+    auto rangeEnd = style.animationRangeEnd();
+
+    RefPtr startValue = dynamicDowncast<CSSValueList>(valueForSingleAnimationRange(style, rangeStart, SingleTimelineRange::Type::Start));
+    if (startValue && startValue->length())
+        list.append(*startValue);
+
+    RefPtr endValue = dynamicDowncast<CSSValueList>(valueForSingleAnimationRange(style, style.animationRangeEnd(), SingleTimelineRange::Type::End));
+    bool endValueEqualsStart = startValue && endValue && startValue->equals(*endValue);
+    bool isNormal = rangeEnd.name == SingleTimelineRange::Name::Normal;
+    bool isDefaultAndSameNameAsStart = rangeStart.name == rangeEnd.name && SingleTimelineRange::isDefault(rangeEnd.offset, SingleTimelineRange::Type::End);
+    if (endValue && endValue->length() && !endValueEqualsStart && !isNormal && !isDefaultAndSameNameAsStart)
+        list.append(*endValue);
+
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
 static Ref<CSSValue> scrollTimelineShorthandValue(const Vector<Ref<ScrollTimeline>>& timelines)
 {
     if (timelines.isEmpty())
@@ -4888,6 +4919,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         ASSERT_NOT_REACHED();
         return CSSPrimitiveValue::create(CSSValueNone);
+    case CSSPropertyAnimationRangeEnd:
+        return valueForSingleAnimationRange(style, style.animationRangeEnd(), SingleTimelineRange::Type::End);
+    case CSSPropertyAnimationRangeStart:
+        return valueForSingleAnimationRange(style, style.animationRangeStart(), SingleTimelineRange::Type::Start);
+    case CSSPropertyAnimationRange:
+        return valueForAnimationRange(style);
 
     // Unimplemented CSS 3 properties (including CSS3 shorthand properties).
     case CSSPropertyAll:

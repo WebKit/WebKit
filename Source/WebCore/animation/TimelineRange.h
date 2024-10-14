@@ -34,11 +34,24 @@ struct SingleTimelineRange {
 
     Name name { Name::Normal };
     Length offset;
+
+    bool operator==(const SingleTimelineRange& other) const = default;
+
+    enum class Type : bool { Start, End };
+    static bool isDefault(const Length&, Type);
+    static bool isDefault(const CSSPrimitiveValue&, Type);
+
+    static bool isOffsetValue(const CSSPrimitiveValue&);
+
+    static Name timelineName(CSSValueID);
+    static CSSValueID valueID(Name);
 };
 
 struct TimelineRange {
     SingleTimelineRange start;
     SingleTimelineRange end;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const SingleTimelineRange&);
 
 } // namespace WebCore

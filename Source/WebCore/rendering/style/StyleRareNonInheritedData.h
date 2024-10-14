@@ -52,6 +52,7 @@
 #include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
 #include "ViewTransitionName.h"
+#include "WebAnimationTypes.h"
 #include "WillChangeData.h"
 #include <memory>
 #include <wtf/DataRef.h>
@@ -193,6 +194,9 @@ public:
     Vector<AtomString> viewTimelineNames;
 
     TimelineScope timelineScope;
+
+    SingleTimelineRange animationRangeStart;
+    SingleTimelineRange animationRangeEnd;
 
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };

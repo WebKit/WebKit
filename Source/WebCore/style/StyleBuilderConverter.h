@@ -240,6 +240,10 @@ public:
 
     static TimelineScope convertTimelineScope(BuilderState&, const CSSValue&);
 
+    static SingleTimelineRange convertAnimationRange(BuilderState&, const CSSValue&, SingleTimelineRange::Type);
+    static SingleTimelineRange convertAnimationRangeStart(BuilderState&, const CSSValue&);
+    static SingleTimelineRange convertAnimationRangeEnd(BuilderState&, const CSSValue&);
+
 private:
     friend class BuilderCustom;
 
@@ -2190,6 +2194,36 @@ inline TimelineScope BuilderConverter::convertTimelineScope(BuilderState&, const
     }) };
 }
 
+inline SingleTimelineRange BuilderConverter::convertAnimationRange(BuilderState& state, const CSSValue& value, SingleTimelineRange::Type type)
+{
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (SingleTimelineRange::isOffsetValue(*primitiveValue)) {
+            // <length-percentage>
+            return { SingleTimelineRange::Name::Omitted, convertLength(state, *primitiveValue) };
+        }
+        // <timeline-range-name> or Normal
+        return { SingleTimelineRange::timelineName(primitiveValue->valueID()), (type == SingleTimelineRange::Type::Start ? WebCore::Length(0, LengthType::Percent) : WebCore::Length(100, LengthType::Percent)) };
+    }
+    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return { };
+
+    // <timeline-range-name> <length-percentage>
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
+    ASSERT(SingleTimelineRange::isOffsetValue(primitiveValue));
+
+    return { SingleTimelineRange::timelineName(pair->first().valueID()), convertLength(state, primitiveValue) };
+}
+
+inline SingleTimelineRange BuilderConverter::convertAnimationRangeStart(BuilderState& state, const CSSValue& value)
+{
+    return convertAnimationRange(state, value, SingleTimelineRange::Type::Start);
+}
+
+inline SingleTimelineRange BuilderConverter::convertAnimationRangeEnd(BuilderState& state, const CSSValue& value)
+{
+    return convertAnimationRange(state, value, SingleTimelineRange::Type::End);
+}
 
 } // namespace Style
 } // namespace WebCore

@@ -33,6 +33,8 @@ namespace WebCore {
 struct TimelineRangeOffset {
     String rangeName;
     RefPtr<CSSNumericValue> offset;
+
+    bool operator==(const TimelineRangeOffset&) const = default;
 };
 
 } // namespace WebCore

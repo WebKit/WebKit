@@ -37,6 +37,8 @@ namespace CSSPropertyParserHelpers {
 
 // MARK: - Consumer functions
 
+RefPtr<CSSValue> consumeAnimationRangeStart(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeAnimationRangeEnd(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
