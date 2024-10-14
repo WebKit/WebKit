@@ -34,6 +34,7 @@
 #include <Foundation/Foundation.h>
 #include <algorithm>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/NativePromise.h>
 #include <wtf/Scope.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
@@ -93,12 +94,16 @@ bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
     return true;
 }
 
-void AudioSampleBufferCompressor::flushInternal(bool isFinished)
+Ref<GenericPromise> AudioSampleBufferCompressor::flushInternal(bool isFinished)
 {
-    m_serialDispatchQueue->dispatchSync([this, isFinished] {
+    return invokeAsync(m_serialDispatchQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, isFinished] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return GenericPromise::createAndReject();
+
         if (!isFinished) {
             // FIXME: we might want to compress not yet processed data (whose duration is at most LOW_WATER_TIME_IN_SECONDS).
-            return;
+            return GenericPromise::createAndResolve();
         }
 
         processSampleBuffersUntilLowWaterTime(PAL::kCMTimeInvalid);
@@ -106,6 +111,7 @@ void AudioSampleBufferCompressor::flushInternal(bool isFinished)
         auto error = PAL::CMBufferQueueMarkEndOfData(m_outputBufferQueue.get());
         RELEASE_LOG_ERROR_IF(error, MediaStream, "AudioSampleBufferCompressor CMBufferQueueMarkEndOfData failed %d", error);
         m_isEncoding = false;
+        return GenericPromise::createAndResolve();
     });
 }
 

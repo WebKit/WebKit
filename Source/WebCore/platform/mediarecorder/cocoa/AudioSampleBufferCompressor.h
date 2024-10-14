@@ -27,6 +27,7 @@
 #if ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)
 
 #include <CoreMedia/CoreMedia.h>
+#include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -42,8 +43,8 @@ public:
 
     bool isEmpty() const;
     void setBitsPerSecond(unsigned);
-    void finish() { flushInternal(true); }
-    void flush() { flushInternal(false); }
+    Ref<GenericPromise> finish() { return flushInternal(true); }
+    Ref<GenericPromise> flush() { return flushInternal(false); }
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer() const;
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
@@ -65,7 +66,7 @@ private:
     RetainPtr<CMSampleBufferRef> sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
     void processSampleBuffersUntilLowWaterTime(CMTime);
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
-    void flushInternal(bool isFinished);
+    Ref<GenericPromise> flushInternal(bool isFinished);
 
     Ref<WorkQueue> m_serialDispatchQueue;
     CMTime m_lowWaterTime;

@@ -28,6 +28,7 @@
 
 #include <CoreMedia/CoreMedia.h>
 #include <VideoToolbox/VTErrors.h>
+#include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
@@ -42,8 +43,8 @@ public:
     ~VideoSampleBufferCompressor();
 
     void setBitsPerSecond(unsigned);
-    void finish() { flushInternal(true); }
-    void flush() { flushInternal(false); }
+    Ref<GenericPromise> finish() { return flushInternal(true); }
+    Ref<GenericPromise> flush() { return flushInternal(false); }
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer();
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
@@ -59,7 +60,7 @@ private:
     void processSampleBuffer(CMSampleBufferRef);
     bool initCompressionSession(CMVideoFormatDescriptionRef);
     CFStringRef vtProfileLevel() const;
-    void flushInternal(bool isFinished);
+    Ref<GenericPromise> flushInternal(bool isFinished);
 
     static void videoCompressionCallback(void *refCon, void*, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef);
 

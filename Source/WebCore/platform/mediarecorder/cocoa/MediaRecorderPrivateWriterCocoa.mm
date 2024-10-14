@@ -47,6 +47,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
+#include <wtf/MainThreadDispatcher.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cocoa/SpanCocoa.h>
 
@@ -438,14 +439,15 @@ void MediaRecorderPrivateWriterAVFObjC::stopRecording()
 
     m_isStopped = true;
 
+    Vector<Ref<GenericPromise>> promises;
+    promises.reserveInitialCapacity(size_t(!!m_videoCompressor) + size_t(!!m_audioCompressor));
     if (m_videoCompressor)
-        m_videoCompressor->finish();
+        promises.append(m_videoCompressor->finish());
     if (m_audioCompressor)
-        m_audioCompressor->finish();
+        promises.append(m_audioCompressor->finish());
 
     m_isStopping = true;
-    // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+    GenericPromise::all(WTFMove(promises))->whenSettled(MainThreadDispatcher::singleton(), [this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -500,13 +502,13 @@ void MediaRecorderPrivateWriterAVFObjC::fetchData(CompletionHandler<void(RefPtr<
         return;
     }
 
+    Vector<Ref<GenericPromise>> promises;
+    promises.reserveInitialCapacity(size_t(!!m_videoCompressor) + size_t(!!m_audioCompressor));
     if (m_videoCompressor)
-        m_videoCompressor->flush();
+        promises.append(m_videoCompressor->flush());
     if (m_audioCompressor)
-        m_audioCompressor->flush();
-
-    // We hop to the main thread since flushing the video compressor might trigger starting the writer asynchronously.
-    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        promises.append(m_audioCompressor->flush());
+    GenericPromise::all(WTFMove(promises))->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }]() {
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;

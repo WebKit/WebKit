@@ -515,15 +515,16 @@ void MediaRecorderPrivateWriterWebM::completeFetchData()
 
 Ref<GenericPromise> MediaRecorderPrivateWriterWebM::flushPendingData()
 {
-    if (m_audioCompressor)
-        RefPtr { m_audioCompressor }->flush();
     encodePendingVideoFrames();
 
-    // We need to hop to the main thread since flushing the audio compressor might output the last remaining samples.
-    return invokeAsync(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
-        RefPtr protectedThis = weakThis.get();
-        return protectedThis && protectedThis->m_videoEncoder ? protectedThis->m_videoEncoder->flush() : GenericPromise::createAndResolve();
-    })->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
+    Vector<Ref<GenericPromise>> promises;
+    promises.reserveInitialCapacity(size_t(!!m_videoEncoder) + size_t(!!m_audioCompressor));
+    if (m_videoEncoder)
+        promises.append(m_videoEncoder->flush());
+    if (m_audioCompressor)
+        promises.append(RefPtr { m_audioCompressor }->flush());
+
+    return GenericPromise::all(WTFMove(promises))->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->partiallyFlushEncodedQueues();
         return GenericPromise::createAndResolve();
