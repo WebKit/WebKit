@@ -7498,6 +7498,3 @@ webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphena
 
 webkit.org/b/281238 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 
-# webkit.org/b/281336 [macOS wk1 iOS] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
-imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
-

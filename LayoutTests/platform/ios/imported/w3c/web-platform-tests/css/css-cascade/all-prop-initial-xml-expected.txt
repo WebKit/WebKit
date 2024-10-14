@@ -415,7 +415,6 @@ PASS -webkit-mask-position-y
 PASS -webkit-nbsp-mode
 PASS -webkit-overflow-scrolling
 PASS -webkit-rtl-ordering
-PASS -webkit-ruby-position
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color
