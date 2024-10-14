@@ -29,6 +29,7 @@
 #include "FileSystemStorageError.h"
 #include "FileSystemSyncAccessHandleInfo.h"
 #include "OriginStorageManager.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
@@ -139,6 +140,9 @@ public:
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
     const String& path() const { return m_pathNormalizedMainThread; }
     const String& customIDBStoragePath() const { return m_customIDBStoragePathNormalizedMainThread; }
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
+    bool sharedPreferencesInitialized() { return m_sharedPreferencesInitialized; };
 
 private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, std::optional<IPC::Connection::UniqueID>, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel, bool storageSiteValidationEnabled);
@@ -305,6 +309,9 @@ private:
     HashMap<WebCore::ClientOrigin, WallTime> m_lastModificationTimes WTF_GUARDED_BY_CAPABILITY(workQueue());
     using ConnectionSitesMap = HashMap<IPC::Connection::UniqueID, HashSet<WebCore::RegistrableDomain>>;
     std::optional<ConnectionSitesMap> m_allowedSitesForConnections WTF_GUARDED_BY_CAPABILITY(workQueue());
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+    bool m_sharedPreferencesInitialized = false;
+
 };
 
 } // namespace WebKit

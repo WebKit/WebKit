@@ -49,6 +49,7 @@
 #include "StorageAreaMapMessages.h"
 #include "StorageAreaRegistry.h"
 #include "UnifiedOriginStorageLevel.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataType.h"
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/SecurityOriginData.h>
@@ -2052,6 +2053,23 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
 
     return m_unifiedOriginStorageLevel >= UnifiedOriginStorageLevel::Standard;
 }
+
+void NetworkStorageManager::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
+{
+    protectedWorkQueue()->dispatch([this, sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess)] {
+        if (sharedPreferencesForWebProcess.version > m_sharedPreferencesForWebProcess.version) {
+            m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+            if (!m_sharedPreferencesInitialized)
+                m_sharedPreferencesInitialized = true;
+        }
+    });
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkStorageManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    return m_sharedPreferencesForWebProcess;
+}
+
 
 } // namespace WebKit
 
