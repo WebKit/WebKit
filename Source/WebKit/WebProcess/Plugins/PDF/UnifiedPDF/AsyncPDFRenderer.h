@@ -148,7 +148,12 @@ private:
     void willRepaintAllTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
     void coverageRectDidChange(WebCore::TiledBacking&, const WebCore::FloatRect&) final;
-    void tilingScaleFactorDidChange(WebCore::TiledBacking&, float) final;
+
+    void willRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType) final;
+    void didRevalidateTiles(WebCore::TiledBacking&, WebCore::TileGridIdentifier, WebCore::TileRevalidationType, const HashSet<WebCore::TileIndex>& tilesNeedingDisplay) final;
+
+    void willRepaintTilesAfterScaleFactorChange(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
+    void didRepaintTilesAfterScaleFactorChange(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
 
     void didAddGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;
     void willRemoveGrid(WebCore::TiledBacking&, WebCore::TileGridIdentifier) final;

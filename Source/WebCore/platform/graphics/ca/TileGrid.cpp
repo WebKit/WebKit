@@ -354,8 +354,6 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     FloatRect coverageRect = m_controller.coverageRect();
     IntRect bounds = m_controller.bounds();
 
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " validation: " << validationPolicy);
-
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
     IntRect coverageRectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
@@ -364,13 +362,30 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     unsigned tilesInCohort = 0;
 
     Seconds minimumRevalidationTimerDuration = Seconds::infinity();
-    bool needsTileRevalidation = false;
-    
+    bool needsDelayedTileRevalidation = false;
+
     auto tileSize = m_controller.computeTileSize();
+
+    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " " << identifier() << " (controller " << &m_controller << ") revalidateTiles: bounds " << bounds << " coverageRect" << coverageRect << " old tile size " << m_tileSize << " new tile size " << tileSize << " validation " << validationPolicy);
+
+    auto revalidationType = [&]() {
+        if (tileSize != m_tileSize)
+            return TileRevalidationType::Full;
+
+        if (!m_scaleAtLastRevalidation || *m_scaleAtLastRevalidation != m_scale)
+            return TileRevalidationType::Full;
+
+        return TileRevalidationType::Partial;
+    }();
+
+    m_controller.willRevalidateTiles(*this, revalidationType);
+
     if (tileSize != m_tileSize) {
         removeAllTiles();
         m_tileSize = tileSize;
     }
+
+    m_scaleAtLastRevalidation = m_scale;
 
     // Move tiles newly outside the coverage rect into the cohort map.
     for (auto& entry : m_tiles) {
@@ -405,7 +420,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
                     Seconds timeUntilCohortExpires = cohort.timeUntilExpiration();
                     if (timeUntilCohortExpires > 0_s) {
                         minimumRevalidationTimerDuration = std::min(minimumRevalidationTimerDuration, timeUntilCohortExpires);
-                        needsTileRevalidation = true;
+                        needsDelayedTileRevalidation = true;
                     } else {
                         m_controller.willRemoveTile(*this, tileIndex);
                         tileLayer->removeFromSuperlayer();
@@ -416,7 +431,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
         }
     }
 
-    if (needsTileRevalidation)
+    if (needsDelayedTileRevalidation)
         m_controller.scheduleTileRevalidation(minimumRevalidationTimerDuration);
 
     if (!m_controller.shouldAggressivelyRetainTiles()) {
@@ -483,19 +498,20 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     }
 
     // Ensure primary tile coverage tiles.
-    m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, CoverageType::PrimaryTiles);
+    HashSet<TileIndex> tilesNeedingDisplay;
+    m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, tilesNeedingDisplay, CoverageType::PrimaryTiles);
 
     // Ensure secondary tiles (requested via prepopulateRect).
     if (!(validationPolicy & PruneSecondaryTiles)) {
         for (auto& secondaryCoverageRect : m_secondaryTileCoverageRects) {
             FloatRect secondaryRectInLayerCoordinates(secondaryCoverageRect);
             secondaryRectInLayerCoordinates.scale(1 / m_scale);
-            ensureTilesForRect(secondaryRectInLayerCoordinates, CoverageType::SecondaryTiles);
+            ensureTilesForRect(secondaryRectInLayerCoordinates, tilesNeedingDisplay, CoverageType::SecondaryTiles);
         }
         m_secondaryTileCoverageRects.clear();
     }
 
-    m_controller.didRevalidateTiles();
+    m_controller.didRevalidateTiles(*this, revalidationType, tilesNeedingDisplay);
 }
 
 TileGrid::TileCohort TileGrid::nextTileCohort() const
@@ -556,7 +572,7 @@ void TileGrid::cohortRemovalTimerFired()
     m_controller.updateTileCoverageMap();
 }
 
-IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTileType)
+IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& tilesNeedingDisplay, CoverageType newTileType)
 {
     if (!m_controller.isInWindow())
         return IntRect();
@@ -607,7 +623,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
             }
 
             if (tileInfo.layer->needsDisplay())
-                m_controller.willRepaintTile(*this, tileIndex, tileRect, tileRect);
+                tilesNeedingDisplay.add(tileIndex);
 
             if (!tileInfo.layer->superlayer())
                 m_containerLayer.get().appendSublayer(*tileInfo.layer);
@@ -616,8 +632,6 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
     if (tilesInCohort)
         startedNewCohort(currCohort);
-
-    LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " (bounds " << m_controller.bounds() << ") ensureTilesForRect: " << rect << " covered " << coverageRect);
 
     return coverageRect;
 }

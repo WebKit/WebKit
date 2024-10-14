@@ -66,6 +66,11 @@ enum class TiledBackingScrollability : uint8_t {
     VerticallyScrollable    = 1 << 1
 };
 
+enum class TileRevalidationType : uint8_t {
+    Partial,
+    Full
+};
+
 using TileIndex = IntPoint;
 class TiledBacking;
 
@@ -78,11 +83,17 @@ public:
     virtual void willRemoveTile(TiledBacking&, TileGridIdentifier, TileIndex) = 0;
     virtual void willRepaintAllTiles(TiledBacking&, TileGridIdentifier) = 0;
 
+    // The client will not receive `willRepaintTile()` for tiles needing display as part of a revalidation.
+    virtual void willRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType) = 0;
+    virtual void didRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay) = 0;
+
     virtual void didAddGrid(TiledBacking&, TileGridIdentifier) = 0;
     virtual void willRemoveGrid(TiledBacking&, TileGridIdentifier) = 0;
 
     virtual void coverageRectDidChange(TiledBacking&, const FloatRect&) = 0;
-    virtual void tilingScaleFactorDidChange(TiledBacking&, float) = 0;
+
+    virtual void willRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier) = 0;
+    virtual void didRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier) = 0;
 };
 
 

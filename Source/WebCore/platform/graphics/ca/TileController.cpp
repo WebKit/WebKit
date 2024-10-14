@@ -185,10 +185,14 @@ void TileController::setContentsScale(float contentsScale)
     auto oldScale = tileGrid().scale();
     tileGrid().setScale(scale);
 
-    if (m_client && scale != oldScale)
-        m_client->tilingScaleFactorDidChange(*this, scale);
+    bool notifyClient = m_client && scale != oldScale;
+    if (notifyClient)
+        m_client->willRepaintTilesAfterScaleFactorChange(*this, tileGrid().identifier());
 
     tileGrid().setNeedsDisplay();
+
+    if (notifyClient)
+        m_client->didRepaintTilesAfterScaleFactorChange(*this, tileGrid().identifier());
 }
 
 float TileController::contentsScale() const
@@ -696,13 +700,22 @@ void TileController::tileRevalidationTimerFired()
         : OptionSet { TileGrid::UnparentAllTiles });
 }
 
-void TileController::didRevalidateTiles()
+void TileController::willRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType)
+{
+    if (m_client)
+        m_client->willRevalidateTiles(*this, tileGrid.identifier(), revalidationType);
+}
+
+void TileController::didRevalidateTiles(TileGrid& tileGrid, TileRevalidationType revalidationType, const HashSet<TileIndex>& tilesNeedingDisplay)
 {
     m_boundsAtLastRevalidate = bounds();
 
     LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
 
     updateTileCoverageMap();
+
+    if (m_client)
+        m_client->didRevalidateTiles(*this, tileGrid.identifier(), revalidationType, tilesNeedingDisplay);
 }
 
 unsigned TileController::blankPixelCount() const
@@ -888,4 +901,4 @@ void TileController::logFilledVisibleFreshTile(unsigned blankPixelCount)
 
 } // namespace WebCore
 
-#endif
+#endif // USE(CG)

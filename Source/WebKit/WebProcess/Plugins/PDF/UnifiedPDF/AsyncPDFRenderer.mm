@@ -199,12 +199,12 @@ void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<ImageBuffer>&& imageB
     presentationController->didGeneratePreviewForPage(pageIndex);
 }
 
-RefPtr<WebCore::ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLayout::PageIndex pageIndex) const
+RefPtr<ImageBuffer> AsyncPDFRenderer::previewImageForPage(PDFDocumentLayout::PageIndex pageIndex) const
 {
     return m_pagePreviews.get(pageIndex);
 }
 
-bool AsyncPDFRenderer::renderInfoIsValidForTile(WebCore::TiledBacking& tiledBacking, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo) const
+bool AsyncPDFRenderer::renderInfoIsValidForTile(TiledBacking& tiledBacking, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo) const
 {
     ASSERT(isMainRunLoop());
 
@@ -315,7 +315,19 @@ void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& co
         removePreviewForPage(pageIndex);
 }
 
-void AsyncPDFRenderer::tilingScaleFactorDidChange(TiledBacking&, float)
+void AsyncPDFRenderer::willRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType)
+{
+}
+
+void AsyncPDFRenderer::didRevalidateTiles(TiledBacking&, TileGridIdentifier, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay)
+{
+}
+
+void AsyncPDFRenderer::willRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier)
+{
+}
+
+void AsyncPDFRenderer::didRepaintTilesAfterScaleFactorChange(TiledBacking&, TileGridIdentifier)
 {
 }
 
