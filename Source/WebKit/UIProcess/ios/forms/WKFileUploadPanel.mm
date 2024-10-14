@@ -380,6 +380,8 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
     RetainPtr<NSSet<NSString *>> _acceptedUTIs;
     OptionSet<WKFileUploadPanelImagePickerType> _allowedImagePickerTypes;
     CGPoint _interactionPoint;
+    CGPoint _interactionPointInWindow;
+    BOOL _isMenuPreviouslyRepositioned;
     BOOL _allowDirectories;
     BOOL _allowMultipleFiles;
     BOOL _usingCamera;
@@ -496,7 +498,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _listener = listener;
     _allowDirectories = parameters->allowDirectories();
     _allowMultipleFiles = parameters->allowMultipleFiles();
+    _isMenuPreviouslyRepositioned = NO;
     _interactionPoint = [_view lastInteractionLocation];
+    _interactionPointInWindow = [_view convertPoint:_interactionPoint toView:[_view webView].window];
 
     Ref<API::Array> acceptMimeTypes = parameters->acceptMIMETypes();
     NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:acceptMimeTypes->size()];
@@ -790,7 +794,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     return *_menuPresenter;
 }
 
-- (void)repositionContextMenuIfNeeded
+- (void)repositionContextMenuIfNeeded:(WebKit::KeyboardIsDismissing)isKeyboardBeingDismissed
 {
     if (!_menuPresenter)
         return;
@@ -799,15 +803,20 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     if (!webView)
         return;
 
+    if (!_isMenuPreviouslyRepositioned && isKeyboardBeingDismissed == WebKit::KeyboardIsDismissing::Yes)
+        return;
+
     auto inputViewBoundsInWindow = webView->_inputViewBoundsInWindow;
-    if (CGRectIsEmpty(inputViewBoundsInWindow))
+    if (!_isMenuPreviouslyRepositioned && CGRectIsEmpty(inputViewBoundsInWindow))
         return;
 
     // The exact bounds of the context menu container itself isn't exposed through any UIKit API or SPI,
     // and would require traversing the view hierarchy in search of internal UIKit views. For now, just
     // reposition the context menu if its presentation location is covered by the input view.
-    if (!CGRectContainsPoint(inputViewBoundsInWindow, [_view convertPoint:_interactionPoint toView:webView.window]))
+    if (!_isMenuPreviouslyRepositioned && !CGRectContainsPoint(inputViewBoundsInWindow, _interactionPointInWindow))
         return;
+
+    _isMenuPreviouslyRepositioned = !_isMenuPreviouslyRepositioned;
 
     SetForScope repositioningContextMenuScope { _isRepositioningContextMenu, YES };
     [UIView performWithoutAnimation:^{

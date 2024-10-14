@@ -2800,7 +2800,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     });
 
 #if USE(UICONTEXTMENU)
-    [_fileUploadPanel repositionContextMenuIfNeeded];
+    [_fileUploadPanel repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::No];
 #endif
 }
 
@@ -4752,6 +4752,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (_isEditable && [self isFirstResponder])
         _keyboardDidRequestDismissal = YES;
+
+#if USE(UICONTEXTMENU)
+    [_fileUploadPanel repositionContextMenuIfNeeded:WebKit::KeyboardIsDismissing::Yes];
+#endif
 }
 
 - (void)copyForWebView:(id)sender

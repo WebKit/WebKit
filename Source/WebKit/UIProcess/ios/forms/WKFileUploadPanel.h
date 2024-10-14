@@ -38,6 +38,7 @@ namespace WebKit {
 class WebOpenPanelResultListenerProxy;
 enum class PickerDismissalReason : uint8_t;
 enum class MovedSuccessfully : bool { No, Yes };
+enum class KeyboardIsDismissing : bool { No, Yes };
 
 struct TemporaryFileMoveResults {
     MovedSuccessfully operationResult;
@@ -54,7 +55,7 @@ struct TemporaryFileMoveResults {
 - (BOOL)dismissIfNeededWithReason:(WebKit::PickerDismissalReason)reason;
 
 #if USE(UICONTEXTMENU)
-- (void)repositionContextMenuIfNeeded;
+- (void)repositionContextMenuIfNeeded:(WebKit::KeyboardIsDismissing)isKeyboardBeingDismissed;
 #endif
 
 - (NSArray<NSString *> *)currentAvailableActionTitles;
