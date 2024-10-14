@@ -30,16 +30,6 @@
 #include "NetworkRTCProvider.h"
 #include <Network/Network.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class NetworkRTCTCPSocketCocoa;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NetworkRTCTCPSocketCocoa> : std::true_type { };
-}
 
 namespace rtc {
 class SocketAddress;
@@ -47,7 +37,7 @@ class SocketAddress;
 
 namespace WebKit {
 
-class NetworkRTCTCPSocketCocoa final : public NetworkRTCProvider::Socket, public CanMakeWeakPtr<NetworkRTCTCPSocketCocoa> {
+class NetworkRTCTCPSocketCocoa final : public NetworkRTCProvider::Socket {
     WTF_MAKE_TZONE_ALLOCATED(NetworkRTCTCPSocketCocoa);
 public:
     static std::unique_ptr<NetworkRTCProvider::Socket> createClientTCPSocket(WebCore::LibWebRTCSocketIdentifier, NetworkRTCProvider&, const rtc::SocketAddress&, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
