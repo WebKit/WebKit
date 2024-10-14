@@ -1271,19 +1271,11 @@ void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
     if (layoutUsingFlexFormattingContext())
         return;
 
-    FlexLineStates lineStates;
-    LayoutUnit sumFlexBaseSize;
-    double totalFlexGrow;
-    double totalFlexShrink;
-    double totalWeightedFlexShrink;
-    LayoutUnit sumHypotheticalMainSize;
-    
     // Set up our master list of flex items. All of the rest of the algorithm
     // should work off this list of a subset.
-    // TODO(cbiesinger): That second part is not yet true.
+    // FIXME: That second part is not yet true.
     FlexLayoutItems allItems;
-    m_orderIterator.first();
-    for (RenderBox* flexItem = m_orderIterator.currentChild(); flexItem; flexItem = m_orderIterator.next()) {
+    for (auto* flexItem = m_orderIterator.first(); flexItem; flexItem = m_orderIterator.next()) {
         if (m_orderIterator.shouldSkipChild(*flexItem)) {
             // Out-of-flow children are not flex items, so we skip them here.
             if (flexItem->isOutOfFlowPositioned())
@@ -1294,7 +1286,23 @@ void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
         // constructFlexItem() might set the override containing block height so any value cached for definiteness might be incorrect.
         resetHasDefiniteHeight();
     }
-    
+
+    if (allItems.isEmpty()) {
+        if (hasLineIfEmpty()) {
+            auto minHeight = borderAndPaddingLogicalHeight() + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes) + scrollbarLogicalHeight();
+            if (height() < minHeight)
+                setLogicalHeight(minHeight);
+        }
+        updateLogicalHeight();
+        return;
+    }
+
+    FlexLineStates lineStates;
+    LayoutUnit sumFlexBaseSize;
+    double totalFlexGrow;
+    double totalFlexShrink;
+    double totalWeightedFlexShrink;
+    LayoutUnit sumHypotheticalMainSize;
     const LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
     LayoutUnit gapBetweenItems = computeGap(GapType::BetweenItems);
     LayoutUnit gapBetweenLines = computeGap(GapType::BetweenLines);
@@ -2234,7 +2242,7 @@ void RenderFlexibleBox::layoutAndPlaceFlexItems(LayoutUnit& crossAxisOffset, Fle
         setOverridingMainSizeForFlexItem(flexItem, flexLayoutItem.flexedContentSize);
         // The flexed content size and the override size include the scrollbar
         // width, so we need to compare to the size including the scrollbar.
-        // TODO(cbiesinger): Should it include the scrollbar?
+        // FIXME: Should it include the scrollbar?
         if (flexLayoutItem.flexedContentSize != mainAxisContentExtentForFlexItemIncludingScrollbar(flexItem))
             flexItem.setChildNeedsLayout(MarkOnlyThis);
         else {
@@ -2663,6 +2671,9 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
 
 bool RenderFlexibleBox::layoutUsingFlexFormattingContext()
 {
+    if (!firstInFlowChild())
+        return false;
+
     m_hasFlexFormattingContextLayout = LayoutIntegration::canUseForFlexLayout(*this);
     if (!m_hasFlexFormattingContextLayout)
         return false;

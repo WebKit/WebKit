@@ -51,7 +51,7 @@ namespace LayoutIntegration {
 
 enum class AvoidanceReason : uint32_t {
     FeatureIsDisabled                   = 1U << 0,
-    FlexBoxHasNoFlexItem                = 1U << 1,
+    // Unused                           = 1U << 1,
     FlexBoxNeedsBaseline                = 1U << 2,
     FlexBoxIsVertical                   = 1U << 3,
     FlexBoxIsRTL                        = 1U << 4,
@@ -106,13 +106,12 @@ static inline bool mayHaveScrollbarOrScrollableOverflow(const RenderStyle& style
 
 static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlexibleBox& flexBox, IncludeReasons includeReasons)
 {
+    ASSERT(flexBox.firstInFlowChild());
+
     auto reasons = OptionSet<AvoidanceReason> { };
 
     if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
         ADD_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
-
-    if (!flexBox.firstInFlowChild())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNoFlexItem, reasons, includeReasons);
 
     auto& flexBoxStyle = flexBox.style();
     if (flexBoxStyle.display() == DisplayType::InlineFlex)
@@ -210,9 +209,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     switch (reason) {
     case AvoidanceReason::FeatureIsDisabled:
         stream << "modern flex layout is disabled";
-        break;
-    case AvoidanceReason::FlexBoxHasNoFlexItem:
-        stream << "flex box has no flex item";
         break;
     case AvoidanceReason::FlexBoxNeedsBaseline:
         stream << "inline flex box needs baseline";
