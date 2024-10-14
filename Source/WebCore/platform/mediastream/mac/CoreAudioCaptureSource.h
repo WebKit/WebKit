@@ -54,7 +54,7 @@ class WebAudioSourceProviderAVFObjC;
 class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, std::optional<PageIdentifier>);
+    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
@@ -68,9 +68,7 @@ public:
     virtual ~CoreAudioCaptureSource();
 
 protected:
-    CoreAudioCaptureSource(const CaptureDevice&, uint32_t, MediaDeviceHashSalts&&, BaseAudioSharedUnit*, std::optional<PageIdentifier>);
-    BaseAudioSharedUnit& unit();
-    const BaseAudioSharedUnit& unit() const;
+    CoreAudioCaptureSource(const CaptureDevice&, uint32_t, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
     bool canResumeAfterInterruption() const { return m_canResumeAfterInterruption; }
     void setCanResumeAfterInterruption(bool value) { m_canResumeAfterInterruption = value; }
@@ -142,9 +140,6 @@ public:
     WEBCORE_EXPORT void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     WEBCORE_EXPORT bool shouldAudioCaptureUnitRenderAudio();
 
-    void setOverrideUnit(BaseAudioSharedUnit* unit) { m_overrideUnit = unit; }
-    BaseAudioSharedUnit& unit();
-
 private:
     // AudioSessionInterruptionObserver
     void beginAudioSessionInterruption() final { beginInterruption(); }
@@ -159,8 +154,6 @@ private:
 
     void beginInterruption();
     void endInterruption();
-
-    BaseAudioSharedUnit* m_overrideUnit { nullptr };
 };
 
 inline CaptureSourceOrError CoreAudioCaptureSourceFactory::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, std::optional<PageIdentifier> pageIdentifier)

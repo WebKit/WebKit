@@ -290,6 +290,7 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
         return result.error();
 
     m_ioUnit = WTFMove(result.value()).moveToUniquePtr();
+    m_canRenderAudio = m_ioUnit->canRenderAudio();
 
 #if HAVE(VPIO_DUCKING_LEVEL_API)
     if (m_shouldUseVPIO) {

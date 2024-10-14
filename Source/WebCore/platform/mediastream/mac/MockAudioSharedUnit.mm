@@ -94,8 +94,7 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, AtomStri
     if (!device)
         return CaptureSourceOrError({ "No mock microphone device"_s , MediaAccessDenialReason::PermissionDenied });
 
-    MockAudioSharedUnit::singleton().setCaptureDevice(String { deviceID }, 0);
-    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), constraints, MockAudioSharedUnit::singleton(), pageIdentifier);
+    return CoreAudioCaptureSource::createForTesting(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), constraints, pageIdentifier);
 }
 
 class MockAudioSharedInternalUnitState : public ThreadSafeRefCounted<MockAudioSharedInternalUnitState> {
@@ -128,6 +127,7 @@ private:
     void delaySamples(Seconds) final;
     Seconds verifyCaptureInterval(bool) const final { return 1_s; }
     bool setVoiceActivityDetection(bool) final;
+    bool canRenderAudio() const final { return false; }
 
     int sampleRate() const { return m_streamFormat.mSampleRate; }
     void tick();
@@ -169,20 +169,22 @@ private:
 };
 
 static bool s_shouldIncreaseBufferSize;
-CoreAudioSharedUnit& MockAudioSharedUnit::singleton()
+void MockAudioSharedUnit::enable()
 {
-    static NeverDestroyed<CoreAudioSharedUnit> unit;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] () {
-        s_shouldIncreaseBufferSize = false;
-        unit->setSampleRateRange({ 44100, 96000 });
-        unit->setInternalUnitCreationCallback([](bool enableEchoCancellation) {
-            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
-            return result;
-        });
-        unit->setInternalUnitGetSampleRateCallback([] { return 44100; });
+    s_shouldIncreaseBufferSize = false;
+    CoreAudioSharedUnit::singleton().setSampleRateRange({ 44100, 96000 });
+    CoreAudioSharedUnit::singleton().setInternalUnitCreationCallback([](bool enableEchoCancellation) {
+        UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<MockAudioSharedInternalUnit>(enableEchoCancellation);
+        return result;
     });
-    return unit;
+    CoreAudioSharedUnit::singleton().setInternalUnitGetSampleRateCallback([] { return 44100; });
+}
+
+void MockAudioSharedUnit::disable()
+{
+    CoreAudioSharedUnit::singleton().setSampleRateRange({ 8000, 96000 });
+    CoreAudioSharedUnit::singleton().setInternalUnitCreationCallback({ });
+    CoreAudioSharedUnit::singleton().setInternalUnitGetSampleRateCallback({ });
 }
 
 void MockAudioSharedUnit::increaseBufferSize()
@@ -276,8 +278,8 @@ bool MockAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
 
 void MockAudioSharedInternalUnit::voiceDetected()
 {
-    MockAudioSharedUnit::singleton().voiceActivityDetected();
-    MockAudioSharedUnit::singleton().disableVoiceActivityThrottleTimerForTesting();
+    CoreAudioSharedUnit::singleton().voiceActivityDetected();
+    CoreAudioSharedUnit::singleton().disableVoiceActivityThrottleTimerForTesting();
 }
 
 void MockAudioSharedInternalUnit::reconfigure()
@@ -422,7 +424,7 @@ OSStatus MockAudioSharedInternalUnit::set(AudioUnitPropertyID property, AudioUni
     }
     if (property == kAudioOutputUnitProperty_CurrentDevice) {
         ASSERT(!*static_cast<const uint32_t*>(value));
-        auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(MockAudioSharedUnit::singleton().persistentIDForTesting());
+        auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(CoreAudioSharedUnit::singleton().persistentIDForTesting());
         if (!device)
             return -1;
 

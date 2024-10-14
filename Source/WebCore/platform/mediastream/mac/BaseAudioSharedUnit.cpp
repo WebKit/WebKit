@@ -184,6 +184,9 @@ void BaseAudioSharedUnit::devicesChanged()
 {
     Ref protectedThis { *this };
 
+    if (!hasAudioUnit())
+        return;
+
     auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
     auto persistentID = this->persistentID();
     if (persistentID.isEmpty())
