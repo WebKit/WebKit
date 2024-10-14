@@ -47,7 +47,7 @@
         },
         "-internal-html-document": {},
         "-internal-in-window-fullscreen": {
-            "conditional": "ENABLE(FULLSCREEN_API)"
+            "conditional": "ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)"
         },
         "-internal-media-document": {},
         "-webkit-any": {

@@ -182,8 +182,6 @@ public:
     WEBCORE_EXPORT static String memoryUsageToDiagnosticLoggingKey(uint64_t memoryUsage);
     WEBCORE_EXPORT static String foregroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
     WEBCORE_EXPORT static String backgroundCPUUsageToDiagnosticLoggingKey(double cpuUsage);
-
-    static String mediaElementSourceTypeDiagnosticLoggingKey(HTMLMediaElementSourceType);
 };
 
 } // namespace WebCore
