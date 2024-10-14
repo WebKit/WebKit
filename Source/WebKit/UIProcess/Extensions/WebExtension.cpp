@@ -269,22 +269,25 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     ASSERT(originalPath);
 
     String path = originalPath;
-
     if (path.startsWith('/'))
         path = path.substring(1);
 
-    if (!path.length() || m_resourceBaseURL.isNull())
+    if (!path.length() || m_resourceBaseURL.isEmpty())
         return { };
 
-    auto resourcePath = FileSystem::realPath(URL(m_resourceBaseURL, path).fileSystemPath());
+    URL result { m_resourceBaseURL, path };
+    if (!FileSystem::fileExists(result.fileSystemPath()))
+        return { };
 
     // Don't allow escaping the base URL with "../".
-    if (!resourcePath.startsWith(m_resourceBaseURL.fileSystemPath())) {
+    auto basePath = FileSystem::realPath(m_resourceBaseURL.fileSystemPath());
+    auto resourcePath = FileSystem::realPath(result.fileSystemPath());
+    if (!resourcePath.startsWith(basePath)) {
         RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", resourcePath.utf8().data());
         return { };
     }
 
-    return URL::fileURLWithFileSystemPath(resourcePath);
+    return result;
 }
 
 String WebExtension::resourceStringForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)

@@ -158,6 +158,8 @@ bool WebExtension::parseManifest(NSData *manifestData)
     if (!m_manifest) {
         if (parseError)
             recordError(createError(Error::InvalidManifest, { }, API::Error::create(parseError)));
+        else
+            recordError(createError(Error::InvalidManifest));
         return false;
     }
 
@@ -351,7 +353,7 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
 
     auto *resourceURL = static_cast<NSURL *>(resourceFileURLForPath(path));
     if (!resourceURL) {
-        if (suppressErrors == SuppressNotFoundErrors::No && outError)
+        if (suppressErrors == SuppressNotFoundErrors::No)
             outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", (__bridge CFStringRef)cocoaPath));
         return nullptr;
     }
@@ -359,7 +361,7 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
     NSError *fileReadError;
     NSData *resultData = [NSData dataWithContentsOfURL:resourceURL options:NSDataReadingMappedIfSafe error:&fileReadError];
     if (!resultData) {
-        if (suppressErrors == SuppressNotFoundErrors::No && outError)
+        if (suppressErrors == SuppressNotFoundErrors::No)
             outError = createError(Error::ResourceNotFound, WEB_UI_FORMAT_CFSTRING("Unable to find \"%@\" in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", (__bridge CFStringRef)cocoaPath), API::Error::create(fileReadError));
         return nullptr;
     }
@@ -367,8 +369,7 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
 #if PLATFORM(MAC)
     NSError *validationError;
     if (!validateResourceData(resourceURL, resultData, &validationError)) {
-        if (outError)
-            outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)cocoaPath), API::Error::create(validationError));
+        outError = createError(Error::InvalidResourceCodeSignature, WEB_UI_FORMAT_CFSTRING("Unable to validate \"%@\" with the extension’s code signature. It likely has been modified since the extension was built.", "WKWebExtensionErrorInvalidResourceCodeSignature description with file name", (__bridge CFStringRef)cocoaPath), API::Error::create(validationError));
         return nullptr;
     }
 #endif
