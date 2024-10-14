@@ -110,6 +110,7 @@ public:
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
     bool attachToElement(WeakPtr<HTMLMediaElement>&&);
+    void elementIsShuttingDown();
     void detachFromElement();
     bool isSeeking() const { return !!m_pendingSeekTarget; }
     Ref<TimeRanges> seekable();
