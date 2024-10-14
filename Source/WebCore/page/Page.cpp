@@ -429,7 +429,9 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(WRITING_TOOLS)
     , m_writingToolsController(makeUniqueRef<WritingToolsController>(*this))
 #endif
+#if ENABLE(MEDIA_SESSION)
     , m_activeNowPlayingSessionUpdateTimer(*this, &Page::activeNowPlayingSessionUpdateTimerFired)
+#endif
 {
     updateTimerThrottlingState();
 
@@ -4982,6 +4984,7 @@ void Page::showSelectionForActiveWritingToolsSession() const
 }
 #endif
 
+#if ENABLE(MEDIA_SESSION)
 void Page::hasActiveNowPlayingSessionChanged()
 {
     if (!m_activeNowPlayingSessionUpdateTimer.isActive())
@@ -4997,5 +5000,6 @@ void Page::activeNowPlayingSessionUpdateTimerFired()
     m_hasActiveNowPlayingSession = hasActiveNowPlayingSession;
     chrome().client().hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
 }
+#endif
 
 } // namespace WebCore

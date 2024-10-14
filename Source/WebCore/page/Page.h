@@ -1188,9 +1188,11 @@ public:
     WEBCORE_EXPORT void showSelectionForActiveWritingToolsSession() const;
 #endif
 
+#if ENABLE(MEDIA_SESSION)
     bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
     void hasActiveNowPlayingSessionChanged();
     void activeNowPlayingSessionUpdateTimerFired();
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
@@ -1614,8 +1616,10 @@ private:
     UniqueRef<WritingToolsController> m_writingToolsController;
 #endif
 
+#if ENABLE(MEDIA_SESSION)
     bool m_hasActiveNowPlayingSession { false };
     Timer m_activeNowPlayingSessionUpdateTimer;
+#endif
 }; // class Page
 
 inline Page* Frame::page() const

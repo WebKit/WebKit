@@ -459,6 +459,10 @@ bool FullscreenManager::isFullscreenEnabled() const
 
 bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
+#if !ENABLE(VIDEO)
+    UNUSED_PARAM(mode);
+#endif
+
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
         ERROR_LOG(LOGIDENTIFIER, "Document in the BackForwardCache; bailing");
         return false;

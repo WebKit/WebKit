@@ -425,8 +425,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     RemoteLegacyCDMFactoryProxy& legacyCdmFactoryProxy();
 #endif
 
+#if ENABLE(VIDEO)
     if (RefPtr remoteMediaResourceManager = m_remoteMediaResourceManager)
         remoteMediaResourceManager->stopListeningForIPC();
+#endif
 
     Ref gpuProcess = this->gpuProcess();
     gpuProcess->connectionToWebProcessClosed(connection);
