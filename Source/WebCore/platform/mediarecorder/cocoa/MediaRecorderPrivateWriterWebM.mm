@@ -326,9 +326,9 @@ Seconds MediaRecorderPrivateWriterWebM::nextVideoFrameTime() const
     auto frameTime = now - m_resumedVideoTime;
     LOG(MediaStream, "nextVideoFrameTime: frameTime:%f nextVideoFrameTime:%f", frameTime.value(), (frameTime + *m_firstVideoFrameAudioTime).value());
     frameTime = frameTime + *m_firstVideoFrameAudioTime;
-    // Take the max value from m_lastAudioSampleTime to handle the occasional wall clock time drift and ensure muxed frames times
-    // are always monotonically increasing.
-    return std::max(frameTime, Seconds { m_lastAudioSampleTime.toDouble() });
+    // Take the max value from m_lastMuxedSampleTime to handle the occasional wall clock time drift and ensure
+    // muxed frames times are always monotonically increasing.
+    return std::max(frameTime, m_lastMuxedSampleTime);
 }
 
 Seconds MediaRecorderPrivateWriterWebM::resumeVideoTime() const
@@ -375,7 +375,6 @@ void MediaRecorderPrivateWriterWebM::appendAudioSampleBuffer(const PlatformAudio
     if (m_isStopping)
         return;
 
-    m_lastAudioSampleTime = m_currentAudioSampleTime;
     if (auto sampleBuffer = createAudioSampleBuffer(data, description, PAL::toCMTime(m_currentAudioSampleTime), sampleCount))
         RefPtr { m_audioCompressor }->addSampleBuffer(sampleBuffer.get());
     m_audioSamplesCount += sampleCount;
@@ -557,7 +556,7 @@ void MediaRecorderPrivateWriterWebM::resume()
 {
     m_firstVideoFrameAudioTime.reset();
     m_resumedVideoTime = MonotonicTime::now();
-    m_resumedAudioTime = m_lastAudioSampleTime;
+    m_resumedAudioTime = m_currentAudioSampleTime;
     LOG(MediaStream, "MediaRecorderPrivateWriterWebM:resume");
 }
 

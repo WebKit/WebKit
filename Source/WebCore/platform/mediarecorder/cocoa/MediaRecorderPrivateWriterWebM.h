@@ -117,7 +117,6 @@ private:
     Deque<RetainPtr<CMSampleBufferRef>> m_encodedAudioFrames;
     uint8_t m_audioTrackIndex { 0 };
     int64_t m_audioSamplesCount { 0 };
-    MediaTime m_lastAudioSampleTime;
     MediaTime m_currentAudioSampleTime;
     MediaTime m_resumedAudioTime;
     FourCharCode m_audioCodec { 0 };
