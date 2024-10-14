@@ -119,12 +119,16 @@ bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (!isFocusable())
         return false;
-    
+
     // Anchor is focusable if the base element supports focus and is focusable.
     if (isFocusable() && Element::supportsFocus())
         return HTMLElement::isKeyboardFocusable(event);
 
-    if (isLink() && !document().frame()->eventHandler().tabsToLinks(event))
+    RefPtr frame = document().frame();
+    if (!frame)
+        return false;
+
+    if (isLink() && !frame->eventHandler().tabsToLinks(event))
         return false;
     return HTMLElement::isKeyboardFocusable(event);
 }
