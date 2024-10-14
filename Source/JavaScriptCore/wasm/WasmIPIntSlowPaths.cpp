@@ -518,6 +518,8 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::Functio
         *callee = boxedCallee;
     }
 
+    RELEASE_ASSERT(WTF::isTaggedWith<WasmEntryPtrTag>(codePtr));
+
     WASM_CALL_RETURN(instance, codePtr);
 }
 

@@ -538,9 +538,7 @@ end
 # 4. Interpreter entrypoints #
 ##############################
 
-global _ipint_entry
-_ipint_entry:
-.ipint_entry:
+op(ipint_entry, macro()
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
     preserveCallerPCAndCFR()
     saveIPIntRegisters()
@@ -548,7 +546,12 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
     getIPIntCallee()
 
     ipintEntry()
+else
+    break
+end
+end)
 
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
 .ipint_entry_end_local:
     argumINTEnd()
 
@@ -575,9 +578,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64 or ARMv7)
 .ipint_exit:
     restoreIPIntRegisters()
     restoreCallerPCAndCFR()
-    ret
+    if ARM64E
+        leap _g_config, ws0
+        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+    else
+        ret
+    end
 else
-    ret
+    break
 end
 
 macro ipintCatchCommon()
@@ -658,7 +666,7 @@ end
 
 op(ipint_trampoline, macro ()
     tagReturnAddress sp
-    jmp .ipint_entry
+    jmp _ipint_entry
 end)
 
 #################################

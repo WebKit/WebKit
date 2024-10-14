@@ -5242,9 +5242,22 @@ mintAlign(_call)
     ipintReloadMemory()
     pop t3, t2
 
-    # Make the call
-    call targetEntrypoint, WasmEntryPtrTag
+    move sc2, ws0
 
+    # Make the call
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::wasm_ipint_call) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+end
+
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+    call ws0, WasmEntryPtrTag
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
     # Restore the stack pointer
     addp FirstArgumentOffset - CallerFrameAndPCSize, sp
     loadh [MC], sc0  # number of stack args

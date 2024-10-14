@@ -2803,6 +2803,10 @@ op(ipint_trampoline, macro ()
     crash()
 end)
 
+op(ipint_entry, macro ()
+    crash()
+end)
+
 _wasm_trampoline_wasm_call:
 _wasm_trampoline_wasm_call_indirect:
 _wasm_trampoline_wasm_call_ref:
@@ -2821,6 +2825,13 @@ _wasm_trampoline_wasm_tail_call_ref_wide16:
 _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
 _wasm_trampoline_wasm_tail_call_ref_wide32:
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
     crash()
 
 end # WEBASSEMBLY

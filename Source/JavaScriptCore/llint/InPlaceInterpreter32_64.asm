@@ -1191,3 +1191,14 @@ argumINTAlign(_stack)
 
 argumINTAlign(_end)
     jmp .ipint_entry_end_local
+
+
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+    break
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
+    break
