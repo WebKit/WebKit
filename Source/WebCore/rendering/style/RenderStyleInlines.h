@@ -320,6 +320,7 @@ inline bool RenderStyle::hasViewportConstrainedPosition() const { return positio
 inline bool RenderStyle::hasVisibleBorder() const { return border().hasVisibleBorder(); }
 inline bool RenderStyle::hasVisibleBorderDecoration() const { return hasVisibleBorder() || hasBorderImage(); }
 inline bool RenderStyle::hasVisitedLinkAutoCaretColor() const { return m_rareInheritedData->hasVisitedLinkAutoCaretColor; }
+inline bool RenderStyle::hasZeroOpacity() const { return m_nonInheritedData->miscData->hasZeroOpacity(); }
 inline const Length& RenderStyle::height() const { return m_nonInheritedData->boxData->height(); }
 inline short RenderStyle::hyphenationLimitAfter() const { return m_rareInheritedData->hyphenationLimitAfter; }
 inline short RenderStyle::hyphenationLimitBefore() const { return m_rareInheritedData->hyphenationLimitBefore; }

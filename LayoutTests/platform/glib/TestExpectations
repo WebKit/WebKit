@@ -2096,26 +2096,11 @@ webkit.org/b/221021 webanimations/combining-transform-animations-with-different-
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-5.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]
 
-webkit.org/b/281041 [ Debug ] animations/animation-direction-reverse-hardware-opacity.html [ Crash ]
-webkit.org/b/281041 [ Debug ] compositing/backing/zero-opacity-invalidation.html [ Crash ]
-webkit.org/b/281041 [ Debug ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/blink/compositing/squashing/animation-repaint-crash.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/css/css-animations/animation-before-initial-box-construction-001.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/mix-blend-mode-only-on-transition.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/paint-timing/fcp-only/fcp-pseudo-element-opacity.html [ Crash ]
-webkit.org/b/281041 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-view-functional-notation.tentative.html [ Crash ]
-webkit.org/b/281041 [ Debug ] animations/animation-followed-by-two-transitions.html [ Crash ]
-webkit.org/b/281041 [ Debug ] fullscreen/fullscreen-restore-scroll-position.html [ Crash ]
-
 webkit.org/b/281211 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Crash ]
 webkit.org/b/281211 [ Debug ] fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Crash ]
 webkit.org/b/281211 [ Debug ] http/wpt/mediastream/transfer-videotrackgenerator-track.html [ Crash ]
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-in-auto-subtree.html [ Crash ]
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-entry.html [ Crash ]
-
-# *repaintRects() == renderer().rectsForRepaintingAfterLayout(repaintContainer.get(), RepaintOutlineBounds::Yes)
-webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
@@ -4094,7 +4079,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/modify-style-via-cssom.
 imported/w3c/web-platform-tests/css/css-view-transitions/no-painting-while-render-blocked.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/no-white-flash-before-activation.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html [ ImageOnlyFailure ]
-# imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-auto.html [ ImageOnlyFailure ]

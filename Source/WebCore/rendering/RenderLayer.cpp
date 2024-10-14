@@ -1103,12 +1103,15 @@ bool RenderLayer::ancestorLayerPositionStateChanged(OptionSet<UpdateLayerPositio
 }
 
 #define LAYER_POSITIONS_ASSERT_ENABLED ASSERT_ENABLED || ENABLE(CONJECTURE_ASSERT)
-#if ENABLE(CONJECTURE_ASSERT)
+#if ASSERT_ENABLED
+#define LAYER_POSITIONS_ASSERT(assertion, ...) ASSERT(assertion, __VA_ARGS__)
+#define LAYER_POSITIONS_ASSERT_IMPLIES(condition, assertion) ASSERT_IMPLIES(condition, assertion)
+#elif ENABLE(CONJECTURE_ASSERT)
 #define LAYER_POSITIONS_ASSERT(assertion, ...) CONJECTURE_ASSERT(assertion, __VAR_ARGS__)
 #define LAYER_POSITIONS_ASSERT_IMPLIES(condition, assertion) CONJECTURE_ASSERT_IMPLIES(condition, assertion)
 #else
-#define LAYER_POSITIONS_ASSERT(assertion, ...) ASSERT(assertion, __VA_ARGS__)
-#define LAYER_POSITIONS_ASSERT_IMPLIES(condition, assertion) ASSERT_IMPLIES(condition, assertion)
+#define LAYER_POSITIONS_ASSERT(assertion, ...) ((void)0)
+#define LAYER_POSITIONS_ASSERT_IMPLIES(condition, assertion) ((void)0)
 #endif
 
 template<RenderLayer::UpdateLayerPositionsMode mode>
@@ -5668,6 +5671,8 @@ void RenderLayer::updateSelfPaintingLayer()
         return;
 
     m_isSelfPaintingLayer = isSelfPaintingLayer;
+    setNeedsPositionUpdate();
+
     if (!parent())
         return;
 
@@ -5764,14 +5769,14 @@ bool RenderLayer::hasVisibleBoxDecorations() const
 
 bool RenderLayer::isVisibilityHiddenOrOpacityZero() const
 {
-    return !hasVisibleContent() || !renderer().style().opacity();
+    return !hasVisibleContent() || renderer().style().hasZeroOpacity();
 }
 
 bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    if (!hasVisibleContent() || !renderer().style().opacity())
+    if (!hasVisibleContent() || renderer().style().hasZeroOpacity())
         return false;
 
     if (renderer().isRenderReplaced() || (m_scrollableArea && m_scrollableArea->hasOverflowControls())) {
@@ -5837,6 +5842,9 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
             if (visibilityChanged || oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
                 m_scrollableArea->computeHasCompositedScrollableOverflow(diff <= StyleDifference::RepaintLayer ? LayoutUpToDate::Yes : LayoutUpToDate::No);
         }
+
+        if (oldStyle->hasZeroOpacity() != renderer().style().hasZeroOpacity())
+            setNeedsPositionUpdate();
     }
 
     if (m_scrollableArea) {
@@ -6477,7 +6485,7 @@ static void outputLayerPositionTreeLegend(TextStream& stream)
     stream.nextLine();
     stream << "Dirty flags: NeedsPosition(U)pdate, (D)escendantNeedsPositionUpdate, All(C)hildrenNeedPositionUpdate, (A)llDescendantsNeedPositionUpdate\n";
     stream << "Repaint status: (-)NeedsNormalRepaint, Needs(F)ullRepaint, NeedsFullRepaintFor(P)ositionedMovementLayout\n";
-    stream << "Layer state: has(P)aginatedAncestor, has(F)ixedAncestor,  hasFixedContaining(B)lockAncestor, has(T)ransformedAncestor, has(3)DTransformedAncestor, hasComposited(S)crollingAncestor, has(V)isibleContent, isSelfPainting(L)ayer\n";
+    stream << "Layer state: has(P)aginatedAncestor, has(F)ixedAncestor,  hasFixedContaining(B)lockAncestor, has(T)ransformedAncestor, has(3)DTransformedAncestor, hasComposited(S)crollingAncestor, !is(V)isibilityHiddenOrOpacityZero(), isSelfPainting(L)ayer\n";
     stream.nextLine();
 }
 
@@ -6505,7 +6513,7 @@ void outputLayerPositionTreeRecursive(TextStream& stream, const WebCore::RenderL
     stream << (layer.hasTransformedAncestor() ? "T"_s : "-"_s);
     stream << (layer.has3DTransformedAncestor() ? "3"_s : "-"_s);
     stream << (layer.hasCompositedScrollingAncestor() ? "S"_s : "-"_s);
-    stream << (layer.hasVisibleContent() ? "V"_s : "-"_s);
+    stream << (!layer.isVisibilityHiddenOrOpacityZero() ? "V"_s : "-"_s);
     stream << (layer.isSelfPaintingLayer() ? "L"_s : "-"_s);
 
     // FIXME: cached clip rects?

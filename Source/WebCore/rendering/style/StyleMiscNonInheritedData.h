@@ -60,6 +60,7 @@ public:
     bool operator==(const StyleMiscNonInheritedData&) const;
 
     bool hasOpacity() const { return opacity < 1; }
+    bool hasZeroOpacity() const { return !opacity; }
     bool hasFilters() const;
     bool contentDataEquivalent(const StyleMiscNonInheritedData&) const;
 

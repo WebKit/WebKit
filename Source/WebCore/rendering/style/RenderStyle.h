@@ -729,6 +729,7 @@ public:
     inline float textStrokeWidth() const;
     inline float opacity() const;
     inline bool hasOpacity() const;
+    inline bool hasZeroOpacity() const;
     inline StyleAppearance appearance() const;
     inline StyleAppearance usedAppearance() const;
     inline AspectRatioType aspectRatioType() const;
