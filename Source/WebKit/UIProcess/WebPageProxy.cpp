@@ -7762,10 +7762,10 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
     auto& frameInfo = data.frameInfo;
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame) {
-        // This synchronous IPC message was processed before the asynchronous DidCreateSubframe one so we do not know about this frameID yet.
-        RefPtr parentFrame = WebFrameProxy::webFrame(frameInfo.parentFrameID);
-        MESSAGE_CHECK_BASE(parentFrame, connection);
-        parentFrame->didCreateSubframe(*frameInfo.frameID, frameInfo.frameName, data.effectiveSandboxFlags);
+        // This message should always be queued at this point, so we can pull it out with a 0 timeout.
+        connection.waitForAndDispatchImmediately<Messages::WebPageProxy::DidCreateSubframe>(webPageIDInMainFrameProcess(), 0_s);
+        frame = WebFrameProxy::webFrame(frameInfo.frameID);
+        MESSAGE_CHECK_COMPLETION_BASE(frame, connection, reply({ }));
     }
 
     decidePolicyForNavigationActionSyncShared(frame->protectedProcess(), WTFMove(data), WTFMove(reply));
