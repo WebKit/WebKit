@@ -141,4 +141,16 @@ TEST(WKPreferencesPrivate, DisableRichJavaScriptFeatures)
     }];
     result = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Shape Detection Disabled", result.get());
+
+    [webView evaluateJavaScript:@"log(window.screen && screen.orientation ? 'Screen Orientation Enabled' : 'Screen Orientation Disabled');" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+    result = (NSString *)[getNextMessage() body];
+    EXPECT_WK_STREQ(@"Screen Orientation Disabled", result.get());
+
+    [webView evaluateJavaScript:@"log(window.Notification ? 'Notifications Enabled' : 'Notifications Disabled');" completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+    result = (NSString *)[getNextMessage() body];
+    EXPECT_WK_STREQ(@"Notifications Disabled", result.get());
 }

@@ -5263,6 +5263,7 @@ NotificationsEnabled:
       default: true
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 ObservableEnabled:
   type: bool
@@ -6191,6 +6192,7 @@ ScreenOrientationAPIEnabled:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 ScreenOrientationLockingAPIEnabled:
   type: bool
