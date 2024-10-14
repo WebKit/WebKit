@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StorageAreaMap.h"
 
-#include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
 #include "StorageAreaImpl.h"

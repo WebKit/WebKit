@@ -154,7 +154,7 @@ public:
     using IPC::Connection::Client::decrementPtrCount;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
-    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkSession* networkSession();

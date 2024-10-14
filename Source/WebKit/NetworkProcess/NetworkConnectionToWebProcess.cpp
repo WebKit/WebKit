@@ -145,6 +145,10 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
+    auto* session = networkSession();
+    if (session && !session->protectedStorageManager()->sharedPreferencesInitialized())
+        session->protectedStorageManager()->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
+
     // Use this flag to force synchronous messages to be treated as asynchronous messages in the WebProcess.
     // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
     // reply from the Network process, which would be unsafe.
@@ -1639,6 +1643,12 @@ void NetworkConnectionToWebProcess::clearFrameLoadRecordsForStorageAccess(WebCor
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
             resourceLoadStatistics->clearFrameLoadRecordsForStorageAccess(frameID);
     }
+}
+
+void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
+{
+    m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
+    networkSession()->protectedStorageManager()->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
 }
 
 } // namespace WebKit
