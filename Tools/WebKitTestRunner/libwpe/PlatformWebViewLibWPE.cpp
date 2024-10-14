@@ -28,6 +28,7 @@
 
 #include "PlatformWebViewClientLibWPE.h"
 #include "TestController.h"
+#include <WebKit/WKPreferencesRefPrivate.h>
 #include <cstdio>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +43,9 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     : m_windowIsKey(true)
     , m_options(options)
 {
+    auto copiedConfiguration = adoptWK(WKPageConfigurationCopy(configuration));
+    WKPreferencesSetThreadedScrollingEnabled(WKPageConfigurationGetPreferences(copiedConfiguration.get()), m_options.useThreadedScrolling());
+
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (TestController::singleton().useWPEPlatformAPI())
         m_window = new PlatformWebViewClientWPE(configuration);
