@@ -833,7 +833,17 @@ void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::op
 
 void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
 {
-    if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get())) {
+    auto documentTimeline = [&]() -> DocumentTimeline* {
+        if (auto* timeline = dynamicDowncast<DocumentTimeline>(m_timeline.get()))
+            return timeline;
+        if (RefPtr scrollTimeline = dynamicDowncast<ScrollTimeline>(m_timeline.get())) {
+            if (RefPtr source = scrollTimeline->source())
+                return Ref { source->document() }->existingTimeline();
+        }
+        return nullptr;
+    };
+
+    if (RefPtr timeline = documentTimeline()) {
         // If animation has a document for timing, then append event to its document for timing's pending animation event queue along
         // with its target, animation. If animation is associated with an active timeline that defines a procedure to convert timeline times
         // to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the

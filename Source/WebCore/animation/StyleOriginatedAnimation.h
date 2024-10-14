@@ -80,16 +80,16 @@ protected:
 
     enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
     ShouldFireEvents shouldFireDOMEvents() const;
-    void invalidateDOMEvents(ShouldFireEvents, Seconds elapsedTime = 0_s);
+    void invalidateDOMEvents(ShouldFireEvents, CSSNumberishTime elapsedTime = 0_s);
 
 private:
     void disassociateFromOwningElement();
     AnimationEffectPhase phaseWithoutEffect() const;
-    void enqueueDOMEvent(const AtomString&, Seconds elapsedTime, Seconds scheduledEffectTime);
+    void enqueueDOMEvent(const AtomString&, CSSNumberishTime elapsedTime, CSSNumberishTime scheduledEffectTime);
 
-    Seconds effectTimeAtStart() const;
-    Seconds effectTimeAtIteration(double) const;
-    Seconds effectTimeAtEnd() const;
+    CSSNumberishTime effectTimeAtStart() const;
+    CSSNumberishTime effectTimeAtIteration(double) const;
+    CSSNumberishTime effectTimeAtEnd() const;
 
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };
