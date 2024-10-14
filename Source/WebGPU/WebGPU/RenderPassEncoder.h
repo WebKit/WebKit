@@ -114,7 +114,9 @@ private:
     RenderPassEncoder(CommandEncoder&, Device&, NSString*);
 
     bool validatePopDebugGroup() const;
+    bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit = false);
     bool executePreDrawCommands(bool passWasSplit = false, const Buffer* = nullptr);
+    bool executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit = false, const Buffer* = nullptr);
     bool runIndexBufferValidation(uint32_t firstInstance, uint32_t instanceCount);
     void runVertexBufferValidation(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
     void addResourceToActiveResources(const TextureView&, OptionSet<BindGroupEntryUsage>);

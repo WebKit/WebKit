@@ -487,12 +487,26 @@ void RenderPassEncoder::setCachedRenderPassState(id<MTLRenderCommandEncoder> com
         [commandEncoder setScissorRect:*m_scissorRect];
 }
 
+bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit)
+{
+    return executePreDrawCommands(firstInstance, instanceCount, passWasSplit, nullptr);
+}
+
 bool RenderPassEncoder::executePreDrawCommands(bool passWasSplit, const Buffer* indirectBuffer)
+{
+    return executePreDrawCommands(0, 0, passWasSplit, indirectBuffer);
+}
+
+bool RenderPassEncoder::executePreDrawCommands(uint32_t firstInstance, uint32_t instanceCount, bool passWasSplit, const Buffer* indirectBuffer)
 {
     if (!m_pipeline) {
         makeInvalid(@"Missing pipeline before draw command");
         return false;
     }
+
+    if (checkedSum<uint64_t>(instanceCount, firstInstance) > std::numeric_limits<uint32_t>::max())
+        return false;
+
     auto& pipeline = *m_pipeline.get();
     if (NSString* error = pipeline.pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);

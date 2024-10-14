@@ -291,9 +291,12 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
     return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex resource:resource]);
 }
 
-bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
+bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t firstInstance, uint32_t instanceCount)
 {
     if (!isValid())
+        return false;
+
+    if (checkedSum<uint64_t>(instanceCount, firstInstance) > std::numeric_limits<uint32_t>::max())
         return false;
 
     auto vertexDynamicOffset = m_vertexDynamicOffset;
@@ -446,7 +449,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit)
 RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
     RETURN_IF_FINISHED_RENDER_COMMAND();
-    if (!executePreDrawCommands(false))
+    if (!executePreDrawCommands(false, firstInstance, instanceCount))
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
         if (!runVertexBufferValidation(vertexCount, instanceCount, firstVertex, firstInstance))
@@ -687,7 +690,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
             m_renderPassEncoder->splitRenderPass();
     }
 
-    if (!executePreDrawCommands(useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw))
+    if (!executePreDrawCommands(useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw, firstInstance, instanceCount))
         return finalizeRenderCommand();
 
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
