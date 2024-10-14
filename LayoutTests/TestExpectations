@@ -7622,10 +7622,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-t
 # View transitions Level 2 - nested view-transitions
 imported/w3c/web-platform-tests/css/css-view-transitions/nested/ [ Skip ]
 
-# 'auto' transition name
-# Fails due to position:relative on view transition root.
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/auto-name-from-id.html [ ImageOnlyFailure ]
-
 # Depends on overflow-clip-margin (unimplemented).
 imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-overflow-zoomed.html [ ImageOnlyFailure ]
