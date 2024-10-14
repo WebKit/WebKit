@@ -599,6 +599,10 @@ public:
     bool webProcessStateUpdatesForPageClientEnabled() const { return m_webProcessStateUpdatesForPageClientEnabled; }
     void setWebProcessStateUpdatesForPageClientEnabled(bool enabled) { m_webProcessStateUpdatesForPageClientEnabled = enabled; }
 
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    void observeScriptTelemetryUpdatesIfNeeded();
+#endif
+
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);

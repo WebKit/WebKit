@@ -307,7 +307,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Ref storageAccessUserAgentStringQuirkController = StorageAccessUserAgentStringQuirkController::sharedSingleton();
     Ref storageAccessPromptQuirkController = StorageAccessPromptQuirkController::sharedSingleton();
-    Ref scriptTelemetryController = ScriptTelemetryController::sharedSingleton();
 
     m_storageAccessUserAgentStringQuirksDataUpdateObserver = storageAccessUserAgentStringQuirkController->observeUpdates([weakThis = WeakPtr { *this }] {
         // FIXME: Filter by process's site when site isolation is enabled
@@ -332,16 +331,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     });
     storageAccessPromptQuirkController->initializeIfNeeded();
     storageAccessUserAgentStringQuirkController->initializeIfNeeded();
-
-    m_scriptTelemetryDataUpdateObserver = scriptTelemetryController->observeUpdates([weakThis = WeakPtr { *this }] {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        if (auto data = ScriptTelemetryController::sharedSingleton().cachedListData(); !data.isEmpty())
-            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateScriptTelemetryFilter(WTFMove(data)));
-    });
-    scriptTelemetryController->initializeIfNeeded();
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
@@ -2482,5 +2471,26 @@ void WebProcessPool::setPagesControlledByAutomation(bool controlled)
 }
 #endif
 #endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+void WebProcessPool::observeScriptTelemetryUpdatesIfNeeded()
+{
+    if (m_scriptTelemetryDataUpdateObserver)
+        return;
+
+    Ref controller = ScriptTelemetryController::sharedSingleton();
+    m_scriptTelemetryDataUpdateObserver = controller->observeUpdates([weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        if (auto data = ScriptTelemetryController::sharedSingleton().cachedListData(); !data.isEmpty())
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateScriptTelemetryFilter(WTFMove(data)));
+    });
+    controller->initializeIfNeeded();
+}
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 } // namespace WebKit

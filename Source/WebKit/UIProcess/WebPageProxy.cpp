@@ -852,7 +852,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendCachedLinkDecorationFilteringData();
     });
-#endif
+
+    if (protectedPreferences()->scriptTelemetryEnabled())
+        process.protectedProcessPool()->observeScriptTelemetryUpdatesIfNeeded();
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
 WebPageProxy::~WebPageProxy()
