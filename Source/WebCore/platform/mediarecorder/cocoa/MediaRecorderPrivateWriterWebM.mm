@@ -534,8 +534,25 @@ Ref<GenericPromise> MediaRecorderPrivateWriterWebM::flushPendingData()
 void MediaRecorderPrivateWriterWebM::appendData(std::span<const uint8_t> data)
 {
     m_lastTimestamp = MonotonicTime::now();
+
     Locker locker { m_dataLock };
-    m_data.append(data);
+    if (!m_dataBuffer.capacity())
+        m_dataBuffer.reserveInitialCapacity(s_dataBufferSize);
+
+    if (data.size() > (m_dataBuffer.capacity() - m_dataBuffer.size()))
+        flushDataBuffer();
+    if (data.size() < m_dataBuffer.capacity())
+        m_dataBuffer.append(data);
+    else
+        m_data.append(data);
+}
+
+void MediaRecorderPrivateWriterWebM::flushDataBuffer()
+{
+    assertIsHeld(m_dataLock);
+    if (m_dataBuffer.isEmpty())
+        return;
+    m_data.append(std::exchange(m_dataBuffer, { }));
 }
 
 RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriterWebM::takeData()
@@ -543,6 +560,7 @@ RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriterWebM::takeData()
     Locker locker { m_dataLock };
     if (!m_delegate->hasAddedFrame())
         return FragmentedSharedBuffer::create();
+    flushDataBuffer();
     return m_data.take();
 }
 

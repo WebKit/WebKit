@@ -95,13 +95,14 @@ private:
 
     Ref<GenericPromise> flushPendingData();
     void completeFetchData();
-    RefPtr<FragmentedSharedBuffer> takeData();
 
     void maybeStartWriting();
     void maybeForceNewCluster();
 
     friend class MediaRecorderPrivateWriterWebMDelegate;
     void appendData(std::span<const uint8_t>);
+    RefPtr<FragmentedSharedBuffer> takeData();
+    void flushDataBuffer();
 
     bool m_hasStartedWriting { false };
     bool m_isStopped { false };
@@ -109,6 +110,8 @@ private:
 
     Lock m_dataLock;
     SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
+    static constexpr size_t s_dataBufferSize { 1024 };
+    Vector<uint8_t> m_dataBuffer;
     CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)> m_fetchDataCompletionHandler;
 
     bool m_hasAudio { false };
