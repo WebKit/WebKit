@@ -228,6 +228,7 @@ MediaPlayer::ReadyState MediaSourcePrivateRemote::mediaPlayerReadyState() const
 void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
     // Call from MediaSource's dispatcher.
+#if !RELEASE_LOG_DISABLED
     if (m_mediaPlayerReadyState > MediaPlayer::ReadyState::HaveCurrentData && readyState == MediaPlayer::ReadyState::HaveCurrentData) {
         RefPtr player = m_mediaPlayerPrivate.get();
         auto currentTime = player->currentTime();
@@ -235,6 +236,7 @@ void MediaSourcePrivateRemote::setMediaPlayerReadyState(MediaPlayer::ReadyState 
         auto duration = this->duration();
         ALWAYS_LOG(LOGIDENTIFIER, "stall detected at:", currentTime, " duration:", duration, " buffered:", buffered);
     }
+#endif
     m_mediaPlayerReadyState = readyState;
     ensureOnDispatcher([protectedThis = Ref { *this }, this, readyState] {
         auto gpuProcessConnection = m_gpuProcessConnection.get();
