@@ -111,6 +111,14 @@ void MediaSourceInterfaceWorker::detachFromElement()
     });
 }
 
+void MediaSourceInterfaceWorker::elementIsShuttingDown()
+{
+    ASSERT(m_handle->hasEverBeenAssignedAsSrcObject());
+    m_handle->ensureOnDispatcher([](MediaSource& mediaSource) {
+        mediaSource.elementIsShuttingDown();
+    });
+}
+
 void MediaSourceInterfaceWorker::openIfDeferredOpen()
 {
     ASSERT(m_handle->hasEverBeenAssignedAsSrcObject());

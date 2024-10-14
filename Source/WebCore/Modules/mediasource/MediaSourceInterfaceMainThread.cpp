@@ -88,6 +88,11 @@ void MediaSourceInterfaceMainThread::detachFromElement()
     m_mediaSource->detachFromElement();
 }
 
+void MediaSourceInterfaceMainThread::elementIsShuttingDown()
+{
+    m_mediaSource->elementIsShuttingDown();
+}
+
 void MediaSourceInterfaceMainThread::openIfDeferredOpen()
 {
     m_mediaSource->openIfDeferredOpen();

@@ -1810,9 +1810,6 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 # add test expectation as flaky because we have no VM modifier for VM only failures
 [ Sequoia+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Timeout Failure ]
 
-# webkit.org/b/278659 [ Sonoma Debug arm64]: ASSERTION FAILED: m_clients.contains(client) in imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html
-[ Sonoma Debug arm64 ] imported/w3c/web-platform-tests/media-source/URL-createObjectURL-null.html [ Pass Crash ]
-
 # webkit.org/b/278683 [macOS wk2] imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html is a flaky failure
 imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-in-onnavigate.html [ Pass Failure ]
 
@@ -1868,11 +1865,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 
 # webkit.org/b/280418 [ Sequoia wk2 ] fast/speechsynthesis/mac/samantha-voice-available.html is a constant failure. 
 [ Sequoia+ ] fast/speechsynthesis/mac/samantha-voice-available.html [ Pass Failure ]
-
-# webkit.org/b/280425 [macOS EWS] ASSERTION FAILED in void WebCore::VideoTrack::clearClient(VideoTrackClient in imported/w3c/web-platform-tests/media-source tests
-[ Sonoma+ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Skip ]
-[ Sonoma+ Debug ] imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Skip ]
-[ Sonoma+ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Skip ]
 
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.
 [ Sequoia+ arm64 Release ] http/tests/resourceLoadStatistics/prune-statistics.html [ Pass Failure ] 

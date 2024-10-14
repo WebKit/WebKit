@@ -1220,6 +1220,14 @@ bool MediaSource::isEnded() const
     return readyState() == ReadyState::Ended;
 }
 
+void MediaSource::elementIsShuttingDown()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_mediaElement = nullptr;
+    m_sourceopenPending = false;
+    detachFromElement();
+}
+
 void MediaSource::detachFromElement()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
