@@ -54,13 +54,13 @@ public:
     static Ref<ViewTimeline> createFromCSSValue(Style::BuilderState&, const CSSViewValue&);
 
     Element* subject() const { return m_subject.get(); }
-    const CSSNumericValue& startOffset() const;
-    const CSSNumericValue& endOffset() const;
+    const CSSNumericValue& startOffset();
+    const CSSNumericValue& endOffset();
     const ViewTimelineInsets& insets() const { return m_insets; }
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
 
-    RenderBox* sourceRenderer() const;
+    RenderBox* sourceScrollerRenderer() const;
     Element* source() const override;
 
 private:
@@ -75,6 +75,8 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
     ViewTimelineInsets m_insets;
+    Ref<CSSNumericValue> m_startOffset;
+    Ref<CSSNumericValue> m_endOffset;
 };
 
 } // namespace WebCore

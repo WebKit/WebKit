@@ -133,6 +133,8 @@ static ViewTimelineInsets insetsFromOptions(const std::variant<String, Vector<st
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
+    , m_startOffset(CSSNumericFactory::px(0))
+    , m_endOffset(CSSNumericFactory::px(0))
 {
     if (m_subject) {
         auto document = m_subject->protectedDocument();
@@ -144,6 +146,8 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
     : ScrollTimeline(name, axis)
     , m_insets(WTFMove(insets))
+    , m_startOffset(CSSNumericFactory::px(0))
+    , m_endOffset(CSSNumericFactory::px(0))
 {
 }
 
@@ -198,12 +202,12 @@ AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ViewTimeline::documentWil
 
 Element* ViewTimeline::source() const
 {
-    if (auto* sourceRender = sourceRenderer())
+    if (auto* sourceRender = sourceScrollerRenderer())
         return sourceRender->element();
     return nullptr;
 }
 
-RenderBox* ViewTimeline::sourceRenderer() const
+RenderBox* ViewTimeline::sourceScrollerRenderer() const
 {
     if (!m_subject)
         return nullptr;
@@ -228,7 +232,7 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     if (!subjectRenderBox)
         return { };
 
-    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer(), document);
+    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceScrollerRenderer(), document);
     if (!sourceScrollableArea)
         return { };
 
@@ -240,13 +244,12 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     //   cover range
     // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
     //   corresponding to the start of the cover range
-    // TODO: investigate best way to compute subjectOffset, as offsetTop uses offsetParent(), not the containing scroller
-    // TODO: view timeline progress calculation: (currentScrollOffset - coverRangeStart) / (coverRangeEnd - coverRangeStart)
 
     float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
     float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
 
-    float subjectOffset = axis() == ScrollAxis::Block ? subjectRenderBox->offsetTop() : subjectRenderBox->offsetLeft();
+    auto subjectOffsetFromSource = subjectRenderBox->localToContainerPoint(FloatPoint(), sourceScrollerRenderer());
+    float subjectOffset = axis() == ScrollAxis::Block ? subjectOffsetFromSource.y() : subjectOffsetFromSource.x();
 
     float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
 
@@ -294,16 +297,18 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     return { currentScrollOffset, rangeStart + ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart), rangeEnd - ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart) };
 }
 
-const CSSNumericValue& ViewTimeline::startOffset() const
+const CSSNumericValue& ViewTimeline::startOffset()
 {
     auto data = computeTimelineData();
-    return CSSNumericFactory::px(data.rangeStart);
+    m_startOffset = CSSNumericFactory::px(data.rangeStart);
+    return m_startOffset;
 }
 
-const CSSNumericValue& ViewTimeline::endOffset() const
+const CSSNumericValue& ViewTimeline::endOffset()
 {
     auto data = computeTimelineData();
-    return CSSNumericFactory::px(data.rangeEnd);
+    m_endOffset = CSSNumericFactory::px(data.rangeEnd);
+    return m_endOffset;
 }
 
 } // namespace WebCore
