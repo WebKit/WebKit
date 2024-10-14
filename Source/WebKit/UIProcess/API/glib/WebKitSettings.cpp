@@ -43,6 +43,7 @@
 #include <cmath>
 #include <glib/gi18n-lib.h>
 #include <pal/text/TextEncodingRegistry.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
