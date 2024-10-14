@@ -47,6 +47,10 @@ typedef struct _NSRect NSRect;
 #endif
 #endif
 
+#if USE(SKIA)
+struct SkIRect;
+#endif
+
 #if PLATFORM(WIN)
 typedef struct tagRECT RECT;
 #endif
@@ -220,6 +224,11 @@ public:
 
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     WEBCORE_EXPORT operator NSRect() const;
+#endif
+
+#if USE(SKIA)
+    IntRect(const SkIRect&);
+    operator SkIRect() const;
 #endif
 
 private:

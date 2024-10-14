@@ -146,18 +146,60 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
 
 void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
+    UNUSED_PARAM(destFormat);
+
     if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
         return;
 
-    auto info = m_surface->imageInfo();
-    auto data = SkData::MakeUninitialized(info.computeMinByteSize());
-    auto* pixels = static_cast<uint8_t*>(data->writable_data());
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, pixels);
+    ASSERT(IntRect({ 0, 0 }, pixelBuffer.size()).contains(srcRect));
+    ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8 || pixelBuffer.format().pixelFormat == PixelFormat::BGRA8);
+    ASSERT(pixelBuffer.format().alphaFormat == AlphaPremultiplication::Premultiplied || pixelBuffer.format().alphaFormat == AlphaPremultiplication::Unpremultiplied);
 
-    // Create a SkImageInfo so the writePixels call will transform the pixels from BGRA to RGBA when painting.
-    SkImageInfo imageInfo = SkImageInfo::Make(info.width(), info.height(), SkColorType::kBGRA_8888_SkColorType, SkAlphaType::kPremul_SkAlphaType, colorSpace().platformColorSpace());
-    SkPixmap pixmap(imageInfo, pixels, info.minRowBytes64());
-    m_surface->writePixels(pixmap, 0, 0);
+    const auto colorType = (pixelBuffer.format().pixelFormat == PixelFormat::RGBA8)
+        ? SkColorType::kRGBA_8888_SkColorType : SkColorType::kBGRA_8888_SkColorType;
+
+    const auto alphaType = (pixelBuffer.format().alphaFormat == AlphaPremultiplication::Premultiplied)
+        ? SkAlphaType::kPremul_SkAlphaType : SkAlphaType::kUnpremul_SkAlphaType;
+
+    const IntRect backendRect { { }, size() };
+    auto sourceRectClipped = intersection({ IntPoint::zero(), pixelBuffer.size() }, srcRect);
+    auto destinationRect = sourceRectClipped;
+    destinationRect.moveBy(destPoint);
+
+    if (srcRect.x() < 0)
+        destinationRect.setX(destinationRect.x() - srcRect.x());
+    if (srcRect.y() < 0)
+        destinationRect.setY(destinationRect.y() - srcRect.y());
+
+    destinationRect.intersect(backendRect);
+    sourceRectClipped.setSize(destinationRect.size());
+
+    auto pixelBufferInfo = SkImageInfo::Make(pixelBuffer.size().width(), pixelBuffer.size().height(),
+        colorType, alphaType, pixelBuffer.format().colorSpace.platformColorSpace());
+    SkPixmap pixmap(pixelBufferInfo, pixelBuffer.bytes().data(), pixelBuffer.size().width() * 4);
+
+    SkPixmap srcPixmap;
+    if (UNLIKELY(!pixmap.extractSubset(&srcPixmap, sourceRectClipped)))
+        return;
+
+    const auto destAlphaType = (destFormat == AlphaPremultiplication::Premultiplied)
+        ? SkAlphaType::kPremul_SkAlphaType : SkAlphaType::kUnpremul_SkAlphaType;
+
+    // If all the pixels in the source rectangle are opaque, it does not matter which kind
+    // of alpha is involved: the destination pixels will be replaced by the source ones.
+    if (m_surface->imageInfo().alphaType() == destAlphaType || srcPixmap.computeIsOpaque()) {
+        m_surface->writePixels(srcPixmap, destinationRect.x(), destinationRect.y());
+        return;
+    }
+
+    // Fall back to converting, but only the part covered by sourceRectClipped/srcPixmap.
+    auto data = SkData::MakeUninitialized(srcPixmap.computeByteSize());
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, sourceRectClipped, IntPoint::zero(), destFormat,
+        static_cast<uint8_t*>(data->writable_data()));
+    auto convertedSrcInfo = SkImageInfo::Make(srcPixmap.dimensions(), SkColorType::kBGRA_8888_SkColorType,
+        SkAlphaType::kPremul_SkAlphaType, colorSpace().platformColorSpace());
+    SkPixmap convertedSrcPixmap(convertedSrcInfo, data->writable_data(), convertedSrcInfo.minRowBytes64());
+    m_surface->writePixels(convertedSrcPixmap, destinationRect.x(), destinationRect.y());
 }
 
 #if USE(COORDINATED_GRAPHICS)
