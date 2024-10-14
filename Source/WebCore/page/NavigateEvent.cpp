@@ -119,8 +119,10 @@ void NavigateEvent::processScrollBehavior(Document& document)
 
     if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload)
         document.frame()->checkedHistory()->restoreScrollPositionAndViewState();
-    else if (!document.frame()->view()->scrollToFragment(document.url()))
-        document.frame()->view()->scrollTo({ 0, 0 });
+    else if (!document.frame()->view()->scrollToFragment(document.url())) {
+        if (!document.url().hasFragmentIdentifier())
+            document.frame()->view()->scrollTo({ 0, 0 });
+    }
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll
