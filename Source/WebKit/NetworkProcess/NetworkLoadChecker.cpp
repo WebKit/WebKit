@@ -370,6 +370,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     case FetchOptions::Destination::Audio:
     case FetchOptions::Destination::Document:
     case FetchOptions::Destination::Embed:
+    case FetchOptions::Destination::Environmentmap:
     case FetchOptions::Destination::Font:
     case FetchOptions::Destination::Image:
     case FetchOptions::Destination::Iframe:

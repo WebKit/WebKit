@@ -56,6 +56,7 @@ public:
 #if ENABLE(MODEL_PROCESS)
     virtual void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) = 0;
     virtual void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) = 0;
+    virtual void didFinishEnvironmentMapLoading() = 0;
 #endif
     virtual std::optional<PlatformLayerIdentifier> platformLayerID() = 0;
 };

@@ -1,0 +1,6 @@
+
+PASS <model> rejects the environmentMapReady promise when provided with an unknown environmentmap attribute resource.
+PASS <model> rejects the environmentMapReady promise when provided with an unknown resource via JS environmentMap.
+PASS <model> rejects the environmentMapReady promise when its environmentMap load is aborted.
+PASS <model> resolves the environmentMapReady promise when provided with a known resource.
+

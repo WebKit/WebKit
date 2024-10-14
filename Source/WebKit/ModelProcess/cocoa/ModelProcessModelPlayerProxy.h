@@ -126,11 +126,13 @@ public:
     void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
     Seconds currentTime() const final;
     void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
 
 private:
     ModelProcessModelPlayerProxy(ModelProcessModelPlayerManagerProxy&, WebCore::ModelPlayerIdentifier, Ref<IPC::Connection>&&);
 
     void computeTransform();
+    void applyEnvironmentMapDataAndRelease();
 
     WebCore::ModelPlayerIdentifier m_id;
     Ref<IPC::Connection> m_webProcessConnection;
@@ -155,6 +157,8 @@ private:
     bool m_autoplay { false };
     bool m_loop { false };
     double m_playbackRate { 1.0 };
+
+    RefPtr<WebCore::SharedBuffer> m_environmentMapData;
 };
 
 } // namespace WebKit

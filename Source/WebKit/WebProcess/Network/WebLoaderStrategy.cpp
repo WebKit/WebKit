@@ -157,6 +157,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::ApplicationManifest:
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
         return Seconds::infinity();

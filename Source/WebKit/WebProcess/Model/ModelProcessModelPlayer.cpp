@@ -107,6 +107,11 @@ void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(bool isPaused, dou
     m_lastCachedClockTimestamp = clockTimestamp;
 }
 
+void ModelProcessModelPlayer::didFinishEnvironmentMapLoading()
+{
+    m_client->didFinishEnvironmentMapLoading();
+}
+
 // MARK: - WebCore::ModelPlayer
 
 void ModelProcessModelPlayer::load(WebCore::Model& model, WebCore::LayoutSize size)
@@ -310,6 +315,14 @@ void ModelProcessModelPlayer::setCurrentTime(Seconds currentTime, CompletionHand
         }
         completionHandler();
     });
+}
+
+void ModelProcessModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
+{
+    if (data->isEmpty())
+        return;
+
+    send(Messages::ModelProcessModelPlayerProxy::SetEnvironmentMap(WTFMove(data)));
 }
 
 }

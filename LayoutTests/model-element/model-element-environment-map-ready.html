@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> environmentMapReady promise</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelWithAttributesAndSource(t, {environmentmap: "resources/does-not-exist.hdr" }, "resources/heart.usdz");
+    return model.environmentMapReady.then(
+        value => assert_unreached("Unexpected environmentMapReady promise resolution."),
+        reason => assert_true(reason.toString().includes("NetworkError"), "The environmentMapReady promise is rejected with a NetworkError.")
+    );
+}, `<model> rejects the environmentMapReady promise when provided with an unknown environmentmap attribute resource.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    model.environmentMap = "resources/does-not-exist.hdr"
+    return model.environmentMapReady.then(
+        value => assert_unreached("Unexpected environmentMapReady promise resolution."),
+        reason => assert_true(reason.toString().includes("NetworkError"), "The environmentMapReady promise is rejected with a NetworkError.")
+    );
+}, `<model> rejects the environmentMapReady promise when provided with an unknown resource via JS environmentMap.`);
+
+promise_test(async t => {
+    const [model, source] = createModelWithAttributesAndSource(t, {environmentmap: "resources/blue.hdr" }, "resources/heart.usdz");
+    const envMapReady = model.environmentMapReady;
+
+    model.environmentMap = "";
+    assert_not_equals(model.environmentMapReady, envMapReady, "Resetting environmentMap resets the environmentMapReadyReady promise.");
+
+    return envMapReady.then(
+        value => assert_unreached("Unexpected environmentMapReady promise resolution."),
+        reason => assert_true(reason.toString().includes("AbortError"), "The environmentMapReady promise is rejected with a AbortError.")
+    );
+}, `<model> rejects the environmentMapReady promise when its environmentMap load is aborted.`);
+
+promise_test(async t => {
+    const blueResource = "resources/blue.hdr";
+    const redResource = "resources/red.hdr";
+
+    const [model, source] = createModelWithAttributesAndSource(t, {environmentmap: blueResource }, "resources/cube.usdz");
+    assert_true(model.environmentMap.includes(blueResource));
+    await model.environmentMapReady;
+
+    model.environmentMap = redResource
+    assert_true(model.environmentMap.includes(redResource));
+    await model.environmentMapReady;
+}, `<model> resolves the environmentMapReady promise when provided with a known resource.`);
+
+</script>
+</body>

@@ -64,6 +64,7 @@ private:
     void didFinishLoading(const WebCore::FloatPoint3D&, const WebCore::FloatPoint3D&);
     void didUpdateEntityTransform(const WebCore::TransformationMatrix&);
     void didUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp);
+    void didFinishEnvironmentMapLoading();
 
     // WebCore::ModelPlayer overrides.
     WebCore::ModelPlayerIdentifier identifier() const final { return m_id; }
@@ -98,6 +99,7 @@ private:
     void setPaused(bool, CompletionHandler<void(bool succeeded)>&&) final;
     Seconds currentTime() const final;
     void setCurrentTime(Seconds, CompletionHandler<void()>&&) final;
+    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
 
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;

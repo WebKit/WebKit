@@ -106,6 +106,10 @@ void ModelPlayer::setCurrentTime(Seconds, CompletionHandler<void()>&& completion
 {
     completionHandler();
 }
+
+void ModelPlayer::setEnvironmentMap(Ref<SharedBuffer>&&)
+{
+}
 #endif // ENABLE(MODEL_PROCESS)
 
 }

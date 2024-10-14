@@ -37,6 +37,7 @@ messages -> ModelProcessModelPlayerProxy {
     SetPlaybackRate(double playbackRate) -> (double effectivePlaybackRate) Async
     SetPaused(bool paused) -> (bool succeeded) Async
     SetCurrentTime(Seconds currentTime) -> () Async
+    SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
 }
 
 #endif

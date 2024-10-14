@@ -373,6 +373,8 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     updateOpacity();
     startAnimating();
 
+    applyEnvironmentMapDataAndRelease();
+
     send(Messages::ModelProcessModelPlayer::DidFinishLoading(WebCore::FloatPoint3D(m_originalBoundingBoxCenter.x, m_originalBoundingBoxCenter.y, m_originalBoundingBoxCenter.z), WebCore::FloatPoint3D(m_originalBoundingBoxExtents.x, m_originalBoundingBoxExtents.y, m_originalBoundingBoxExtents.z)));
 }
 
@@ -570,6 +572,26 @@ void ModelProcessModelPlayerProxy::setCurrentTime(Seconds currentTime, Completio
     [m_modelRKEntity setCurrentTime:currentTime.seconds()];
     completionHandler();
 }
+
+void ModelProcessModelPlayerProxy::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
+{
+    m_environmentMapData = WTFMove(data);
+    if (m_modelRKEntity)
+        applyEnvironmentMapDataAndRelease();
+}
+
+void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()
+{
+    if (m_environmentMapData) {
+        if (m_environmentMapData->size() > 0)
+            [m_modelRKEntity applyIBLData:m_environmentMapData->createNSData().get()];
+        else
+            [m_modelRKEntity removeIBL];
+        m_environmentMapData = nullptr;
+        send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading());
+    }
+}
+
 
 } // namespace WebKit
 

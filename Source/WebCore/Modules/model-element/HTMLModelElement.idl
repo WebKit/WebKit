@@ -54,6 +54,9 @@
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> pause();
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double currentTime;
 
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded, Reflect, URL] attribute USVString environmentMap;
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute Promise<undefined> environmentMapReady;
+
     undefined enterFullscreen();
 
     [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<HTMLModelElementCamera> getCamera();

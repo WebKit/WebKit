@@ -12,3 +12,15 @@ const createModelAndSource = (test, src) => {
 
     return [model, source];
 };
+
+const createModelWithAttributesAndSource= (test, attributes, src) => {
+    [model, source] = createModelAndSource(test, src);
+
+    for (const attrKey in attributes) {
+        if (attributes.hasOwnProperty(attrKey)) {
+            model.setAttribute(attrKey, attributes[attrKey]);
+        }
+    }
+
+    return [model, source];
+};

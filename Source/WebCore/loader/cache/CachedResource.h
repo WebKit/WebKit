@@ -91,6 +91,7 @@ public:
         SVGFontResource,
         MediaResource,
 #if ENABLE(MODEL_ELEMENT)
+        EnvironmentMapResource,
         ModelResource,
 #endif
         RawResource,
@@ -463,6 +464,7 @@ inline bool CachedResource::isMainOrMediaOrIconOrRawResource() const
     return type() == Type::MainResource
         || type() == Type::MediaResource
 #if ENABLE(MODEL_ELEMENT)
+        || type() == Type::EnvironmentMapResource
         || type() == Type::ModelResource
 #endif
         || type() == Type::Icon

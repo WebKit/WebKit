@@ -3361,6 +3361,7 @@ enum class WebCore::FetchOptionsDestination : uint8_t {
     Audioworklet,
     Document,
     Embed,
+    Environmentmap,
     Font,
     Image,
     Iframe,

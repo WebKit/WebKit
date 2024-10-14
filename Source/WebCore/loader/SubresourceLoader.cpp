@@ -618,6 +618,7 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
     case CachedResource::Type::Ping:
     case CachedResource::Type::MediaResource:
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
     case CachedResource::Type::Icon:

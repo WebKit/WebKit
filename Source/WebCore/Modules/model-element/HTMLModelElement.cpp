@@ -82,6 +82,7 @@ HTMLModelElement::HTMLModelElement(const QualifiedName& tagName, Document& docum
     , m_entityTransform(DOMMatrixReadOnly::create(TransformationMatrix::identity, DOMMatrixReadOnly::Is2D::No))
     , m_boundingBoxCenter(DOMPointReadOnly::create({ }))
     , m_boundingBoxExtents(DOMPointReadOnly::create({ }))
+    , m_environmentMapReadyPromise(makeUniqueRef<EnvironmentMapPromise>())
 #endif
 {
 }
@@ -231,40 +232,24 @@ void HTMLModelElement::didAttachRenderers()
 
 void HTMLModelElement::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
-    ASSERT_UNUSED(resource, &resource == m_resource);
-    m_data.append(buffer);
+    if (&resource == m_resource)
+        m_data.append(buffer);
+#if ENABLE(MODEL_PROCESS)
+    else if (&resource == m_environmentMapResource)
+        m_pendingEnvironmentMapData.append(buffer);
+#endif
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
-    auto invalidateResourceHandleAndUpdateRenderer = [&] {
-        m_resource->removeClient(*this);
-        m_resource = nullptr;
-
-        if (CheckedPtr renderer = this->renderer())
-            renderer->updateFromElement();
-    };
-
-    if (resource.loadFailedOrCanceled()) {
-        m_data.reset();
-
-        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-
-        invalidateResourceHandleAndUpdateRenderer();
-
-        if (!m_readyPromise->isFulfilled())
-            m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
-        return;
-    }
-
-    m_dataComplete = true;
-    m_model = Model::create(m_data.takeAsContiguous().get(), resource.mimeType(), resource.url());
-
-    ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
-
-    invalidateResourceHandleAndUpdateRenderer();
-
-    modelDidChange();
+    if (&resource == m_resource)
+        modelResourceFinished();
+#if ENABLE(MODEL_PROCESS)
+    else if (&resource == m_environmentMapResource)
+        environmentMapResourceFinished();
+#endif
 }
 
 // MARK: - ModelPlayer support
@@ -318,6 +303,11 @@ void HTMLModelElement::createModelPlayer()
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
     m_modelPlayer->load(*m_model, size);
+
+#if ENABLE(MODEL_PROCESS)
+    if (m_pendingEnvironmentMapData)
+        m_modelPlayer->setEnvironmentMap(m_pendingEnvironmentMapData.takeAsContiguous().get());
+#endif
 }
 
 void HTMLModelElement::deleteModelPlayer()
@@ -453,6 +443,11 @@ void HTMLModelElement::didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D& ce
     m_boundingBoxCenter = DOMPointReadOnly::fromFloatPoint(center);
     m_boundingBoxExtents = DOMPointReadOnly::fromFloatPoint(extents);
 }
+
+void HTMLModelElement::didFinishEnvironmentMapLoading()
+{
+    m_environmentMapReadyPromise->resolve();
+}
 #endif // ENABLE(MODEL_PROCESS)
 
 // MARK: - Fullscreen support.
@@ -496,6 +491,8 @@ void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomStr
         updateAutoplay();
     else if (name == loopAttr)
         updateLoop();
+    else if (name == environmentmapAttr)
+        updateEnvironmentMap();
 #endif
     else
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
@@ -688,7 +685,126 @@ void HTMLModelElement::setCurrentTime(double currentTime)
     if (m_modelPlayer)
         m_modelPlayer->setCurrentTime(Seconds(currentTime), [&]() { });
 }
+
+const URL& HTMLModelElement::environmentMap() const
+{
+    return m_environmentMapURL;
+};
+
+void HTMLModelElement::setEnvironmentMap(const URL& url)
+{
+    if (url.string() == m_environmentMapURL.string())
+        return;
+
+    m_environmentMapURL = url;
+
+    m_pendingEnvironmentMapData.reset();
+
+    if (m_environmentMapResource) {
+        m_environmentMapResource->removeClient(*this);
+        m_environmentMapResource = nullptr;
+    }
+
+    if (!m_environmentMapReadyPromise->isFulfilled())
+        m_environmentMapReadyPromise->reject(Exception { ExceptionCode::AbortError });
+
+    m_environmentMapReadyPromise = makeUniqueRef<EnvironmentMapPromise>();
+
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.destination = FetchOptions::Destination::Environmentmap;
+
+    auto crossOriginAttribute = parseCORSSettingsAttribute(attributeWithoutSynchronization(HTMLNames::crossoriginAttr));
+    auto request = createPotentialAccessControlRequest(ResourceRequest { m_environmentMapURL }, WTFMove(options), document(), crossOriginAttribute);
+    request.setInitiator(*this);
+
+    auto resource = document().protectedCachedResourceLoader()->requestEnvironmentMapResource(WTFMove(request));
+    if (!resource.has_value()) {
+        if (!m_environmentMapReadyPromise->isFulfilled())
+            m_environmentMapReadyPromise->reject(Exception { ExceptionCode::NetworkError });
+        // sending a message with empty data to indicate resource removal
+        if (m_modelPlayer)
+            m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
+        return;
+    }
+
+    m_pendingEnvironmentMapData.empty();
+
+    m_environmentMapResource = resource.value();
+    m_environmentMapResource->addClient(*this);
+}
+
+void HTMLModelElement::updateEnvironmentMap()
+{
+    setEnvironmentMap(selectEnvironmentMapURL());
+}
+
+URL HTMLModelElement::selectEnvironmentMapURL() const
+{
+    if (!document().hasBrowsingContext())
+        return { };
+
+    if (hasAttributeWithoutSynchronization(environmentmapAttr))
+        return getURLAttribute(environmentmapAttr);
+
+    return { };
+}
+
+void HTMLModelElement::environmentMapResourceFinished()
+{
+    if (m_environmentMapResource->loadFailedOrCanceled()) {
+        m_pendingEnvironmentMapData.reset();
+
+        m_environmentMapResource->removeClient(*this);
+        m_environmentMapResource = nullptr;
+
+        if (!m_environmentMapReadyPromise->isFulfilled())
+            m_environmentMapReadyPromise->reject(Exception { ExceptionCode::NetworkError });
+
+        // sending a message with empty data to indicate resource removal
+        if (m_modelPlayer)
+            m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
+        return;
+    }
+    if (m_modelPlayer)
+        m_modelPlayer->setEnvironmentMap(m_pendingEnvironmentMapData.takeAsContiguous().get());
+
+    m_environmentMapResource->removeClient(*this);
+    m_environmentMapResource = nullptr;
+}
+
 #endif // ENABLE(MODEL_PROCESS)
+
+void HTMLModelElement::modelResourceFinished()
+{
+    auto invalidateResourceHandleAndUpdateRenderer = [&] {
+        m_resource->removeClient(*this);
+        m_resource = nullptr;
+
+        if (CheckedPtr renderer = this->renderer())
+            renderer->updateFromElement();
+    };
+
+    if (m_resource->loadFailedOrCanceled()) {
+        m_data.reset();
+
+        ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+        invalidateResourceHandleAndUpdateRenderer();
+
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { ExceptionCode::NetworkError });
+        return;
+    }
+
+    m_dataComplete = true;
+    m_model = Model::create(m_data.takeAsContiguous().get(), m_resource->mimeType(), m_resource->url());
+
+    ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+    invalidateResourceHandleAndUpdateRenderer();
+
+    modelDidChange();
+}
 
 void HTMLModelElement::isPlayingAnimation(IsPlayingAnimationPromise&& promise)
 {
@@ -904,7 +1020,11 @@ bool HTMLModelElement::hasPresentationalHintsForAttribute(const QualifiedName& n
 
 bool HTMLModelElement::isURLAttribute(const Attribute& attribute) const
 {
-    return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+    return attribute.name() == srcAttr
+#if ENABLE(MODEL_PROCESS)
+        || attribute.name() == environmentmapAttr
+#endif
+        || HTMLElement::isURLAttribute(attribute);
 }
 
 }

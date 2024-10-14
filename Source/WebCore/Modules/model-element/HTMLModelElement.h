@@ -55,6 +55,10 @@ class MouseEvent;
 template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
+#if ENABLE(MODEL_PROCESS)
+template<typename IDLType> class DOMPromiseProxy;
+#endif
+
 class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLModelElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLModelElement);
@@ -92,6 +96,9 @@ public:
 
     const DOMPointReadOnly& boundingBoxCenter() const;
     const DOMPointReadOnly& boundingBoxExtents() const;
+
+    using EnvironmentMapPromise = DOMPromiseProxy<IDLUndefined>;
+    EnvironmentMapPromise& environmentMapReady() { return m_environmentMapReadyPromise.get(); }
 #endif
 
     void enterFullscreen();
@@ -136,6 +143,9 @@ public:
     void setPaused(bool, DOMPromiseDeferred<void>&&);
     double currentTime() const;
     void setCurrentTime(double);
+
+    const URL& environmentMap() const;
+    void setEnvironmentMap(const URL&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -186,6 +196,7 @@ private:
 #if ENABLE(MODEL_PROCESS)
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
     void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
+    void didFinishEnvironmentMapLoading() final;
 #endif
     std::optional<PlatformLayerIdentifier> platformLayerID() final;
 
@@ -205,7 +216,11 @@ private:
     void updateAutoplay();
     bool loop() const;
     void updateLoop();
+    void updateEnvironmentMap();
+    URL selectEnvironmentMapURL() const;
+    void environmentMapResourceFinished();
 #endif
+    void modelResourceFinished();
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
@@ -222,6 +237,10 @@ private:
     Ref<DOMPointReadOnly> m_boundingBoxCenter;
     Ref<DOMPointReadOnly> m_boundingBoxExtents;
     double m_playbackRate { 1.0 };
+    URL m_environmentMapURL;
+    SharedBufferBuilder m_pendingEnvironmentMapData;
+    CachedResourceHandle<CachedRawResource> m_environmentMapResource;
+    UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
 };
 

@@ -159,6 +159,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
         return std::nullopt;
     case FetchRequestDestination::Embed:
         return std::nullopt;
+    case FetchRequestDestination::Environmentmap:
+        return std::nullopt;
     case FetchRequestDestination::Font:
         return CachedResource::Type::FontResource;
     case FetchRequestDestination::Image:
@@ -229,6 +231,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::Type::ApplicationManifest:
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
 #endif
         // None of these values is currently supported as an `as` value.

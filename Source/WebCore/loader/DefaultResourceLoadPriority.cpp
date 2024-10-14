@@ -59,6 +59,7 @@ ResourceLoadPriority DefaultResourceLoadPriority::forResourceType(CachedResource
         return ResourceLoadPriority::Low;
 #endif
 #if ENABLE(MODEL_ELEMENT)
+    case CachedResource::Type::EnvironmentMapResource:
     case CachedResource::Type::ModelResource:
         return ResourceLoadPriority::Medium;
 #endif
