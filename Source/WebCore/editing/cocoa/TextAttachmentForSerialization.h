@@ -56,8 +56,6 @@ struct MultiRepresentationHEICAttachmentSingleImage {
 struct MultiRepresentationHEICAttachmentData {
     String identifier;
     String description;
-    String credit;
-    String digitalSourceType;
     Vector<MultiRepresentationHEICAttachmentSingleImage> images;
 
     // Not serialized.

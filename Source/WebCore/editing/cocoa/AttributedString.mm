@@ -169,13 +169,6 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
     attachmentData.identifier = attachment.contentIdentifier;
     attachmentData.description = attachment.contentDescription;
 
-#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-    if (RetainPtr<NSDictionary<NSString *, NSString *>> provenance = attachment.strikes.firstObject.provenance) {
-        attachmentData.credit = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCCredit];
-        attachmentData.digitalSourceType = [provenance objectForKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType];
-    }
-#endif
-
     for (NSEmojiImageStrike *strike in attachment.strikes) {
         MultiRepresentationHEICAttachmentSingleImage image;
         RefPtr nativeImage = NativeImage::create(strike.cgImage);
@@ -203,27 +196,11 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
     if (!description.length)
         description = @"Apple Emoji";
 
-#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-    RetainPtr<NSMutableDictionary<NSString *, NSString *>> provenanceInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-
-    NSString *credit = attachmentData.credit;
-    NSString *digitalSourceType = attachmentData.digitalSourceType;
-    if (identifier.length && digitalSourceType.length) {
-        [provenanceInfo setObject:credit forKey:(__bridge NSString *)kCGImagePropertyIPTCCredit];
-        [provenanceInfo setObject:digitalSourceType forKey:(__bridge NSString *)kCGImagePropertyIPTCExtDigitalSourceType];
-    }
-#endif
-
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
-#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
-#else
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
 ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
         [images addObject:strike.get()];
     }
 
