@@ -2875,6 +2875,7 @@ rendering/style/ListStyleType.cpp
 rendering/style/NinePieceImage.cpp
 rendering/style/OffsetRotation.cpp
 rendering/style/QuotesData.cpp
+rendering/style/PositionArea.cpp
 rendering/style/RenderStyle.cpp
 rendering/style/RenderStyleConstants.cpp
 rendering/style/SVGRenderStyle.cpp

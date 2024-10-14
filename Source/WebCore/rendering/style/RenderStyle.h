@@ -273,6 +273,8 @@ struct TextEdge;
 class TextSpacingTrim;
 struct TransformOperationData;
 
+struct PositionArea;
+
 template<typename> class FontTaggedSettings;
 template<typename> class RectEdges;
 
@@ -2246,6 +2248,10 @@ public:
     static inline const AtomString& initialPositionAnchor();
     inline const AtomString& positionAnchor() const;
     inline void setPositionAnchor(const AtomString&);
+
+    static inline std::optional<PositionArea> initialPositionArea();
+    inline std::optional<PositionArea> positionArea() const;
+    inline void setPositionArea(std::optional<PositionArea>);
 
 private:
     struct NonInheritedFlags {

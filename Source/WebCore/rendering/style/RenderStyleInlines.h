@@ -32,6 +32,7 @@
 #include "GridPositionsResolver.h"
 #include "HitTestRequest.h"
 #include "ImageOrientation.h"
+#include "PositionArea.h"
 #include "RenderStyle.h"
 #include "ScrollTypes.h"
 #include "ScrollbarColor.h"
@@ -452,6 +453,7 @@ inline Length RenderStyle::initialPerspectiveOriginY() { return { 50.0f, LengthT
 constexpr PointerEvents RenderStyle::initialPointerEvents() { return PointerEvents::Auto; }
 constexpr PositionType RenderStyle::initialPosition() { return PositionType::Static; }
 inline const AtomString& RenderStyle::initialPositionAnchor() { return nullAtom(); }
+inline std::optional<PositionArea> RenderStyle::initialPositionArea() { return std::nullopt; }
 constexpr PrintColorAdjust RenderStyle::initialPrintColorAdjust() { return PrintColorAdjust::Economy; }
 constexpr Order RenderStyle::initialRTLOrdering() { return Order::Logical; }
 inline Length RenderStyle::initialRadius() { return LengthType::Auto; }
@@ -661,6 +663,7 @@ inline LengthPoint RenderStyle::perspectiveOrigin() const { return m_nonInherite
 inline const Length& RenderStyle::perspectiveOriginX() const { return m_nonInheritedData->rareData->perspectiveOriginX; }
 inline const Length& RenderStyle::perspectiveOriginY() const { return m_nonInheritedData->rareData->perspectiveOriginY; }
 inline const AtomString& RenderStyle::positionAnchor() const { return m_nonInheritedData->rareData->positionAnchor; }
+inline std::optional<PositionArea> RenderStyle::positionArea() const { return m_nonInheritedData->rareData->positionArea; }
 inline bool RenderStyle::preserveNewline() const { return preserveNewline(whiteSpace()); }
 inline bool RenderStyle::preserves3D() const { return usedTransformStyle3D() == TransformStyle3D::Preserve3D; }
 inline QuotesData* RenderStyle::quotes() const { return m_rareInheritedData->quotes.get(); }

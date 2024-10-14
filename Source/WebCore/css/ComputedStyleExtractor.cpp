@@ -3210,6 +3210,160 @@ static Ref<CSSValue> valueForAnchorName(const Vector<AtomString>& names)
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
+static CSSValueID toCSSValueID(const PositionArea::Cols value)
+{
+    switch (value) {
+    case PositionArea::Cols::Center:
+        return CSSValueCenter;
+    case PositionArea::Cols::End:
+        return CSSValueEnd;
+    case PositionArea::Cols::InlineEnd:
+        return CSSValueInlineEnd;
+    case PositionArea::Cols::InlineStart:
+        return CSSValueInlineStart;
+    case PositionArea::Cols::Left:
+        return CSSValueLeft;
+    case PositionArea::Cols::Right:
+        return CSSValueRight;
+    case PositionArea::Cols::SelfEnd:
+        return CSSValueSelfEnd;
+    case PositionArea::Cols::SelfInlineEnd:
+        return CSSValueSelfInlineEnd;
+    case PositionArea::Cols::SelfInlineStart:
+        return CSSValueSelfInlineStart;
+    case PositionArea::Cols::SelfStart:
+        return CSSValueSelfStart;
+    case PositionArea::Cols::SpanAll:
+        return CSSValueSpanAll;
+    case PositionArea::Cols::SpanEnd:
+        return CSSValueSpanEnd;
+    case PositionArea::Cols::SpanInlineEnd:
+        return CSSValueSpanInlineEnd;
+    case PositionArea::Cols::SpanInlineStart:
+        return CSSValueSpanInlineStart;
+    case PositionArea::Cols::SpanLeft:
+        return CSSValueSpanLeft;
+    case PositionArea::Cols::SpanRight:
+        return CSSValueSpanRight;
+    case PositionArea::Cols::SpanSelfEnd:
+        return CSSValueSpanSelfEnd;
+    case PositionArea::Cols::SpanSelfInlineEnd:
+        return CSSValueSpanSelfInlineEnd;
+    case PositionArea::Cols::SpanSelfInlineStart:
+        return CSSValueSpanSelfInlineStart;
+    case PositionArea::Cols::SpanSelfStart:
+        return CSSValueSpanSelfStart;
+    case PositionArea::Cols::SpanStart:
+        return CSSValueSpanStart;
+    case PositionArea::Cols::SpanXEnd:
+        return CSSValueSpanXEnd;
+    case PositionArea::Cols::SpanXSelfEnd:
+        return CSSValueSpanXSelfEnd;
+    case PositionArea::Cols::SpanXSelfStart:
+        return CSSValueSpanXSelfStart;
+    case PositionArea::Cols::SpanXStart:
+        return CSSValueSpanXStart;
+    case PositionArea::Cols::Start:
+        return CSSValueStart;
+    case PositionArea::Cols::XEnd:
+        return CSSValueXEnd;
+    case PositionArea::Cols::XSelfEnd:
+        return CSSValueXSelfEnd;
+    case PositionArea::Cols::XSelfStart:
+        return CSSValueXSelfStart;
+    case PositionArea::Cols::XStart:
+        return CSSValueXStart;
+    }
+    ASSERT_NOT_REACHED();
+    return CSSValueNone;
+}
+
+static CSSValueID toCSSValueID(const PositionArea::Rows value)
+{
+    switch (value) {
+    case PositionArea::Rows::BlockEnd:
+        return CSSValueBlockEnd;
+    case PositionArea::Rows::BlockStart:
+        return CSSValueBlockStart;
+    case PositionArea::Rows::Bottom:
+        return CSSValueBottom;
+    case PositionArea::Rows::Center:
+        return CSSValueCenter;
+    case PositionArea::Rows::End:
+        return CSSValueEnd;
+    case PositionArea::Rows::SelfBlockEnd:
+        return CSSValueSelfBlockEnd;
+    case PositionArea::Rows::SelfBlockStart:
+        return CSSValueSelfBlockStart;
+    case PositionArea::Rows::SelfEnd:
+        return CSSValueSelfEnd;
+    case PositionArea::Rows::SelfStart:
+        return CSSValueSelfStart;
+    case PositionArea::Rows::SpanAll:
+        return CSSValueSpanAll;
+    case PositionArea::Rows::SpanBlockEnd:
+        return CSSValueSpanBlockEnd;
+    case PositionArea::Rows::SpanBlockStart:
+        return CSSValueSpanBlockStart;
+    case PositionArea::Rows::SpanBottom:
+        return CSSValueSpanBottom;
+    case PositionArea::Rows::SpanEnd:
+        return CSSValueSpanEnd;
+    case PositionArea::Rows::SpanSelfBlockEnd:
+        return CSSValueSpanSelfBlockEnd;
+    case PositionArea::Rows::SpanSelfBlockStart:
+        return CSSValueSpanSelfBlockStart;
+    case PositionArea::Rows::SpanSelfEnd:
+        return CSSValueSpanSelfEnd;
+    case PositionArea::Rows::SpanSelfStart:
+        return CSSValueSpanSelfStart;
+    case PositionArea::Rows::SpanStart:
+        return CSSValueSpanStart;
+    case PositionArea::Rows::SpanTop:
+        return CSSValueSpanTop;
+    case PositionArea::Rows::SpanYEnd:
+        return CSSValueSpanYEnd;
+    case PositionArea::Rows::SpanYSelfEnd:
+        return CSSValueSpanYSelfEnd;
+    case PositionArea::Rows::SpanYSelfStart:
+        return CSSValueSpanYSelfStart;
+    case PositionArea::Rows::SpanYStart:
+        return CSSValueSpanYStart;
+    case PositionArea::Rows::Start:
+        return CSSValueStart;
+    case PositionArea::Rows::Top:
+        return CSSValueTop;
+    case PositionArea::Rows::YEnd:
+        return CSSValueYEnd;
+    case PositionArea::Rows::YSelfEnd:
+        return CSSValueYSelfEnd;
+    case PositionArea::Rows::YSelfStart:
+        return CSSValueYSelfStart;
+    case PositionArea::Rows::YStart:
+        return CSSValueYStart;
+    }
+    ASSERT_NOT_REACHED();
+    return CSSValueNone;
+}
+
+static Ref<CSSValue> valueForPositionArea(const std::optional<PositionArea>& positionArea)
+{
+    if (!positionArea)
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    auto cols = toCSSValueID(positionArea->cols);
+    auto rows = toCSSValueID(positionArea->rows);
+
+    if (cols == rows)
+        return CSSPrimitiveValue::create(cols);
+    if (cols == CSSValueSpanAll && !PositionArea::isAmbiguous(rows))
+        return CSSPrimitiveValue::create(rows);
+    if (rows == CSSValueSpanAll && !PositionArea::isAmbiguous(cols))
+        return CSSPrimitiveValue::create(cols);
+
+    return CSSValuePair::create(CSSPrimitiveValue::create(cols), CSSPrimitiveValue::create(rows));
+}
+
 static Ref<CSSValue> valueForTimelineScopeNames(const Vector<AtomString>& names)
 {
     if (names.isEmpty())
@@ -4896,6 +5050,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         if (style.positionAnchor().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::createCustomIdent(style.positionAnchor());
+    case CSSPropertyPositionArea:
+        return valueForPositionArea(style.positionArea());
     case CSSPropertyTimelineScope:
         switch (style.timelineScope().type) {
         case TimelineScope::Type::None:

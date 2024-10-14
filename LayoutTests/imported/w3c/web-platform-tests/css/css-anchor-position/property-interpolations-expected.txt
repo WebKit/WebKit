@@ -167,90 +167,90 @@ PASS Web Animations: property <position-anchor> from [--foo] to [--bar] at (0.5)
 PASS Web Animations: property <position-anchor> from [--foo] to [--bar] at (0.6) should be [--bar]
 PASS Web Animations: property <position-anchor> from [--foo] to [--bar] at (1) should be [--bar]
 PASS Web Animations: property <position-anchor> from [--foo] to [--bar] at (1.5) should be [--bar]
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (-0.3) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (0) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (0.3) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (-0.3) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.3) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (0.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (0.6) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (1) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [center] at (1.5) should be [center] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (-0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (-0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (-0.3) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (0) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (0.3) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (-0.3) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.3) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (-0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (0) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (-0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (0) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (0.3) should be [left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (0.5) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (0.6) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (1) should be [right] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [left] to [right] at (1.5) should be [right] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (-0.3) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.3) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (1) should be [center]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (-0.3) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.3) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (1) should be [center]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (-0.3) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (0) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (0.3) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (1) should be [center]
+PASS CSS Transitions: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (-0.3) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.3) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (1) should be [center]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS CSS Animations: property <position-area> from [none] to [center] at (-0.3) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [center] at (0) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [center] at (0.3) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS CSS Animations: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS CSS Animations: property <position-area> from [none] to [center] at (1) should be [center]
+PASS CSS Animations: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS Web Animations: property <position-area> from [none] to [center] at (-0.3) should be [none]
+PASS Web Animations: property <position-area> from [none] to [center] at (0) should be [none]
+PASS Web Animations: property <position-area> from [none] to [center] at (0.3) should be [none]
+PASS Web Animations: property <position-area> from [none] to [center] at (0.5) should be [center]
+PASS Web Animations: property <position-area> from [none] to [center] at (0.6) should be [center]
+PASS Web Animations: property <position-area> from [none] to [center] at (1) should be [center]
+PASS Web Animations: property <position-area> from [none] to [center] at (1.5) should be [center]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (-0.3) should be [left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0) should be [left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.3) should be [left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (1) should be [right]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [left] to [right] at (1.5) should be [right]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (-0.3) should be [left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0) should be [left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.3) should be [left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (1) should be [right]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [left] to [right] at (1.5) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (-0.3) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (0) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (0.3) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (1) should be [right]
+PASS CSS Transitions: property <position-area> from [left] to [right] at (1.5) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (-0.3) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.3) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (1) should be [right]
+PASS CSS Transitions with transition: all: property <position-area> from [left] to [right] at (1.5) should be [right]
+PASS CSS Animations: property <position-area> from [left] to [right] at (-0.3) should be [left]
+PASS CSS Animations: property <position-area> from [left] to [right] at (0) should be [left]
+PASS CSS Animations: property <position-area> from [left] to [right] at (0.3) should be [left]
+PASS CSS Animations: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS CSS Animations: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS CSS Animations: property <position-area> from [left] to [right] at (1) should be [right]
+PASS CSS Animations: property <position-area> from [left] to [right] at (1.5) should be [right]
+PASS Web Animations: property <position-area> from [left] to [right] at (-0.3) should be [left]
+PASS Web Animations: property <position-area> from [left] to [right] at (0) should be [left]
+PASS Web Animations: property <position-area> from [left] to [right] at (0.3) should be [left]
+PASS Web Animations: property <position-area> from [left] to [right] at (0.5) should be [right]
+PASS Web Animations: property <position-area> from [left] to [right] at (0.6) should be [right]
+PASS Web Animations: property <position-area> from [left] to [right] at (1) should be [right]
+PASS Web Animations: property <position-area> from [left] to [right] at (1.5) should be [right]
 FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-fallbacks> from [none] to [--foo] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-fallbacks> from [none] to [--foo] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-fallbacks> from [none] to [--foo] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false

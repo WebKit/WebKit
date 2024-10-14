@@ -121,6 +121,7 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&, const CSSParserConte
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 
