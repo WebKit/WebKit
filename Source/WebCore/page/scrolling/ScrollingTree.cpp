@@ -465,7 +465,9 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
     }
 
     auto nodeID = stateNode->scrollingNodeID();
-    auto parentNodeID = state.frameHostingNode ? state.frameHostingNode->scrollingNodeID() : stateNode->parentNodeID();
+    auto parentNodeID = stateNode->parentNodeID();
+    if (!parentNodeID && state.frameHostingNode && is<ScrollingStateFrameScrollingNode>(stateNode))
+        parentNodeID = state.frameHostingNode->scrollingNodeID();
 
     auto it = m_nodeMap.find(nodeID);
 
