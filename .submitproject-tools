@@ -1,0 +1,7 @@
+[submitproject "filter"]
+    includedSubdirectoryPatterns = Tools/DumpRenderTree
+    includedSubdirectoryPatterns = Tools/ImageDiff
+    includedSubdirectoryPatterns = Tools/MiniBrowser
+    includedSubdirectoryPatterns = Tools/TestRunnerShared
+    includedSubdirectoryPatterns = Tools/WebKitTestRunner
+    excludedSubdirectoryPatterns = Tools/WebKitTestRunner/gtk
