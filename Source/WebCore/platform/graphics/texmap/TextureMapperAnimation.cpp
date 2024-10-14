@@ -1,32 +1,32 @@
 /*
- Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
-
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Library General Public
- License as published by the Free Software Foundation; either
- version 2 of the License, or (at your option) any later version.
-
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Library General Public License for more details.
-
- You should have received a copy of the GNU Library General Public License
- along with this library; see the file COPYING.LIB.  If not, write to
- the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- Boston, MA 02110-1301, USA.
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #include "config.h"
-#include "NicosiaAnimation.h"
+#include "TextureMapperAnimation.h"
+
+#if USE(TEXTURE_MAPPER)
 
 #include "LayoutSize.h"
 #include "TranslateTransformOperation.h"
 #include <wtf/Scope.h>
 
-namespace Nicosia {
-
-using namespace WebCore;
+namespace WebCore {
 
 static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
 {
@@ -77,14 +77,14 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     return FilterOperations { WTFMove(operations) };
 }
 
-static bool shouldReverseAnimationValue(WebCore::Animation::Direction direction, int loopCount)
+static bool shouldReverseAnimationValue(Animation::Direction direction, int loopCount)
 {
-    return (direction == WebCore::Animation::Direction::Alternate && loopCount & 1)
-        || (direction == WebCore::Animation::Direction::AlternateReverse && !(loopCount & 1))
-        || direction == WebCore::Animation::Direction::Reverse;
+    return (direction == Animation::Direction::Alternate && loopCount & 1)
+        || (direction == Animation::Direction::AlternateReverse && !(loopCount & 1))
+        || direction == Animation::Direction::Reverse;
 }
 
-static double normalizedAnimationValue(double runningTime, double duration, WebCore::Animation::Direction direction, double iterationCount)
+static double normalizedAnimationValue(double runningTime, double duration, Animation::Direction direction, double iterationCount)
 {
     if (!duration)
         return 0;
@@ -98,11 +98,11 @@ static double normalizedAnimationValue(double runningTime, double duration, WebC
     return shouldReverseAnimationValue(direction, loopCount) ? 1 - normalized : normalized;
 }
 
-static double normalizedAnimationValueForFillsForwards(double iterationCount, WebCore::Animation::Direction direction)
+static double normalizedAnimationValueForFillsForwards(double iterationCount, Animation::Direction direction)
 {
-    if (direction == WebCore::Animation::Direction::Normal)
+    if (direction == Animation::Direction::Normal)
         return 1;
-    if (direction == WebCore::Animation::Direction::Reverse)
+    if (direction == Animation::Direction::Reverse)
         return 0;
     return shouldReverseAnimationValue(direction, iterationCount) ? 1 : 0;
 }
@@ -139,12 +139,12 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const Animation& animation)
+static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const TextureMapperAnimation& animation)
 {
-    if (animationValue.timingFunction())
-        return *animationValue.timingFunction();
-    if (animation.timingFunction())
-        return *animation.timingFunction();
+    if (auto* function = animationValue.timingFunction())
+        return *function;
+    if (auto* function = animation.timingFunction())
+        return *function;
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
@@ -173,7 +173,7 @@ static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& orig
     return keyframes;
 }
 
-Animation::Animation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const WebCore::Animation& animation, MonotonicTime startTime, Seconds pauseTime, AnimationState state)
+TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(createThreadsafeKeyFrames(keyframes, boxSize))
     , m_boxSize(boxSize)
@@ -190,7 +190,7 @@ Animation::Animation(const String& name, const KeyframeValueList& keyframes, con
 {
 }
 
-Animation::Animation(const Animation& other)
+TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
     , m_keyframes(other.m_keyframes)
     , m_boxSize(other.m_boxSize)
@@ -207,7 +207,7 @@ Animation::Animation(const Animation& other)
 {
 }
 
-Animation& Animation::operator=(const Animation& other)
+TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAnimation& other)
 {
     m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
     m_keyframes = other.m_keyframes;
@@ -225,11 +225,11 @@ Animation& Animation::operator=(const Animation& other)
     return *this;
 }
 
-void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time, KeepInternalState keepInternalState)
+void TextureMapperAnimation::apply(ApplicationResult& applicationResults, MonotonicTime time, KeepInternalState keepInternalState)
 {
     MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
     Seconds oldTotalRunningTime = m_totalRunningTime;
-    AnimationState oldState = m_state;
+    State oldState = m_state;
 
     auto maybeRestoreInternalState = makeScopeExit([&] {
         if (keepInternalState == KeepInternalState::Yes) {
@@ -239,19 +239,19 @@ void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time,
         }
     });
 
-    // Even when m_state == AnimationState::Stopped && !m_fillsForwards, we should calculate the last value to avoid a flash.
+    // Even when m_state == State::Stopped && !m_fillsForwards, we should calculate the last value to avoid a flash.
     // CoordinatedGraphicsScene will soon remove the stopped animation and update the value instead of this function.
 
     Seconds totalRunningTime = computeTotalRunningTime(time);
     double normalizedValue = normalizedAnimationValue(totalRunningTime.seconds(), m_duration, m_direction, m_iterationCount);
 
-    if (m_iterationCount != WebCore::Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
-        m_state = AnimationState::Stopped;
+    if (m_iterationCount != Animation::IterationCountInfinite && totalRunningTime.seconds() >= m_duration * m_iterationCount) {
+        m_state = State::Stopped;
         m_pauseTime = 0_s;
         normalizedValue = normalizedAnimationValueForFillsForwards(m_iterationCount, m_direction);
     }
 
-    applicationResults.hasRunningAnimations |= (m_state == AnimationState::Playing);
+    applicationResults.hasRunningAnimations |= (m_state == State::Playing);
 
     if (!normalizedValue) {
         applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), 0);
@@ -283,15 +283,15 @@ void Animation::apply(ApplicationResult& applicationResults, MonotonicTime time,
     }
 }
 
-void Animation::pause(Seconds time)
+void TextureMapperAnimation::pause(Seconds time)
 {
-    m_state = AnimationState::Paused;
+    m_state = State::Paused;
     m_pauseTime = time;
 }
 
-void Animation::resume()
+void TextureMapperAnimation::resume()
 {
-    m_state = AnimationState::Playing;
+    m_state = State::Playing;
     // FIXME: This seems wrong. m_totalRunningTime is cleared.
     // https://bugs.webkit.org/show_bug.cgi?id=183113
     m_pauseTime = 0_s;
@@ -299,9 +299,9 @@ void Animation::resume()
     m_lastRefreshedTime = MonotonicTime::now();
 }
 
-Seconds Animation::computeTotalRunningTime(MonotonicTime time)
+Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
 {
-    if (m_state == AnimationState::Paused)
+    if (m_state == State::Paused)
         return m_pauseTime;
 
     MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
@@ -310,7 +310,7 @@ Seconds Animation::computeTotalRunningTime(MonotonicTime time)
     return m_totalRunningTime;
 }
 
-void Animation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
+void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedProperty::Translate:
@@ -334,7 +334,7 @@ void Animation::applyInternal(ApplicationResult& applicationResults, const Anima
     }
 }
 
-void Animations::add(const Animation& animation)
+void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
 {
     // Remove the old state if we are resuming a paused animation.
     remove(animation.name(), animation.keyframes().property());
@@ -342,21 +342,21 @@ void Animations::add(const Animation& animation)
     m_animations.append(animation);
 }
 
-void Animations::remove(const String& name)
+void TextureMapperAnimations::remove(const String& name)
 {
-    m_animations.removeAllMatching([&name] (const Animation& animation) {
+    m_animations.removeAllMatching([&name] (const auto& animation) {
         return animation.name() == name;
     });
 }
 
-void Animations::remove(const String& name, AnimatedProperty property)
+void TextureMapperAnimations::remove(const String& name, AnimatedProperty property)
 {
-    m_animations.removeAllMatching([&name, property] (const Animation& animation) {
+    m_animations.removeAllMatching([&name, property] (const auto& animation) {
         return animation.name() == name && animation.keyframes().property() == property;
     });
 }
 
-void Animations::pause(const String& name, Seconds offset)
+void TextureMapperAnimations::pause(const String& name, Seconds offset)
 {
     for (auto& animation : m_animations) {
         if (animation.name() == name)
@@ -364,7 +364,7 @@ void Animations::pause(const String& name, Seconds offset)
     }
 }
 
-void Animations::suspend(MonotonicTime time)
+void TextureMapperAnimations::suspend(MonotonicTime time)
 {
     // FIXME: This seems wrong. `pause` takes time offset (Seconds), not MonotonicTime.
     // https://bugs.webkit.org/show_bug.cgi?id=183112
@@ -372,19 +372,19 @@ void Animations::suspend(MonotonicTime time)
         animation.pause(time.secondsSinceEpoch());
 }
 
-void Animations::resume()
+void TextureMapperAnimations::resume()
 {
     for (auto& animation : m_animations)
         animation.resume();
 }
 
-void Animations::apply(Animation::ApplicationResult& applicationResults, MonotonicTime time, Animation::KeepInternalState keepInternalState)
+void TextureMapperAnimations::apply(TextureMapperAnimation::ApplicationResult& applicationResults, MonotonicTime time, TextureMapperAnimation::KeepInternalState keepInternalState)
 {
-    Vector<Animation*> translateAnimations;
-    Vector<Animation*> rotateAnimations;
-    Vector<Animation*> scaleAnimations;
-    Vector<Animation*> transformAnimations;
-    Vector<Animation*> leafAnimations;
+    Vector<TextureMapperAnimation*> translateAnimations;
+    Vector<TextureMapperAnimation*> rotateAnimations;
+    Vector<TextureMapperAnimation*> scaleAnimations;
+    Vector<TextureMapperAnimation*> transformAnimations;
+    Vector<TextureMapperAnimation*> leafAnimations;
 
     for (auto& animation : m_animations) {
         switch (animation.keyframes().property()) {
@@ -439,46 +439,45 @@ void Animations::apply(Animation::ApplicationResult& applicationResults, Monoton
         animation->apply(applicationResults, time, keepInternalState);
 }
 
-bool Animations::hasActiveAnimationsOfType(AnimatedProperty type) const
+bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedProperty type) const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(),
-        [&type](const Animation& animation) {
-            return animation.keyframes().property() == type;
-        });
+    return std::any_of(m_animations.begin(), m_animations.end(), [&type](const auto& animation) {
+        return animation.keyframes().property() == type;
+    });
 }
 
-bool Animations::hasRunningAnimations() const
+bool TextureMapperAnimations::hasRunningAnimations() const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(),
-        [](const Animation& animation) {
-            return animation.state() == Animation::AnimationState::Playing;
-        });
+    return std::any_of(m_animations.begin(), m_animations.end(), [](const auto& animation) {
+        return animation.state() == TextureMapperAnimation::State::Playing;
+    });
 }
 
-bool Animations::hasRunningTransformAnimations() const
+bool TextureMapperAnimations::hasRunningTransformAnimations() const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(),
-        [](const Animation& animation) {
-            switch (animation.keyframes().property()) {
-            case AnimatedProperty::Translate:
-            case AnimatedProperty::Rotate:
-            case AnimatedProperty::Scale:
-            case AnimatedProperty::Transform:
-                break;
-            default:
-                return false;
-            }
+    return std::any_of(m_animations.begin(), m_animations.end(), [](const auto& animation) {
+        switch (animation.keyframes().property()) {
+        case AnimatedProperty::Translate:
+        case AnimatedProperty::Rotate:
+        case AnimatedProperty::Scale:
+        case AnimatedProperty::Transform:
+            break;
+        default:
+            return false;
+        }
 
-            switch (animation.state()) {
-            case Animation::AnimationState::Playing:
-            case Animation::AnimationState::Paused:
-                break;
-            default:
-                return false;
-            }
+        switch (animation.state()) {
+        case TextureMapperAnimation::State::Playing:
+        case TextureMapperAnimation::State::Paused:
+            break;
+        default:
+            return false;
+        }
 
-            return true;
-        });
+        return true;
+    });
 }
 
-} // namespace Nicosia
+} // namespace WebCore
+
+#endif // USE(TEXTURE_MAPPER)

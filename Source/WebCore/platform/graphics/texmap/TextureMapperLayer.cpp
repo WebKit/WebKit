@@ -29,6 +29,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedAnimatedBackingStoreClient.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperLayer);
@@ -1061,7 +1065,7 @@ void TextureMapperLayer::setContentsLayer(TextureMapperPlatformLayer* platformLa
     m_contentsLayer = platformLayer;
 }
 
-void TextureMapperLayer::setAnimations(const Nicosia::Animations& animations)
+void TextureMapperLayer::setAnimations(const TextureMapperAnimations& animations)
 {
     m_animations = animations;
 }
@@ -1072,7 +1076,7 @@ void TextureMapperLayer::setBackingStore(TextureMapperBackingStore* backingStore
 }
 
 #if USE(COORDINATED_GRAPHICS)
-void TextureMapperLayer::setAnimatedBackingStoreClient(Nicosia::AnimatedBackingStoreClient* client)
+void TextureMapperLayer::setAnimatedBackingStoreClient(CoordinatedAnimatedBackingStoreClient* client)
 {
     m_animatedBackingStoreClient = client;
 }
@@ -1105,7 +1109,7 @@ bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 
 bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 {
-    Nicosia::Animation::ApplicationResult applicationResults;
+    TextureMapperAnimation::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
 
     m_layerTransforms.localTransform = applicationResults.transform.value_or(m_state.transform);
@@ -1114,8 +1118,8 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 
 #if USE(COORDINATED_GRAPHICS)
     // Calculate localTransform 50ms in the future.
-    Nicosia::Animation::ApplicationResult futureApplicationResults;
-    m_animations.apply(futureApplicationResults, time + 50_ms, Nicosia::Animation::KeepInternalState::Yes);
+    TextureMapperAnimation::ApplicationResult futureApplicationResults;
+    m_animations.apply(futureApplicationResults, time + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
     m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.value_or(m_layerTransforms.localTransform);
 #endif
 

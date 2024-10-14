@@ -29,6 +29,7 @@
 #pragma once
 
 #include "Color.h"
+#include "CoordinatedAnimatedBackingStoreClient.h"
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "Damage.h"
@@ -37,10 +38,9 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-#include "NicosiaAnimatedBackingStoreClient.h"
-#include "NicosiaAnimation.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayerProxy.h"
 #include "TransformationMatrix.h"
@@ -132,9 +132,7 @@ public:
         WebCore::Color solidColor;
 
         WebCore::FilterOperations filters;
-        // FIXME: Despite the name, this implementation is not
-        // TextureMapper-specific. Should be renamed when necessary.
-        Animations animations;
+        WebCore::TextureMapperAnimations animations;
 
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;
@@ -152,7 +150,7 @@ public:
             RefPtr<WebCore::CoordinatedImageBackingStore> store;
             bool isVisible { false };
         } imageBacking;
-        RefPtr<AnimatedBackingStoreClient> animatedBackingStoreClient;
+        RefPtr<WebCore::CoordinatedAnimatedBackingStoreClient> animatedBackingStoreClient;
 
         struct RepaintCounter {
             unsigned count { 0 };

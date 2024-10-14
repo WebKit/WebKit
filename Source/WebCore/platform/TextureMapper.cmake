@@ -8,6 +8,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/ClipStack.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
     platform/graphics/texmap/TextureMapper.cpp
+    platform/graphics/texmap/TextureMapperAnimation.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp
@@ -25,6 +26,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/GraphicsLayerContentsDisplayDelegateTextureMapper.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
+    platform/graphics/texmap/TextureMapperAnimation.h
     platform/graphics/texmap/TextureMapperBackingStore.h
     platform/graphics/texmap/TextureMapperFlags.h
     platform/graphics/texmap/TextureMapperFPSCounter.h
@@ -45,6 +47,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/GraphicsLayerAsyncContentsDisplayDelegateTextureMapper.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
 
+        platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
@@ -57,6 +60,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedTileBuffer.cpp
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
@@ -94,17 +98,6 @@ else ()
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
         platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
     )
-
-    # FIXME: Share NicosiaAnimation since its used outside of Nicosia
-    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/nicosia"
-    )
-    list(APPEND WebCore_SOURCES
-        platform/graphics/nicosia/NicosiaAnimation.cpp
-    )
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/nicosia/NicosiaAnimation.h
-    )
 endif ()
 
 if (USE_NICOSIA)
@@ -120,8 +113,6 @@ if (USE_NICOSIA)
         page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.h
         page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.h
 
-        platform/graphics/nicosia/NicosiaAnimatedBackingStoreClient.h
-        platform/graphics/nicosia/NicosiaAnimation.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
         platform/graphics/nicosia/NicosiaPlatformLayer.h
         platform/graphics/nicosia/NicosiaScene.h

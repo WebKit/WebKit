@@ -27,10 +27,9 @@
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "NicosiaAnimatedBackingStoreClient.h"
-#include "NicosiaAnimation.h"
 #include "NicosiaCompositionLayer.h"
 #include "NicosiaPlatformLayer.h"
+#include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 #include <wtf/Function.h>
 #include <wtf/RunLoop.h>
@@ -46,11 +45,11 @@ class SkiaThreadedPaintingPool;
 #endif
 
 namespace Nicosia {
-class Animations;
 class PaintingEngine;
 }
 
 namespace WebCore {
+class CoordinatedAnimatedBackingStoreClient;
 class CoordinatedBackingStoreProxy;
 class CoordinatedGraphicsLayer;
 class CoordinatedImageBackingStore;
@@ -159,28 +158,6 @@ public:
 
     const RefPtr<Nicosia::CompositionLayer>& compositionLayer() const;
 
-    class AnimatedBackingStoreHost : public ThreadSafeRefCounted<AnimatedBackingStoreHost> {
-    public:
-        static Ref<AnimatedBackingStoreHost> create(CoordinatedGraphicsLayer& layer)
-        {
-            return adoptRef(*new AnimatedBackingStoreHost(layer));
-        }
-
-        void requestBackingStoreUpdate()
-        {
-            if (m_layer)
-                m_layer->requestBackingStoreUpdate();
-        }
-
-        void layerWillBeDestroyed() { m_layer = nullptr; }
-    private:
-        explicit AnimatedBackingStoreHost(CoordinatedGraphicsLayer& layer)
-            : m_layer(&layer)
-        { }
-
-        CoordinatedGraphicsLayer* m_layer;
-    };
-
     void requestBackingStoreUpdate();
 
     double backingStoreMemoryEstimate() const override;
@@ -191,6 +168,10 @@ public:
 #if USE(SKIA)
     void paintIntoGraphicsContext(GraphicsContext&, const IntRect&) const;
 #endif
+
+    float effectiveContentsScale() const;
+
+    static void clampToContentsRectIfRectIsInfinite(FloatRect&, const FloatSize&);
 
 private:
     enum class FlushNotification {
@@ -223,7 +204,6 @@ private:
     bool selfOrAncestorHaveNonAffineTransforms() const;
 
     void setShouldUpdateVisibleRect();
-    float effectiveContentsScale() const;
 
     void animationStartedTimerFired();
     void requestPendingTileCreationTimerFired();
@@ -261,7 +241,7 @@ private:
 
     Timer m_animationStartedTimer;
     RunLoop::Timer m_requestPendingTileCreationTimer;
-    Nicosia::Animations m_animations;
+    TextureMapperAnimations m_animations;
     MonotonicTime m_lastAnimationStartTime;
 
     struct {
@@ -270,11 +250,10 @@ private:
         Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
         bool performLayerSync { false };
-
-        RefPtr<Nicosia::AnimatedBackingStoreClient> animatedBackingStoreClient;
     } m_nicosia;
 
     std::unique_ptr<CoordinatedBackingStoreProxy> m_backingStore;
+    RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
 
     RefPtr<NativeImage> m_pendingContentsImage;
     struct {
@@ -286,7 +265,6 @@ private:
     bool m_contentsLayerNeedsUpdate { false };
     bool m_contentsLayerUpdated { false };
 
-    RefPtr<AnimatedBackingStoreHost> m_animatedBackingStoreHost;
     RefPtr<CoordinatedGraphicsLayer> m_backdropLayer;
 };
 

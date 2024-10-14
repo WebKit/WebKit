@@ -29,39 +29,32 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-
+#include "FloatRect.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
+class CoordinatedGraphicsLayer;
 class TransformationMatrix;
-}
 
-namespace Nicosia {
-
-class AnimatedBackingStoreClient : public ThreadSafeRefCounted<AnimatedBackingStoreClient> {
+class CoordinatedAnimatedBackingStoreClient final : public ThreadSafeRefCounted<CoordinatedAnimatedBackingStoreClient> {
 public:
-    enum class Type {
-        Coordinated
-    };
+    static Ref<CoordinatedAnimatedBackingStoreClient> create(CoordinatedGraphicsLayer&, const FloatRect& visibleRect);
+    ~CoordinatedAnimatedBackingStoreClient() = default;
 
-    explicit AnimatedBackingStoreClient(Type type)
-        : m_type(type)
-    {
-    }
-
-    Type type() const { return m_type; }
-    virtual ~AnimatedBackingStoreClient() = default;
-    virtual void requestBackingStoreUpdateIfNeeded(const WebCore::TransformationMatrix&) = 0;
+    void invalidate();
+    void setCoverRect(const IntRect&);
+    void requestBackingStoreUpdateIfNeeded(const TransformationMatrix&);
 
 private:
-    Type m_type;
+    CoordinatedAnimatedBackingStoreClient(CoordinatedGraphicsLayer&, const FloatRect& visibleRect);
+
+    CoordinatedGraphicsLayer* m_layer { nullptr };
+    FloatRect m_visibleRect;
+    FloatRect m_coverRect;
+    FloatSize m_size;
+    float m_contentsScale { 1 };
 };
 
-} // namespace Nicosia
-
-#define SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const Nicosia::AnimatedBackingStoreClient& client) { return client.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+} // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

@@ -21,16 +21,13 @@
 
 #include "Damage.h"
 #include "FilterOperations.h"
-#include "NicosiaAnimation.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperSolidColorLayer.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-#if USE(COORDINATED_GRAPHICS)
-#include "NicosiaAnimatedBackingStoreClient.h"
-#endif
-
 namespace WebCore {
+class CoordinatedAnimatedBackingStoreClient;
 class TextureMapperLayer;
 }
 
@@ -109,10 +106,10 @@ public:
     void setRepaintCount(int repaintCount) { m_state.repaintCount = repaintCount; }
 
     void setContentsLayer(TextureMapperPlatformLayer*);
-    void setAnimations(const Nicosia::Animations&);
+    void setAnimations(const TextureMapperAnimations&);
     void setBackingStore(TextureMapperBackingStore*);
 #if USE(COORDINATED_GRAPHICS)
-    void setAnimatedBackingStoreClient(Nicosia::AnimatedBackingStoreClient*);
+    void setAnimatedBackingStoreClient(CoordinatedAnimatedBackingStoreClient*);
 #endif
 
     bool applyAnimationsRecursively(MonotonicTime);
@@ -249,10 +246,10 @@ private:
     };
 
     State m_state;
-    Nicosia::Animations m_animations;
+    TextureMapperAnimations m_animations;
 #if USE(COORDINATED_GRAPHICS)
     uint32_t m_id { 0 };
-    RefPtr<Nicosia::AnimatedBackingStoreClient> m_animatedBackingStoreClient;
+    RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
 #endif
     bool m_isBackdrop { false };
     bool m_isReplica { false };

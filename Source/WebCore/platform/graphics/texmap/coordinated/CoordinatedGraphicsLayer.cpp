@@ -25,6 +25,7 @@
 #include "CoordinatedGraphicsLayer.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedAnimatedBackingStoreClient.h"
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "CoordinatedTileBuffer.h"
@@ -172,8 +173,7 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
     }
     ASSERT(!m_imageBacking.store);
     ASSERT(!m_backingStore);
-    if (m_animatedBackingStoreHost)
-        m_animatedBackingStoreHost->layerWillBeDestroyed();
+    ASSERT(!m_animatedBackingStoreClient);
     if (CoordinatedGraphicsLayer* parentLayer = downcast<CoordinatedGraphicsLayer>(parent()))
         parentLayer->didChangeChildren();
     willBeDestroyed();
@@ -773,7 +773,7 @@ bool CoordinatedGraphicsLayer::checkContentLayerUpdated()
     return std::exchange(m_contentsLayerUpdated, false);
 }
 
-static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
+void CoordinatedGraphicsLayer::clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize& contentsSize)
 {
     if (rect.width() >= LayoutUnit::nearlyMax() || rect.width() <= LayoutUnit::nearlyMin()) {
         rect.setX(0);
@@ -785,74 +785,6 @@ static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const FloatSize
         rect.setHeight(contentsSize.height());
     }
 }
-
-class CoordinatedAnimatedBackingStoreClient final : public Nicosia::AnimatedBackingStoreClient {
-public:
-    static Ref<CoordinatedAnimatedBackingStoreClient> create(RefPtr<CoordinatedGraphicsLayer::AnimatedBackingStoreHost>&& host, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
-    {
-        return adoptRef(*new CoordinatedAnimatedBackingStoreClient(WTFMove(host), visibleRect, coverRect, size, contentsScale));
-    }
-
-    ~CoordinatedAnimatedBackingStoreClient() = default;
-
-    void setCoverRect(const IntRect& rect) { m_coverRect = rect; }
-    void requestBackingStoreUpdateIfNeeded(const TransformationMatrix& transform) final
-    {
-        ASSERT(!isMainThread());
-
-        // Calculate the contents rectangle of the layer in backingStore coordinates.
-        FloatRect contentsRect = { { 0, 0 }, m_size };
-        contentsRect.scale(m_contentsScale);
-
-        // If the area covered by tiles (the coverRect, already in backingStore coordinates) covers the whole
-        // layer contents then we don't need to do anything.
-        if (m_coverRect.contains(contentsRect))
-            return;
-
-        // Non-invertible layers are not visible.
-        if (!transform.isInvertible())
-            return;
-
-        // Calculate the inverse of the layer transformation. The inverse transform will have the inverse of the
-        // scaleFactor applied, so we need to scale it back.
-        TransformationMatrix inverse = transform.inverse().value_or(TransformationMatrix()).scale(m_contentsScale);
-
-        // Apply the inverse transform to the visible rectangle, so we have the visible rectangle in layer coordinates.
-        FloatRect rect = inverse.clampedBoundsOfProjectedQuad(FloatQuad(m_visibleRect));
-        clampToContentsRectIfRectIsInfinite(rect, m_size);
-        FloatRect transformedVisibleRect = enclosingIntRect(rect);
-
-        // Convert the calculated visible rectangle to backingStore coordinates.
-        transformedVisibleRect.scale(m_contentsScale);
-
-        // Restrict the calculated visible rect to the contents rectangle of the layer.
-        transformedVisibleRect.intersect(contentsRect);
-
-        // If the coverRect doesn't contain the calculated visible rectangle we need to request a backingStore
-        // update to render more tiles.
-        if (!m_coverRect.contains(transformedVisibleRect)) {
-            callOnMainThread([protectedHost = m_host]() {
-                protectedHost->requestBackingStoreUpdate();
-            });
-        }
-    }
-
-private:
-    CoordinatedAnimatedBackingStoreClient(RefPtr<CoordinatedGraphicsLayer::AnimatedBackingStoreHost>&& host, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
-        : Nicosia::AnimatedBackingStoreClient(Type::Coordinated)
-        , m_host(WTFMove(host))
-        , m_visibleRect(visibleRect)
-        , m_coverRect(coverRect)
-        , m_size(size)
-        , m_contentsScale(contentsScale)
-    { }
-
-    RefPtr<CoordinatedGraphicsLayer::AnimatedBackingStoreHost> m_host;
-    FloatRect m_visibleRect;
-    FloatRect m_coverRect;
-    FloatSize m_size;
-    float m_contentsScale;
-};
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
@@ -897,15 +829,12 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
         // At this point we don't know the area covered by tiles available, so we just pass an empty rectangle
         // for that. The call to updateContentBuffers will calculate the tile coverage and set the appropriate
         // rectangle to the client.
-        if (!m_animatedBackingStoreHost)
-            m_animatedBackingStoreHost = AnimatedBackingStoreHost::create(*this);
-        m_nicosia.animatedBackingStoreClient = CoordinatedAnimatedBackingStoreClient::create(m_animatedBackingStoreHost.copyRef(), m_coordinator->visibleContentsRect(), { }, m_size, effectiveContentsScale());
+        m_animatedBackingStoreClient = CoordinatedAnimatedBackingStoreClient::create(*this, m_coordinator->visibleContentsRect());
         m_nicosia.delta.animatedBackingStoreClientChanged = true;
-    } else  {
-        if (m_nicosia.animatedBackingStoreClient) {
-            m_nicosia.animatedBackingStoreClient = nullptr;
-            m_nicosia.delta.animatedBackingStoreClientChanged = true;
-        }
+    } else if (m_animatedBackingStoreClient) {
+        m_animatedBackingStoreClient->invalidate();
+        m_animatedBackingStoreClient = nullptr;
+        m_nicosia.delta.animatedBackingStoreClientChanged = true;
     }
 
     if (m_pendingContentsImage)
@@ -1031,7 +960,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.imageBacking.isVisible = m_imageBacking.isVisible;
                 }
                 if (localDelta.animatedBackingStoreClientChanged)
-                    state.animatedBackingStoreClient = m_nicosia.animatedBackingStoreClient;
+                    state.animatedBackingStoreClient = m_animatedBackingStoreClient;
 #if ENABLE(SCROLLING_THREAD)
                 if (localDelta.scrollingNodeChanged)
                     state.scrollingNodeID = scrollingNodeID();
@@ -1169,10 +1098,8 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     auto update = m_backingStore->updateIfNeeded(transformedVisibleRectIncludingFuture(), contentsRect, m_pendingVisibleRectAdjustment, WTFMove(dirtyRegion), *this);
     m_pendingVisibleRectAdjustment = false;
 
-    if (is<CoordinatedAnimatedBackingStoreClient>(m_nicosia.animatedBackingStoreClient)) {
-        // Determine the coverRect and set it to the client.
-        downcast<CoordinatedAnimatedBackingStoreClient>(*m_nicosia.animatedBackingStoreClient).setCoverRect(m_backingStore->coverRect());
-    }
+    if (m_animatedBackingStoreClient)
+        m_animatedBackingStoreClient->setCoverRect(m_backingStore->coverRect());
 
     if (update) {
         m_nicosia.performLayerSync |= true;
@@ -1199,7 +1126,14 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
 #ifndef NDEBUG
     SetForScope updateModeProtector(m_isPurging, true);
 #endif
+
     m_backingStore = nullptr;
+
+    if (m_animatedBackingStoreClient) {
+        m_animatedBackingStoreClient->invalidate();
+        m_animatedBackingStoreClient = nullptr;
+    }
+
     m_imageBacking = { };
 
     notifyFlushRequired();
@@ -1321,8 +1255,8 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     TransformationMatrix futureTransform = currentTransform;
     if (m_movingVisibleRect) {
         client().getCurrentTransform(this, currentTransform);
-        Nicosia::Animation::ApplicationResult futureApplicationResults;
-        m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, Nicosia::Animation::KeepInternalState::Yes);
+        TextureMapperAnimation::ApplicationResult futureApplicationResults;
+        m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
         futureTransform = futureApplicationResults.transform.value_or(currentTransform);
     }
     m_layerTransform.setLocalTransform(currentTransform);
@@ -1421,7 +1355,7 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
     }
 
     m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
-    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, m_lastAnimationStartTime, 0_s, Nicosia::Animation::AnimationState::Playing));
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, m_lastAnimationStartTime, 0_s, TextureMapperAnimation::State::Playing));
     m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;
@@ -1502,13 +1436,11 @@ Vector<std::pair<String, double>> CoordinatedGraphicsLayer::acceleratedAnimation
     Vector<std::pair<String, double>> animations;
 
     for (auto& animation : m_animations.animations())
-        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == Nicosia::Animation::AnimationState::Playing ? 1 : 0 });
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimation::State::Playing ? 1 : 0 });
 
     return animations;
 }
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ANIMATEDBACKINGSTORECLIENT(WebCore::CoordinatedAnimatedBackingStoreClient, type() == Nicosia::AnimatedBackingStoreClient::Type::Coordinated)
 
 #endif // USE(COORDINATED_GRAPHICS)
