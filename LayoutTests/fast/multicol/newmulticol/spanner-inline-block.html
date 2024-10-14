@@ -1,15 +1,9 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Inline-block as spanner (not allowed)</title>
-    </head>
-    <body>
-        <p>The inline block should be contained in a single column below.</p>
-        <div style="-webkit-columns:2; columns:2; -webkit-column-gap:0; column-gap:0; width:400px; ">
-            <div style="display:inline-block; width:100%; height:100px;-webkit-column-span:all; column-span:all; margin-left:1em;border:5px solid green">
-                
-            </div>
-            <br><br>
-        </div>
-    </body>
-</html>
+<p>There should be nothing below.</p>
+<div style="-webkit-columns:6; -webkit-column-gap:0; width:4em; overflow:hidden; orphans:1; widows:1;">
+    <!-- column-span:all only applies to in-flow block-level elements, so it will have no effect here. -->
+    <div style="display:inline-block; -webkit-column-span:all; margin-left:1em;">
+        FAIL
+    </div>
+    <br><br>
+</div>
