@@ -42,6 +42,9 @@ public:
 
     void registerConnectionToWebProcess(NetworkConnectionToWebProcess&);
     void unregisterConnectionToWebProcess(NetworkConnectionToWebProcess&);
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
+
 
 private:
     RTCDataChannelRemoteManagerProxy();
@@ -63,6 +66,7 @@ private:
 
     Ref<WorkQueue> m_queue;
     HashMap<WebCore::ProcessIdentifier, IPC::Connection::UniqueID> m_webProcessConnections;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 } // namespace WebKit

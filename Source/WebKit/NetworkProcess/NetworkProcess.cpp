@@ -395,6 +395,10 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
 void NetworkProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferences, CompletionHandler<void()>&& completionHandler)
 {
+#if ENABLE(WEB_RTC)
+    m_rtcDataChannelProxy->updateSharedPreferencesForWebProcess(sharedPreferences);
+#endif
+
     if (RefPtr connection = m_webProcessConnections.get(identifier))
         connection->updateSharedPreferencesForWebProcess(WTFMove(sharedPreferences));
     completionHandler();
