@@ -22,6 +22,7 @@
 
 [SharedPreferencesNeedsConnection]
 messages -> NotificationManagerMessageHandler NotRefCounted {
+#if ENABLE(NOTIFICATIONS)
     [EnabledBy=NotificationsEnabled] ShowNotification(struct WebCore::NotificationData notificationData, RefPtr<WebCore::NotificationResources> notificationResources) -> ()
     [EnabledBy=NotificationsEnabled] CancelNotification(WebCore::SecurityOriginData origin, WTF::UUID notificationID)
     [EnabledBy=NotificationsEnabled] ClearNotifications(Vector<WTF::UUID> notificationIDs)
@@ -31,4 +32,5 @@ messages -> NotificationManagerMessageHandler NotRefCounted {
     [EnabledBy=NotificationsEnabled] SetAppBadge(WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     [EnabledBy=NotificationsEnabled] GetPermissionState(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission)
     [EnabledBy=NotificationsEnabled] GetPermissionStateSync(WebCore::SecurityOriginData origin) -> (enum:uint8_t WebCore::PushPermissionState permission) Synchronous
+#endif
 }
