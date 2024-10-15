@@ -203,7 +203,6 @@ namespace JSC {
     macro(isRemoteFunction) \
     macro(arrayFromFastFillWithUndefined) \
     macro(arrayFromFastFillWithEmpty) \
-    macro(arraySpeciesWatchpointIsValid) \
     macro(arraySort) \
     macro(jsonParse) \
     macro(jsonStringify) \

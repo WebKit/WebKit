@@ -133,7 +133,6 @@ class JSGlobalObject;
     v(isRemoteFunction, nullptr) \
     v(arrayFromFastFillWithUndefined, nullptr) \
     v(arrayFromFastFillWithEmpty, nullptr) \
-    v(arraySpeciesWatchpointIsValid, nullptr) \
     v(arraySort, nullptr) \
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \
