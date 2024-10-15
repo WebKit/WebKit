@@ -46,7 +46,8 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     process().markProcessAsRecentlyUsed();
     process().send(Messages::WebPage::CreateProvisionalFrame(ProvisionalFrameCreationParameters {
         frame.layerHostingContextIdentifier(),
-        frame.effectiveSandboxFlags()
+        frame.effectiveSandboxFlags(),
+        frame.scrollingMode()
     }, frame.frameID()), frame.page()->webPageIDInProcess(process()));
 }
 

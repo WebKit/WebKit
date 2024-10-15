@@ -161,4 +161,10 @@ OptionSet<AdvancedPrivacyProtections> RemoteFrame::advancedPrivacyProtections() 
     return m_advancedPrivacyProtections;
 }
 
+void RemoteFrame::updateScrollingMode()
+{
+    if (RefPtr ownerElement = this->ownerElement())
+        m_client->updateScrollingMode(ownerElement->scrollingMode());
+}
+
 } // namespace WebCore

@@ -157,7 +157,7 @@ static const LocalFrame& rootFrame(const LocalFrame& frame)
     return frame;
 }
 
-LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags sandboxFlags, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
+LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags sandboxFlags, std::optional<ScrollbarMode> scrollingMode, HTMLFrameOwnerElement* ownerElement, Frame* parent, Frame* opener)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent, opener)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(clientCreator)))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -177,7 +177,8 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
     frameCounter.increment();
 #endif
 
-    updateScrollingMode();
+    ASSERT(scrollingMode.has_value() ^ !!ownerElement);
+    m_scrollingMode = scrollingMode ? *scrollingMode : ownerElement->scrollingMode();
 
     // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
     if (RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
@@ -196,17 +197,17 @@ void LocalFrame::init()
 
 Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, Frame* opener)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, nullptr, nullptr, opener));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, ScrollbarMode::Auto, nullptr, nullptr, opener));
 }
 
 Ref<LocalFrame> LocalFrame::createSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, HTMLFrameOwnerElement& ownerElement)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, &ownerElement, ownerElement.document().frame(), nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, std::nullopt, &ownerElement, ownerElement.document().frame(), nullptr));
 }
 
-Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, Frame& parent)
+Ref<LocalFrame> LocalFrame::createProvisionalSubframe(Page& page, ClientCreator&& clientCreator, FrameIdentifier identifier, SandboxFlags effectiveSandboxFlags, ScrollbarMode scrollingMode, Frame& parent)
 {
-    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, nullptr, &parent, nullptr));
+    return adoptRef(*new LocalFrame(page, WTFMove(clientCreator), identifier, effectiveSandboxFlags, scrollingMode, nullptr, &parent, nullptr));
 }
 
 LocalFrame::~LocalFrame()
@@ -942,8 +943,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     if (CheckedPtr ownerRenderer = this->ownerRenderer())
         ownerRenderer->setWidget(frameView);
 
-    if (RefPtr owner = ownerElement())
-        protectedView()->setCanHaveScrollbars(owner->scrollingMode() != ScrollbarMode::AlwaysOff);
+    protectedView()->setCanHaveScrollbars(scrollingMode() != ScrollbarMode::AlwaysOff);
 }
 
 LocalDOMWindow* LocalFrame::window() const
@@ -1374,7 +1374,16 @@ void LocalFrame::updateSandboxFlags(SandboxFlags flags, NotifyUIProcess notifyUI
 
 void LocalFrame::updateScrollingMode()
 {
-    m_scrollingMode = ownerElement() ? ownerElement()->scrollingMode() : ScrollbarMode::Auto;
+    if (!ownerElement())
+        return;
+    m_scrollingMode = ownerElement()->scrollingMode();
+    if (RefPtr view = this->view())
+        view->setCanHaveScrollbars(m_scrollingMode != ScrollbarMode::AlwaysOff);
+}
+
+void LocalFrame::setScrollingMode(ScrollbarMode scrollingMode)
+{
+    m_scrollingMode = scrollingMode;
     if (RefPtr view = this->view())
         view->setCanHaveScrollbars(m_scrollingMode != ScrollbarMode::AlwaysOff);
 }

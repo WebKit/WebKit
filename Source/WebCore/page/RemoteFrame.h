@@ -76,6 +76,8 @@ public:
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections) { m_advancedPrivacyProtections = advancedPrivacyProtections; }
     OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const final;
 
+    void updateScrollingMode() final;
+
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, ClientCreator&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener);
 

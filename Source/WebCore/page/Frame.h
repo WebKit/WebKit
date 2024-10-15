@@ -29,7 +29,6 @@
 #include "FrameTree.h"
 #include "OwnerPermissionsPolicyData.h"
 #include "PageIdentifier.h"
-#include "ScrollTypes.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -54,6 +53,7 @@ class WindowProxy;
 
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class SandboxFlag : uint16_t;
+enum class ScrollbarMode : uint8_t;
 
 using SandboxFlags = OptionSet<SandboxFlag>;
 
@@ -127,7 +127,7 @@ public:
     WEBCORE_EXPORT void setOwnerPermissionsPolicy(OwnerPermissionsPolicyData&&);
     WEBCORE_EXPORT std::optional<OwnerPermissionsPolicyData> ownerPermissionsPolicy() const;
 
-    virtual void updateScrollingMode() { }
+    virtual void updateScrollingMode() = 0;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent, Frame* opener);

@@ -23,4 +23,5 @@
 struct WebKit::ProvisionalFrameCreationParameters {
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::ScrollbarMode scrollingMode;
 };

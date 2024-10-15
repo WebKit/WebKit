@@ -1444,6 +1444,8 @@ webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 # No scrollbars on iOS
 compositing/iframes/iframe-content-flipping.html [ Failure ]
 compositing/iframes/iframe-scrolling-change.html [ Failure ]
+http/tests/site-isolation/compositing/iframes/iframe-content-flipping.html [ Failure ]
+http/tests/site-isolation/compositing/iframes/iframe-scrolling-change.html [ Failure ]
 
 # CSS tests to triage
 webkit.org/b/178588 css3/zoom-coords.xhtml [ Failure ]

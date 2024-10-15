@@ -117,7 +117,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     } else if (m_page->preferences().siteIsolationEnabled())
         m_mainFrame = m_page->mainFrame();
     else {
-        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, FrameIdentifier::generate(), previousMainFrame->effectiveSandboxFlags(), nullptr, IsMainFrame::Yes);
+        m_mainFrame = WebFrameProxy::create(protectedPage(), m_frameProcess, FrameIdentifier::generate(), previousMainFrame->effectiveSandboxFlags(), previousMainFrame->scrollingMode(), nullptr, IsMainFrame::Yes);
 
         // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
         m_mainFrame->frameLoadState().setURL(previousMainFrame->url());
@@ -256,6 +256,7 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
             send(Messages::WebPage::CreateProvisionalFrame(ProvisionalFrameCreationParameters {
                 std::nullopt,
                 m_mainFrame->effectiveSandboxFlags(),
+                m_mainFrame->scrollingMode(),
             }, m_mainFrame->frameID()));
             m_needsCookieAccessAddedInNetworkProcess = true;
             registerWithInspectorController = false; // FIXME: <rdar://121240770> This is a hack. There seems to be a bug in our interaction with WebPageInspectorController.

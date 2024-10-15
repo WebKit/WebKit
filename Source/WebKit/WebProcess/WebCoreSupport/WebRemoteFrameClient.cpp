@@ -204,4 +204,10 @@ void WebRemoteFrameClient::applyWebsitePolicies(WebsitePoliciesData&& websitePol
     coreFrame->setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
 }
 
+void WebRemoteFrameClient::updateScrollingMode(ScrollbarMode scrollingMode)
+{
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::UpdateScrollingMode(m_frame->frameID(), scrollingMode));
+}
+
 }
