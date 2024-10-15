@@ -39,15 +39,6 @@
 @class WKWebView;
 @protocol WKUIDelegate;
 
-namespace WebKit {
-class UIDelegate;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UIDelegate> : std::true_type { };
-}
-
 namespace API {
 class FrameInfo;
 class SecurityOrigin;
@@ -67,6 +58,9 @@ class UIDelegate : public CanMakeWeakPtr<UIDelegate> {
 public:
     explicit UIDelegate(WKWebView *);
     ~UIDelegate();
+
+    void ref() const;
+    void deref() const;
 
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::ContextMenuClient> createContextMenuClient();

@@ -415,7 +415,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _navigationState = makeUniqueWithoutRefCountedCheck<WebKit::NavigationState>(self);
     _page->setNavigationClient(_navigationState->createNavigationClient());
 
-    _uiDelegate = makeUnique<WebKit::UIDelegate>(self);
+    _uiDelegate = makeUniqueWithoutRefCountedCheck<WebKit::UIDelegate>(self);
     _page->setFindClient(makeUnique<WebKit::FindClient>(self));
     _page->setDiagnosticLoggingClient(makeUnique<WebKit::DiagnosticLoggingClient>(self));
 
