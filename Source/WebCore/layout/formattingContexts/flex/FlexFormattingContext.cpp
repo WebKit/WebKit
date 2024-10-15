@@ -210,27 +210,17 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
     auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
     auto flexContainerContentBoxPosition = LayoutPoint { constraints.mainAxis().startPosition, constraints.crossAxis().startPosition };
 
-    auto flexBoxLogicalHeightForWarpReverse = [&]() -> std::optional<LayoutUnit> {
-        if (flexBoxStyle.flexWrap() != FlexWrap::Reverse)
-            return { };
-        if (!isMainAxisParallelWithInlineAxis) {
-            // We always have a valid horizontal constraint for column logical height.
-            return constraints.mainAxis().availableSize;
-        }
-
-        // Let's use the bottom of the content if flex box does not have a definite height.
-        return constraints.crossAxis().availableSize.value_or(logicalRects.last().bottom());
-    }();
-
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
         auto& logicalFlexItem = logicalFlexItemList[index];
         auto& flexItemGeometry = geometryForFlexItem(logicalFlexItem.layoutBox());
         auto logicalRect = [&] {
             // Note that flex rects are inner size based.
-            if (!flexBoxLogicalHeightForWarpReverse)
+            if (flexBoxStyle.flexWrap() != FlexWrap::Reverse)
                 return logicalRects[index];
             auto rect = logicalRects[index];
-            auto adjustedLogicalBorderBoxTop = *flexBoxLogicalHeightForWarpReverse - (rect.bottom() - flexItemGeometry.marginBefore());
+            // Let's use the bottom of the content if flex box does not have a definite height.
+            auto flexBoxLogicalHeightForWarpReverse = constraints.crossAxis().availableSize.value_or(logicalRects.last().bottom());
+            auto adjustedLogicalBorderBoxTop = flexBoxLogicalHeightForWarpReverse - (rect.bottom() - flexItemGeometry.marginBefore());
             if (logicalFlexItem.isContentBoxBased())
                 adjustedLogicalBorderBoxTop -= flexItemGeometry.verticalBorderAndPadding();
             rect.setTop(adjustedLogicalBorderBoxTop);
