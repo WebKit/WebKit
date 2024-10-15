@@ -203,7 +203,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             JSWebAssemblyInstance* calleeInstance = nullptr;
             WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
-            const uintptr_t* boxedTargetCalleeLoadLocation = nullptr;
+            const uintptr_t* boxedWasmCalleeLoadLocation = nullptr;
             JSObject* function = jsCast<JSObject*>(value);
 
             // ii. If v is an Exported Function Exotic Object:
@@ -216,11 +216,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     importedTypeIndex = wasmFunction->typeIndex();
                     calleeInstance = wasmFunction->instance();
                     entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
-                    boxedTargetCalleeLoadLocation = wasmFunction->boxedWasmCalleeLoadLocation();
+                    boxedWasmCalleeLoadLocation = wasmFunction->boxedWasmCalleeLoadLocation();
                 } else {
                     importedTypeIndex = wasmWrapperFunction->typeIndex();
                     // b. Let closure be v.[[Closure]].
                     function = wasmWrapperFunction->function();
+                    boxedWasmCalleeLoadLocation = wasmWrapperFunction->boxedWasmCalleeLoadLocation();
                 }
                 Wasm::TypeIndex expectedTypeIndex = moduleInformation.importFunctionTypeIndices[import.kindIndex];
                 if (!Wasm::isSubtypeIndex(importedTypeIndex, expectedTypeIndex))
@@ -234,8 +235,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             auto* info = m_instance->importFunctionInfo(import.kindIndex);
             info->targetInstance.setMayBeNull(vm, m_instance.get(), calleeInstance);
-            info->wasmEntrypointLoadLocation = entrypointLoadLocation;
-            info->boxedTargetCalleeLoadLocation = boxedTargetCalleeLoadLocation;
+            info->entrypointLoadLocation = entrypointLoadLocation;
+            info->boxedWasmCalleeLoadLocation = boxedWasmCalleeLoadLocation;
             m_instance->importFunction(import.kindIndex).set(vm, m_instance.get(), function);
             break;
         }

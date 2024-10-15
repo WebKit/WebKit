@@ -4169,7 +4169,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
     // Nothing should refer to FP after this point.
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
-        static_assert(sizeof(JSWebAssemblyInstance::ImportFunctionInfo) * maxImports < std::numeric_limits<int32_t>::max());
+        static_assert(sizeof(WasmOrJSImportableFunction) * maxImports < std::numeric_limits<int32_t>::max());
         RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex) < std::numeric_limits<int32_t>::max());
         m_jit.farJump(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), WasmEntryPtrTag);
     } else {
@@ -4208,7 +4208,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
     saveValuesAcrossCallAndPassArguments(arguments, callInfo, signature);
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
-        static_assert(sizeof(JSWebAssemblyInstance::ImportFunctionInfo) * maxImports < std::numeric_limits<int32_t>::max());
+        static_assert(sizeof(WasmOrJSImportableFunction) * maxImports < std::numeric_limits<int32_t>::max());
         RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex) < std::numeric_limits<int32_t>::max());
         m_jit.call(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(functionIndex)), WasmEntryPtrTag);
     } else {
@@ -4533,14 +4533,14 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
             }
 
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
-            static_assert(static_cast<ptrdiff_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex() + sizeof(void*)) == WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation());
+            static_assert(static_cast<ptrdiff_t>(WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation() + sizeof(void*)) == WasmToWasmImportableFunction::offsetOfSignatureIndex());
 
             // Save the table entry in calleeRTT if needed for the subtype check.
             bool needsSubtypeCheck = Options::useWasmGC() && !originalSignature.isFinalType();
             if (needsSubtypeCheck)
                 m_jit.move(calleeSignatureIndex, calleeRTT);
 
-            m_jit.loadPairPtr(calleeSignatureIndex, TrustedImm32(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex, calleeCode);
+            m_jit.loadPairPtr(calleeSignatureIndex, TrustedImm32(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode, calleeSignatureIndex);
 
             throwExceptionIf(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
             auto indexEqual = m_jit.branchPtr(CCallHelpers::Equal, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature)));

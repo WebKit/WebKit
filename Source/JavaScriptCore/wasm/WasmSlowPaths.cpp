@@ -628,21 +628,25 @@ static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSW
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
+    Register& functionInfoSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::codeBlock)];
+    ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
 
     if (functionIndex < importFunctionCount) {
-        JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
+        auto* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
-#if USE(JSVALUE64)
-        calleeStackSlot = bitwise_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
-#else
-        calleeStackSlot = bitwise_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
-#endif
+        // This may call the  wasm_to_js or wasm_to_wasm thunks.
+        // In the jit case, they already have everything they need to set the callee and target instance.
+        // For the non-jit case, we set those here.
+        calleeStackSlot = *functionInfo->boxedWasmCalleeLoadLocation;
+        // For the non-jit wasm_to_js case specifically, we also pass along this functionInfo*, since
+        // this new callee will have no way to access it.
+        if (!functionInfo->targetInstance)
+            functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<Wasm::WasmOrJSImportableFunction*>(functionInfo));
     } else {
         // Target is a wasm function within the same instance
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
         boxedCallee = CalleeBits::encodeNativeCallee(
             instance->calleeGroup()->wasmCalleeFromFunctionIndexSpace(functionIndex));
-        ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
         calleeStackSlot = boxedCallee;
     }
 
@@ -673,12 +677,12 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
+    Register& functionInfoSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::codeBlock)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
-    ASSERT(function.m_function.boxedWasmCalleeLoadLocation);
-    if (function.m_function.boxedWasmCalleeLoadLocation)
-        calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
-    else
-        calleeStackSlot = CalleeBits::encodeNullCallee();
+
+    calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
+    if (!function.m_function.targetInstance)
+        functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<const Wasm::WasmOrJSImportableFunction*>(&function.m_function));
 
     auto callTarget = *function.m_function.entrypointLoadLocation;
     WASM_CALL_RETURN(function.m_instance, callTarget);
@@ -705,16 +709,16 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
 
     ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
-    Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
+    auto function = wasmFunction->importableFunction();
     JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
+    Register& functionInfoSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::codeBlock)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
-    ASSERT(function.boxedWasmCalleeLoadLocation);
-    if (function.boxedWasmCalleeLoadLocation)
-        calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.boxedWasmCalleeLoadLocation));
-    else
-        calleeStackSlot = CalleeBits::encodeNullCallee();
+
+    calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.boxedWasmCalleeLoadLocation));
+    if (!function.targetInstance)
+        functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<const Wasm::WasmOrJSImportableFunction*>(&function));
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
     ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());

@@ -75,7 +75,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
 {
     static_assert(static_cast<ptrdiff_t>(JSWebAssemblyInstance::offsetOfCachedMemory() + sizeof(void*)) == JSWebAssemblyInstance::offsetOfCachedBoundsCheckingSize());
     for (unsigned i = 0; i < m_numImportFunctions; ++i) {
-        auto* info = new (importFunctionInfo(i)) ImportFunctionInfo();
+        auto* info = new (importFunctionInfo(i)) WasmOrJSImportableFunction();
         info->callLinkInfo.initialize(vm, nullptr, CallLinkInfo::CallType::Call, CodeOrigin { });
     }
     m_globals = bitwise_cast<Global::Value*>(bitwise_cast<char*>(this) + offsetOfGlobalPtr(m_numImportFunctions, m_module->moduleInformation().tableCount(), 0));
@@ -115,7 +115,7 @@ JSWebAssemblyInstance::~JSWebAssemblyInstance()
 {
     clearJSCallICs(*m_vm);
     for (unsigned i = 0; i < m_numImportFunctions; ++i)
-        importFunctionInfo(i)->~ImportFunctionInfo();
+        importFunctionInfo(i)->~WasmOrJSImportableFunction();
 }
 
 void JSWebAssemblyInstance::destroy(JSCell* cell)
@@ -192,10 +192,13 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
         if (!info->targetInstance) {
             info->importFunctionStub = module().importFunctionStub(functionSpaceIndex);
             importCallees.append(adoptRef(*new WasmToJSCallee(functionSpaceIndex, { nullptr, nullptr })));
-            info->boxedTargetCalleeLoadLocation = reinterpret_cast<const uintptr_t*>(importCallees.last().ptr());
-        }
-        else
+            ASSERT(!info->boxedWasmCalleeLoadLocation);
+            info->boxedWasmCalleeLoadLocation = &info->boxedCallee;
+            info->boxedCallee = CalleeBits::encodeNativeCallee(importCallees.last().ptr());
+        } else {
             info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(functionSpaceIndex);
+            ASSERT(info->boxedWasmCalleeLoadLocation && *info->boxedWasmCalleeLoadLocation);
+        }
     }
 
     if (creationMode == CreationMode::FromJS) {

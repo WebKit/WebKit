@@ -292,6 +292,13 @@ void FuncRefTable::setFunction(uint32_t index, WebAssemblyFunctionBase* function
     ASSERT_WITH_SECURITY_IMPLICATION(isSubtype(function->type(), wasmType()));
     auto& slot = m_importableFunctions.get()[index];
     slot.m_function = function->importableFunction();
+    if (!slot.m_function.targetInstance) {
+        // This is a JS function.
+        ASSERT(!slot.m_function.boxedWasmCalleeLoadLocation);
+        slot.m_protectedJSCallee = adoptRef(*new WasmToJSCallee(FunctionSpaceIndex(index), { nullptr, nullptr }));
+        slot.m_boxedProtectedJSCallee = CalleeBits::encodeNativeCallee(slot.m_protectedJSCallee.get());
+        slot.m_function.boxedWasmCalleeLoadLocation = &slot.m_boxedProtectedJSCallee;
+    }
     slot.m_instance = function->instance();
     slot.m_value.set(function->instance()->vm(), m_owner, function);
 }

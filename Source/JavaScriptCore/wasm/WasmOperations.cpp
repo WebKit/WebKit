@@ -269,11 +269,11 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
     OPERATION_RETURN(scope, JSValue::encode(resultArray));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance* instance, Wasm::Callee* callee))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmCalleeStackSize, unsigned, (JSWebAssemblyInstance* instance, CalleeBits callee))
 {
     auto& module = instance->module();
 
-    auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(callee->index());
+    auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(static_cast<Wasm::Callee*>(callee.asNativeCallee())->index());
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
     unsigned argCount = signature.argumentCount();
@@ -288,10 +288,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWeb
     const unsigned numberOfBytesForSavedResults = savedResultRegisters.sizeOfAreaInBytes();
     const unsigned stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(numberOfBytesForCall, numberOfBytesForSavedResults));
 
-    VM& vm = instance->vm();
-
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, stackOffset);
+    return stackOffset;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp, CallFrame* cfr, void* argumentRegisters, JSWebAssemblyInstance* instance))
@@ -306,7 +303,9 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
     VM& vm = instance->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Wasm::Callee* callee = *access.operator()<Wasm::Callee*>(cfr, -0x10);
+    constexpr int calleeScratchOffset = -0x10;
+
+    auto* callee = static_cast<Wasm::Callee*>(access.operator()<CalleeBits>(cfr, calleeScratchOffset)->asNativeCallee());
     auto functionIndex = callee->index();
     auto& module = instance->module();
     auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(functionIndex);
@@ -443,7 +442,9 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 
     auto scope = DECLARE_THROW_SCOPE(instance->vm());
 
-    Wasm::Callee* callee = *access.operator()<Wasm::Callee*>(cfr, -0x10);
+    constexpr int calleeScratchOffset = -0x10;
+
+    auto* callee = static_cast<Wasm::Callee*>(access.operator()<CalleeBits>(cfr, calleeScratchOffset)->asNativeCallee());
     auto functionIndex = callee->index();
     auto& module = instance->module();
     auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(functionIndex);
