@@ -328,7 +328,14 @@ TEST(WKWebView, AttributedStringFromTable)
         auto leftEdge = NSRectEdgeMinX;
 #endif
         EXPECT_EQ([cell widthForLayer:NSTextBlockBorder edge:leftEdge], expectedBorderWidth);
-        EXPECT_TRUE([cell backgroundColor] == expectedBackgroundColor || [[cell backgroundColor] isEqual:expectedBackgroundColor]);
+
+        if (!expectedBackgroundColor)
+            EXPECT_NULL(cell.backgroundColor);
+        else {
+            auto cellColor = WebCore::colorFromCocoaColor([cell backgroundColor]);
+            auto expectedColor = WebCore::colorFromCocoaColor(expectedBackgroundColor);
+            EXPECT_EQ(cellColor, expectedColor);
+        }
     };
 
     EXPECT_EQ(allTableCells.size(), 8U);

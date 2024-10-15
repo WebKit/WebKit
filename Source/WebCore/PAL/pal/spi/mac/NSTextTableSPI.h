@@ -30,3 +30,7 @@
 @interface NSTextBlock (Internal)
 - (void)_takeValuesFromTextBlock:(NSTextBlock *)other;
 @end
+
+@interface NSTextTab ()
+- (instancetype)initWithTextAlignment:(NSTextAlignment)alignment location:(CGFloat)loc options:(NSDictionary<NSTextTabOptionKey, id> *)options;
+@end

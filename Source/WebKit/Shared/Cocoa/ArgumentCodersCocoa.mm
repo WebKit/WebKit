@@ -456,8 +456,7 @@ template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder,
 
 static bool shouldEnableStrictMode(Decoder& decoder, const AllowedClassHashSet& allowedClasses)
 {
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
-    && HAVE(STRICT_DECODABLE_PKCONTACT) \
+#if HAVE(STRICT_DECODABLE_PKCONTACT) \
     && HAVE(STRICT_DECODABLE_CNCONTACT) \
     && (HAVE(STRICT_DECODABLE_PKPAYMENTPASS) || !HAVE(PKPAYMENTPASS))
     // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
@@ -536,15 +535,6 @@ static constexpr bool haveSecureActionContext = false;
         return haveStrictDecodablePKContact;
 #endif // ENABLE(APPLE_PAY)
 
-    // rdar://107553230 don't reintroduce rdar://108038436
-#if HAVE(STRICT_DECODABLE_NSTEXTTABLE)
-    static constexpr bool haveStrictDecodableNSTextTable = true;
-#else
-    static constexpr bool haveStrictDecodableNSTextTable = false;
-#endif
-    if (allowedClasses.contains(NSParagraphStyle.class))
-        return haveStrictDecodableNSTextTable;
-
     // rdar://107553194, Don't reintroduce rdar://108339450
     if (allowedClasses.contains(NSMutableURLRequest.class))
         return true;
@@ -594,9 +584,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
         allowedClasses.add(NSMutableData.class);
         allowedClasses.add(NSMutableURLRequest.class);
     }
-
-    if (allowedClasses.contains(NSParagraphStyle.class))
-        allowedClasses.add(NSMutableParagraphStyle.class);
 
 #if USE(PASSKIT)
     // FIXME: Remove these exceptions for PKSecureElementPass
@@ -651,7 +638,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 ENCODE_AS_SECURE_CODING(NSURLRequest);
 #endif
 
-ENCODE_AS_SECURE_CODING(NSParagraphStyle);
 #if USE(PASSKIT)
 ENCODE_AS_SECURE_CODING(PKSecureElementPass);
 #endif

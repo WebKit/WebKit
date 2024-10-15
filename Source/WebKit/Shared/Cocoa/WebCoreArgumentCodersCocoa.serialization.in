@@ -124,19 +124,121 @@ header: <WebCore/ResourceRequest.h>
     bool m_wasSchemeOptimisticallyUpgraded;
 };
 
-[Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {
-    RetainPtr<NSParagraphStyle> style
-    Vector<std::optional<WebCore::AttributedString::TableBlockAndTableIDPair>> tableBlockAndTableIDs
-    Vector<WebCore::AttributedStringTextListID> listIDs
+header: <WebCore/AttributedString.h>
+[CustomHeader] enum class WebCore::ParagraphStyleAlignment : uint8_t {
+    Natural,
+    Left,
+    Right,
+    Centre,
+    Justified,
+};
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] enum class WebCore::ParagraphStyleWritingDirection : uint8_t {
+    Natural,
+    LeftToRight,
+    RightToLeft,
+};
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] enum class WebCore::TextTableBlockVerticalAlignment : uint8_t {
+    Top,
+    Middle,
+    Bottom,
+    Baseline,
 }
-using WebCore::AttributedString::TableBlockAndTableIDPair = std::pair<WebCore::AttributedStringTextTableBlockID, WebCore::AttributedStringTextTableID>
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] enum class WebCore::TextTableLayoutAlgorithm : bool;
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::ParagraphStyleTextList {
+    WebCore::AttributedStringTextListID thisID
+    String markerFormat;
+    [Validator='startingItemNumber >= 0'] long startingItemNumber;
+}
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::ParagraphStyleCommonTableAttributes {
+    CGFloat width;
+    CGFloat minimumWidth;
+    CGFloat maximumWidth;
+    CGFloat minimumHeight;
+    CGFloat maximumHeight;
+
+    CGFloat paddingMinXEdge;
+    CGFloat paddingMinYEdge;
+    CGFloat paddingMaxXEdge;
+    CGFloat paddingMaxYEdge;
+
+    CGFloat borderMinXEdge;
+    CGFloat borderMinYEdge;
+    CGFloat borderMaxXEdge;
+    CGFloat borderMaxYEdge;
+
+    CGFloat marginMinXEdge;
+    CGFloat marginMinYEdge;
+    CGFloat marginMaxXEdge;
+    CGFloat marginMaxYEdge;
+
+    RetainPtr<PlatformColor> backgroundColor;
+    RetainPtr<PlatformColor> borderMinXEdgeColor;
+    RetainPtr<PlatformColor> borderMinYEdgeColor;
+    RetainPtr<PlatformColor> borderMaxXEdgeColor;
+    RetainPtr<PlatformColor> borderMaxYEdgeColor;
+}
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::TextTableBlock : WebCore::ParagraphStyleCommonTableAttributes {
+    WebCore::AttributedStringTextTableBlockID thisID;
+    WebCore::AttributedStringTextTableID tableID;
+    [Validator='startingRow >= 0'] long startingRow;
+    [Validator='rowSpan >= 0'] long rowSpan;
+    [Validator='startingColumn >= 0'] long startingColumn;
+    [Validator='columnSpan >= 0'] long columnSpan;
+    WebCore::TextTableBlockVerticalAlignment verticalAlignment;
+};
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::TextTable : WebCore::ParagraphStyleCommonTableAttributes {
+    WebCore::AttributedStringTextTableID thisID;
+    unsigned long numberOfColumns;
+    WebCore::TextTableLayoutAlgorithm layout;
+    bool collapsesBorders;
+    bool hidesEmptyCells;
+}
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::TextTab {
+    CGFloat location;
+    WebCore::ParagraphStyleAlignment alignment;
+}
+
+header: <WebCore/AttributedString.h>
+[CustomHeader] struct WebCore::ParagraphStyle {
+    double defaultTabInterval;
+    WebCore::ParagraphStyleAlignment alignment;
+    WebCore::ParagraphStyleWritingDirection writingDirection;
+    float hyphenationFactor;
+    CGFloat firstLineHeadIndent;
+    CGFloat headIndent;
+    [Validator='headerLevel >= 0'] long headerLevel;
+    CGFloat tailIndent;
+    CGFloat paragraphSpacing;
+    Vector<WebCore::AttributedStringTextTableBlockID> textTableBlockIDs;
+    Vector<WebCore::AttributedStringTextListID> textListIDs;
+    Vector<WebCore::TextTableBlock> textTableBlocks;
+    Vector<WebCore::TextTable> textTables;
+    Vector<WebCore::ParagraphStyleTextList> textLists;
+    Vector<WebCore::TextTab> textTabs;
+}
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::MultiRepresentationHEICAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::MultiRepresentationHEICAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
 #endif
 #if !ENABLE(MULTI_REPRESENTATION_HEIC)
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
 #endif
 }
 
