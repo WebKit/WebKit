@@ -523,7 +523,7 @@ void UnsubscribeRequest::startInternal()
             return;
         }
         
-        protectedThis->protectedDatabase()->removeRecordByIdentifier(result->identifier, [weakThis = WTFMove(weakThis), serverVAPIDPublicKey = result->serverVAPIDPublicKey](bool removed) mutable {
+        protectedThis->protectedDatabase()->removeRecordByIdentifier(*result->identifier, [weakThis = WTFMove(weakThis), serverVAPIDPublicKey = result->serverVAPIDPublicKey](bool removed) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

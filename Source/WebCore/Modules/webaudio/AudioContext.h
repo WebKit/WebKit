@@ -134,7 +134,7 @@ private:
     bool isSuspended() const final;
     bool isPlaying() const final;
     bool isAudible() const final;
-    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
     bool isNowPlayingEligible() const final;
     std::optional<NowPlayingInfo> nowPlayingInfo() const final;
     WeakPtr<PlatformMediaSession> selectBestMediaSession(const Vector<WeakPtr<PlatformMediaSession>>&, PlatformMediaSession::PlaybackControlsPurpose) final;

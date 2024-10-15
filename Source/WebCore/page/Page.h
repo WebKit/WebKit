@@ -947,7 +947,7 @@ public:
     WEBCORE_EXPORT void voiceActivityDetected();
 #endif
 
-    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const;
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const;
     WEBCORE_EXPORT bool mediaPlaybackExists();
     WEBCORE_EXPORT bool mediaPlaybackIsPaused();
     WEBCORE_EXPORT void pauseAllMediaPlayback();
@@ -1582,7 +1582,7 @@ private:
     std::optional<Color> m_sampledPageTopColor;
 
     const bool m_httpsUpgradeEnabled { true };
-    mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
+    mutable Markable<MediaSessionGroupIdentifier> m_mediaSessionGroupIdentifier;
 
     std::optional<std::pair<uint16_t, uint16_t>> m_portsForUpgradingInsecureSchemeForTesting;
 

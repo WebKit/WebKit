@@ -2891,11 +2891,11 @@ void Page::suspendAllMediaPlayback()
 #endif
 }
 
-MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
+std::optional<MediaSessionGroupIdentifier> Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {
         if (auto identifier = this->identifier())
-            m_mediaSessionGroupIdentifier = LegacyNullableObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+            m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
     }
     return m_mediaSessionGroupIdentifier;
 }

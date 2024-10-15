@@ -44,7 +44,7 @@
 namespace WebCore {
 
 struct PushRecord {
-    PushSubscriptionIdentifier identifier;
+    Markable<PushSubscriptionIdentifier> identifier { };
     PushSubscriptionSetIdentifier subscriptionSetIdentifier;
     String securityOrigin;
     String scope;

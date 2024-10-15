@@ -540,7 +540,7 @@ void PlatformMediaSessionManager::processSystemDidWake()
     });
 }
 
-void PlatformMediaSessionManager::pauseAllMediaPlaybackForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+void PlatformMediaSessionManager::pauseAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
         session.pauseSession();
@@ -548,7 +548,7 @@ void PlatformMediaSessionManager::pauseAllMediaPlaybackForGroup(MediaSessionGrou
 }
 
 
-bool PlatformMediaSessionManager::mediaPlaybackIsPaused(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+bool PlatformMediaSessionManager::mediaPlaybackIsPaused(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     bool mediaPlaybackIsPaused = false;
     forEachSessionInGroup(mediaSessionGroupIdentifier, [&mediaPlaybackIsPaused](auto& session) {
@@ -565,28 +565,28 @@ void PlatformMediaSessionManager::stopAllMediaPlaybackForProcess()
     });
 }
 
-void PlatformMediaSessionManager::suspendAllMediaPlaybackForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+void PlatformMediaSessionManager::suspendAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
         session.beginInterruption(PlatformMediaSession::InterruptionType::PlaybackSuspended);
     });
 }
 
-void PlatformMediaSessionManager::resumeAllMediaPlaybackForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+void PlatformMediaSessionManager::resumeAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
         session.endInterruption(PlatformMediaSession::EndInterruptionFlags::MayResumePlaying);
     });
 }
 
-void PlatformMediaSessionManager::suspendAllMediaBufferingForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+void PlatformMediaSessionManager::suspendAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
         session.suspendBuffering();
     });
 }
 
-void PlatformMediaSessionManager::resumeAllMediaBufferingForGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+void PlatformMediaSessionManager::resumeAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     forEachSessionInGroup(mediaSessionGroupIdentifier, [](auto& session) {
         session.resumeBuffering();
@@ -612,12 +612,12 @@ void PlatformMediaSessionManager::forEachMatchingSession(const Function<bool(con
     }
 }
 
-void PlatformMediaSessionManager::forEachSessionInGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier, const Function<void(PlatformMediaSession&)>& callback)
+void PlatformMediaSessionManager::forEachSessionInGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier, const Function<void(PlatformMediaSession&)>& callback)
 {
     if (!mediaSessionGroupIdentifier)
         return;
 
-    forEachMatchingSession([mediaSessionGroupIdentifier](auto& session) {
+    forEachMatchingSession([mediaSessionGroupIdentifier = *mediaSessionGroupIdentifier](auto& session) {
         return session.client().mediaSessionGroupIdentifier() == mediaSessionGroupIdentifier;
     }, [&callback](auto& session) {
         callback(session);
@@ -879,7 +879,7 @@ void PlatformMediaSessionManager::nowPlayingMetadataChanged(const NowPlayingMeta
     });
 }
 
-bool PlatformMediaSessionManager::hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier mediaSessionGroupIdentifier)
+bool PlatformMediaSessionManager::hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
 {
     bool hasActiveNowPlayingSession = false;
 

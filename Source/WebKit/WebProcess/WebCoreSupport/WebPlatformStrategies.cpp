@@ -464,7 +464,7 @@ void WebPlatformStrategies::navigatorSubscribeToPushService(const URL& scope, co
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorSubscribeToPushService(scope, applicationServerKey), WTFMove(completionHandler));
 }
 
-void WebPlatformStrategies::navigatorUnsubscribeFromPushService(const URL& scope, PushSubscriptionIdentifier subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
+void WebPlatformStrategies::navigatorUnsubscribeFromPushService(const URL& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, UnsubscribeFromPushServiceCallback&& callback)
 {
     auto completionHandler = [callback = WTFMove(callback)](auto&& valueOrException) mutable {
         if (!valueOrException.has_value()) {
@@ -474,7 +474,7 @@ void WebPlatformStrategies::navigatorUnsubscribeFromPushService(const URL& scope
         callback(WTFMove(*valueOrException));
     };
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, subscriptionIdentifier), WTFMove(completionHandler));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::NavigatorUnsubscribeFromPushService(scope, *subscriptionIdentifier), WTFMove(completionHandler));
 }
 
 void WebPlatformStrategies::navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&& callback)

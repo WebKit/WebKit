@@ -60,7 +60,7 @@ struct NowPlayingInfo {
     double currentTime { 0 };
     double rate { 1.0 };
     bool supportsSeeking { false };
-    MediaUniqueIdentifier uniqueIdentifier;
+    Markable<MediaUniqueIdentifier> uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
     bool isVideo { false };

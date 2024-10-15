@@ -492,7 +492,7 @@ void Navigator::subscribeToPushService(const Vector<uint8_t>& applicationServerK
     });
 }
 
-void Navigator::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+void Navigator::unsubscribeFromPushService(std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     LOG(Push, "Navigator::unsubscribeFromPushService");
 

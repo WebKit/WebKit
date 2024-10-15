@@ -59,10 +59,6 @@ header: <wtf/text/AtomString.h>
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
 }
 
-template: enum class WebCore::MediaSessionGroupIdentifierType
-template: enum class WebCore::MediaUniqueIdentifierType
-template: enum class WebCore::PushSubscriptionIdentifierType
-template: enum class WebCore::RealtimeMediaSourceIdentifierType
 template: struct WebCore::MediaKeySystemRequestIdentifierType
 template: struct WebCore::MediaPlayerIdentifierType
 template: struct WebCore::MediaPlayerClientIdentifierType
@@ -83,7 +79,11 @@ template: enum class WebCore::ImageDecoderIdentifierType
 template: enum class WebCore::ImageOverlayDataDetectionResultIdentifierType
 template: enum class WebCore::InbandGenericCueIdentifierType
 template: enum class WebCore::LayerHostingContextIdentifierType
+template: enum class WebCore::MediaSessionGroupIdentifierType
+template: enum class WebCore::MediaUniqueIdentifierType
 template: enum class WebCore::ProcessIdentifierType
+template: enum class WebCore::PushSubscriptionIdentifierType
+template: enum class WebCore::RealtimeMediaSourceIdentifierType
 template: enum class WebCore::SWServerToContextConnectionIdentifierType
 template: enum class WebCore::SharedWorkerIdentifierType
 template: enum class WebCore::SpeechRecognitionConnectionClientIdentifierType

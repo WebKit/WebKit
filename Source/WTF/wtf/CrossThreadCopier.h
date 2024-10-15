@@ -231,6 +231,12 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
     }
 };
 
+template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState>
+struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U, V, supportsNullState>>> {
+    typedef HashSet<ObjectIdentifierGeneric<T, U, V, supportsNullState>> Type;
+    static Type copy(const Type& identifiers) { return identifiers; }
+};
+
 // Default specialization for HashMaps of CrossThreadCopyable classes
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
 struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>> {

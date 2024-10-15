@@ -5112,10 +5112,11 @@ std::optional<Internals::NowPlayingMetadata> Internals::nowPlayingMetadata() con
 ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
 {
 #if ENABLE(VIDEO)
+    auto lastUpdatedNowPlayingInfoUniqueIdentifier = PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingInfoUniqueIdentifier();
     return { { PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingTitle(),
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingDuration(),
         PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingElapsedTime(),
-        PlatformMediaSessionManager::sharedManager().lastUpdatedNowPlayingInfoUniqueIdentifier().toUInt64(),
+        lastUpdatedNowPlayingInfoUniqueIdentifier ? lastUpdatedNowPlayingInfoUniqueIdentifier->toUInt64() : 0,
         PlatformMediaSessionManager::sharedManager().hasActiveNowPlayingSession(),
         PlatformMediaSessionManager::sharedManager().registeredAsNowPlayingApplication(),
         PlatformMediaSessionManager::sharedManager().haveEverRegisteredAsNowPlayingApplication()
@@ -7439,7 +7440,7 @@ void Internals::retainTextIteratorForDocumentContent()
 
 RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
-    return PushSubscription::create(PushSubscriptionData { { }, { endpoint }, expirationTime, serverVAPIDPublicKey.toVector(), clientECDHPublicKey.toVector(), auth.toVector() });
+    return PushSubscription::create(PushSubscriptionData { std::nullopt, { endpoint }, expirationTime, serverVAPIDPublicKey.toVector(), clientECDHPublicKey.toVector(), auth.toVector() });
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

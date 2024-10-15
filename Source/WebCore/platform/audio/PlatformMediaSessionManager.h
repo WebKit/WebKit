@@ -98,7 +98,7 @@ public:
     virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
     virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
-    virtual MediaUniqueIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const { return { }; }
+    virtual std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const { return std::nullopt; }
     virtual bool registeredAsNowPlayingApplication() const { return false; }
     virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void prepareToSendUserMediaPermissionRequest() { }
@@ -116,14 +116,14 @@ public:
     WEBCORE_EXPORT void processWillSuspend();
     WEBCORE_EXPORT void processDidResume();
 
-    bool mediaPlaybackIsPaused(MediaSessionGroupIdentifier);
-    void pauseAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
+    bool mediaPlaybackIsPaused(std::optional<MediaSessionGroupIdentifier>);
+    void pauseAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
-    void suspendAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
-    void resumeAllMediaPlaybackForGroup(MediaSessionGroupIdentifier);
-    void suspendAllMediaBufferingForGroup(MediaSessionGroupIdentifier);
-    void resumeAllMediaBufferingForGroup(MediaSessionGroupIdentifier);
+    void suspendAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
+    void resumeAllMediaPlaybackForGroup(std::optional<MediaSessionGroupIdentifier>);
+    void suspendAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>);
+    void resumeAllMediaBufferingForGroup(std::optional<MediaSessionGroupIdentifier>);
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
@@ -197,7 +197,7 @@ public:
     WEBCORE_EXPORT void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
     WEBCORE_EXPORT void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
 
-    bool hasActiveNowPlayingSessionInGroup(MediaSessionGroupIdentifier);
+    bool hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier>);
 
 protected:
     friend class PlatformMediaSession;
@@ -208,7 +208,7 @@ protected:
     virtual void removeSession(PlatformMediaSession&);
 
     void forEachSession(const Function<void(PlatformMediaSession&)>&);
-    void forEachSessionInGroup(MediaSessionGroupIdentifier, const Function<void(PlatformMediaSession&)>&);
+    void forEachSessionInGroup(std::optional<MediaSessionGroupIdentifier>, const Function<void(PlatformMediaSession&)>&);
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
     void maybeDeactivateAudioSession();

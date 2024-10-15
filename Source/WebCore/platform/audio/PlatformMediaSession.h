@@ -317,7 +317,7 @@ public:
 
     virtual bool isPlayingOnSecondScreen() const { return false; }
 
-    virtual MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const = 0;
+    virtual std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const = 0;
 
     virtual bool hasMediaStreamSource() const { return false; }
 

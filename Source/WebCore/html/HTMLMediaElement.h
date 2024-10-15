@@ -242,7 +242,7 @@ public:
     
     bool inActiveDocument() const { return m_inActiveDocument; }
 
-    MediaSessionGroupIdentifier mediaSessionGroupIdentifier() const final;
+    std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier() const final;
 
     WEBCORE_EXPORT bool isActiveNowPlayingSession() const;
     void isActiveNowPlayingSessionChanged() final;

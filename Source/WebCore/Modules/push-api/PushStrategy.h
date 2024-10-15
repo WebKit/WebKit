@@ -41,7 +41,7 @@ public:
     virtual void navigatorSubscribeToPushService(const URL& scope, const Vector<uint8_t>& applicationServerKey, SubscribeToPushServiceCallback&&) = 0;
 
     using UnsubscribeFromPushServiceCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
-    virtual void navigatorUnsubscribeFromPushService(const URL& scope, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) = 0;
+    virtual void navigatorUnsubscribeFromPushService(const URL& scope, std::optional<PushSubscriptionIdentifier>, UnsubscribeFromPushServiceCallback&&) = 0;
 
     using GetPushSubscriptionCallback = CompletionHandler<void(ExceptionOr<std::optional<PushSubscriptionData>>&&)>;
     virtual void navigatorGetPushSubscription(const URL& scope, GetPushSubscriptionCallback&&) = 0;

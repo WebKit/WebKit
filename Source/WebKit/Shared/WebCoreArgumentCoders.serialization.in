@@ -1514,7 +1514,7 @@ struct WebCore::PermissionDescriptor {
 }
 
 struct WebCore::PushSubscriptionData {
-    WebCore::PushSubscriptionIdentifier identifier;
+    Markable<WebCore::PushSubscriptionIdentifier> identifier;
     String endpoint;
     std::optional<WebCore::EpochTimeStamp> expirationTime;
     Vector<uint8_t> serverVAPIDPublicKey;
@@ -7158,7 +7158,7 @@ struct WebCore::NowPlayingInfo {
     double currentTime;
     double rate;
     bool supportsSeeking;
-    WebCore::MediaUniqueIdentifier uniqueIdentifier;
+    Markable<WebCore::MediaUniqueIdentifier> uniqueIdentifier;
     bool isPlaying;
     bool allowsNowPlayingControlsVisibility;
     bool isVideo;
