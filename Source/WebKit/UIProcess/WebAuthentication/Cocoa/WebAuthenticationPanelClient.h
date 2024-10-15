@@ -34,15 +34,6 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
-namespace WebKit {
-class WebAuthenticationPanelClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebAuthenticationPanelClient> : std::true_type { };
-}
-
 @class _WKWebAuthenticationPanel;
 @protocol _WKWebAuthenticationPanelDelegate;
 
@@ -50,11 +41,13 @@ namespace WebKit {
 
 class WebAuthenticationPanelClient final : public API::WebAuthenticationPanelClient, public CanMakeWeakPtr<WebAuthenticationPanelClient> {
 public:
-    WebAuthenticationPanelClient(_WKWebAuthenticationPanel *, id <_WKWebAuthenticationPanelDelegate>);
+    static Ref<WebAuthenticationPanelClient> create(_WKWebAuthenticationPanel *, id<_WKWebAuthenticationPanelDelegate>);
 
-    RetainPtr<id <_WKWebAuthenticationPanelDelegate> > delegate();
+    RetainPtr<id<_WKWebAuthenticationPanelDelegate>> delegate() const;
 
 private:
+    WebAuthenticationPanelClient(_WKWebAuthenticationPanel *, id <_WKWebAuthenticationPanelDelegate>);
+
     // API::WebAuthenticationPanelClient
     void updatePanel(WebAuthenticationStatus) const final;
     void dismissPanel(WebAuthenticationResult) const final;
@@ -64,7 +57,7 @@ private:
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) const final;
 
     _WKWebAuthenticationPanel *m_panel;
-    WeakObjCPtr<id <_WKWebAuthenticationPanelDelegate> > m_delegate;
+    WeakObjCPtr<id<_WKWebAuthenticationPanelDelegate>> m_delegate;
 
     struct {
         bool panelUpdateWebAuthenticationPanel : 1;

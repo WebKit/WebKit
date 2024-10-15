@@ -2114,9 +2114,14 @@ VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
     return downcast<VirtualAuthenticatorManager>(m_authenticatorManager.get());
 }
 
+Ref<AuthenticatorManager> WebsiteDataStore::protectedAuthenticatorManager()
+{
+    return authenticatorManager();
+}
+
 Ref<VirtualAuthenticatorManager> WebsiteDataStore::protectedVirtualAuthenticatorManager()
 {
-return virtualAuthenticatorManager();
+    return virtualAuthenticatorManager();
 }
 #endif
 

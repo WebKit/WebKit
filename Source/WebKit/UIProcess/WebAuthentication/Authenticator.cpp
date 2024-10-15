@@ -49,9 +49,8 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 void Authenticator::receiveRespond(AuthenticatorObserverRespond&& respond) const
 {
     ASSERT(RunLoop::isMain());
-    if (!m_observer)
-        return;
-    m_observer->respondReceived(WTFMove(respond));
+    if (RefPtr observer = m_observer.get())
+        observer->respondReceived(WTFMove(respond));
 }
 
 } // namespace WebKit

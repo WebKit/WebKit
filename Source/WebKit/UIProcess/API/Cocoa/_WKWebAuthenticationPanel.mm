@@ -154,15 +154,16 @@ NSString * const _WKLocalAuthenticatorCredentialLastUsedDateKey = @"_WKLocalAuth
 
 - (id <_WKWebAuthenticationPanelDelegate>)delegate
 {
-    if (!_client)
+    RefPtr client = _client.get();
+    if (!client)
         return nil;
-    return _client->delegate().autorelease();
+    return client->delegate().autorelease();
 }
 
 - (void)setDelegate:(id<_WKWebAuthenticationPanelDelegate>)delegate
 {
-    auto client = WTF::makeUniqueRef<WebKit::WebAuthenticationPanelClient>(self, delegate);
-    _client = client.get();
+    Ref client = WebKit::WebAuthenticationPanelClient::create(self, delegate);
+    _client = client.ptr();
     _panel->setClient(WTFMove(client));
 }
 

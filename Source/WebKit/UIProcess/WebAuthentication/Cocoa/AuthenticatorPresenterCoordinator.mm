@@ -41,6 +41,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorPresenterCoordinator);
 
+Ref<AuthenticatorPresenterCoordinator> AuthenticatorPresenterCoordinator::create(const AuthenticatorManager& manager, const String& rpId, const AuthenticatorPresenterCoordinator::TransportSet& transports, WebCore::ClientDataType type, const String& username)
+{
+    return adoptRef(*new AuthenticatorPresenterCoordinator(manager, rpId, transports, type, username));
+}
+
 AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
     : m_manager(manager)
 {

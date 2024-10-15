@@ -41,7 +41,12 @@
 
 namespace WebKit {
 
-WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationPanel *panel, id <_WKWebAuthenticationPanelDelegate> delegate)
+Ref<WebAuthenticationPanelClient> WebAuthenticationPanelClient::create(_WKWebAuthenticationPanel *panel, id<_WKWebAuthenticationPanelDelegate> delegate)
+{
+    return adoptRef(*new WebAuthenticationPanelClient(panel, delegate));
+}
+
+WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationPanel *panel, id<_WKWebAuthenticationPanelDelegate> delegate)
     : m_panel(panel)
     , m_delegate(delegate)
 {
@@ -53,7 +58,7 @@ WebAuthenticationPanelClient::WebAuthenticationPanelClient(_WKWebAuthenticationP
     m_delegateMethods.panelRequestLAContextForUserVerificationCompletionHandler = [delegate respondsToSelector:@selector(panel:requestLAContextForUserVerificationWithCompletionHandler:)];
 }
 
-RetainPtr<id <_WKWebAuthenticationPanelDelegate> > WebAuthenticationPanelClient::delegate()
+RetainPtr<id<_WKWebAuthenticationPanelDelegate>> WebAuthenticationPanelClient::delegate() const
 {
     return m_delegate.get();
 }

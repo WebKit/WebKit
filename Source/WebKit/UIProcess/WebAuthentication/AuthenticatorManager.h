@@ -42,15 +42,6 @@
 
 OBJC_CLASS LAContext;
 
-namespace WebKit {
-class AuthenticatorManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorManager> : std::true_type { };
-}
-
 namespace API {
 class WebAuthenticationPanel;
 }
@@ -134,7 +125,7 @@ private:
     WebAuthenticationRequestData m_pendingRequestData;
     Callback m_pendingCompletionHandler; // Should not be invoked directly, use invokePendingCompletionHandler.
     RunLoop::Timer m_requestTimeOutTimer;
-    std::unique_ptr<AuthenticatorPresenterCoordinator> m_presenter;
+    RefPtr<AuthenticatorPresenterCoordinator> m_presenter;
 
     Vector<UniqueRef<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;

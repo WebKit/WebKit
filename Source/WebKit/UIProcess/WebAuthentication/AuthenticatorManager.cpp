@@ -281,8 +281,8 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 {
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->updatePresenter(status);
+    if (RefPtr presenter = m_presenter) {
+        presenter->updatePresenter(status);
         return;
     }
 
@@ -331,8 +331,8 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
     m_pendingRequestData.cachedPin = String();
 
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->updatePresenter(status);
+    if (RefPtr presenter = m_presenter) {
+        presenter->updatePresenter(status);
         return;
     }
 
@@ -361,8 +361,8 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
     };
 
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->requestPin(retries, WTFMove(callback));
+    if (RefPtr presenter = m_presenter) {
+        presenter->requestPin(retries, WTFMove(callback));
         return;
     }
 
@@ -374,8 +374,8 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
 void AuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
 {
     // This is for the new UI.
-    if (m_presenter) {
-        m_presenter->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
+    if (RefPtr presenter = m_presenter) {
+        presenter->selectAssertionResponse(WTFMove(responses), source, WTFMove(completionHandler));
         return;
     }
 
@@ -393,8 +393,8 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
 
 void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
-    if (m_presenter) {
-        m_presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
+    if (RefPtr presenter = m_presenter) {
+        presenter->requestLAContextForUserVerification(WTFMove(completionHandler));
         return;
     }
 
@@ -508,7 +508,7 @@ void AuthenticatorManager::runPresenter()
 void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
 {
     auto& options = m_pendingRequestData.options;
-    m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
+    m_presenter = AuthenticatorPresenterCoordinator::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
 }
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
@@ -516,8 +516,8 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
     auto result = std::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
 
     // This is for the new UI.
-    if (m_presenter)
-        m_presenter->dimissPresenter(result);
+    if (RefPtr presenter = m_presenter)
+        presenter->dimissPresenter(result);
     else {
         dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
             panel.client().dismissPanel(result);
