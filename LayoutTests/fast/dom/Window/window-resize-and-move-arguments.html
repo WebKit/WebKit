@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script language="JavaScript" type="text/javascript">
@@ -17,7 +17,7 @@
 
     function reset()
     {
-        window.moveTo(0, 0);
+        window.moveTo(screen.availLeft + 100, screen.availTop + 100);
         window.resizeTo(300, 200);
         resetWidth = window.outerWidth;
         resetHeight = window.outerHeight;
@@ -99,8 +99,8 @@
 
     debug("Testing - moveTo with more than 2 arguments");
     window.moveTo(x, y, 200, "text");
-    shouldBe('window.screenX', 'x + screen.availLeft');
-    shouldBe('window.screenY', 'y + screen.availTop');
+    shouldBe('window.screenX', 'Math.max(x, screen.availLeft)');
+    shouldBe('window.screenY', 'Math.max(y, screen.availTop)');
     reset();
 
 

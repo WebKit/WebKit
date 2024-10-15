@@ -43,8 +43,8 @@ PASS window.moveTo(x) threw exception TypeError: Not enough arguments.
 PASS window.screenX is resetX
 PASS window.screenY is resetY
 Testing - moveTo with more than 2 arguments
-PASS window.screenX is x + screen.availLeft
-PASS window.screenY is y + screen.availTop
+PASS window.screenX is Math.max(x, screen.availLeft)
+PASS window.screenY is Math.max(y, screen.availTop)
 
 window.moveBy Tests
 

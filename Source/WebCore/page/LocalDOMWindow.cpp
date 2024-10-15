@@ -1802,12 +1802,12 @@ void LocalDOMWindow::moveTo(int x, int y) const
         return;
 
     RefPtr page = frame()->page();
-    auto fr = page->chrome().windowRect();
+    auto update = page->chrome().windowRect();
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
 
-    auto sr = screenAvailableRect(page->mainFrame().virtualView());
-    fr.setLocation(sr.location());
-    auto update = fr;
-    update.move(x, y);
+    update.setLocation(LayoutPoint(x, y));
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
