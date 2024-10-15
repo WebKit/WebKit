@@ -2402,8 +2402,10 @@ void FrameLoader::commitProvisionalLoad()
     if (RefPtr document = frame->document())
         document->checkedEditor()->confirmOrCancelCompositionAndNotifyClient();
 
+IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
     LOG(Loading, "WebCoreLoading frame %" PRIu64 ": Finished committing provisional load to URL %s", frame->frameID().object().toUInt64(),
         frame->document() ? frame->document()->url().stringCenterEllipsizedToLength().utf8().data() : "");
+IGNORE_GCC_WARNINGS_END
 
     if (m_loadType == FrameLoadType::Standard && m_documentLoader && m_documentLoader->isClientRedirect())
         frame->checkedHistory()->updateForClientRedirect();
