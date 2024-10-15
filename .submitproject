@@ -1,6 +1,7 @@
 [submitproject "filter"]
     includedSubdirectoryPatterns = Configurations/
     includedSubdirectoryPatterns = Source/
+    includedSubdirectoryPatterns = WebKitLibraries/SDKs/*.internal-additions.sdk/
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/webrtc/examples
     excludedSubdirectoryPatterns = Source/ThirdParty/capstone
