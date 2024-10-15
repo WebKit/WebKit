@@ -118,6 +118,11 @@ static RetainPtr<PKPaymentAuthorizationViewController> platformViewController(PK
 #endif
 }
 
+Ref<PaymentAuthorizationViewController> PaymentAuthorizationViewController::create(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request, PKPaymentAuthorizationViewController *viewController)
+{
+    return adoptRef(*new PaymentAuthorizationViewController(client, request, viewController));
+}
+
 PaymentAuthorizationViewController::PaymentAuthorizationViewController(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request, PKPaymentAuthorizationViewController *viewController)
     : PaymentAuthorizationPresenter(client)
     , m_viewController(platformViewController(request, viewController))

@@ -85,7 +85,10 @@ class WebPaymentCoordinatorProxy final
     , public PaymentAuthorizationPresenter::Client
     , public RefCounted<WebPaymentCoordinatorProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPaymentCoordinatorProxy);
 public:
+    USING_CAN_MAKE_WEAKPTR(MessageReceiver);
+
     struct Client : public CanMakeWeakPtr<Client>, public CanMakeCheckedPtr<Client> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
@@ -104,7 +107,7 @@ public:
         virtual void getWindowSceneAndBundleIdentifierForPaymentPresentation(WebPageProxyIdentifier, CompletionHandler<void(const String&, const String&)>&&) = 0;
 #endif
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
-        virtual std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
+        virtual Ref<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
         virtual CocoaWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) const = 0;
         virtual void getPaymentCoordinatorEmbeddingUserAgent(WebPageProxyIdentifier, CompletionHandler<void(const String&)>&&) = 0;
@@ -244,7 +247,7 @@ private:
         ValidationComplete
     } m_merchantValidationState { MerchantValidationState::Idle };
 
-    std::unique_ptr<PaymentAuthorizationPresenter> m_authorizationPresenter;
+    RefPtr<PaymentAuthorizationPresenter> m_authorizationPresenter;
     Ref<WorkQueue> m_canMakePaymentsQueue;
 
 #if PLATFORM(MAC)

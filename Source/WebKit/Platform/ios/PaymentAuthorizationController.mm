@@ -49,7 +49,7 @@
     if (!(self = [super _initWithRequest:request presenter:presenter]))
         return nil;
 
-    _presentingWindow = presenter.client().presentingWindowForPaymentAuthorization(presenter);
+    _presentingWindow = presenter.checkedClient()->presentingWindowForPaymentAuthorization(presenter);
     return self;
 }
 
@@ -134,6 +134,11 @@
 @end
 
 namespace WebKit {
+
+Ref<PaymentAuthorizationController> PaymentAuthorizationController::create(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request)
+{
+    return adoptRef(*new PaymentAuthorizationController(client, request));
+}
 
 PaymentAuthorizationController::PaymentAuthorizationController(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request)
     : PaymentAuthorizationPresenter(client)

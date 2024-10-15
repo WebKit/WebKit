@@ -41,9 +41,11 @@ class WebPaymentCoordinatorProxy;
 
 class PaymentAuthorizationViewController final : public PaymentAuthorizationPresenter {
 public:
-    PaymentAuthorizationViewController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *, PKPaymentAuthorizationViewController * = nil);
+    static Ref<PaymentAuthorizationViewController> create(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *, PKPaymentAuthorizationViewController * = nil);
 
 private:
+    PaymentAuthorizationViewController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *, PKPaymentAuthorizationViewController * = nil);
+
     // PaymentAuthorizationPresenter
     WKPaymentAuthorizationDelegate *platformDelegate() final;
     void dismiss() final;

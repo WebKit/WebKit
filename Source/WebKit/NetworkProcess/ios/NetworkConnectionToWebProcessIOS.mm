@@ -104,9 +104,9 @@ const String& NetworkConnectionToWebProcess::paymentCoordinatorSourceApplication
     return emptyString();
 }
 
-std::unique_ptr<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& coordinator, PKPaymentRequest *request)
+Ref<PaymentAuthorizationPresenter> NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& coordinator, PKPaymentRequest *request)
 {
-    return makeUnique<PaymentAuthorizationController>(coordinator, request);
+    return PaymentAuthorizationController::create(coordinator, request);
 }
 
 void NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, IPC::ReceiverName, IPC::MessageReceiver&)

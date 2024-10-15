@@ -31,20 +31,12 @@
 #include <WebCore/ApplePaySessionPaymentRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS UIViewController;
 OBJC_CLASS WKPaymentAuthorizationDelegate;
-
-namespace WebKit {
-class PaymentAuthorizationPresenter;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PaymentAuthorizationPresenter> : std::true_type { };
-}
 
 namespace WebCore {
 class Payment;
@@ -62,11 +54,14 @@ struct ApplePayShippingMethodUpdate;
 
 namespace WebKit {
 
-class PaymentAuthorizationPresenter : public CanMakeWeakPtr<PaymentAuthorizationPresenter> {
+class PaymentAuthorizationPresenter : public RefCountedAndCanMakeWeakPtr<PaymentAuthorizationPresenter> {
     WTF_MAKE_TZONE_ALLOCATED(PaymentAuthorizationPresenter);
     WTF_MAKE_NONCOPYABLE(PaymentAuthorizationPresenter);
 public:
-    struct Client {
+    struct Client : public CanMakeWeakPtr<Client>, public CanMakeCheckedPtr<Client> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
+
         virtual ~Client() = default;
 
         virtual void presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment&) = 0;
@@ -83,7 +78,8 @@ public:
 
     virtual ~PaymentAuthorizationPresenter() = default;
 
-    Client& client() { return m_client; }
+    Client* client() { return m_client.get(); }
+    CheckedPtr<Client> checkedClient() { return m_client.get(); }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
@@ -118,7 +114,7 @@ protected:
 #endif
 
 private:
-    Client& m_client;
+    WeakPtr<Client> m_client;
 };
 
 } // namespace WebKit

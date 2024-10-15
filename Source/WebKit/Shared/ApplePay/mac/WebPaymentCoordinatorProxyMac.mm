@@ -105,7 +105,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 
             ASSERT(viewController);
 
-            paymentCoordinatorProxy->m_authorizationPresenter = makeUnique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
+            paymentCoordinatorProxy->m_authorizationPresenter = PaymentAuthorizationViewController::create(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
 
             ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
             paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];

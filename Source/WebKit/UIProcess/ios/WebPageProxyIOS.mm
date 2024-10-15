@@ -1353,9 +1353,9 @@ void WebPageProxy::requestPasswordForQuickLookDocumentInMainFrameShared(const St
 
 #if ENABLE(APPLE_PAY)
 
-std::unique_ptr<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, PKPaymentRequest *paymentRequest)
+Ref<PaymentAuthorizationPresenter> WebPageProxy::Internals::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, PKPaymentRequest *paymentRequest)
 {
-    return makeUnique<PaymentAuthorizationController>(paymentCoordinatorProxy, paymentRequest);
+    return PaymentAuthorizationController::create(paymentCoordinatorProxy, paymentRequest);
 }
 
 UIViewController *WebPageProxy::Internals::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)

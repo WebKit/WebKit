@@ -39,9 +39,11 @@ namespace WebKit {
 
 class PaymentAuthorizationController final : public PaymentAuthorizationPresenter {
 public:
-    PaymentAuthorizationController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *);
+    static Ref<PaymentAuthorizationController> create(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *);
 
 private:
+    PaymentAuthorizationController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *);
+
     // PaymentAuthorizationPresenter
     WKPaymentAuthorizationDelegate *platformDelegate() final;
     void dismiss() final;
