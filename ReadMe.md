@@ -142,6 +142,16 @@ run-safari --debug --ios-simulator
 
 In both cases, if you have built release builds instead, use `--release` instead of `--debug`.
 
+To run other applications, for example MobileMiniBrowser, with your local build of WebKit, run the following command:
+
+``` shell
+Tools/Scripts/run-webkit-app --debug --iphone-simulator <application-path>
+```
+
+#### Using Xcode
+
+Open `WebKit.xcworkspace`, select intended scheme such as MobileMiniBrowser and an iOS simulator as target, click run.
+
 ### Linux Ports
 
 If you have a development build, you can use the `run-minibrowser` script, e.g.:
