@@ -458,6 +458,6 @@ Ref<RemoteVideoFrameObjectHeap> RemoteGraphicsContextGL::protectedVideoFrameObje
 
 } // namespace WebKit
 
-#endif
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
