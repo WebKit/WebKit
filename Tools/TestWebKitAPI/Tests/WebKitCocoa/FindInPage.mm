@@ -1051,7 +1051,7 @@ TEST(WebKit, FindInPDFAfterFindInPage)
 
 TEST(WebKit, FindInUnifiedPDF)
 {
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
 
     RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request.get()];

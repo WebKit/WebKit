@@ -83,7 +83,7 @@ TEST(WebKit, WKPDFViewResizeCrash)
 
 TEST(WebKit, WKPDFViewStablePresentationUpdateCallback)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
     [webView loadRequest:request];
