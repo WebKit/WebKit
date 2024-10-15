@@ -3061,10 +3061,8 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {
-        if (auto syncRequestID = decoder.decode<IPC::Connection::SyncRequestID>()) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID->toUInt64()));
-            RETURN_IF_EXCEPTION(scope, nullptr);
-        }
+        jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(decoder.syncRequestID().toUInt64()));
+        RETURN_IF_EXCEPTION(scope, nullptr);
     }
     auto arrayBuffer = JSC::ArrayBuffer::create(decoder.span());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {

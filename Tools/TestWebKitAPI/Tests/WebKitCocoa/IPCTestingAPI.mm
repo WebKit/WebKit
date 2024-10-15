@@ -214,8 +214,7 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToUIProcessWithoutTermination)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
-// #Fixme rdar://137215517
-TEST(IPCTestingAPI, DISABLED_CanSendInvalidSyncMessageToUIProcessWithoutTermination)
+TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -228,7 +227,7 @@ TEST(IPCTestingAPI, DISABLED_CanSendInvalidSyncMessageToUIProcessWithoutTerminat
         "</script>"];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "Failed to successfully deserialize the message");
+    EXPECT_STREQ([alertMessage UTF8String], "Receiver cancelled the reply due to invalid destination or deserialization error");
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -395,8 +394,7 @@ TEST(IPCTestingAPI, DescribesArguments)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"args[2].type"] UTF8String], "String");
 }
 
-// #Fixme rdar://137215517
-TEST(IPCTestingAPI, DISABLED_CanInterceptAlert)
+TEST(IPCTestingAPI, CanInterceptAlert)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
