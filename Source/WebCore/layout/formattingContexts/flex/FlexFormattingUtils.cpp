@@ -113,6 +113,21 @@ LayoutUnit FlexFormattingUtils::usedMaxContentSizeInMainAxis(const LogicalFlexIt
     return contentSize;
 }
 
+LayoutUnit FlexFormattingUtils::usedSizeInCrossAxis(const LogicalFlexItem& flexItem, LayoutUnit maxAxisConstraint) const
+{
+    if (auto definiteSize = flexItem.crossAxis().definiteSize)
+        return *definiteSize;
+
+    auto isMainAxisParallelWithInlineAxis = this->isMainAxisParallelWithInlineAxis(formattingContext().root());
+    auto widtConstraintForLayout = isMainAxisParallelWithInlineAxis ? std::make_optional(maxAxisConstraint) : std::nullopt;
+    auto& flexItemBox = flexItem.layoutBox();
+    formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), widtConstraintForLayout);
+    auto crossSize = isMainAxisParallelWithInlineAxis ? formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight() : formattingContext().geometryForFlexItem(flexItemBox).contentBoxWidth();
+    if (!flexItem.isContentBoxBased())
+        crossSize += flexItem.crossAxis().borderAndPadding;
+    return crossSize;
+}
+
 }
 }
 

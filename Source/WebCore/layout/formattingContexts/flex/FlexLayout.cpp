@@ -397,23 +397,8 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
 FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList)
 {
     SizeList hypotheticalCrossSizeList(flexItems.size());
-    for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex) {
-        auto& flexItem = flexItems[flexItemIndex];
-
-        if (auto definiteSize = flexItems[flexItemIndex].crossAxis().definiteSize) {
-            hypotheticalCrossSizeList[flexItemIndex] = *definiteSize;
-            continue;
-        }
-        auto& flexItemBox = flexItem.layoutBox();
-        auto crossContentSizeAfterPerformingLayout = [&]() -> LayoutUnit {
-            formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), flexItemsMainSizeList[flexItemIndex]);
-            return formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight();
-        };
-        auto usedCrossSize = crossContentSizeAfterPerformingLayout();
-        if (!flexItem.isContentBoxBased())
-            usedCrossSize += flexItem.crossAxis().borderAndPadding;
-        hypotheticalCrossSizeList[flexItemIndex] = usedCrossSize;
-    }
+    for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex)
+        hypotheticalCrossSizeList[flexItemIndex] = formattingUtils().usedSizeInCrossAxis(flexItems[flexItemIndex], flexItemsMainSizeList[flexItemIndex]);
     return hypotheticalCrossSizeList;
 }
 

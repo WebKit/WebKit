@@ -48,6 +48,7 @@ public:
     LayoutUnit usedMinimumSizeInMainAxis(const LogicalFlexItem&) const;
     std::optional<LayoutUnit> usedMaximumSizeInMainAxis(const LogicalFlexItem&) const;
     LayoutUnit usedMaxContentSizeInMainAxis(const LogicalFlexItem&) const;
+    LayoutUnit usedSizeInCrossAxis(const LogicalFlexItem&, LayoutUnit maxAxisConstraint) const;
 
 private:
     const FlexFormattingContext& formattingContext() const { return m_flexFormattingContext; }
