@@ -171,11 +171,13 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
     }
 
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec]() mutable {
         if (isSupportedCodec && isSameConfigurationExceptBitrateAndFramerate(m_baseConfiguration, config)) {
             updateRates(config);
             return;
         }
+
+        auto identifier = scriptExecutionContext()->identifier();
 
         m_isMessageQueueBlocked = true;
 
@@ -196,18 +198,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
 
         m_baseConfiguration = config;
 
-        VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
-            postTaskToCodec<WebCodecsVideoEncoder>(identifier, WTFMove(weakThis), [result = WTFMove(result)] (auto& encoder) mutable {
-                if (!result.has_value()) {
-                    encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                    return;
-                }
-                encoder.setInternalEncoder(WTFMove(result.value()));
-                encoder.m_hasNewActiveConfiguration = true;
-                encoder.m_isMessageQueueBlocked = false;
-                encoder.processControlMessageQueue();
-            });
-        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }](VideoEncoder::ActiveConfiguration&& configuration) {
+        Ref createEncoderPromise = VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& configuration) {
             postTaskToCodec<WebCodecsVideoEncoder>(identifier, weakThis, [configuration = WTFMove(configuration)] (auto& encoder) mutable {
                 encoder.m_activeConfiguration = WTFMove(configuration);
                 encoder.m_hasNewActiveConfiguration = true;
@@ -226,6 +217,20 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
                 });
                 encoder.m_output->handleEvent(WTFMove(chunk), encoder.createEncodedChunkMetadata(result.temporalIndex));
             });
+        });
+
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(WTFMove(createEncoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) mutable {
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (!result) {
+                protectedThis->closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                return;
+            }
+            protectedThis->setInternalEncoder(WTFMove(*result));
+            protectedThis->m_hasNewActiveConfiguration = true;
+            protectedThis->m_isMessageQueueBlocked = false;
+            protectedThis->processControlMessageQueue();
         });
     } });
     return { };
@@ -344,16 +349,9 @@ void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    auto* promisePtr = promise.ptr();
-    context.addDeferredPromise(WTFMove(promise));
-
-    VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier = context.identifier(), config = config.isolatedCopy(), promisePtr](auto&& result) mutable {
-        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopy(), promisePtr](auto& context) mutable {
-            if (auto promise = context.takeDeferredPromise(promisePtr))
-                promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { success, WTFMove(config) });
-        });
-    }, [](auto&&) {
-    }, [](auto&&) {
+    Ref createEncoderPromise = VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [] (auto&&) { }, [] (auto&&) { });
+    context.enqueueTaskWhenSettled(WTFMove(createEncoderPromise), TaskSource::MediaElement, [config, promise = WTFMove(promise)](auto&& result) mutable {
+        promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { result.has_value(), WTFMove(config) });
     });
 }
 

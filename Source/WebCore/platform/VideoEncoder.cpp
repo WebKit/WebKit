@@ -45,13 +45,20 @@ void VideoEncoder::setCreatorCallback(CreatorFunction&& function)
     s_customCreator = WTFMove(function);
 }
 
-void VideoEncoder::create(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+Ref<VideoEncoder::CreatePromise> VideoEncoder::create(const String& codecName, const Config& config, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
 {
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+
     if (s_customCreator) {
         s_customCreator(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
-        return;
+        return promise;
     }
     createLocalEncoder(codecName, config, WTFMove(callback), WTFMove(descriptionCallback), WTFMove(outputCallback));
+    return promise;
 }
 
 void VideoEncoder::createLocalEncoder(const String& codecName, const Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)

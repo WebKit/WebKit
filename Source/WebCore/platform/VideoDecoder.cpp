@@ -46,13 +46,20 @@ void VideoDecoder::setCreatorCallback(CreatorFunction&& function)
     s_customCreator = WTFMove(function);
 }
 
-void VideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
+Ref<VideoDecoder::CreatePromise> VideoDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
 {
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+
     if (s_customCreator) {
         s_customCreator(codecName, config, WTFMove(callback), WTFMove(outputCallback));
-        return;
+        return promise;
     }
     createLocalDecoder(codecName, config, WTFMove(callback), WTFMove(outputCallback));
+    return promise;
 }
 
 #define LE_CHR(a, b, c, d) (((a)<<24) | ((b)<<16) | ((c)<<8) | (d))

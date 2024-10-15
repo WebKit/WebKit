@@ -268,20 +268,14 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
 
     if (!m_firstVideoFrameProcessed) {
         m_firstVideoFrameProcessed = true;
+
+        m_resumedVideoTime = MonotonicTime::now();
+
         VideoEncoder::Config config { static_cast<uint64_t>(frame.presentationSize().width()), static_cast<uint64_t>(frame.presentationSize().height()), false, m_videoBitsPerSecond };
 
         m_videoTrackIndex = m_delegate->addVideoTrack(config.width, config.height, mkvCodeIcForMediaVideoCodecId(m_videoCodec));
 
-        VideoEncoder::create(codecStringForMediaVideoCodecId(m_videoCodec), config, [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
-            assertIsMainThread();
-            RefPtr protectedThis = weakThis.get();
-            if (!result || !protectedThis)
-                return;
-            m_videoEncoder = result.value().moveToUniquePtr();
-            m_videoEncoder->setRates(m_videoBitsPerSecond, 0);
-            encodePendingVideoFrames();
-        }, [](auto&&) {
-        }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& frame) {
+        auto promise = VideoEncoder::create(codecStringForMediaVideoCodecId(m_videoCodec), config, [](auto&&) { }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& frame) {
             ensureOnMainThread([weakThis, frame = WTFMove(frame)]() mutable {
                 assertIsCurrent(MainThreadDispatcher::singleton());
                 if (RefPtr protectedThis = weakThis.get()) {
@@ -294,9 +288,18 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
             });
         });
 
-        m_resumedVideoTime = MonotonicTime::now();
+        promise->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
+            assertIsMainThread();
+            RefPtr protectedThis = weakThis.get();
+            if (!result || !protectedThis)
+                return;
+            m_videoEncoder = result.value().moveToUniquePtr();
+            m_videoEncoder->setRates(m_videoBitsPerSecond, 0);
 
-        maybeStartWriting();
+            maybeStartWriting();
+
+            encodePendingVideoFrames();
+        });
     }
 
     if (!m_hasStartedWriting) // We don't record video frames received before the first audio frame.

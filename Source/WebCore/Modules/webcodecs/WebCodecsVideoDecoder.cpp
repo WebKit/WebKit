@@ -130,7 +130,11 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     m_isKeyChunkRequired = true;
 
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec]() mutable {
+        RefPtr context = scriptExecutionContext();
+
+        auto identifier = context->identifier();
+
         m_isMessageQueueBlocked = true;
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsVideoDecoder>(identifier, *this, [] (auto& decoder) {
@@ -139,22 +143,12 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
             return;
         }
 
-        VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
-            postTaskToCodec<WebCodecsVideoDecoder>(identifier, WTFMove(weakThis), [result = WTFMove(result)] (auto& decoder) mutable {
-                if (!result.has_value()) {
-                    decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                    return;
-                }
-                decoder.setInternalDecoder(WTFMove(result.value()));
-                decoder.m_isMessageQueueBlocked = false;
-                decoder.processControlMessageQueue();
-            });
-        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount](auto&& result) {
+        Ref createDecoderPromise = VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
             postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
                 if (decoder.m_state != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;
 
-                if (!result.has_value()) {
+                if (!result) {
                     decoder.closeDecoder(Exception { ExceptionCode::EncodingError, WTFMove(result).error() });
                     return;
                 }
@@ -170,6 +164,19 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
                 auto videoFrame = WebCodecsVideoFrame::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.frame), WTFMove(init));
                 decoder.m_output->handleEvent(WTFMove(videoFrame));
             });
+        });
+
+        context->enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (!result) {
+                protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                return;
+            }
+            protectedThis->setInternalDecoder(WTFMove(*result));
+            protectedThis->m_isMessageQueueBlocked = false;
+            protectedThis->processControlMessageQueue();
         });
     } });
     return { };
@@ -246,20 +253,9 @@ void WebCodecsVideoDecoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    auto* promisePtr = promise.ptr();
-    context.addDeferredPromise(WTFMove(promise));
-
-    auto videoDecoderConfig = createVideoDecoderConfig(config);
-    Vector<uint8_t> description { videoDecoderConfig.description };
-    VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [identifier = context.identifier(), config = config.isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto&& result) mutable {
-        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto& context) mutable {
-            if (auto promise = context.takeDeferredPromise(promisePtr)) {
-                if (description.size())
-                    config.description = RefPtr { JSC::ArrayBuffer::create(description) };
-                promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { success, WTFMove(config) });
-            }
-        });
-    }, [](auto&&) {
+    Ref createDecoderPromise = VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [] (auto&&) { });
+    context.enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [config = WTFMove(config), promise = WTFMove(promise)](auto&& result) mutable {
+        promise->template resolve<IDLDictionary<WebCodecsVideoDecoderSupport>>(WebCodecsVideoDecoderSupport { !!result, WTFMove(config) });
     });
 }
 

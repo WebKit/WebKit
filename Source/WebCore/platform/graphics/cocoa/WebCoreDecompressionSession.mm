@@ -848,18 +848,8 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
     VideoDecoder::Config config { { }, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes };
     MediaPromise::Producer producer;
     auto promise = producer.promise();
-    VideoDecoder::create(VideoDecoder::fourCCToCodecString(codec), config, [protectedThis = Ref { *this }, this, producer = WTFMove(producer), queue = m_decompressionQueue](VideoDecoder::CreateResult&& result) mutable {
-        queue->dispatch([protectedThis = WTFMove(protectedThis), this, producer = WTFMove(producer), result = WTFMove(result)] () mutable {
-            assertIsCurrent(m_decompressionQueue.get());
-            if (!result || isInvalidated()) {
-                producer.reject(PlatformMediaError::DecoderCreationError);
-                return;
-            }
-            Locker lock { m_lock };
-            m_videoDecoder = result.value().moveToUniquePtr();
-            producer.resolve();
-        });
-    }, [weakThis = ThreadSafeWeakPtr { *this }, this, queue = m_decompressionQueue](Expected<VideoDecoder::DecodedFrame, String>&& result) {
+
+    VideoDecoder::create(VideoDecoder::fourCCToCodecString(codec), config, [weakThis = ThreadSafeWeakPtr { *this }, this, queue = m_decompressionQueue] (auto&& result) {
         queue->dispatch([weakThis, this, result = WTFMove(result)] () {
             if (RefPtr protectedThis = weakThis.get()) {
                 assertIsCurrent(m_decompressionQueue.get());
@@ -876,7 +866,17 @@ Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCo
                 handleDecompressionOutput(m_pendingDecodeData->displaying, noErr, 0, result->frame->pixelBuffer(), presentationTime, presentationDuration);
             }
         });
+    })->whenSettled(m_decompressionQueue, [protectedThis = Ref { *this }, this, producer = WTFMove(producer), queue = m_decompressionQueue] (auto&& result) mutable {
+        assertIsCurrent(m_decompressionQueue.get());
+        if (!result || isInvalidated()) {
+            producer.reject(PlatformMediaError::DecoderCreationError);
+            return;
+        }
+        Locker lock { m_lock };
+        m_videoDecoder = result.value().moveToUniquePtr();
+        producer.resolve();
     });
+
     return promise;
 }
 
