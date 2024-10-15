@@ -79,6 +79,7 @@ enum class FontIsOrientationFallback : bool { No, Yes };
 
 #if USE(CORE_TEXT)
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
+bool supportsOpenTypeFeature(CTFontRef, CFStringRef featureTag);
 #endif
 
 struct FontInternalAttributes {
@@ -122,6 +123,7 @@ public:
     const Font& noSynthesizableFeaturesFont() const;
     const Font* emphasisMarkFont(const FontDescription&) const;
     const Font& brokenIdeographFont() const;
+    const RefPtr<Font> halfWidthFont() const;
 
     bool isProbablyOnlyUsedToRenderIcons() const;
 
@@ -214,6 +216,7 @@ public:
     bool supportsAllSmallCaps() const;
     bool supportsPetiteCaps() const;
     bool supportsAllPetiteCaps() const;
+    bool supportsOpenTypeAlternateHalfWidths() const;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     MultiRepresentationHEICMetrics metricsForMultiRepresentationHEIC() const;
 #endif
@@ -252,6 +255,8 @@ private:
     RefPtr<Font> createFontWithoutSynthesizableFeatures() const;
     RefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
     RefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
+    RefPtr<Font> createHalfWidthFont() const;
+    RefPtr<Font> platformCreateHalfWidthFont() const;
 
     struct DerivedFonts;
     DerivedFonts& ensureDerivedFontData() const;
@@ -325,6 +330,7 @@ private:
         RefPtr<Font> verticalRightOrientationFont;
         RefPtr<Font> uprightOrientationFont;
         RefPtr<Font> invisibleFont;
+        RefPtr<Font> halfWidthFont;
     };
 
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
@@ -350,6 +356,7 @@ private:
     mutable SupportsFeature m_supportsAllSmallCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsPetiteCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsAllPetiteCaps { SupportsFeature::Unknown };
+    mutable SupportsFeature m_supportsOpenTypeAlternateHalfWidths { SupportsFeature::Unknown };
 #endif
 
 #if PLATFORM(WIN)

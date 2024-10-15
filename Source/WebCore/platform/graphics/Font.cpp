@@ -478,6 +478,15 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
     return derivedFontData.smallCapsFont.get();
 }
 
+const RefPtr<Font> Font::halfWidthFont() const
+{
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.halfWidthFont)
+        derivedFontData.halfWidthFont = createHalfWidthFont();
+    ASSERT(derivedFontData.halfWidthFont.get() != this);
+    return derivedFontData.halfWidthFont;
+}
+
 const Font& Font::noSynthesizableFeaturesFont() const
 {
 #if PLATFORM(COCOA)
@@ -548,6 +557,11 @@ const OpenTypeMathData* Font::mathData() const
 RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     return platformCreateScaledFont(fontDescription, scaleFactor);
+}
+
+RefPtr<Font> Font::createHalfWidthFont() const
+{
+    return platformCreateHalfWidthFont();
 }
 
 #if !USE(CORE_TEXT)

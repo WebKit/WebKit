@@ -27,6 +27,7 @@
 #include "Font.h"
 
 #include "GlyphBuffer.h"
+#include "NotImplemented.h"
 #include "PathSkia.h"
 #include <skia/core/SkFont.h>
 #include <skia/core/SkFontMetrics.h>
@@ -132,6 +133,13 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
         Vector<hb_feature_t> { m_platformData.features() },
         m_platformData.customPlatformData()),
         origin(), IsInterstitial::No);
+}
+
+RefPtr<Font> Font::platformCreateHalfWidthFont() const
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281333 : implement half width font for this platform.
+    notImplemented();
+    return nullptr;
 }
 
 void Font::determinePitch()

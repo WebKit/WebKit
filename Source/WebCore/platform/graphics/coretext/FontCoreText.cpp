@@ -315,6 +315,13 @@ static void injectTrueTypeCoverage(int type, int selector, CTFontRef font, BitVe
     unionBitVectors(result, source.get());
 }
 
+bool Font::supportsOpenTypeAlternateHalfWidths() const
+{
+    if (m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Unknown)
+        m_supportsOpenTypeAlternateHalfWidths = supportsOpenTypeFeature(getCTFont(), CFSTR("halt")) ? SupportsFeature::Yes : SupportsFeature::No;
+    return m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Yes;
+}
+
 bool Font::supportsSmallCaps() const
 {
     if (m_supportsSmallCaps == SupportsFeature::Unknown) {
@@ -528,6 +535,62 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
 
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.widthVariant(), m_platformData.textRenderingMode(), m_platformData.protectedCustomPlatformData().get());
+}
+
+bool supportsOpenTypeFeature(CTFontRef font, CFStringRef featureTag)
+{
+    RetainPtr<CFArrayRef> features = adoptCF(CTFontCopyFeatures(font));
+    CFIndex featureCount = CFArrayGetCount(features.get());
+    for (CFIndex featureIndex = 0; featureIndex < featureCount; ++featureIndex) {
+        auto feature = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(features.get(), featureIndex));
+        auto featureTypeIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(feature, kCTFontFeatureTypeIdentifierKey));
+        if (!featureTypeIdentifier)
+            continue;
+
+        int rawFeatureTypeIdentifier;
+        CFNumberGetValue(featureTypeIdentifier, kCFNumberIntType, &rawFeatureTypeIdentifier);
+        if (rawFeatureTypeIdentifier != kTextSpacingType)
+            continue;
+
+        auto featureSelectors = static_cast<CFArrayRef>(CFDictionaryGetValue(feature, kCTFontFeatureTypeSelectorsKey));
+        if (!featureSelectors)
+            continue;
+        auto selectorsCount = CFArrayGetCount(featureSelectors);
+        for (CFIndex selectorIndex = 0; selectorIndex < selectorsCount; ++selectorIndex) {
+            auto featureSelector = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(featureSelectors, selectorIndex));
+            auto openTypeTag = static_cast<CFStringRef>(CFDictionaryGetValue(featureSelector, kCTFontOpenTypeFeatureTag));
+            if (!openTypeTag)
+                continue;
+            if (CFStringCompare(openTypeTag, featureTag, 0) == kCFCompareEqualTo)
+                return true;
+        }
+    }
+    return false;
+}
+
+RefPtr<Font> Font::platformCreateHalfWidthFont() const
+{
+    if (!supportsOpenTypeAlternateHalfWidths())
+        return nullptr;
+
+    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(getCTFont()));
+    auto size = m_platformData.size();
+    auto fontTraits = CTFontGetSymbolicTraits(getCTFont());
+    int enableHaltValue = 1;
+    auto featureName = CFSTR("halt");
+    auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &enableHaltValue));
+
+    const void* featureValues[] = { featureName, featureValue.get() };
+    auto fontFeatureSettings = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureValues, std::size(featureValues), &kCFTypeArrayCallBacks));
+
+    CFTypeRef fontDescriptorKeys[] = { kCTFontFeatureSettingsAttribute };
+    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings.get() };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, std::size(fontDescriptorValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    auto attributesDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
+    auto halfWidthFont = adoptCF(CTFontCreateCopyWithAttributes(getCTFont(), size, nullptr, attributesDescriptor.get()));
+
+    return createDerivativeFont(halfWidthFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.widthVariant(), m_platformData.textRenderingMode(), m_platformData.protectedCustomPlatformData().get());
 }
 
 float Font::platformWidthForGlyph(Glyph glyph) const

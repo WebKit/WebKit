@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "FontDescription.h"
 #include "HWndDC.h"
+#include "NotImplemented.h"
 #include <mlang.h>
 #include <wtf/MathExtras.h>
 #include <wtf/win/GDIObject.h>
@@ -128,6 +129,13 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     winfont.lfHeight = -lroundf(scaledSize * cWindowsFontScaleFactor);
     auto hfont = adoptGDIObject(::CreateFontIndirect(&winfont));
     return Font::create(FontPlatformData(WTFMove(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.customPlatformData()), origin());
+}
+
+RefPtr<Font> Font::platformCreateHalfWidthFont() const
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281333 : implement half width font for this platform.
+    notImplemented();
+    return nullptr;
 }
 
 bool Font::platformSupportsCodePoint(char32_t character, std::optional<char32_t> variation) const
