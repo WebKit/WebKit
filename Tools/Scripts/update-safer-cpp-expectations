@@ -135,7 +135,7 @@ def modify_expectations_for_checker(checker_type, unexpected_contents, project, 
 
 def update_expectations(args, project, add=False):
     if not project:
-        print(f'Could not find a project to update. Please include the project in the filename or pass in the --project argument.')
+        print(f'Could not find a project to update. Please pass in the --project argument.')
         return
     print(f"{'Adding' if add else 'Removing'} unexpected failures in {project}...\n")
     for checker_type in CHECKERS:
@@ -150,7 +150,7 @@ This currently checks against the files in your local checkout at SaferCPPExpect
 Ensure that it is up-to-date before using this script.
 '''
 def is_expected_file(expected_file):
-    print('This checks against local expectations. Ensure your checkout is up-to-date.')
+    print('This checks against local expectations. Ensure your checkout is up-to-date.\n')
     line = f'{expected_file}\n'
     issues = False
     for project in PROJECTS:
@@ -160,15 +160,20 @@ def is_expected_file(expected_file):
                 expectations = f.read()
                 if line in expectations:
                     if not issues:
-                        print(f'{expected_file} has issues:')
+                        print(f'{expected_file} has the following issues:')
                     issues = True
                     print(f'- {project} {checker}')
     if not issues:
         print(f'{expected_file} has no known issues!')
+    else:
+        print('Follow this link for the latest results: https://build.webkit.org/#/builders/Apple-Sonoma-Safer-CPP-Checks\n')
 
 
 def main():
     args = parser()
+    if args.expected_file:
+        is_expected_file(args.expected_file)
+        return
     if args.add:
         print('WARNING: Adding expected failures. Please only add expected failures when you fix false negatives in our tools.')
         user_input = input('Are you sure you want to proceed? [y/N]: ') or 'N'
@@ -178,8 +183,6 @@ def main():
         update_expectations_from_file(args.unexpected_results_file, args.project, args.add)
     else:
         update_expectations(vars(args), args.project, args.add)
-    if args.expected_file:
-        is_expected_file(args.expected_file)
 
 
 if __name__ == '__main__':
