@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS animation.progress reflects the progress of a scroll animation as a number between 0 and 1
+TIMEOUT animation.progress reflects the overall progress of a scroll animation with multiple iterations. Test timed out
+NOTRUN animation.progress reflects the overall progress of a scroll animation that uses a view-timeline.
+NOTRUN progresss of a view-timeline is bounded between 0 and 1.
+
