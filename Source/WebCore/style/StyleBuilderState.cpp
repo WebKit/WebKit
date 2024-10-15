@@ -88,11 +88,6 @@ BuilderState::BuilderState(Builder& builder, RenderStyle& style, BuilderContext&
 // width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
 // if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
 // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
-bool BuilderState::useSVGZoomRules() const
-{
-    return is<SVGElement>(element());
-}
-
 bool BuilderState::useSVGZoomRulesForLength() const
 {
     return is<SVGElement>(element()) && !(is<SVGSVGElement>(*element()) && element()->parentNode());
@@ -261,7 +256,7 @@ void BuilderState::updateFontForOrientationChange()
 void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float size)
 {
     fontDescription.setSpecifiedSize(size);
-    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), false, &style(), document()));
+    fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), &style(), document()));
 }
 
 CSSPropertyID BuilderState::cssPropertyID() const
