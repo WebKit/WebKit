@@ -28,6 +28,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 
 namespace WebKit {
 
@@ -35,7 +36,12 @@ class NetworkProcessMainCurl final: public AuxiliaryProcessMainBaseNoSingleton<N
 public:
     void platformFinalize() override
     {
-        process().destroySession(PAL::SessionID::defaultSessionID());
+        Vector<PAL::SessionID> sessionIDs;
+        process().forEachNetworkSession([&sessionIDs](auto& session) {
+            sessionIDs.append(session.sessionID());
+        });
+        for (auto& sessionID : sessionIDs)
+            process().destroySession(sessionID);
     }
 };
 
