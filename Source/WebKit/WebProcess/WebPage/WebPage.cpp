@@ -9748,6 +9748,15 @@ void WebPage::requestTargetedElement(TargetedElementRequest&& request, Completio
     completion(page->checkedElementTargetingController()->findTargets(WTFMove(request)));
 }
 
+void WebPage::requestAllTargetableElements(float hitTestInterval, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&& completion)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return completion({ });
+
+    completion(page->checkedElementTargetingController()->findAllTargets(hitTestInterval));
+}
+
 void WebPage::requestTextExtraction(std::optional<FloatRect>&& collectionRectInRootView, CompletionHandler<void(TextExtraction::Item&&)>&& completion)
 {
     completion(TextExtraction::extractItem(WTFMove(collectionRectInRootView), Ref { *corePage() }));

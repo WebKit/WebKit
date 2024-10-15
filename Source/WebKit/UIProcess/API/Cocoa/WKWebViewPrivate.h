@@ -576,6 +576,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+- (void)_requestAllTargetableElementsInfo:(CGFloat)hitTestInterval completionHandler:(void(^)(NSArray<NSArray<_WKTargetedElementInfo *> *> *))completionHandler WK_API_AVAILABLE(visionos(2.0)) WK_API_UNAVAILABLE(macos, ios);
+
 @property (nonatomic, readonly) NSURL *_requiredWebExtensionBaseURL WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
 @property (nonatomic, readonly) BOOL _hasActiveNowPlayingSession WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));

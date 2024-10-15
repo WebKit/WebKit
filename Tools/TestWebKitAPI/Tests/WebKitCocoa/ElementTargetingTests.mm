@@ -63,6 +63,9 @@
 - (BOOL)adjustVisibilityForTargets:(NSArray<_WKTargetedElementInfo *> *)targets;
 - (BOOL)resetVisibilityAdjustmentsForTargets:(NSArray<_WKTargetedElementInfo *> *)elements;
 - (void)expectSingleTargetedSelector:(NSString *)expectedSelector at:(CGPoint)point;
+#if PLATFORM(VISION)
+- (NSArray<NSArray<_WKTargetedElementInfo *> *> *)allTargetableElementsWithHitTestInterval:(CGFloat)hitTestInterval;
+#endif
 
 @property (nonatomic, readonly) NSUInteger numberOfVisibilityAdjustmentRects;
 
@@ -143,6 +146,20 @@
     NSString *preferredSelector = [elements firstObject].selectors.firstObject;
     EXPECT_WK_STREQ(preferredSelector, expectedSelector);
 }
+
+#if PLATFORM(VISION)
+- (NSArray<NSArray<_WKTargetedElementInfo *> *> *)allTargetableElementsWithHitTestInterval:(CGFloat)hitTestInterval
+{
+    __block RetainPtr<NSArray<NSArray<_WKTargetedElementInfo *> *>> result;
+    __block bool done = false;
+    [self _requestAllTargetableElementsInfo:hitTestInterval completionHandler:^(NSArray<NSArray<_WKTargetedElementInfo *> *> *elements) {
+        result = elements;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+#endif // PLATFORM(VISION)
 
 @end
 
@@ -653,5 +670,92 @@ TEST(ElementTargeting, CountVisibilityAdjustmentsAfterNavigatingBack)
     [webView synchronouslyGoForward];
     EXPECT_EQ(0U, [webView numberOfVisibilityAdjustmentRects]);
 }
+
+#if PLATFORM(VISION)
+TEST(ElementTargeting, RequestAllVisibleElements)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"element-targeting-11"];
+
+    RetainPtr elements = [webView allTargetableElementsWithHitTestInterval:CGFloat(40.0)];
+    EXPECT_EQ([elements count], 4U);
+    {
+        auto subelements = [elements objectAtIndex: 0];
+        EXPECT_EQ([subelements count], 4U);
+        {
+            auto subelement = [subelements objectAtIndex: 0];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Top box"]);
+            EXPECT_EQ(subelement.renderedText.length, 7U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 1];
+            EXPECT_TRUE([subelement.renderedText containsString:@"the crazy ones"]);
+            EXPECT_EQ(subelement.renderedText.length, 64U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 2];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Lorem ipsum"]);
+            EXPECT_EQ(subelement.renderedText.length, 896U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 3];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Occluded box"]);
+            EXPECT_EQ(subelement.renderedText.length, 12U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+    }
+    {
+        auto subelements = [elements objectAtIndex: 1];
+        EXPECT_EQ([subelements count], 3U);
+        {
+            auto subelement = [subelements objectAtIndex: 0];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Occluded box"]);
+            EXPECT_EQ(subelement.renderedText.length, 12U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 1];
+            EXPECT_TRUE([subelement.renderedText containsString:@"the crazy ones"]);
+            EXPECT_EQ(subelement.renderedText.length, 64U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 2];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Lorem ipsum"]);
+            EXPECT_EQ(subelement.renderedText.length, 896U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+    }
+    {
+        auto subelements = [elements objectAtIndex: 2];
+        EXPECT_EQ([subelements count], 2U);
+        {
+            auto subelement = [subelements objectAtIndex: 0];
+            EXPECT_TRUE([subelement.renderedText containsString:@"the crazy ones"]);
+            EXPECT_EQ(subelement.renderedText.length, 64U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+        {
+            auto subelement = [subelements objectAtIndex: 1];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Lorem ipsum"]);
+            EXPECT_EQ(subelement.renderedText.length, 896U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+    }
+    {
+        auto subelements = [elements objectAtIndex: 3];
+        EXPECT_EQ([subelements count], 1U);
+        {
+            auto subelement = [subelements objectAtIndex: 0];
+            EXPECT_TRUE([subelement.renderedText containsString:@"Lorem ipsum"]);
+            EXPECT_EQ(subelement.renderedText.length, 896U);
+            EXPECT_EQ(subelement.childFrames.count, 0U);
+        }
+    }
+}
+#endif // PLATFORM(VISION)
 
 } // namespace TestWebKitAPI

@@ -56,6 +56,7 @@ public:
     ElementTargetingController(Page&);
 
     WEBCORE_EXPORT Vector<TargetedElementInfo> findTargets(TargetedElementRequest&&);
+    WEBCORE_EXPORT Vector<Vector<TargetedElementInfo>> findAllTargets(float);
 
     WEBCORE_EXPORT bool adjustVisibility(Vector<TargetedElementAdjustment>&&);
     void adjustVisibilityInRepeatedlyTargetedRegions(Document&);
@@ -91,6 +92,9 @@ private:
     Vector<TargetedElementInfo> extractTargets(Vector<Ref<Node>>&&, RefPtr<Element>&& innerElement, bool canIncludeNearbyElements);
 
     void recomputeAdjustedElementsIfNeeded();
+
+    void topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+    Vector<ElementIdentifier> topologicallySortElements(const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
 
     WeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;

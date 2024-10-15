@@ -15220,6 +15220,24 @@ void WebPageProxy::requestTargetedElement(const API::TargetedElementRequest& req
     });
 }
 
+void WebPageProxy::requestAllTargetableElements(float hitTestingInterval, CompletionHandler<void(Vector<Vector<Ref<API::TargetedElementInfo>>>&&)>&& completion)
+{
+    if (!hasRunningProcess())
+        return completion({ });
+
+    sendWithAsyncReply(Messages::WebPage::RequestAllTargetableElements(hitTestingInterval), [completion = WTFMove(completion), weakThis = WeakPtr { *this }](Vector<Vector<WebCore::TargetedElementInfo>>&& elements) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completion({ });
+
+        completion(WTF::map(WTFMove(elements), [protectedThis](auto&& subelements) {
+            return WTF::map(WTFMove(subelements), [protectedThis](auto&& subelement) {
+                return API::TargetedElementInfo::create(*protectedThis, WTFMove(subelement));
+            });
+        }));
+    });
+}
+
 void WebPageProxy::takeSnapshotForTargetedElement(const API::TargetedElementInfo& info, CompletionHandler<void(std::optional<ShareableBitmapHandle>&&)>&& completion)
 {
     if (!hasRunningProcess())

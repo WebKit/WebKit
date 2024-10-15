@@ -3186,6 +3186,17 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     });
 }
 
+- (void)_requestAllTargetableElementsInfo:(CGFloat)hitTestInterval completionHandler:(void(^)(NSArray<NSArray<_WKTargetedElementInfo *> *> *))completionHandler
+{
+    _page->requestAllTargetableElements(float(hitTestInterval), [completion = makeBlockPtr(completionHandler)](auto&& elements) {
+        completion(createNSArray(elements, [](auto& subelements) {
+            return createNSArray(subelements, [](auto& subelement) {
+                return wrapper(subelement);
+            });
+        }).get());
+    });
+}
+
 - (NSURL *)_unreachableURL
 {
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];

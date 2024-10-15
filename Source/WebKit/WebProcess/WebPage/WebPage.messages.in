@@ -771,6 +771,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
 
+    RequestAllTargetableElements(float hitTestInterval) -> (Vector<Vector<WebCore::TargetedElementInfo>> elements)
+
     RequestTextExtraction(std::optional<WebCore::FloatRect> collectionRectInRootView) -> (struct WebCore::TextExtraction::Item item)
 
 #if PLATFORM(IOS_FAMILY)
