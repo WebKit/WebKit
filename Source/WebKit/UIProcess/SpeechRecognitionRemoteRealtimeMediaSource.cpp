@@ -50,25 +50,25 @@ SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMedia
     , m_identifier(identifier)
     , m_manager(manager)
 {
-    m_manager->addSource(*this, captureDevice);
+    manager.addSource(*this, captureDevice);
 }
 
 SpeechRecognitionRemoteRealtimeMediaSource::~SpeechRecognitionRemoteRealtimeMediaSource()
 {
-    if (m_manager)
-        m_manager->removeSource(*this);
+    if (RefPtr manager = m_manager.get())
+        manager->removeSource(*this);
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSource::startProducingData()
 {
-    if (m_manager)
-        m_manager->send(Messages::SpeechRecognitionRealtimeMediaSourceManager::Start { m_identifier });
+    if (RefPtr manager = m_manager.get())
+        manager->send(Messages::SpeechRecognitionRealtimeMediaSourceManager::Start { m_identifier });
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSource::stopProducingData()
 {
-    if (m_manager)
-        m_manager->send(Messages::SpeechRecognitionRealtimeMediaSourceManager::Stop { m_identifier });
+    if (RefPtr manager = m_manager.get())
+        manager->send(Messages::SpeechRecognitionRealtimeMediaSourceManager::Stop { m_identifier });
 }
 
 #if PLATFORM(COCOA)

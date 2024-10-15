@@ -43,6 +43,16 @@ SpeechRecognitionRemoteRealtimeMediaSourceManager::SpeechRecognitionRemoteRealti
 {
 }
 
+void SpeechRecognitionRemoteRealtimeMediaSourceManager::ref() const
+{
+    m_process->ref();
+}
+
+void SpeechRecognitionRemoteRealtimeMediaSourceManager::deref() const
+{
+    m_process->deref();
+}
+
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognitionRemoteRealtimeMediaSource& source, const WebCore::CaptureDevice& captureDevice)
 {
     auto identifier = source.identifier();
