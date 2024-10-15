@@ -43,6 +43,9 @@ public:
     explicit WebPagePreferencesLockdownModeObserver(API::WebsitePolicies&);
     ~WebPagePreferencesLockdownModeObserver();
 
+    void ref() const final;
+    void deref() const final;
+
 private:
     void willChangeLockdownMode() final;
     void didChangeLockdownMode() final;

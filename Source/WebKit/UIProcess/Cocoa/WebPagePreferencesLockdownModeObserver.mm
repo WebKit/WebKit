@@ -64,4 +64,14 @@ void WebPagePreferencesLockdownModeObserver::didChangeLockdownMode()
     }
 }
 
+void WebPagePreferencesLockdownModeObserver::ref() const
+{
+    m_policies->ref();
 }
+
+void WebPagePreferencesLockdownModeObserver::deref() const
+{
+    m_policies->deref();
+}
+
+} // namespace WebKit

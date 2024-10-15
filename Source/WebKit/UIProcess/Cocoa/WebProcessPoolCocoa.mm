@@ -1088,9 +1088,9 @@ void WebProcessPool::lockdownModeStateChanged()
 {
     auto isNowEnabled = isLockdownModeEnabledBySystemIgnoringCaching();
     if (cachedLockdownModeEnabledGlobally() != isNowEnabled) {
-        lockdownModeObservers().forEach([](auto& observer) { observer.willChangeLockdownMode(); });
+        lockdownModeObservers().forEach([](Ref<LockdownModeObserver> observer) { observer->willChangeLockdownMode(); });
         cachedLockdownModeEnabledGlobally() = isNowEnabled;
-        lockdownModeObservers().forEach([](auto& observer) { observer.didChangeLockdownMode(); });
+        lockdownModeObservers().forEach([](Ref<LockdownModeObserver> observer) { observer->didChangeLockdownMode(); });
     }
 
     WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::lockdownModeStateChanged() isNowEnabled=%d", isNowEnabled);
