@@ -45,8 +45,9 @@ public:
     static LayoutUnit rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight);
     static LayoutUnit columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth);
 
-    LayoutUnit usedMinimumMainSize(const LogicalFlexItem&) const;
-    std::optional<LayoutUnit> usedMaxiumMainSize(const LogicalFlexItem&) const;
+    LayoutUnit usedMinimumSizeInMainAxis(const LogicalFlexItem&) const;
+    std::optional<LayoutUnit> usedMaximumSizeInMainAxis(const LogicalFlexItem&) const;
+    LayoutUnit usedMaxContentSizeInMainAxis(const LogicalFlexItem&) const;
 
 private:
     const FlexFormattingContext& formattingContext() const { return m_flexFormattingContext; }
