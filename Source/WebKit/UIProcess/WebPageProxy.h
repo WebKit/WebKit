@@ -3294,7 +3294,7 @@ private:
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    std::unique_ptr<ModelElementController> m_modelElementController;
+    RefPtr<ModelElementController> m_modelElementController;
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)

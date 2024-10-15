@@ -1507,7 +1507,7 @@ void WebPageProxy::didAttachToRunningProcess()
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     if (protectedPreferences()->modelElementEnabled()) {
         ASSERT(!m_modelElementController);
-        m_modelElementController = makeUnique<ModelElementController>(*this);
+        m_modelElementController = ModelElementController::create(*this);
     }
 #endif
 
@@ -14474,88 +14474,88 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 void WebPageProxy::modelElementGetCamera(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<WebCore::HTMLModelElementCamera, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->getCameraForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->getCameraForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementSetCamera(ModelIdentifier modelIdentifier, WebCore::HTMLModelElementCamera camera, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->setCameraForModelElement(modelIdentifier, camera, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setCameraForModelElement(modelIdentifier, camera, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementIsPlayingAnimation(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->isPlayingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->isPlayingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementSetAnimationIsPlaying(ModelIdentifier modelIdentifier, bool isPlaying, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->setAnimationIsPlayingForModelElement(modelIdentifier, isPlaying, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setAnimationIsPlayingForModelElement(modelIdentifier, isPlaying, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementIsLoopingAnimation(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->isLoopingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->isLoopingAnimationForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementSetIsLoopingAnimation(ModelIdentifier modelIdentifier, bool isLooping, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->setIsLoopingAnimationForModelElement(modelIdentifier, isLooping, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setIsLoopingAnimationForModelElement(modelIdentifier, isLooping, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementAnimationDuration(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->animationDurationForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->animationDurationForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementAnimationCurrentTime(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<Seconds, WebCore::ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->animationCurrentTimeForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->animationCurrentTimeForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementSetAnimationCurrentTime(ModelIdentifier modelIdentifier, Seconds currentTime, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->setAnimationCurrentTimeForModelElement(modelIdentifier, currentTime, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setAnimationCurrentTimeForModelElement(modelIdentifier, currentTime, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementHasAudio(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->hasAudioForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->hasAudioForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementIsMuted(ModelIdentifier modelIdentifier, CompletionHandler<void(Expected<bool, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->isMutedForModelElement(modelIdentifier, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->isMutedForModelElement(modelIdentifier, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementSetIsMuted(ModelIdentifier modelIdentifier, bool isMuted, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->setIsMutedForModelElement(modelIdentifier, isMuted, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setIsMutedForModelElement(modelIdentifier, isMuted, WTFMove(completionHandler));
 }
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 void WebPageProxy::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
 {
-    if (m_modelElementController)
-        m_modelElementController->takeModelElementFullscreen(modelIdentifier, URL { currentURL() });
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->takeModelElementFullscreen(modelIdentifier, URL { currentURL() });
 }
 
 void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdentifier, bool isInteractionEnabled)
 {
-    if (m_modelElementController)
-        m_modelElementController->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
 }
 
 void WebPageProxy::modelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
@@ -14573,50 +14573,50 @@ void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::PlatformLayerIdentif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 void WebPageProxy::modelElementCreateRemotePreview(const String& uuid, const FloatSize& size, CompletionHandler<void(Expected<std::pair<String, uint32_t>, ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->modelElementCreateRemotePreview(uuid, size, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->modelElementCreateRemotePreview(uuid, size, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementLoadRemotePreview(const String& uuid, const URL& url, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->modelElementLoadRemotePreview(uuid, url, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->modelElementLoadRemotePreview(uuid, url, WTFMove(completionHandler));
 }
 
 void WebPageProxy::modelElementDestroyRemotePreview(const String& uuid)
 {
-    if (m_modelElementController)
-        m_modelElementController->modelElementDestroyRemotePreview(uuid);
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->modelElementDestroyRemotePreview(uuid);
 }
 
 void WebPageProxy::modelElementSizeDidChange(const String& uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->modelElementSizeDidChange(uuid, size, WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->modelElementSizeDidChange(uuid, size, WTFMove(completionHandler));
 }
 
 void WebPageProxy::handleMouseDownForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    if (m_modelElementController)
-        m_modelElementController->handleMouseDownForModelElement(uuid, flippedLocationInElement, timestamp);
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->handleMouseDownForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 
 void WebPageProxy::handleMouseMoveForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    if (m_modelElementController)
-        m_modelElementController->handleMouseMoveForModelElement(uuid, flippedLocationInElement, timestamp);
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->handleMouseMoveForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 
 void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
-    if (m_modelElementController)
-        m_modelElementController->handleMouseUpForModelElement(uuid, flippedLocationInElement, timestamp);
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->handleMouseUpForModelElement(uuid, flippedLocationInElement, timestamp);
 }
 
 void WebPageProxy::modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    if (m_modelElementController)
-        m_modelElementController->inlinePreviewUUIDs(WTFMove(completionHandler));
+    if (RefPtr modelElementController = m_modelElementController)
+        modelElementController->inlinePreviewUUIDs(WTFMove(completionHandler));
 }
 #endif
 
