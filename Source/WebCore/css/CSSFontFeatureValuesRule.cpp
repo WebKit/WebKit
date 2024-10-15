@@ -82,7 +82,7 @@ String CSSFontFeatureValuesRule::cssText() const
 
 void CSSFontFeatureValuesRule::reattach(StyleRuleBase& rule)
 {
-    m_fontFeatureValuesRule = static_cast<StyleRuleFontFeatureValues&>(rule);
+    m_fontFeatureValuesRule = downcast<StyleRuleFontFeatureValues>(rule);
 }
 
 CSSFontFeatureValuesBlockRule::CSSFontFeatureValuesBlockRule(StyleRuleFontFeatureValuesBlock& block , CSSStyleSheet* parent)
@@ -102,7 +102,7 @@ String CSSFontFeatureValuesBlockRule::cssText() const
 
 void CSSFontFeatureValuesBlockRule::reattach(StyleRuleBase& rule)
 {
-    m_fontFeatureValuesBlockRule = static_cast<StyleRuleFontFeatureValuesBlock&>(rule);
+    m_fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(rule);
 }
 
 } // namespace WebCore
