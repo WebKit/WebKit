@@ -606,6 +606,9 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         setFallbackValuesIfApplicable();
 
+        // If the property's axis is not parallel with either left<->right axis, this value behaves as start (https://drafts.csswg.org/css-align/#positional-values)
+        justifyContentPosition = !FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer()) && justifyContentPosition == ContentPosition::Right ? ContentPosition::Start : justifyContentPosition;
+
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
             auto initialOffset = [&] {
