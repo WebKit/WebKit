@@ -365,7 +365,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type,
     invalidateStyleAndLayerComposition();
 #endif
 
-    return static_cast<CanvasRenderingContext2D*>(m_context.get());
+    return downcast<CanvasRenderingContext2D>(m_context.get());
 }
 
 CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
@@ -377,7 +377,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, Ca
 
     if (!m_context)
         return createContext2d(type, WTFMove(settings));
-    return static_cast<CanvasRenderingContext2D*>(m_context.get());
+    return downcast<CanvasRenderingContext2D>(m_context.get());
 }
 
 #if ENABLE(WEBGL)
@@ -510,7 +510,7 @@ ImageBitmapRenderingContext* HTMLCanvasElement::getContextBitmapRenderer(const S
     ASSERT_UNUSED(type, HTMLCanvasElement::isBitmapRendererType(type));
     if (!m_context)
         return createContextBitmapRenderer(type, WTFMove(settings));
-    return static_cast<ImageBitmapRenderingContext*>(m_context.get());
+    return downcast<ImageBitmapRenderingContext>(m_context.get());
 }
 
 bool HTMLCanvasElement::isWebGPUType(const String& type)
@@ -533,7 +533,7 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU
         invalidateStyleAndLayerComposition();
     }
 
-    return static_cast<GPUCanvasContext*>(m_context.get());
+    return downcast<GPUCanvasContext>(m_context.get());
 }
 
 GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* gpu)
@@ -549,7 +549,7 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* g
     if (!m_context)
         return createContextWebGPU(type, gpu);
 
-    return static_cast<GPUCanvasContext*>(m_context.get());
+    return downcast<GPUCanvasContext>(m_context.get());
 }
 
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
