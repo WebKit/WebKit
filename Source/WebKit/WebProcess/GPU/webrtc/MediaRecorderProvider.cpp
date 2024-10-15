@@ -49,7 +49,7 @@ std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMedi
 {
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_RTC)
     RefPtr page = m_webPage->corePage();
-    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled())
+    if (page && page->settings().webRTCPlatformCodecsInGPUProcessEnabled() && !isWebMAndSupported(options.mimeType))
         return makeUnique<MediaRecorderPrivate>(stream, options);
 #endif
     return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);

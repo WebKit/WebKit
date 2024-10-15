@@ -30,13 +30,14 @@
 #include "SharedBuffer.h"
 #include "VideoEncoder.h"
 #include <CoreAudio/CoreAudioTypes.h>
+#include <atomic>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WorkQueue.h>
 
 using CMBufferQueueTriggerToken = struct opaqueCMBufferQueueTriggerToken*;
 using CMFormatDescriptionRef = const struct opaqueCMFormatDescription*;
@@ -85,7 +86,8 @@ private:
     void enqueueCompressedAudioSampleBuffers();
     Seconds sampleTime(const RetainPtr<CMSampleBufferRef>&) const;
 
-    void encodePendingVideoFrames();
+    void appendVideoFrame(Ref<VideoFrame>&&);
+    Ref<GenericPromise> encodePendingVideoFrames();
     Seconds nextVideoFrameTime() const;
     Seconds resumeVideoTime() const;
 
@@ -94,7 +96,6 @@ private:
     bool muxNextFrame();
 
     Ref<GenericPromise> flushPendingData();
-    void completeFetchData();
 
     void maybeStartWriting();
     void maybeForceNewCluster();
@@ -104,48 +105,52 @@ private:
     RefPtr<FragmentedSharedBuffer> takeData();
     void flushDataBuffer();
 
-    bool m_hasStartedWriting { false };
-    bool m_isStopped { false };
-    bool m_isStopping { false };
+    WorkQueue& workQueue() const { return m_workQueue.get(); }
+    Ref<WorkQueue> protectedWorkQueue() const { return m_workQueue; }
 
-    Lock m_dataLock;
-    SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
+    bool m_hasStartedWriting WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
+    std::atomic<bool> m_isStopped { false };
+
+    SharedBufferBuilder m_data WTF_GUARDED_BY_CAPABILITY(workQueue());
     static constexpr size_t s_dataBufferSize { 1024 };
-    Vector<uint8_t> m_dataBuffer;
-    CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)> m_fetchDataCompletionHandler;
+    Vector<uint8_t> m_dataBuffer WTF_GUARDED_BY_CAPABILITY(workQueue());
 
-    bool m_hasAudio { false };
-    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
+    const bool m_hasAudio { false };
+    uint64_t m_audioBitsPerSecond { 0 }; // set on creation. const after
+    FourCharCode m_audioCodec { 0 }; // set on creation. const after
+    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription WTF_GUARDED_BY_CAPABILITY(workQueue());
     RefPtr<AudioSampleBufferCompressor> m_audioCompressor;
-    Deque<RetainPtr<CMSampleBufferRef>> m_encodedAudioFrames;
-    uint8_t m_audioTrackIndex { 0 };
-    int64_t m_audioSamplesCount { 0 };
-    MediaTime m_currentAudioSampleTime;
-    MediaTime m_resumedAudioTime;
-    FourCharCode m_audioCodec { 0 };
+    Deque<RetainPtr<CMSampleBufferRef>> m_encodedAudioFrames WTF_GUARDED_BY_CAPABILITY(workQueue());
+    uint8_t m_audioTrackIndex WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
+    int64_t m_audioSamplesCountAudioThread { 0 };
+    int64_t m_audioSamplesCount WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
+    MediaTime m_currentAudioSampleTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+    MediaTime m_resumedAudioTime WTF_GUARDED_BY_CAPABILITY(workQueue());
 
-    bool m_hasVideo { false };
+    const bool m_hasVideo { false };
+    uint64_t m_videoBitsPerSecond { 0 }; // set on creation. const after
+    FourCharCode m_videoCodec { 0 }; // set on creation. const after
     std::unique_ptr<VideoEncoder> m_videoEncoder;
-    uint64_t m_videoBitsPerSecond { 0 };
-    Deque<std::pair<Ref<VideoFrame>, Seconds>> m_pendingVideoFrames;
-    Deque<VideoEncoder::EncodedFrame> m_encodedVideoFrames;
-    bool m_firstVideoFrameProcessed { false };
-    size_t m_pendingVideoEncode { 0 };
-    uint8_t m_videoTrackIndex { 0 };
-    MonotonicTime m_resumedVideoTime;
-    Seconds m_currentVideoDuration;
-    Seconds m_lastVideoKeyframeTime;
-    Seconds m_lastEnqueuedRawVideoFrame;
-    Seconds m_lastReceivedCompressedVideoFrame;
-    std::optional<Seconds> m_firstVideoFrameAudioTime;
-    FourCharCode m_videoCodec { 0 };
+    Deque<std::pair<Ref<VideoFrame>, Seconds>> m_pendingVideoFrames WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Deque<VideoEncoder::EncodedFrame> m_encodedVideoFrames WTF_GUARDED_BY_CAPABILITY(workQueue());
+    bool m_firstVideoFrameProcessed WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
+    size_t m_pendingVideoEncode WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
+    uint8_t m_videoTrackIndex WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
+    MonotonicTime m_resumedVideoTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Seconds m_currentVideoDuration WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Seconds m_lastVideoKeyframeTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Seconds m_lastEnqueuedRawVideoFrame WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Seconds m_lastReceivedCompressedVideoFrame WTF_GUARDED_BY_CAPABILITY(workQueue());
+    std::optional<Seconds> m_firstVideoFrameAudioTime WTF_GUARDED_BY_CAPABILITY(workQueue());
 
-    double m_timeCode { 0 };
+    RefPtr<GenericPromise> m_finalOperations WTF_GUARDED_BY_CAPABILITY(mainThread);
+    double m_timeCode WTF_GUARDED_BY_CAPABILITY(workQueue()) { 0 };
     Seconds m_maxClusterDuration { 2_s };
-    MonotonicTime m_lastTimestamp;
-    Seconds m_lastMuxedSampleTime;
+    MonotonicTime m_lastTimestamp WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Seconds m_lastMuxedSampleTime WTF_GUARDED_BY_CAPABILITY(workQueue());
     UniqueRef<MediaRecorderPrivateWriterWebMDelegate> m_delegate;
-    String m_mimeType;
+    String m_mimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Ref<WorkQueue> m_workQueue;
 };
 
 } // namespace WebCore

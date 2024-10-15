@@ -161,26 +161,27 @@ MediaRecorderPrivateWriterWebM::MediaRecorderPrivateWriterWebM(bool hasAudio, bo
     : m_hasAudio(hasAudio)
     , m_hasVideo(hasVideo)
     , m_delegate(makeUniqueRef<MediaRecorderPrivateWriterWebMDelegate>(*this))
+    , m_workQueue(WorkQueue::create("com.apple.MediaRecorderPrivateWriterWebM"_s))
 {
 }
 
 MediaRecorderPrivateWriterWebM::~MediaRecorderPrivateWriterWebM()
 {
     ASSERT(isMainThread());
-    ASSERT(!m_audioCompressor);
-    ASSERT(!m_videoEncoder);
 }
 
 void MediaRecorderPrivateWriterWebM::close()
 {
-    m_audioCompressor = nullptr;
-    m_videoEncoder = nullptr;
+    stopRecording();
 }
 
 void MediaRecorderPrivateWriterWebM::compressedAudioOutputBufferCallback(void* mediaRecorderPrivateWriter, CMBufferQueueTriggerToken)
 {
     LOG(MediaStream, "compressedAudioOutputBufferCallback called");
-    callOnMainThread([weakWriter = ThreadSafeWeakPtr<MediaRecorderPrivateWriterWebM> { static_cast<MediaRecorderPrivateWriterWebM*>(mediaRecorderPrivateWriter) }] {
+    // We can only be called from the CoreMedia callback if we are still alive.
+    RefPtr writer = static_cast<MediaRecorderPrivateWriterWebM*>(mediaRecorderPrivateWriter);
+
+    writer->protectedWorkQueue()->dispatch([weakWriter = ThreadSafeWeakPtr { *writer }] {
         if (auto strongWriter = weakWriter.get()) {
             strongWriter->enqueueCompressedAudioSampleBuffers();
             strongWriter->partiallyFlushEncodedQueues();
@@ -190,6 +191,8 @@ void MediaRecorderPrivateWriterWebM::compressedAudioOutputBufferCallback(void* m
 
 bool MediaRecorderPrivateWriterWebM::initialize(const MediaRecorderPrivateOptions& options)
 {
+    assertIsMainThread();
+
     m_videoCodec = 'vp08';
     m_audioCodec = kAudioFormatOpus;
     ContentType mimeType(options.mimeType);
@@ -209,8 +212,10 @@ bool MediaRecorderPrivateWriterWebM::initialize(const MediaRecorderPrivateOption
         m_audioCompressor = AudioSampleBufferCompressor::create(compressedAudioOutputBufferCallback, this, m_audioCodec);
         if (!m_audioCompressor)
             return false;
-        if (options.audioBitsPerSecond)
-            RefPtr { m_audioCompressor }->setBitsPerSecond(*options.audioBitsPerSecond);
+        if (options.audioBitsPerSecond) {
+            m_audioBitsPerSecond = *options.audioBitsPerSecond;
+            RefPtr { m_audioCompressor }->setBitsPerSecond(m_audioBitsPerSecond);
+        }
     }
 
     if (options.videoBitsPerSecond)
@@ -222,6 +227,8 @@ bool MediaRecorderPrivateWriterWebM::initialize(const MediaRecorderPrivateOption
 
 void MediaRecorderPrivateWriterWebM::enqueueCompressedAudioSampleBuffers()
 {
+    assertIsCurrent(workQueue());
+
     ASSERT(m_hasAudio);
 
     if (!m_audioCompressor || RefPtr { m_audioCompressor }->isEmpty()) {
@@ -248,7 +255,7 @@ void MediaRecorderPrivateWriterWebM::enqueueCompressedAudioSampleBuffers()
 
     while (RetainPtr sampleBlock = RefPtr { m_audioCompressor }->takeOutputSampleBuffer()) {
         PAL::CMSampleBufferCallBlockForEachSample(sampleBlock.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
-            assertIsCurrent(MainThreadDispatcher::singleton());
+            assertIsCurrent(workQueue());
             m_encodedAudioFrames.append(sampleBuffer);
             LOG(MediaStream, "enqueueCompressedAudioSampleBuffers:Receiving compressed audio frame: queue:%zu first:%f last:%f", m_encodedAudioFrames.size(), sampleTime(m_encodedAudioFrames.first()).value(), sampleTime(m_encodedAudioFrames.last()).value());
             return noErr;
@@ -258,27 +265,39 @@ void MediaRecorderPrivateWriterWebM::enqueueCompressedAudioSampleBuffers()
 
 void MediaRecorderPrivateWriterWebM::maybeStartWriting()
 {
+    assertIsCurrent(workQueue());
+
     m_hasStartedWriting = (!m_hasAudio || m_audioFormatDescription) && (!m_hasVideo || m_videoEncoder);
 }
 
 void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
 {
-    if (m_isStopping)
+    if (m_isStopped)
         return;
+
+    protectedWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, frame = Ref { frame }]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->appendVideoFrame(WTFMove(frame));
+    });
+}
+
+void MediaRecorderPrivateWriterWebM::appendVideoFrame(Ref<VideoFrame>&& frame)
+{
+    assertIsCurrent(workQueue());
 
     if (!m_firstVideoFrameProcessed) {
         m_firstVideoFrameProcessed = true;
 
         m_resumedVideoTime = MonotonicTime::now();
 
-        VideoEncoder::Config config { static_cast<uint64_t>(frame.presentationSize().width()), static_cast<uint64_t>(frame.presentationSize().height()), false, m_videoBitsPerSecond };
+        VideoEncoder::Config config { static_cast<uint64_t>(frame->presentationSize().width()), static_cast<uint64_t>(frame->presentationSize().height()), false, m_videoBitsPerSecond };
 
         m_videoTrackIndex = m_delegate->addVideoTrack(config.width, config.height, mkvCodeIcForMediaVideoCodecId(m_videoCodec));
 
-        auto promise = VideoEncoder::create(codecStringForMediaVideoCodecId(m_videoCodec), config, [](auto&&) { }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& frame) {
-            ensureOnMainThread([weakThis, frame = WTFMove(frame)]() mutable {
-                assertIsCurrent(MainThreadDispatcher::singleton());
+        Ref promise = VideoEncoder::create(codecStringForMediaVideoCodecId(m_videoCodec), config, [](auto&&) { }, [weakThis = ThreadSafeWeakPtr { *this }, workQueue = protectedWorkQueue()](auto&& frame) {
+            workQueue->dispatch([weakThis, frame = WTFMove(frame)]() mutable {
                 if (RefPtr protectedThis = weakThis.get()) {
+                    assertIsCurrent(protectedThis->workQueue());
                     protectedThis->m_lastReceivedCompressedVideoFrame = Seconds::fromMicroseconds(frame.timestamp);
                     ASSERT(protectedThis->m_lastReceivedCompressedVideoFrame <= protectedThis->m_lastEnqueuedRawVideoFrame);
                     protectedThis->m_encodedVideoFrames.append(WTFMove(frame));
@@ -287,25 +306,19 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
                 }
             });
         });
-
-        promise->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
-            assertIsMainThread();
-            RefPtr protectedThis = weakThis.get();
-            if (!result || !protectedThis)
-                return;
-            m_videoEncoder = result.value().moveToUniquePtr();
-            m_videoEncoder->setRates(m_videoBitsPerSecond, 0);
-
-            maybeStartWriting();
-
-            encodePendingVideoFrames();
+        promise->whenSettled(protectedWorkQueue(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                assertIsCurrent(protectedThis->workQueue());
+                protectedThis->m_videoEncoder = result.value().moveToUniquePtr();
+                protectedThis->m_videoEncoder->setRates(protectedThis->m_videoBitsPerSecond, 0);
+                protectedThis->maybeStartWriting();
+                protectedThis->encodePendingVideoFrames();
+            }
         });
     }
 
     if (!m_hasStartedWriting) // We don't record video frames received before the first audio frame.
         return;
-
-    assertIsCurrent(MainThreadDispatcher::singleton());
 
     // We take the time before m_firstVideoFrameAudioTime is set so that the first frame will always apepar to have a timestamp of 0 but with a longer duration.
     auto sampleTime = m_firstVideoFrameAudioTime ? nextVideoFrameTime() : resumeVideoTime();
@@ -316,7 +329,7 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
     ASSERT(m_lastEnqueuedRawVideoFrame <= sampleTime);
     ASSERT(m_lastEnqueuedRawVideoFrame >= m_lastReceivedCompressedVideoFrame);
     m_lastEnqueuedRawVideoFrame = sampleTime;
-    m_pendingVideoFrames.append({ Ref { frame }, sampleTime });
+    m_pendingVideoFrames.append({ WTFMove(frame), sampleTime });
     LOG(MediaStream, "appendVideoFrame:enqueuing raw video frame:%f queue:%zu first:%f last:%f", sampleTime.value(), m_pendingVideoFrames.size(), m_pendingVideoFrames.first().second.value(), m_pendingVideoFrames.last().second.value());
 
     encodePendingVideoFrames();
@@ -324,6 +337,8 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(VideoFrame& frame)
 
 Seconds MediaRecorderPrivateWriterWebM::nextVideoFrameTime() const
 {
+    assertIsCurrent(workQueue());
+
     ASSERT(!m_hasAudio || m_firstVideoFrameAudioTime);
     auto now = MonotonicTime::now();
     auto frameTime = now - m_resumedVideoTime;
@@ -336,6 +351,8 @@ Seconds MediaRecorderPrivateWriterWebM::nextVideoFrameTime() const
 
 Seconds MediaRecorderPrivateWriterWebM::resumeVideoTime() const
 {
+    assertIsCurrent(workQueue());
+
     return m_hasAudio ? Seconds { m_resumedAudioTime.toDouble() } : m_currentVideoDuration;
 }
 
@@ -344,16 +361,17 @@ Seconds MediaRecorderPrivateWriterWebM::sampleTime(const RetainPtr<CMSampleBuffe
     return Seconds { PAL::CMTimeGetSeconds(PAL::CMSampleBufferGetPresentationTimeStamp(sample.get())) };
 }
 
-void MediaRecorderPrivateWriterWebM::encodePendingVideoFrames()
+Ref<GenericPromise> MediaRecorderPrivateWriterWebM::encodePendingVideoFrames()
 {
-    assertIsCurrent(MainThreadDispatcher::singleton());
+    assertIsCurrent(workQueue());
 
     if (m_pendingVideoFrames.isEmpty() || !m_videoEncoder)
-        return;
+        return GenericPromise::createAndResolve();
 
     m_pendingVideoEncode++;
 
     Vector<Ref<VideoEncoder::EncodePromise>> promises { m_pendingVideoFrames.size() , [&](auto) {
+        assertIsCurrent(workQueue());
         auto frame = m_pendingVideoFrames.takeFirst();
         bool needVideoKeyframe = false;
         if (frame.second - m_lastVideoKeyframeTime >= m_maxClusterDuration) {
@@ -364,30 +382,43 @@ void MediaRecorderPrivateWriterWebM::encodePendingVideoFrames()
         return m_videoEncoder->encode({ WTFMove(frame.first), frame.second.microsecondsAs<int64_t>(), { } }, needVideoKeyframe);
     } };
 
-    VideoEncoder::EncodePromise::all(WTFMove(promises))->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&&) {
+    return VideoEncoder::EncodePromise::all(WTFMove(promises))->whenSettled(protectedWorkQueue(), [weakThis = ThreadSafeWeakPtr { *this }](auto&&) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
-            return;
-
-        m_pendingVideoEncode--;
+            return GenericPromise::createAndResolve();
+        assertIsCurrent(protectedThis->workQueue());
+        protectedThis->m_pendingVideoEncode--;
+        return GenericPromise::createAndResolve();
     });
 }
 
 void MediaRecorderPrivateWriterWebM::appendAudioSampleBuffer(const PlatformAudioData& data, const AudioStreamDescription& description, const MediaTime&, size_t sampleCount)
 {
-    if (m_isStopping)
+    if (m_isStopped)
         return;
 
-    if (auto sampleBuffer = createAudioSampleBuffer(data, description, PAL::toCMTime(m_currentAudioSampleTime), sampleCount))
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+    protectedWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, sampleCount, sampleRate = description.sampleRate()] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        assertIsCurrent(protectedThis->workQueue());
+        protectedThis->m_audioSamplesCount += sampleCount;
+        LOG(MediaStream, "appendAudioSampleBuffer: sampleCount=%lu total:%lld time:%f", sampleCount, protectedThis->m_audioSamplesCount, protectedThis->m_currentAudioSampleTime.toDouble());
+        protectedThis->m_currentAudioSampleTime = { protectedThis->m_audioSamplesCount, static_cast<uint32_t>(sampleRate) };
+    });
+
+    if (auto sampleBuffer = createAudioSampleBuffer(data, description, PAL::CMTimeMake(m_audioSamplesCountAudioThread, description.sampleRate()), sampleCount))
         RefPtr { m_audioCompressor }->addSampleBuffer(sampleBuffer.get());
-    m_audioSamplesCount += sampleCount;
-    LOG(MediaStream, "appendAudioSampleBuffer: sampleCount=%lu total:%lld time:%f", sampleCount, m_audioSamplesCount, m_currentAudioSampleTime.toDouble());
-    m_currentAudioSampleTime = { m_audioSamplesCount, static_cast<uint32_t>(description.sampleRate()) };
+    m_audioSamplesCountAudioThread += sampleCount;
 }
 
 void MediaRecorderPrivateWriterWebM::flushEncodedQueues()
 {
-    assertIsCurrent(MainThreadDispatcher::singleton());
+    assertIsCurrent(workQueue());
 
     if (m_hasAudio)
         enqueueCompressedAudioSampleBuffers(); // compressedAudioOutputBufferCallback isn't always called when new frames are available. Force refresh
@@ -399,7 +430,7 @@ void MediaRecorderPrivateWriterWebM::flushEncodedQueues()
 
 void MediaRecorderPrivateWriterWebM::partiallyFlushEncodedQueues()
 {
-    assertIsCurrent(MainThreadDispatcher::singleton());
+    assertIsCurrent(workQueue());
 
     if (!m_hasStartedWriting)
         return;
@@ -422,7 +453,7 @@ void MediaRecorderPrivateWriterWebM::partiallyFlushEncodedQueues()
 
 bool MediaRecorderPrivateWriterWebM::muxNextFrame()
 {
-    assertIsCurrent(MainThreadDispatcher::singleton());
+    assertIsCurrent(workQueue());
 
     LOG(MediaStream, "muxNextFrame:audioqueue:%zu first:%f last:%f videoQueue:%zu first:%f last:%f", m_encodedAudioFrames.size(), m_encodedAudioFrames.size() ? sampleTime(m_encodedAudioFrames.first()).value() : 0, m_encodedAudioFrames.size() ? sampleTime(m_encodedAudioFrames.last()).value() : 0, m_encodedVideoFrames.size(), m_encodedVideoFrames.size() ? m_encodedVideoFrames.first().timestamp / 1000000.0 : 0, m_encodedVideoFrames.size() ? m_encodedVideoFrames.last().timestamp / 1000000.0 : 0);
 
@@ -464,70 +495,84 @@ bool MediaRecorderPrivateWriterWebM::muxNextFrame()
 
 void MediaRecorderPrivateWriterWebM::stopRecording()
 {
-    if (m_isStopping)
+    assertIsMainThread();
+
+    if (m_isStopped)
         return;
 
     LOG(MediaStream, "stopRecording");
-    m_isStopping = true;
+    m_isStopped = true;
 
-    if (m_audioCompressor)
-        RefPtr { m_audioCompressor }->finish();
+    m_finalOperations = invokeAsync(protectedWorkQueue(), [protectedThis = Ref { *this }, this]() mutable -> Ref<GenericPromise> {
+        if (m_audioCompressor)
+            RefPtr { m_audioCompressor }->finish();
 
-    flushPendingData()->whenSettled(MainThreadDispatcher::singleton(), [protectedThis = Ref { *this }, this] {
-        assertIsCurrent(MainThreadDispatcher::singleton());
-        if (m_videoEncoder)
-            m_videoEncoder->close();
+        return flushPendingData()->whenSettled(protectedWorkQueue(), [protectedThis = WTFMove(protectedThis), this] {
+            assertIsCurrent(workQueue());
+            if (m_videoEncoder)
+                m_videoEncoder->close();
 
-        flushEncodedQueues();
+            flushEncodedQueues();
 
-        ASSERT(m_pendingVideoFrames.isEmpty() && m_encodedVideoFrames.isEmpty() && !m_pendingVideoEncode);
-        ASSERT(!m_hasAudio || (m_encodedAudioFrames.isEmpty() && m_audioCompressor->isEmpty()));
+            ASSERT(m_pendingVideoFrames.isEmpty() && m_encodedVideoFrames.isEmpty() && !m_pendingVideoEncode);
+            ASSERT(!m_hasAudio || (m_encodedAudioFrames.isEmpty() && m_audioCompressor->isEmpty()));
 
-        m_isStopping = false;
-        m_hasStartedWriting = false;
+            m_hasStartedWriting = false;
 
-        m_delegate->finalize();
+            m_delegate->finalize();
 
-        completeFetchData();
+            return GenericPromise::createAndResolve();
+        });
     });
 }
 
 void MediaRecorderPrivateWriterWebM::fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&& completionHandler)
 {
-    m_fetchDataCompletionHandler = WTFMove(completionHandler);
+    assertIsMainThread();
 
-    flushPendingData()->whenSettled(MainThreadDispatcher::singleton(), [protectedThis = Ref { *this }, this] {
-        if (m_isStopping)
-            return;
-        completeFetchData();
-    });
-}
+    auto finalAction = [protectedThis = Ref { *this }, this, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+        auto currentTimeCode = m_timeCode;
+        if (m_hasAudio)
+            m_timeCode = m_currentAudioSampleTime.toDouble();
+        else {
+            auto sampleTime = MonotonicTime::now() - m_resumedVideoTime;
+            m_timeCode = (sampleTime + m_currentVideoDuration).value();
+        }
+        callOnMainThread([completionHandler = WTFMove(completionHandler), data = takeData(), currentTimeCode]() mutable {
+            completionHandler(WTFMove(data), currentTimeCode);
+        });
+    };
 
-void MediaRecorderPrivateWriterWebM::completeFetchData()
-{
-    auto currentTimeCode = m_timeCode;
-    if (m_hasAudio)
-        m_timeCode = m_currentAudioSampleTime.toDouble();
-    else {
-        auto sampleTime = MonotonicTime::now() - m_resumedVideoTime;
-        m_timeCode = (sampleTime + m_currentVideoDuration).value();
+    // If the recorder has been stopped, we want to return the data only once the final flush has completed.
+    // FIXME: MediaRecorderPrivateAVFImpl::stopRecording should not immediately call its CompletionHandler
+    if (m_finalOperations) {
+        m_finalOperations = RefPtr { m_finalOperations }->whenSettled(protectedWorkQueue(), [completionHandler = WTFMove(finalAction)]() mutable {
+            completionHandler();
+            return GenericPromise::createAndResolve();
+        });
+    } else {
+        protectedWorkQueue()->dispatch([completionHandler = WTFMove(finalAction), this]() mutable {
+            flushPendingData()->whenSettled(protectedWorkQueue(), [completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler();
+            });
+        });
     }
-    if (m_fetchDataCompletionHandler)
-        m_fetchDataCompletionHandler(takeData(), currentTimeCode);
 }
 
 Ref<GenericPromise> MediaRecorderPrivateWriterWebM::flushPendingData()
 {
-    encodePendingVideoFrames();
+    assertIsCurrent(workQueue());
 
     Vector<Ref<GenericPromise>> promises;
-    promises.reserveInitialCapacity(size_t(!!m_videoEncoder) + size_t(!!m_audioCompressor));
+    promises.reserveInitialCapacity(size_t(!!m_videoEncoder) + size_t(!!m_audioCompressor) + 1);
+    promises.append(encodePendingVideoFrames());
     if (m_videoEncoder)
         promises.append(m_videoEncoder->flush());
     if (m_audioCompressor)
         promises.append(RefPtr { m_audioCompressor }->flush());
 
-    return GenericPromise::all(WTFMove(promises))->whenSettled(MainThreadDispatcher::singleton(), [weakThis = ThreadSafeWeakPtr { *this }] {
+    return GenericPromise::all(WTFMove(promises))->whenSettled(protectedWorkQueue(), [weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->partiallyFlushEncodedQueues();
         return GenericPromise::createAndResolve();
@@ -536,9 +581,10 @@ Ref<GenericPromise> MediaRecorderPrivateWriterWebM::flushPendingData()
 
 void MediaRecorderPrivateWriterWebM::appendData(std::span<const uint8_t> data)
 {
+    assertIsCurrent(workQueue());
+
     m_lastTimestamp = MonotonicTime::now();
 
-    Locker locker { m_dataLock };
     if (!m_dataBuffer.capacity())
         m_dataBuffer.reserveInitialCapacity(s_dataBufferSize);
 
@@ -552,7 +598,8 @@ void MediaRecorderPrivateWriterWebM::appendData(std::span<const uint8_t> data)
 
 void MediaRecorderPrivateWriterWebM::flushDataBuffer()
 {
-    assertIsHeld(m_dataLock);
+    assertIsCurrent(workQueue());
+
     if (m_dataBuffer.isEmpty())
         return;
     m_data.append(std::exchange(m_dataBuffer, { }));
@@ -560,7 +607,8 @@ void MediaRecorderPrivateWriterWebM::flushDataBuffer()
 
 RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriterWebM::takeData()
 {
-    Locker locker { m_dataLock };
+    assertIsCurrent(workQueue());
+
     if (!m_delegate->hasAddedFrame())
         return FragmentedSharedBuffer::create();
     flushDataBuffer();
@@ -569,36 +617,53 @@ RefPtr<FragmentedSharedBuffer> MediaRecorderPrivateWriterWebM::takeData()
 
 void MediaRecorderPrivateWriterWebM::pause()
 {
-    auto recordingDuration = MonotonicTime::now() - m_resumedVideoTime;
-    m_currentVideoDuration = recordingDuration + m_currentVideoDuration;
-    LOG(MediaStream, "MediaRecorderPrivateWriterWebM::pause m_currentVideoDuration:%f", m_currentVideoDuration.value());
+    protectedWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        assertIsCurrent(protectedThis->workQueue());
+        auto recordingDuration = MonotonicTime::now() - protectedThis->m_resumedVideoTime;
+        protectedThis->m_currentVideoDuration = recordingDuration + protectedThis->m_currentVideoDuration;
+        LOG(MediaStream, "MediaRecorderPrivateWriterWebM::pause m_currentVideoDuration:%f", protectedThis->m_currentVideoDuration.value());
+    });
 }
 
 void MediaRecorderPrivateWriterWebM::resume()
 {
-    m_firstVideoFrameAudioTime.reset();
-    m_resumedVideoTime = MonotonicTime::now();
-    m_resumedAudioTime = m_currentAudioSampleTime;
-    LOG(MediaStream, "MediaRecorderPrivateWriterWebM:resume");
+    protectedWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        assertIsCurrent(protectedThis->workQueue());
+        protectedThis->m_firstVideoFrameAudioTime.reset();
+        protectedThis->m_resumedVideoTime = MonotonicTime::now();
+        protectedThis->m_resumedAudioTime = protectedThis->m_currentAudioSampleTime;
+        LOG(MediaStream, "MediaRecorderPrivateWriterWebM:resume");
+    });
 }
 
 const String& MediaRecorderPrivateWriterWebM::mimeType() const
 {
+    assertIsMainThread();
     return m_mimeType;
 }
 
 unsigned MediaRecorderPrivateWriterWebM::audioBitRate() const
 {
-    return m_audioCompressor ? RefPtr { m_audioCompressor }->bitRate() : 0;
+    assertIsMainThread();
+    return m_audioBitsPerSecond;
 }
 
 unsigned MediaRecorderPrivateWriterWebM::videoBitRate() const
 {
+    assertIsMainThread();
     return m_videoBitsPerSecond;
 }
 
 void MediaRecorderPrivateWriterWebM::maybeForceNewCluster()
 {
+    assertIsCurrent(workQueue());
+
     // If we have a video, a new cluster is determined with having a new keyframe.
     if (m_hasVideo || !m_maxClusterDuration || !m_lastTimestamp)
         return;
