@@ -53,8 +53,8 @@ class ScriptArguments;
 class ScriptCallStack;
 
 class ConsoleMessage {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ConsoleMessage, JS_EXPORT_PRIVATE);
     WTF_MAKE_NONCOPYABLE(ConsoleMessage);
-    WTF_MAKE_TZONE_ALLOCATED(ConsoleMessage);
 public:
     JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, WallTime timestamp = { });
     JS_EXPORT_PRIVATE ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
