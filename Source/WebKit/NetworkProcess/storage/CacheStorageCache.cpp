@@ -250,8 +250,8 @@ void CacheStorageCache::removeRecords(WebCore::ResourceRequest&& request, WebCor
     if (iterator->value.isEmpty())
         m_records.remove(iterator);
 
-    if (m_manager && sizeDecreased)
-        m_manager->sizeDecreased(sizeDecreased);
+    if (RefPtr manager = m_manager.get(); manager && sizeDecreased)
+        manager->sizeDecreased(sizeDecreased);
 
     m_store->deleteRecords(targetRecordInfos, [targetIdentifiers = WTFMove(targetRecordIdentifiers), callback = WTFMove(callback)](bool succeeded) mutable {
         if (!succeeded)
@@ -284,7 +284,8 @@ void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRe
     ASSERT(m_isInitialized);
     assertIsOnCorrectQueue();
 
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
     int64_t spaceRequested = 0;
@@ -292,14 +293,14 @@ void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRe
         spaceRequested += record.responseBodySize;
         if (auto* existingRecord = findExistingRecord(record.request))
             spaceRequested -= existingRecord->size;
-        return toCacheStorageRecord(WTFMove(record), m_manager->salt(), m_uniqueName);
+        return toCacheStorageRecord(WTFMove(record), manager->salt(), m_uniqueName);
     });
 
     // The request still needs to go through quota check to keep ordering.
     if (spaceRequested < 0)
         spaceRequested = 0;
 
-    m_manager->requestSpace(spaceRequested, [this, weakThis = WeakPtr { *this }, records = WTFMove(cacheStorageRecords), callback = WTFMove(callback)](bool granted) mutable {
+    manager->requestSpace(spaceRequested, [this, weakThis = WeakPtr { *this }, records = WTFMove(cacheStorageRecords), callback = WTFMove(callback)](bool granted) mutable {
         if (!weakThis)
             return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
@@ -384,11 +385,11 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
         return !record.info.identifier;
     });
 
-    if (m_manager) {
+    if (RefPtr manager = m_manager.get()) {
         if (sizeIncreased > sizeDecreased)
-            m_manager->sizeIncreased(sizeIncreased - sizeDecreased);
+            manager->sizeIncreased(sizeIncreased - sizeDecreased);
         else if (sizeDecreased > sizeIncreased)
-            m_manager->sizeDecreased(sizeDecreased - sizeIncreased);
+            manager->sizeDecreased(sizeDecreased - sizeIncreased);
     }
 
     m_store->writeRecords(WTFMove(records), [targetIdentifiers = WTFMove(targetIdentifiers), callback = WTFMove(callback)](bool succeeded) mutable {
@@ -412,8 +413,8 @@ void CacheStorageCache::removeAllRecords()
         }
     }
 
-    if (m_manager && sizeDecreased)
-        m_manager->sizeDecreased(sizeDecreased);
+    if (RefPtr manager = m_manager.get(); manager && sizeDecreased)
+        manager->sizeDecreased(sizeDecreased);
 
     m_records.clear();
     m_store->deleteRecords(targetRecordInfos, [](auto) { });

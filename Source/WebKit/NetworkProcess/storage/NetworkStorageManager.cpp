@@ -170,7 +170,6 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
     , m_sessionID(sessionID)
     , m_queue(SuspendableWorkQueue::create(queueName(sessionID), SuspendableWorkQueue::QOS::Default, SuspendableWorkQueue::ShouldLog::Yes))
     , m_parentConnection(connection)
-
 {
     ASSERT(RunLoop::isMain());
 
@@ -205,7 +204,7 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
         m_fileSystemStorageHandleRegistry = FileSystemStorageHandleRegistry::create();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
         m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
-        m_cacheStorageRegistry = makeUnique<CacheStorageRegistry>();
+        m_cacheStorageRegistry = CacheStorageRegistry::create();
         m_unifiedOriginStorageLevel = level;
         m_path = path;
         m_customLocalStoragePath = customLocalStoragePath;
@@ -1751,16 +1750,16 @@ void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& conn
 
 void NetworkStorageManager::cacheStorageOpenCache(const WebCore::ClientOrigin& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).openCache(cacheName, WTFMove(callback));
+    originStorageManager(origin).cacheStorageManager(*protectedCacheStorageRegistry(), origin, m_queue.copyRef()).openCache(cacheName, WTFMove(callback));
 }
 
 void NetworkStorageManager::cacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
-    auto* cacheStorageManager = cache->manager();
+    RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
@@ -1769,16 +1768,16 @@ void NetworkStorageManager::cacheStorageRemoveCache(WebCore::DOMCacheIdentifier 
 
 void NetworkStorageManager::cacheStorageAllCaches(const WebCore::ClientOrigin& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& callback)
 {
-    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).allCaches(updateCounter, WTFMove(callback));
+    originStorageManager(origin).cacheStorageManager(*protectedCacheStorageRegistry(), origin, m_queue.copyRef()).allCaches(updateCounter, WTFMove(callback));
 }
 
 void NetworkStorageManager::cacheStorageReference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return;
 
-    auto* cacheStorageManager = cache->manager();
+    RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
         return;
 
@@ -1787,11 +1786,11 @@ void NetworkStorageManager::cacheStorageReference(IPC::Connection& connection, W
 
 void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return;
 
-    auto* cacheStorageManager = cache->manager();
+    RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
         return;
 
@@ -1800,7 +1799,7 @@ void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection,
 
 void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
 {
-    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).lockStorage(connection.uniqueID());
+    originStorageManager(origin).cacheStorageManager(*protectedCacheStorageRegistry(), origin, m_queue.copyRef()).lockStorage(connection.uniqueID());
 }
 
 void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
@@ -1811,7 +1810,7 @@ void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, cons
 
 void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
@@ -1820,7 +1819,7 @@ void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentif
 
 void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
@@ -1829,7 +1828,7 @@ void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifie
 
 void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
-    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
@@ -1857,7 +1856,7 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
             originStrings.append(makeString("\n{ \"origin\" : { \"topOrigin\" : \""_s,
                 origin.topOrigin.toString(), "\", \"clientOrigin\": \""_s,
                 origin.clientOrigin.toString(), "\" }, \"caches\" : "_s,
-                originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).representationString(),
+                originStorageManager(origin).cacheStorageManager(*protectedCacheStorageRegistry(), origin, m_queue.copyRef()).representationString(),
                 '}'
             ));
         }
@@ -2051,6 +2050,11 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
     ASSERT(!RunLoop::isMain());
 
     return m_unifiedOriginStorageLevel >= UnifiedOriginStorageLevel::Standard;
+}
+
+RefPtr<CacheStorageRegistry> NetworkStorageManager::protectedCacheStorageRegistry()
+{
+    return m_cacheStorageRegistry.get();
 }
 
 } // namespace WebKit

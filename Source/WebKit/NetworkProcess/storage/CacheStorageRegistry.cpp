@@ -35,6 +35,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CacheStorageRegistry);
 
 CacheStorageRegistry::CacheStorageRegistry() = default;
 
+Ref<CacheStorageRegistry> CacheStorageRegistry::create()
+{
+    return adoptRef(*new CacheStorageRegistry());
+}
+
 void CacheStorageRegistry::registerCache(WebCore::DOMCacheIdentifier identifier, CacheStorageCache& cache)
 {
     ASSERT(!m_caches.contains(identifier));

@@ -119,7 +119,7 @@ private:
     std::unique_ptr<IDBStorageManager> m_idbStorageManager;
     String m_customIDBStoragePath;
     String m_resolvedIDBStoragePath;
-    std::unique_ptr<CacheStorageManager> m_cacheStorageManager;
+    RefPtr<CacheStorageManager> m_cacheStorageManager;
     String m_customCacheStoragePath;
     String m_resolvedCacheStoragePath;
     UnifiedOriginStorageLevel m_level;
@@ -150,8 +150,8 @@ void OriginStorageManager::StorageBucket::connectionClosed(IPC::Connection::Uniq
     if (m_sessionStorageManager)
         m_sessionStorageManager->connectionClosed(connection);
 
-    if (m_cacheStorageManager)
-        m_cacheStorageManager->connectionClosed(connection);
+    if (RefPtr manager = m_cacheStorageManager)
+        manager->connectionClosed(connection);
 }
 
 std::optional<OriginStorageManager::StorageBucket::StorageType> OriginStorageManager::StorageBucket::toStorageType(WebsiteDataType websiteDataType) const
@@ -250,7 +250,7 @@ CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(Ca
         std::optional<WebCore::ClientOrigin> optionalOrigin;
         if (m_level < UnifiedOriginStorageLevel::Standard)
             optionalOrigin = origin;
-        m_cacheStorageManager = makeUnique<CacheStorageManager>(resolvedCacheStoragePath(), registry, optionalOrigin, WTFMove(quotaCheckFunction), WTFMove(queue));
+        m_cacheStorageManager = CacheStorageManager::create(resolvedCacheStoragePath(), registry, optionalOrigin, WTFMove(quotaCheckFunction), WTFMove(queue));
     }
 
     return *m_cacheStorageManager;
@@ -457,8 +457,8 @@ void OriginStorageManager::StorageBucket::deleteIDBStorageData(WallTime time)
 
 void OriginStorageManager::StorageBucket::deleteCacheStorageData(WallTime time)
 {
-    if (m_cacheStorageManager)
-        m_cacheStorageManager->reset();
+    if (RefPtr manager = m_cacheStorageManager)
+        manager->reset();
 
     FileSystem::deleteAllFilesModifiedSince(resolvedCacheStoragePath(), time);
 }

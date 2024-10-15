@@ -243,6 +243,11 @@ void CacheStorageManager::makeDirty()
     m_updateCounter = nextUpdateNumber();
 }
 
+Ref<CacheStorageManager> CacheStorageManager::create(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
+{
+    return adoptRef(*new CacheStorageManager(path, registry, origin, WTFMove(quotaCheckFunction), WTFMove(queue)));
+}
+
 CacheStorageManager::CacheStorageManager(const String& path, CacheStorageRegistry& registry, const std::optional<WebCore::ClientOrigin>& origin, QuotaCheckFunction&& quotaCheckFunction, Ref<WorkQueue>&& queue)
     : m_updateCounter(nextUpdateNumber())
     , m_path(path)
@@ -270,12 +275,13 @@ void CacheStorageManager::reset()
         request.second(false);
     }
 
+    Ref registry = m_registry.get();
     for (Ref cache : m_caches)
-        m_registry->unregisterCache(cache->identifier());
+        registry->unregisterCache(cache->identifier());
     m_caches.clear();
 
     for (auto& identifier : m_removedCaches.keys())
-        m_registry->unregisterCache(identifier);
+        registry->unregisterCache(identifier);
     m_removedCaches.clear();
 
     m_cacheRefConnections.clear();
@@ -295,9 +301,10 @@ bool CacheStorageManager::initializeCaches()
         return false;
 
     m_isInitialized = true;
+    Ref registry = m_registry;
     for (auto& [name, uniqueName] : *cachesList) {
         Ref cache = CacheStorageCache::create(*this, name, uniqueName, m_path, m_queue.copyRef());
-        m_registry->registerCache(cache->identifier(), cache.get());
+        registry->registerCache(cache->identifier(), cache.get());
         m_caches.append(WTFMove(cache));
     }
 
@@ -324,7 +331,7 @@ void CacheStorageManager::openCache(const String& name, WebCore::DOMCacheEngine:
     }
 
     makeDirty();
-    m_registry->registerCache(cache->identifier(), cache);
+    protectedRegistry()->registerCache(cache->identifier(), cache);
     cache->open(WTFMove(callback));
 }
 
@@ -495,7 +502,7 @@ void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIde
 {
     if (RefPtr cache = m_removedCaches.take(cacheIdentifier)) {
         cache->removeAllRecords();
-        m_registry->unregisterCache(cacheIdentifier);
+        protectedRegistry()->unregisterCache(cacheIdentifier);
         return;
     }
 
@@ -544,6 +551,11 @@ String CacheStorageManager::representationString()
     }
     builder.append("]}\n"_s);
     return builder.toString();
+}
+
+Ref<CacheStorageRegistry> CacheStorageManager::protectedRegistry()
+{
+    return m_registry.get();
 }
 
 } // namespace WebKit
