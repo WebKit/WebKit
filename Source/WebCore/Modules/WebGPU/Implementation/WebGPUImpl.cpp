@@ -83,11 +83,6 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     wgpuInstanceRequestAdapter(m_backing.get(), &backingOptions, &requestAdapterCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestAdapterCallback().
 }
 
-void GPUImpl::loseTheDevice()
-{
-    wgpuInstanceLoseAllDevices(m_backing.get());
-}
-
 static WTF::Function<void(CompletionHandler<void()>&&)> convert(WGPUOnSubmittedWorkScheduledCallback&& onSubmittedWorkScheduledCallback)
 {
     return [onSubmittedWorkScheduledCallback = makeBlockPtr(WTFMove(onSubmittedWorkScheduledCallback))](CompletionHandler<void()>&& completionHandler) {

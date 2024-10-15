@@ -218,15 +218,6 @@ RefPtr<GPUConnectionToWebProcess> RemoteGPU::gpuConnectionToWebProcess() const
     return m_gpuConnectionToWebProcess.get();
 }
 
-void RemoteGPU::lowMemoryHandler(Critical, Synchronous)
-{
-#if PLATFORM(IOS_FAMILY)
-    assertIsCurrent(workQueue());
-    if (RefPtr backing = m_backing)
-        backing->loseTheDevice();
-#endif
-}
-
 void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
 {
     assertIsCurrent(workQueue());

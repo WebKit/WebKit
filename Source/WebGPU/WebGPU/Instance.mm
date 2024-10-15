@@ -144,16 +144,6 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
     }
 }
 
-void Instance::loseAllDevices()
-{
-    for (WeakPtr ptr : m_weakAdapters) {
-        if (RefPtr refPtr = ptr.get())
-            refPtr->makeInvalid();
-    }
-
-    m_weakAdapters.clear();
-}
-
 void Instance::requestAdapter(const WGPURequestAdapterOptions& options, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -202,9 +192,8 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
         return;
     }
 
-    auto adapter = Adapter::create(sortedDevices[0], *this, options.xrCompatible, WTFMove(*deviceCapabilities));
-    m_weakAdapters.append(adapter.ptr());
-    callback(WGPURequestAdapterStatus_Success, WTFMove(adapter), { });
+    // FIXME: this should be asynchronous
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this, options.xrCompatible, WTFMove(*deviceCapabilities)), { });
 }
 
 } // namespace WebGPU
@@ -239,11 +228,6 @@ WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDe
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
     WebGPU::fromAPI(instance).processEvents();
-}
-
-void wgpuInstanceLoseAllDevices(WGPUInstance instance)
-{
-    WebGPU::fromAPI(instance).loseAllDevices();
 }
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)

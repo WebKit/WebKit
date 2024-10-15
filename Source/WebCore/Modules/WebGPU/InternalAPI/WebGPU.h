@@ -79,7 +79,6 @@ public:
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
-    virtual void loseTheDevice() = 0;
 
     virtual RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 

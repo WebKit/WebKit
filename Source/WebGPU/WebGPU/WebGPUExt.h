@@ -122,8 +122,6 @@ typedef WGPUTexture (*WGPUProcSwapChainGetCurrentTexture)(WGPUSwapChain swapChai
 
 #if !defined(WGPU_SKIP_DECLARATIONS)
 
-WGPU_EXPORT void wgpuInstanceLoseAllDevices(WGPUInstance instance);
-
 WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, char const * label);
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h

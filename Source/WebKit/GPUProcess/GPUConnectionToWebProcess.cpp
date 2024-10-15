@@ -579,10 +579,6 @@ void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous 
 #if ENABLE(VIDEO)
     protectedVideoFrameObjectHeap()->lowMemoryHandler();
 #endif
-    for (auto& [_, remoteGPUReceiver] : m_remoteGPUMap) {
-        if (RefPtr remoteGPU = remoteGPUReceiver.get())
-            remoteGPU->lowMemoryHandler(critical, synchronous);
-    }
 }
 
 #if ENABLE(WEB_AUDIO)

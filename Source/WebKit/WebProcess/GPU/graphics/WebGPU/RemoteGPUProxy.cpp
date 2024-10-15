@@ -203,11 +203,6 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
     callback(WebGPU::RemoteAdapterProxy::create(WTFMove(response->name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), response->isFallbackAdapter, options.xrCompatible, *this, convertToBackingContext, identifier));
 }
 
-void RemoteGPUProxy::loseTheDevice()
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 RefPtr<WebCore::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor& descriptor)
 {
     // FIXME: Should we be consulting m_lost?

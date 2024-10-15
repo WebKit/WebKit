@@ -135,26 +135,13 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
 
     auto label = fromAPI(descriptor.label);
     m_deviceRequested = true;
-    auto device = Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this);
-    m_weakDevice = device.ptr();
-    callback(WGPURequestDeviceStatus_Success, WTFMove(device), { });
+    // FIXME: this should be asynchronous - https://bugs.webkit.org/show_bug.cgi?id=233621
+    callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
 }
 
 bool Adapter::isXRCompatible() const
 {
     return m_xrCompatible;
-}
-
-void Adapter::makeInvalid()
-{
-    if (!m_device)
-        return;
-
-    m_device = nil;
-    if (RefPtr refPtr = m_weakDevice.get()) {
-        refPtr->loseTheDevice(WGPUDeviceLostReason_Undefined);
-        m_weakDevice = nullptr;
-    }
 }
 
 } // namespace WebGPU

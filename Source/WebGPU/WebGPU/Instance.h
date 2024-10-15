@@ -66,7 +66,6 @@ public:
     void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback);
 
     bool isValid() const { return m_isValid; }
-    void loseAllDevices();
 
     // This can be called on a background thread.
     using WorkItem = Function<void()>;
@@ -82,7 +81,6 @@ private:
 
     // This can be used on a background thread.
     Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
-    Vector<WeakPtr<Adapter>> m_weakAdapters;
     const std::optional<const MachSendRight> m_webProcessID;
     const WGPUScheduleWorkBlock m_scheduleWorkBlock;
     Lock m_lock;

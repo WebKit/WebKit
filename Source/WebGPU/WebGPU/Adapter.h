@@ -42,7 +42,7 @@ class Device;
 class Instance;
 
 // https://gpuweb.github.io/gpuweb/#gpuadapter
-class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter>, public CanMakeWeakPtr<Adapter> {
+class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
     WTF_MAKE_TZONE_ALLOCATED(Adapter);
 public:
     static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, bool xrCompatible, HardwareCapabilities&& capabilities)
@@ -63,7 +63,7 @@ public:
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
 
     bool isValid() const { return m_device; }
-    void makeInvalid();
+    void makeInvalid() { m_device = nil; }
     bool isXRCompatible() const;
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
@@ -76,7 +76,6 @@ private:
     id<MTLDevice> m_device { nil };
     const ThreadSafeWeakPtr<Instance> m_instance;
 
-    ThreadSafeWeakPtr<Device> m_weakDevice;
     const HardwareCapabilities m_capabilities { };
     bool m_deviceRequested { false };
     bool m_xrCompatible { false };
