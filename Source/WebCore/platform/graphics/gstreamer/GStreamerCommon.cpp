@@ -1210,15 +1210,6 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
     return { };
 }
 
-static gboolean parseGstStructureValue(GQuark fieldId, const GValue* value, gpointer userData)
-{
-    if (auto jsonValue = gstStructureValueToJSON(value)) {
-        auto* object = reinterpret_cast<JSON::Object*>(userData);
-        object->setValue(String::fromLatin1(g_quark_to_string(fieldId)), jsonValue->releaseNonNull());
-    }
-    return TRUE;
-}
-
 static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
 {
     auto jsonObject = JSON::Object::create();
@@ -1226,7 +1217,13 @@ static RefPtr<JSON::Value> gstStructureToJSON(const GstStructure* structure)
     if (!resultValue)
         return nullptr;
 
-    gst_structure_foreach(structure, parseGstStructureValue, resultValue.get());
+    gstStructureForeach(structure, [&](auto id, auto value) -> bool {
+        if (auto jsonValue = gstStructureValueToJSON(value)) {
+            auto fieldId = gstIdToString(id);
+            resultValue->setValue(fieldId.toString(), jsonValue->releaseNonNull());
+        }
+        return TRUE;
+    });
     return resultValue;
 }
 
@@ -1601,6 +1598,69 @@ std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
     if (!enumValue)
         return std::nullopt;
     return enumValue->value;
+}
+
+bool gstStructureForeach(const GstStructure* structure, Function<bool(GstId, const GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return gst_structure_foreach_id_str(structure, [](GstId id, const GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, const GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    return gst_structure_foreach(structure, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, const GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
+}
+
+void gstStructureIdSetValue(GstStructure* structure, GstId id, const GValue* value)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    gst_structure_id_str_set_value(structure, id, value);
+#else
+    gst_structure_set_value(structure, g_quark_to_string(id), value);
+#endif
+}
+
+bool gstStructureMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return gst_structure_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    return gst_structure_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
+}
+
+StringView gstIdToString(GstId id)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    return StringView::fromLatin1(gst_id_str_as_str(id));
+#else
+    return StringView::fromLatin1(g_quark_to_string(id));
+#endif
+}
+
+void gstStructureFilterAndMapInPlace(GstStructure* structure, Function<bool(GstId, GValue*)>&& callback)
+{
+#if GST_CHECK_VERSION(1, 25, 0)
+    gst_structure_filter_and_map_in_place_id_str(structure, [](GstId id, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GstId, GValue*)>*>(userData);
+        return callback(id, value);
+    }, &callback);
+#else
+    gst_structure_filter_and_map_in_place(structure, [](GQuark quark, GValue* value, gpointer userData) -> gboolean {
+        auto& callback = *reinterpret_cast<Function<bool(GQuark, GValue*)>*>(userData);
+        return callback(quark, value);
+    }, &callback);
+#endif
 }
 
 #undef GST_CAT_DEFAULT

@@ -656,19 +656,18 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
             builder.append('(', WTF::span(serializedFeature.get()), ')');
         }
 
-        gst_structure_foreach(structure, [](GQuark field, const GValue* value, gpointer builderPointer) -> gboolean {
-            auto* builder = reinterpret_cast<StringBuilder*>(builderPointer);
-            builder->append(WTF::span(g_quark_to_string(field)), ": "_s);
+        gstStructureForeach(structure, [&](auto id, const auto value) -> bool {
+            builder.append(gstIdToString(id), ": "_s);
 
             GUniquePtr<char> serializedValue(gst_value_serialize(value));
             String valueString = WTF::span(serializedValue.get());
             if (valueString.length() > 25)
-                builder->append(valueString.substring(0, 25), WTF::span("…"));
+                builder.append(valueString.substring(0, 25), WTF::span("…"));
             else
-                builder->append(valueString);
-            builder->append("<br/>"_s);
+                builder.append(valueString);
+            builder.append("<br/>"_s);
             return TRUE;
-        }, &builder);
+        });
     }
     return builder.toString();
 }

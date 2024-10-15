@@ -113,11 +113,10 @@ const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()
         if (!stats)
             return;
 
-        gst_structure_foreach(stats.get(), reinterpret_cast<GstStructureForeachFunc>(+[](GQuark fieldId, const GValue* value, gpointer userData) -> gboolean {
-            auto* source = reinterpret_cast<RealtimeIncomingVideoSourceGStreamer*>(userData);
-            gst_structure_set_value(source->m_stats.get(), g_quark_to_string(fieldId), value);
+        gstStructureForeach(stats.get(), [&](auto id, auto value) -> bool {
+            gstStructureIdSetValue(m_stats.get(), id, value);
             return TRUE;
-        }), this);
+        });
     });
     return m_stats.get();
 }

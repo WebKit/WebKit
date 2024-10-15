@@ -259,7 +259,7 @@ public:
     DOMMapAdapter* adapter;
 };
 
-static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userData)
+static gboolean fillReportCallback(const GValue* value, Ref<ReportHolder>& reportHolder)
 {
     if (!GST_VALUE_HOLDS_STRUCTURE(value))
         return TRUE;
@@ -269,8 +269,10 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
     if (!gst_structure_get(structure, "type", GST_TYPE_WEBRTC_STATS_TYPE, &statsType, nullptr))
         return TRUE;
 
-    auto* reportHolder = reinterpret_cast<ReportHolder*>(userData);
-    DOMMapAdapter& report = *reportHolder->adapter;
+    if (UNLIKELY(!reportHolder->adapter))
+        return TRUE;
+
+    auto& report = *reportHolder->adapter;
 
     switch (statsType) {
     case GST_WEBRTC_STATS_CODEC: {
@@ -385,7 +387,9 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefP
                 return;
             holder->callback(RTCStatsReport::create([stats = WTFMove(preprocessedStats)](auto& mapAdapter) mutable {
                 auto holder = adoptRef(*new ReportHolder(&mapAdapter));
-                gst_structure_foreach(stats.get(), fillReportCallback, holder.ptr());
+                gstStructureForeach(stats.get(), [&](auto, const auto value) -> bool {
+                    return fillReportCallback(value, holder);
+                });
             }));
         });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));

@@ -328,6 +328,18 @@ private:
     Atomic<uint64_t> m_totalObservers;
 };
 
+#if GST_CHECK_VERSION(1, 25, 0)
+using GstId = const GstIdStr*;
+#else
+using GstId = GQuark;
+#endif
+
+bool gstStructureForeach(const GstStructure*, Function<bool(GstId, const GValue*)>&&);
+void gstStructureIdSetValue(GstStructure*, GstId, const GValue*);
+bool gstStructureMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
+StringView gstIdToString(GstId);
+void gstStructureFilterAndMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS

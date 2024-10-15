@@ -573,7 +573,7 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
     return GST_FLOW_EOS;
 }
 
-static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpointer userData)
+static bool webKitWebSrcSetExtraHeader(StringView fieldId, const GValue* value, ResourceRequest& request)
 {
     GUniquePtr<gchar> fieldContent;
 
@@ -587,41 +587,10 @@ static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpoi
             fieldContent.reset(g_value_dup_string(&dest));
     }
 
-    const gchar* fieldName = g_quark_to_string(fieldId);
-    if (!fieldContent.get()) {
-        GST_ERROR("extra-headers field '%s' contains no value or can't be converted to a string", fieldName);
-        return false;
-    }
-
-    GST_DEBUG("Appending extra header: \"%s: %s\"", fieldName, fieldContent.get());
-    ResourceRequest* request = static_cast<ResourceRequest*>(userData);
-    request->setHTTPHeaderField(String::fromLatin1(fieldName), String::fromLatin1(fieldContent.get()));
+    auto field = fieldId.toStringWithoutCopying();
+    GST_DEBUG("Appending extra header: \"%s: %s\"", field.ascii().data(), fieldContent.get());
+    request.setHTTPHeaderField(field, String::fromLatin1(fieldContent.get()));
     return true;
-}
-
-static gboolean webKitWebSrcProcessExtraHeaders(GQuark fieldId, const GValue* value, gpointer userData)
-{
-    if (G_VALUE_TYPE(value) == GST_TYPE_ARRAY) {
-        unsigned size = gst_value_array_get_size(value);
-
-        for (unsigned i = 0; i < size; i++) {
-            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_array_get_value(value, i), userData))
-                return FALSE;
-        }
-        return TRUE;
-    }
-
-    if (G_VALUE_TYPE(value) == GST_TYPE_LIST) {
-        unsigned size = gst_value_list_get_size(value);
-
-        for (unsigned i = 0; i < size; i++) {
-            if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_list_get_value(value, i), userData))
-                return FALSE;
-        }
-        return TRUE;
-    }
-
-    return webKitWebSrcSetExtraHeader(fieldId, value, userData);
 }
 
 static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
@@ -686,8 +655,32 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     if (!priv->keepAlive)
         request.setHTTPHeaderField(HTTPHeaderName::Connection, "close"_s);
 
-    if (priv->extraHeaders)
-        gst_structure_foreach(priv->extraHeaders.get(), webKitWebSrcProcessExtraHeaders, &request);
+    if (priv->extraHeaders) {
+        gstStructureForeach(priv->extraHeaders.get(), [&](auto id, auto value) -> bool {
+            auto fieldId = gstIdToString(id);
+            if (G_VALUE_TYPE(value) == GST_TYPE_ARRAY) {
+                unsigned size = gst_value_array_get_size(value);
+
+                for (unsigned i = 0; i < size; i++) {
+                    if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_array_get_value(value, i), request))
+                        return FALSE;
+                }
+                return TRUE;
+            }
+
+            if (G_VALUE_TYPE(value) == GST_TYPE_LIST) {
+                unsigned size = gst_value_list_get_size(value);
+
+                for (unsigned i = 0; i < size; i++) {
+                    if (!webKitWebSrcSetExtraHeader(fieldId, gst_value_list_get_value(value, i), request))
+                        return FALSE;
+                }
+                return TRUE;
+            }
+
+            return webKitWebSrcSetExtraHeader(fieldId, value, request);
+        });
+    }
 
     // We always request Icecast/Shoutcast metadata, just in case ...
     request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);

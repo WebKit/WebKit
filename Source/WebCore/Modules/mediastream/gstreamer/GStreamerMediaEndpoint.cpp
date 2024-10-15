@@ -1821,11 +1821,10 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
     ASSERT(isMainThread());
     GUniquePtr<GstStructure> additionalStats(gst_structure_new_empty("stats"));
     auto mergeStructureInAdditionalStats = [&](const GstStructure* stats) {
-        gst_structure_foreach(stats, [](GQuark quark, const GValue* value, gpointer userData) -> gboolean {
-            auto resultStructure = GST_STRUCTURE_CAST(userData);
-            gst_structure_set_value(resultStructure, g_quark_to_string(quark), value);
+        gstStructureForeach(stats, [&](auto id, const GValue* value) -> bool {
+            gstStructureIdSetValue(additionalStats.get(), id, value);
             return TRUE;
-        }, additionalStats.get());
+        });
     };
     if (!pad) {
         for (auto& sender : m_peerConnectionBackend.connection().getSenders()) {
@@ -1865,7 +1864,7 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
     }
 
     GUniquePtr<GstStructure> result(gst_structure_copy(stats));
-    gst_structure_map_in_place(result.get(), [](GQuark, GValue* value, gpointer userData) -> gboolean {
+    gstStructureMapInPlace(result.get(), [&](auto, auto value) -> bool {
         if (!GST_VALUE_HOLDS_STRUCTURE(value))
             return TRUE;
 
@@ -1874,16 +1873,15 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
         if (!gst_structure_get(structure.get(), "type", GST_TYPE_WEBRTC_STATS_TYPE, &statsType, nullptr))
             return TRUE;
 
-        auto additionalStats = GST_STRUCTURE_CAST(userData);
         switch (statsType) {
         case GST_WEBRTC_STATS_INBOUND_RTP: {
-            if (auto framesDecoded = gstStructureGet<uint64_t>(additionalStats, "frames-decoded"_s))
+            if (auto framesDecoded = gstStructureGet<uint64_t>(additionalStats.get(), "frames-decoded"_s))
                 gst_structure_set(structure.get(), "frames-decoded", G_TYPE_UINT64, *framesDecoded, nullptr);
-            if (auto framesDropped = gstStructureGet<uint64_t>(additionalStats, "frames-dropped"_s))
+            if (auto framesDropped = gstStructureGet<uint64_t>(additionalStats.get(), "frames-dropped"_s))
                 gst_structure_set(structure.get(), "frames-dropped", G_TYPE_UINT64, *framesDropped, nullptr);
-            if (auto frameWidth = gstStructureGet<unsigned>(additionalStats, "frame-width"_s))
+            if (auto frameWidth = gstStructureGet<unsigned>(additionalStats.get(), "frame-width"_s))
                 gst_structure_set(structure.get(), "frame-width", G_TYPE_UINT, *frameWidth, nullptr);
-            if (auto frameHeight = gstStructureGet<unsigned>(additionalStats, "frame-height"_s))
+            if (auto frameHeight = gstStructureGet<unsigned>(additionalStats.get(), "frame-height"_s))
                 gst_structure_set(structure.get(), "frame-height", G_TYPE_UINT, *frameHeight, nullptr);
             auto trackIdentifier = gstStructureGetString(additionalStats, "track-identifier"_s);
             if (!trackIdentifier.isEmpty())
@@ -1891,11 +1889,11 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
             break;
         }
         case GST_WEBRTC_STATS_OUTBOUND_RTP: {
-            if (auto framesSent = gstStructureGet<uint64_t>(additionalStats, "frames-sent"_s))
+            if (auto framesSent = gstStructureGet<uint64_t>(additionalStats.get(), "frames-sent"_s))
                 gst_structure_set(structure.get(), "frames-sent", G_TYPE_UINT64, *framesSent, nullptr);
-            if (auto framesEncoded = gstStructureGet<uint64_t>(additionalStats, "frames-encoded"_s))
+            if (auto framesEncoded = gstStructureGet<uint64_t>(additionalStats.get(), "frames-encoded"_s))
                 gst_structure_set(structure.get(), "frames-encoded", G_TYPE_UINT64, *framesEncoded, nullptr);
-            if (auto targetBitrate = gstStructureGet<double>(additionalStats, "bitrate"_s))
+            if (auto targetBitrate = gstStructureGet<double>(additionalStats.get(), "bitrate"_s))
                 gst_structure_set(structure.get(), "target-bitrate", G_TYPE_DOUBLE, *targetBitrate, nullptr);
             break;
         }
@@ -1911,7 +1909,7 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
 
         gst_value_set_structure(value, structure.get());
         return TRUE;
-    }, additionalStats.get());
+    });
 
     return result;
 }
@@ -1954,11 +1952,10 @@ void GStreamerMediaEndpoint::processStatsItem(const GValue* value)
 void GStreamerMediaEndpoint::onStatsDelivered(GUniquePtr<GstStructure>&& stats)
 {
     callOnMainThread([protectedThis = Ref(*this), this, stats = WTFMove(stats)] {
-        gst_structure_foreach(stats.get(), static_cast<GstStructureForeachFunc>([](GQuark, const GValue* value, gpointer userData) -> gboolean {
-            auto* endPoint = reinterpret_cast<GStreamerMediaEndpoint*>(userData);
-            endPoint->processStatsItem(value);
+        gstStructureForeach(stats.get(), [&](auto, const auto value) -> bool {
+            processStatsItem(value);
             return TRUE;
-        }), this);
+        });
     });
 }
 #endif
