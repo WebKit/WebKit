@@ -39,15 +39,6 @@
 #endif
 
 namespace WebKit {
-class AudioSessionRoutingArbitratorProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AudioSessionRoutingArbitratorProxy> : std::true_type { };
-}
-
-namespace WebKit {
 
 class WebProcessProxy;
 
@@ -55,7 +46,7 @@ class AudioSessionRoutingArbitratorProxy
     : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionRoutingArbitratorProxy);
 public:
-    AudioSessionRoutingArbitratorProxy(WebProcessProxy&);
+    explicit AudioSessionRoutingArbitratorProxy(WebProcessProxy&);
     virtual ~AudioSessionRoutingArbitratorProxy();
 
     void processDidTerminate();
@@ -75,6 +66,9 @@ public:
 
     ArbitrationStatus arbitrationStatus() const { return m_arbitrationStatus; }
     WallTime arbitrationUpdateTime() const { return m_arbitrationUpdateTime; }
+
+    void ref() const;
+    void deref() const;
 
 protected:
     Logger& logger();

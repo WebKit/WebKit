@@ -85,6 +85,16 @@ WTFLogChannel& AudioSessionRoutingArbitratorProxy::logChannel() const
     return WebKit2LogMedia;
 }
 
+void AudioSessionRoutingArbitratorProxy::ref() const
+{
+    return m_process->ref();
 }
+
+void AudioSessionRoutingArbitratorProxy::deref() const
+{
+    return m_process->deref();
+}
+
+} // namespace WebKit
 
 #endif // ENABLE(ROUTING_ARBITRATION)
