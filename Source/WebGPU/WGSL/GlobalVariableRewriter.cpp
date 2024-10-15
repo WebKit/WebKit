@@ -2096,7 +2096,7 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
             );
             AST::Expression* initializer = &access;
 
-            auto it = m_globalsUsingDynamicOffset.find({ group + 1, binding + 1 });
+            auto it = global->declaration->binding() ? m_globalsUsingDynamicOffset.find({ group + 1, binding + 1 }) : m_globalsUsingDynamicOffset.end();
             if (it != m_globalsUsingDynamicOffset.end()) {
                 auto offset = it->value;
                 auto& target = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
