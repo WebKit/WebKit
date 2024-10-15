@@ -10,4 +10,3 @@ let regexp = /aaaaaaaaaa/g;
 for (let i = 0; i < 1e4; i++) {
     test(str, regexp);
 }
-

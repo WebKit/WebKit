@@ -1484,6 +1484,14 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
 
     ASSERT(regExp->global());
 
+    if (regExp->hasValidAtom()) {
+        if (string->isSubstring()) {
+            auto& cache = globalObject->regExpGlobalData().substringGlobalAtomCache();
+            OPERATION_RETURN(scope, JSValue::encode(cache.collectMatches(globalObject, string->asRope(), regExp)));
+        }
+        OPERATION_RETURN(scope, JSValue::encode(collectGlobalAtomMatches(globalObject, string, regExp)));
+    }
+
     auto s = string->value(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

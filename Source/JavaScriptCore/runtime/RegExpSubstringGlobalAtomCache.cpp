@@ -27,6 +27,7 @@
 #include "RegExpSubstringGlobalAtomCache.h"
 
 #include "JSGlobalObjectInlines.h"
+#include "RegExpObjectInlines.h"
 
 namespace JSC {
 
@@ -67,30 +68,71 @@ JSValue RegExpSubstringGlobalAtomCache::collectMatches(JSGlobalObject* globalObj
     auto input = substring->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
-    RETURN_IF_EXCEPTION(scope, { });
+    const String& pattern = regExp->atom();
+    ASSERT(!pattern.isEmpty());
 
-    if (result) {
-        do {
-            if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH) {
-                throwOutOfMemoryError(globalObject, scope);
-                return jsUndefined();
+    auto regExpMatch = [&]() ALWAYS_INLINE_LAMBDA {
+        MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
+        if (UNLIKELY(scope.exception()))
+            return;
+
+        if (result) {
+            do {
+                if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return;
+                }
+
+                numberOfMatches++;
+                startIndex = result.end;
+                if (result.empty())
+                    startIndex++;
+
+                result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
+                if (UNLIKELY(scope.exception()))
+                    return;
+            } while (result);
+        }
+    };
+
+    if (pattern.is8Bit()) {
+        if (input->is8Bit()) {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span8(), pattern.span8()[0], numberOfMatches, startIndex);
+            else {
+                regExpMatch();
+                if (UNLIKELY(scope.exception()))
+                    return { };
             }
+        } else {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
+            else {
+                regExpMatch();
+                if (UNLIKELY(scope.exception()))
+                    return { };
+            }
+        }
+    } else {
+        if (input->is8Bit()) {
+            regExpMatch();
+            if (UNLIKELY(scope.exception()))
+                return { };
+        } else {
+            if (pattern.length() == 1)
+                oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
+            else {
+                regExpMatch();
+                if (UNLIKELY(scope.exception()))
+                    return { };
+            }
+        }
+    }
 
-            numberOfMatches++;
-            startIndex = result.end;
-            if (result.empty())
-                startIndex++;
-
-            result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, substring, input, startIndex);
-            RETURN_IF_EXCEPTION(scope, { });
-        } while (result);
-    } else if (!numberOfMatches)
+    if (!numberOfMatches)
         return jsNull();
 
     // Construct the array
-    const String& pattern = regExp->atom();
-    ASSERT(!pattern.isEmpty());
     JSArray* array = createPatternFilledArray(globalObject, jsString(vm, pattern), numberOfMatches);
     RETURN_IF_EXCEPTION(scope, { });
 
