@@ -156,7 +156,10 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     , m_networkContentRuleListManager(*this)
 #endif
 #if USE(RUNNINGBOARD)
-    , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { setIsHoldingLockedFiles(isHoldingLockedFiles); })
+    , m_webSQLiteDatabaseTracker(WebSQLiteDatabaseTracker::create([weakThis = WeakPtr { *this }](bool isHoldingLockedFiles) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setIsHoldingLockedFiles(isHoldingLockedFiles);
+    }))
 #endif
 {
     NetworkProcessPlatformStrategies::initialize();

@@ -145,7 +145,6 @@ Shared/WebGPU/WebGPURenderPassTimestampWrites.cpp
 Shared/WebHitTestResultData.cpp
 Shared/WebImage.cpp
 Shared/WebMemorySampler.cpp
-Shared/WebSQLiteDatabaseTracker.cpp
 Shared/graphics/ImageBufferSet.cpp
 UIProcess/API/APIAttachment.cpp
 UIProcess/API/APIContentRuleListStore.cpp

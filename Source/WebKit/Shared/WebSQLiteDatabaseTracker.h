@@ -29,33 +29,27 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class WebSQLiteDatabaseTracker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebSQLiteDatabaseTracker> : std::true_type { };
-}
-
-namespace WebKit {
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs from a non-main thread.
-class WebSQLiteDatabaseTracker final : public WebCore::SQLiteDatabaseTrackerClient, public CanMakeWeakPtr<WebSQLiteDatabaseTracker, WeakPtrFactoryInitialization::Eager> {
+class WebSQLiteDatabaseTracker final : public WebCore::SQLiteDatabaseTrackerClient, public RefCounted<WebSQLiteDatabaseTracker>, public CanMakeWeakPtr<WebSQLiteDatabaseTracker, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
 public:
     // IsHoldingLockedFilesHandler may get called on a non-main thread, but while holding a Lock.
     using IsHoldingLockedFilesHandler = Function<void(bool)>;
-    explicit WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&&);
+    static Ref<WebSQLiteDatabaseTracker> create(IsHoldingLockedFilesHandler&&);
 
     ~WebSQLiteDatabaseTracker();
 
     void setIsSuspended(bool);
 
 private:
+    explicit WebSQLiteDatabaseTracker(IsHoldingLockedFilesHandler&&);
+
     void setIsHoldingLockedFiles(bool) WTF_REQUIRES_LOCK(m_lock);
 
     // WebCore::SQLiteDatabaseTrackerClient.
