@@ -69,7 +69,12 @@ void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
         return;
     }
 
-    setIsHoldingLockedFiles(true);
+    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get()) {
+            Locker locker { protectedThis->m_lock };
+            protectedThis->setIsHoldingLockedFiles(true);
+        }
+    });
 }
 
 void WebSQLiteDatabaseTracker::didFinishLastTransaction()
