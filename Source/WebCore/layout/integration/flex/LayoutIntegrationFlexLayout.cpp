@@ -138,16 +138,13 @@ void FlexLayout::layout()
             return { };
         };
 
-        auto logicalHeight = heightValue(flexBoxStyle.logicalHeight(), true);
+        auto availableSize = heightValue(flexBoxStyle.logicalHeight(), true);
+        auto logicalMinHeight = heightValue(flexBoxStyle.logicalMinHeight()).value_or(0_lu);
         auto logicalMaxHeight = heightValue(flexBoxStyle.logicalMaxHeight());
-        if (logicalHeight && logicalMaxHeight && *logicalHeight > *logicalMaxHeight)
-            logicalHeight = logicalMaxHeight;
+        if (!availableSize || (logicalMaxHeight && *logicalMaxHeight < *availableSize))
+            availableSize = logicalMaxHeight;
 
-        auto logicalMinHeight = heightValue(flexBoxStyle.logicalMinHeight());
-        if (!logicalMinHeight)
-            logicalMinHeight = 0_lu;
-
-        return Layout::ConstraintsForFlexContent::AxisGeometry { logicalMinHeight, logicalMaxHeight, logicalHeight, rootGeometry.contentBoxTop() };
+        return Layout::ConstraintsForFlexContent::AxisGeometry { logicalMinHeight, logicalMaxHeight, availableSize, rootGeometry.contentBoxTop() };
     };
 
     auto constraints = Layout::FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexBox()) ? Layout::ConstraintsForFlexContent(logicalHorizontalGeometry(), logicalVerticalGeometry(), false) : Layout::ConstraintsForFlexContent(logicalVerticalGeometry(), logicalHorizontalGeometry(), false);
