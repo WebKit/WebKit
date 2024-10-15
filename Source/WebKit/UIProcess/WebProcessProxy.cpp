@@ -2247,11 +2247,6 @@ WebProcessPool* WebProcessProxy::processPoolIfExists() const
     return m_processPool.get();
 }
 
-Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
-{
-    return processPool();
-}
-
 void WebProcessProxy::enableMediaPlaybackIfNecessary()
 {
     if (!m_sharedPreferencesForWebProcess.mediaPlaybackEnabled)

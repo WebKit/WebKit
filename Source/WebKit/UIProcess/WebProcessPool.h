@@ -981,4 +981,9 @@ inline WebProcessPool& WebProcessProxy::processPool() const
     return *m_processPool.get();
 }
 
+inline Ref<WebProcessPool> WebProcessProxy::protectedProcessPool() const
+{
+    return processPool();
+}
+
 } // namespace WebKit
