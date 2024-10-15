@@ -939,20 +939,16 @@ PDFPageCoverage PDFDiscretePresentationController::pageCoverageForContentsRect(c
     }
 
     auto contentsRect = convertFromPaintingToContents(paintingRect, row->pages[0]);
-
-    auto drawingRect = IntRect { { }, m_plugin->documentSize() };
-    drawingRect.intersect(enclosingIntRect(contentsRect));
-
-    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
+    auto paintRectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, contentsRect);
 
     auto pageCoverage = PDFPageCoverage { };
 
     auto addPageToCoverage = [&](PDFDocumentLayout::PageIndex pageIndex) {
         auto pageBounds = layoutBoundsForPageAtIndex(pageIndex);
-        if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
+        if (!pageBounds.intersects(paintRectInPDFLayoutCoordinates))
             return;
 
-        pageCoverage.append(PerPageInfo { pageIndex, pageBounds });
+        pageCoverage.append(PerPageInfo { pageIndex, pageBounds, paintRectInPDFLayoutCoordinates });
     };
 
     for (auto pageIndex : row->pages)

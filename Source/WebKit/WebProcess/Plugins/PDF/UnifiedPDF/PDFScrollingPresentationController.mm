@@ -108,9 +108,7 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
     if (m_plugin->visibleOrDocumentSizeIsEmpty())
         return { };
 
-    auto drawingRect = IntRect { { }, m_plugin->documentSize() };
-    drawingRect.intersect(enclosingIntRect(contentsRect));
-    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatRect { drawingRect });
+    auto rectInPDFLayoutCoordinates = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Contents, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, contentsRect);
 
     auto& documentLayout = m_plugin->documentLayout();
     auto pageCoverage = PDFPageCoverage { };
@@ -123,7 +121,7 @@ PDFPageCoverage PDFScrollingPresentationController::pageCoverageForContentsRect(
         if (!pageBounds.intersects(rectInPDFLayoutCoordinates))
             continue;
 
-        pageCoverage.append(PerPageInfo { i, pageBounds });
+        pageCoverage.append(PerPageInfo { i, pageBounds, rectInPDFLayoutCoordinates });
     }
 
     return pageCoverage;

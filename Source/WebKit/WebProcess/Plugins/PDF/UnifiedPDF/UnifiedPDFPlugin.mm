@@ -763,11 +763,11 @@ void UnifiedPDFPlugin::paintPDFContent(const WebCore::GraphicsLayer* layer, Grap
             context.clip(pageBoundsInPaintingCoordinates);
 
             ASSERT(layer);
-            bool paintedPageContent = asyncRenderer->paintTilesForPage(layer, context, documentScale, clipRect, pageBoundsInPaintingCoordinates, pageInfo.pageIndex);
-            LOG_WITH_STREAM(PDFAsyncRendering, stream << "UnifiedPDFPlugin::paintPDFContent - painting tiles for page " << pageInfo.pageIndex << " dest rect " << pageBoundsInPaintingCoordinates << " clip " << clipRect << " - painted cached tile " << paintedPageContent);
 
-            if (!paintedPageContent && showDebugIndicators)
+            if (showDebugIndicators)
                 context.fillRect(pageBoundsInPaintingCoordinates, Color::yellow.colorWithAlphaByte(128));
+
+            asyncRenderer->paintTilesForPage(layer, context, documentScale, clipRect, pageInfo.rectInPageLayoutCoordinates, pageBoundsInPaintingCoordinates, pageInfo.pageIndex);
         }
 
         bool currentPageHasAnnotation = pageWithAnnotation && *pageWithAnnotation == pageInfo.pageIndex;
