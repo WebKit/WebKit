@@ -35,8 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;
 #endif
@@ -79,38 +77,38 @@ class TransformationMatrix {
 public:
 
 #if (PLATFORM(IOS_FAMILY) && CPU(ARM_THUMB2)) || defined(TRANSFORMATION_MATRIX_USE_X86_64_SSE2)
-    typedef double Matrix4[4][4] __attribute__((aligned (16)));
+    typedef std::array<std::array<double, 4>, 4> Matrix4 __attribute__((aligned (16)));
 #else
-    typedef double Matrix4[4][4];
+    typedef std::array<std::array<double, 4>, 4> Matrix4;
 #endif
 
     constexpr TransformationMatrix()
-        : m_matrix {
+        : m_matrix { {
             { 1, 0, 0, 0 },
             { 0, 1, 0, 0 },
             { 0, 0, 1, 0 },
             { 0, 0, 0, 1 },
-        }
+        } }
     {
     }
 
     constexpr TransformationMatrix(double a, double b, double c, double d, double e, double f)
-        : m_matrix {
+        : m_matrix { {
             { a, b, 0, 0 },
             { c, d, 0, 0 },
             { 0, 0, 1, 0 },
             { e, f, 0, 1 },
-        }
+        } }
     {
     }
 
     constexpr TransformationMatrix(double tx, double ty)
-        : m_matrix {
+        : m_matrix { {
             { 1, 0, 0, 0 },
             { 0, 1, 0, 0 },
             { 0, 0, 1, 0 },
             { tx, ty, 0, 1 },
-        }
+        } }
     {
     }
 
@@ -119,12 +117,12 @@ public:
         double m21, double m22, double m23, double m24,
         double m31, double m32, double m33, double m34,
         double m41, double m42, double m43, double m44)
-        : m_matrix {
+        : m_matrix { {
             { m11, m12, m13, m14 },
             { m21, m22, m23, m24 },
             { m31, m32, m33, m34 },
             { m41, m42, m43, m44 },
-        }
+        } }
     {
     }
 
@@ -486,5 +484,3 @@ private:
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const TransformationMatrix&);
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

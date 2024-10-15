@@ -998,6 +998,7 @@ css/typedom/numeric/CSSMathNegate.cpp
 css/typedom/numeric/CSSMathProduct.cpp
 css/typedom/numeric/CSSMathSum.cpp
 css/typedom/numeric/CSSMathValue.h
+css/typedom/transform/CSSMatrixComponent.cpp
 css/typedom/transform/CSSPerspective.cpp
 css/typedom/transform/CSSRotate.cpp
 css/typedom/transform/CSSScale.cpp

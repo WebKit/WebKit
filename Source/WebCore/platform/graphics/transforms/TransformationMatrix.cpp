@@ -355,7 +355,7 @@ static bool decompose2(const TransformationMatrix::Matrix4& matrix, Transformati
 static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationMatrix::Decomposed4Type& result)
 {
     TransformationMatrix::Matrix4 localMatrix;
-    memcpy(localMatrix, mat, sizeof(TransformationMatrix::Matrix4));
+    memcpySpan(std::span { localMatrix }, std::span { mat });
 
     // Normalize the matrix.
     if (localMatrix[3][3] == 0)
@@ -369,7 +369,7 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
     // perspectiveMatrix is used to solve for perspective, but it also provides
     // an easy way to test for singularity of the upper 3x3 component.
     TransformationMatrix::Matrix4 perspectiveMatrix;
-    memcpy(perspectiveMatrix, localMatrix, sizeof(TransformationMatrix::Matrix4));
+    memcpySpan(std::span { perspectiveMatrix }, std::span { localMatrix });
     for (i = 0; i < 3; i++)
         perspectiveMatrix[i][3] = 0;
     perspectiveMatrix[3][3] = 1;
@@ -1530,7 +1530,7 @@ TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix&
     tmp[3][3] = (mat.m_matrix[3][0] * m_matrix[0][3] + mat.m_matrix[3][1] * m_matrix[1][3]
                + mat.m_matrix[3][2] * m_matrix[2][3] + mat.m_matrix[3][3] * m_matrix[3][3]);
 
-    memcpy(&m_matrix[0][0], &tmp[0][0], sizeof(Matrix4));
+    memcpySpan(std::span { m_matrix }, std::span { tmp });
 #endif
     return *this;
 }
