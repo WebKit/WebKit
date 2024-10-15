@@ -44,21 +44,21 @@ FECompositeSoftwareApplier::FECompositeSoftwareApplier(const FEComposite& effect
 
 bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
-    Ref input2 = inputs[1];
+    auto& input = inputs[0].get();
+    auto& input2 = inputs[1].get();
 
     RefPtr resultImage = result.imageBuffer();
     if (!resultImage)
         return false;
 
-    RefPtr inputImage = input->imageBuffer();
-    RefPtr inputImage2 = input2->imageBuffer();
+    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage2 = input2.imageBuffer();
     if (!inputImage || !inputImage2)
         return false;
 
     auto& filterContext = resultImage->context();
-    auto inputImageRect = input->absoluteImageRectRelativeTo(result);
-    auto inputImageRect2 = input2->absoluteImageRectRelativeTo(result);
+    auto inputImageRect = input.absoluteImageRectRelativeTo(result);
+    auto inputImageRect2 = input2.absoluteImageRectRelativeTo(result);
 
     switch (m_effect.operation()) {
     case CompositeOperationType::FECOMPOSITE_OPERATOR_UNKNOWN:
@@ -71,14 +71,14 @@ bool FECompositeSoftwareApplier::apply(const Filter&, const FilterImageVector& i
 
     case CompositeOperationType::FECOMPOSITE_OPERATOR_IN: {
         // Applies only to the intersected region.
-        IntRect destinationRect = input->absoluteImageRect();
-        destinationRect.intersect(input2->absoluteImageRect());
+        IntRect destinationRect = input.absoluteImageRect();
+        destinationRect.intersect(input2.absoluteImageRect());
         destinationRect.intersect(result.absoluteImageRect());
         if (destinationRect.isEmpty())
             break;
         IntRect adjustedDestinationRect = destinationRect - result.absoluteImageRect().location();
-        IntRect sourceRect = destinationRect - input->absoluteImageRect().location();
-        IntRect source2Rect = destinationRect - input2->absoluteImageRect().location();
+        IntRect sourceRect = destinationRect - input.absoluteImageRect().location();
+        IntRect source2Rect = destinationRect - input2.absoluteImageRect().location();
         filterContext.drawImageBuffer(*inputImage2, FloatRect(adjustedDestinationRect), FloatRect(source2Rect));
         filterContext.drawImageBuffer(*inputImage, FloatRect(adjustedDestinationRect), FloatRect(sourceRect), { CompositeOperator::SourceIn });
         break;

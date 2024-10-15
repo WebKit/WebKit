@@ -55,15 +55,14 @@ SwapBuffersDisplayRequirement ImageBufferSet::swapBuffersForDisplay(bool hasEmpt
     if (!supportsPartialRepaint)
         displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
 
-    RefPtr backBuffer = m_backBuffer;
-    if (!backBuffer || backBuffer->isInUse()) {
+    if (!m_backBuffer || m_backBuffer->isInUse()) {
         m_previouslyPaintedRect = std::nullopt;
         std::swap(m_backBuffer, m_secondaryBackBuffer);
 
         // When pulling the secondary back buffer out of hibernation (to become
         // the new front buffer), if it is somehow still in use (e.g. we got
         // three swaps ahead of the render server), just give up and discard it.
-        if (backBuffer && backBuffer->isInUse())
+        if (m_backBuffer && m_backBuffer->isInUse())
             m_backBuffer = nullptr;
     }
 
@@ -108,19 +107,18 @@ void ImageBufferSet::prepareBufferForDisplay(const FloatRect& layerBounds, const
         return;
     }
 
-    RefPtr frontBuffer = m_frontBuffer;
-    GraphicsContext& context = frontBuffer->context();
+    GraphicsContext& context = m_frontBuffer->context();
     context.resetClip();
 
     WebCore::FloatRect copyRect;
-    if (RefPtr backBuffer = m_backBuffer) {
+    if (m_backBuffer) {
         WebCore::IntRect enclosingCopyRect { m_previouslyPaintedRect ? *m_previouslyPaintedRect : enclosingIntRect(layerBounds) };
         if (!dirtyRegion.contains(enclosingCopyRect)) {
             WebCore::Region copyRegion(enclosingCopyRect);
             copyRegion.subtract(dirtyRegion);
             copyRect = intersection(copyRegion.bounds(), layerBounds);
             if (!copyRect.isEmpty())
-                frontBuffer->context().drawImageBuffer(*backBuffer, copyRect, copyRect, { WebCore::CompositeOperator::Copy });
+                m_frontBuffer->context().drawImageBuffer(*m_backBuffer, copyRect, copyRect, { WebCore::CompositeOperator::Copy });
         }
     }
 

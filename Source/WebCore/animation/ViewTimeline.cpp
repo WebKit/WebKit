@@ -38,7 +38,6 @@
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "Element.h"
 #include "RenderBox.h"
 #include "ScrollAnchoringController.h"
@@ -189,7 +188,7 @@ Ref<CSSValue> ViewTimeline::toCSSValue(const RenderStyle& style) const
 AnimationTimelinesController* ViewTimeline::controller() const
 {
     if (m_subject)
-        return &m_subject->protectedDocument()->ensureTimelinesController();
+        return &m_subject->document().ensureTimelinesController();
     return nullptr;
 }
 

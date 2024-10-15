@@ -31,7 +31,6 @@
 #include "CSSScrollValue.h"
 #include "CSSValuePool.h"
 #include "Document.h"
-#include "DocumentInlines.h"
 #include "Element.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
@@ -139,7 +138,7 @@ Ref<CSSValue> ScrollTimeline::toCSSValue(const RenderStyle&) const
 AnimationTimelinesController* ScrollTimeline::controller() const
 {
     if (m_source)
-        return &m_source->protectedDocument()->ensureTimelinesController();
+        return &m_source->document().ensureTimelinesController();
     return nullptr;
 }
 

@@ -67,7 +67,7 @@ CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
 
     ASSERT(std::holds_alternative<RefPtr<CSSNumericValue>>(value));
     auto numericValue = std::get<RefPtr<CSSNumericValue>>(value);
-    if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
+    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(numericValue.get())) {
         if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
             m_type = Type::Time;
             m_value = unitValue->value() / 1000;

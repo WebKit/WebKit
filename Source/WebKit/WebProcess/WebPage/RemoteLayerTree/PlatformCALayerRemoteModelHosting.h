@@ -43,8 +43,6 @@ private:
 
     Type type() const final { return Type::RemoteModel; }
 
-    Ref<WebCore::Model> protectedModel() const { return m_model; }
-
     Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
     
     void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType) override;

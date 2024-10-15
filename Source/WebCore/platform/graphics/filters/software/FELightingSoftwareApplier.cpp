@@ -173,14 +173,14 @@ void FELightingSoftwareApplier::applyPlatform(const LightingData& data) const
 
 bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
-    Ref input = inputs[0];
+    auto& input = inputs[0].get();
 
-    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+    input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange
@@ -206,7 +206,7 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVec
     data.lightSource = m_effect.lightSource().ptr();
     data.operatingColorSpace = &m_effect.operatingColorSpace();
 
-    data.pixels = destinationPixelBuffer.get();
+    data.pixels = destinationPixelBuffer;
     data.widthMultipliedByPixelSize = size.width() * cPixelSize;
     data.width = size.width();
     data.height = size.height();
