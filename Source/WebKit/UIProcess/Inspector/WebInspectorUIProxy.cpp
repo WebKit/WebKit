@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -758,6 +758,11 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorClien
         if (RefPtr inspectedPage = m_inspectedPage.get())
             inspectedPage->setMockCaptureDevicesEnabledOverride(overrideValue);
 #endif // ENABLE(MEDIA_STREAM)
+        return;
+
+    case InspectorClient::DeveloperPreference::NeedsSiteSpecificQuirks:
+        if (RefPtr inspectedPage = m_inspectedPage.get())
+            inspectedPage->protectedPreferences()->setNeedsSiteSpecificQuirksInspectorOverride(overrideValue);
         return;
     }
 

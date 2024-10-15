@@ -92,6 +92,7 @@ class Preference
   attr_accessor :exposed
   attr_accessor :sharedPreferenceForWebProcess
   attr_accessor :richJavaScript
+  attr_accessor :inspectorOverride
 
   def initialize(name, opts, frontend)
     @name = name
@@ -118,6 +119,7 @@ class Preference
     @exposed = !opts["exposed"] || opts["exposed"].include?(frontend)
     @sharedPreferenceForWebProcess = opts["sharedPreferenceForWebProcess"] || false
     @richJavaScript = opts["richJavaScript"] || false
+    @inspectorOverride = opts["inspectorOverride"]
   end
 
   def nameLower
@@ -172,6 +174,10 @@ class Preference
       else
         "API::FeatureCategory::" + @category.capitalize
       end
+  end
+
+  def hasInspectorOverride?
+    @inspectorOverride == true
   end
 
   # WebKitLegacy specific helpers.
@@ -254,6 +260,7 @@ class Preferences
     @exposedPreferences = @preferences.select { |p| p.exposed }
     @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
     @sharedPreferencesForWebProcess = @exposedFeatures.select { |p| p.type == "bool" && p.sharedPreferenceForWebProcess }
+    @inspectorOverridePreferences = @preferences.select { |p| p.hasInspectorOverride? }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }
     @preferencesBoundToDeprecatedGlobalSettings = @preferences.select { |p| p.webcoreBinding == "DeprecatedGlobalSettings" }

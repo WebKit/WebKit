@@ -37,6 +37,13 @@
     void delete##KeyUpper(); \
     Type KeyLower() const;
 
+#define DECLARE_INSPECTOR_OVERRIDE_SETTERS(KeyUpper, KeyLower, Type) \
+    void set##KeyUpper##InspectorOverride(std::optional<Type> inspectorOverride);
+
+#define DECLARE_INSPECTOR_OVERRIDE_STORE(KeyUpper, KeyLower, Type) \
+    std::optional<Type> m_##KeyLower##InspectorOverride;
+
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -60,6 +67,7 @@ public:
 
     // Implemented in generated file WebPreferencesGetterSetters.cpp.
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
+    FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
@@ -137,6 +145,8 @@ private:
     WeakHashSet<WebPageProxy> m_pages;
     unsigned m_updateBatchCount { 0 };
     bool m_needUpdateAfterBatch { false };
+
+    FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_STORE)
 };
 
 } // namespace WebKit

@@ -7584,6 +7584,7 @@ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
     PrivateClickMeasurementDebugModeEnabled,
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
+    NeedsSiteSpecificQuirks,
 };
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {
