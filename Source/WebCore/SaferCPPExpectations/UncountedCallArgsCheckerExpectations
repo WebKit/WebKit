@@ -738,8 +738,10 @@ animation/CustomEffect.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/KeyframeEffectStack.cpp
+animation/ScrollTimeline.cpp
 animation/StyleOriginatedAnimation.cpp
 animation/StyleOriginatedAnimationEvent.cpp
+animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CachedModuleScriptLoader.cpp
@@ -899,6 +901,7 @@ css/CSSFontStyleRangeValue.cpp
 css/CSSFontStyleRangeValue.h
 css/CSSFontStyleWithAngleValue.cpp
 css/CSSFontValue.cpp
+css/CSSFontVariationValue.cpp
 css/CSSGradientValue.cpp
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineValue.cpp
@@ -1209,6 +1212,7 @@ html/HTMLFormControlElement.cpp
 html/HTMLFormControlsCollection.cpp
 html/HTMLFormElement.cpp
 html/HTMLFrameElementBase.cpp
+html/HTMLFrameOwnerElement.cpp
 html/HTMLFrameSetElement.cpp
 html/HTMLIFrameElement.cpp
 html/HTMLImageElement.cpp
@@ -1938,6 +1942,7 @@ style/StyleBuilderState.cpp
 style/StyleInvalidator.cpp
 style/StylePendingResources.cpp
 style/StyleResolveForDocument.cpp
+style/StyleResolveForFont.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleScopeRuleSets.cpp
