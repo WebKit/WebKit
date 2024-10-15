@@ -394,6 +394,9 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     if (!factory)
         return nullptr;
 
+    if (auto portRange = portAllocatorRange())
+        portAllocator->SetPortRange(portRange->first, portRange->second);
+
     webrtc::PeerConnectionDependencies dependencies { &observer };
     dependencies.allocator = WTFMove(portAllocator);
     dependencies.async_dns_resolver_factory = WTFMove(asyncDnsResolverFactory);

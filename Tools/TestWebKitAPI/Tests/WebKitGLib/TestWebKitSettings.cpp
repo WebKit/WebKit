@@ -408,6 +408,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     webkit_settings_set_disable_web_security(settings, TRUE);
     g_assert_true(webkit_settings_get_disable_web_security(settings));
 
+#if ENABLE(WEB_RTC)
+    g_assert_cmpstr("", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "20000:30000");
+    g_assert_cmpstr("20000:30000", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+#endif
+
     g_object_unref(G_OBJECT(settings));
 }
 
