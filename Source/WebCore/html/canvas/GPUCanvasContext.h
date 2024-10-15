@@ -62,8 +62,6 @@ public:
     virtual std::optional<GPUCanvasConfiguration> getConfiguration() const = 0;
     virtual ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() = 0;
 
-    bool isWebGPU() const override { return true; }
-
 protected:
     GPUCanvasContext(CanvasBase&);
 };

@@ -40,7 +40,7 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase&, GPU&)
 #endif
 
 GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
-    : GPUBasedCanvasRenderingContext(canvas)
+    : GPUBasedCanvasRenderingContext(canvas, Type::WebGPU)
 {
 }
 

@@ -86,7 +86,7 @@ std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create
 }
 
 PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canvas)
-    : CanvasRenderingContext(canvas)
+    : CanvasRenderingContext(canvas, Type::Placeholder)
     , m_source(PlaceholderRenderingContextSource::create(*this))
 {
 }

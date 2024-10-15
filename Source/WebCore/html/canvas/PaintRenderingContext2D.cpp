@@ -42,7 +42,7 @@ std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CustomP
 }
 
 PaintRenderingContext2D::PaintRenderingContext2D(CustomPaintCanvas& canvas)
-    : CanvasRenderingContext2DBase(canvas, { }, false)
+    : CanvasRenderingContext2DBase(canvas, Type::Paint, { }, false)
 {
 }
 

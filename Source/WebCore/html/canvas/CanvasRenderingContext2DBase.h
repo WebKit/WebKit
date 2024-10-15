@@ -94,7 +94,7 @@ class CanvasRenderingContext2DBase : public CanvasRenderingContext, public Canva
     friend class CanvasFilterContextSwitcher;
     friend class CanvasLayerContextSwitcher;
 protected:
-    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
+    CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext::Type, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
 
 public:
     virtual ~CanvasRenderingContext2DBase();
@@ -396,7 +396,6 @@ private:
     void applyShadow();
     bool shouldDrawShadows() const;
 
-    bool is2dBase() const final { return true; }
     bool needsPreparationForDisplay() const final;
     void prepareForDisplay() final;
 

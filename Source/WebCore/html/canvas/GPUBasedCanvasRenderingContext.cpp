@@ -32,10 +32,11 @@
 
 namespace WebCore {
 
-GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(CanvasBase& canvas)
-    : CanvasRenderingContext(canvas)
+GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(CanvasBase& canvas, CanvasRenderingContext::Type type)
+    : CanvasRenderingContext(canvas, type)
     , ActiveDOMObject(canvas.scriptExecutionContext())
 {
+    ASSERT(isGPUBased());
 }
 
 HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const

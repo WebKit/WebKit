@@ -47,7 +47,7 @@ std::unique_ptr<ImageBitmapRenderingContext> ImageBitmapRenderingContext::create
 }
 
 ImageBitmapRenderingContext::ImageBitmapRenderingContext(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
-    : CanvasRenderingContext(canvas)
+    : CanvasRenderingContext(canvas, Type::BitmapRenderer)
     , m_settings(WTFMove(settings))
 {
 }

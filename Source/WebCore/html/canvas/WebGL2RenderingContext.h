@@ -261,9 +261,6 @@ public:
 
 private:
     using WebGLRenderingContextBase::WebGLRenderingContextBase;
-
-    bool isWebGL2() const final { return true; }
-
     void initializeContextState() final;
 
     RefPtr<ArrayBufferView> arrayBufferViewSliceFactory(ASCIILiteral functionName, const ArrayBufferView& data, unsigned startByte, unsigned bytelength);

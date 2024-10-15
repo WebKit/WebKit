@@ -72,7 +72,7 @@ std::unique_ptr<OffscreenCanvasRenderingContext2D> OffscreenCanvasRenderingConte
 }
 
 OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase& canvas, CanvasRenderingContext2DSettings&& settings)
-    : CanvasRenderingContext2DBase(canvas, WTFMove(settings), false)
+    : CanvasRenderingContext2DBase(canvas, Type::Offscreen2D, WTFMove(settings), false)
 {
 }
 

@@ -71,7 +71,6 @@ public:
 
 private:
     PlaceholderRenderingContext(HTMLCanvasElement&);
-    bool isPlaceholder() const final { return true; }
     bool delegatesDisplay() const final { return true; }
     void setContentsToLayer(GraphicsLayer&) final;
 

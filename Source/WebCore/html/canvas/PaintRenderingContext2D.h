@@ -52,7 +52,6 @@ public:
 
 private:
     PaintRenderingContext2D(CustomPaintCanvas&);
-    bool isPaint() const override { return true; }
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
 };
 

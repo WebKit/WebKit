@@ -75,8 +75,6 @@ public:
     ExceptionOr<RefPtr<GPUTexture>> getCurrentTexture() override;
     RefPtr<ImageBuffer> transferToImageBuffer() override;
 
-    bool isWebGPU() const override { return true; }
-
 private:
     explicit GPUCanvasContextCocoa(CanvasBase&, Ref<GPUCompositorIntegration>&&, Ref<GPUPresentationContext>&&);
 
