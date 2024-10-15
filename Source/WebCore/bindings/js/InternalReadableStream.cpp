@@ -199,6 +199,27 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results[1].get()));
 }
 
+ExceptionOr<JSC::Strong<JSC::JSObject>> InternalReadableStream::getByobReader()
+{
+    auto* globalObject = this->globalObject();
+    if (!globalObject)
+        return Exception { ExceptionCode::InvalidStateError };
+
+    auto* clientData = static_cast<JSVMClientData*>(globalObject->vm().clientData);
+    auto& names = clientData->builtinFunctions().readableStreamInternalsBuiltins();
+    auto& privateName = names.createReadableStreamByobReaderPrivateName();
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(guardedObject());
+    ASSERT(!arguments.hasOverflowed());
+
+    auto result = invokeReadableStreamFunction(*globalObject, privateName, arguments);
+    if (result.hasException())
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    return JSC::Strong<JSC::JSObject> { globalObject->vm(), result.returnValue().toObject(globalObject) };
+}
+
 JSC::JSValue InternalReadableStream::cancel(JSC::JSGlobalObject& globalObject, JSC::JSValue reason, Use use)
 {
     auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
@@ -208,23 +229,6 @@ JSC::JSValue InternalReadableStream::cancel(JSC::JSGlobalObject& globalObject, J
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     arguments.append(reason);
-    ASSERT(!arguments.hasOverflowed());
-
-    auto result = invokeReadableStreamFunction(globalObject, privateName, arguments);
-    if (result.hasException())
-        return { };
-
-    return result.returnValue();
-}
-
-JSC::JSValue InternalReadableStream::getReader(JSC::JSGlobalObject& globalObject, JSC::JSValue options)
-{
-    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
-    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamGetReaderForBindingsPrivateName();
-
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(guardedObject());
-    arguments.append(options);
     ASSERT(!arguments.hasOverflowed());
 
     auto result = invokeReadableStreamFunction(globalObject, privateName, arguments);

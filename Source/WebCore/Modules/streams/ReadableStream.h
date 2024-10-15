@@ -33,16 +33,23 @@ namespace WebCore {
 
 class InternalReadableStream;
 class JSDOMGlobalObject;
+class ReadableStreamDefaultReader;
 class ReadableStreamSource;
 
 class ReadableStream : public RefCounted<ReadableStream> {
 public:
+    enum class ReaderMode { Byob };
+    struct GetReaderOptions {
+        std::optional<ReaderMode> mode;
+    };
+
     static ExceptionOr<Ref<ReadableStream>> create(JSC::JSGlobalObject&, std::optional<JSC::Strong<JSC::JSObject>>&&, std::optional<JSC::Strong<JSC::JSObject>>&&);
     static ExceptionOr<Ref<ReadableStream>> create(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
     static Ref<ReadableStream> create(Ref<InternalReadableStream>&&);
 
     ~ReadableStream() = default;
 
+    ExceptionOr<JSC::Strong<JSC::JSObject>> getReader(const GetReaderOptions&);
     void lock() { m_internalReadableStream->lock(); }
     bool isLocked() const { return m_internalReadableStream->isLocked(); }
     bool isDisturbed() const { return m_internalReadableStream->isDisturbed(); }

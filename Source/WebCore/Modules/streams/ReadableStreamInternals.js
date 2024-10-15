@@ -101,29 +101,6 @@ function createInternalReadableStreamFromUnderlyingSource(underlyingSource, stra
     return stream;
 }
 
-function readableStreamGetReaderForBindings(stream, options)
-{
-    "use strict";
-
-    @assert(@isReadableStream(stream));
-
-    const mode = @toDictionary(options, { }, "ReadableStream.getReader takes an object as first argument").mode;
-    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
-
-    if (mode === @undefined) {
-        const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
-        return new readableStreamDefaultReaderConstructor(stream);
-    }
-
-    // String conversion is required by spec, hence double equals.
-    if (mode == 'byob') {
-        const readableStreamBYOBReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamBYOBReader");
-        return new readableStreamBYOBReaderConstructor(stream);
-    }
-
-    @throwTypeError("Invalid mode is specified");
-}
-
 function readableStreamCancelForBindings(stream, reason)
 {
     "use strict";
@@ -222,6 +199,85 @@ function readableStreamPipeToForBindings(stream, destination, options)
         return @Promise.@reject(@makeTypeError("WritableStream is locked"));
 
     return @readableStreamPipeToWritableStream(stream, internalDestination, preventClose, preventAbort, preventCancel, signal);
+}
+
+function createReadableStreamByobReader(internalStream)
+{
+    "use strict";
+
+    @assert(@isReadableStream(internalStream));
+
+    const readableStreamGlobalObject = @getByIdDirectPrivate(internalStream, "globalObject");
+    const readableStreamBYOBReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamBYOBReader");
+    return new readableStreamBYOBReaderConstructor(internalStream);
+}
+
+function createInternalReadableStreamDefaultReader(internalStream)
+{
+    "use strict";
+
+    const reader = { };
+
+    @assert(@isReadableStream(internalStream));
+
+    if (internalStream === @undefined)
+        @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
+
+    if (@isReadableStreamLocked(internalStream))
+        @throwTypeError("ReadableStream is locked");
+
+    @readableStreamReaderGenericInitialize(reader, internalStream);
+    @putByIdDirectPrivate(reader, "readRequests", []);
+
+    return reader;
+}
+
+function readableStreamDefaultReaderClosedForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
+
+    return @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+}
+
+function readableStreamDefaultReaderReadForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "read"));
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return @Promise.@reject(@makeTypeError("read() called on a reader owned by no readable stream"));
+
+    return @readableStreamDefaultReaderRead(reader);
+}
+
+function readableStreamDefaultReaderReleaseLockForBindings(reader)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        throw @makeThisTypeError("ReadableStreamDefaultReader", "releaseLock");
+
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return;
+
+    @readableStreamDefaultReaderRelease(reader);
+}
+
+function readableStreamDefaultReaderCancelForBindings(reader, reason)
+{
+    "use strict";
+
+    if (!@isReadableStreamDefaultReader(reader))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "cancel"));
+
+    if (!@getByIdDirectPrivate(reader, "ownerReadableStream"))
+        return @Promise.@reject(@makeTypeError("cancel() called on a reader owned by no readable stream"));
+
+    return @readableStreamReaderGenericCancel(reader, reason);
 }
 
 function readableStreamReaderGenericInitialize(reader, stream)
@@ -331,9 +387,7 @@ function readableStreamPipeTo(stream, sink)
 
 function acquireReadableStreamDefaultReader(stream)
 {
-    const readableStreamGlobalObject = @getByIdDirectPrivate(stream, "globalObject");
-    const readableStreamDefaultReaderConstructor = @getByIdDirectPrivate(readableStreamGlobalObject, "ReadableStreamDefaultReader");
-    return new readableStreamDefaultReaderConstructor(stream);
+    return @createInternalReadableStreamDefaultReader(stream);
 }
 
 // FIXME: Replace readableStreamPipeTo by below function.

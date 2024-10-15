@@ -27,6 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum ReadableStreamReaderMode { "byob" };
+
+dictionary ReadableStreamGetReaderOptions {
+  ReadableStreamReaderMode mode;
+};
+
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=*,
@@ -36,7 +42,7 @@
     [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
 
     [Custom, ReturnsOwnPromise] Promise<any> cancel(optional any reason);
-    [Custom] Object getReader(optional any options);
+    object getReader(optional ReadableStreamGetReaderOptions options = { });
     [Custom, ReturnsOwnPromise] Promise<any> pipeTo(any streams, optional any options);
     [Custom] Object pipeThrough(any dest, optional any options);
     sequence<ReadableStream> tee();

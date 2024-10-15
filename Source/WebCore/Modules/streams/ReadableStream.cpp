@@ -27,6 +27,7 @@
 #include "ReadableStream.h"
 
 #include "JSReadableStream.h"
+#include "JSReadableStreamDefaultReader.h"
 #include "JSReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
 
@@ -90,14 +91,24 @@ ExceptionOr<Vector<Ref<ReadableStream>>> ReadableStream::tee(bool shouldClone)
     };
 }
 
+ExceptionOr<JSC::Strong<JSC::JSObject>> ReadableStream::getReader(const GetReaderOptions& options)
+{
+    if (options.mode)
+        return internalReadableStream().getByobReader();
+
+    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(internalReadableStream().globalObject());
+
+    auto readerOrException = ReadableStreamDefaultReader::create(*globalObject, *this);
+    if (readerOrException.hasException())
+        return readerOrException.releaseException();
+
+    auto newReaderValue = toJSNewlyCreated<IDLInterface<ReadableStreamDefaultReader>>(*globalObject, *globalObject, readerOrException.releaseReturnValue());
+    return JSC::Strong<JSC::JSObject> { globalObject->vm(), newReaderValue.toObject(globalObject) };
+}
+
 JSC::JSValue JSReadableStream::cancel(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)
 {
     return wrapped().internalReadableStream().cancelForBindings(globalObject, callFrame.argument(0));
-}
-
-JSC::JSValue JSReadableStream::getReader(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)
-{
-    return wrapped().internalReadableStream().getReader(globalObject, callFrame.argument(0));
 }
 
 JSC::JSValue JSReadableStream::pipeTo(JSC::JSGlobalObject& globalObject, JSC::CallFrame& callFrame)

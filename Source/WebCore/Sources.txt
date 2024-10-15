@@ -364,6 +364,7 @@ Modules/speech/SpeechSynthesisVoice.cpp
 Modules/storage/StorageManager.cpp
 Modules/storage/WorkerStorageConnection.cpp
 Modules/streams/ReadableStream.cpp
+Modules/streams/ReadableStreamDefaultReader.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/streams/TransformStream.cpp
@@ -620,6 +621,7 @@ bindings/js/DOMWrapperWorld.cpp
 bindings/js/GCController.cpp
 bindings/js/IDBBindingUtilities.cpp
 bindings/js/InternalReadableStream.cpp
+bindings/js/InternalReadableStreamDefaultReader.cpp
 bindings/js/InternalWritableStream.cpp
 bindings/js/JSAbortSignalCustom.cpp
 bindings/js/JSAbstractRangeCustom.cpp
