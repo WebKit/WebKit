@@ -809,7 +809,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
             g_value_init(&intValue, G_TYPE_INT);
 
             switch (bitRateAllocation.scalabilityMode()) {
-            case VideoEncoder::ScalabilityMode::L1T1:
+            case WebCore::VideoEncoderScalabilityMode::L1T1:
                 numberLayers = 1;
                 scalabilityString = "L1T1"_s;
                 if (auto value = bitRateAllocation.getBitRate(0, 0)) {
@@ -822,7 +822,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                     g_value_array_append(decimators.get(), &intValue);
                 }
                 break;
-            case VideoEncoder::ScalabilityMode::L1T2:
+            case WebCore::VideoEncoderScalabilityMode::L1T2:
                 numberLayers = 2;
                 scalabilityString = "L1T2"_s;
                 if (auto value = bitRateAllocation.getBitRate(0, 1)) {
@@ -855,7 +855,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                     "no-upd-last+no-upd-alt>"_s;
                 layerSyncFlags = { false, true, false, false };
                 break;
-            case VideoEncoder::ScalabilityMode::L1T3:
+            case WebCore::VideoEncoderScalabilityMode::L1T3:
                 numberLayers = 3;
                 scalabilityString = "L1T3"_s;
                 if (auto value = bitRateAllocation.getBitRate(0, 2)) {
