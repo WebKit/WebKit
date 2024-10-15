@@ -592,7 +592,7 @@ Error Connection::sendMessageImpl(UniqueRef<Encoder>&& encoder, OptionSet<SendOp
     if (isMainRunLoop()) {
         bool hasDeadObservers = false;
         for (auto& observerWeakPtr : m_messageObservers) {
-            if (auto* observer = observerWeakPtr.get())
+            if (RefPtr observer = observerWeakPtr.get())
                 observer->willSendMessage(encoder.get(), sendOptions);
             else
                 hasDeadObservers = true;
@@ -1369,7 +1369,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     if (isMainRunLoop()) {
         bool hasDeadObservers = false;
         for (auto& observerWeakPtr : m_messageObservers) {
-            if (auto* observer = observerWeakPtr.get())
+            if (RefPtr observer = observerWeakPtr.get())
                 observer->didReceiveMessage(decoder);
             else
                 hasDeadObservers = true;

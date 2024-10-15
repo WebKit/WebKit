@@ -354,14 +354,22 @@ private:
     Ref<SharedMemory> m_sharedMemory;
 };
 
-class JSMessageListener final : public IPC::MessageObserver {
+class JSMessageListener final : public IPC::MessageObserver, public RefCounted<JSMessageListener> {
     WTF_MAKE_TZONE_ALLOCATED(JSMessageListener);
 public:
     enum class Type { Incoming, Outgoing };
 
-    JSMessageListener(JSIPC&, Type, JSC::JSGlobalObject*, JSObjectRef callback);
+    static Ref<JSMessageListener> create(JSIPC& jsIPC, Type type, JSC::JSGlobalObject* globalObject, JSObjectRef callback)
+    {
+        return adoptRef(*new JSMessageListener(jsIPC, type, globalObject, callback));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    JSMessageListener(JSIPC&, Type, JSC::JSGlobalObject*, JSObjectRef callback);
+
     void willSendMessage(const IPC::Encoder&, OptionSet<IPC::SendOption>) override;
     void didReceiveMessage(const IPC::Decoder&) override;
     JSC::JSObject* jsDescriptionFromDecoder(JSC::JSGlobalObject*, IPC::Decoder&);
@@ -431,7 +439,7 @@ private:
 
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
-    Vector<UniqueRef<JSMessageListener>> m_messageListeners;
+    Vector<Ref<JSMessageListener>> m_messageListeners;
     IPCTesterReceiver m_testerProxy;
     RefPtr<JSIPCConnection> m_uiConnection;
     RefPtr<JSIPCConnection> m_networkConnection;
@@ -1937,11 +1945,11 @@ void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef contex
     if (!connection)
         return;
 
-    std::unique_ptr<JSMessageListener> listener;
+    RefPtr<JSMessageListener> listener;
     if (argumentCount >= 2 && JSValueIsObject(context, arguments[1])) {
         auto listenerObjectRef = JSValueToObject(context, arguments[1], exception);
         if (JSObjectIsFunction(context, listenerObjectRef))
-            listener = makeUnique<JSMessageListener>(*jsIPC, type, globalObject, listenerObjectRef);
+            listener = JSMessageListener::create(*jsIPC, type, globalObject, listenerObjectRef);
     }
 
     if (!listener) {
@@ -1950,7 +1958,7 @@ void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef contex
     }
 
     connection->connection()->addMessageObserver(*listener);
-    jsIPC->m_messageListeners.append(makeUniqueRefFromNonNullUniquePtr(WTFMove(listener)));
+    jsIPC->m_messageListeners.append(listener.releaseNonNull());
 }
 
 JSValueRef JSIPC::addIncomingMessageListener(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
