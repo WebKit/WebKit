@@ -1885,6 +1885,9 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
                 gst_structure_set(structure.get(), "frame-width", G_TYPE_UINT, *frameWidth, nullptr);
             if (auto frameHeight = gstStructureGet<unsigned>(additionalStats, "frame-height"_s))
                 gst_structure_set(structure.get(), "frame-height", G_TYPE_UINT, *frameHeight, nullptr);
+            auto trackIdentifier = gstStructureGetString(additionalStats, "track-identifier"_s);
+            if (!trackIdentifier.isEmpty())
+                gst_structure_set(structure.get(), "track-identifier", G_TYPE_STRING, trackIdentifier.toStringWithoutCopying().utf8().data(), nullptr);
             break;
         }
         case GST_WEBRTC_STATS_OUTBOUND_RTP: {

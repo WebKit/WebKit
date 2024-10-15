@@ -138,6 +138,9 @@ RTCStatsReport::InboundRtpStreamStats::InboundRtpStreamStats(const GstStructure*
     frameWidth = gstStructureGet<unsigned>(structure, "frame-width"_s);
     frameHeight = gstStructureGet<unsigned>(structure, "frame-height"_s);
 
+    if (auto identifier = gstStructureGetString(structure, "track-identifier"_s))
+        trackIdentifier = identifier.toString();
+
     // FIXME:
     // stats.fractionLost =
     // stats.burstPacketsLost =
