@@ -100,6 +100,7 @@ private:
     WGPUInstance backing() const { return m_backing.get(); }
 
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
+    void loseTheDevice() final;
 
     RefPtr<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
