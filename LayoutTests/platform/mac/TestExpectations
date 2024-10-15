@@ -2433,3 +2433,6 @@ webkit.org/b/280792 inspector/worker/debugger-pause-subworker.html [ Skip ]
 
 # webkit.org/b/281097 [ Sequoia ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html is a constant failure. 
 [ Sequoia+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
+
+# webkit.org/b/281523 [macOS arm64] Flaky test - imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html (failed in EWS)
+[ arm64 ] imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
