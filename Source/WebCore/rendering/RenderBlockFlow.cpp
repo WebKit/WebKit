@@ -4534,6 +4534,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             float childMin = 0;
             float childMax = 0;
 
+            bool isImplicitRubyBase = child->parent()->style().display() == DisplayType::Ruby && (childStyle.display() == DisplayType::RubyBase || childStyle.display() == DisplayType::Inline);
+
             if (!child->isRenderText()) {
                 if (child->isLineBreakOpportunity()) {
                     minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
@@ -4548,13 +4550,18 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     childMin += bpm;
                     childMax += bpm;
 
-                    if (childStyle.display() == DisplayType::RubyBase && !childIterator.endOfInline)
-                        rubyBaseMinimumMaximumWidthStack.append(std::pair { inlineMin, inlineMax });
-
                     inlineMin += childMin;
                     inlineMax += childMax;
 
-                    if (childStyle.display() == DisplayType::RubyBase && childIterator.endOfInline) {
+                    if (isImplicitRubyBase) {
+                        minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
+                        inlineMin = 0;
+                    }
+
+                    if (isImplicitRubyBase && !childIterator.endOfInline)
+                        rubyBaseMinimumMaximumWidthStack.append(std::pair { inlineMin, inlineMax });
+
+                    if (isImplicitRubyBase && childIterator.endOfInline) {
                         if (!rubyBaseMinimumMaximumWidthStack.isEmpty()) {
                             auto rubyBaseStart = rubyBaseMinimumMaximumWidthStack.last();
                             rubyBaseMinimumMaximumWidthStack.last() = std::pair { inlineMin - rubyBaseStart.first, inlineMax - rubyBaseStart.second };
