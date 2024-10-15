@@ -4774,7 +4774,7 @@ MediaRecorderEnabled:
 
 MediaRecorderEnabledWebM:
   type: bool
-  status: testable
+  status: preview
   category: media
   humanReadableName: "MediaRecorder WebM"
   humanReadableDescription: "Enable WebM support with MediaRecorder"
