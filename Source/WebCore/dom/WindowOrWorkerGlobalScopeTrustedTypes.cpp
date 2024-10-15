@@ -31,11 +31,10 @@
 #include "LocalDOMWindowProperty.h"
 #include "LocalFrame.h"
 #include "Page.h"
-#include "Supplementable.h"
-#include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/ASCIILiteral.h>
 #include "TrustedTypePolicyFactory.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 

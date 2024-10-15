@@ -25,19 +25,22 @@
 
 #pragma once
 
-namespace WTF { class ASCIILiteral; }
+#include "Supplementable.h"
+#include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class TrustedTypePolicyFactory;
 class DOMWindow;
+class WeakPtrImplWithEventTargetData;
 class WorkerGlobalScope;
 
 template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeTrustedTypes {
 public:
-    static WTF::ASCIILiteral workerGlobalSupplementName();
+    static ASCIILiteral workerGlobalSupplementName();
     static TrustedTypePolicyFactory* trustedTypes(DOMWindow&);
     static TrustedTypePolicyFactory* trustedTypes(WorkerGlobalScope&);
 };
