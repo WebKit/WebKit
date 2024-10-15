@@ -39,7 +39,6 @@ use warnings;
 
 use FindBin;
 use lib $FindBin::Bin;
-use autouse 'webkitdirs' => qw(prohibitUnknownPort);
 
 BEGIN {
    use Exporter   ();
