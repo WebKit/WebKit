@@ -60,7 +60,8 @@ struct NotificationData;
 class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     using Permission = NotificationPermission;
     using Direction = NotificationDirection;

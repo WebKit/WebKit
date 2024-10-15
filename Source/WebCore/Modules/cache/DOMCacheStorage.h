@@ -36,7 +36,8 @@ struct MultiCacheQueryOptions;
 
 class DOMCacheStorage : public RefCounted<DOMCacheStorage>, public ActiveDOMObject {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<DOMCacheStorage> create(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
     ~DOMCacheStorage();

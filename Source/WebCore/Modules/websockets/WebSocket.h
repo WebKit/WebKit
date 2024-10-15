@@ -51,7 +51,8 @@ class ThreadableWebSocketChannel;
 class WebSocket final : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, private WebSocketChannelClient {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(WebSocket);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static ASCIILiteral subprotocolSeparator();
 

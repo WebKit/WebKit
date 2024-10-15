@@ -44,7 +44,8 @@ struct WebLockManagerSnapshot;
 
 class WebLockManager : public RefCounted<WebLockManager>, public CanMakeWeakPtr<WebLockManager>, public ActiveDOMObject {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<WebLockManager> create(NavigatorBase&);
     ~WebLockManager();

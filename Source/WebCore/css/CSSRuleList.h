@@ -49,7 +49,8 @@ protected:
 
 class StaticCSSRuleList final : public CSSRuleList, public RefCounted<StaticCSSRuleList> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<StaticCSSRuleList> create() { return adoptRef(*new StaticCSSRuleList); }
 

@@ -56,7 +56,8 @@ class MediaPlayerPrivateMediaFoundation final
     , public RefCounted<MediaPlayerPrivateMediaFoundation> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();

@@ -199,7 +199,8 @@ class DocumentLoader
     friend class ContentFilter;
 public:
 #if ENABLE(CONTENT_FILTERING)
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 #endif
 
     static Ref<DocumentLoader> create(const ResourceRequest& request, const SubstituteData& data)

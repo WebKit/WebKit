@@ -40,7 +40,8 @@ class Subscriber final : public ActiveDOMObject, public ScriptWrappable, public 
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(Subscriber);
 
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void next(JSC::JSValue);
     void complete();

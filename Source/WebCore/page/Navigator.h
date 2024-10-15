@@ -51,7 +51,8 @@ class Navigator final
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Navigator);
 public:
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 #endif
 
     static Ref<Navigator> create(ScriptExecutionContext* context, LocalDOMWindow& window) { return adoptRef(*new Navigator(context, window)); }

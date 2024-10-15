@@ -54,7 +54,8 @@ void AudioHardwareListener::resetCreationFunction()
 #else
         class RefCountedAudioHardwareListener : public AudioHardwareListener, public RefCounted<RefCountedAudioHardwareListener> {
         public:
-            DEFINE_VIRTUAL_REFCOUNTED;
+            void ref() const final { RefCounted::ref(); }
+            void deref() const final { RefCounted::deref(); }
 
             RefCountedAudioHardwareListener(AudioHardwareListener::Client& client)
                 : AudioHardwareListener(client) { }

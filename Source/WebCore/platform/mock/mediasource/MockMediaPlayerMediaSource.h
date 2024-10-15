@@ -44,7 +44,8 @@ class MockMediaPlayerMediaSource final
     , public RefCounted<MockMediaPlayerMediaSource>
     , public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 

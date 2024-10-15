@@ -63,7 +63,8 @@ class MediaStreamTrack
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaStreamTrack);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     class Observer {
     public:

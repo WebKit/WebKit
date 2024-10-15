@@ -42,7 +42,8 @@ class NetworkSchemeRegistry;
 
 class PingLoad final : public RefCounted<PingLoad>, public NetworkDataTaskClient {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static void create(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
     {

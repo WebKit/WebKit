@@ -79,7 +79,9 @@ class MediaSource
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSource);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaSource>);
 
     static void setRegistry(URLRegistry*);

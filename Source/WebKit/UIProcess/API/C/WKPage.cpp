@@ -2460,7 +2460,8 @@ public:
         return adoptRef(*new StateClient(client));
     }
 
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     explicit StateClient(const WKPageStateClientBase* client)

@@ -43,7 +43,8 @@ class Document;
 
 class ApplePaySetup : public ActiveDOMObject, public RefCounted<ApplePaySetup> {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<ApplePaySetup> create(ScriptExecutionContext&, ApplePaySetupConfiguration&&);
 

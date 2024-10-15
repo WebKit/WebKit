@@ -50,7 +50,8 @@ class NetworkResourceLoader;
 class NetworkCORSPreflightChecker final : public RefCounted<NetworkCORSPreflightChecker>, private NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(NetworkCORSPreflightChecker);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct Parameters {
         WebCore::ResourceRequest originalRequest;

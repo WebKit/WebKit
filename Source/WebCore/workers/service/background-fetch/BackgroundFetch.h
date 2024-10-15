@@ -84,7 +84,8 @@ public:
     class Record final : public BackgroundFetchRecordLoaderClient, public RefCounted<Record>, private Identified<BackgroundFetchRecordIdentifier> {
         WTF_MAKE_TZONE_ALLOCATED(Record);
     public:
-        DEFINE_VIRTUAL_REFCOUNTED;
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
 
         static Ref<Record> create(BackgroundFetch& fetch, BackgroundFetchRequest&& request, size_t size) { return adoptRef(*new Record(fetch, WTFMove(request), size)); }
         ~Record();

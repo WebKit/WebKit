@@ -43,7 +43,8 @@ struct GamepadEffectParameters;
 
 class GamepadHapticActuator : public RefCounted<GamepadHapticActuator>, public ActiveDOMObject, public VisibilityChangeClient {
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     using EffectType = GamepadHapticEffectType;
     enum class Type : uint8_t { Vibration, DualRumble };

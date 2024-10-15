@@ -50,7 +50,8 @@ class NetworkProcess;
 class BackgroundFetchLoad final : public RefCounted<BackgroundFetchLoad>, public WebCore::BackgroundFetchRecordLoader, public NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchLoad);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<BackgroundFetchLoad> create(NetworkProcess& networkProcess, PAL::SessionID sessionID,
         WebCore::BackgroundFetchRecordLoaderClient& backgroundFetchRecordLoaderClient,

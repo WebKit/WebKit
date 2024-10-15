@@ -50,7 +50,8 @@ class EventSource final : public RefCounted<EventSource>, public EventTarget, pr
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(EventSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EventSource);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     struct Init {
         bool withCredentials;

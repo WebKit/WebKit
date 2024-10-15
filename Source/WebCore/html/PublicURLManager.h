@@ -41,7 +41,8 @@ class URLRegistrable;
 class PublicURLManager final : public RefCounted<PublicURLManager>, public ActiveDOMObject {
     WTF_MAKE_TZONE_ALLOCATED(PublicURLManager);
 public:
-    DEFINE_VIRTUAL_REFCOUNTED;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static Ref<PublicURLManager> create(ScriptExecutionContext*);
 
