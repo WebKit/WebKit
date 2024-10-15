@@ -362,8 +362,9 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:
         return TriState::True;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
-    return TriState::False;
 }
 
 bool CalleeGroup::isSafeToRun(MemoryMode memoryMode)
