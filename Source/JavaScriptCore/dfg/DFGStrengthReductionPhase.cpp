@@ -1219,6 +1219,35 @@ private:
             break;
         }
 
+        case CompareStrictEq:
+        case SameValue:
+        case CompareEq:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq: {
+            if (m_node->child1().useKind() == UntypedUse && m_node->child2().useKind() == UntypedUse) {
+                if (m_node->op() == CompareEq || m_node->op() == CompareStrictEq || m_node->op() == SameValue) {
+                    if (Node::shouldSpeculateBoolean(m_node->child1().node(), m_node->child2().node())) {
+                        m_node->child1().setUseKind(BooleanUse);
+                        m_node->child2().setUseKind(BooleanUse);
+                        m_node->clearFlags(NodeMustGenerate);
+                        m_changed = true;
+                        break;
+                    }
+                }
+
+                if (Node::shouldSpeculateInt32(m_node->child1().node(), m_node->child2().node())) {
+                    m_node->child1().setUseKind(Int32Use);
+                    m_node->child2().setUseKind(Int32Use);
+                    m_node->clearFlags(NodeMustGenerate);
+                    m_changed = true;
+                    break;
+                }
+            }
+            break;
+        }
+
         case Call:
         case Construct:
         case TailCallInlinedCaller:
