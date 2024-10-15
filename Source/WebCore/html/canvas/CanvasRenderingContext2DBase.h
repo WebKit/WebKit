@@ -325,9 +325,11 @@ protected:
     void realizeSaves();
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
-    virtual GraphicsContext* drawingContext() const;
+    // These methods are de-virtualized for performance reasons.
+    GraphicsContext* drawingContext() const;
+    GraphicsContext* effectiveDrawingContext() const;
+
     virtual GraphicsContext* existingDrawingContext() const;
-    virtual GraphicsContext* effectiveDrawingContext() const;
     virtual AffineTransform baseTransform() const;
 
     enum class DidDrawOption {
@@ -466,7 +468,6 @@ private:
 
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
 #if USE(SKIA)
-    bool delegatesDisplay() const override;
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
 #endif
     bool hasDeferredOperations() const final;

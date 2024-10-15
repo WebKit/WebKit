@@ -40,8 +40,6 @@ public:
     void ref() const final { CanvasRenderingContext::ref(); }
     void deref() const final { CanvasRenderingContext::deref(); }
 
-    bool delegatesDisplay() const override { return true; }
-
     virtual void reshape() = 0;
 protected:
     explicit GPUBasedCanvasRenderingContext(CanvasBase&, CanvasRenderingContext::Type);

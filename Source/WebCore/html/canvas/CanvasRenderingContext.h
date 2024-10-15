@@ -92,7 +92,7 @@ public:
     // Draws the source buffer to the canvasBase().buffer().
     virtual RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer);
     virtual bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const;
-    virtual bool delegatesDisplay() const;
+    bool delegatesDisplay() const;
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 
