@@ -34,15 +34,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class MediaKeySystemPermissionRequestManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MediaKeySystemPermissionRequestManagerProxy> : std::true_type { };
-}
-
 namespace WebCore {
 class SecurityOrigin;
 };
@@ -65,6 +56,9 @@ public:
 
     void grantRequest(MediaKeySystemPermissionRequestProxy&);
     void denyRequest(MediaKeySystemPermissionRequestProxy&, const String& message = { });
+
+    void ref() const;
+    void deref() const;
 
 private:
 #if !RELEASE_LOG_DISABLED

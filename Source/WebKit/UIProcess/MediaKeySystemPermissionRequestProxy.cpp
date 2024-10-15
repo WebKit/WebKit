@@ -47,20 +47,22 @@ MediaKeySystemPermissionRequestProxy::MediaKeySystemPermissionRequestProxy(Media
 
 void MediaKeySystemPermissionRequestProxy::allow()
 {
-    ASSERT(m_manager);
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    ASSERT(manager);
+    if (!manager)
         return;
 
-    m_manager->grantRequest(*this);
+    manager->grantRequest(*this);
     invalidate();
 }
 
 void MediaKeySystemPermissionRequestProxy::deny()
 {
-    if (!m_manager)
+    RefPtr manager = m_manager.get();
+    if (!manager)
         return;
 
-    m_manager->denyRequest(*this);
+    manager->denyRequest(*this);
     invalidate();
 }
 

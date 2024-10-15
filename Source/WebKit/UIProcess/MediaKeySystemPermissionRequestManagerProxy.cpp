@@ -122,4 +122,14 @@ Ref<MediaKeySystemPermissionRequestProxy> MediaKeySystemPermissionRequestManager
     return request;
 }
 
+void MediaKeySystemPermissionRequestManagerProxy::ref() const
+{
+    m_page->ref();
+}
+
+void MediaKeySystemPermissionRequestManagerProxy::deref() const
+{
+    m_page->deref();
+}
+
 } // namespace WebKit
