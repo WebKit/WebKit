@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BCompiler.h"
 #include "BExport.h"
 #include "BPlatform.h"
 
@@ -172,6 +173,8 @@ private:
         return 8;
     }
 
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     BINLINE unsigned tzoneBucketForKey(UniqueLockHolder&, bmalloc_type* type, unsigned bucketCountForSize)
     {
         SHA256ResultAsUnsigned sha256Result;
@@ -213,6 +216,8 @@ private:
     Vector<SizeAndAlign> m_typeSizes;
     Map<SizeAndAlign, TZoneTypeBuckets*, SizeAndAlign> m_heapRefsBySizeAndAlignment;
 };
+
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } } // namespace bmalloc::api
 

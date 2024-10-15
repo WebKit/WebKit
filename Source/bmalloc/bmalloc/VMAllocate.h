@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BAssert.h"
+#include "BCompiler.h"
 #include "BSyscall.h"
 #include "BVMTags.h"
 #include "Logging.h"
@@ -38,6 +39,8 @@
 #if BOS(DARWIN)
 #include <mach/vm_page_size.h>
 #endif
+
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace bmalloc {
 
@@ -264,3 +267,5 @@ inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
 }
 
 } // namespace bmalloc
+
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END

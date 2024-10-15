@@ -147,3 +147,17 @@
 #define BALLOW_DEPRECATED_DECLARATIONS_BEGIN
 #define BALLOW_DEPRECATED_DECLARATIONS_END
 #endif
+
+/* BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN and BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END */
+
+#if BCOMPILER(CLANG)
+#define BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"")
+
+#define BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END \
+    _Pragma("clang diagnostic pop")
+#else
+#define BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#define BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END
+#endif
