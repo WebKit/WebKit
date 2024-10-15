@@ -351,7 +351,7 @@ void WebCodecsVideoEncoder::isConfigSupported(ScriptExecutionContext& context, W
 
     Ref createEncoderPromise = VideoEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [] (auto&&) { }, [] (auto&&) { });
     context.enqueueTaskWhenSettled(WTFMove(createEncoderPromise), TaskSource::MediaElement, [config, promise = WTFMove(promise)](auto&& result) mutable {
-        promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { result.has_value(), WTFMove(config) });
+        promise->template resolve<IDLDictionary<WebCodecsVideoEncoderSupport>>(WebCodecsVideoEncoderSupport { !!result, WTFMove(config) });
     });
 }
 

@@ -78,12 +78,13 @@ public:
         std::optional<uint64_t> duration;
     };
     using CreateResult = Expected<UniqueRef<AudioEncoder>, String>;
+    using CreatePromise = NativePromise<UniqueRef<AudioEncoder>, String>;
 
     using DescriptionCallback = Function<void(ActiveConfiguration&&)>;
     using OutputCallback = Function<void(EncodedFrame&&)>;
     using CreateCallback = Function<void(CreateResult&&)>;
 
-    static void create(const String&, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&);
+    static Ref<CreatePromise> create(const String&, const Config&, DescriptionCallback&&, OutputCallback&&);
 
     using EncodePromise = NativePromise<void, String>;
     virtual Ref<EncodePromise> encode(RawFrame&&) = 0;

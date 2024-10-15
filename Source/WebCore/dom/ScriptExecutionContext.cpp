@@ -399,7 +399,6 @@ void ScriptExecutionContext::stopActiveDOMObjects()
         activeDOMObject.stop();
         return ShouldContinue::Yes;
     });
-    m_deferredPromises.clear();
 
     m_nativePromiseRequests.forEach([] (auto& request) {
         request.disconnect();
@@ -843,16 +842,6 @@ ScriptExecutionContext::NotificationCallbackIdentifier ScriptExecutionContext::a
 CompletionHandler<void()> ScriptExecutionContext::takeNotificationCallback(NotificationCallbackIdentifier identifier)
 {
     return m_notificationCallbacks.take(identifier);
-}
-
-void ScriptExecutionContext::addDeferredPromise(Ref<DeferredPromise>&& promise)
-{
-    m_deferredPromises.add(WTFMove(promise));
-}
-
-RefPtr<DeferredPromise> ScriptExecutionContext::takeDeferredPromise(DeferredPromise* promise)
-{
-    return m_deferredPromises.take(promise);
 }
 
 CheckedRef<EventLoopTaskGroup> ScriptExecutionContext::checkedEventLoop()

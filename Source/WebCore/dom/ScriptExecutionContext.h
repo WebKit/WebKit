@@ -352,9 +352,6 @@ public:
     WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
     WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);
 
-    void addDeferredPromise(Ref<DeferredPromise>&&);
-    RefPtr<DeferredPromise> takeDeferredPromise(DeferredPromise*);
-
     template<typename Promise, typename Task>
     void enqueueTaskWhenSettled(Ref<Promise>&& promise, TaskSource taskSource, Task&& task)
     {
@@ -458,7 +455,6 @@ private:
     mutable ScriptExecutionContextIdentifier m_identifier;
 
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
-    HashSet<Ref<DeferredPromise>> m_deferredPromises;
 
     StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
     ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ReasonForSuspension>(-1) };

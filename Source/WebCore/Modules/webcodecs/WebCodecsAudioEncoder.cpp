@@ -155,6 +155,8 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
 
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec);
     queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+        RefPtr context = scriptExecutionContext();
+
         m_isMessageQueueBlocked = true;
         if (!isSupportedCodec) {
             postTaskToCodec<WebCodecsAudioEncoder>(identifier, *this, [] (auto& encoder) {
@@ -172,18 +174,8 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
         }
 
         m_baseConfiguration = config;
-        AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
-            postTaskToCodec<WebCodecsAudioEncoder>(identifier, WTFMove(weakThis), [result = WTFMove(result)] (auto& encoder) mutable {
-                if (!result.has_value()) {
-                    encoder.closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                    return;
-                }
-                encoder.setInternalEncoder(WTFMove(result.value()));
-                encoder.m_isMessageQueueBlocked = false;
-                encoder.m_hasNewActiveConfiguration = true;
-                encoder.processControlMessageQueue();
-            });
-        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& configuration) {
+
+        Ref createEncoderPromise = AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier, weakThis = ThreadSafeWeakPtr { *this }] (auto&& configuration) {
             postTaskToCodec<WebCodecsAudioEncoder>(identifier, weakThis, [configuration = WTFMove(configuration)] (auto& encoder) mutable {
                 encoder.m_activeConfiguration = WTFMove(configuration);
                 encoder.m_hasNewActiveConfiguration = true;
@@ -202,6 +194,21 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
                 });
                 encoder.m_output->handleEvent(WTFMove(chunk), encoder.createEncodedChunkMetadata());
             });
+        });
+
+        context->enqueueTaskWhenSettled(WTFMove(createEncoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (auto&& result) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            if (!result) {
+                protectedThis->closeEncoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                return;
+            }
+            protectedThis->setInternalEncoder(WTFMove(*result));
+            protectedThis->m_isMessageQueueBlocked = false;
+            protectedThis->m_hasNewActiveConfiguration = true;
+            protectedThis->processControlMessageQueue();
         });
     } });
     return { };
@@ -329,16 +336,9 @@ void WebCodecsAudioEncoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    auto* promisePtr = promise.ptr();
-    context.addDeferredPromise(WTFMove(promise));
-
-    AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [identifier = context.identifier(), config = config.isolatedCopy(), promisePtr](auto&& result) mutable {
-        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopy(), promisePtr](auto& context) mutable {
-            if (auto promise = context.takeDeferredPromise(promisePtr))
-                promise->template resolve<IDLDictionary<WebCodecsAudioEncoderSupport>>(WebCodecsAudioEncoderSupport { success, WTFMove(config) });
-        });
-    }, [](auto&&) {
-    }, [](auto&&) {
+    auto createEncoderPromise = AudioEncoder::create(config.codec, encoderConfig.releaseReturnValue(), [](auto&&) { }, [](auto&&) { });
+    context.enqueueTaskWhenSettled(WTFMove(createEncoderPromise), TaskSource::MediaElement, [config, promise = WTFMove(promise)](auto&& result) mutable {
+        promise->template resolve<IDLDictionary<WebCodecsAudioEncoderSupport>>(WebCodecsAudioEncoderSupport { !!result, WTFMove(config) });
     });
 }
 

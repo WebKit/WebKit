@@ -59,18 +59,25 @@ bool AudioDecoder::isCodecSupported(const StringView& codec)
     return result;
 }
 
-void AudioDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback)
+Ref<AudioDecoder::CreatePromise> AudioDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)
 {
+    CreatePromise::Producer producer;
+    Ref promise = producer.promise();
+    CreateCallback callback = [producer = WTFMove(producer)] (auto&& result) mutable {
+        producer.settle(WTFMove(result));
+    };
+
 #if USE(GSTREAMER)
     GStreamerAudioDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback));
-    return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);
     UNUSED_PARAM(outputCallback);
-#endif
 
     callback(makeUnexpected("Not supported"_s));
+#endif
+
+    return promise;
 }
 
 AudioDecoder::AudioDecoder() = default;

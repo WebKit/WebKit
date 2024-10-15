@@ -113,17 +113,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
             return;
         }
 
-        AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [identifier, decoder = ThreadSafeWeakPtr { *this }] (AudioDecoder::CreateResult&& result) mutable {
-            postTaskToCodec<WebCodecsAudioDecoder>(identifier, WTFMove(decoder), [result = WTFMove(result)] (auto& decoder) mutable {
-                if (!result.has_value()) {
-                    decoder.closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
-                    return;
-                }
-                decoder.setInternalDecoder(WTFMove(result.value()));
-                decoder. m_isMessageQueueBlocked = false;
-                decoder.processControlMessageQueue();
-            });
-        }, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
+        Ref createDecoderPromise = AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
             postTaskToCodec<WebCodecsAudioDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
                 if (decoder.m_state != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;
@@ -137,6 +127,21 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
                 auto audioData = WebCodecsAudioData::create(*decoder.scriptExecutionContext(), WTFMove(decodedResult.data));
                 decoder.m_output->handleEvent(WTFMove(audioData));
             });
+        });
+
+        protectedScriptExecutionContext()->enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }] (AudioDecoder::CreateResult&& result) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            if (!result) {
+                protectedThis->closeDecoder(Exception { ExceptionCode::NotSupportedError, WTFMove(result.error()) });
+                return;
+            }
+
+            protectedThis->setInternalDecoder(WTFMove(*result));
+            protectedThis->m_isMessageQueueBlocked = false;
+            protectedThis->processControlMessageQueue();
         });
     } });
     return { };
@@ -213,20 +218,9 @@ void WebCodecsAudioDecoder::isConfigSupported(ScriptExecutionContext& context, W
         return;
     }
 
-    auto* promisePtr = promise.ptr();
-    context.addDeferredPromise(WTFMove(promise));
-
-    auto audioDecoderConfig = createAudioDecoderConfig(config);
-    Vector<uint8_t> description { audioDecoderConfig.description };
-    AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [identifier = context.identifier(), config = config.isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto&& result) mutable {
-        ScriptExecutionContext::postTaskTo(identifier, [success = result.has_value(), config = WTFMove(config).isolatedCopyWithoutDescription(), description = WTFMove(description), promisePtr](auto& context) mutable {
-            if (auto promise = context.takeDeferredPromise(promisePtr)) {
-                if (description.size())
-                    config.description = RefPtr { JSC::ArrayBuffer::create(description) };
-                promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { success, WTFMove(config) });
-            }
-        });
-    }, [](auto&&) {
+    Ref createDecoderPromise = AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [](auto&&) { });
+    context.enqueueTaskWhenSettled(WTFMove(createDecoderPromise), TaskSource::MediaElement, [config = WTFMove(config), promise = WTFMove(promise)](auto&& result) mutable {
+        promise->template resolve<IDLDictionary<WebCodecsAudioDecoderSupport>>(WebCodecsAudioDecoderSupport { !!result, WTFMove(config) });
     });
 }
 
