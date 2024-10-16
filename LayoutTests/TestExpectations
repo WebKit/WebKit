@@ -6025,9 +6025,6 @@ ipc/invalid-fullscreen-enum.html [ Pass Timeout ]
 ipc/invalid-message-to-addTrackBuffer.html [ Pass Timeout ]
 ipc/removeMediaUsageManagerSession-test.html [ Skip ]
 
-# Test is crashing in Debug builds since import.
-webkit.org/b/234977 [ Debug ] imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html [ Skip ]
-
 # Test is crashing since import.
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html [ Skip ]
 

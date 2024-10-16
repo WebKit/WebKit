@@ -6,11 +6,11 @@ Pointer Events Capture Test
 
 The following pointer types were detected: mouse.
 
-The following events were logged: pointerover@btnCapture, pointerenter@BODY, pointermove@btnCapture, pointerdown@btnCapture, pointerout@btnCapture, pointerover@target0, pointerenter@target0, gotpointercapture@target0, pointermove@target0, lostpointercapture@document, pointerout@target0, pointerleave@target0, pointerover@btnCapture, pointerenter@BODY, pointermove@btnCapture, pointermove@btnCapture, pointermove@btnCapture.
+The following events were logged: pointerover@btnCapture, pointerenter@BODY, pointermove@btnCapture, pointerdown@btnCapture, pointerout@btnCapture, pointerover@target0, pointerenter@target0, gotpointercapture@target0, pointerover@target0, pointerenter@target0, pointermove@target0, lostpointercapture@document, pointerout@target0, pointerleave@target0, pointerover@btnCapture, pointerenter@BODY, pointermove@btnCapture, pointermove@btnCapture, pointermove@btnCapture.
 
 
 PASS lostpointercapture event received
 PASS Lostpointercapture fires on document when target is removed
-FAIL lostpointercapture must be received before the next pointerevent after the node is disconnected assert_equals: No pointerevents should be received before lost capture is resolved expected "" but got "pointermove@target0"
+FAIL lostpointercapture must be received before the next pointerevent after the node is disconnected assert_equals: No pointerevents should be received before lost capture is resolved expected "" but got "pointerover@target0, pointerenter@target0, pointermove@target0"
 PASS lostpointercapture is dispatched on the document
 
