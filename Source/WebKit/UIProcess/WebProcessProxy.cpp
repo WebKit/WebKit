@@ -338,7 +338,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_lockdownMode(lockdownMode)
     , m_crossOriginMode(crossOriginMode)
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
-    , m_webLockRegistry(websiteDataStore ? makeUnique<WebLockRegistryProxy>(*this) : nullptr)
+    , m_webLockRegistry(websiteDataStore ? makeUniqueWithoutRefCountedCheck<WebLockRegistryProxy>(*this) : nullptr)
     , m_webPermissionController(makeUnique<WebPermissionControllerProxy>(*this))
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
@@ -452,7 +452,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 
     // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
     // LocalWebLockRegistry.
-    m_webLockRegistry = makeUnique<WebLockRegistryProxy>(*this);
+    m_webLockRegistry = makeUniqueWithoutRefCountedCheck<WebLockRegistryProxy>(*this);
 }
 
 bool WebProcessProxy::isDummyProcessProxy() const
@@ -728,8 +728,8 @@ void WebProcessProxy::shutDown()
 
     m_userInitiatedActionMap.clear();
 
-    if (m_webLockRegistry)
-        m_webLockRegistry->processDidExit();
+    if (RefPtr webLockRegistry = m_webLockRegistry.get())
+        webLockRegistry->processDidExit();
 
 #if ENABLE(ROUTING_ARBITRATION)
     if (RefPtr routingArbitrator = m_routingArbitrator.get())

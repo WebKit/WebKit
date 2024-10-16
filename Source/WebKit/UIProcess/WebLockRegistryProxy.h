@@ -32,11 +32,6 @@
 #include <WebCore/WebLockMode.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebLockRegistryProxy> : std::true_type { };
-}
-
 namespace WebCore {
 struct ClientOrigin;
 struct WebLockManagerSnapshot;
@@ -44,7 +39,6 @@ struct WebLockManagerSnapshot;
 
 namespace WebKit {
 
-class WebLockRegistryProxy;
 struct SharedPreferencesForWebProcess;
 
 class WebLockRegistryProxy final : public IPC::MessageReceiver {
@@ -52,6 +46,9 @@ class WebLockRegistryProxy final : public IPC::MessageReceiver {
 public:
     explicit WebLockRegistryProxy(WebProcessProxy&);
     ~WebLockRegistryProxy();
+
+    void ref() const { m_process->ref(); }
+    void deref() const { m_process->deref(); }
 
     // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
     SUPPRESS_UNCOUNTED_ARG std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() { return m_process->sharedPreferencesForWebProcess(); }
