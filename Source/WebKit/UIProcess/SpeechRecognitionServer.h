@@ -34,17 +34,9 @@
 #include <WebCore/SpeechRecognitionResultData.h>
 #include <WebCore/SpeechRecognizer.h>
 #include <wtf/Deque.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
-
-namespace WebKit {
-class SpeechRecognitionServer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SpeechRecognitionServer> : std::true_type { };
-}
 
 namespace WebCore {
 enum class SpeechRecognitionUpdateType : uint8_t;
@@ -61,15 +53,15 @@ using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
 using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
-class SpeechRecognitionServer : public IPC::MessageReceiver, private IPC::MessageSender {
+class SpeechRecognitionServer : public IPC::MessageReceiver, private IPC::MessageSender, public RefCounted<SpeechRecognitionServer> {
     WTF_MAKE_TZONE_ALLOCATED(SpeechRecognitionServer);
 public:
-#if ENABLE(MEDIA_STREAM)
     using RealtimeMediaSourceCreateFunction = Function<WebCore::CaptureSourceOrError()>;
-    SpeechRecognitionServer(WebProcessProxy&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&, RealtimeMediaSourceCreateFunction&&);
-#else
-    SpeechRecognitionServer(WebProcessProxy&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&);
+    static Ref<SpeechRecognitionServer> create(WebProcessProxy&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&
+#if ENABLE(MEDIA_STREAM)
+        , RealtimeMediaSourceCreateFunction&&
 #endif
+        );
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -80,6 +72,12 @@ public:
     void mute();
 
 private:
+    SpeechRecognitionServer(WebProcessProxy&, SpeechRecognitionServerIdentifier, SpeechRecognitionPermissionChecker&&, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&&
+#if ENABLE(MEDIA_STREAM)
+        , RealtimeMediaSourceCreateFunction&&
+#endif
+        );
+
     void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
     void handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, std::optional<WebCore::SpeechRecognitionError> = std::nullopt, std::optional<Vector<WebCore::SpeechRecognitionResultData>> = std::nullopt);
@@ -92,7 +90,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    WeakRef<WebProcessProxy> m_process;
+    WeakPtr<WebProcessProxy> m_process;
     SpeechRecognitionServerIdentifier m_identifier;
     HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;

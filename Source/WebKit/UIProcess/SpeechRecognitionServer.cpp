@@ -40,6 +40,19 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeechRecognitionServer);
 
+Ref<SpeechRecognitionServer> SpeechRecognitionServer::create(WebProcessProxy& process, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
+#if ENABLE(MEDIA_STREAM)
+    , RealtimeMediaSourceCreateFunction&& function
+#endif
+    )
+{
+    return adoptRef(*new SpeechRecognitionServer(process, identifier, WTFMove(permissionChecker), WTFMove(checkIfEnabled)
+#if ENABLE(MEDIA_STREAM)
+        , WTFMove(function)
+#endif
+    ));
+}
+
 SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, SpeechRecognitionServerIdentifier identifier, SpeechRecognitionPermissionChecker&& permissionChecker, SpeechRecognitionCheckIfMockSpeechRecognitionEnabled&& checkIfEnabled
 #if ENABLE(MEDIA_STREAM)
     , RealtimeMediaSourceCreateFunction&& function
@@ -58,7 +71,7 @@ SpeechRecognitionServer::SpeechRecognitionServer(WebProcessProxy& process, Speec
 std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPreferencesForWebProcess() const
 {
     // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
-    SUPPRESS_UNCOUNTED_ARG return m_process->sharedPreferencesForWebProcess();
+    SUPPRESS_UNCOUNTED_ARG return m_process ? m_process->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
 void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
@@ -168,7 +181,7 @@ void SpeechRecognitionServer::sendUpdate(const WebCore::SpeechRecognitionUpdate&
 
 IPC::Connection* SpeechRecognitionServer::messageSenderConnection() const
 {
-    return &m_process->connection();
+    return m_process ? &m_process->connection() : nullptr;
 }
 
 uint64_t SpeechRecognitionServer::messageSenderDestinationID() const
