@@ -11,6 +11,11 @@
 
 @import "support/masonry-intrinsic-sizing-visual.css";
 
+@font-face {
+  font-family: Ahem;
+  src: url(/fonts/Ahem.ttf);
+}
+
 grid {
   display: inline-grid;
   gap: 1px 2px;
@@ -20,13 +25,15 @@ grid {
   padding: 0 1px 0 2px;
   vertical-align: top;
 }
+
 item {
   writing-mode: vertical-lr;
+  font-family: Ahem;
+  font-size: 9px;
 }
 </style>
 
 <body>
-
 <grid style="grid-template-rows: repeat(4, 3ch)">
   <item style="height:3ch">1</item>
   <item>2</item>
@@ -37,6 +44,7 @@ item {
   <item>7</item>
   <item>8</item>
   <item>9 9</item>
+  <item style="visibility: hidden; grid-column: 4; grid-row: 1; width: calc(1ch - 2px);"></item>
 </grid>
 
 <grid style="grid-template-rows: repeat(4,3ch)">
@@ -49,29 +57,32 @@ item {
   <item>7</item>
   <item>8</item>
   <item>9 9</item>
+  <item style="visibility: hidden; grid-column: 4; grid-row: 1; width: calc(1ch - 2px);"></item>
 </grid>
 
-<grid style="grid-template-rows: 3ch repeat(3,1ch)">
-  <item>1</item>
-  <item>2</item>
-  <item>3</item>
-  <item>4</item>
+<grid style="grid-template-rows: repeat(4,3ch)">
   <item style="height:3ch; grid-row:1">5 5</item>
-  <item>6</item>
-  <item>7</item>
-  <item>8</item>
-  <item>9 9</item>
-</grid>
-
-<grid style="grid-template-rows: 3ch repeat(3,1ch)">
   <item>1</item>
   <item>2</item>
   <item>3</item>
   <item>4</item>
-  <item style="height:3ch; grid-column:1">5 5</item>
   <item>6</item>
   <item>7</item>
   <item>8</item>
   <item>9 9</item>
+  <item style="visibility: hidden; grid-column: 4; grid-row: 1; width: calc(1ch - 2px);"></item>
+</grid>
+
+<grid style="grid-template-rows: repeat(4,3ch)">
+  <item>1</item>
+  <item>2</item>
+  <item>3</item>
+  <item>4</item>
+  <item style="height:3ch; grid-column:2; grid-row: 1;">5 5</item>
+  <item>6</item>
+  <item>7</item>
+  <item>8</item>
+  <item>9 9</item>
+  <item style="visibility: hidden; grid-column: 4; grid-row: 1; width: calc(1ch - 2px);"></item>
 </grid>
 
