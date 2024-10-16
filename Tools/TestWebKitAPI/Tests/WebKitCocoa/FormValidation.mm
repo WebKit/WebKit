@@ -26,10 +26,11 @@
 #import "config.h"
 
 #import "TestWKWebView.h"
+#include "Utilities.h"
 
 TEST(FormValidation, PresentingFormValidationUIWithoutViewControllerDoesNotCrash)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
         "<form>"
         "    <input required>"
@@ -37,4 +38,25 @@ TEST(FormValidation, PresentingFormValidationUIWithoutViewControllerDoesNotCrash
         "</form>"
         "<script>document.querySelector('input[type=submit]').click()</script>"];
     [webView waitForNextPresentationUpdate];
+}
+
+TEST(FormValidation, FormValidationOnUnparentedWindowDoesNotCrash)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<form>"
+        "    <input type='email' required>"
+        "    <input type='submit'>"
+        "</form>"];
+    [webView waitForNextPresentationUpdate];
+    __block bool ranScript = false;
+    [webView evaluateJavaScript:@"document.querySelector('input[type=submit]').click()" completionHandler:^(id result, NSError *error) {
+        ranScript = true;
+    }];
+    TestWebKitAPI::Util::runFor(10_ms);
+    // Remove the view from the window before it has a chance to display the form validation bubble.
+    [webView removeFromTestWindow];
+    TestWebKitAPI::Util::run(&ranScript);
+    TestWebKitAPI::Util::runFor(100_ms);
 }
