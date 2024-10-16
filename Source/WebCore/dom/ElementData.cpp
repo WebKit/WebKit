@@ -153,9 +153,9 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const
 {
-    if (isUnique())
-        return adoptRef(*new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
-    return adoptRef(*new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
+    if (auto* uniqueData = dynamicDowncast<const UniqueElementData>(*this))
+        return adoptRef(*new UniqueElementData(*uniqueData));
+    return adoptRef(*new UniqueElementData(downcast<const ShareableElementData>(*this)));
 }
 
 Ref<ShareableElementData> UniqueElementData::makeShareableCopy() const
