@@ -560,6 +560,7 @@ private:
     float scaleForPagePreviews() const;
 
     void createPasswordEntryForm();
+    void teardownPasswordEntryForm() override;
 
     bool isInDiscreteDisplayMode() const;
     bool isShowingTwoPages() const;

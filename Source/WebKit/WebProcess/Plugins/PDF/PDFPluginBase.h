@@ -377,6 +377,8 @@ protected:
     void incrementalLoaderLog(const String&);
 #endif
 
+    virtual void teardownPasswordEntryForm() = 0;
+
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
     WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;
