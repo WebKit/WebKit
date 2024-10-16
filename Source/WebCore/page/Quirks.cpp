@@ -639,6 +639,22 @@ bool Quirks::needsYouTubeOverflowScrollQuirk() const
 #endif
 }
 
+// amazon.com rdar://128962002
+bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsPrimeVideoUserSelectNoneQuirk)
+        m_needsPrimeVideoUserSelectNoneQuirk = m_document->url().host() == "www.amazon.com"_s;
+
+    return *m_needsPrimeVideoUserSelectNoneQuirk;
+#else
+    return false;
+#endif
+}
+
 // youtube.com rdar://135886305
 bool Quirks::needsYouTubeDarkModeQuirk() const
 {

@@ -962,6 +962,12 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             && const_cast<Element*>(m_element.get())->classList().contains(class2))
             style.setMinHeight(WebCore::Length(0, LengthType::Fixed));
     }
+    if (m_document->quirks().needsPrimeVideoUserSelectNoneQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);
+        if (m_element->hasClassName(className))
+            style.setUserSelect(UserSelect::None);
+    }
+
 #if ENABLE(VIDEO)
     if (m_document->quirks().needsFullscreenDisplayNoneQuirk()) {
         if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element); div && style.display() == DisplayType::None) {
