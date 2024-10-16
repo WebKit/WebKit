@@ -377,31 +377,6 @@ static Class scrollViewScrollIndicatorClass()
 
 @end
 
-@implementation WKRemoteView
-
-- (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID
-{
-    if ((self = [super initWithFrame:frame])) {
-        CALayerHost *layer = (CALayerHost *)self.layer;
-        layer.contextId = contextID;
-#if PLATFORM(MACCATALYST)
-        // When running iOS apps on macOS, kCAContextIgnoresHitTest isn't respected; instead, we avoid
-        // hit-testing to the remote context by disabling hit-testing on its host layer. See
-        // <rdar://problem/40591107> for more details.
-        layer.allowsHitTesting = NO;
-#endif
-    }
-
-    return self;
-}
-
-+ (Class)layerClass
-{
-    return NSClassFromString(@"CALayerHost");
-}
-
-@end
-
 @implementation WKUIRemoteView
 
 - (instancetype)initWithFrame:(CGRect)frame pid:(pid_t)pid contextID:(uint32_t)contextID

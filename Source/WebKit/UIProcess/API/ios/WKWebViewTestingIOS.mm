@@ -207,7 +207,6 @@ static String allowListedClassToString(UIView *view)
         "WKCompositingView",
         "WKContentView",
         "WKModelView",
-        "WKRemoteView",
         "WKScrollView",
         "WKSeparatedModelView",
         "WKShapeView",
