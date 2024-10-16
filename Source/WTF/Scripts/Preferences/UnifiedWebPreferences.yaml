@@ -939,7 +939,7 @@ BlockMobileAssetInWebContentSandbox:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 BlockMobileGestaltInWebContentSandbox:
   type: bool
