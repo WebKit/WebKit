@@ -40,15 +40,6 @@
 @class WKBEScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 
-namespace WebKit {
-class ScrollingTreeScrollingNodeDelegateIOS;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::ScrollingTreeScrollingNodeDelegateIOS> : std::true_type { };
-}
-
 namespace WebCore {
 
 class FloatPoint;
@@ -60,7 +51,7 @@ class ScrollingTreeScrollingNode;
 
 namespace WebKit {
 
-class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate, public CanMakeWeakPtr<ScrollingTreeScrollingNodeDelegateIOS> {
+class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate {
     WTF_MAKE_TZONE_ALLOCATED(ScrollingTreeScrollingNodeDelegateIOS);
 public:
     
