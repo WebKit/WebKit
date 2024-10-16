@@ -390,6 +390,16 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         return;
 
     auto glyphData = m_font->glyphDataForCharacter(character, false, FontVariant::NormalVariant);
+
+    auto getHalfWidthFontAndSetGlyphDataIfNeeded = [&](GlyphData& glyphData, const TextSpacing::CharactersData& charactersData) {
+        auto halfWidthFont = fontDescription.textSpacingTrim().shouldTrimSpacing(charactersData) ? glyphData.font->halfWidthFont() : nullptr;
+        if (halfWidthFont)
+            glyphData.font = halfWidthFont.get();
+        return halfWidthFont;
+    };
+    TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+    auto halfWidthFont = getHalfWidthFontAndSetGlyphDataIfNeeded(glyphData, charactersData);
+
     advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
     auto capitalizedCharacter = capitalized(character);
     if (shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing))
@@ -419,6 +429,10 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
 #endif
         auto glyphData = m_font->glyphDataForCharacter(character, false, FontVariant::NormalVariant);
+
+        TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
+        halfWidthFont = getHalfWidthFontAndSetGlyphDataIfNeeded(glyphData, charactersData);
+
         advanceInternalState.updateFont(glyphData.font ? glyphData.font.get() : primaryFont.ptr());
         smallCapsState.shouldSynthesizeCharacter = shouldSynthesizeSmallCaps(smallCapsState.dontSynthesizeSmallCaps, advanceInternalState.font.get(), character, capitalizedCharacter, smallCapsState.fontVariantCaps, smallCapsState.engageAllSmallCapsProcessing);
         updateCharacterAndSmallCapsIfNeeded(smallCapsState, capitalizedCharacter, characterToWrite);

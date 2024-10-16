@@ -32,6 +32,20 @@ namespace WebCore {
 
 using namespace TextSpacing;
 
+bool TextSpacingTrim::shouldTrimSpacing(const CharactersData& charactersData) const
+{
+    switch (m_trim) {
+    case TrimType::SpaceAll:
+        return false;
+    case TrimType::Auto:
+        return false;
+    case TrimType::TrimAll:
+        return charactersData.currentCharacterClass == CharacterClass::FullWidthOpeningPunctuation || charactersData.currentCharacterClass == CharacterClass::FullWidthClosingPunctuation || charactersData.currentCharacterClass == CharacterClass::FullWidthMiddleDotPunctuation;
+    default:
+        return false;
+    }
+}
+
 bool TextAutospace::shouldApplySpacing(CharacterClass firstCharacterClass, CharacterClass secondCharacterClass) const
 {
     constexpr uint8_t ideographAlphaMask = static_cast<uint8_t>(CharacterClass::Ideograph) | static_cast<uint8_t>(CharacterClass::NonIdeographLetter);
@@ -117,6 +131,9 @@ CharacterClass characterClass(char32_t character)
         if (character == rightSingleQuotationMark || character == rightDoubleQuotationMark)
             return CharacterClass::FullWidthClosingPunctuation;
     }
+
+    if (isFullwidthMiddleDotPunctuation(character))
+        return CharacterClass::FullWidthMiddleDotPunctuation;
     // FIXME: implement remaining classes for text-autospace: punctuation
     return CharacterClass::Undefined;
 }

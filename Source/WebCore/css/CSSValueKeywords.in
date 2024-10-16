@@ -1775,6 +1775,7 @@ false
 
 // text-spacing-trim
 space-all
+trim-all
 // text-autospace
 // normal
 no-autospace

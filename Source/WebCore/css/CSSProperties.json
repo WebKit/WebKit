@@ -1182,7 +1182,8 @@
             "inherited": true,
             "values": [
                 "auto",
-                "space-all"
+                "space-all",
+                "trim-all"
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextSpacingTrimEnabled",
@@ -1190,9 +1191,7 @@
                 "high-priority": true,
                 "sink-priority": true,
                 "converter": "TextSpacingTrim",
-                "parser-function": "consumeTextSpacingTrim",
-                "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
-                "parser-grammar-unused-reason": "Needs support for '||' groups."
+                "parser-grammar": "space-all | trim-all | auto"
             },
             "status": "in development",
             "specification": {

@@ -1931,8 +1931,17 @@ inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(const Build
 inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(const BuilderState&, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueAuto)
-            return { .m_trim = TextSpacingTrim::TrimType::Auto };
+        switch (primitiveValue->valueID()) {
+        case CSSValueSpaceAll:
+            return TextSpacingTrim::TrimType::SpaceAll;
+        case CSSValueTrimAll:
+            return TextSpacingTrim::TrimType::TrimAll;
+        case CSSValueAuto:
+            return TextSpacingTrim::TrimType::Auto;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
     return { };
 }

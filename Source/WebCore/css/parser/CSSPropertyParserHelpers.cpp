@@ -2377,18 +2377,6 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSPa
     return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), context);
 }
 
-RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    // auto | space-all |  trim-all | [ allow-end || space-first ]
-    // FIXME: add remaining values;
-    if (auto value = consumeIdent<CSSValueAuto, CSSValueSpaceAll>(range)) {
-        if (!range.atEnd())
-            return nullptr;
-        return value;
-    }
-    return nullptr;
-}
-
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range, const CSSParserContext&)
 {
     //  normal | auto | no-autospace | [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ]

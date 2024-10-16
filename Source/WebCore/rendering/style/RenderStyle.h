@@ -272,7 +272,7 @@ struct ViewTimelineInsets;
 struct TabSize;
 class TextAutospace;
 struct TextEdge;
-struct TextSpacingTrim;
+class TextSpacingTrim;
 struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;

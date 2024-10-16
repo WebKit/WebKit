@@ -48,6 +48,15 @@ enum class CharacterClass : uint8_t {
     FullWidthDotPunctuation = 1 << 7
 };
 
+struct CharactersData {
+    char32_t previousCharacter { 0 };
+    char32_t currentCharacter { 0 };
+    char32_t nextCharacter { 0 };
+    CharacterClass previousCharacterClass { };
+    CharacterClass currentCharacterClass { };
+    CharacterClass nextCharacterClass { };
+};
+
 // Classes are defined at https://www.w3.org/TR/css-text-4/#text-spacing-classes
 CharacterClass characterClass(char32_t character);
 struct SpacingState {
@@ -59,26 +68,38 @@ bool isIdeograph(char32_t character);
 
 } // namespace TextSpacing
 
-struct TextSpacingTrim {
-    enum class TrimType : bool {
-        Auto = 0,
-        SpaceAll // equivalent to None in text-spacing shorthand
+class TextSpacingTrim {
+public:
+    enum class TrimType : uint8_t {
+        SpaceAll = 0, // equivalent to None in text-spacing shorthand
+        TrimAll,
+        Auto
     };
+
+    TextSpacingTrim() = default;
+    TextSpacingTrim(TrimType trimType)
+        : m_trim(trimType)
+        { }
 
     bool isAuto() const { return m_trim == TrimType::Auto; }
     bool isSpaceAll() const { return m_trim == TrimType::SpaceAll; }
+    bool shouldTrimSpacing(const TextSpacing::CharactersData&) const;
     friend bool operator==(const TextSpacingTrim&, const TextSpacingTrim&) = default;
+    TrimType type() const { return m_trim; }
+private:
     TrimType m_trim { TrimType::SpaceAll };
 };
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& value)
 {
     // FIXME: add remaining values;
-    switch (value.m_trim) {
+    switch (value.type()) {
     case TextSpacingTrim::TrimType::Auto:
         return ts << "auto";
     case TextSpacingTrim::TrimType::SpaceAll:
         return ts << "space-all";
+    case TextSpacingTrim::TrimType::TrimAll:
+        return ts << "trim-all";
     }
     return ts;
 }

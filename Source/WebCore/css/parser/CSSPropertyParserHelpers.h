@@ -117,7 +117,6 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&, const CSSPars
 RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&, const CSSParserContext&);
 #endif
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, const CSSParserContext&);
-RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange&, const CSSParserContext&);

@@ -386,9 +386,17 @@ static Ref<CSSPrimitiveValue> textSpacingTrimFromStyle(const RenderStyle& style)
 {
     // FIXME: add support for remaining values once spec is stable and we are parsing them.
     auto textSpacingTrim = style.textSpacingTrim();
-    if (textSpacingTrim.isAuto())
+    switch (textSpacingTrim.type()) {
+    case TextSpacingTrim::TrimType::SpaceAll:
+        return CSSPrimitiveValue::create(CSSValueSpaceAll);
+    case TextSpacingTrim::TrimType::Auto:
         return CSSPrimitiveValue::create(CSSValueAuto);
-
+    case TextSpacingTrim::TrimType::TrimAll:
+        return CSSPrimitiveValue::create(CSSValueTrimAll);
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
     return CSSPrimitiveValue::create(CSSValueSpaceAll);
 }
 
