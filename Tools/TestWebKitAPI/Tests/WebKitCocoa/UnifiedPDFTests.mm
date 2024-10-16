@@ -150,6 +150,26 @@ UNIFIED_PDF_TEST(SnapshotsPaintPageContent)
     Util::run(&done);
 }
 
+#if PLATFORM(IOS) || PLATFORM(VISION)
+
+UNIFIED_PDF_TEST(StablePresentationUpdateCallback)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:TestWebKitAPI::configurationForWebViewTestingUnifiedPDF().get()]);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool finished;
+    [webView _doAfterNextStablePresentationUpdate:^{
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(UNIFIED_PDF)
