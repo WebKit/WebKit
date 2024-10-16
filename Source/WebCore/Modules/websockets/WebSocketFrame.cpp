@@ -47,10 +47,10 @@ bool WebSocketFrame::needsExtendedLengthField(size_t payloadLength)
     return payloadLength > maxPayloadLengthWithoutExtendedLengthField;
 }
 
-WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(uint8_t* data, size_t dataLength, WebSocketFrame& frame, const uint8_t*& frameEnd, String& errorString)
+WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(std::span<uint8_t> data, size_t dataLength, WebSocketFrame& frame, const uint8_t*& frameEnd, String& errorString)
 {
-    auto p = data;
-    const uint8_t* bufferEnd = data + dataLength;
+    auto p = data.data();
+    const uint8_t* bufferEnd = data.data() + dataLength;
 
     if (dataLength < 2)
         return FrameIncomplete;
