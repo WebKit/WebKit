@@ -585,6 +585,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useAtomicsPause, true, Normal, "Expose Atomics.pause."_s) \
     v(Bool, useErrorIsError, false, Normal, "Expose Error.isError feature."_s) \
     v(Bool, useFloat16Array, true, Normal, "Expose Float16Array."_s) \
+    v(Bool, useIteratorChunking, false, Normal, "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."_s) \
     v(Bool, useIteratorHelpers, false, Normal, "Expose the Iterator Helpers."_s) \
     v(Bool, useMathSumPreciseMethod, false, Normal, "Expose the Math.sumPrecise() method."_s) \
     v(Bool, usePromiseTryMethod, true, Normal, "Expose the Promise.try() method."_s) \

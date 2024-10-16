@@ -310,3 +310,97 @@ function reduce(reducer /*, initialValue */)
 
     return accumulator;
 }
+
+// https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.chunks
+function chunks(chunkSize)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.chunks requires that |this| be an Object.");
+
+    var numChunkSize = @toNumber(chunkSize);
+    if (numChunkSize !== numChunkSize)
+        @throwRangeError("Iterator.prototype.chunks requires that argument not be NaN.");
+
+    var intChunkSize = @toIntegerOrInfinity(numChunkSize);
+    if (intChunkSize < 1 || intChunkSize > @MAX_ARRAY_INDEX)
+        @throwRangeError("Iterator.prototype.chunks requires that argument be between 1 and 2**32 - 1.");
+
+    var iterated = this;
+    var iteratedNextMethod = this.next;
+
+    var generator = (function*() {
+        var buffer = [];
+
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done) {
+                if (buffer.length)
+                    yield buffer;
+                return;
+            }
+
+            @arrayPush(buffer, result.value);
+
+            if (buffer.length === intChunkSize) {
+                @ifAbruptCloseIterator(iterated, (
+                    yield buffer
+                ));
+
+                buffer = [];
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}
+
+// https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.windows
+function windows(windowSize)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("Iterator.prototype.windows requires that |this| be an Object.");
+
+    var numWindowSize = @toNumber(windowSize);
+    if (numWindowSize !== numWindowSize)
+        @throwRangeError("Iterator.prototype.windows requires that argument not be NaN.");
+
+    var intWindowSize = @toIntegerOrInfinity(numWindowSize);
+    if (intWindowSize < 1 || intWindowSize > @MAX_ARRAY_INDEX)
+        @throwRangeError("Iterator.prototype.windows requires that argument be between 1 and 2**32 - 1.");
+
+    var iterated = this;
+    var iteratedNextMethod = this.next;
+
+    var generator = (function*() {
+        var buffer = [];
+
+        for (;;) {
+            var result = @iteratorGenericNext(iteratedNextMethod, iterated);
+            if (result.done)
+                return;
+
+            if (buffer.length === intWindowSize) {
+                for (var i = 0; i < buffer.length - 1; ++i)
+                    buffer[i] = buffer[i + 1];
+                buffer[buffer.length - 1] = result.value;
+            } else
+                @arrayPush(buffer, result.value);
+
+            if (buffer.length === intWindowSize) {
+                var copy = @newArrayWithSize(buffer.length);
+                for (var i = 0; i < buffer.length; ++i)
+                    copy[i] = buffer[i];
+
+                @ifAbruptCloseIterator(iterated, (
+                    yield copy
+                ));
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, iterated);
+}

@@ -84,6 +84,13 @@ void JSIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         // https://tc39.es/proposal-iterator-helpers/#sec-iteratorprototype.flatmap
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().flatMapPublicName(), jsIteratorPrototypeFlatMapCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
+
+    if (Options::useIteratorChunking()) {
+        // https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.chunks
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("chunks"_s, jsIteratorPrototypeChunksCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        // https://tc39.es/proposal-iterator-chunking/#sec-iterator.prototype.windows
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("windows"_s, jsIteratorPrototypeWindowsCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 }
 
 JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
