@@ -34,7 +34,6 @@ namespace WebCore {
 class ScrollbarThemeGtk final : public ScrollbarThemeAdwaita {
 public:
     ScrollbarThemeGtk();
-    virtual ~ScrollbarThemeGtk();
 
     void setUseSystemAppearance(bool);
 
