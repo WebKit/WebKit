@@ -1865,6 +1865,7 @@ template<typename Lexer>
 Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 {
     START_PARSE();
+    CHECK_RECURSION();
     CONSUME_TYPE(ParenLeft);
 
     AST::Expression::List arguments;
