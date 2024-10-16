@@ -917,7 +917,7 @@ private:
             auto index = m_value->as<ExtractValue>()->index();
             if (originalTuple->type() == Int64) {
                 auto input = getMapping(originalTuple);
-                m_value->replaceWithIdentity(index ? input.first : input.second);
+                m_value->replaceWithIdentity(index ? input.second : input.first);
                 return;
             }
             auto originalTupleType = m_proc.tupleForType(originalTuple->type());
