@@ -181,6 +181,9 @@ bool SVGAElement::isMouseFocusable() const
 
 bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
+    if (!isFocusable())
+        return false;
+
     if (isFocusable() && Element::supportsFocus())
         return SVGElement::isKeyboardFocusable(event);
 
