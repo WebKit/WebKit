@@ -69,6 +69,11 @@ static SpeechRecognitionPermissionManager::CheckResult computeSpeechRecognitionS
 #endif
 }
 
+Ref<SpeechRecognitionPermissionManager> SpeechRecognitionPermissionManager::create(WebPageProxy& page)
+{
+    return adoptRef(*new SpeechRecognitionPermissionManager(page));
+}
+
 SpeechRecognitionPermissionManager::SpeechRecognitionPermissionManager(WebPageProxy& page)
     : m_page(page)
 {
@@ -80,7 +85,7 @@ SpeechRecognitionPermissionManager::~SpeechRecognitionPermissionManager()
         request->complete(WebCore::SpeechRecognitionError { WebCore::SpeechRecognitionErrorType::NotAllowed, "Permission manager has exited"_s });
 }
 
-Ref<WebPageProxy> SpeechRecognitionPermissionManager::protectedPage() const
+RefPtr<WebPageProxy> SpeechRecognitionPermissionManager::protectedPage() const
 {
     return m_page.get();
 }
@@ -90,6 +95,11 @@ void SpeechRecognitionPermissionManager::request(WebCore::SpeechRecognitionReque
     m_requests.append(SpeechRecognitionPermissionRequest::create(request, WTFMove(completiontHandler)));
     if (m_requests.size() == 1)
         startNextRequest();
+}
+
+WebPageProxy* SpeechRecognitionPermissionManager::page()
+{
+    return m_page.get();
 }
 
 void SpeechRecognitionPermissionManager::startNextRequest()
@@ -247,7 +257,10 @@ void SpeechRecognitionPermissionManager::requestUserPermission(WebCore::SpeechRe
 void SpeechRecognitionPermissionManager::decideByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(COCOA)
-    alertForPermission(protectedPage(), MediaPermissionReason::SpeechRecognition, origin, WTFMove(completionHandler));
+    if (RefPtr page = m_page.get())
+        alertForPermission(*page, MediaPermissionReason::SpeechRecognition, origin, WTFMove(completionHandler));
+    else
+        completionHandler(false);
 #else
     completionHandler(false);
 #endif

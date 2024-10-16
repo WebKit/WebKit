@@ -14426,19 +14426,20 @@ std::optional<IPC::AsyncReplyID> WebPageProxy::willPerformPasteCommand(DOMPasteA
 void WebPageProxy::requestSpeechRecognitionPermission(WebCore::SpeechRecognitionRequest& request, CompletionHandler<void(std::optional<SpeechRecognitionError>&&)>&& completionHandler)
 {
     if (!m_speechRecognitionPermissionManager)
-        m_speechRecognitionPermissionManager = makeUnique<SpeechRecognitionPermissionManager>(*this);
+        m_speechRecognitionPermissionManager = SpeechRecognitionPermissionManager::create(*this);
 
     m_speechRecognitionPermissionManager->request(request, WTFMove(completionHandler));
 }
 
 void WebPageProxy::requestSpeechRecognitionPermissionByDefaultAction(const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_speechRecognitionPermissionManager) {
+    RefPtr speechRecognitionPermissionManager = m_speechRecognitionPermissionManager.get();
+    if (!speechRecognitionPermissionManager) {
         completionHandler(false);
         return;
     }
 
-    m_speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
+    speechRecognitionPermissionManager->decideByDefaultAction(origin, WTFMove(completionHandler));
 }
 
 void WebPageProxy::requestUserMediaPermissionForSpeechRecognition(FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, CompletionHandler<void(bool)>&& completionHandler)

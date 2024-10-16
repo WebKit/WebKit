@@ -3611,7 +3611,7 @@ private:
 
     mutable RefPtr<Logger> m_logger;
 
-    std::unique_ptr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
+    RefPtr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr<RemoteMediaSessionCoordinatorProxy> m_mediaSessionCoordinatorProxy;
