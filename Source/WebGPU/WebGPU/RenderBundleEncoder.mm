@@ -291,6 +291,16 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resource
     return addResource(resources, mtlResource, [[ResourceUsageAndRenderStage alloc] initWithUsage:MTLResourceUsageRead renderStages:stage entryUsage:BindGroupEntryUsage::Input binding:BindGroupEntryUsageData::invalidBindingIndex resource:resource]);
 }
 
+template<typename T>
+static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset = 0)
+{
+    auto bufferLength = buffer.length;
+    if (UNLIKELY(bufferLength < byteOffset || (bufferLength - byteOffset < sizeof(T))))
+        return std::span { static_cast<T*>(nullptr), 0 };
+
+    return std::span { static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T) };
+}
+
 bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t firstInstance, uint32_t instanceCount)
 {
     if (!isValid())
@@ -391,8 +401,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
             auto bindGroupIndex = kvp.key;
 
             if (m_dynamicOffsetsVertexBuffer) {
-                auto maxBufferLength = m_dynamicOffsetsVertexBuffer.length;
-                auto dynamicOffsetsVertexBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsVertexBuffer.contents), maxBufferLength };
+                auto dynamicOffsetsVertexBuffer = makeSpanFromBuffer<uint8_t>(m_dynamicOffsetsVertexBuffer);
 
                 auto bufferOffset = vertexDynamicOffset;
                 auto vertexBufferContentsSpan = dynamicOffsetsVertexBuffer.subspan(bufferOffset);
@@ -411,8 +420,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
             }
 
             if (m_dynamicOffsetsFragmentBuffer) {
-                auto maxBufferLength = m_dynamicOffsetsFragmentBuffer.length;
-                auto dynamicOffsetsFragmentBuffer = std::span { static_cast<uint8_t*>(m_dynamicOffsetsFragmentBuffer.contents), maxBufferLength };
+                auto dynamicOffsetsFragmentBuffer = makeSpanFromBuffer<uint8_t>(m_dynamicOffsetsFragmentBuffer);
                 auto bufferOffset = fragmentDynamicOffset;
                 auto fragmentBufferContents = dynamicOffsetsFragmentBuffer.subspan(bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
@@ -762,7 +770,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
             if (!indirectBuffer.isDestroyed() && indexBuffer.length && mtlIndirectBuffer)
                 [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
         } else {
-            auto contents = (MTLDrawIndexedPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+            auto contents = makeSpanFromBuffer<MTLDrawIndexedPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
             if (!contents || !contents->indexCount || !contents->instanceCount)
                 return finalizeRenderCommand();
 
@@ -820,7 +828,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
             if (!indirectBuffer.isDestroyed() && clampedIndirectBuffer)
                 [m_renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:0];
         } else {
-            auto contents = (MTLDrawPrimitivesIndirectArguments*)indirectBuffer.buffer().contents;
+            auto contents = makeSpanFromBuffer<MTLDrawPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
             if (!contents || !contents->instanceCount || !contents->vertexCount)
                 return finalizeRenderCommand();
 
@@ -874,12 +882,13 @@ void RenderBundleEncoder::endCurrentICB()
 
     if (!m_dynamicOffsetsFragmentBuffer) {
         m_dynamicOffsetsFragmentBuffer = m_device->safeCreateBuffer(m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
-        auto* fragmentBufferPtr = m_dynamicOffsetsFragmentBuffer.contents;
-        RELEASE_ASSERT(fragmentBufferPtr);
+        auto fragmentBufferSpan = makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer);
+        auto fragmentBufferIntSpan = makeSpanFromBuffer<uint32_t>(m_dynamicOffsetsFragmentBuffer);
+        RELEASE_ASSERT(fragmentBufferSpan.size());
         static_assert(sizeof(float) == sizeof(uint32_t));
-        static_cast<float*>(fragmentBufferPtr)[0] = 0.f;
-        static_cast<float*>(fragmentBufferPtr)[1] = 1.f;
-        static_cast<uint32_t*>(fragmentBufferPtr)[2] = m_sampleMask;
+        fragmentBufferSpan[0] = 0.f;
+        fragmentBufferSpan[1] = 1.f;
+        fragmentBufferIntSpan[2] = m_sampleMask;
         if (!addResource(m_resources, m_dynamicOffsetsFragmentBuffer, MTLRenderStageFragment))
             return;
     }
