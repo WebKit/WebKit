@@ -107,6 +107,7 @@ class UserGestureToken;
 
 enum class EventMakesGamepadsVisible : bool;
 enum class RenderAsTextFlag : uint16_t;
+enum class RenderingPurpose : uint8_t;
 
 struct ClientOrigin;
 struct DisplayUpdate;
