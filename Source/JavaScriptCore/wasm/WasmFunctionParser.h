@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3452,8 +3452,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 return { };
             }
 
+            if (exceptionLabel >= m_controlStack.size()) {
+                errorMessage = WTF::makeString("try_table's catch target "_s, exceptionLabel, " exceeds control stack size "_s, m_controlStack.size());
+                return { };
+            }
             // Type checking
-
             return {
                 static_cast<CatchKind>(catchOpcode),
                 exceptionTag,
