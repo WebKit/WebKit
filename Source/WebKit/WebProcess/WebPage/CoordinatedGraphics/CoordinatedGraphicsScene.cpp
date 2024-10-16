@@ -380,7 +380,7 @@ void CoordinatedGraphicsScene::updateSceneState()
     }
 
     for (auto& backingStore : backingStoresWithPendingBuffers)
-        backingStore->swapBuffers(*m_textureMapper);
+        backingStore->processPendingUpdates(*m_textureMapper);
 
     for (auto& proxy : proxiesForSwapping)
         proxy->swapBuffer();

@@ -15,7 +15,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/TextureMapperLayer.cpp
     platform/graphics/texmap/TextureMapperPlatformLayer.cpp
     platform/graphics/texmap/TextureMapperShaderProgram.cpp
-    platform/graphics/texmap/TextureMapperTile.cpp
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
@@ -50,6 +49,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.cpp
+        platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferExternalOES.cpp
@@ -63,6 +63,7 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.h
+        platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBuffer.h
@@ -96,7 +97,14 @@ if (USE_COORDINATED_GRAPHICS)
 else ()
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+        platform/graphics/texmap/TextureMapperTile.cpp
         platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/texmap/GraphicsLayerTextureMapper.h
+        platform/graphics/texmap/TextureMapperTile.h
+        platform/graphics/texmap/TextureMapperTiledBackingStore.h
     )
 endif ()
 

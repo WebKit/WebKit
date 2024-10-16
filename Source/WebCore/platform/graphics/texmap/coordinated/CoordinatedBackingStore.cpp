@@ -29,79 +29,6 @@
 
 namespace WebCore {
 
-void CoordinatedBackingStoreTile::addUpdate(Update&& update)
-{
-    m_updates.append(WTFMove(update));
-}
-
-void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
-{
-    auto updates = WTFMove(m_updates);
-    auto updatesCount = updates.size();
-    if (!updatesCount)
-        return;
-
-    WTFBeginSignpost(this, CoordinatedSwapBuffers, "%lu updates", updatesCount);
-    for (unsigned updateIndex = 0; updateIndex < updatesCount; ++updateIndex) {
-        auto& update = updates[updateIndex];
-        if (!update.buffer)
-            continue;
-
-        WTFBeginSignpost(this, CoordinatedSwapBuffer, "%u/%lu, rect %ix%i+%i+%i", updateIndex + 1, updatesCount, update.tileRect.x(), update.tileRect.y(), update.tileRect.width(), update.tileRect.height());
-
-        ASSERT(textureMapper.maxTextureSize().width() >= update.tileRect.size().width());
-        ASSERT(textureMapper.maxTextureSize().height() >= update.tileRect.size().height());
-
-        FloatRect unscaledTileRect(update.tileRect);
-        unscaledTileRect.scale(1. / m_scale);
-
-        OptionSet<BitmapTexture::Flags> flags;
-        if (update.buffer->supportsAlpha())
-            flags.add(BitmapTexture::Flags::SupportsAlpha);
-
-        WTFBeginSignpost(this, AcquireTexture);
-        if (!m_texture || unscaledTileRect != rect()) {
-            setRect(unscaledTileRect);
-            m_texture = textureMapper.acquireTextureFromPool(update.tileRect.size(), flags);
-        } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
-            m_texture->reset(update.tileRect.size(), flags);
-        WTFEndSignpost(this, AcquireTexture);
-
-        WTFBeginSignpost(this, WaitPaintingCompletion);
-        update.buffer->waitUntilPaintingComplete();
-        WTFEndSignpost(this, WaitPaintingCompletion);
-
-#if USE(SKIA)
-        if (update.buffer->isBackedByOpenGL()) {
-            WTFBeginSignpost(this, CopyTextureGPUToGPU);
-            auto& buffer = static_cast<CoordinatedAcceleratedTileBuffer&>(*update.buffer);
-
-            // Fast path: whole tile content changed -- take ownership of the incoming texture, replacing the existing tile buffer (avoiding texture copies).
-            if (update.sourceRect.size() == update.tileRect.size()) {
-                ASSERT(update.sourceRect.location().isZero());
-                m_texture->swapTexture(buffer.texture());
-            } else
-                m_texture->copyFromExternalTexture(buffer.texture().id(), update.sourceRect, toIntSize(update.bufferOffset));
-
-            update.buffer = nullptr;
-            WTFEndSignpost(this, CopyTextureGPUToGPU);
-            WTFEndSignpost(this, CoordinatedSwapBuffer);
-            continue;
-        }
-#endif
-
-        WTFBeginSignpost(this, CopyTextureCPUToGPU);
-        ASSERT(!update.buffer->isBackedByOpenGL());
-        auto& buffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(*update.buffer);
-        m_texture->updateContents(buffer.data(), update.sourceRect, update.bufferOffset, buffer.stride(), buffer.pixelFormat());
-        update.buffer = nullptr;
-        WTFEndSignpost(this, CopyTextureCPUToGPU);
-
-        WTFEndSignpost(this, CoordinatedSwapBuffer);
-    }
-    WTFEndSignpost(this, CoordinatedSwapBuffers);
-}
-
 void CoordinatedBackingStore::createTile(uint32_t id)
 {
     m_tiles.add(id, CoordinatedBackingStoreTile(m_scale));
@@ -120,36 +47,32 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
     it->value.addUpdate({ WTFMove(buffer), sourceRect, tileRect, offset });
 }
 
+void CoordinatedBackingStore::processPendingUpdates(TextureMapper& textureMapper)
+{
+    for (auto& tile : m_tiles.values())
+        tile.processPendingUpdates(textureMapper);
+}
+
 void CoordinatedBackingStore::resize(const FloatSize& size, float scale)
 {
     m_size = size;
     m_scale = scale;
 }
 
-void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper& textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
-{
-    for (auto& tile : tiles)
-        tile->paint(textureMapper, transform, opacity, allTileEdgesExposed(rect, tile->rect()));
-}
-
-TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const FloatRect& targetRect)
-{
-    return TransformationMatrix::rectToRect(rect(), targetRect);
-}
-
 void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     if (m_tiles.isEmpty())
         return;
+
     ASSERT(!m_size.isZero());
 
-    Vector<TextureMapperTile*> tilesToPaint;
-    Vector<TextureMapperTile*> previousTilesToPaint;
+    Vector<CoordinatedBackingStoreTile*, 16> tilesToPaint;
+    Vector<CoordinatedBackingStoreTile*, 16> previousTilesToPaint;
 
     // We have to do this every time we paint, in case the opacity has changed.
     FloatRect coveredRect;
     for (auto& tile : m_tiles.values()) {
-        if (!tile.texture())
+        if (!tile.canBePainted())
             continue;
 
         if (tile.scale() == m_scale) {
@@ -168,31 +91,35 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper,
 
     // targetRect is on the contents coordinate system, so we must compare two rects on the contents coordinate system.
     // See CoodinatedBackingStoreProxy.
-    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    FloatRect layerRect = { { }, m_size };
+    TransformationMatrix adjustedTransform = transform * TransformationMatrix::rectToRect(layerRect, targetRect);
 
-    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, rect());
-    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, rect());
+    auto paintTile = [&](CoordinatedBackingStoreTile& tile) {
+        textureMapper.drawTexture(tile.texture(), tile.rect(), adjustedTransform, opacity, allTileEdgesExposed(layerRect, tile.rect()) ? TextureMapper::AllEdgesExposed::Yes : TextureMapper::AllEdgesExposed::No);
+    };
+
+    for (auto* tile : previousTilesToPaint)
+        paintTile(*tile);
+    for (auto* tile : tilesToPaint)
+        paintTile(*tile);
 }
 
 void CoordinatedBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
-    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    FloatRect layerRect = { { }, m_size };
+    TransformationMatrix adjustedTransform = transform * TransformationMatrix::rectToRect(layerRect, targetRect);
     for (auto& tile : m_tiles.values())
         textureMapper.drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
 }
 
 void CoordinatedBackingStore::drawRepaintCounter(TextureMapper& textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
-    TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
+    FloatRect layerRect = { { }, m_size };
+    TransformationMatrix adjustedTransform = transform * TransformationMatrix::rectToRect(layerRect, targetRect);
     for (auto& tile : m_tiles.values())
         textureMapper.drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
 }
 
-void CoordinatedBackingStore::swapBuffers(TextureMapper& textureMapper)
-{
-    for (auto& tile : m_tiles.values())
-        tile.swapBuffers(textureMapper);
-}
-
 } // namespace WebCore
+
 #endif // USE(COORDINATED_GRAPHICS)

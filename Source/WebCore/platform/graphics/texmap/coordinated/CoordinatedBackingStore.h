@@ -20,43 +20,14 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-#include "IntRect.h"
+#include "CoordinatedBackingStoreTile.h"
 #include "TextureMapperBackingStore.h"
-#include "TextureMapperTile.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 class CoordinatedTileBuffer;
 class TextureMapper;
-
-class CoordinatedBackingStoreTile final : public TextureMapperTile {
-public:
-    explicit CoordinatedBackingStoreTile(float scale = 1)
-        : TextureMapperTile(FloatRect())
-        , m_scale(scale)
-    {
-    }
-    ~CoordinatedBackingStoreTile() = default;
-
-    float scale() const { return m_scale; }
-
-    struct Update {
-        RefPtr<CoordinatedTileBuffer> buffer;
-        IntRect sourceRect;
-        IntRect tileRect;
-        IntPoint bufferOffset;
-    };
-    void addUpdate(Update&&);
-
-    void swapBuffers(TextureMapper&);
-
-private:
-    Vector<Update> m_updates;
-    float m_scale { 1. };
-};
 
 class CoordinatedBackingStore final : public RefCounted<CoordinatedBackingStore>, public TextureMapperBackingStore {
 public:
@@ -72,7 +43,7 @@ public:
     void removeTile(uint32_t tileID);
     void updateTile(uint32_t tileID, const IntRect&, const IntRect&, RefPtr<CoordinatedTileBuffer>&&, const IntPoint&);
 
-    void swapBuffers(TextureMapper&);
+    void processPendingUpdates(TextureMapper&);
 
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
     void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
@@ -80,10 +51,6 @@ public:
 
 private:
     CoordinatedBackingStore() = default;
-
-    void paintTilesToTextureMapper(Vector<TextureMapperTile*>&, TextureMapper&, const TransformationMatrix&, float, const FloatRect&);
-    TransformationMatrix adjustedTransformForRect(const FloatRect&);
-    FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
 
     HashMap<uint32_t, CoordinatedBackingStoreTile> m_tiles;
     FloatSize m_size;
