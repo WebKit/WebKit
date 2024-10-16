@@ -1501,7 +1501,7 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if USE(SYSTEM_PREVIEW)
     ASSERT(!m_systemPreviewController);
-    m_systemPreviewController = makeUnique<SystemPreviewController>(*this);
+    m_systemPreviewController = SystemPreviewController::create(*this);
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
@@ -14983,15 +14983,16 @@ bool WebPageProxy::hasSleepDisabler() const
 #if USE(SYSTEM_PREVIEW)
 void WebPageProxy::beginSystemPreview(const URL& url, const SecurityOriginData& topOrigin, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_systemPreviewController)
+    RefPtr systemPreviewController = m_systemPreviewController;
+    if (!systemPreviewController)
         return completionHandler();
-    m_systemPreviewController->begin(url, topOrigin, systemPreviewInfo, WTFMove(completionHandler));
+    systemPreviewController->begin(url, topOrigin, systemPreviewInfo, WTFMove(completionHandler));
 }
 
 void WebPageProxy::setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)
 {
-    if (m_systemPreviewController)
-        m_systemPreviewController->setCompletionHandlerForLoadTesting(WTFMove(handler));
+    if (RefPtr systemPreviewController = m_systemPreviewController)
+        systemPreviewController->setCompletionHandlerForLoadTesting(WTFMove(handler));
 }
 #endif
 

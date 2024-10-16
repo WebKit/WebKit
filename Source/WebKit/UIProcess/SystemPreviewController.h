@@ -32,6 +32,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
@@ -46,15 +47,6 @@ OBJC_CLASS _WKPreviewControllerDelegate;
 OBJC_CLASS _WKSystemPreviewDataTaskDelegate;
 #endif
 
-namespace WebKit {
-class SystemPreviewController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::SystemPreviewController> : std::true_type { };
-}
-
 namespace WebCore {
 class SecurityOriginData;
 }
@@ -63,10 +55,10 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class SystemPreviewController : public CanMakeWeakPtr<SystemPreviewController> {
+class SystemPreviewController : public RefCountedAndCanMakeWeakPtr<SystemPreviewController> {
     WTF_MAKE_TZONE_ALLOCATED(SystemPreviewController);
 public:
-    explicit SystemPreviewController(WebPageProxy&);
+    static Ref<SystemPreviewController> create(WebPageProxy&);
 
     bool canPreview(const String& mimeType) const;
 
@@ -77,7 +69,7 @@ public:
     void loadFailed();
     void end();
 
-    WebPageProxy& page() { return m_webPageProxy.get(); }
+    WebPageProxy* page() { return m_webPageProxy.get(); }
     const WebCore::SystemPreviewInfo& previewInfo() const { return m_systemPreviewInfo; }
 
     void triggerSystemPreviewAction();
@@ -86,6 +78,8 @@ public:
     void setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 
 private:
+    explicit SystemPreviewController(WebPageProxy&);
+
     void takeActivityToken();
     void releaseActivityTokenIfNecessary();
 
@@ -100,7 +94,7 @@ private:
 
     State m_state { State::Initial };
 
-    WeakRef<WebPageProxy> m_webPageProxy;
+    WeakPtr<WebPageProxy> m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
     URL m_downloadURL;
     URL m_localFileURL;

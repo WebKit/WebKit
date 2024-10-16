@@ -3294,7 +3294,7 @@ private:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    std::unique_ptr<SystemPreviewController> m_systemPreviewController;
+    RefPtr<SystemPreviewController> m_systemPreviewController;
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

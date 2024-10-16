@@ -220,13 +220,13 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (UIViewController *)presentingViewController
 {
-    if (!_previewController)
+    if (!_previewController || !_previewController->page())
         return nil;
 
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    return _previewController->page().uiClient().presentingViewController();
+    return _previewController->page()->uiClient().presentingViewController();
 }
 
 - (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView * *)view
@@ -236,10 +236,14 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     if (!presentingViewController)
         return CGRectZero;
 
+    RefPtr page = _previewController->page();
+    if (!page)
+        return CGRectZero;
+
     *view = presentingViewController.view;
 
     if (!_previewController->previewInfo().previewRect.isEmpty())
-        return _previewController->page().syncRootViewToScreen(_previewController->previewInfo().previewRect);
+        return page->syncRootViewToScreen(_previewController->previewInfo().previewRect);
 
     CGRect frame;
     frame.size.width = (*view).frame.size.width / 2.0;
@@ -257,8 +261,8 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     if (presentingViewController) {
         if (_linkRect.isEmpty())
             *contentRect = {CGPointZero, {presentingViewController.view.frame.size.width / 2.0, presentingViewController.view.frame.size.height / 2.0}};
-        else {
-            WebCore::IntRect screenRect = _previewController->page().syncRootViewToScreen(_linkRect);
+        else if (RefPtr page = _previewController->page()) {
+            WebCore::IntRect screenRect = page->syncRootViewToScreen(_linkRect);
             *contentRect = { CGPointZero, { static_cast<CGFloat>(screenRect.width()), static_cast<CGFloat>(screenRect.height()) } };
         }
     }
@@ -390,10 +394,14 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
     if (m_qlPreviewController)
         return completionHandler();
 
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return completionHandler();
+
     // FIXME: When in element fullscreen, UIClient::presentingViewController() may not return the
     // WKFullScreenViewController even though that is the presenting view controller of the WKWebView.
     // We should call PageClientImpl::presentingViewController() instead.
-    RetainPtr<UIViewController> presentingViewController = m_webPageProxy->uiClient().presentingViewController();
+    RetainPtr<UIViewController> presentingViewController = webPageProxy->uiClient().presentingViewController();
 
     if (!presentingViewController)
         return completionHandler();
@@ -405,10 +413,13 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
             return completionHandler();
 
         auto protectedThis = weakThis.get();
+        RefPtr webPageProxy = protectedThis->m_webPageProxy.get();
+        if (!webPageProxy)
+            return completionHandler();
         RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", protectedThis->m_systemPreviewInfo.element.elementIdentifier ? protectedThis->m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
         auto request = WebCore::ResourceRequest(url);
         bool shouldRunAtForegroundPriority = false;
-        protectedThis->m_webPageProxy->dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
+        webPageProxy->dataTaskWithRequest(WTFMove(request), topOrigin, shouldRunAtForegroundPriority, [weakThis, completionHandler = WTFMove(completionHandler)] (Ref<API::DataTask>&& task) mutable {
             if (!weakThis)
                 return completionHandler();
 
@@ -565,7 +576,11 @@ void SystemPreviewController::takeActivityToken()
 #if USE(RUNNINGBOARD)
     RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
     ASSERT(!m_activity);
-    m_activity = page().legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s);
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    m_activity = page->legacyMainFrameProcess().throttler().backgroundActivity("System preview download"_s);
 #endif
 }
 
@@ -588,14 +603,19 @@ void SystemPreviewController::triggerSystemPreviewAction()
 {
     RELEASE_LOG(SystemPreview, "SystemPreview action was triggered on %lld", m_systemPreviewInfo.element.elementIdentifier ? m_systemPreviewInfo.element.elementIdentifier->toUInt64() : 0);
 
-    page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    page->systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
 }
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)
 {
     auto uuid = WTF::UUID::parseVersion4(String(documentID));
     ASSERT(uuid);
-    if (!uuid)
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!uuid || !webPageProxy)
         return;
 
     m_systemPreviewInfo.isPreview = true;
@@ -603,7 +623,7 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
         m_systemPreviewInfo.element.elementIdentifier = ObjectIdentifier<WebCore::ElementIdentifierType>(elementID);
     else
         m_systemPreviewInfo.element.elementIdentifier = std::nullopt;
-    m_systemPreviewInfo.element.documentIdentifier = WebCore::ScriptExecutionContextIdentifier { *uuid, m_webPageProxy->legacyMainFrameProcess().coreProcessIdentifier() };
+    m_systemPreviewInfo.element.documentIdentifier = WebCore::ScriptExecutionContextIdentifier { *uuid, webPageProxy->legacyMainFrameProcess().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
 }
