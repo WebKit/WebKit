@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPreferences.h"
 
+#include "WebKit2Initialize.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
 #include <wtf/ExperimentalFeatureNames.h>
@@ -37,6 +38,7 @@ namespace WebKit {
 
 const Vector<RefPtr<API::Object>>& WebPreferences::features()
 {
+    InitializeWebKit2();
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
 <% for @pref in @exposedFeatures do -%>
 <%- if @pref.condition -%>
