@@ -12743,9 +12743,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 - (CGRect)contentsRectForImageAnalysisInteraction:(VKCImageAnalysisInteraction *)interaction
 {
     auto unitInteractionRect = _imageAnalysisInteractionBounds;
-    WebCore::FloatRect unobscuredRect = self.bounds;
-    unitInteractionRect.moveBy(-unobscuredRect.location());
-    unitInteractionRect.scale(1 / unobscuredRect.size());
+    WebCore::FloatRect contentViewBounds = self.bounds;
+    auto obscuredInset = self.webView._computedObscuredInset;
+    unitInteractionRect.move(obscuredInset.left, obscuredInset.top);
+    unitInteractionRect.moveBy(-contentViewBounds.location());
+    unitInteractionRect.scale(1 / contentViewBounds.size());
     return unitInteractionRect;
 }
 
