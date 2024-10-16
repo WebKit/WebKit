@@ -202,9 +202,7 @@ struct CompactTZoneHeap : public TZoneHeapBase<Type> {
 };
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
-// Use this together with MAKE_BISO_MALLOCED_IMPL.
-#define MAKE_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
-public: \
+#define MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
     static exportMacro ::bmalloc::api::heapType<isoType>& btzoneHeap(); \
     \
     void* operator new(size_t, void* p) { return p; } \
@@ -223,8 +221,17 @@ public: \
     } \
     exportMacro static void freeAfterDestruction(void*); \
     \
-    using WTFIsFastAllocated = int; \
+    using WTFIsFastAllocated = int;
+
+// Use these two macros together with MAKE_BTZONE_MALLOCED_IMPL.
+#define MAKE_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
+public: \
+    MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
 private: \
+    using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
+
+#define MAKE_STRUCT_BTZONE_MALLOCED(isoType, heapType, exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON(isoType, heapType, exportMacro) \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api

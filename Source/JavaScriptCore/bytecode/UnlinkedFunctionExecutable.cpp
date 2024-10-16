@@ -39,8 +39,12 @@
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "UnlinkedFunctionCodeBlock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutableClassElementDefinition, UnlinkedFunctionExecutable::ClassElementDefinition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutableRareData, UnlinkedFunctionExecutable::RareData);
 
 static_assert(sizeof(UnlinkedFunctionExecutable) <= 128, "UnlinkedFunctionExecutable should fit in a 128-byte cell to keep allocated blocks count to only one after initializing JSGlobalObject.");
 

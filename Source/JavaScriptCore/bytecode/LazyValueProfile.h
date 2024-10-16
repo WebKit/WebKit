@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LazyOperandValueProfile.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
@@ -52,7 +53,7 @@ private:
     inline void initializeData();
 
     struct LazyValueProfileHolder {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED_INLINE(LazyValueProfileHolder);
         ConcurrentVector<LazyOperandValueProfile, 8> operandValueProfiles;
         ConcurrentVector<std::pair<BytecodeIndex, JSValue>, 8> speculationFailureValueProfileBuckets;
     };

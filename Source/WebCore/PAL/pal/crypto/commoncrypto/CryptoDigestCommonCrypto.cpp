@@ -31,11 +31,12 @@
 #endif
 #include <CommonCrypto/CommonCrypto.h>
 #include <optional>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
 
 struct CryptoDigestContext {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_INLINE(CryptoDigestContext);
     CryptoDigest::Algorithm algorithm;
     std::variant<
 #if HAVE(SWIFT_CPP_INTEROP)

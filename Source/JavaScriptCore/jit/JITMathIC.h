@@ -43,7 +43,7 @@ namespace JSC {
 class LinkBuffer;
 
 struct MathICGenerationState {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(MathICGenerationState);
     MacroAssembler::Label fastPathStart;
     MacroAssembler::Label fastPathEnd;
     MacroAssembler::Label slowPathStart;

@@ -25,6 +25,7 @@
 
 #include <wtf/StdLibExtras.h>
 #include "BidiResolver.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -33,6 +34,8 @@ class LegacyInlineBox;
 class RenderObject;
 
 struct BidiRun : BidiCharacterRun {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(BidiRun);
+public:
     BidiRun(unsigned start, unsigned stop, RenderObject&, BidiContext*, UCharDirection);
     ~BidiRun();
 

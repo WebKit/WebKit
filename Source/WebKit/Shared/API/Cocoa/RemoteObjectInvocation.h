@@ -40,8 +40,8 @@ class RemoteObjectInvocation {
     WTF_MAKE_TZONE_ALLOCATED(RemoteObjectInvocation);
 public:
     struct ReplyInfo {
-        WTF_MAKE_TZONE_ALLOCATED(ReplyInfo);
-    public:
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(ReplyInfo);
+
         ReplyInfo(uint64_t replyID, String&& blockSignature)
             : replyID(replyID)
             , blockSignature(WTFMove(blockSignature))
