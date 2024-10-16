@@ -729,7 +729,6 @@ public:
     void setPluginScaleFactor(double scaleFactor, WebCore::IntPoint origin);
 
 #if PLATFORM(IOS_FAMILY)
-    void didInitializePlugin();
     void pluginDidInstallPDFDocument(double initialScale);
 #endif
 

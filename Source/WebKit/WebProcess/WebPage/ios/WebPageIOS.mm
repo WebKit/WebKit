@@ -4164,12 +4164,6 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         if (m_isInFullscreenMode == IsInFullscreenMode::Yes)
             return m_viewportConfiguration.nativeWebpageParameters();
 #endif
-
-#if ENABLE(PDF_PLUGIN)
-        if (mainFramePlugIn())
-            return m_viewportConfiguration.pluginDocumentParameters();
-#endif
-
         if (shouldIgnoreMetaViewport())
             return m_viewportConfiguration.nativeWebpageParameters();
         return ViewportConfiguration::webpageParameters();
@@ -4216,6 +4210,10 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
             m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
         else if (document->isTextDocument())
             m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
+#if ENABLE(PDF_PLUGIN)
+        else if (m_page->settings().unifiedPDFEnabled() && document->isPluginDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::pluginDocumentParameters());
+#endif
         else
             configureWithParametersForStandardFrame = true;
     }
@@ -5655,14 +5653,6 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
         state.visualData->selectionClipRect = WTFMove(innerScrollingClipRect);
     }
 }
-
-#if ENABLE(PDF_PLUGIN)
-void WebPage::didInitializePlugin()
-{
-    resetViewportDefaultConfiguration(m_mainFrame.ptr());
-    viewportConfigurationChanged();
-}
-#endif
 
 } // namespace WebKit
 
