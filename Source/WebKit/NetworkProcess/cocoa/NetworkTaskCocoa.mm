@@ -105,8 +105,8 @@ static NSArray<NSHTTPCookie *> *cookiesByCappingExpiry(NSArray<NSHTTPCookie *> *
 bool NetworkTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const
 {
     using RegistrableDomain = WebCore::RegistrableDomain;
-    static NeverDestroyed<HashMap<RegistrableDomain, RegistrableDomain>> quirkPairs = [] {
-        HashMap<RegistrableDomain, RegistrableDomain> map;
+    static NeverDestroyed<UncheckedKeyHashMap<RegistrableDomain, RegistrableDomain>> quirkPairs = [] {
+        UncheckedKeyHashMap<RegistrableDomain, RegistrableDomain> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("ymail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("yahoo.com"_s));
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aolmail.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("aol.com"_s));
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("googleusercontent.com"_s), RegistrableDomain::uncheckedCreateFromRegistrableDomainString("google.com"_s));

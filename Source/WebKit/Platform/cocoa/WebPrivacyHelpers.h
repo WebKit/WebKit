@@ -148,7 +148,7 @@ private:
 #endif
 };
 
-class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, HashMap<WebCore::RegistrableDomain, String>> {
+class StorageAccessUserAgentStringQuirkController : public ListDataController<StorageAccessUserAgentStringQuirkController, UncheckedKeyHashMap<WebCore::RegistrableDomain, String>> {
 private:
     void updateList(CompletionHandler<void()>&&) final;
 #ifdef __OBJC__
@@ -178,7 +178,7 @@ private:
     void update();
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
-    HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
     uint64_t m_nextScheduledUpdateTime { 0 };
 };
 

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class IDBObjectStoreInfo {
 public:
-    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& = { });
+    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, UncheckedKeyHashMap<uint64_t, IDBIndexInfo>&& = { });
 
     IDBObjectStoreIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
@@ -55,7 +55,7 @@ public:
     IDBIndexInfo* infoForExistingIndex(uint64_t identifier);
 
     Vector<String> indexNames() const;
-    const HashMap<uint64_t, IDBIndexInfo>& indexMap() const { return m_indexMap; }
+    const UncheckedKeyHashMap<uint64_t, IDBIndexInfo>& indexMap() const { return m_indexMap; }
 
     void deleteIndex(const String& indexName);
     void deleteIndex(uint64_t indexIdentifier);
@@ -71,7 +71,7 @@ private:
     std::optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
 
-    HashMap<uint64_t, IDBIndexInfo> m_indexMap;
+    UncheckedKeyHashMap<uint64_t, IDBIndexInfo> m_indexMap;
 };
 
 } // namespace WebCore

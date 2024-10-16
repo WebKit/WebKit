@@ -63,8 +63,8 @@ private:
     RetainPtr<APSConnection> m_connection;
     RetainPtr<id<APSConnectionDelegate>> m_delegate;
     unsigned m_handlerIdentifier { 0 };
-    HashMap<unsigned, SubscribeHandler> m_subscribeHandlers;
-    HashMap<unsigned, UnsubscribeHandler> m_unsubscribeHandlers;
+    UncheckedKeyHashMap<unsigned, SubscribeHandler> m_subscribeHandlers;
+    UncheckedKeyHashMap<unsigned, UnsubscribeHandler> m_unsubscribeHandlers;
 };
 
 } // namespace WebPushD

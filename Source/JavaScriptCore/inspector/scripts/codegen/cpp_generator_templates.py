@@ -138,7 +138,7 @@ ${dispatchCases}
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
     using CallHandler = void (${domainName}BackendDispatcher::*)(long protocol_requestId, RefPtr<JSON::Object>&& protocol_message);
-    using DispatchMap = HashMap<String, CallHandler>;
+    using DispatchMap = UncheckedKeyHashMap<String, CallHandler>;
     static NeverDestroyed<DispatchMap> dispatchMap = DispatchMap({
 ${dispatchCases}
     });

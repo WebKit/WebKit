@@ -1093,7 +1093,7 @@ void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* textu
     // ES 2.0 doesn't expose this flag (a bug in the specification) and
     // otherwise the application has no control over the seams in this
     // dimension. However, it appears that supporting this properly on all
-    // platforms is fairly involved (will require a HashMap from texture ID
+    // platforms is fairly involved (will require a UncheckedKeyHashMap from texture ID
     // in all ports), and we have not had any complaints, so the logic has
     // been removed.
 }

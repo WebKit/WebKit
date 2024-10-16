@@ -55,7 +55,7 @@ void AvailabilityMap::pruneHeap()
             return possibleNodes.add(node).isNewEntry;
         });
     
-    HashMap<PromotedHeapLocation, Availability> newHeap;
+    UncheckedKeyHashMap<PromotedHeapLocation, Availability> newHeap;
     for (auto pair : m_heap) {
         if (possibleNodes.contains(pair.key.base()))
             newHeap.add(pair.key, pair.value);

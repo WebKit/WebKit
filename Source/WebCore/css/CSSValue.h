@@ -141,7 +141,7 @@ public:
     // FIXME: These three traversing functions are buggy. It should be rewritten with visitChildren.
     // https://bugs.webkit.org/show_bug.cgi?id=270600
     bool traverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void setReplacementURLForSubresources(const HashMap<String, String>&);
+    void setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
     void clearReplacementURLForSubresources();
 
     IterationStatus visitChildren(const Function<IterationStatus(CSSValue&)>&) const;
@@ -194,7 +194,7 @@ public:
     inline bool isValueID() const;
     inline CSSValueID valueID() const;
 
-    void customSetReplacementURLForSubresources(const HashMap<String, String>&) { }
+    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&) { }
     void customClearReplacementURLForSubresources() { }
     bool customMayDependOnBaseURL() const { return false; }
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const { return IterationStatus::Continue; }

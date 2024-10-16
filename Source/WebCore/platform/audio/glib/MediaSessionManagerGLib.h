@@ -104,7 +104,7 @@ private:
     Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
-    HashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
+    UncheckedKeyHashMap<MediaSessionIdentifier, std::unique_ptr<MediaSessionGLib>> m_sessions;
 
     bool m_dbusNotificationsEnabled { true };
 };

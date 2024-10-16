@@ -304,7 +304,7 @@ struct AV1PerLevelConstraints {
 
 // Derived from "AV1 Bitstream & Decoding Process Specification", Version 1.0.0 with Errata 1
 // Annex A: Profiles and levels
-using AV1PerLevelConstraintsMap = HashMap<AV1ConfigurationLevel, AV1PerLevelConstraints, WTF::IntHash<AV1ConfigurationLevel>, WTF::StrongEnumHashTraits<AV1ConfigurationLevel>>;
+using AV1PerLevelConstraintsMap = UncheckedKeyHashMap<AV1ConfigurationLevel, AV1PerLevelConstraints, WTF::IntHash<AV1ConfigurationLevel>, WTF::StrongEnumHashTraits<AV1ConfigurationLevel>>;
 static const AV1PerLevelConstraintsMap& perLevelConstraints()
 {
     static NeverDestroyed<AV1PerLevelConstraintsMap> perLevelConstraints = AV1PerLevelConstraintsMap {

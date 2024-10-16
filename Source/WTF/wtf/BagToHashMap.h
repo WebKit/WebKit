@@ -31,7 +31,7 @@
 namespace WTF {
 
 template<typename ElementType, typename BagPtrTraits, typename KeyType, typename HashArg, typename KeyGetterFunctor>
-void toHashMap(Bag<ElementType, BagPtrTraits>& bag, KeyGetterFunctor& getKey, HashMap<KeyType, ElementType*, HashArg>& result)
+void toHashMap(Bag<ElementType, BagPtrTraits>& bag, KeyGetterFunctor& getKey, UncheckedKeyHashMap<KeyType, ElementType*, HashArg>& result)
 {
     for (typename Bag<ElementType, BagPtrTraits>::iterator iter = bag.begin(); !!iter; ++iter) {
         ElementType* element = *iter;

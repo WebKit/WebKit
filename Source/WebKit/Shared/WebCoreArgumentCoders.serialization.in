@@ -563,7 +563,7 @@ class WebCore::IDBDatabaseInfo {
     String m_name
     uint64_t m_version
     uint64_t m_maxIndexID
-    HashMap<WebCore::IDBObjectStoreIdentifier, WebCore::IDBObjectStoreInfo> m_objectStoreMap
+    UncheckedKeyHashMap<WebCore::IDBObjectStoreIdentifier, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
 struct WebCore::IDBKeyRangeData {
@@ -604,7 +604,7 @@ class WebCore::IDBObjectStoreInfo {
     String name()
     std::optional<WebCore::IDBKeyPath> keyPath()
     bool autoIncrement()
-    HashMap<uint64_t, WebCore::IDBIndexInfo> indexMap()
+    UncheckedKeyHashMap<uint64_t, WebCore::IDBIndexInfo> indexMap()
 }
 
 struct WebCore::IDBIterateCursorData {
@@ -2466,7 +2466,7 @@ header: <WebCore/ScreenProperties.h>
 using WebCore::PlatformDisplayID = uint32_t;
 struct WebCore::ScreenProperties {
     WebCore::PlatformDisplayID primaryDisplayID;
-    HashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
+    UncheckedKeyHashMap<WebCore::PlatformDisplayID, WebCore::ScreenData> screenDataMap;
 };
 
 class WebCore::PlatformTimeRanges {
@@ -2714,7 +2714,7 @@ header: <WebCore/SearchPopupMenu.h>
 
 struct WebCore::EventTrackingRegions {
     WebCore::Region asynchronousDispatchRegion;
-    HashMap<WebCore::EventTrackingRegions::EventType, WebCore::Region, WTF::IntHash<WebCore::EventTrackingRegions::EventType>, WTF::StrongEnumHashTraits<WebCore::EventTrackingRegions::EventType>> eventSpecificSynchronousDispatchRegions;
+    UncheckedKeyHashMap<WebCore::EventTrackingRegions::EventType, WebCore::Region, WTF::IntHash<WebCore::EventTrackingRegions::EventType>, WTF::StrongEnumHashTraits<WebCore::EventTrackingRegions::EventType>> eventSpecificSynchronousDispatchRegions;
 };
 
 enum class WebCore::HasInsecureContent : bool
@@ -6898,7 +6898,7 @@ header: <WebCore/InspectorOverlay.h>
 
 header: <WebCore/DiagnosticLoggingClient.h>
 [CustomHeader] struct WebCore::DiagnosticLoggingDictionary {
-    HashMap<String, std::variant<String, uint64_t, int64_t, bool, double>> dictionary;
+    UncheckedKeyHashMap<String, std::variant<String, uint64_t, int64_t, bool, double>> dictionary;
 };
 
 using WebCore::ViewportConstraints::AnchorEdges = unsigned;
@@ -7871,7 +7871,7 @@ struct WebCore::Length {
 
 struct WebCore::OrganizationStorageAccessPromptQuirk {
     String organizationName;
-    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomains;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomains;
     Vector<URL> triggerPages;
 };
 
@@ -8235,7 +8235,7 @@ class WebCore::SerializedPlatformDataCueValue {
 [Nested] struct WebCore::SerializedPlatformDataCueValue::Data {
 #if PLATFORM(COCOA)
     String type;
-    HashMap<String, String> otherAttributes;
+    UncheckedKeyHashMap<String, String> otherAttributes;
     String key;
     RetainPtr<NSLocale> locale;
     std::variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;
@@ -8388,7 +8388,7 @@ header: <WebCore/InspectorFrontendClient.h>
 using Inspector::ExtensionTabID = String
 #endif
 
-using WebCore::ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>
+using WebCore::ArgumentWireBytesMap = UncheckedKeyHashMap<String, Vector<uint8_t>>
 using WebCore::IDBKeyPath = std::variant<String, Vector<String>>;
 using WebCore::ServiceWorkerOrClientData = std::variant<WebCore::ServiceWorkerData, WebCore::ServiceWorkerClientData>
 enum class WebCore::CrossOriginMode : bool
@@ -8404,7 +8404,7 @@ struct WebCore::WrappedCryptoKey {
 };
 
 #if PLATFORM(IOS_FAMILY)
-using WebCore::RenderThemeIOS::CSSValueToSystemColorMap = HashMap<WebCore::CSSValueKey, WebCore::Color>
+using WebCore::RenderThemeIOS::CSSValueToSystemColorMap = UncheckedKeyHashMap<WebCore::CSSValueKey, WebCore::Color>
 #endif
 
 enum class WebCore::WorkerThreadMode : bool
@@ -8485,7 +8485,7 @@ class WebCore::PermissionsPolicy {
     WebCore::PermissionsPolicy::InheritedPolicy inheritedPolicy()
 };
 using WebCore::PermissionsPolicy::InheritedPolicy = HashSet<WebCore::PermissionsPolicy::Feature, IntHash<WebCore::PermissionsPolicy::Feature>, WTF::StrongEnumHashTraits<WebCore::PermissionsPolicy::Feature>>;
-using WebCore::OwnerPermissionsPolicyData::PolicyDirective = HashMap<WebCore::PermissionsPolicy::Feature, WebCore::Allowlist, IntHash<WebCore::PermissionsPolicy::Feature>, WTF::StrongEnumHashTraits<WebCore::PermissionsPolicy::Feature>>;
+using WebCore::OwnerPermissionsPolicyData::PolicyDirective = UncheckedKeyHashMap<WebCore::PermissionsPolicy::Feature, WebCore::Allowlist, IntHash<WebCore::PermissionsPolicy::Feature>, WTF::StrongEnumHashTraits<WebCore::PermissionsPolicy::Feature>>;
 
 header: <WebCore/ImageBufferResourceLimits.h>
 struct WebCore::ImageBufferResourceLimits {

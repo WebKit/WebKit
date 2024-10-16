@@ -68,7 +68,7 @@ private:
     void inputNotificationTimerFired();
 
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
-    HashMap<ManetteDevice*, std::unique_ptr<ManetteGamepad>> m_gamepadMap;
+    UncheckedKeyHashMap<ManetteDevice*, std::unique_ptr<ManetteGamepad>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
     GRefPtr<ManetteMonitor> m_monitor;

@@ -75,7 +75,7 @@ public:
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
-    using StateNodeMap = HashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
+    using StateNodeMap = UncheckedKeyHashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
@@ -119,7 +119,7 @@ private:
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;
     // Owns roots of unparented subtrees.
-    HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
+    UncheckedKeyHashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
     unsigned m_scrollingNodeCount { 0 };

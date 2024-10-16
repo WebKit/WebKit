@@ -402,7 +402,7 @@ FormData* httpBodyFromStream(CFReadStreamRef stream)
 
     // Passing the pointer as property appears to be the only way to associate a stream with FormData.
     // A new stream is always created in CFURLRequestCopyHTTPRequestBodyStream (or -[NSURLRequest HTTPBodyStream]),
-    // so a side HashMap wouldn't work.
+    // so a side UncheckedKeyHashMap wouldn't work.
     // Even the stream's context pointer is different from the one we returned from formCreate().
 
     RetainPtr<CFNumberRef> formDataPointerAsCFNumber = adoptCF(static_cast<CFNumberRef>(CFReadStreamCopyProperty(stream, formDataPointerPropertyName)));

@@ -84,7 +84,7 @@ MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCo
     }
 
     if (!m_supportsTypeAndCodecsCache)
-        m_supportsTypeAndCodecsCache = HashMap<SupportedTypesAndCodecsKey, MediaPlayerEnums::SupportsType> { };
+        m_supportsTypeAndCodecsCache = UncheckedKeyHashMap<SupportedTypesAndCodecsKey, MediaPlayerEnums::SupportsType> { };
 
     auto sendResult = protectedManager()->gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), 0);
     auto [result] = sendResult.takeReplyOr(MediaPlayerEnums::SupportsType::IsNotSupported);

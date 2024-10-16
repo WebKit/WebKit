@@ -2228,7 +2228,7 @@ void TestRunner::setAccummulateLogsForChannel(JSStringRef channel)
     WebCoreTestSupport::setLogChannelToAccumulate(String::fromLatin1(buffer.get()));
 }
 
-using CallbackMap = WTF::HashMap<unsigned, JSObjectRef>;
+using CallbackMap = WTF::UncheckedKeyHashMap<unsigned, JSObjectRef>;
 static CallbackMap& callbackMap()
 {
     static CallbackMap& map = *new CallbackMap;

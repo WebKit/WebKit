@@ -1226,7 +1226,7 @@ private:
     FrozenValue* const m_constantOne;
     Vector<Node*, 16> m_constants;
 
-    HashMap<InlineCallFrame*, Vector<ArgumentPosition*>, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> m_inlineCallFrameToArgumentPositions;
+    UncheckedKeyHashMap<InlineCallFrame*, Vector<ArgumentPosition*>, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> m_inlineCallFrameToArgumentPositions;
 
     // The number of arguments passed to the function.
     const unsigned m_numArguments;
@@ -1281,7 +1281,7 @@ private:
         // code block had gathered.
         LazyOperandValueProfileParser m_lazyOperands;
 
-        HashMap<BytecodeIndex, JSValue*> m_specFailValueProfileBuckets;
+        UncheckedKeyHashMap<BytecodeIndex, JSValue*> m_specFailValueProfileBuckets;
         
         ICStatusMap m_baselineMap;
         ICStatusContext m_optimizedContext;

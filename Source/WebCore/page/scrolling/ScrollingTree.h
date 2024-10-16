@@ -196,7 +196,7 @@ public:
 
     // A map of overflow scrolling nodes to positioned nodes which need to be updated
     // when the scroller changes, but are not descendants.
-    using RelatedNodesMap = HashMap<ScrollingNodeID, Vector<ScrollingNodeID>>;
+    using RelatedNodesMap = UncheckedKeyHashMap<ScrollingNodeID, Vector<ScrollingNodeID>>;
     RelatedNodesMap& overflowRelatedNodes() { return m_overflowRelatedNodesMap; }
 
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>>& activeOverflowScrollProxyNodes() { return m_activeOverflowScrollProxyNodes; }
@@ -306,11 +306,11 @@ private:
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
-    using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
+    using ScrollingTreeNodeMap = UncheckedKeyHashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
     ScrollingTreeNodeMap m_nodeMap;
 
     Lock m_frameIDMapLock;
-    HashMap<FrameIdentifier, HashSet<ScrollingNodeID>> m_nodeMapPerFrame WTF_GUARDED_BY_LOCK(m_frameIDMapLock);
+    UncheckedKeyHashMap<FrameIdentifier, HashSet<ScrollingNodeID>> m_nodeMapPerFrame WTF_GUARDED_BY_LOCK(m_frameIDMapLock);
 
     ScrollingTreeLatchingController m_latchingController;
     ScrollingTreeGestureState m_gestureState;
@@ -350,8 +350,8 @@ private:
     Lock m_lastWheelEventTimeLock;
     MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
 
-    HashMap<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>> m_hostedSubtreesNeedingPairing;
-    HashMap<LayerHostingContextIdentifier, Ref<ScrollingTreeFrameHostingNode>> m_hostedSubtrees;
+    UncheckedKeyHashMap<LayerHostingContextIdentifier, Vector<std::unique_ptr<ScrollingStateTree>>> m_hostedSubtreesNeedingPairing;
+    UncheckedKeyHashMap<LayerHostingContextIdentifier, Ref<ScrollingTreeFrameHostingNode>> m_hostedSubtrees;
 
 protected:
     bool m_allowLatching { true };

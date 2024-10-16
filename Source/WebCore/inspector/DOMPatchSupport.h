@@ -52,7 +52,7 @@ private:
     struct Digest;
 
     using ResultMap = Vector<std::pair<Digest*, size_t>>;
-    using UnusedNodesMap = HashMap<String, Digest*>;
+    using UnusedNodesMap = UncheckedKeyHashMap<String, Digest*>;
 
     ExceptionOr<void> innerPatchNode(Digest& oldNode, Digest& newNode);
     std::pair<ResultMap, ResultMap> diff(const Vector<std::unique_ptr<Digest>>& oldChildren, const Vector<std::unique_ptr<Digest>>& newChildren);

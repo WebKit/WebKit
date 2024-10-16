@@ -97,7 +97,7 @@ private:
     void visitVariableDeclaration(AST::Variable&, MangledName::Kind);
 
     ShaderModule& m_shaderModule;
-    HashMap<AST::Structure*, NameMap> m_structFieldMapping;
+    UncheckedKeyHashMap<AST::Structure*, NameMap> m_structFieldMapping;
     uint32_t m_indexPerType[MangledName::numberOfKinds] { 0 };
 };
 

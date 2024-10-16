@@ -41,9 +41,9 @@ namespace API {
 
 #if DELEGATE_REF_COUNTING_TO_COCOA
 
-HashMap<Object*, CFTypeRef>& Object::apiObjectsUnderConstruction()
+UncheckedKeyHashMap<Object*, CFTypeRef>& Object::apiObjectsUnderConstruction()
 {
-    static LazyNeverDestroyed<ThreadSpecific<HashMap<Object*, CFTypeRef>>> s_apiObjectsUnderConstruction;
+    static LazyNeverDestroyed<ThreadSpecific<UncheckedKeyHashMap<Object*, CFTypeRef>>> s_apiObjectsUnderConstruction;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         s_apiObjectsUnderConstruction.construct();

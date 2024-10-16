@@ -491,7 +491,7 @@ static NSSet<NSString *> *splitTypeFromList(NSString *container, NSString *list)
         || [container isEqualToString:@"Vector"]
         || [container isEqualToString:@"std::array"]
         || [container isEqualToString:@"HashSet"];
-    bool firstTwoTypesOnly = [container isEqualToString:@"HashMap"];
+    bool firstTwoTypesOnly = [container isEqualToString:@"UncheckedKeyHashMap"];
 
     NSMutableSet *set = NSMutableSet.set;
     size_t nestedTypeDepth { 0 };
@@ -528,7 +528,7 @@ static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *i
         BOOL foundContainer = NO;
         NSArray<NSString *> *containerTypes = @[
             @"Expected",
-            @"HashMap",
+            @"UncheckedKeyHashMap",
             @"MemoryCompactRobinHoodHashMap",
             @"MemoryCompactLookupOnlyRobinHoodHashSet",
             @"std::pair",

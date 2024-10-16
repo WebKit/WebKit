@@ -135,7 +135,7 @@ private:
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    HashMap<std::pair<WebPageProxyIdentifier, WebCore::PageIdentifier>, std::unique_ptr<LayerHostingContext>> m_visibilityPropagationContexts;
+    UncheckedKeyHashMap<std::pair<WebPageProxyIdentifier, WebCore::PageIdentifier>, std::unique_ptr<LayerHostingContext>> m_visibilityPropagationContexts;
 #endif
 
 #if ENABLE(IPC_TESTING_API)

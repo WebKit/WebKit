@@ -105,7 +105,7 @@ static void compileRecovery(
     CCallHelpers& jit, const ExitValue& value,
     const FixedVector<B3::ValueRep>& valueReps,
     char* registerScratch,
-    const HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
+    const UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
 {
     switch (value.kind()) {
     case ExitValueDead:
@@ -198,7 +198,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     char* registerScratch = bitwise_cast<char*>(materializationArguments + maxMaterializationNumArguments);
     uint64_t* unwindScratch = bitwise_cast<uint64_t*>(registerScratch + requiredScratchMemorySizeInBytes());
     
-    HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*> materializationToPointer;
+    UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*> materializationToPointer;
     unsigned materializationCount = 0;
     for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations) {
         materializationToPointer.add(

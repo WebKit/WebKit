@@ -80,7 +80,7 @@ public:
     const ServiceWorkerContextData::ImportedScript* scriptResource(const URL&) const;
     void setScriptResource(const URL&, ServiceWorkerContextData::ImportedScript&&);
 
-    void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
+    void didSaveScriptsToDisk(ScriptBuffer&&, UncheckedKeyHashMap<URL, ScriptBuffer>&& importedScripts);
 
     const ServiceWorkerContextData& contextData() const { return m_contextData; }
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
@@ -143,7 +143,7 @@ private:
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };
-    HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
+    UncheckedKeyHashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
     std::unique_ptr<NotificationClient> m_notificationClient;
     bool m_hasPendingSilentPushEvent { false };
     bool m_isProcessingUserGesture { false };
@@ -160,7 +160,7 @@ private:
         RefPtr<ServiceWorkerFetch::Client> client;
         std::variant<std::nullptr_t, Ref<FetchEvent>, UniqueRef<ResourceError>, UniqueRef<ResourceResponse>> navigationPreload;
     };
-    HashMap<FetchKey, FetchTask> m_ongoingFetchTasks;
+    UncheckedKeyHashMap<FetchKey, FetchTask> m_ongoingFetchTasks;
 };
 
 } // namespace WebCore

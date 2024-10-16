@@ -3239,7 +3239,7 @@ TEST(WTF_WeakRef, HashSetLookupFromRawRef)
 
 TEST(WTF_WeakRef, HashMapLookupFromRawRef)
 {
-    HashMap<WTF::WeakRef<TestType, DidUpdateRefCountWeakPtrImpl>, unsigned> map;
+    UncheckedKeyHashMap<WTF::WeakRef<TestType, DidUpdateRefCountWeakPtrImpl>, unsigned> map;
 
     TestType object;
     map.add(object, 1);

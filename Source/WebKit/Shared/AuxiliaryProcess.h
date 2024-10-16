@@ -110,7 +110,7 @@ public:
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
-    void preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences);
+    void preferencesDidUpdate(UncheckedKeyHashMap<String, std::optional<String>> domainlessPreferences, UncheckedKeyHashMap<std::pair<String, String>, std::optional<String>> preferences);
 #endif
     static void setNotifyOptions();
 
@@ -210,7 +210,7 @@ struct AuxiliaryProcessInitializationParameters {
     String clientBundleIdentifier;
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
-    HashMap<String, String> extraInitializationData;
+    UncheckedKeyHashMap<String, String> extraInitializationData;
     WTF::AuxiliaryProcessType processType;
 };
 

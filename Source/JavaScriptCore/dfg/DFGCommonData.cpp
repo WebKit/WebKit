@@ -45,9 +45,9 @@ void CommonData::shrinkToFit()
 }
 
 static Lock pcCodeBlockMapLock;
-inline HashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBlockMapLock)
+inline UncheckedKeyHashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBlockMapLock)
 {
-    static LazyNeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;
+    static LazyNeverDestroyed<UncheckedKeyHashMap<void*, CodeBlock*>> pcCodeBlockMap;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         pcCodeBlockMap.construct();

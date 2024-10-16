@@ -61,7 +61,7 @@ protected:
     virtual CSSParserContext cssParserContext() const;
 
     MutableStyleProperties* m_propertySet;
-    HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
+    UncheckedKeyHashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>> m_cssomValueWrappers;
 
 private:
     CSSRule* parentRule() const override { return nullptr; }

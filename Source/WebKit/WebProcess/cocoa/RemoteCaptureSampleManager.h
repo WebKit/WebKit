@@ -108,8 +108,8 @@ private:
     Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;
     // background thread member
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeVideoSource>> m_videoSources;
+    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
+    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeVideoSource>> m_videoSources;
 
     Lock m_videoFrameObjectHeapProxyLock;
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_videoFrameObjectHeapProxyLock);

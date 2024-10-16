@@ -78,7 +78,7 @@ using AnimationEvents = Vector<Ref<AnimationEventBase>>;
 using CSSAnimationCollection = ListHashSet<Ref<CSSAnimation>>;
 
 using AnimatableCSSProperty = std::variant<CSSPropertyID, AtomString>;
-using AnimatableCSSPropertyToTransitionMap = HashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
+using AnimatableCSSPropertyToTransitionMap = UncheckedKeyHashMap<AnimatableCSSProperty, Ref<CSSTransition>>;
 
 enum class AcceleratedEffectProperty : uint16_t {
     Invalid = 1 << 0,

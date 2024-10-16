@@ -592,7 +592,7 @@ struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
 
-using StubInfoMap = HashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
+using StubInfoMap = UncheckedKeyHashMap<CodeOrigin, StructureStubInfo*, CodeOriginApproximateHash>;
 
 #endif
 

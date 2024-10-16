@@ -119,7 +119,7 @@ private:
     void providerStopUpdating(PerDomainData&);
     void providerSetEnabledHighAccuracy(PerDomainData&, bool enabled);
 
-    HashMap<WebCore::RegistrableDomain, std::unique_ptr<PerDomainData>> m_perDomainData;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, std::unique_ptr<PerDomainData>> m_perDomainData;
     std::unique_ptr<API::GeolocationProvider> m_clientProvider;
 };
 

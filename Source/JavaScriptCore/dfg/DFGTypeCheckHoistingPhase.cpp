@@ -127,7 +127,7 @@ public:
                     // If the basic block previously only had the SetArgumentDefinitely as its
                     // variable-at-tail, then replace it with this GetLocal.
                     VariableAccessData* variable = node->variableAccessData();
-                    HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
+                    UncheckedKeyHashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
@@ -187,7 +187,7 @@ public:
                     
                 case SetLocal: {
                     VariableAccessData* variable = node->variableAccessData();
-                    HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
+                    UncheckedKeyHashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                     if (iter == m_map.end())
                         break;
                     if (!iter->value.m_structure && !iter->value.m_arrayModeIsValid)
@@ -447,7 +447,7 @@ private:
                 continue;
             if (TypeCheck::hasEnoughVotesToHoist(variable))
                 continue;
-            HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
+            UncheckedKeyHashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
             if (iter == m_map.end())
                 continue;
             TypeCheck::disableHoisting(iter->value);
@@ -476,7 +476,7 @@ private:
                 if (!node)
                     continue;
                 VariableAccessData* variable = node->variableAccessData();
-                HashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
+                UncheckedKeyHashMap<VariableAccessData*, CheckData>::iterator iter = m_map.find(variable);
                 if (iter == m_map.end())
                     continue;
                 if (!TypeCheck::isValidToHoist(iter->value))
@@ -492,7 +492,7 @@ private:
 
     void disableCheckArrayHoisting(VariableAccessData* variable)
     {
-        HashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData());
+        UncheckedKeyHashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData());
         result.iterator->value.disableCheckArrayHoisting();
     }
 
@@ -510,7 +510,7 @@ private:
     
     void noticeStructureCheck(VariableAccessData* variable, RegisteredStructure structure)
     {
-        HashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData(structure.get()));
+        UncheckedKeyHashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData(structure.get()));
         if (result.isNewEntry)
             return;
         if (result.iterator->value.m_structure == structure.get())
@@ -529,7 +529,7 @@ private:
 
     void noticeCheckArray(VariableAccessData* variable, ArrayMode arrayMode)
     {
-        HashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData(arrayMode));
+        UncheckedKeyHashMap<VariableAccessData*, CheckData>::AddResult result = m_map.add(variable, CheckData(arrayMode));
         if (result.isNewEntry)
             return;
         if (!result.iterator->value.m_arrayModeHoistingOkay)
@@ -546,7 +546,7 @@ private:
 
     void noticeStructureCheckAccountingForArrayMode(VariableAccessData* variable, RegisteredStructure structure)
     {
-        HashMap<VariableAccessData*, CheckData>::iterator result = m_map.find(variable);
+        UncheckedKeyHashMap<VariableAccessData*, CheckData>::iterator result = m_map.find(variable);
         if (result == m_map.end())
             return;
         if (!result->value.m_arrayModeHoistingOkay || !result->value.m_arrayModeIsValid)
@@ -562,7 +562,7 @@ private:
             noticeStructureCheckAccountingForArrayMode(variable, set.at(i));
     }
 
-    HashMap<VariableAccessData*, CheckData> m_map;
+    UncheckedKeyHashMap<VariableAccessData*, CheckData> m_map;
 };
 
 bool performTypeCheckHoisting(Graph& graph)

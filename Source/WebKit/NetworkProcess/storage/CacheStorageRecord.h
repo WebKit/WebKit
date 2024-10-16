@@ -71,7 +71,7 @@ struct CacheStorageRecordInformation {
     uint64_t size { 0 };
     URL url;
     bool hasVaryStar { false };
-    HashMap<String, String> varyHeaders;
+    UncheckedKeyHashMap<String, String> varyHeaders;
 };
 
 struct CacheStorageRecord {

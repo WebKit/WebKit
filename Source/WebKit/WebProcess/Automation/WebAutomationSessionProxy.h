@@ -91,8 +91,8 @@ private:
     String m_sessionIdentifier;
     JSC::PrivateName m_scriptObjectIdentifier;
 
-    HashMap<WebCore::FrameIdentifier, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
-    HashMap<WebCore::FrameIdentifier, RefPtr<WebAutomationDOMWindowObserver>> m_frameObservers;
+    UncheckedKeyHashMap<WebCore::FrameIdentifier, Vector<uint64_t>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
+    UncheckedKeyHashMap<WebCore::FrameIdentifier, RefPtr<WebAutomationDOMWindowObserver>> m_frameObservers;
 };
 
 } // namespace WebKit

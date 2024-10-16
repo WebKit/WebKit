@@ -74,7 +74,7 @@ public:
     virtual bool getClientBundleIdentifier(String& clientBundleIdentifier);
     virtual bool getClientProcessName(String& clientProcessName);
     virtual bool getClientSDKAlignedBehaviors(SDKAlignedBehaviors&);
-    virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
+    virtual bool getExtraInitializationData(UncheckedKeyHashMap<String, String>& extraInitializationData);
 
 protected:
     bool hasEntitlement(ASCIILiteral entitlement);

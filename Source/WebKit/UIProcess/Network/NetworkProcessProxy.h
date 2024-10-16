@@ -220,7 +220,7 @@ public:
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, const String& firstPartyHost, const RegistrableDomain& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
-    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
+    void setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
 
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
 
@@ -441,7 +441,7 @@ private:
     struct UploadActivity {
         RefPtr<ProcessAssertion> uiAssertion;
         RefPtr<ProcessAssertion> networkAssertion;
-        HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>> webProcessAssertions;
+        UncheckedKeyHashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>> webProcessAssertions;
     };
     std::optional<UploadActivity> m_uploadActivity;
 
@@ -460,7 +460,7 @@ private:
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     WeakHashMap<WebProcessProxy, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
-    HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
+    UncheckedKeyHashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
 #if PLATFORM(MAC)
     // On macOS, we prevent suspension of the NetworkProcess to avoid kills when holding
     // locked database files. The WebSQLiteDatabaseTracker is not functional on macOS

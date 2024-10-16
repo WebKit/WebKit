@@ -69,8 +69,8 @@ private:
     void removeTaskFromPageMap(WebPageProxyIdentifier, WebCore::ResourceLoaderIdentifier);
     WebProcessProxy* processForTaskIdentifier(WebPageProxy&, WebCore::ResourceLoaderIdentifier) const;
 
-    HashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebPageProxyIdentifier>, Ref<WebURLSchemeTask>> m_tasks;
-    HashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;
+    UncheckedKeyHashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebPageProxyIdentifier>, Ref<WebURLSchemeTask>> m_tasks;
+    UncheckedKeyHashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;
     
     SyncLoadCompletionHandler m_syncLoadCompletionHandler;
 

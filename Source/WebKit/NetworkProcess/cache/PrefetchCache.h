@@ -68,7 +68,7 @@ public:
 private:
     void clearExpiredEntries();
 
-    using PrefetchEntriesMap = HashMap<URL, std::unique_ptr<Entry>>;
+    using PrefetchEntriesMap = UncheckedKeyHashMap<URL, std::unique_ptr<Entry>>;
     std::unique_ptr<PrefetchEntriesMap> m_sessionPrefetches;
 
     using SessionPrefetchExpirationList = Deque<std::tuple<URL, WallTime>>;

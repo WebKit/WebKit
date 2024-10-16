@@ -95,8 +95,8 @@ public:
     };
 
     struct ComputedKeyframe : BaseComputedKeyframe {
-        HashMap<CSSPropertyID, String> styleStrings;
-        HashMap<AtomString, String> customStyleStrings;
+        UncheckedKeyHashMap<CSSPropertyID, String> styleStrings;
+        UncheckedKeyHashMap<AtomString, String> customStyleStrings;
     };
 
     struct ParsedKeyframe : ComputedKeyframe {

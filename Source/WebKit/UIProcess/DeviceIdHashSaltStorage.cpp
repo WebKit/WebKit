@@ -111,14 +111,14 @@ static std::optional<SecurityOriginData> getSecurityOriginData(ASCIILiteral name
     return securityOriginData;
 }
 
-void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&& completionHandler)
+void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(UncheckedKeyHashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         ASSERT(!RunLoop::isMain());
 
         FileSystem::makeAllDirectories(m_deviceIdHashSaltStorageDirectory);
 
-        HashMap<String, std::unique_ptr<HashSaltForOrigin>> deviceIdHashSaltForOrigins;
+        UncheckedKeyHashMap<String, std::unique_ptr<HashSaltForOrigin>> deviceIdHashSaltForOrigins;
         for (auto& origin : FileSystem::listDirectory(m_deviceIdHashSaltStorageDirectory)) {
             auto originPath = FileSystem::pathByAppendingComponent(m_deviceIdHashSaltStorageDirectory, origin);
             auto deviceIdHashSalt = URL::fileURLWithFileSystemPath(originPath).lastPathComponent().toString();

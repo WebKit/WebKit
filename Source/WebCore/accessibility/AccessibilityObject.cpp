@@ -2613,8 +2613,8 @@ AccessibilityOrientation AccessibilityObject::orientation() const
     return AccessibilityOrientation::Undefined;
 }    
 
-using ARIARoleMap = HashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash>;
-using ARIAReverseRoleMap = HashMap<AccessibilityRole, String, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
+using ARIARoleMap = UncheckedKeyHashMap<String, AccessibilityRole, ASCIICaseInsensitiveHash>;
+using ARIAReverseRoleMap = UncheckedKeyHashMap<AccessibilityRole, String, DefaultHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
 
 static ARIARoleMap* gAriaRoleMap = nullptr;
 static ARIAReverseRoleMap* gAriaReverseRoleMap = nullptr;
@@ -3555,7 +3555,7 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     return AccessibilityButtonState::Off;
 }
 
-HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditingStyles() const
+UncheckedKeyHashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditingStyles() const
 {
     auto document = this->document();
     if (!document)
@@ -3565,7 +3565,7 @@ HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditing
     if (!selectionStyle)
         return { };
 
-    HashMap<String, AXEditingStyleValueVariant> styles;
+    UncheckedKeyHashMap<String, AXEditingStyleValueVariant> styles;
     styles.add("bold"_s, selectionStyle->hasStyle(CSSPropertyFontWeight, "bold"_s));
     styles.add("italic"_s, selectionStyle->hasStyle(CSSPropertyFontStyle, "italic"_s));
     styles.add("underline"_s, selectionStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s));

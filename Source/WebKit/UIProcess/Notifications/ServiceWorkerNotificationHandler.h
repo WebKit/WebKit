@@ -57,7 +57,7 @@ private:
 
     WebsiteDataStore* dataStoreForNotificationID(const WTF::UUID&);
 
-    HashMap<WTF::UUID, PAL::SessionID> m_notificationToSessionMap;
+    UncheckedKeyHashMap<WTF::UUID, PAL::SessionID> m_notificationToSessionMap;
 };
 
 } // namespace WebKit

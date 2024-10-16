@@ -375,7 +375,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
     return PlatformCAAnimationCocoa::create(type, keyPath);
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+typedef UncheckedKeyHashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {

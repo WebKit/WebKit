@@ -97,7 +97,7 @@ public:
         , m_generation(generation)
     { }
 
-    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
+    bool flushAndCollectHandles(UncheckedKeyHashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
         Ref flushState = m_flushState;
         if (flushState->wait()) {

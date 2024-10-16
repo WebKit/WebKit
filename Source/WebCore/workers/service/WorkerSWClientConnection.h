@@ -90,26 +90,26 @@ private:
     struct SWClientRequestIdentifierType;
     using SWClientRequestIdentifier = AtomicObjectIdentifier<SWClientRequestIdentifierType>;
 
-    HashMap<SWClientRequestIdentifier, RegistrationCallback> m_matchRegistrationRequests;
-    HashMap<SWClientRequestIdentifier, GetRegistrationsCallback> m_getRegistrationsRequests;
-    HashMap<SWClientRequestIdentifier, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
-    HashMap<SWClientRequestIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
-    HashMap<SWClientRequestIdentifier, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
-    HashMap<SWClientRequestIdentifier, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
-    HashMap<SWClientRequestIdentifier, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
-    HashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, RegistrationCallback> m_matchRegistrationRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, GetRegistrationsCallback> m_getRegistrationsRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, WhenRegistrationReadyCallback> m_whenRegistrationReadyRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>> m_unregisterRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, SubscribeToPushServiceCallback> m_subscribeToPushServiceRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, UnsubscribeFromPushServiceCallback> m_unsubscribeFromPushServiceRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, GetPushSubscriptionCallback> m_getPushSubscriptionRequests;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, ExceptionOrVoidCallback> m_voidCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
 #if ENABLE(NOTIFICATION_EVENT)
-    HashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, GetNotificationsCallback> m_getNotificationsCallbacks;
 #endif
-    HashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
-    HashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
-    HashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
-    HashMap<SWClientRequestIdentifier, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
-    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
-    HashMap<SWClientRequestIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
-    HashMap<SWClientRequestIdentifier, ExceptionOrCookieChangeSubscriptionsCallback> m_cookieChangeSubscriptionsCallback;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, ExceptionOrBackgroundFetchInformationCallback> m_backgroundFetchInformationCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, BackgroundFetchIdentifiersCallback> m_backgroundFetchIdentifiersCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, AbortBackgroundFetchCallback> m_abortBackgroundFetchCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, MatchBackgroundFetchCallback> m_matchBackgroundFetchCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, RetrieveRecordResponseCallback> m_retrieveRecordResponseCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
+    UncheckedKeyHashMap<SWClientRequestIdentifier, ExceptionOrCookieChangeSubscriptionsCallback> m_cookieChangeSubscriptionsCallback;
 };
 
 } // namespace WebCore

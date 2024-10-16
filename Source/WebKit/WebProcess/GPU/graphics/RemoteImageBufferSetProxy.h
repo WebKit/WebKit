@@ -64,7 +64,7 @@ public:
     ThreadSafeImageBufferSetFlusher() = default;
     virtual ~ThreadSafeImageBufferSetFlusher() = default;
     // Returns true if flush succeeded, false if it failed.
-    virtual bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
+    virtual bool flushAndCollectHandles(UncheckedKeyHashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
 };
 
 // A RemoteImageBufferSet is an ImageBufferSet, where the actual ImageBuffers are owned by the GPU process.

@@ -43,7 +43,7 @@ struct UScriptCodeHashTraits : HashTraits<int> {
     static bool isDeletedValue(int value) { return value == -3; }
 };
 
-typedef HashMap<int, String, DefaultHash<int>, UScriptCodeHashTraits> ScriptFontFamilyMap;
+typedef UncheckedKeyHashMap<int, String, DefaultHash<int>, UScriptCodeHashTraits> ScriptFontFamilyMap;
 
 class FontGenericFamilies {
     WTF_MAKE_TZONE_ALLOCATED(FontGenericFamilies);

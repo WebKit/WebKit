@@ -43,7 +43,7 @@ namespace WTF {
     }
 
     // The hash() functions on StringHash and ASCIICaseInsensitiveHash do not support
-    // null strings. get(), contains(), and add() on HashMap<String,..., StringHash>
+    // null strings. get(), contains(), and add() on UncheckedKeyHashMap<String,..., StringHash>
     // cause a null-pointer dereference when passed null strings.
 
     // FIXME: We should really figure out a way to put the computeHash function that's
@@ -238,7 +238,7 @@ namespace WTF {
     };
 
     // FIXME: Find a way to incorporate this functionality into ASCIICaseInsensitiveHash and allow
-    // a HashMap whose keys are type String to perform operations when given a key of type StringView.
+    // a UncheckedKeyHashMap whose keys are type String to perform operations when given a key of type StringView.
     struct ASCIICaseInsensitiveStringViewHashTranslator {
         static unsigned hash(StringView key)
         {

@@ -64,8 +64,8 @@ protected:
 
     std::optional<PatternAttributes> m_attributes;
 
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_imageMap;
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_transformMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_imageMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, AffineTransform> m_transformMap;
 };
 
 }

@@ -92,8 +92,8 @@ public:
 
     using WebExtensionContextSet = HashSet<Ref<WebExtensionContext>>;
     using WebExtensionSet = HashSet<Ref<WebExtension>>;
-    using WebExtensionContextBaseURLMap = HashMap<String, Ref<WebExtensionContext>>;
-    using WebExtensionURLSchemeHandlerMap = HashMap<String, Ref<WebExtensionURLSchemeHandler>>;
+    using WebExtensionContextBaseURLMap = UncheckedKeyHashMap<String, Ref<WebExtensionContext>>;
+    using WebExtensionURLSchemeHandlerMap = UncheckedKeyHashMap<String, Ref<WebExtensionURLSchemeHandler>>;
 
     using WebProcessProxySet = WeakHashSet<WebProcessProxy>;
     using WebProcessPoolSet = WeakHashSet<WebProcessPool>;

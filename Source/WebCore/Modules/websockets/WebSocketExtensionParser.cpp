@@ -113,7 +113,7 @@ bool WebSocketExtensionParser::consumeCharacter(char character)
     return false;
 }
 
-bool WebSocketExtensionParser::parseExtension(String& extensionToken, HashMap<String, String>& extensionParameters)
+bool WebSocketExtensionParser::parseExtension(String& extensionToken, UncheckedKeyHashMap<String, String>& extensionParameters)
 {
     // Parse extension-token.
     if (!consumeToken())

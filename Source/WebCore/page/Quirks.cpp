@@ -95,10 +95,10 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
-static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
+static UncheckedKeyHashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
 {
     // FIXME: Make this a member of Quirks.
-    static MainThreadNeverDestroyed<HashMap<RegistrableDomain, String>> map;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<RegistrableDomain, String>> map;
     return map.get();
 }
 
@@ -336,7 +336,7 @@ bool Quirks::shouldDisableWritingSuggestionsByDefault() const
     return url.host() == "mail.google.com"_s;
 }
 
-void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
+void Quirks::updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&& userAgentStringQuirks)
 {
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();
     quirks.clear();

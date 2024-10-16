@@ -195,7 +195,7 @@ public:
     void removeDataForDomain(const RegistrableDomain&);
 
     Vector<RegistrableDomain> allDomains() const;
-    HashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const;
+    UncheckedKeyHashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const;
     HashSet<RegistrableDomain> domainsExemptFromWebsiteDataDeletion() const;
 
     void didCreateNetworkProcess();
@@ -262,7 +262,7 @@ private:
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
-    HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccess() const;
+    UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccess() const;
 
     struct DomainData {
         unsigned domainID;
@@ -289,7 +289,7 @@ private:
         unsigned subframeUnderTopFrameDomainsCount;
         unsigned topFrameUniqueRedirectsToCount;
     };
-    HashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
+    UncheckedKeyHashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
 
     int predicateValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
     bool predicateBoolValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;

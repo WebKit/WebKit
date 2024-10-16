@@ -74,14 +74,14 @@ static void testSummaryProviders()
     aVectorWithOneItem.reserveCapacity(16);
     aVectorWithOneItem.append(1);
 
-    HashMap<unsigned, int> hashMapOfInts;
+    UncheckedKeyHashMap<unsigned, int> hashMapOfInts;
     hashMapOfInts.add(12, 23);
     hashMapOfInts.add(34, 45);
 
     HashSet<unsigned> hashSetOfInts;
     hashSetOfInts.add(42);
 
-    HashMap<unsigned, Vector<int>> hashMapOfVectors;
+    UncheckedKeyHashMap<unsigned, Vector<int>> hashMapOfVectors;
     hashMapOfVectors.add(1, Vector<int>({2, 3}));
 
     OptionSet<ExampleFlags> exampleFlagsEmpty;

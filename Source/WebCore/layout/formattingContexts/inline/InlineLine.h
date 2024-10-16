@@ -200,7 +200,7 @@ public:
     // FIXME: This is temporary and should be removed when annotation transitions to inline box structure.
     void adjustContentRightWithRubyAlign(InlineLayoutUnit offset) { m_rubyAlignContentRightOffset = offset; }
 
-    using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
+    using InlineBoxListWithClonedDecorationEnd = UncheckedKeyHashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
 
     struct Result {

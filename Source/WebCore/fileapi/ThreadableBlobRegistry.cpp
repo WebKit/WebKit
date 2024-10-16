@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-using BlobURLOriginMap = HashMap<String, RefPtr<SecurityOrigin>>;
+using BlobURLOriginMap = UncheckedKeyHashMap<String, RefPtr<SecurityOrigin>>;
 
 static BlobURLOriginMap& originMap()
 {

@@ -224,7 +224,7 @@ std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType 
     if (!parentID) {
         RELEASE_ASSERT(nodeType == ScrollingNodeType::MainFrame || nodeType == ScrollingNodeType::Subframe);
         ASSERT(!childIndex || childIndex == notFound);
-        // If we're resetting the root node, we should clear the HashMap and destroy the current children.
+        // If we're resetting the root node, we should clear the UncheckedKeyHashMap and destroy the current children.
         clear();
 
         setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, nodeType, newNodeID));

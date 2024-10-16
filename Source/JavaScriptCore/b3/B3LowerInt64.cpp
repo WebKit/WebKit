@@ -1200,8 +1200,8 @@ private:
     InsertionSet m_insertionSet;
     BlockInsertionSet m_blockInsertionSet;
     bool m_changed;
-    HashMap<Value*, Value*> m_rewrittenTupleResults;
-    HashMap<Value*, std::pair<Value*, Value*>> m_mapping;
+    UncheckedKeyHashMap<Value*, Value*> m_rewrittenTupleResults;
+    UncheckedKeyHashMap<Value*, std::pair<Value*, Value*>> m_mapping;
     HashSet<Value*> m_syntheticValues;
 };
 

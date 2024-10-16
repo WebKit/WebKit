@@ -40,7 +40,7 @@ public:
     
     CString getID(const T* value)
     {
-        typename HashMap<const T*, CString>::iterator iter = m_forwardMap.find(value);
+        typename UncheckedKeyHashMap<const T*, CString>::iterator iter = m_forwardMap.find(value);
         if (iter != m_forwardMap.end())
             return iter->value;
         
@@ -81,7 +81,7 @@ public:
         Vector<CString> keys;
         unsigned maxKeySize = 0;
         for (
-            typename HashMap<CString, const T*>::const_iterator iter = m_backwardMap.begin();
+            typename UncheckedKeyHashMap<CString, const T*>::const_iterator iter = m_backwardMap.begin();
             iter != m_backwardMap.end();
             ++iter) {
             keys.append(iter->key);
@@ -109,8 +109,8 @@ public:
         return out.toCString();
     }
     
-    HashMap<const T*, CString> m_forwardMap;
-    HashMap<CString, const T*> m_backwardMap;
+    UncheckedKeyHashMap<const T*, CString> m_forwardMap;
+    UncheckedKeyHashMap<CString, const T*> m_backwardMap;
 };
 
 } // namespace WTF

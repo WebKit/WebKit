@@ -85,9 +85,9 @@ public:
         
         m_graph.ensureCPSNaturalLoops();
         CPSNaturalLoops& naturalLoops = *m_graph.m_cpsNaturalLoops;
-        HashMap<const NaturalLoop*, BytecodeIndex> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);
+        UncheckedKeyHashMap<const NaturalLoop*, BytecodeIndex> naturalLoopToLoopHint = buildNaturalLoopToLoopHintMap(naturalLoops);
 
-        HashMap<BytecodeIndex, LoopHintDescriptor> tierUpHierarchy;
+        UncheckedKeyHashMap<BytecodeIndex, LoopHintDescriptor> tierUpHierarchy;
 
         InsertionSet insertionSet(m_graph);
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -183,9 +183,9 @@ private:
         return true;
     }
 
-    HashMap<const NaturalLoop*, BytecodeIndex> buildNaturalLoopToLoopHintMap(const CPSNaturalLoops& naturalLoops)
+    UncheckedKeyHashMap<const NaturalLoop*, BytecodeIndex> buildNaturalLoopToLoopHintMap(const CPSNaturalLoops& naturalLoops)
     {
-        HashMap<const NaturalLoop*, BytecodeIndex> naturalLoopsToLoopHint;
+        UncheckedKeyHashMap<const NaturalLoop*, BytecodeIndex> naturalLoopsToLoopHint;
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {

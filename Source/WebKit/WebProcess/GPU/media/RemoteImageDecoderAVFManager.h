@@ -70,7 +70,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&, size_t frameCount, const WebCore::IntSize&, bool hasTrack);
 
-    HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
+    UncheckedKeyHashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };

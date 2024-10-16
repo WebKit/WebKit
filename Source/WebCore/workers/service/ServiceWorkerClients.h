@@ -62,7 +62,7 @@ public:
 private:
     ServiceWorkerClients() = default;
 
-    HashMap<PromiseIdentifier, Ref<DeferredPromise>> m_pendingPromises;
+    UncheckedKeyHashMap<PromiseIdentifier, Ref<DeferredPromise>> m_pendingPromises;
 };
 
 WebCoreOpaqueRoot root(ServiceWorkerClients*);

@@ -146,7 +146,7 @@ String WebExtensionCommand::shortcutString() const
     if (!flags || key.isEmpty())
         return emptyString();
 
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+    static NeverDestroyed<UncheckedKeyHashMap<String, String>> specialKeyMap = UncheckedKeyHashMap<String, String> {
         { ","_s, "Comma"_s },
         { "."_s, "Period"_s },
         { " "_s, "Space"_s },
@@ -220,7 +220,7 @@ String WebExtensionCommand::userVisibleShortcut() const
     NSKeyboardShortcut *shortcut = [NSKeyboardShortcut shortcutWithKeyEquivalent:key modifierMask:flags.toRaw()];
     return shortcut.localizedDisplayName ?: @"";
 #else
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+    static NeverDestroyed<UncheckedKeyHashMap<String, String>> specialKeyMap = UncheckedKeyHashMap<String, String> {
         { ","_s, ","_s },
         { "."_s, "."_s },
         { " "_s, "Space"_s },
@@ -321,7 +321,7 @@ bool WebExtensionCommand::matchesEvent(NSEvent *event) const
     if ((event.modifierFlags & expectedModifierFlags) != expectedModifierFlags)
         return false;
 
-    static NeverDestroyed<HashMap<String, uint16_t>> specialKeyMap = HashMap<String, uint16_t> {
+    static NeverDestroyed<UncheckedKeyHashMap<String, uint16_t>> specialKeyMap = UncheckedKeyHashMap<String, uint16_t> {
         { ","_s, kVK_ANSI_Comma },
         { "."_s, kVK_ANSI_Period },
         { " "_s, kVK_Space },

@@ -98,7 +98,7 @@ private:
 
     WeakRef<NetworkProcess> m_networkProcess;
 
-    typedef HashMap<LegacyCustomProtocolID, CustomProtocol> CustomProtocolMap;
+    typedef UncheckedKeyHashMap<LegacyCustomProtocolID, CustomProtocol> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap WTF_GUARDED_BY_LOCK(m_customProtocolMapLock);
     Lock m_customProtocolMapLock;
 

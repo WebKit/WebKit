@@ -47,7 +47,7 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
+    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const UncheckedKeyHashMap<String, ConstantValue>& constantValues)
         : m_stringBuilder(stringBuilder)
         , m_shaderModule(shaderModule)
         , m_prepareResult(prepareResult)
@@ -143,7 +143,7 @@ private:
     AST::Continuing*m_continuing { nullptr };
     HashSet<AST::Function*> m_visitedFunctions;
     PrepareResult& m_prepareResult;
-    const HashMap<String, ConstantValue>& m_constantValues;
+    const UncheckedKeyHashMap<String, ConstantValue>& m_constantValues;
 };
 
 static ASCIILiteral serializeAddressSpace(AddressSpace addressSpace)
@@ -2693,7 +2693,7 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
         });
 }
 
-void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
+void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule, PrepareResult& prepareResult, const UncheckedKeyHashMap<String, ConstantValue>& constantValues)
 {
     FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues);
     functionDefinitionWriter.write();

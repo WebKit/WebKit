@@ -53,9 +53,9 @@ public:
     gpointer wrappedObject(JSGlobalContextRef, JSObjectRef) const;
 
 private:
-    HashMap<JSValueRef, JSCValue*> m_cachedGObjectWrappers;
+    UncheckedKeyHashMap<JSValueRef, JSCValue*> m_cachedGObjectWrappers;
     std::unique_ptr<JSC::WeakGCMap<gpointer, JSC::JSObject>> m_cachedJSWrappers;
-    HashMap<JSClassRef, GRefPtr<JSCClass>> m_classMap;
+    UncheckedKeyHashMap<JSClassRef, GRefPtr<JSCClass>> m_classMap;
 };
 
 } // namespace JSC

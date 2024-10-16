@@ -51,7 +51,7 @@ protected:
 
 private:
     Vector<void*> m_blocks;
-    HashMap<void*, unsigned> m_blockIndices;
+    UncheckedKeyHashMap<void*, unsigned> m_blockIndices;
     BitVector m_committed;
     unsigned m_firstUncommitted { 0 };
     Lock m_lock;

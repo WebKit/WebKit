@@ -89,7 +89,7 @@ private:
     uint32_t m_displayID { 0 };
     unsigned long m_bufferRenderedID { 0 };
     CompletionHandler<void()> m_nextPresentationUpdateCallback;
-    HashMap<uint32_t, GRefPtr<WPEEvent>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_touchEvents;
+    UncheckedKeyHashMap<uint32_t, GRefPtr<WPEEvent>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_touchEvents;
 #if ENABLE(FULLSCREEN_API)
     bool m_viewWasAlreadyInFullScreen { false };
 #endif

@@ -169,7 +169,7 @@ private:
     FixedVector<StructureChainInvalidationWatchpoint> m_cachedPropertyNameEnumeratorWatchpoints;
     WriteBarrier<JSImmutableButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
 
-    typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
+    typedef UncheckedKeyHashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
 #ifdef NDEBUG
     static_assert(sizeof(PropertyWatchpointMap) == sizeof(void*), "StructureRareData should remain small");
 #endif

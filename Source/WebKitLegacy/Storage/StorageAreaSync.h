@@ -58,7 +58,7 @@ private:
     StorageAreaSync(RefPtr<WebCore::StorageSyncManager>&&, Ref<StorageAreaImpl>&&, const String& databaseIdentifier);
 
     WebCore::Timer m_syncTimer;
-    HashMap<String, String> m_changedItems;
+    UncheckedKeyHashMap<String, String> m_changedItems;
     bool m_itemsCleared;
 
     bool m_finalSyncScheduled;
@@ -84,12 +84,12 @@ private:
 
     void syncTimerFired();
     void openDatabase(OpenDatabaseParamType openingStrategy);
-    void sync(bool clearItems, const HashMap<String, String>& items);
+    void sync(bool clearItems, const UncheckedKeyHashMap<String, String>& items);
 
     const String m_databaseIdentifier;
 
     Lock m_syncLock;
-    HashMap<String, String> m_itemsPendingSync;
+    UncheckedKeyHashMap<String, String> m_itemsPendingSync;
     bool m_clearItemsWhileSyncing;
     bool m_syncScheduled;
     bool m_syncInProgress;

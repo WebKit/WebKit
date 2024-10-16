@@ -47,14 +47,14 @@ protected:
     StyleRuleGroup& groupRule() { return m_groupRule; }
     void reattach(StyleRuleBase&) override;
     void appendCSSTextForItems(StringBuilder&) const;
-    void appendCSSTextWithReplacementURLsForItems(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+    void appendCSSTextWithReplacementURLsForItems(StringBuilder&, const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const;
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&) override;
 
 private:
     bool isGroupingRule() const final { return true; }
     void appendCSSTextForItemsInternal(StringBuilder&, StringBuilder&) const;
     void cssTextForRules(StringBuilder&) const;
-    void cssTextForRulesWithReplacementURLs(StringBuilder&, const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const;
+    void cssTextForRulesWithReplacementURLs(StringBuilder&, const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const;
 
     Ref<StyleRuleGroup> m_groupRule;
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;

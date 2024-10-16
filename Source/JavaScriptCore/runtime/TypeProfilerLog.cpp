@@ -72,8 +72,8 @@ void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
         before = MonotonicTime::now();
     }
 
-    HashMap<Structure*, RefPtr<StructureShape>> cachedMonoProtoShapes;
-    HashMap<std::pair<Structure*, JSCell*>, RefPtr<StructureShape>> cachedPolyProtoShapes;
+    UncheckedKeyHashMap<Structure*, RefPtr<StructureShape>> cachedMonoProtoShapes;
+    UncheckedKeyHashMap<std::pair<Structure*, JSCell*>, RefPtr<StructureShape>> cachedPolyProtoShapes;
 
     LogEntry* entry = m_logStartPtr;
 

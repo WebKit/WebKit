@@ -46,7 +46,7 @@ static void ensureAudioDataDebugCategoryInitialized()
 
 GstAudioConverter* getAudioConvertedForFormat(StringView&& key, GstAudioInfo& sourceInfo, GstAudioInfo& destinationInfo)
 {
-    static NeverDestroyed<HashMap<String, GUniquePtr<GstAudioConverter>>> audioConverters;
+    static NeverDestroyed<UncheckedKeyHashMap<String, GUniquePtr<GstAudioConverter>>> audioConverters;
     auto result = audioConverters->ensure(key.toString(), [&] {
         return GUniquePtr<GstAudioConverter>(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_NONE, &sourceInfo, &destinationInfo, nullptr));
     });

@@ -125,7 +125,7 @@ private:
 
     Ref<WorkQueue> m_queue;
     UniqueRef<WebCore::SQLiteDatabase> m_db;
-    HashMap<ASCIILiteral, UniqueRef<WebCore::SQLiteStatement>> m_statements;
+    UncheckedKeyHashMap<ASCIILiteral, UniqueRef<WebCore::SQLiteStatement>> m_statements;
 };
 
 } // namespace WebCore

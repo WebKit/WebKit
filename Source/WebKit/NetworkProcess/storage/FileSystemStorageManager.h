@@ -62,9 +62,9 @@ private:
     String m_path;
     WeakPtr<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
-    HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
-    HashMap<WebCore::FileSystemHandleIdentifier, RefPtr<FileSystemStorageHandle>> m_handles;
-    HashMap<String, WebCore::FileSystemHandleIdentifier> m_lockMap;
+    UncheckedKeyHashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
+    UncheckedKeyHashMap<WebCore::FileSystemHandleIdentifier, RefPtr<FileSystemStorageHandle>> m_handles;
+    UncheckedKeyHashMap<String, WebCore::FileSystemHandleIdentifier> m_lockMap;
 };
 
 } // namespace WebKit

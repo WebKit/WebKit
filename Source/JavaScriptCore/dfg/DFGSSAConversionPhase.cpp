@@ -59,7 +59,7 @@ public:
         m_graph.clearReplacements();
         m_graph.clearCPSCFGData();
 
-        HashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
+        UncheckedKeyHashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
 
         m_graph.m_numberOfEntrypoints = m_graph.m_roots.size();
         m_graph.m_argumentFormats.resize(m_graph.m_numberOfEntrypoints);
@@ -480,8 +480,8 @@ public:
 
 private:
     InsertionSet m_insertionSet;
-    HashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
-    HashMap<Node*, Node*> m_argumentMapping;
+    UncheckedKeyHashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
+    UncheckedKeyHashMap<Node*, Node*> m_argumentMapping;
     HashSet<Node*> m_argumentGetters;
     Vector<VariableAccessData*> m_variableForSSAIndex;
 };

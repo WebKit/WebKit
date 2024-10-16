@@ -74,7 +74,7 @@ private:
     bool isOrthogonalGridItemForBaseline(const RenderBox&) const;
     bool isParallelToAlignmentAxisForGridItem(const RenderBox&, GridAxis) const;
 
-    typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
+    typedef UncheckedKeyHashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
     // Grid Container's WritingMode, used to determine grid item's orthogonality.
     WritingMode m_writingMode;

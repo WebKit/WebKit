@@ -104,8 +104,8 @@ private:
     RefPtr<IPC::Connection> m_connection;
     RefPtr<RemoteHandlerConnection> m_remoteHandlerConnection;
     RefPtr<RemoteSourceConnection> m_remoteSourceConnection;
-    HashMap<WebCore::RTCDataChannelLocalIdentifier, UniqueRef<WebCore::RTCDataChannelRemoteSource>> m_sources;
-    HashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers;
+    UncheckedKeyHashMap<WebCore::RTCDataChannelLocalIdentifier, UniqueRef<WebCore::RTCDataChannelRemoteSource>> m_sources;
+    UncheckedKeyHashMap<WebCore::RTCDataChannelLocalIdentifier, RemoteHandler> m_handlers;
 };
 
 } // namespace WebKit

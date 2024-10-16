@@ -135,7 +135,7 @@ template<typename T>
 void loadConstantImpl(BasicBlock* block, T value, B3::Air::Opcode move, Tmp tmp, Tmp scratch)
 {
     static Lock lock;
-    static StdMap<T, T*>* map; // I'm not messing with HashMap's problems with integers.
+    static StdMap<T, T*>* map; // I'm not messing with UncheckedKeyHashMap's problems with integers.
 
     Locker locker { lock };
     if (!map)

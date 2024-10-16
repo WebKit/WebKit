@@ -85,7 +85,7 @@ struct SpaceSplitStringTableKeyTraits : public HashTraits<AtomString>
     static const int minimumTableSize = WTF::HashTableCapacityForSize<typicalNumberOfSpaceSplitString>::value;
 };
 
-typedef HashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
+typedef UncheckedKeyHashMap<AtomString, SpaceSplitStringData*, AtomStringHash, SpaceSplitStringTableKeyTraits> SpaceSplitStringTable;
 
 static SpaceSplitStringTable& spaceSplitStringTable()
 {

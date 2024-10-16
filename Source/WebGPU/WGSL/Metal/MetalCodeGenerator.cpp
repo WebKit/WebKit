@@ -65,7 +65,7 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
     }
 }
 
-String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
+String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const UncheckedKeyHashMap<String, ConstantValue>& constantValues)
 {
     StringBuilder stringBuilder;
     stringBuilder.append(metalCodePrologue());

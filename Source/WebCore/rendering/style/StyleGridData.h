@@ -39,13 +39,13 @@
 namespace WebCore {
 
 struct NamedGridLinesMap {
-    HashMap<String, Vector<unsigned>> map;
+    UncheckedKeyHashMap<String, Vector<unsigned>> map;
 
     friend bool operator==(const NamedGridLinesMap&, const NamedGridLinesMap&) = default;
 };
 
 struct OrderedNamedGridLinesMap {
-    HashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    UncheckedKeyHashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
 };
 
 typedef std::variant<GridTrackSize, Vector<String>> RepeatEntry;

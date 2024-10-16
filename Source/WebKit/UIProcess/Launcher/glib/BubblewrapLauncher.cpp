@@ -717,7 +717,7 @@ static std::optional<CString> directoryContainingDBusSocket(const char* dbusAddr
     return std::nullopt;
 }
 
-static void addExtraPaths(const HashMap<CString, SandboxPermission>& paths, Vector<CString>& args)
+static void addExtraPaths(const UncheckedKeyHashMap<CString, SandboxPermission>& paths, Vector<CString>& args)
 {
     for (const auto& pathAndPermission : paths) {
         args.appendVector(Vector<CString>({

@@ -85,7 +85,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::gpuProcessConnectionDidClose(GPUP
 
 void RemoteVideoFrameObjectHeapProxyProcessor::clearCallbacks()
 {
-    HashMap<RemoteVideoFrameIdentifier, Callback> callbacks;
+    UncheckedKeyHashMap<RemoteVideoFrameIdentifier, Callback> callbacks;
     {
         Locker lock(m_callbacksLock);
         callbacks = std::exchange(m_callbacks, { });

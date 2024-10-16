@@ -71,9 +71,9 @@ public:
 private:
     ObjectHeap();
 
-    HashMap<ShapeDetectionIdentifier, Ref<RemoteBarcodeDetector>> m_barcodeDetectors;
-    HashMap<ShapeDetectionIdentifier, Ref<RemoteFaceDetector>> m_faceDetectors;
-    HashMap<ShapeDetectionIdentifier, Ref<RemoteTextDetector>> m_textDetectors;
+    UncheckedKeyHashMap<ShapeDetectionIdentifier, Ref<RemoteBarcodeDetector>> m_barcodeDetectors;
+    UncheckedKeyHashMap<ShapeDetectionIdentifier, Ref<RemoteFaceDetector>> m_faceDetectors;
+    UncheckedKeyHashMap<ShapeDetectionIdentifier, Ref<RemoteTextDetector>> m_textDetectors;
 };
 
 } // namespace WebKit::ShapeDetection

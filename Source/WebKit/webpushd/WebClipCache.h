@@ -49,7 +49,7 @@ private:
     void persist();
 
     String m_path;
-    HashMap<std::tuple<String, WebCore::SecurityOriginData>, String> m_preferredWebClipIdentifiers;
+    UncheckedKeyHashMap<std::tuple<String, WebCore::SecurityOriginData>, String> m_preferredWebClipIdentifiers;
 };
 
 } // namespace WebPushD

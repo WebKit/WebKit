@@ -61,7 +61,7 @@ private:
     void postMessageToRemote(const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
     void postMessageLocally(const WebCore::PartitionedSecurityOrigin&, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&&, Ref<WTF::CallbackAggregator>&&);
 
-    HashMap<WebCore::PartitionedSecurityOrigin, HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>> m_channelsPerOrigin;
+    UncheckedKeyHashMap<WebCore::PartitionedSecurityOrigin, UncheckedKeyHashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>> m_channelsPerOrigin;
 };
 
 } // namespace WebKit

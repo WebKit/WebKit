@@ -45,7 +45,7 @@ enum class FontFeatureValuesType {
 
 class FontFeatureValues : public RefCounted<FontFeatureValues> {
 public:
-    using Tags = HashMap<String, Vector<unsigned>>;
+    using Tags = UncheckedKeyHashMap<String, Vector<unsigned>>;
     static Ref<FontFeatureValues> create() { return adoptRef(*new FontFeatureValues()); }
     virtual ~FontFeatureValues() = default;
 

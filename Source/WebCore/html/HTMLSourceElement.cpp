@@ -210,7 +210,7 @@ const MQ::MediaQueryList& HTMLSourceElement::parsedMediaAttribute(Document& docu
     return m_cachedParsedMediaAttribute.value();
 }
 
-Attribute HTMLSourceElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+Attribute HTMLSourceElement::replaceURLsInAttributeValue(const Attribute& attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings) const
 {
     if (attribute.name() != srcsetAttr)
         return attribute;

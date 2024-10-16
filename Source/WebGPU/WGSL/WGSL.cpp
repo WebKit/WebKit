@@ -95,7 +95,7 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts)
+inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule, const UncheckedKeyHashMap<String, PipelineLayout*>& pipelineLayouts)
 {
     CompilationScope compilationScope(shaderModule);
 
@@ -103,7 +103,7 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
     auto result = [&]() -> std::variant<PrepareResult, Error> {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        HashMap<String, Reflection::EntryPointInformation> entryPoints;
+        UncheckedKeyHashMap<String, Reflection::EntryPointInformation> entryPoints;
 
         RUN_PASS(insertBoundsChecks, shaderModule);
         RUN_PASS(rewritePointers, shaderModule);
@@ -120,7 +120,7 @@ inline std::variant<PrepareResult, Error> prepareImpl(ShaderModule& shaderModule
     return result;
 }
 
-std::variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, HashMap<String, ConstantValue>& constantValues)
+std::variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& prepareResult, UncheckedKeyHashMap<String, ConstantValue>& constantValues)
 {
     PhaseTimes phaseTimes;
     String result;
@@ -134,19 +134,19 @@ std::variant<String, Error> generate(ShaderModule& shaderModule, PrepareResult& 
     return { result };
 }
 
-std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const HashMap<String, PipelineLayout*>& pipelineLayouts)
+std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const UncheckedKeyHashMap<String, PipelineLayout*>& pipelineLayouts)
 {
     return prepareImpl(ast, pipelineLayouts);
 }
 
 std::variant<PrepareResult, Error> prepare(ShaderModule& ast, const String& entryPointName, PipelineLayout* pipelineLayout)
 {
-    HashMap<String, PipelineLayout*> pipelineLayouts;
+    UncheckedKeyHashMap<String, PipelineLayout*> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
     return prepareImpl(ast, pipelineLayouts);
 }
 
-std::optional<ConstantValue> evaluate(const AST::Expression& expression, const HashMap<String, ConstantValue>& constants)
+std::optional<ConstantValue> evaluate(const AST::Expression& expression, const UncheckedKeyHashMap<String, ConstantValue>& constants)
 {
     if (auto constantValue = expression.constantValue())
         return *constantValue;

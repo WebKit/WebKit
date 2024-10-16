@@ -154,9 +154,9 @@ private:
     std::unique_ptr<HeapSnapshot> m_snapshot;
     Lock m_buildingEdgeMutex;
     Vector<HeapSnapshotEdge> m_edges;
-    HashMap<JSCell*, RootData> m_rootData;
-    HashMap<JSCell*, void*> m_wrappedObjectPointers;
-    HashMap<JSCell*, String> m_cellLabels;
+    UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
+    UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
+    UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
     HashSet<JSCell*> m_appendedCells;
     SnapshotType m_snapshotType;
 };

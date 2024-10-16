@@ -50,8 +50,8 @@ public:
 
     WEBCORE_EXPORT bool contains(const String& key) const;
 
-    WEBCORE_EXPORT void importItems(HashMap<String, String>&&);
-    const HashMap<String, String>& items() const { return m_impl->map; }
+    WEBCORE_EXPORT void importItems(UncheckedKeyHashMap<String, String>&&);
+    const UncheckedKeyHashMap<String, String>& items() const { return m_impl->map; }
 
     unsigned quota() const { return m_quotaSize; }
 
@@ -71,8 +71,8 @@ private:
 
         Ref<Impl> copy() const;
 
-        HashMap<String, String> map;
-        HashMap<String, String>::iterator iterator { map.end() };
+        UncheckedKeyHashMap<String, String> map;
+        UncheckedKeyHashMap<String, String>::iterator iterator { map.end() };
         unsigned iteratorIndex { std::numeric_limits<unsigned>::max() };
         unsigned currentSize { 0 };
     };

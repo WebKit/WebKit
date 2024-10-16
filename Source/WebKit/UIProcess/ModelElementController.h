@@ -98,7 +98,7 @@ private:
     WeakPtr<WebPageProxy> m_webPageProxy;
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     RetainPtr<ASVInlinePreview> previewForUUID(const String&);
-    HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
+    UncheckedKeyHashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
 #endif
 };
 

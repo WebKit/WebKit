@@ -80,7 +80,7 @@ public:
         return false;
     }
 
-    virtual HashMap<WTF::String, bool> notificationPermissions()
+    virtual UncheckedKeyHashMap<WTF::String, bool> notificationPermissions()
     {
         return { };
     }

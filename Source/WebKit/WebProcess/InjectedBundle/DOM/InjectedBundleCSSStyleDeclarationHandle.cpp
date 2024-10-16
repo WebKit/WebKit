@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMStyleDeclarationHandleCache = HashMap<SingleThreadWeakRef<CSSStyleDeclaration>, WeakRef<InjectedBundleCSSStyleDeclarationHandle>>;
+using DOMStyleDeclarationHandleCache = UncheckedKeyHashMap<SingleThreadWeakRef<CSSStyleDeclaration>, WeakRef<InjectedBundleCSSStyleDeclarationHandle>>;
 
 static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
 {

@@ -109,7 +109,7 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
     return !isVarying;
 }
 
-bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions& options)
+bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const UncheckedKeyHashMap<String, String>& varyHeaders, const CacheQueryOptions& options)
 {
     if (!matchURLs(request, url, options))
         return false;

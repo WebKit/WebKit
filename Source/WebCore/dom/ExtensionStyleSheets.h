@@ -94,7 +94,7 @@ private:
 
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedUserStyleSheets;
     mutable Vector<RefPtr<CSSStyleSheet>> m_injectedAuthorStyleSheets;
-    mutable HashMap<RefPtr<CSSStyleSheet>, String> m_injectedStyleSheetToSource;
+    mutable UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> m_injectedStyleSheetToSource;
     mutable bool m_injectedStyleSheetCacheValid { false };
 
     Vector<RefPtr<CSSStyleSheet>> m_userStyleSheets;

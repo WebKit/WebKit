@@ -125,7 +125,7 @@ public:
         Defer = 1 << 1,
     };
     using BlackboxFlags = OptionSet<BlackboxFlag>;
-    using BlackboxConfiguration = HashMap<BlackboxRange, BlackboxFlags>;
+    using BlackboxConfiguration = UncheckedKeyHashMap<BlackboxRange, BlackboxFlags>;
     void setBlackboxConfiguration(SourceID, BlackboxConfiguration&&);
     void setBlackboxBreakpointEvaluations(bool);
     void clearBlackbox();
@@ -327,8 +327,8 @@ private:
 
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
-    HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
-    HashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
+    UncheckedKeyHashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
+    UncheckedKeyHashMap<SourceID, BlackboxConfiguration, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxConfigurations;
     bool m_blackboxBreakpointEvaluations : 1;
 
     bool m_pauseAtNextOpportunity : 1;
@@ -349,8 +349,8 @@ private:
     SourceID m_lastExecutedSourceID;
     bool m_afterBlackboxedScript { false };
 
-    using LineToBreakpointsMap = HashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
-    HashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;
+    using LineToBreakpointsMap = UncheckedKeyHashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
+    UncheckedKeyHashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;
     HashSet<Ref<Breakpoint>> m_breakpoints;
     RefPtr<Breakpoint> m_specialBreakpoint;
     ListHashSet<Ref<Breakpoint>> m_deferredBreakpoints;

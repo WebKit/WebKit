@@ -172,7 +172,7 @@ private:
         void revokeAccess(WebProcessProxy&);
         std::optional<PasteboardAccessType> accessType(WebProcessProxy&) const;
     };
-    HashMap<String, PasteboardAccessInformation> m_pasteboardNameToAccessInformationMap;
+    UncheckedKeyHashMap<String, PasteboardAccessInformation> m_pasteboardNameToAccessInformationMap;
 #endif
 };
 

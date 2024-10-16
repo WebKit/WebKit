@@ -76,7 +76,7 @@ using namespace WebCore;
 //------------------------------------------------------------------------------------------
 // DOMNode
 
-typedef HashMap<const QualifiedName::QualifiedNameImpl*, Class> ObjCClassMap;
+typedef UncheckedKeyHashMap<const QualifiedName::QualifiedNameImpl*, Class> ObjCClassMap;
 static ObjCClassMap* elementClassMap;
 
 static void addElementClass(const QualifiedName& tag, Class objCClass)

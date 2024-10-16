@@ -564,7 +564,7 @@ struct IsFirstLastIndex {
     std::optional<size_t> first;
     std::optional<size_t> last;
 };
-using IsFirstLastIndexesMap = HashMap<const Box*, IsFirstLastIndex>;
+using IsFirstLastIndexesMap = UncheckedKeyHashMap<const Box*, IsFirstLastIndex>;
 void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& contentRightInInlineDirectionVisualOrder, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree& displayBoxTree, InlineDisplay::Boxes& boxes, const IsFirstLastIndexesMap& isFirstLastIndexesMap)
 {
     auto writingMode = root().style().writingMode();

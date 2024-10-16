@@ -177,7 +177,7 @@ _expected_model_base = {
         {
             'name': 'TemplateTest',
             'parameters': (
-                ('HashMap<String, std::pair<String, uint64_t>>', 'a'),
+                ('UncheckedKeyHashMap<String, std::pair<String, uint64_t>>', 'a'),
             ),
             'conditions': (None),
         },

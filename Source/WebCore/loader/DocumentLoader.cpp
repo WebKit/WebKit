@@ -160,9 +160,9 @@ static void setAllDefersLoading(const ResourceLoaderMap& loaders, bool defers)
         loader->setDefersLoading(defers);
 }
 
-static HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>& scriptExecutionContextIdentifierToLoaderMap()
+static UncheckedKeyHashMap<ScriptExecutionContextIdentifier, DocumentLoader*>& scriptExecutionContextIdentifierToLoaderMap()
 {
-    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, DocumentLoader*>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<ScriptExecutionContextIdentifier, DocumentLoader*>> map;
     return map.get();
 }
 
@@ -2634,7 +2634,7 @@ void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceErr
 
 #endif // ENABLE(CONTENT_FILTERING)
 
-void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>& patterns)
+void DocumentLoader::setActiveContentRuleListActionPatterns(const UncheckedKeyHashMap<String, Vector<String>>& patterns)
 {
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> parsedPatternMap;
 

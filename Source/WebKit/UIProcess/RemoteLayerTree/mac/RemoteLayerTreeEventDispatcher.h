@@ -188,7 +188,7 @@ private:
     // For WTF_ACQUIRES_LOCK
     friend class RemoteScrollingCoordinatorProxyMac;
     Lock m_effectStacksLock;
-    HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAcceleratedEffectStack>> m_effectStacks WTF_GUARDED_BY_LOCK(m_effectStacksLock);
+    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAcceleratedEffectStack>> m_effectStacks WTF_GUARDED_BY_LOCK(m_effectStacksLock);
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)

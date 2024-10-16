@@ -69,9 +69,9 @@ static RetainPtr<NSString>& globalException()
 // FIXME: A new object can happen to be equal to the old one, so even pointer comparison is not safe. Maybe we can use NeverDestroyed<JSC::Weak>?
 static JSGlobalObject* s_exceptionEnvironment;
 
-static HashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
+static UncheckedKeyHashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
 {
-    static NeverDestroyed<HashMap<CFTypeRef, ObjcInstance*>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<CFTypeRef, ObjcInstance*>> map;
     return map;
 }
 

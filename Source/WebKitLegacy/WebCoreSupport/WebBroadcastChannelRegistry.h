@@ -41,6 +41,6 @@ public:
 private:
     WebBroadcastChannelRegistry() = default;
 
-    using NameToChannelIdentifiersMap = HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>;
-    HashMap<WebCore::PartitionedSecurityOrigin, NameToChannelIdentifiersMap> m_channels;
+    using NameToChannelIdentifiersMap = UncheckedKeyHashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>;
+    UncheckedKeyHashMap<WebCore::PartitionedSecurityOrigin, NameToChannelIdentifiersMap> m_channels;
 };

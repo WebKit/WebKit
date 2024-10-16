@@ -112,7 +112,7 @@ public:
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
 
     WEBCORE_EXPORT static SWServerWorker* existingWorkerForIdentifier(ServiceWorkerIdentifier);
-    static HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& allWorkers();
+    static UncheckedKeyHashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& allWorkers();
 
     const ServiceWorkerData& data() const { return m_data; }
     ServiceWorkerContextData contextData() const;

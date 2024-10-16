@@ -939,7 +939,7 @@ void DatabaseTracker::recordCreatingDatabase(const SecurityOriginData& origin, c
 {
     ASSERT(m_databaseGuard.isHeld());
 
-    // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
+    // We don't use UncheckedKeyHashMap::ensure here to avoid making an isolated copy of the origin every time.
     auto it = m_beingCreated.find(origin);
     if (it == m_beingCreated.end())
         it = m_beingCreated.add(origin.isolatedCopy(), HashCountedSet<String>()).iterator;
@@ -982,7 +982,7 @@ void DatabaseTracker::recordDeletingDatabase(const SecurityOriginData& origin, c
     ASSERT(m_databaseGuard.isHeld());
     ASSERT(canDeleteDatabase(origin, name));
 
-    // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
+    // We don't use UncheckedKeyHashMap::ensure here to avoid making an isolated copy of the origin every time.
     auto it = m_beingDeleted.find(origin);
     if (it == m_beingDeleted.end())
         it = m_beingDeleted.add(origin.isolatedCopy(), MemoryCompactRobinHoodHashSet<String>()).iterator;

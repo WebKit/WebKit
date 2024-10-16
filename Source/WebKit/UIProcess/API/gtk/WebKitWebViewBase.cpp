@@ -243,10 +243,10 @@ struct MotionEvent {
 };
 
 #if !USE(GTK4)
-typedef HashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
-typedef HashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
+typedef UncheckedKeyHashMap<GtkWidget*, IntRect> WebKitWebViewChildrenMap;
+typedef UncheckedKeyHashMap<uint32_t, GUniquePtr<GdkEvent>> TouchEventsMap;
 #else
-typedef HashMap<uint32_t, GRefPtr<GdkEvent>> TouchEventsMap;
+typedef UncheckedKeyHashMap<uint32_t, GRefPtr<GdkEvent>> TouchEventsMap;
 #endif
 
 struct _WebKitWebViewBasePrivate {

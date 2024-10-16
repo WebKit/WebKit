@@ -50,7 +50,7 @@ private:
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) final;
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
 
-    HashMap<WebCore::MessagePortIdentifier, Vector<WebCore::MessageWithMessagePorts>> m_inProcessPortMessages;
+    UncheckedKeyHashMap<WebCore::MessagePortIdentifier, Vector<WebCore::MessageWithMessagePorts>> m_inProcessPortMessages;
 };
 
 } // namespace WebKit

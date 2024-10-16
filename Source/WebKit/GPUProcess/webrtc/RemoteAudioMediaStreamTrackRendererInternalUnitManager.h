@@ -70,7 +70,7 @@ private:
     void stopUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier);
     void setAudioOutputDevice(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&);
 
-    HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>> m_units;
+    UncheckedKeyHashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, Ref<class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>> m_units;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };
 

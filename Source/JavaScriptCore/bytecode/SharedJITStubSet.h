@@ -161,8 +161,8 @@ public:
 
 private:
     HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
-    HashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
-    HashMap<DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>> m_domJITCodes;
+    UncheckedKeyHashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
+    UncheckedKeyHashMap<DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>> m_domJITCodes;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_slowPathHandlers { };
 };

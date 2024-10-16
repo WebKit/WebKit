@@ -64,7 +64,7 @@ unsigned LayerPool::backingStoreBytesForSize(const IntSize& size)
 
 LayerPool::LayerList& LayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)
 {
-    HashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
+    UncheckedKeyHashMap<IntSize, LayerList>::iterator it = m_reuseLists.find(size);
     if (it == m_reuseLists.end()) {
         it = m_reuseLists.add(size, LayerList()).iterator;
         m_sizesInPruneOrder.append(size);

@@ -56,8 +56,8 @@ public:
     void deref() const;
 
 private:
-    using IDToGeolocationMap = HashMap<GeolocationIdentifier, WeakRef<WebCore::Geolocation>>;
-    using GeolocationToIDMap = HashMap<WeakRef<WebCore::Geolocation>, GeolocationIdentifier>;
+    using IDToGeolocationMap = UncheckedKeyHashMap<GeolocationIdentifier, WeakRef<WebCore::Geolocation>>;
+    using GeolocationToIDMap = UncheckedKeyHashMap<WeakRef<WebCore::Geolocation>, GeolocationIdentifier>;
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 

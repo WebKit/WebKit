@@ -128,7 +128,7 @@ public:
     void removeAllContentRuleLists();
 #endif
 
-    const HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() { return m_contentRuleLists; }
+    const UncheckedKeyHashMap<String, std::pair<Ref<API::ContentRuleList>, URL>>& contentExtensionRules() { return m_contentRuleLists; }
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleListData() const;
 #endif
 
@@ -150,12 +150,12 @@ private:
     WeakHashSet<WebProcessProxy> m_processes;
     Ref<API::Array> m_userScripts;
     Ref<API::Array> m_userStyleSheets;
-    HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
+    UncheckedKeyHashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
     HashSet<ContentWorldIdentifier> m_associatedContentWorlds;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<NetworkProcessProxy> m_networkProcesses;
-    HashMap<String, std::pair<Ref<API::ContentRuleList>, URL>> m_contentRuleLists;
+    UncheckedKeyHashMap<String, std::pair<Ref<API::ContentRuleList>, URL>> m_contentRuleLists;
 #endif
 };
 

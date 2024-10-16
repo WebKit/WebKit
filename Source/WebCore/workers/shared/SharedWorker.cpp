@@ -52,10 +52,10 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SharedWorker);
 #define SHARED_WORKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
 #define SHARED_WORKER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(SharedWorker, "%p - [identifier=%" PUBLIC_LOG_STRING "] SharedWorker::" fmt, this, identifier().toString().utf8().data(), ##__VA_ARGS__)
 
-static HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
+static UncheckedKeyHashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>& allSharedWorkers()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>> allSharedWorkers;
+    static NeverDestroyed<UncheckedKeyHashMap<SharedWorkerObjectIdentifier, WeakRef<SharedWorker, WeakPtrImplWithEventTargetData>>> allSharedWorkers;
     return allSharedWorkers;
 }
 

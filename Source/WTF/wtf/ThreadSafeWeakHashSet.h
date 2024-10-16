@@ -216,7 +216,7 @@ private:
         }
     }
 
-    mutable HashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
+    mutable UncheckedKeyHashMap<const T*, ControlBlockRefPtr> m_map WTF_GUARDED_BY_LOCK(m_lock);
     mutable unsigned m_operationCountSinceLastCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable unsigned m_maxOperationCountWithoutCleanup WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     mutable Lock m_lock;

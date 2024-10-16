@@ -146,7 +146,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
     result->m_nestedLexicalScope = m_nestedLexicalScope;
     result->m_scopeType = m_scopeType;
 
-    HashMap<VarOffset, uint32_t> varOffsetToArgIndexMap;
+    UncheckedKeyHashMap<VarOffset, uint32_t> varOffsetToArgIndexMap;
 
     if (this->arguments()) {
         // Copy the arguments, but not the WatchpointSets. We create new WatchpointSets as appropriate when we create the SymbolTableEntry

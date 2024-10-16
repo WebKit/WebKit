@@ -58,7 +58,7 @@ messages -> WebExtensionContextProxy {
     DispatchMenusClickedEvent(struct WebKit::WebExtensionMenuItemParameters menuItemParameters, bool wasChecked, struct WebKit::WebExtensionMenuItemContextParameters contextParameters, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
 
     // Permissions
-    UpdateGrantedPermissions(HashMap<String, WallTime> permissions)
+    UpdateGrantedPermissions(UncheckedKeyHashMap<String, WallTime> permissions)
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
     // Ports

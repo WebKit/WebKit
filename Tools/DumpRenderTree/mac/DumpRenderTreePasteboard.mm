@@ -50,7 +50,7 @@
 
     ListHashSet<RetainPtr<CFStringRef>, WTF::RetainPtrObjectHash<CFStringRef>> _types;
     ListHashSet<RetainPtr<CFStringRef>, WTF::RetainPtrObjectHash<CFStringRef>> _originalTypes;
-    HashMap<RetainPtr<CFStringRef>, RetainPtr<CFDataRef>, WTF::RetainPtrObjectHash<CFStringRef>, WTF::RetainPtrObjectHashTraits<CFStringRef>> _data;
+    UncheckedKeyHashMap<RetainPtr<CFStringRef>, RetainPtr<CFDataRef>, WTF::RetainPtrObjectHash<CFStringRef>, WTF::RetainPtrObjectHashTraits<CFStringRef>> _data;
 }
 
 -(id)initWithName:(NSString *)name;

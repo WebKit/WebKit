@@ -80,7 +80,7 @@ private:
     RemoteLegacyCDMSessionIdentifier m_identifier;
     WeakPtr<WebCore::LegacyCDMSessionClient> m_client;
     String m_sessionId;
-    mutable HashMap<String, RefPtr<ArrayBuffer>> m_cachedKeyCache;
+    mutable UncheckedKeyHashMap<String, RefPtr<ArrayBuffer>> m_cachedKeyCache;
 };
 
 }

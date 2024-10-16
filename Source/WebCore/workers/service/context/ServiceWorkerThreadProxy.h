@@ -93,7 +93,7 @@ public:
     void fireBackgroundFetchEvent(BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
     void fireBackgroundFetchClickEvent(BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
 
-    WEBCORE_EXPORT void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
+    WEBCORE_EXPORT void didSaveScriptsToDisk(ScriptBuffer&&, UncheckedKeyHashMap<URL, ScriptBuffer>&& importedScripts);
 
     WEBCORE_EXPORT void setLastNavigationWasAppInitiated(bool);
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
@@ -136,8 +136,8 @@ private:
 
     ServiceWorkerInspectorProxy m_inspectorProxy;
     uint64_t m_functionalEventTasksCounter { 0 };
-    HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
-    HashMap<uint64_t, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>> m_ongoingNotificationPayloadFunctionalEventTasks;
+    UncheckedKeyHashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
+    UncheckedKeyHashMap<uint64_t, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>> m_ongoingNotificationPayloadFunctionalEventTasks;
 };
 
 } // namespace WebKit

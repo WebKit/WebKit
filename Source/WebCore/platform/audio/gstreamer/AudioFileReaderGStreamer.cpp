@@ -77,7 +77,7 @@ private:
     std::span<const uint8_t> m_data;
     float m_sampleRate { 0 };
     int m_channels { 0 };
-    HashMap<int, GRefPtr<GstBufferList>> m_buffers;
+    UncheckedKeyHashMap<int, GRefPtr<GstBufferList>> m_buffers;
     GRefPtr<GstElement> m_pipeline;
     std::optional<int> m_firstChannelType;
     unsigned m_channelSize { 0 };

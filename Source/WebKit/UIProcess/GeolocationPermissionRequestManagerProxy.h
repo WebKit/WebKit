@@ -57,7 +57,7 @@ public:
     void revokeAuthorizationToken(const String&);
 
 private:
-    HashMap<GeolocationIdentifier, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
+    UncheckedKeyHashMap<GeolocationIdentifier, RefPtr<GeolocationPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
     WeakRef<WebPageProxy> m_page;
 };

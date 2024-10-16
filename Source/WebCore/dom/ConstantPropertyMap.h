@@ -58,7 +58,7 @@ class ConstantPropertyMap {
 public:
     explicit ConstantPropertyMap(Document&);
 
-    typedef HashMap<AtomString, Ref<CSSCustomPropertyValue>> Values;
+    typedef UncheckedKeyHashMap<AtomString, Ref<CSSCustomPropertyValue>> Values;
     const Values& values() const;
 
     void didChangeSafeAreaInsets();

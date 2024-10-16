@@ -590,7 +590,7 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
         }
     }
 
-    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
+    UncheckedKeyHashMap<String, Vector<WebCore::CharacterRange>> annotations;
     if (annotationData) {
         if (auto* annotationDataArray = WebKit::toImpl(annotationData)) {
             for (auto dictionary : annotationDataArray->elementsOfType<API::Dictionary>()) {

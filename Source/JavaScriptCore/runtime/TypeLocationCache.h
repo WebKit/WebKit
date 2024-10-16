@@ -59,7 +59,7 @@ public:
 
     std::pair<TypeLocation*, bool> getTypeLocation(GlobalVariableID, SourceID, unsigned start, unsigned end, RefPtr<TypeSet>&&, VM*);
 private:
-    using LocationMap = HashMap<GenericHashKey<LocationKey, LocationKey::Hash>, TypeLocation*>;
+    using LocationMap = UncheckedKeyHashMap<GenericHashKey<LocationKey, LocationKey::Hash>, TypeLocation*>;
     LocationMap m_locationMap;
 };
 

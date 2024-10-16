@@ -136,7 +136,7 @@ struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
 using ElementName = NodeName;
-using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
+using ExplicitlySetAttrElementsMap = UncheckedKeyHashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 using TrustedTypeOrString = std::variant<RefPtr<TrustedHTML>, RefPtr<TrustedScript>, RefPtr<TrustedScriptURL>, AtomString>;
 
 // https://drafts.csswg.org/css-contain/#relevant-to-the-user
@@ -503,7 +503,7 @@ public:
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
-    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const;
+    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;

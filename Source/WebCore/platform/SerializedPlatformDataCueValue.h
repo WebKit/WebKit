@@ -47,7 +47,7 @@ public:
     struct Data {
 #if PLATFORM(COCOA)
         String type;
-        HashMap<String, String> otherAttributes;
+        UncheckedKeyHashMap<String, String> otherAttributes;
         String key;
         RetainPtr<NSLocale> locale;
         std::variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>> value;

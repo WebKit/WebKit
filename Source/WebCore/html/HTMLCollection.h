@@ -46,7 +46,7 @@ public:
     inline size_t memoryCost() const;
 
 private:
-    typedef HashMap<AtomStringImpl*, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>> StringToElementsMap;
+    typedef UncheckedKeyHashMap<AtomStringImpl*, Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>> StringToElementsMap;
 
     inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* find(const StringToElementsMap&, const AtomString& key) const;
     inline void append(StringToElementsMap&, const AtomString& key, Element&);

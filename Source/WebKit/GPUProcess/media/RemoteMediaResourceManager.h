@@ -81,7 +81,7 @@ private:
     RefPtr<RemoteMediaResource> resourceForId(RemoteMediaResourceIdentifier);
 
     Lock m_lock;
-    HashMap<RemoteMediaResourceIdentifier, ThreadSafeWeakPtr<RemoteMediaResource>> m_remoteMediaResources WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<RemoteMediaResourceIdentifier, ThreadSafeWeakPtr<RemoteMediaResource>> m_remoteMediaResources WTF_GUARDED_BY_LOCK(m_lock);
 
     RefPtr<IPC::Connection> m_connection;
 };

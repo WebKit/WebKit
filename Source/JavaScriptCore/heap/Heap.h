@@ -576,7 +576,7 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    HashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
+    UncheckedKeyHashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 

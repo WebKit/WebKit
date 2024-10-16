@@ -49,7 +49,7 @@ private:
 
     WeakRef<WebProcessPool> m_processPool;
     RunLoop::Timer m_loggingTimer;
-    typedef HashMap<WebCore::ActivityStateForCPUSampling, Seconds, WTF::IntHash<WebCore::ActivityStateForCPUSampling>, WTF::StrongEnumHashTraits<WebCore::ActivityStateForCPUSampling>> CPUTimeInActivityStateMap;
+    typedef UncheckedKeyHashMap<WebCore::ActivityStateForCPUSampling, Seconds, WTF::IntHash<WebCore::ActivityStateForCPUSampling>, WTF::StrongEnumHashTraits<WebCore::ActivityStateForCPUSampling>> CPUTimeInActivityStateMap;
     CPUTimeInActivityStateMap m_cpuTimeInActivityState;
     MonotonicTime m_lastCPUTime;
 };

@@ -38,7 +38,7 @@ enum class RunAsAsyncFunction : bool { No, Yes };
 enum class ForceUserGesture : bool { No, Yes };
 enum class RemoveTransientActivation : bool { No, Yes };
 
-using ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>;
+using ArgumentWireBytesMap = UncheckedKeyHashMap<String, Vector<uint8_t>>;
 
 struct RunJavaScriptParameters {
     RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)

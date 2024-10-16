@@ -54,9 +54,9 @@
 
 namespace WebCore {
 
-static HashMap<ScriptExecutionContextIdentifier, WeakRef<SharedWorkerThreadProxy>>& allSharedWorkerThreadProxies()
+static UncheckedKeyHashMap<ScriptExecutionContextIdentifier, WeakRef<SharedWorkerThreadProxy>>& allSharedWorkerThreadProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WeakRef<SharedWorkerThreadProxy>>> map;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<ScriptExecutionContextIdentifier, WeakRef<SharedWorkerThreadProxy>>> map;
     return map;
 }
 

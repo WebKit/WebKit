@@ -207,7 +207,7 @@ private:
 
         bool result = true;
 
-        HashMap<AbstractHeap, Node*> potentialStackEscapes;
+        UncheckedKeyHashMap<AbstractHeap, Node*> potentialStackEscapes;
         
         for (m_nodeIndex = 0; m_nodeIndex < block->size(); ++m_nodeIndex) {
             m_node = block->at(m_nodeIndex);

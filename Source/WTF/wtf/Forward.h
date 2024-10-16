@@ -135,6 +135,8 @@ template<typename KeyTypeArg, typename ValueTypeArg> struct KeyValuePair;
 template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits> class HashTable;
 template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Value>> class HashCountedSet;
 template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
+template<typename KeyArg, typename MappedArg, typename KeyHash = DefaultHash<KeyArg>, typename KeyTraits = HashTraits<KeyArg>, typename MappedTraits = HashTraits<MappedArg>, typename HashTraits = HashTableTraits>
+using UncheckedKeyHashMap = HashMap<KeyArg, MappedArg, KeyHash, KeyTraits, MappedTraits, HashTraits>;
 template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
 template<typename ResolveValueT, typename RejectValueT, unsigned options = 0> class NativePromise;
 using GenericPromise = NativePromise<void, void>;
@@ -209,6 +211,7 @@ using WTF::SuspendableWorkQueue;
 using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
+using WTF::UncheckedKeyHashMap;
 using WTF::UniqueRef;
 using WTF::Vector;
 using WTF::WeakPtr;

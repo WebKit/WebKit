@@ -72,7 +72,7 @@ public:
     {
         return adoptRef(*new XMLDocumentParser(document, isInFrameView, policy));
     }
-    static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
+    static Ref<XMLDocumentParser> create(DocumentFragment& fragment, UncheckedKeyHashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     {
         return adoptRef(*new XMLDocumentParser(fragment, WTFMove(prefixToNamespaceMap), defaultNamespaceURI, parserContentPolicy));
     }
@@ -95,7 +95,7 @@ public:
 
 private:
     explicit XMLDocumentParser(Document&, IsInFrameView, OptionSet<ParserContentPolicy>);
-    XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
+    XMLDocumentParser(DocumentFragment&, UncheckedKeyHashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
 
     // CheckedPtr interface
     uint32_t ptrCount() const final { return CanMakeCheckedPtr::ptrCount(); }
@@ -184,7 +184,7 @@ private:
 
     bool m_parsingFragment { false };
 
-    HashMap<AtomString, AtomString> m_prefixToNamespaceMap;
+    UncheckedKeyHashMap<AtomString, AtomString> m_prefixToNamespaceMap;
     AtomString m_defaultNamespaceURI;
 
     SegmentedString m_pendingSrc;
@@ -197,6 +197,6 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader&, const String& source, const 
 xmlParserInputPtr externalEntityLoader(const char* url, const char* id, xmlParserCtxtPtr);
 void initializeXMLParser();
 
-std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader&, const String&);
+std::optional<UncheckedKeyHashMap<String, String>> parseAttributes(CachedResourceLoader&, const String&);
 
 } // namespace WebCore

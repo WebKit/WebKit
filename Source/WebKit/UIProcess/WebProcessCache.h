@@ -102,8 +102,8 @@ private:
 
     unsigned m_capacity { 0 };
 
-    HashMap<uint64_t, std::unique_ptr<CachedProcess>> m_pendingAddRequests;
-    HashMap<WebCore::RegistrableDomain, std::unique_ptr<CachedProcess>> m_processesPerRegistrableDomain;
+    UncheckedKeyHashMap<uint64_t, std::unique_ptr<CachedProcess>> m_pendingAddRequests;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, std::unique_ptr<CachedProcess>> m_processesPerRegistrableDomain;
     RunLoop::Timer m_evictionTimer;
 };
 

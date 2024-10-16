@@ -480,9 +480,9 @@ void registerWebKitGStreamerVideoEncoder()
 // We use a recursive lock because the removal of a pipeline can trigger the removal of another one,
 // from the same thread, specially when using chained element harnesses.
 static RecursiveLock s_activePipelinesMapLock;
-static HashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
+static UncheckedKeyHashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
 {
-    static NeverDestroyed<HashMap<String, GRefPtr<GstElement>>> activePipelines;
+    static NeverDestroyed<UncheckedKeyHashMap<String, GRefPtr<GstElement>>> activePipelines;
     return activePipelines.get();
 }
 

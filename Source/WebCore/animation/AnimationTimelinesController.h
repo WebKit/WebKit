@@ -67,7 +67,7 @@ private:
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
 
-    HashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
+    UncheckedKeyHashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;

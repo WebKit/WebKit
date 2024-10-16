@@ -53,7 +53,7 @@ void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBl
     
     // First make sure that we haven't already added profiled bytecodes for this code
     // block. We do this using an O(N) search because I suspect that this list will
-    // tend to be fairly small, and the additional space costs of having a HashMap/Set
+    // tend to be fairly small, and the additional space costs of having a UncheckedKeyHashMap/Set
     // would be greater than the time cost of occasionally doing this search.
     
     for (unsigned i = m_profiledBytecodes.size(); i--;) {

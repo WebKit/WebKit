@@ -117,7 +117,7 @@ void GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints(
         if (inst.kind.opcode != Patch)
             continue;
 
-        HashMap<Tmp, Arg*> needToDef;
+        UncheckedKeyHashMap<Tmp, Arg*> needToDef;
 
         inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
             if (!arg.isTmp())
@@ -1000,7 +1000,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     for (auto& entry : m_blocksAfterTerminalPatchForSpilling) {
         entry.value.jump.linkTo(m_jit->label(), m_jit);
-        const HashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
+        const UncheckedKeyHashMap<Tmp, Arg*>& spills = entry.value.defdTmps;
         for (auto& entry : spills) {
             Arg* arg = entry.value;
             if (!arg->isTmp())

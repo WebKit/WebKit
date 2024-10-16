@@ -253,8 +253,8 @@ private:
     Ref<const SVGFontElement> protectedFontElement() const { return m_fontElement.get(); }
 
     Vector<GlyphData> m_glyphs;
-    HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
-    HashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
+    UncheckedKeyHashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
+    UncheckedKeyHashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
     Vector<uint8_t> m_result;
     Vector<char, 17> m_emptyGlyphCharString;
     FloatRect m_boundingBox;

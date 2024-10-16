@@ -69,7 +69,7 @@ private:
     WeakPtr<WebCore::SWServer> m_server;
     WeakPtr<NetworkStorageManager> m_manager;
     WebCore::Timer m_updateTimer;
-    HashMap<WebCore::ServiceWorkerRegistrationKey, std::optional<WebCore::ServiceWorkerContextData>> m_updates;
+    UncheckedKeyHashMap<WebCore::ServiceWorkerRegistrationKey, std::optional<WebCore::ServiceWorkerContextData>> m_updates;
 };
 
 } // namespace WebKit

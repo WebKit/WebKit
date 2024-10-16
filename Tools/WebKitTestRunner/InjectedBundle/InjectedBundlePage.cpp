@@ -201,9 +201,9 @@ WTF::String pathSuitableForTestResult(WKURLRef fileURL)
     return toWTFString(adoptWK(WKURLCopyLastPathComponent(fileURL))); // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
-static HashMap<uint64_t, String>& assignedUrlsCache()
+static UncheckedKeyHashMap<uint64_t, String>& assignedUrlsCache()
 {
-    static NeverDestroyed<HashMap<uint64_t, String>> cache;
+    static NeverDestroyed<UncheckedKeyHashMap<uint64_t, String>> cache;
     return cache.get();
 }
 
@@ -215,9 +215,9 @@ static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBui
         stringBuilder.append("<unknown>"_s);
 }
 
-static HashMap<WKBundlePageRef, InjectedBundlePage*>& bundlePageMap()
+static UncheckedKeyHashMap<WKBundlePageRef, InjectedBundlePage*>& bundlePageMap()
 {
-    static NeverDestroyed<HashMap<WKBundlePageRef, InjectedBundlePage*>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<WKBundlePageRef, InjectedBundlePage*>> map;
     return map.get();
 }
 

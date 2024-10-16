@@ -71,8 +71,8 @@ public:
 private:
     WCContentBufferManager& m_manager;
     WebCore::ProcessIdentifier m_processIdentifier;
-    HashMap<WebCore::TextureMapperPlatformLayer*, std::unique_ptr<WCContentBuffer>> m_contentBuffers;
-    HashMap<WCContentBufferIdentifier, WCContentBuffer*> m_validIdentifiers;
+    UncheckedKeyHashMap<WebCore::TextureMapperPlatformLayer*, std::unique_ptr<WCContentBuffer>> m_contentBuffers;
+    UncheckedKeyHashMap<WCContentBufferIdentifier, WCContentBuffer*> m_validIdentifiers;
 };
 
 WCContentBufferManager& WCContentBufferManager::singleton()

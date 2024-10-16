@@ -100,7 +100,7 @@ private:
 
     Nicosia::PlatformLayer::LayerID m_rootLayerID { 0 };
 
-    HashMap<WebCore::TextureMapperLayer*, Ref<WebCore::CoordinatedBackingStore>> m_backingStores;
+    UncheckedKeyHashMap<WebCore::TextureMapperLayer*, Ref<WebCore::CoordinatedBackingStore>> m_backingStores;
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
 };

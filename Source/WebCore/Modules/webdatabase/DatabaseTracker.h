@@ -161,8 +161,8 @@ private:
     void deleteOriginLockFor(const SecurityOriginData&) WTF_REQUIRES_LOCK(m_databaseGuard);
 
     using DatabaseSet = HashSet<Database*>;
-    using DatabaseNameMap = HashMap<String, DatabaseSet*>;
-    using DatabaseOriginMap = HashMap<SecurityOriginData, DatabaseNameMap*>;
+    using DatabaseNameMap = UncheckedKeyHashMap<String, DatabaseSet*>;
+    using DatabaseOriginMap = UncheckedKeyHashMap<SecurityOriginData, DatabaseNameMap*>;
 
     Lock m_openDatabaseMapGuard;
     mutable std::unique_ptr<DatabaseOriginMap> m_openDatabaseMap WTF_GUARDED_BY_LOCK(m_openDatabaseMapGuard);
@@ -171,15 +171,15 @@ private:
     Lock m_databaseGuard;
     SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
-    using OriginLockMap = HashMap<String, Ref<OriginLock>>;
+    using OriginLockMap = UncheckedKeyHashMap<String, Ref<OriginLock>>;
     OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     String m_databaseDirectoryPath;
 
     DatabaseManagerClient* m_client { nullptr };
 
-    HashMap<SecurityOriginData, HashCountedSet<String>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
-    HashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<String>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    UncheckedKeyHashMap<SecurityOriginData, HashCountedSet<String>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    UncheckedKeyHashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<String>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     HashSet<SecurityOriginData> m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
     void recordCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);

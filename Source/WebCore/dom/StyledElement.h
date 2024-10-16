@@ -90,7 +90,7 @@ protected:
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, RefPtr<CSSValue>&&);
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
-    Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const override;
 
 private:
     void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);

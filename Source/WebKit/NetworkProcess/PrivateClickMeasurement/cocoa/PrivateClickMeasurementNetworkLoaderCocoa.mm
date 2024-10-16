@@ -81,9 +81,9 @@ namespace WebKit::PCM {
 
 enum class LoadTaskIdentifierType { };
 using LoadTaskIdentifier = LegacyNullableObjectIdentifier<LoadTaskIdentifierType>;
-static HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& taskMap()
+static UncheckedKeyHashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>& taskMap()
 {
-    static NeverDestroyed<HashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<LoadTaskIdentifier, RetainPtr<NSURLSessionDataTask>>> map;
     return map.get();
 }
 

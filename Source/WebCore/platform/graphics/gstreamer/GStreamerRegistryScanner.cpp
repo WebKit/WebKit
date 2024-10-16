@@ -1166,7 +1166,7 @@ Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::
 
 GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isRtpPacketizerSupported(const String& encoding)
 {
-    static HashMap<String, ASCIILiteral> mapping = { { "h264"_s, "video/x-h264"_s }, { "vp8"_s, "video/x-vp8"_s },
+    static UncheckedKeyHashMap<String, ASCIILiteral> mapping = { { "h264"_s, "video/x-h264"_s }, { "vp8"_s, "video/x-vp8"_s },
         { "vp9"_s, "video/x-vp9"_s }, { "av1"_s, "video/x-av1"_s }, { "h265"_s, "video/x-h265"_s }, { "opus"_s, "audio/x-opus"_s },
         { "g722"_s, "audio/G722"_s }, { "pcma"_s, "audio/x-alaw"_s }, { "pcmu"_s, "audio/x-mulaw"_s } };
     auto gstCapsName = mapping.getOptional(encoding);

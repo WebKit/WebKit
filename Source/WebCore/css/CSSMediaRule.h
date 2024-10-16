@@ -48,7 +48,7 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Media; }
     String cssText() const final;
-    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const final;
     String conditionText() const final;
 
     const MQ::MediaQueryList& mediaQueries() const;

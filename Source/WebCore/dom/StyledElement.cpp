@@ -303,7 +303,7 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
     });
 }
 
-Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings) const
 {
     if (replacementURLStrings.isEmpty())
         return attribute;

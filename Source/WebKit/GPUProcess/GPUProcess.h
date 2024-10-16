@@ -215,7 +215,7 @@ private:
 #endif
 
     // Connections to WebProcesses.
-    HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
 
     GPUProcessPreferences m_preferences;
@@ -226,7 +226,7 @@ private:
         bool allowVideoCapture { false };
         bool allowDisplayCapture { false };
     };
-    HashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, MediaCaptureAccess> m_mediaCaptureAccessMap;
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     RefPtr<WorkQueue> m_videoMediaStreamTrackRendererQueue;
 #endif
@@ -246,7 +246,7 @@ private:
         String mediaKeysStorageDirectory;
 #endif
     };
-    HashMap<PAL::SessionID, GPUSession> m_sessions;
+    UncheckedKeyHashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
     String m_applicationVisibleName;

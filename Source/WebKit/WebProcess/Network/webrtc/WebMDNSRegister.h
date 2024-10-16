@@ -64,7 +64,7 @@ public:
 private:
     void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
-    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
+    UncheckedKeyHashMap<WebCore::ScriptExecutionContextIdentifier, UncheckedKeyHashMap<String, String>> m_registeringDocuments;
 };
 
 } // namespace WebKit

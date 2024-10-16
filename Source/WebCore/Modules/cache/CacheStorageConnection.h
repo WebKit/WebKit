@@ -73,7 +73,7 @@ private:
     uint64_t computeRealBodySize(const DOMCacheEngine::ResponseBody&);
 
 protected:
-    HashMap<uint64_t, uint64_t> m_opaqueResponseToSizeWithPaddingMap;
+    UncheckedKeyHashMap<uint64_t, uint64_t> m_opaqueResponseToSizeWithPaddingMap;
 };
 
 } // namespace WebCore

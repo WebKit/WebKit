@@ -114,7 +114,7 @@ public:
     void setIsNewResourceLoadStatisticsDatabaseFile(bool isNewResourceLoadStatisticsDatabaseFile) { m_isNewResourceLoadStatisticsDatabaseFile = isNewResourceLoadStatisticsDatabaseFile; }
     void removeDataForDomain(const RegistrableDomain&) override;
     Vector<RegistrableDomain> allDomains() const final;
-    HashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const final;
+    UncheckedKeyHashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const final;
     bool domainIDExistsInDatabase(int);
     std::optional<Vector<String>> checkForMissingTablesInSchema();
     void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
@@ -159,7 +159,7 @@ private:
     Vector<RegistrableDomain> domainsToBlockAndDeleteCookiesFor() const;
     Vector<RegistrableDomain> domainsToBlockButKeepCookiesFor() const;
     Vector<RegistrableDomain> domainsWithUserInteractionAsFirstParty() const;
-    HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccess() const;
+    UncheckedKeyHashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccess() const;
 
     struct DomainData {
         unsigned domainID;
@@ -187,7 +187,7 @@ private:
         unsigned subframeUnderTopFrameDomainsCount;
         unsigned topFrameUniqueRedirectsToCount;
     };
-    HashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
+    UncheckedKeyHashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
 
     bool predicateValueForDomain(WebCore::SQLiteStatementAutoResetScope&, const RegistrableDomain&) const;
 

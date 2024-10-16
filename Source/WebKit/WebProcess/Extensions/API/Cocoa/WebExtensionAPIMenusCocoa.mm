@@ -147,7 +147,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
     }
 
     if (NSArray *contexts = properties[contextsKey]) {
-        static NeverDestroyed<HashMap<String, WebExtensionMenuItemContextType>> typeMap = HashMap<String, WebExtensionMenuItemContextType> {
+        static NeverDestroyed<UncheckedKeyHashMap<String, WebExtensionMenuItemContextType>> typeMap = UncheckedKeyHashMap<String, WebExtensionMenuItemContextType> {
             { "action"_s, WebExtensionMenuItemContextType::Action },
             { "audio"_s, WebExtensionMenuItemContextType::Audio },
             { "browser_action"_s, WebExtensionMenuItemContextType::Action },

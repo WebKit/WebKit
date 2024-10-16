@@ -113,7 +113,7 @@ private:
     WTF_INTERNAL T getPropertyValue(JSON::Object*, const String& name, bool required, std::function<T(JSON::Value&)> converter, ASCIILiteral typeName);
 
     Ref<FrontendRouter> m_frontendRouter;
-    HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
+    UncheckedKeyHashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
 
     // Protocol errors reported for the top-level request being processed.
     // If processing a request triggers async responses, then any related errors will

@@ -122,14 +122,14 @@ private:
 
     UserContentControllerIdentifier m_identifier;
 
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<UserScriptIdentifier>, WebCore::UserScript>>> WorldToUserScriptMap;
+    typedef UncheckedKeyHashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<UserScriptIdentifier>, WebCore::UserScript>>> WorldToUserScriptMap;
     WorldToUserScriptMap m_userScripts;
 
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<UserStyleSheetIdentifier>, WebCore::UserStyleSheet>>> WorldToUserStyleSheetMap;
+    typedef UncheckedKeyHashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<std::optional<UserStyleSheetIdentifier>, WebCore::UserStyleSheet>>> WorldToUserStyleSheetMap;
     WorldToUserStyleSheetMap m_userStyleSheets;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    typedef HashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<ScriptMessageHandlerIdentifier, RefPtr<WebUserMessageHandlerDescriptorProxy>>>> WorldToUserMessageHandlerVectorMap;
+    typedef UncheckedKeyHashMap<RefPtr<InjectedBundleScriptWorld>, Vector<std::pair<ScriptMessageHandlerIdentifier, RefPtr<WebUserMessageHandlerDescriptorProxy>>>> WorldToUserMessageHandlerVectorMap;
     WorldToUserMessageHandlerVectorMap m_userMessageHandlers;
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)

@@ -52,7 +52,7 @@ static void webkit_back_forward_list_item_class_init(WebKitBackForwardListItemCl
 {
 }
 
-typedef HashMap<WebBackForwardListItem*, WebKitBackForwardListItem*> HistoryItemsMap;
+typedef UncheckedKeyHashMap<WebBackForwardListItem*, WebKitBackForwardListItem*> HistoryItemsMap;
 
 static HistoryItemsMap& historyItemsMap()
 {

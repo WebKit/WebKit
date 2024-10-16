@@ -48,7 +48,7 @@ struct SoupNetworkProxySettings {
     {
     }
 
-    SoupNetworkProxySettings(Mode proxyMode, const CString& defaultURL, const GUniquePtr<char*>& hosts, const HashMap<CString, CString>& map)
+    SoupNetworkProxySettings(Mode proxyMode, const CString& defaultURL, const GUniquePtr<char*>& hosts, const UncheckedKeyHashMap<CString, CString>& map)
         : mode(proxyMode)
         , defaultProxyURL(defaultURL)
         , ignoreHosts(g_strdupv(hosts.get()))
@@ -90,7 +90,7 @@ struct SoupNetworkProxySettings {
     Mode mode { Mode::Default };
     CString defaultProxyURL;
     GUniquePtr<char*> ignoreHosts;
-    HashMap<CString, CString> proxyMap;
+    UncheckedKeyHashMap<CString, CString> proxyMap;
 };
 
 } // namespace WebCore

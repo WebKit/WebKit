@@ -106,7 +106,7 @@ struct _WebKitWebPagePrivate {
     CString uri;
 
     GRefPtr<WebKitWebEditor> webEditor;
-    HashMap<WebKitScriptWorld*, GRefPtr<WebKitWebFormManager>> formManagerMap;
+    UncheckedKeyHashMap<WebKitScriptWorld*, GRefPtr<WebKitWebFormManager>> formManagerMap;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -136,7 +136,7 @@ private:
     GRefPtr<WebKitFrame> m_webkitFrame;
 };
 
-typedef HashMap<WebFrame*, std::unique_ptr<WebKitFrameWrapper>> WebFrameMap;
+typedef UncheckedKeyHashMap<WebFrame*, std::unique_ptr<WebKitFrameWrapper>> WebFrameMap;
 
 static WebFrameMap& webFrameMap()
 {

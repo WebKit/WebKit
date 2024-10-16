@@ -135,7 +135,7 @@ HashSet<SecurityOriginData> CredentialStorage::originsWithCredentials() const
     return origins;
 }
 
-HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
+UncheckedKeyHashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtectionSpaceForURL(const URL& url)
 {
     ASSERT(url.protocolIsInHTTPFamily());
     ASSERT(url.isValid());

@@ -40,9 +40,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>& webExtensionControllerProxies()
+static UncheckedKeyHashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>& webExtensionControllerProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>> controllers;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>> controllers;
     return controllers;
 }
 

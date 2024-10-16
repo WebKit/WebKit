@@ -249,7 +249,7 @@ struct WebPageCreationParameters {
     String overrideContentSecurityPolicy { };
     std::optional<double> cpuLimit { };
 
-    HashMap<String, WebURLSchemeHandlerIdentifier> urlSchemeHandlers { };
+    UncheckedKeyHashMap<String, WebURLSchemeHandlerIdentifier> urlSchemeHandlers { };
     Vector<String> urlSchemesWithLegacyCustomProtocolHandlers { };
 
 #if ENABLE(APPLICATION_MANIFEST)

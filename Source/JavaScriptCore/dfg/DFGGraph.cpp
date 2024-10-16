@@ -1144,7 +1144,7 @@ bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifie
 
 FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 {
-    HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);
+    UncheckedKeyHashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);
     if (iter != m_bytecodeLiveness.end())
         return *iter->value;
     

@@ -55,7 +55,7 @@ class WebPageProxy;
 
 using KeyboardInteraction = Inspector::Protocol::Automation::KeyboardInteractionType;
 using VirtualKey = Inspector::Protocol::Automation::VirtualKey;
-using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
+using VirtualKeyMap = UncheckedKeyHashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, WTF::StrongEnumHashTraits<VirtualKey>>;
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
 using CharKey = String;
@@ -123,8 +123,8 @@ public:
     explicit SimulatedInputKeyFrame(Vector<StateEntry>&&);
     Seconds maximumDuration() const;
 
-    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
-    static SimulatedInputKeyFrame keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const UncheckedKeyHashMap<String, Ref<SimulatedInputSource>>&);
+    static SimulatedInputKeyFrame keyFrameToResetInputSources(const UncheckedKeyHashMap<String, Ref<SimulatedInputSource>>&);
 
     Vector<StateEntry> states;
 };
@@ -157,7 +157,7 @@ public:
 
     ~SimulatedInputDispatcher();
 
-    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
+    void run(std::optional<WebCore::FrameIdentifier>, Vector<SimulatedInputKeyFrame>&& keyFrames, const UncheckedKeyHashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&&);
     void cancel();
 
     bool isActive() const;

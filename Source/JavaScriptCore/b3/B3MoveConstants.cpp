@@ -68,7 +68,7 @@ private:
     void hoistConstants(const Filter& filter)
     {
         Dominators& dominators = m_proc.dominators();
-        HashMap<ValueKey, Value*> valueForConstant;
+        UncheckedKeyHashMap<ValueKey, Value*> valueForConstant;
         IndexMap<BasicBlock*, Vector<Value*>> materializations(m_proc.size());
 
         // We determine where things get materialized based on where they are used.
@@ -264,7 +264,7 @@ private:
         unsigned floatSize = 0;
         unsigned doubleSize = 0;
         unsigned v128Size = 0;
-        HashMap<ValueKey, unsigned> constTable;
+        UncheckedKeyHashMap<ValueKey, unsigned> constTable;
         for (Value* value : m_proc.values()) {
             if (!goesInTable(value))
                 continue;

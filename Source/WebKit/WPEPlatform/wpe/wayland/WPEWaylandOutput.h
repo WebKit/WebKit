@@ -51,7 +51,7 @@ private:
 
     struct wl_output* m_output { nullptr };
     double m_scale { 1. };
-    HashMap<WPEViewWayland*, Function<void(WPEViewWayland*)>> m_scaleObservers;
+    UncheckedKeyHashMap<WPEViewWayland*, Function<void(WPEViewWayland*)>> m_scaleObservers;
 };
 
 } // namespace WPE

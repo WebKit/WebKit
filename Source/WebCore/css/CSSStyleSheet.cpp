@@ -487,7 +487,7 @@ String CSSStyleSheet::debugDescription() const
     return makeString("CSSStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
-String CSSStyleSheet::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
+String CSSStyleSheet::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
 {
     auto ruleList = cssRulesSkippingAccessCheck();
     if (!ruleList)

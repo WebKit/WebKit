@@ -98,7 +98,7 @@ using namespace WebCore;
 
 @end
 
-using HistoryItemMap = HashMap<WeakRef<HistoryItem>, WebHistoryItem*>;
+using HistoryItemMap = UncheckedKeyHashMap<WeakRef<HistoryItem>, WebHistoryItem*>;
 
 static inline WebCoreHistoryItem* core(WebHistoryItemPrivate* itemPrivate)
 {

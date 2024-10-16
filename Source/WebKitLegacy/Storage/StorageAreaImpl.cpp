@@ -184,7 +184,7 @@ bool StorageAreaImpl::contains(const String& key)
     return m_storageMap.contains(key);
 }
 
-void StorageAreaImpl::importItems(HashMap<String, String>&& items)
+void StorageAreaImpl::importItems(UncheckedKeyHashMap<String, String>&& items)
 {
     ASSERT(!m_isShutdown);
     ASSERT(!isMainThread());

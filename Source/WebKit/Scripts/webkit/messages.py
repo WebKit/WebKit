@@ -185,7 +185,7 @@ def types_that_must_be_moved():
         'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'std::optional<Win32Handle>',
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData',
-        'HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
+        'UncheckedKeyHashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
         'std::optional<WebCore::DMABufBufferAttributes>',
     ]
 
@@ -735,7 +735,7 @@ def class_template_headers(template_string):
         'WebCore::RectEdges': {'headers': ['<WebCore/RectEdges.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Expected': {'headers': ['<wtf/Expected.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'HashCountedSet': {'headers': ['<wtf/HashCountedSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
-        'HashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'UncheckedKeyHashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'HashSet': {'headers': ['<wtf/HashSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'KeyValuePair': {'headers': ['<wtf/KeyValuePair.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Markable': {'headers': ['<wtf/Markable.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},

@@ -98,8 +98,8 @@ private:
     WebExtensionRegisteredScriptParameters m_parameters;
     InjectedContentData m_injectedContent;
 
-    HashMap<String, UserScriptVector> m_userScriptsMap;
-    HashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;
+    UncheckedKeyHashMap<String, UserScriptVector> m_userScriptsMap;
+    UncheckedKeyHashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;
 
     void removeUserStyleSheets(const String& identifier);
     void removeUserScripts(const String& identifier);

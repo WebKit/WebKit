@@ -46,8 +46,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM&, const Slow
 template<typename KeyTypeArgument>
 struct ThunkMap {
     typedef KeyTypeArgument KeyType;
-    typedef HashMap<KeyType, MacroAssemblerCodeRef<JITThunkPtrTag>> ToThunkMap;
-    typedef HashMap<CodePtr<JITThunkPtrTag>, KeyType> FromThunkMap;
+    typedef UncheckedKeyHashMap<KeyType, MacroAssemblerCodeRef<JITThunkPtrTag>> ToThunkMap;
+    typedef UncheckedKeyHashMap<CodePtr<JITThunkPtrTag>, KeyType> FromThunkMap;
     
     ToThunkMap m_toThunk;
     FromThunkMap m_fromThunk;

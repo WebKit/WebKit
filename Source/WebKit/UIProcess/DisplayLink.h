@@ -122,7 +122,7 @@ private:
     struct wpe_playstation_display* m_display;
 #endif
     Lock m_clientsLock;
-    HashMap<CheckedRef<Client>, ClientInfo> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
+    UncheckedKeyHashMap<CheckedRef<Client>, ClientInfo> m_clients WTF_GUARDED_BY_LOCK(m_clientsLock);
     const WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { WebCore::FullSpeedFramesPerSecond };
     WebCore::DisplayUpdate m_currentUpdate;

@@ -1385,7 +1385,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto data = butterfly.contiguous().data();
         if (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
-                // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches against Int32 value.
                 if (searchInt32 == data[index].get())
                     return jsNumber(index);
@@ -1393,7 +1393,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         } else {
             do {
                 ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches against Int32 value.
                 if (searchInt32 == data[index].get())
                     return jsNumber(index);
@@ -1444,7 +1444,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto data = butterfly.contiguousDouble().data();
         if (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
-                // Array#indexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
                 if (data[index] == searchNumber)
                     return jsNumber(index);
@@ -1452,7 +1452,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         } else {
             do {
                 ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not HashMap isEqual semantics).
+                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
                 if (data[index] == searchNumber)
                     return jsNumber(index);

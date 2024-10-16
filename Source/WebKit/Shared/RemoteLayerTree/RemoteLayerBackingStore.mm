@@ -81,7 +81,7 @@ public:
         return std::unique_ptr<DelegatedContentsFenceFlusher> { new DelegatedContentsFenceFlusher(WTFMove(fence)) };
     }
 
-    bool flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
+    bool flushAndCollectHandles(UncheckedKeyHashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) final
     {
         return m_fence->waitFor(delegatedContentsFinishedTimeout);
     }

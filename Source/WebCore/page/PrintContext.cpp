@@ -341,7 +341,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
         return;
 
     if (!m_linkedDestinations) {
-        m_linkedDestinations = makeUnique<HashMap<String, Ref<Element>>>();
+        m_linkedDestinations = makeUnique<UncheckedKeyHashMap<String, Ref<Element>>>();
         collectLinkedDestinations(document);
     }
 

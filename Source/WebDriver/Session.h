@@ -234,8 +234,8 @@ private:
     std::optional<String> m_toplevelBrowsingContext;
     std::optional<String> m_currentBrowsingContext;
     std::optional<String> m_currentParentBrowsingContext;
-    HashMap<String, InputSource> m_activeInputSources;
-    HashMap<String, InputSourceState> m_inputStateTable;
+    UncheckedKeyHashMap<String, InputSource> m_activeInputSources;
+    UncheckedKeyHashMap<String, InputSourceState> m_inputStateTable;
 };
 
 } // WebDriver

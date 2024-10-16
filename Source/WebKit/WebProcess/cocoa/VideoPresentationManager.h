@@ -217,8 +217,8 @@ protected:
     WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
     WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier> m_videoElements;
-    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
 };

@@ -134,18 +134,18 @@ private:
     GRefPtr<GDBusConnection> m_connection;
     GRefPtr<GDBusProxy> m_registry;
     Vector<PendingRootRegistration> m_pendingRootRegistrations;
-    HashMap<CString, Vector<GUniquePtr<char*>>> m_eventListeners;
-    HashMap<AccessibilityRootAtspi*, Vector<unsigned, 3>> m_rootObjects;
-    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 7>> m_atspiObjects;
-    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 1>> m_atspiHyperlinks;
-    HashMap<CString, unsigned> m_clients;
+    UncheckedKeyHashMap<CString, Vector<GUniquePtr<char*>>> m_eventListeners;
+    UncheckedKeyHashMap<AccessibilityRootAtspi*, Vector<unsigned, 3>> m_rootObjects;
+    UncheckedKeyHashMap<AccessibilityObjectAtspi*, Vector<unsigned, 7>> m_atspiObjects;
+    UncheckedKeyHashMap<AccessibilityObjectAtspi*, Vector<unsigned, 1>> m_atspiHyperlinks;
+    UncheckedKeyHashMap<CString, unsigned> m_clients;
     unsigned m_cacheID { 0 };
-    HashMap<String, AccessibilityObjectAtspi*> m_cache;
+    UncheckedKeyHashMap<String, AccessibilityObjectAtspi*> m_cache;
     ListHashSet<RefPtr<AccessibilityObjectAtspi>> m_cacheUpdateList;
     RunLoop::Timer m_cacheUpdateTimer;
     RunLoop::Timer m_cacheClearTimer;
 #if ENABLE(DEVELOPER_MODE)
-    HashMap<void*, NotificationObserver> m_notificationObservers;
+    UncheckedKeyHashMap<void*, NotificationObserver> m_notificationObservers;
 #endif
 };
 

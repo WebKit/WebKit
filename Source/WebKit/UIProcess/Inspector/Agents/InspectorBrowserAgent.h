@@ -54,7 +54,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
 
-    void extensionsEnabled(HashMap<String, String>&&);
+    void extensionsEnabled(UncheckedKeyHashMap<String, String>&&);
     void extensionsDisabled(HashSet<String>&&);
 
 private:

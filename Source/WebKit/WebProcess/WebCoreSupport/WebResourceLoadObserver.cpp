@@ -448,7 +448,7 @@ bool WebResourceLoadObserver::hasCrossPageStorageAccess(const SubFrameDomain& su
     return false;
 }
 
-void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubFrameDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubFrameDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
     for (const auto& [topDomain, subResourceDomains] : domains) {
         for (auto& subResourceDomain : subResourceDomains) {

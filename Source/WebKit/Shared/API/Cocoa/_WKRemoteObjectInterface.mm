@@ -55,7 +55,7 @@ struct MethodInfo {
 @implementation _WKRemoteObjectInterface {
     RetainPtr<NSString> _identifier;
 
-    HashMap<SEL, MethodInfo> _methods;
+    UncheckedKeyHashMap<SEL, MethodInfo> _methods;
 }
 
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)

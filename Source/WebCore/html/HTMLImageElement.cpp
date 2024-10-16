@@ -685,7 +685,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
     return HTMLElement::completeURLsInAttributeValue(base, attribute, resolveURLs);
 }
 
-Attribute HTMLImageElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+Attribute HTMLImageElement::replaceURLsInAttributeValue(const Attribute& attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings) const
 {
     if (attribute.name() != srcsetAttr)
         return attribute;

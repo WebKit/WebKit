@@ -455,7 +455,7 @@ void DFAMinimizer::minimize(DFA& dfa)
     // Unlike traditional minimization final states can be differentiated by their action.
     // Instead of creating a single set for the final state, we partition by actions from
     // the start.
-    HashMap<ActionKey, Vector<unsigned>, ActionKeyHash, ActionKeyHashTraits> finalStates;
+    UncheckedKeyHashMap<ActionKey, Vector<unsigned>, ActionKeyHash, ActionKeyHashTraits> finalStates;
     for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
         const DFANode& node = dfa.nodes[i];
         if (node.hasActions()) {

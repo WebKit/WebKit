@@ -132,7 +132,7 @@ private:
         NodeAndFD nodeAndFd;
         String path;
     };
-    HashMap<String, std::unique_ptr<Session>> m_sessions;
+    UncheckedKeyHashMap<String, std::unique_ptr<Session>> m_sessions;
 
     GRefPtr<GDBusProxy> m_proxy;
     ResponseCallback m_currentResponseCallback;

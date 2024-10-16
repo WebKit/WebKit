@@ -234,7 +234,7 @@ private:
 
     // This map holds the collapsed border values for cells with collapsed borders.
     // It is held at RenderTableSection level to spare memory consumption by table cells.
-    HashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
+    UncheckedKeyHashMap<std::pair<const RenderTableCell*, int>, CollapsedBorderValue > m_cellsCollapsedBorders;
 
     bool m_forceSlowPaintPathWithOverflowingCell { false };
     bool m_hasMultipleCellLevels { false };

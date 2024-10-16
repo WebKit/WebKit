@@ -156,7 +156,7 @@ private:
     OptionSet<VisibilityAdjustment> m_adjustmentToRestore;
 };
 
-using ElementSelectorCache = HashMap<Ref<Element>, std::optional<String>>;
+using ElementSelectorCache = UncheckedKeyHashMap<Ref<Element>, std::optional<String>>;
 
 ElementTargetingController::ElementTargetingController(Page& page)
     : m_page { page }
@@ -867,7 +867,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     return extractTargets(WTFMove(nodes), WTFMove(innerElement), request.canIncludeNearbyElements);
 }
 
-void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
+void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
 {
     if (processingIDs.contains(currentElementID)) {
         ASSERT_NOT_REACHED();
@@ -887,7 +887,7 @@ void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifi
     depthSortedIDs.append(currentElementID);
 }
 
-Vector<ElementIdentifier> ElementTargetingController::topologicallySortElements(const HashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
+Vector<ElementIdentifier> ElementTargetingController::topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
 {
     Vector<ElementIdentifier> depthSortedIDs;
     HashSet<ElementIdentifier> processingIDs;
@@ -944,8 +944,8 @@ Vector<Vector<TargetedElementInfo>> ElementTargetingController::findAllTargets(f
         }
     }
 
-    HashMap<ElementIdentifier, HashSet<ElementIdentifier>> elementIDToOccludedElementIDs;
-    HashMap<ElementIdentifier, Vector<TargetedElementInfo>> elementIDToTargets;
+    UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>> elementIDToOccludedElementIDs;
+    UncheckedKeyHashMap<ElementIdentifier, Vector<TargetedElementInfo>> elementIDToTargets;
     for (auto& targets : targetsList) {
         if (targets.isEmpty())
             continue;
@@ -1087,7 +1087,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
 
 static Vector<Ref<Element>> filterRedundantNearbyTargets(HashSet<Ref<Element>>&& unfilteredNearbyTargets)
 {
-    HashMap<Ref<Element>, bool> shouldKeepCache;
+    UncheckedKeyHashMap<Ref<Element>, bool> shouldKeepCache;
     Vector<Ref<Element>> filteredResults;
 
     for (auto& originalTarget : unfilteredNearbyTargets) {

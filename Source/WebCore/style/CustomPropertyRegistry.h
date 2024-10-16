@@ -63,8 +63,8 @@ private:
 
     Scope& m_scope;
 
-    HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
-    HashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
+    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromAPI;
+    UncheckedKeyHashMap<AtomString, UniqueRef<CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
 
     mutable std::unique_ptr<RenderStyle> m_initialValuePrototypeStyle;
     mutable bool m_hasInvalidPrototypeStyle { false };

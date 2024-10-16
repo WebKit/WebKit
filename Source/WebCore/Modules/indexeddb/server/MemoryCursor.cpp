@@ -34,9 +34,9 @@ namespace WebCore {
 namespace IDBServer {
 
 static Lock cursorMapLock;
-static HashMap<IDBResourceIdentifier, MemoryCursor*>& cursorMap() WTF_REQUIRES_LOCK(cursorMapLock)
+static UncheckedKeyHashMap<IDBResourceIdentifier, MemoryCursor*>& cursorMap() WTF_REQUIRES_LOCK(cursorMapLock)
 {
-    static NeverDestroyed<HashMap<IDBResourceIdentifier, MemoryCursor*>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<IDBResourceIdentifier, MemoryCursor*>> map;
     return map;
 }
 

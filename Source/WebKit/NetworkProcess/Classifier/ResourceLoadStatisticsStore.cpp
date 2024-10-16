@@ -1543,11 +1543,11 @@ void ResourceLoadStatisticsStore::markAsPrevalentIfHasRedirectedToPrevalent()
         ITP_RELEASE_LOG_DATABASE_ERROR("markAsPrevalentIfHasRedirectedToPrevalent: failed to step statement");
 }
 
-HashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> ResourceLoadStatisticsStore::findNotVeryPrevalentResources()
+UncheckedKeyHashMap<unsigned, ResourceLoadStatisticsStore::NotVeryPrevalentResources> ResourceLoadStatisticsStore::findNotVeryPrevalentResources()
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<unsigned, NotVeryPrevalentResources> results;
+    UncheckedKeyHashMap<unsigned, NotVeryPrevalentResources> results;
     auto notVeryPrevalentResourcesStatement = m_database.prepareStatement("SELECT domainID, registrableDomain, isPrevalent FROM ObservedDomains WHERE isVeryPrevalent = 0"_s);
     if (notVeryPrevalentResourcesStatement) {
         while (notVeryPrevalentResourcesStatement->step() == SQLITE_ROW) {
@@ -2514,11 +2514,11 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::allDomains() const
     return domains;
 }
 
-HashMap<RegistrableDomain, WallTime> ResourceLoadStatisticsStore::allDomainsWithLastAccessedTime() const
+UncheckedKeyHashMap<RegistrableDomain, WallTime> ResourceLoadStatisticsStore::allDomainsWithLastAccessedTime() const
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<RegistrableDomain, WallTime> result;
+    UncheckedKeyHashMap<RegistrableDomain, WallTime> result;
     for (auto& domainData : domains()) {
         auto lastAccessedTime = std::max(domainData.mostRecentUserInteractionTime, domainData.mostRecentWebPushInteractionTime);
         result.add(WTFMove(domainData.registrableDomain), lastAccessedTime);
@@ -2641,11 +2641,11 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::domainsWithUserInteractio
     return results;
 }
 
-HashMap<TopFrameDomain, Vector<SubResourceDomain>> ResourceLoadStatisticsStore::domainsWithStorageAccess() const
+UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> ResourceLoadStatisticsStore::domainsWithStorageAccess() const
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> results;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> results;
     auto statement = m_database.prepareStatement("SELECT subFrameDomain, registrableDomain FROM (SELECT o.registrableDomain as subFrameDomain, s.topLevelDomainID as topLevelDomainID FROM ObservedDomains as o INNER JOIN StorageAccessUnderTopFrameDomains as s WHERE o.domainID = s.domainID) as z INNER JOIN ObservedDomains ON domainID = z.topLevelDomainID;"_s);
     if (!statement)
         return results;

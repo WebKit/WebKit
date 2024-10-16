@@ -124,7 +124,7 @@ private:
     IntRect m_visibleRect;
     IntRect m_coverRect;
     IntRect m_keepRect;
-    HashMap<IntPoint, Tile> m_tiles;
+    UncheckedKeyHashMap<IntPoint, Tile> m_tiles;
 };
 
 } // namespace WebCore

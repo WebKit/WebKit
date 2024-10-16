@@ -89,8 +89,8 @@ private:
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<WTF::UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
-    HashMap<String, bool> m_permissionsMap;
+    UncheckedKeyHashMap<WTF::UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
+    UncheckedKeyHashMap<String, bool> m_permissionsMap;
 #endif
 };
 

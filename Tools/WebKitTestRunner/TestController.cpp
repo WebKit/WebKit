@@ -1866,7 +1866,7 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
 {
     auto numDocuments = WKArrayGetSize(liveDocumentList);
 
-    HashMap<String, String> documentInfo;
+    UncheckedKeyHashMap<String, String> documentInfo;
     for (size_t i = 0; i < numDocuments; ++i) {
         if (auto dictionary = dictionaryValue(WKArrayGetItemAtIndex(liveDocumentList, i)))
             documentInfo.add(toWTFString(stringValue(dictionary, "id")), toWTFString(stringValue(dictionary, "url")));
@@ -2992,14 +2992,14 @@ public:
     String persistentSalt() const { return m_persistentSalt; }
     void setPersistentSalt(const String& salt) { m_persistentSalt = salt; }
 
-    HashMap<uint64_t, String>& ephemeralSalts() { return m_ephemeralSalts; }
+    UncheckedKeyHashMap<uint64_t, String>& ephemeralSalts() { return m_ephemeralSalts; }
 
     void incrementRequestCount() { ++m_requestCount; }
     void resetRequestCount() { m_requestCount = 0; }
     unsigned requestCount() const { return m_requestCount; }
 
 private:
-    HashMap<uint64_t, String> m_ephemeralSalts;
+    UncheckedKeyHashMap<uint64_t, String> m_ephemeralSalts;
     String m_persistentSalt;
     unsigned m_requestCount { 0 };
     bool m_persistentPermission { false };

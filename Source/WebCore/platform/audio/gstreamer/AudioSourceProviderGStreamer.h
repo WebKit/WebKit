@@ -84,7 +84,7 @@ private:
     GRefPtr<GstElement> m_audioSinkBin;
     WeakPtr<AudioSourceProviderClient> m_client;
     int m_deinterleaveSourcePads { 0 };
-    HashMap<int, GRefPtr<GstAdapter>> m_adapters WTF_GUARDED_BY_LOCK(m_adapterLock);
+    UncheckedKeyHashMap<int, GRefPtr<GstAdapter>> m_adapters WTF_GUARDED_BY_LOCK(m_adapterLock);
     unsigned long m_deinterleavePadAddedHandlerId { 0 };
     unsigned long m_deinterleaveNoMorePadsHandlerId { 0 };
     unsigned long m_deinterleavePadRemovedHandlerId { 0 };

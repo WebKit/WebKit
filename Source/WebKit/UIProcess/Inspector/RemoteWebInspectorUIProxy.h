@@ -188,7 +188,7 @@ private:
     RetainPtr<WKInspectorViewController> m_inspectorView;
     RetainPtr<NSWindow> m_window;
     RetainPtr<WKRemoteWebInspectorUIProxyObjCAdapter> m_objCAdapter;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    UncheckedKeyHashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;
 #endif
 #if PLATFORM(GTK)

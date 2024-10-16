@@ -115,7 +115,7 @@ private:
     void supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&&, CompletionHandler<void(WebCore::MediaPlayer::SupportsType)>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
-    HashMap<WebCore::MediaPlayerIdentifier, Ref<RemoteMediaPlayerProxy>> m_proxies;
+    UncheckedKeyHashMap<WebCore::MediaPlayerIdentifier, Ref<RemoteMediaPlayerProxy>> m_proxies;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -124,11 +124,11 @@ private:
         WebCore::VideoReceiverEndpoint endpoint;
         WebCore::PlatformVideoTarget videoTarget;
     };
-    HashMap<WebCore::HTMLMediaElementIdentifier, VideoRecevierEndpointCacheEntry> m_videoReceiverEndpointCache;
+    UncheckedKeyHashMap<WebCore::HTMLMediaElementIdentifier, VideoRecevierEndpointCacheEntry> m_videoReceiverEndpointCache;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
-    HashMap<RemoteMediaSourceIdentifier, RefPtr<RemoteMediaSourceProxy>> m_pendingMediaSources;
+    UncheckedKeyHashMap<RemoteMediaSourceIdentifier, RefPtr<RemoteMediaSourceProxy>> m_pendingMediaSources;
 #endif
 
 #if !RELEASE_LOG_DISABLED

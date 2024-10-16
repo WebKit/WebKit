@@ -110,9 +110,9 @@ static URL createYouTubeURL(StringView videoID, StringView timeID)
     return URL(URL(), makeString("youtube:"_s, videoID, timeID.isEmpty() ? ""_s : "t="_s, timeID));
 }
 
-static HashMap<String, String> queryKeysAndValues(StringView queryString)
+static UncheckedKeyHashMap<String, String> queryKeysAndValues(StringView queryString)
 {
-    HashMap<String, String> queryDictionary;
+    UncheckedKeyHashMap<String, String> queryDictionary;
     
     size_t queryLength = queryString.length();
     if (!queryLength)
@@ -182,7 +182,7 @@ static bool isYouTubeURL(const URL& url)
         || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com"_s);
 }
 
-static const String& valueForKey(const HashMap<String, String>& dictionary, const String& key)
+static const String& valueForKey(const UncheckedKeyHashMap<String, String>& dictionary, const String& key)
 {
     const auto& value = dictionary.find(key);
     if (value == dictionary.end())

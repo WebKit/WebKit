@@ -123,7 +123,7 @@ bool CSSImageValue::customTraverseSubresources(const Function<bool(const CachedR
     return m_cachedImage && *m_cachedImage && handler(**m_cachedImage);
 }
 
-void CSSImageValue::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void CSSImageValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
     if (!replacementURLString.isNull())

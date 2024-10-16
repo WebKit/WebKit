@@ -203,8 +203,8 @@ private:
 
     ThreadSafeWeakPtr<PDFPresentationController> m_presentationController;
 
-    HashMap<WebCore::PlatformLayerIdentifier, Ref<WebCore::GraphicsLayer>> m_layerIDtoLayerMap;
-    HashMap<WebCore::TileGridIdentifier, WebCore::PlatformLayerIdentifier> m_tileGridToLayerIDMap;
+    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, Ref<WebCore::GraphicsLayer>> m_layerIDtoLayerMap;
+    UncheckedKeyHashMap<WebCore::TileGridIdentifier, WebCore::PlatformLayerIdentifier> m_tileGridToLayerIDMap;
 
     Ref<ConcurrentWorkQueue> m_paintingWorkQueue;
 
@@ -212,7 +212,7 @@ private:
         PDFTileRenderIdentifier renderIdentifier;
         TileRenderInfo renderInfo;
     };
-    HashMap<TileForGrid, TileRenderData> m_currentValidTileRenders;
+    UncheckedKeyHashMap<TileForGrid, TileRenderData> m_currentValidTileRenders;
 
     const int m_maxConcurrentTileRenders { 4 };
     int m_numConcurrentTileRenders { 0 };
@@ -224,14 +224,14 @@ private:
 
         RefPtr<WebCore::ImageBuffer> protectedBuffer() { return buffer; }
     };
-    HashMap<TileForGrid, RenderedTile> m_rendereredTiles;
-    HashMap<TileForGrid, RenderedTile> m_rendereredTilesForOldState;
+    UncheckedKeyHashMap<TileForGrid, RenderedTile> m_rendereredTiles;
+    UncheckedKeyHashMap<TileForGrid, RenderedTile> m_rendereredTilesForOldState;
 
-    HashMap<WebCore::TileGridIdentifier, std::unique_ptr<RevalidationStateForGrid>> m_gridRevalidationState;
+    UncheckedKeyHashMap<WebCore::TileGridIdentifier, std::unique_ptr<RevalidationStateForGrid>> m_gridRevalidationState;
 
     using PDFPageIndexSet = HashSet<PDFDocumentLayout::PageIndex, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
-    using PDFPageIndexToPreviewHash = HashMap<PDFDocumentLayout::PageIndex, PagePreviewRequest, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
-    using PDFPageIndexToBufferHash = HashMap<PDFDocumentLayout::PageIndex, RefPtr<WebCore::ImageBuffer>, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
+    using PDFPageIndexToPreviewHash = UncheckedKeyHashMap<PDFDocumentLayout::PageIndex, PagePreviewRequest, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
+    using PDFPageIndexToBufferHash = UncheckedKeyHashMap<PDFDocumentLayout::PageIndex, RefPtr<WebCore::ImageBuffer>, IntHash<PDFDocumentLayout::PageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFDocumentLayout::PageIndex>>;
 
     PDFPageIndexToPreviewHash m_enqueuedPagePreviews;
     PDFPageIndexToBufferHash m_pagePreviews;

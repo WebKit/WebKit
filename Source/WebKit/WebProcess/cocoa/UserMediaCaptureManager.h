@@ -135,7 +135,7 @@ private:
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, WebCore::MediaConstraintType, String&&);
 
     using Source = std::variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>>;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;
+    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;
     AudioFactory m_audioFactory;
     VideoFactory m_videoFactory;

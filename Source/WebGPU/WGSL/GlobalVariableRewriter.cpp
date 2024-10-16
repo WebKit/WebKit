@@ -44,7 +44,7 @@ constexpr bool shouldLogGlobalVariableRewriting = false;
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
+    RewriteGlobalVariables(ShaderModule& shaderModule, const UncheckedKeyHashMap<String, PipelineLayout*>& pipelineLayouts, UncheckedKeyHashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
         : AST::Visitor()
         , m_shaderModule(shaderModule)
         , m_pipelineLayouts(pipelineLayouts)
@@ -78,7 +78,7 @@ private:
     };
 
     template<typename Value>
-    using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    using IndexMap = UncheckedKeyHashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
     using UsedResources = IndexMap<IndexMap<Global*>>;
     using UsedPrivateGlobals = Vector<Global*>;
@@ -150,29 +150,29 @@ private:
     AST::IdentifierExpression& getBase(AST::Expression&, unsigned&);
 
     ShaderModule& m_shaderModule;
-    HashMap<String, Global> m_globals;
-    HashMap<std::tuple<unsigned, unsigned>, AST::Variable*> m_globalsByBinding;
+    UncheckedKeyHashMap<String, Global> m_globals;
+    UncheckedKeyHashMap<std::tuple<unsigned, unsigned>, AST::Variable*> m_globalsByBinding;
     IndexMap<Vector<std::pair<unsigned, String>>> m_groupBindingMap;
     IndexMap<const Type*> m_structTypes;
-    HashMap<String, AST::Variable*> m_defs;
+    UncheckedKeyHashMap<String, AST::Variable*> m_defs;
     ListHashSet<String> m_reads;
-    HashMap<AST::Function*, ListHashSet<String>> m_lengthParameters;
-    HashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
+    UncheckedKeyHashMap<AST::Function*, ListHashSet<String>> m_lengthParameters;
+    UncheckedKeyHashMap<AST::Function*, ListHashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
-    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
+    UncheckedKeyHashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_generateLayoutGroupMapping;
     PipelineLayout* m_generatedLayout { nullptr };
     unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
     Vector<Insertion> m_pendingInsertions;
-    HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
+    UncheckedKeyHashMap<const Types::Struct*, const Type*> m_packedStructTypes;
     ShaderStage m_stage { ShaderStage::Vertex };
-    const HashMap<String, PipelineLayout*>& m_pipelineLayouts;
-    HashMap<String, Reflection::EntryPointInformation>& m_entryPointInformations;
-    HashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
+    const UncheckedKeyHashMap<String, PipelineLayout*>& m_pipelineLayouts;
+    UncheckedKeyHashMap<String, Reflection::EntryPointInformation>& m_entryPointInformations;
+    UncheckedKeyHashMap<AST::Variable*, AST::Variable*> m_bufferLengthMap;
     AST::Expression* m_bufferLengthType { nullptr };
     AST::Expression* m_bufferLengthReferenceType { nullptr };
     AST::Function* m_currentFunction { nullptr };
-    HashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
+    UncheckedKeyHashMap<std::pair<unsigned, unsigned>, unsigned> m_globalsUsingDynamicOffset;
     HashSet<AST::Expression*> m_doNotUnpack;
     CheckedUint32 m_combinedFunctionVariablesSize;
 };
@@ -1337,7 +1337,7 @@ Vector<unsigned> RewriteGlobalVariables::insertStructs(const UsedResources& used
 
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         unsigned metalId = 0;
-        HashMap<AST::Variable*, unsigned> bufferSizeToOwnerMap;
+        UncheckedKeyHashMap<AST::Variable*, unsigned> bufferSizeToOwnerMap;
         for (auto [binding, globalName] : bindingGlobalMap) {
             unsigned group = groupBinding.key;
             if (!usedBindings.contains(binding))
@@ -1937,7 +1937,7 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
 {
     Vector<unsigned> groups;
     unsigned group = 0;
-    HashMap<AST::Variable*, BindGroupLayoutEntry*> serializedVariables;
+    UncheckedKeyHashMap<AST::Variable*, BindGroupLayoutEntry*> serializedVariables;
     for (auto& bindGroupLayout : layout.bindGroupLayouts) {
         Vector<std::pair<unsigned, AST::StructureMember*>> entries;
         Vector<std::pair<unsigned, AST::Variable*>> bufferLengths;
@@ -2485,7 +2485,7 @@ AST::Identifier RewriteGlobalVariables::dynamicOffsetVariableName()
     return AST::Identifier::make("__DynamicOffsets"_str);
 }
 
-std::optional<Error> rewriteGlobalVariables(ShaderModule& shaderModule, const HashMap<String, PipelineLayout*>& pipelineLayouts, HashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
+std::optional<Error> rewriteGlobalVariables(ShaderModule& shaderModule, const UncheckedKeyHashMap<String, PipelineLayout*>& pipelineLayouts, UncheckedKeyHashMap<String, Reflection::EntryPointInformation>& entryPointInformations)
 {
     return RewriteGlobalVariables(shaderModule, pipelineLayouts, entryPointInformations).run();
 }

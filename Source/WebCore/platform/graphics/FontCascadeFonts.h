@@ -111,7 +111,7 @@ private:
         std::unique_ptr<MixedFontGlyphPage> m_mixedFont;
     };
 
-    EnumeratedArray<ResolvedEmojiPolicy, HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>, ResolvedEmojiPolicy::RequireEmoji> m_cachedPages;
+    EnumeratedArray<ResolvedEmojiPolicy, UncheckedKeyHashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>, ResolvedEmojiPolicy::RequireEmoji> m_cachedPages;
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 

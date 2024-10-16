@@ -175,7 +175,7 @@ private:
     bool postTaskForJob(ServiceWorkerJobIdentifier, IsJobComplete, Function<void(ServiceWorkerJob&)>&&);
 
     bool m_isClosed { false };
-    HashMap<ServiceWorkerJobIdentifier, ServiceWorkerOrClientIdentifier> m_scheduledJobSources;
+    UncheckedKeyHashMap<ServiceWorkerJobIdentifier, ServiceWorkerOrClientIdentifier> m_scheduledJobSources;
 };
 
 } // namespace WebCore

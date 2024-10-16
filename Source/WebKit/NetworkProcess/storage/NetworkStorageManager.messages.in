@@ -42,12 +42,12 @@
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::optional<std::pair<WebCore::FileSystemHandleIdentifier, bool>>, WebKit::FileSystemStorageError> result)
 
-    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier)
-    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
+    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, UncheckedKeyHashMap<String, String> items, uint64_t messageIdentifier)
+    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (std::optional<WebKit::StorageAreaIdentifier> identifier, UncheckedKeyHashMap<String, String> items, uint64_t messageIdentifier) Synchronous
     CancelConnectToStorageArea(WebCore::StorageType type, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin)
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier)
-    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems)
-    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> (bool hasError, HashMap<String, String> allItems)
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, UncheckedKeyHashMap<String, String> allItems)
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> (bool hasError, UncheckedKeyHashMap<String, String> allItems)
     Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> ()
 
     OpenDatabase(WebCore::IDBOpenRequestData requestData)

@@ -78,15 +78,15 @@ private:
     class HostContext;
     HostContext* contextForLoad(const NetworkLoad&);
 
-    using PageContext = HashMap<String, std::unique_ptr<HostContext>>;
-    HashMap<WebCore::PageIdentifier, std::unique_ptr<PageContext>> m_pageContexts;
+    using PageContext = UncheckedKeyHashMap<String, std::unique_ptr<HostContext>>;
+    UncheckedKeyHashMap<WebCore::PageIdentifier, std::unique_ptr<PageContext>> m_pageContexts;
 
     struct PendingMainResourcePreconnectInfo {
         unsigned pendingPreconnects {1};
         WeakListHashSet<NetworkLoad> pendingLoads;
     };
     // Maps (protocolHostAndPort, userAgent) => PendingMainResourcePreconnectInfo.
-    using PendingPreconnectMap = HashMap<std::tuple<String, String>, PendingMainResourcePreconnectInfo>;
+    using PendingPreconnectMap = UncheckedKeyHashMap<std::tuple<String, String>, PendingMainResourcePreconnectInfo>;
     PendingPreconnectMap m_pendingMainResourcePreconnects;
 
     void maybePrunePreconnectInfo(PendingPreconnectMap::iterator&);

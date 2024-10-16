@@ -96,7 +96,7 @@ private:
     Lock m_lock;
     HashSet<NativeCallee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(JIT)
-    HashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 };
 

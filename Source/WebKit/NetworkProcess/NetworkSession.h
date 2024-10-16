@@ -310,8 +310,8 @@ protected:
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain m_standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> m_persistedDomains;
-    HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
-    HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
+    UncheckedKeyHashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
+    UncheckedKeyHashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
     bool m_isStaleWhileRevalidateEnabled { false };
     Ref<PCM::ManagerInterface> m_privateClickMeasurement;
@@ -331,7 +331,7 @@ protected:
         WebCore::Timer m_expirationTimer;
         RefPtr<NetworkResourceLoader> m_loader;
     };
-    HashMap<NetworkResourceLoadIdentifier, std::unique_ptr<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
+    UncheckedKeyHashMap<NetworkResourceLoadIdentifier, std::unique_ptr<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
 
     PrefetchCache m_prefetchCache;
 
@@ -348,7 +348,7 @@ protected:
     bool m_shouldSendPrivateTokenIPCForTesting { false };
     std::optional<unsigned> m_overrideServiceWorkerRegistrationCountTestingValue;
     HashSet<std::unique_ptr<ServiceWorkerSoftUpdateLoader>> m_softUpdateLoaders;
-    HashMap<WebCore::FetchIdentifier, WeakRef<ServiceWorkerFetchTask>> m_navigationPreloaders;
+    UncheckedKeyHashMap<WebCore::FetchIdentifier, WeakRef<ServiceWorkerFetchTask>> m_navigationPreloaders;
 
     struct ServiceWorkerInfo {
         String databasePath;
@@ -373,7 +373,7 @@ protected:
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
 #endif
 
-    HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
+    UncheckedKeyHashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     NetworkNotificationManager m_notificationManager;

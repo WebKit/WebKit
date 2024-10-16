@@ -59,7 +59,7 @@ struct ViewportConstrainedLayerData {
     std::unique_ptr<ViewportConstraints> m_viewportConstraints;
 };
 
-typedef HashMap<RetainPtr<CALayer>, std::unique_ptr<ViewportConstrainedLayerData>> LayerInfoMap;
+typedef UncheckedKeyHashMap<RetainPtr<CALayer>, std::unique_ptr<ViewportConstrainedLayerData>> LayerInfoMap;
 
 struct WebFixedPositionContentData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -171,7 +171,7 @@ WebFixedPositionContentData::~WebFixedPositionContentData()
     });
 }
 
-- (void)setViewportConstrainedLayers:(WTF::HashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(const WTF::HashMap<CALayer*, CALayer*>&)stickyContainers
+- (void)setViewportConstrainedLayers:(WTF::UncheckedKeyHashMap<CALayer *, std::unique_ptr<WebCore::ViewportConstraints>>&)layerMap stickyContainerMap:(const WTF::UncheckedKeyHashMap<CALayer*, CALayer*>&)stickyContainers
 {
     Locker locker { webFixedPositionContentDataLock };
 

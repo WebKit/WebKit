@@ -96,7 +96,7 @@ public:
     // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
     bool shouldCheckColumnBreaks() const override;
 
-    using SpannerMap = HashMap<SingleThreadWeakRef<const RenderBox>, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
+    using SpannerMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, SingleThreadWeakPtr<RenderMultiColumnSpannerPlaceholder>>;
     SpannerMap& spannerMap() { return m_spannerMap; }
 
 private:

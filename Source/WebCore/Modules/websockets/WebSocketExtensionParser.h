@@ -45,7 +45,7 @@ public:
     }
     bool finished();
     bool parsedSuccessfully();
-    bool parseExtension(String& extensionToken, HashMap<String, String>& parameters);
+    bool parseExtension(String& extensionToken, UncheckedKeyHashMap<String, String>& parameters);
 
 private:
     const String& currentToken() { return m_currentToken; }

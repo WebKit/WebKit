@@ -54,7 +54,7 @@ private:
     void visibilityStateChanged() final;
 
     Document& m_document;
-    HashMap<WakeLockType, Vector<RefPtr<WakeLockSentinel>>, WTF::IntHash<WakeLockType>, WTF::StrongEnumHashTraits<WakeLockType>> m_wakeLocks;
+    UncheckedKeyHashMap<WakeLockType, Vector<RefPtr<WakeLockSentinel>>, WTF::IntHash<WakeLockType>, WTF::StrongEnumHashTraits<WakeLockType>> m_wakeLocks;
     std::unique_ptr<SleepDisabler> m_screenLockDisabler;
 };
 

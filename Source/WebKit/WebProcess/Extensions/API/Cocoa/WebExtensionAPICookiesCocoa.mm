@@ -137,7 +137,7 @@ static inline NSDictionary *toWebAPI(const WebExtensionCookieParameters& cookieP
     return [result copy];
 }
 
-static inline NSArray *toWebAPI(const HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& stores)
+static inline NSArray *toWebAPI(const UncheckedKeyHashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>& stores)
 {
     auto *result = [NSMutableArray arrayWithCapacity:stores.size()];
 
@@ -368,7 +368,7 @@ void WebExtensionAPICookies::getAllCookieStores(Ref<WebExtensionCallbackHandler>
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies/getAllCookieStores
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAllCookieStores(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&& result) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::CookiesGetAllCookieStores(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Expected<UncheckedKeyHashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error());
             return;

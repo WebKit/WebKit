@@ -85,7 +85,7 @@ private:
 
     WKBundleRef m_bundle;
     ExtensionRecord m_extensionRecords[6];
-    HashMap<WKBundleDOMWindowExtensionRef, int> m_extensionToRecordMap;
+    UncheckedKeyHashMap<WKBundleDOMWindowExtensionRef, int> m_extensionToRecordMap;
     bool m_finishedOneMainFrameLoad;
 };
 
@@ -166,8 +166,8 @@ void DOMWindowExtensionBasic::didCreatePage(WKBundleRef bundle, WKBundlePageRef 
 
 void DOMWindowExtensionBasic::willDestroyPage(WKBundleRef, WKBundlePageRef)
 {
-    HashMap<WKBundleDOMWindowExtensionRef, int>::iterator it = m_extensionToRecordMap.begin();
-    HashMap<WKBundleDOMWindowExtensionRef, int>::iterator end = m_extensionToRecordMap.end();
+    UncheckedKeyHashMap<WKBundleDOMWindowExtensionRef, int>::iterator it = m_extensionToRecordMap.begin();
+    UncheckedKeyHashMap<WKBundleDOMWindowExtensionRef, int>::iterator end = m_extensionToRecordMap.end();
     for (; it != end; ++it) {
         updateExtensionStateRecord(it->key, Removed);
         WKRelease(it->key);

@@ -48,7 +48,7 @@ void StorageMap::invalidateIterator()
 
 void StorageMap::setIteratorToIndex(unsigned index)
 {
-    // FIXME: Once we have bidirectional iterators for HashMap we can be more intelligent about this.
+    // FIXME: Once we have bidirectional iterators for UncheckedKeyHashMap we can be more intelligent about this.
     // The requested index will be closest to begin(), our current iterator, or end(), and we
     // can take the shortest route.
     // Until that mechanism is available, we'll always increment our iterator from begin() or current.
@@ -165,7 +165,7 @@ bool StorageMap::contains(const String& key) const
     return m_impl->map.contains(key);
 }
 
-void StorageMap::importItems(HashMap<String, String>&& items)
+void StorageMap::importItems(UncheckedKeyHashMap<String, String>&& items)
 {
     RELEASE_ASSERT(m_impl->map.isEmpty());
     RELEASE_ASSERT(!m_impl->currentSize);

@@ -44,7 +44,7 @@ public:
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext&);
     static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, InlineFormattingContext&);
-    static HashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, InlineFormattingContext&);
+    static UncheckedKeyHashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, InlineFormattingContext&);
     static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line&, InlineLayoutUnit spaceToDistribute, InlineFormattingContext&);
 
     // Line box building
@@ -58,7 +58,7 @@ public:
     static void applyRubyOverhang(InlineFormattingContext& parentFormattingContext, InlineLayoutUnit lineLogicalHeight, InlineDisplay::Boxes&, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList);
 
     enum class RubyBasesMayNeedResizing : bool { No, Yes };
-    static void applyAlignmentOffsetList(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing, InlineFormattingContext&);
+    static void applyAlignmentOffsetList(InlineDisplay::Boxes&, const UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing, InlineFormattingContext&);
     static void applyAnnotationAlignmentOffset(InlineDisplay::Boxes&, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
     // Miscellaneous helpers
@@ -66,10 +66,10 @@ public:
     static bool hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox);
 
 private:
-    using MaximumLayoutBoundsStretchMap = HashMap<const InlineLevelBox*, InlineLevelBox::AscentAndDescent>;
+    using MaximumLayoutBoundsStretchMap = UncheckedKeyHashMap<const InlineLevelBox*, InlineLevelBox::AscentAndDescent>;
     static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, MaximumLayoutBoundsStretchMap&, const InlineFormattingContext&);
 
-    static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext&);
+    static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, UncheckedKeyHashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, InlineLayoutUnit lineLogicalHeight, InlineFormattingContext&);
 };

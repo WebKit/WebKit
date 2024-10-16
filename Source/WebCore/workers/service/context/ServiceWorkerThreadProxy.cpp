@@ -331,7 +331,7 @@ void ServiceWorkerThreadProxy::fireActivateEvent()
     });
 }
 
-void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, UncheckedKeyHashMap<URL, ScriptBuffer>&& importedScripts)
 {
     ASSERT(!isMainThread());
 

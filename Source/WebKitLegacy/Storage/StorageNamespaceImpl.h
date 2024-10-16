@@ -65,7 +65,7 @@ private:
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOrigin&) final;
     Ref<StorageNamespace> copy(WebCore::Page& newPage) final;
 
-    typedef HashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaImpl>> StorageAreaMap;
+    typedef UncheckedKeyHashMap<WebCore::SecurityOriginData, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;
 
     WebCore::StorageType m_storageType;

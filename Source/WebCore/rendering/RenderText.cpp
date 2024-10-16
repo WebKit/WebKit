@@ -146,15 +146,15 @@ void SecureTextTimer::fired()
     m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, String>& originalTextMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, String>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, String>> map;
     return map;
 }
 
-static HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>& inlineWrapperForDisplayContentsMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const RenderText>, SingleThreadWeakPtr<RenderInline>>> map;
     return map;
 }
 

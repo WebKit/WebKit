@@ -48,7 +48,7 @@ public:
     void defer(WebCore::ResourceLoaderIdentifier, Function<void()>&&);
 
 private:
-    HashMap<WebCore::ResourceLoaderIdentifier, Deque<Function<void()>>> m_interceptedResponseQueue;
+    UncheckedKeyHashMap<WebCore::ResourceLoaderIdentifier, Deque<Function<void()>>> m_interceptedResponseQueue;
 };
 
 } // namespace WebKit

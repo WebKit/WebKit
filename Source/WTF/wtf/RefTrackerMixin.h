@@ -59,7 +59,7 @@ public:
     WTF_EXPORT_PRIVATE void logAllLiveReferences();
 
     Lock lock { };
-    HashMap<void*, std::unique_ptr<StackShot>> map WTF_GUARDED_BY_LOCK(lock) { };
+    UncheckedKeyHashMap<void*, std::unique_ptr<StackShot>> map WTF_GUARDED_BY_LOCK(lock) { };
     std::atomic<int> loggingDisabledDepth { };
 };
 

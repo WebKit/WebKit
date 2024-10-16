@@ -115,7 +115,7 @@ private:
     void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
+    void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, UncheckedKeyHashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
 #endif
     void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData>&&);
     void skipWaitingCompleted(uint64_t matchAllRequestIdentifier);
@@ -142,8 +142,8 @@ private:
     WebCore::PageIdentifier m_pageID;
 
     HashSet<std::unique_ptr<RemoteWorkerFrameLoaderClient>> m_loaders;
-    HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
-    HashMap<uint64_t, Function<void()>> m_skipWaitingCallbacks;
+    UncheckedKeyHashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
+    UncheckedKeyHashMap<uint64_t, Function<void()>> m_skipWaitingCallbacks;
     uint64_t m_previousRequestIdentifier { 0 };
     String m_userAgent;
     bool m_isThrottleable { true };
@@ -152,7 +152,7 @@ private:
     Ref<WorkQueue> m_queue;
 
     using FetchKey = std::pair<WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier>;
-    HashMap<FetchKey, Ref<WebServiceWorkerFetchTaskClient>> m_ongoingNavigationFetchTasks WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    UncheckedKeyHashMap<FetchKey, Ref<WebServiceWorkerFetchTaskClient>> m_ongoingNavigationFetchTasks WTF_GUARDED_BY_CAPABILITY(m_queue.get());
 };
 
 } // namespace WebKit

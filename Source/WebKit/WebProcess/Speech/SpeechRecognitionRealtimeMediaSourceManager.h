@@ -64,7 +64,7 @@ private:
 
     class Source;
     friend class Source;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<Source>> m_sources;
+    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<Source>> m_sources;
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     RefPtr<SandboxExtension> m_machBootstrapExtension;

@@ -47,9 +47,9 @@ gshort webkit_dom_node_filter_accept_node(WebKitDOMNodeFilter* filter, WebKitDOM
 
 namespace WebKit {
 
-static HashMap<WebCore::NodeFilter*, WebKitDOMNodeFilter*>& nodeFilterMap()
+static UncheckedKeyHashMap<WebCore::NodeFilter*, WebKitDOMNodeFilter*>& nodeFilterMap()
 {
-    static NeverDestroyed<HashMap<WebCore::NodeFilter*, WebKitDOMNodeFilter*>> nodeFilterMap;
+    static NeverDestroyed<UncheckedKeyHashMap<WebCore::NodeFilter*, WebKitDOMNodeFilter*>> nodeFilterMap;
     return nodeFilterMap;
 }
 

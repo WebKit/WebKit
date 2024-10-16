@@ -66,7 +66,7 @@ private:
 
     GtkWidget* m_webView;
     GtkWidget* m_menu;
-    HashMap<unsigned long, void*> m_signalHandlers;
+    UncheckedKeyHashMap<unsigned long, void*> m_signalHandlers;
     GRefPtr<GSimpleActionGroup> m_actionGroup { adoptGRef(g_simple_action_group_new()) };
 };
 

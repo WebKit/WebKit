@@ -584,12 +584,12 @@ private:
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
 
-    HashMap<AtomString, Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
-    HashMap<AtomString, Ref<VideoTrackPrivateGStreamer>> m_videoTracks;
-    HashMap<AtomString, Ref<InbandTextTrackPrivateGStreamer>> m_textTracks;
+    UncheckedKeyHashMap<AtomString, Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
+    UncheckedKeyHashMap<AtomString, Ref<VideoTrackPrivateGStreamer>> m_videoTracks;
+    UncheckedKeyHashMap<AtomString, Ref<InbandTextTrackPrivateGStreamer>> m_textTracks;
     RefPtr<InbandMetadataTextTrackPrivateGStreamer> m_chaptersTrack;
 #if USE(GSTREAMER_MPEGTS)
-    HashMap<AtomString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
+    UncheckedKeyHashMap<AtomString, RefPtr<InbandMetadataTextTrackPrivateGStreamer>> m_metadataTracks;
 #endif
     virtual bool isMediaSource() const { return false; }
 
@@ -630,14 +630,14 @@ private:
 
     void setupCodecProbe(GstElement*);
     Lock m_codecsLock;
-    HashMap<String, String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
+    UncheckedKeyHashMap<String, String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 
     Ref<PlatformMediaResourceLoader> m_loader;
 
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
-    HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
+    UncheckedKeyHashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
 };
 
 } // namespace WebCore

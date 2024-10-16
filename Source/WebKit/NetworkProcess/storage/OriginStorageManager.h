@@ -89,7 +89,7 @@ public:
     bool isActive();
     bool hasDataInMemory();
     bool isEmpty();
-    using DataTypeSizeMap = HashMap<WebsiteDataType, uint64_t, IntHash<WebsiteDataType>, WTF::StrongEnumHashTraits<WebsiteDataType>>;
+    using DataTypeSizeMap = UncheckedKeyHashMap<WebsiteDataType, uint64_t, IntHash<WebsiteDataType>, WTF::StrongEnumHashTraits<WebsiteDataType>>;
     DataTypeSizeMap fetchDataTypesInList(OptionSet<WebsiteDataType>, bool shouldComputeSize);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);

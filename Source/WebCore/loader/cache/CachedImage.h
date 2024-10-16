@@ -200,7 +200,7 @@ private:
         URL imageURL;
     };
 
-    using ContainerContextRequests = HashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;
+    using ContainerContextRequests = UncheckedKeyHashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
     SingleThreadWeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;

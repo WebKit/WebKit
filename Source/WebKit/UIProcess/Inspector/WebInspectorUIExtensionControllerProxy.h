@@ -86,7 +86,7 @@ private:
     void whenFrontendHasLoaded(Function<void()>&&);
 
     WeakPtr<WebPageProxy> m_inspectorPage;
-    HashMap<Inspector::ExtensionID, RefPtr<API::InspectorExtension>> m_extensionAPIObjectMap;
+    UncheckedKeyHashMap<Inspector::ExtensionID, RefPtr<API::InspectorExtension>> m_extensionAPIObjectMap;
 
     // Used to queue actions such as registering extensions that happen early on.
     // There's no point sending these before the frontend is fully loaded.

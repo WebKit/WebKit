@@ -68,7 +68,7 @@ private:
     };
 
     DeviceIdHashSaltStorage(const String& deviceIdHashSaltStorageDirectory);
-    void loadStorageFromDisk(CompletionHandler<void(HashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&&);
+    void loadStorageFromDisk(CompletionHandler<void(UncheckedKeyHashMap<String, std::unique_ptr<HashSaltForOrigin>>&&)>&&);
     void storeHashSaltToDisk(const HashSaltForOrigin&);
     void deleteHashSaltFromDisk(const HashSaltForOrigin&);
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData(const HashSaltForOrigin&) const;
@@ -77,7 +77,7 @@ private:
     void completeDeviceIdHashSaltForOriginCall(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, CompletionHandler<void(String&&)>&&);
 
     Ref<WorkQueue> m_queue;
-    HashMap<String, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
+    UncheckedKeyHashMap<String, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
     bool m_isLoaded { false };
     bool m_isClosed { false };
     Vector<CompletionHandler<void()>> m_pendingCompletionHandlers;

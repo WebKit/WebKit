@@ -153,7 +153,7 @@ struct WebProcessCreationParameters {
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<String, bool> notificationPermissions;
+    UncheckedKeyHashMap<String, bool> notificationPermissions;
 #endif
 
 #if PLATFORM(COCOA)
@@ -272,7 +272,7 @@ struct WebProcessCreationParameters {
 
     String timeZoneOverride;
 
-    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     ScriptTelemetryRules scriptTelemetryRules;
 

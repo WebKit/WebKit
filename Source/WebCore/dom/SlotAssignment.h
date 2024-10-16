@@ -135,7 +135,7 @@ private:
     unsigned m_slotResolutionVersion { 0 };
     unsigned m_slotElementCount { 0 };
 
-    HashMap<AtomString, std::unique_ptr<Slot>> m_slots;
+    UncheckedKeyHashMap<AtomString, std::unique_ptr<Slot>> m_slots;
 
 #if ASSERT_ENABLED
     WeakHashSet<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_slotElementsForConsistencyCheck;

@@ -42,7 +42,7 @@ class JSWindowProxy;
 class WindowProxy : public RefCounted<WindowProxy> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(WindowProxy, WEBCORE_EXPORT);
 public:
-    using ProxyMap = HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
+    using ProxyMap = UncheckedKeyHashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSWindowProxy>>;
 
     static Ref<WindowProxy> create(Frame& frame)
     {

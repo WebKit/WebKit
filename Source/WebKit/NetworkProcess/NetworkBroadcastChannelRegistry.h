@@ -54,8 +54,8 @@ public:
 
 private:
     Ref<NetworkProcess> m_networkProcess;
-    using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
-    HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
+    using NameToConnectionIdentifiersMap = UncheckedKeyHashMap<String, Vector<IPC::Connection::UniqueID>>;
+    UncheckedKeyHashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };
 
 } // namespace WebKit

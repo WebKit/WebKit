@@ -198,7 +198,7 @@ header: <WebCore/PlatformXR.h>
     std::optional<PlatformXR::FrameData::Pose> floorTransform;
     PlatformXR::FrameData::StageParameters stageParameters;
     Vector<PlatformXR::FrameData::View> views;
-    HashMap<PlatformXR::LayerHandle, UniqueRef<PlatformXR::FrameData::LayerData>> layers;
+    UncheckedKeyHashMap<PlatformXR::LayerHandle, UniqueRef<PlatformXR::FrameData::LayerData>> layers;
     Vector<PlatformXR::FrameData::InputSource> inputSources;
 };
 

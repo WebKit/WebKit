@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using WorldMap = HashMap<SingleThreadWeakRef<DOMWrapperWorld>, WeakRef<InjectedBundleScriptWorld>>;
+using WorldMap = UncheckedKeyHashMap<SingleThreadWeakRef<DOMWrapperWorld>, WeakRef<InjectedBundleScriptWorld>>;
 
 static WorldMap& allWorlds()
 {

@@ -65,7 +65,7 @@ public:
     bool inStandardsMode() const { return m_inStandardsMode; }
 
     // Integration codepath
-    void setNestedListMarkerOffsets(HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTFMove(nestedListMarkerOffsets); }
+    void setNestedListMarkerOffsets(UncheckedKeyHashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets) { m_nestedListMarkerOffsets = WTFMove(nestedListMarkerOffsets); }
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
     void setShouldNotSynthesizeInlineBlockBaseline() { m_shouldNotSynthesizeInlineBlockBaseline = true; }
     bool shouldNotSynthesizeInlineBlockBaseline() const { return m_shouldNotSynthesizeInlineBlockBaseline; }
@@ -79,7 +79,7 @@ private:
     std::optional<size_t> m_hyphenationLimitLines { };
     size_t m_successiveHyphenatedLineCount { 0 };
     // FIXME: This is required by the integaration codepath.
-    HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    UncheckedKeyHashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
     AvailableLineWidthOverride m_availableLineWidthOverride;
     bool m_shouldNotSynthesizeInlineBlockBaseline { false };
     bool m_inStandardsMode { false };

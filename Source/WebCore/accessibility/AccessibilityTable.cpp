@@ -208,7 +208,7 @@ bool AccessibilityTable::isDataTable() const
     unsigned cellsWithLeftBorder = 0;
     unsigned cellsWithRightBorder = 0;
 
-    HashMap<Node*, unsigned> cellCountForEachRow;
+    UncheckedKeyHashMap<Node*, unsigned> cellCountForEachRow;
     Color alternatingRowColors[5];
     int alternatingRowColorCount = 0;
     unsigned rowCount = 0;

@@ -303,7 +303,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         return;
     }
 
-    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, ElementIdentifier snapTargetID, bool isFocused, size_t snapAreaIndices)
+    auto addOrUpdateStopForSnapOffset = [](UncheckedKeyHashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, ElementIdentifier snapTargetID, bool isFocused, size_t snapAreaIndices)
     {
         if (!offsets.isValidKey(newOffset))
             return;
@@ -320,8 +320,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         offset.iterator->value.snapAreaIndices.append(snapAreaIndices);
     };
 
-    HashMap<LayoutUnit, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
-    HashMap<LayoutUnit, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
+    UncheckedKeyHashMap<LayoutUnit, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
+    UncheckedKeyHashMap<LayoutUnit, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
     Vector<LayoutRect> snapAreas;
     Vector<ElementIdentifier> snapAreasIDs;
 

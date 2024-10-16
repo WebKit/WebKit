@@ -225,7 +225,7 @@ public:
     FloatRect primaryScreenRect() const override;
 #endif
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
-    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
+    UncheckedKeyHashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
     
     // In a multi-select list, many items can be selected but only one is active at a time.
     bool isSelectedOptionActive() const override { return false; }
@@ -991,7 +991,7 @@ AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const Function<b
 
 namespace Accessibility {
 
-using PlatformRoleMap = HashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+using PlatformRoleMap = UncheckedKeyHashMap<AccessibilityRole, String, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
 PlatformRoleMap createPlatformRoleMap();
 String roleToPlatformString(AccessibilityRole);

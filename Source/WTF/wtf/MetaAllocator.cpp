@@ -310,8 +310,8 @@ void MetaAllocator::addFreeSpace(FreeSpacePtr start, size_t sizeInBytes)
 {
     FreeSpacePtr end = start + sizeInBytes;
 
-    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator leftNeighbor = m_freeSpaceEndAddressMap.find(start);
-    HashMap<FreeSpacePtr, FreeSpaceNode*>::iterator rightNeighbor = m_freeSpaceStartAddressMap.find(end);
+    UncheckedKeyHashMap<FreeSpacePtr, FreeSpaceNode*>::iterator leftNeighbor = m_freeSpaceEndAddressMap.find(start);
+    UncheckedKeyHashMap<FreeSpacePtr, FreeSpaceNode*>::iterator rightNeighbor = m_freeSpaceStartAddressMap.find(end);
 
     if (leftNeighbor != m_freeSpaceEndAddressMap.end()) {
         // We have something we can coalesce with on the left. Remove it from the tree, and
@@ -441,7 +441,7 @@ void MetaAllocator::decrementPageOccupancy(void* address, size_t sizeInBytes)
     };
     
     for (uintptr_t page = firstPage; page <= lastPage; ++page) {
-        HashMap<uintptr_t, size_t>::iterator iter = m_pageOccupancyMap.find(page);
+        UncheckedKeyHashMap<uintptr_t, size_t>::iterator iter = m_pageOccupancyMap.find(page);
         ASSERT(iter != m_pageOccupancyMap.end());
         if (!--(iter->value)) {
             m_pageOccupancyMap.remove(iter);

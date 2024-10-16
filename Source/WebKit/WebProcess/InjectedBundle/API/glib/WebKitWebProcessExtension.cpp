@@ -121,7 +121,7 @@ enum {
     LAST_SIGNAL
 };
 
-typedef HashMap<WebPage*, GRefPtr<WebKitWebPage> > WebPageMap;
+typedef UncheckedKeyHashMap<WebPage*, GRefPtr<WebKitWebPage> > WebPageMap;
 
 struct _WebKitWebProcessExtensionPrivate {
     WebPageMap pages;

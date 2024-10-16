@@ -70,7 +70,7 @@ private:
 };
 
 @implementation WKHTTPCookieStore {
-    HashMap<CFTypeRef, RefPtr<WKHTTPCookieStoreObserver>> _observers;
+    UncheckedKeyHashMap<CFTypeRef, RefPtr<WKHTTPCookieStoreObserver>> _observers;
 }
 
 WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;

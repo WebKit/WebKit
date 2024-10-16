@@ -491,7 +491,7 @@ uint32_t UniqueSSRCGenerator::generateSSRC()
 
 std::optional<int> payloadTypeForEncodingName(StringView encodingName)
 {
-    static HashMap<String, int> staticPayloadTypes = {
+    static UncheckedKeyHashMap<String, int> staticPayloadTypes = {
         { "PCMU"_s, 0 },
         { "PCMA"_s, 8 },
         { "G722"_s, 9 },

@@ -59,7 +59,7 @@ private:
     static const Command s_commands[];
 
     static std::optional<HTTPMethod> toCommandHTTPMethod(const String& method);
-    static bool findCommand(HTTPMethod, const String& path, CommandHandler*, HashMap<String, String>& parameters);
+    static bool findCommand(HTTPMethod, const String& path, CommandHandler*, UncheckedKeyHashMap<String, String>& parameters);
 
     void newSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void deleteSession(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

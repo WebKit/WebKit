@@ -111,7 +111,7 @@ private:
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting { false };
 
-    std::unique_ptr<HashMap<String, Ref<Element>>> m_linkedDestinations;
+    std::unique_ptr<UncheckedKeyHashMap<String, Ref<Element>>> m_linkedDestinations;
 };
 
 } // namespace WebCore

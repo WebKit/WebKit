@@ -87,7 +87,7 @@ private:
 
     void didFlushCompositingLayers() final;
 
-    void updateViewportConstrainedLayers(HashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, const HashMap<PlatformLayer*, PlatformLayer*>&) final;
+    void updateViewportConstrainedLayers(UncheckedKeyHashMap<PlatformLayer*, std::unique_ptr<WebCore::ViewportConstraints>>&, const UncheckedKeyHashMap<PlatformLayer*, PlatformLayer*>&) final;
 
     bool fetchCustomFixedPositionLayoutRect(WebCore::IntRect&) final;
     void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer*, PlatformLayer*, const WebCore::IntSize&, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) final;

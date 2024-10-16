@@ -72,7 +72,7 @@ struct DOMObjectCacheData {
 };
 
 class DOMObjectCacheFrameObserver;
-typedef HashMap<WebCore::LocalFrame*, std::unique_ptr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
+typedef UncheckedKeyHashMap<WebCore::LocalFrame*, std::unique_ptr<DOMObjectCacheFrameObserver>> DOMObjectCacheFrameObserverMap;
 
 static DOMObjectCacheFrameObserverMap& domObjectCacheFrameObservers()
 {
@@ -195,7 +195,7 @@ static DOMObjectCacheFrameObserver& getOrCreateDOMObjectCacheFrameObserver(WebCo
     return *result.iterator->value;
 }
 
-typedef HashMap<void*, std::unique_ptr<DOMObjectCacheData>> DOMObjectMap;
+typedef UncheckedKeyHashMap<void*, std::unique_ptr<DOMObjectCacheData>> DOMObjectMap;
 
 static DOMObjectMap& domObjects()
 {

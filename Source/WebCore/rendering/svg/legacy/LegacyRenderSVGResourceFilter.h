@@ -87,7 +87,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
 
-    HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<FilterData>> m_rendererFilterDataMap;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);

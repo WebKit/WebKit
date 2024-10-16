@@ -269,7 +269,7 @@ public:
 
 private:
     Graph& m_graph;
-    BlockMap<HashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
+    BlockMap<UncheckedKeyHashMap<NodeFlowProjection, AbstractValue>> m_valuesAtTailMap;
     BlockMap<Vector<AbstractValue>> m_tupleAbstractValues;
     BasicBlock* m_block { nullptr };
     bool m_trustEdgeProofs { false };

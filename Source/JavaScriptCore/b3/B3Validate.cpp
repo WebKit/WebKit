@@ -69,10 +69,10 @@ public:
     {
         HashSet<BasicBlock*> blocks;
         HashSet<Value*> valueInProc;
-        HashMap<Value*, unsigned> valueInBlock;
-        HashMap<Value*, BasicBlock*> valueOwner;
-        HashMap<Value*, unsigned> valueIndex;
-        HashMap<Value*, Vector<std::optional<Type>>> extractions;
+        UncheckedKeyHashMap<Value*, unsigned> valueInBlock;
+        UncheckedKeyHashMap<Value*, BasicBlock*> valueOwner;
+        UncheckedKeyHashMap<Value*, unsigned> valueIndex;
+        UncheckedKeyHashMap<Value*, Vector<std::optional<Type>>> extractions;
 
         for (unsigned tuple = 0; tuple < m_procedure.tuples().size(); ++tuple) {
             VALIDATE(m_procedure.tuples()[tuple].size(), ("In tuple ", tuple));
@@ -114,7 +114,7 @@ public:
             }
         }
 
-        HashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;
+        UncheckedKeyHashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;
         for (BasicBlock* block : blocks) {
             VALIDATE(block->size() >= 1, ("At ", *block));
             for (unsigned i = 0; i < block->size() - 1; ++i)

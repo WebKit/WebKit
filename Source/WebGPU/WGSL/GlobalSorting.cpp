@@ -170,7 +170,7 @@ public:
 
 private:
     FixedVector<Node> m_nodes;
-    HashMap<String, Node*> m_nodeMap;
+    UncheckedKeyHashMap<String, Node*> m_nodeMap;
     EdgeSet m_edges;
 };
 

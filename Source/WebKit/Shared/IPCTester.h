@@ -81,10 +81,10 @@ private:
     RefPtr<WorkQueue> m_testQueue;
     std::atomic<bool> m_shouldStop { false };
 
-    using StreamTesterMap = HashMap<IPCStreamTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester>>;
+    using StreamTesterMap = UncheckedKeyHashMap<IPCStreamTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester>>;
     StreamTesterMap m_streamTesters;
 
-    using ConnectionTesterMap = HashMap<IPCConnectionTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester>>;
+    using ConnectionTesterMap = UncheckedKeyHashMap<IPCConnectionTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester>>;
     ConnectionTesterMap m_connectionTesters;
 };
 

@@ -384,9 +384,9 @@ Interpreter::~Interpreter() = default;
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
-HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
+UncheckedKeyHashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 {
-    static LazyNeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
+    static LazyNeverDestroyed<UncheckedKeyHashMap<Opcode, OpcodeID>> opcodeIDTable;
 
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [&] {

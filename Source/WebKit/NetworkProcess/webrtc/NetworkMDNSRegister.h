@@ -85,11 +85,11 @@ private:
     WeakRef<NetworkConnectionToWebProcess> m_connection;
     HashSet<String> m_registeredNames;
 
-    HashMap<WebCore::ScriptExecutionContextIdentifier, Vector<String>> m_perDocumentRegisteredNames;
+    UncheckedKeyHashMap<WebCore::ScriptExecutionContextIdentifier, Vector<String>> m_perDocumentRegisteredNames;
 
 #if ENABLE_MDNS
     struct DNSServiceDeallocator;
-    HashMap<WebCore::ScriptExecutionContextIdentifier, std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>> m_services;
+    UncheckedKeyHashMap<WebCore::ScriptExecutionContextIdentifier, std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>> m_services;
 #endif
 };
 

@@ -199,7 +199,7 @@ public:
     }
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
-    HashMap<String, URISchemeHandler> m_handlersMap;
+    UncheckedKeyHashMap<String, URISchemeHandler> m_handlersMap;
     bool m_uriSchemeRequestCallbackUsesTestWebView { true };
     int m_loadCounter { 0 };
 };

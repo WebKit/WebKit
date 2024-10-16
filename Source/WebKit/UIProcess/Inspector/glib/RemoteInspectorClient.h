@@ -87,8 +87,8 @@ private:
     RemoteInspectorObserver& m_observer;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
-    HashMap<uint64_t, Vector<Target>> m_targets;
-    HashMap<std::pair<uint64_t, uint64_t>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;
+    UncheckedKeyHashMap<uint64_t, Vector<Target>> m_targets;
+    UncheckedKeyHashMap<std::pair<uint64_t, uint64_t>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;
 };
 
 } // namespace WebKit

@@ -63,7 +63,7 @@ Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty
 
 static auto& deduplicationMap()
 {
-    static NeverDestroyed<HashMap<unsigned, Ref<ImmutableStyleProperties>, AlreadyHashed>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<unsigned, Ref<ImmutableStyleProperties>, AlreadyHashed>> map;
     return map.get();
 }
 

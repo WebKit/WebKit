@@ -118,7 +118,7 @@ public:
         }
 
     private:
-        typedef HashMap<RefPtr<UniquedStringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
+        typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
         PrivatePropertyMap m_propertyMap;
         Lock m_lock;
     };

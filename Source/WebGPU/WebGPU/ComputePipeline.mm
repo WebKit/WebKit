@@ -54,7 +54,7 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-static std::optional<MTLSize> metalSize(auto workgroupSize, const HashMap<String, WGSL::ConstantValue>& wgslConstantValues)
+static std::optional<MTLSize> metalSize(auto workgroupSize, const UncheckedKeyHashMap<String, WGSL::ConstantValue>& wgslConstantValues)
 {
     auto width = WGSL::evaluate(*workgroupSize.width, wgslConstantValues);
     auto height = workgroupSize.height ? WGSL::evaluate(*workgroupSize.height, wgslConstantValues) : 1;

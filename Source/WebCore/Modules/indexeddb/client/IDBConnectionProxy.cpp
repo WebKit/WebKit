@@ -572,7 +572,7 @@ void IDBConnectionProxy::forgetTransaction(IDBTransaction& transaction)
 }
 
 template<typename KeyType, typename ValueType, typename FunctionType>
-void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map, FunctionType&& cleanupFunction)
+void removeItemsMatchingCurrentThread(UncheckedKeyHashMap<KeyType, ValueType>& map, FunctionType&& cleanupFunction)
 {
     // FIXME: Revisit when introducing WebThread aware thread comparison.
     // https://bugs.webkit.org/show_bug.cgi?id=204345
@@ -586,7 +586,7 @@ void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map, Function
 }
 
 template<typename KeyType, typename ValueType>
-void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, HashMap<KeyType, ValueType>& map, bool isContextSuspended)
+void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, UncheckedKeyHashMap<KeyType, ValueType>& map, bool isContextSuspended)
 {
     // FIXME: Revisit when introducing WebThread aware thread comparison.
     // https://bugs.webkit.org/show_bug.cgi?id=204345

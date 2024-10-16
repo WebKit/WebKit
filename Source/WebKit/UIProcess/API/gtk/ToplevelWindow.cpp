@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-static HashMap<GtkWindow*, std::unique_ptr<ToplevelWindow>>& toplevelWindows()
+static UncheckedKeyHashMap<GtkWindow*, std::unique_ptr<ToplevelWindow>>& toplevelWindows()
 {
-    static NeverDestroyed<HashMap<GtkWindow*, std::unique_ptr<ToplevelWindow>>> windows;
+    static NeverDestroyed<UncheckedKeyHashMap<GtkWindow*, std::unique_ptr<ToplevelWindow>>> windows;
     return windows.get();
 }
 

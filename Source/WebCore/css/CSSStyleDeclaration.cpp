@@ -119,7 +119,7 @@ static inline void writeEpubPrefix(char*& buffer)
 
 static CSSPropertyID parseJavaScriptCSSPropertyName(const AtomString& propertyName)
 {
-    using CSSPropertyIDMap = HashMap<AtomString, CSSPropertyID>;
+    using CSSPropertyIDMap = UncheckedKeyHashMap<AtomString, CSSPropertyID>;
     static NeverDestroyed<CSSPropertyIDMap> propertyIDCache;
 
     auto* propertyNameString = propertyName.impl();
@@ -207,7 +207,7 @@ enum class CSSPropertyLookupMode { ConvertUsingDashPrefix, ConvertUsingNoDashPre
 
 template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(const AtomString& attribute)
 {
-    static NeverDestroyed<HashMap<AtomString, CSSPropertyID>> cache;
+    static NeverDestroyed<UncheckedKeyHashMap<AtomString, CSSPropertyID>> cache;
 
     if (auto id = cache.get().get(attribute))
         return id;

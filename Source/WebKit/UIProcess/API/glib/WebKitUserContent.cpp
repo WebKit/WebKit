@@ -29,7 +29,7 @@ using namespace WebCore;
 
 API::ContentWorld& webkitContentWorld(const char* worldName)
 {
-    static NeverDestroyed<HashMap<CString, RefPtr<API::ContentWorld>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<CString, RefPtr<API::ContentWorld>>> map;
     return *map.get().ensure(worldName, [worldName = String::fromUTF8(worldName)] {
         return API::ContentWorld::sharedWorldWithName(worldName);
     }).iterator->value;

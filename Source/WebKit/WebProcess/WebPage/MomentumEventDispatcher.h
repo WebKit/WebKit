@@ -176,10 +176,10 @@ private:
 #endif
     } m_currentGesture;
 
-    HashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
+    UncheckedKeyHashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
 
     mutable Lock m_accelerationCurvesLock;
-    HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves WTF_GUARDED_BY_LOCK(m_accelerationCurvesLock);
+    UncheckedKeyHashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves WTF_GUARDED_BY_LOCK(m_accelerationCurvesLock);
     CheckedRef<Client> m_client;
 };
 

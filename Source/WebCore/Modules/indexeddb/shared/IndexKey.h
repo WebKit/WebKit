@@ -49,6 +49,6 @@ private:
     Data m_keys;
 };
 
-typedef HashMap<uint64_t, IndexKey> IndexIDToIndexKeyMap;
+typedef UncheckedKeyHashMap<uint64_t, IndexKey> IndexIDToIndexKeyMap;
 
 } // namespace WebCore

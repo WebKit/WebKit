@@ -771,7 +771,7 @@ struct Entrypoint {
 
 class OSREntryValue;
 using StackMap = FixedVector<OSREntryValue>;
-using StackMaps = HashMap<CallSiteIndex, StackMap>;
+using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
 
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;

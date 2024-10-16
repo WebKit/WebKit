@@ -39,7 +39,7 @@ TEST(WebKit, WKRetainPtr)
     WKRetainPtr<WKStringRef> string3 = adoptWK(WKStringCreateWithUTF8CString("a"));
     WKRetainPtr<WKStringRef> string4 = adoptWK(WKStringCreateWithUTF8CString("a"));
 
-    HashMap<WKRetainPtr<WKStringRef>, int> map;
+    UncheckedKeyHashMap<WKRetainPtr<WKStringRef>, int> map;
 
     map.set(string2, 2);
     map.set(string1, 1);

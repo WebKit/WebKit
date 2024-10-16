@@ -53,9 +53,9 @@ WebBackForwardListFrameItem::~WebBackForwardListFrameItem()
     allItems().remove(*m_frameState->identifier);
 }
 
-HashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>& WebBackForwardListFrameItem::allItems()
+UncheckedKeyHashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>& WebBackForwardListFrameItem::allItems()
 {
-    static MainThreadNeverDestroyed<HashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>> items;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>> items;
     return items;
 }
 

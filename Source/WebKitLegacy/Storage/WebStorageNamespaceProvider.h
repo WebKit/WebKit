@@ -58,7 +58,7 @@ private:
     void cloneSessionStorageNamespaceForPage(WebCore::Page&, WebCore::Page&) final;
 
     const String m_localStorageDatabasePath;
-    WeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
+    WeakHashMap<WebCore::Page, UncheckedKeyHashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
 };
 
 } // namespace WebKit

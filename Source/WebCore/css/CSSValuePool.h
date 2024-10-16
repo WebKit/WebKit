@@ -77,9 +77,9 @@ public:
     Ref<CSSPrimitiveValue> createFontFamilyValue(const AtomString&);
 
 private:
-    HashMap<Color, Ref<CSSPrimitiveValue>> m_colorValueCache;
-    HashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
-    HashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
+    UncheckedKeyHashMap<Color, Ref<CSSPrimitiveValue>> m_colorValueCache;
+    UncheckedKeyHashMap<AtomString, RefPtr<CSSValueList>> m_fontFaceValueCache;
+    UncheckedKeyHashMap<AtomString, Ref<CSSPrimitiveValue>> m_fontFamilyValueCache;
 };
 
 inline CSSPrimitiveValue& CSSPrimitiveValue::implicitInitialValue()

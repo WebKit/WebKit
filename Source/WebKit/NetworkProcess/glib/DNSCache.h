@@ -53,7 +53,7 @@ private:
         MonotonicTime expirationTime;
     };
 
-    using DNSCacheMap = HashMap<CString, CachedResponse>;
+    using DNSCacheMap = UncheckedKeyHashMap<CString, CachedResponse>;
 
     DNSCacheMap& mapForType(Type) WTF_REQUIRES_LOCK(m_lock);
     void removeExpiredResponsesFired();

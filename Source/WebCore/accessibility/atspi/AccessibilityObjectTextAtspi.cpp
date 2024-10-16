@@ -761,8 +761,8 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     if (!m_coreObject || !m_coreObject->renderer())
         return { };
 
-    auto accessibilityTextAttributes = [this](AXCoreObject* axObject, const HashMap<String, String>& defaultAttributes) -> HashMap<String, String> {
-        HashMap<String, String> attributes;
+    auto accessibilityTextAttributes = [this](AXCoreObject* axObject, const UncheckedKeyHashMap<String, String>& defaultAttributes) -> UncheckedKeyHashMap<String, String> {
+        UncheckedKeyHashMap<String, String> attributes;
         auto& style = axObject->renderer()->style();
 
         auto addAttributeIfNeeded = [&](const String& name, const String& value) {

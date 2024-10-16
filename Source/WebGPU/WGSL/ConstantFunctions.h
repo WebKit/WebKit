@@ -111,7 +111,7 @@ static ConstantValue zeroValue(const Type* type)
             return result;
         },
         [&](const Types::Struct& structType) -> ConstantValue {
-            HashMap<String, ConstantValue> constantFields;
+            UncheckedKeyHashMap<String, ConstantValue> constantFields;
             for (auto& [key, type] : structType.fields)
                 constantFields.set(key, zeroValue(type));
             return ConstantStruct { WTFMove(constantFields) };

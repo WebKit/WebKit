@@ -104,7 +104,7 @@ private:
     private:
         friend class TextureMapperGLData;
 
-        using GLContextDataMap = HashMap<void*, SharedGLData*>;
+        using GLContextDataMap = UncheckedKeyHashMap<void*, SharedGLData*>;
         static GLContextDataMap& contextDataMap()
         {
             static NeverDestroyed<GLContextDataMap> map;
@@ -113,11 +113,11 @@ private:
 
         SharedGLData() = default;
 
-        HashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
+        UncheckedKeyHashMap<unsigned, RefPtr<TextureMapperShaderProgram>> m_programs;
     };
 
     Ref<SharedGLData> m_sharedGLData;
-    HashMap<const void*, GLuint> m_vbos;
+    UncheckedKeyHashMap<const void*, GLuint> m_vbos;
     GLuint m_vao { 0 };
 };
 

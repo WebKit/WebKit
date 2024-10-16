@@ -83,9 +83,9 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    HashMap<WebTransportStreamIdentifier, Ref<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
-    HashMap<WebTransportStreamIdentifier, Ref<NetworkTransportReceiveStream>> m_receiveStreams;
-    HashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportSendStream>> m_sendStreams;
+    UncheckedKeyHashMap<WebTransportStreamIdentifier, Ref<NetworkTransportBidirectionalStream>> m_bidirectionalStreams;
+    UncheckedKeyHashMap<WebTransportStreamIdentifier, Ref<NetworkTransportReceiveStream>> m_receiveStreams;
+    UncheckedKeyHashMap<WebTransportStreamIdentifier, UniqueRef<NetworkTransportSendStream>> m_sendStreams;
     WeakPtr<NetworkConnectionToWebProcess> m_connectionToWebProcess;
 
 #if PLATFORM(COCOA)

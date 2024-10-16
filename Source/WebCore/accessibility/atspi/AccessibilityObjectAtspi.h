@@ -35,7 +35,7 @@ typedef struct _GVariantBuilder GVariantBuilder;
 
 namespace WebCore {
 
-using RelationMap = HashMap<Atspi::Relation, Vector<RefPtr<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
+using RelationMap = UncheckedKeyHashMap<Atspi::Relation, Vector<RefPtr<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
 
 class AccessibilityObjectAtspi final : public RefCounted<AccessibilityObjectAtspi> {
 public:
@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT OptionSet<Atspi::State> states() const;
     bool isDefunct() const;
     void stateChanged(const char*, bool);
-    WEBCORE_EXPORT HashMap<String, String> attributes() const;
+    WEBCORE_EXPORT UncheckedKeyHashMap<String, String> attributes() const;
     WEBCORE_EXPORT RelationMap relationMap() const;
 
     WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, Atspi::CoordinateType) const;
@@ -114,7 +114,7 @@ public:
     WEBCORE_EXPORT IntPoint boundaryOffset(unsigned, TextGranularity) const;
     WEBCORE_EXPORT IntRect boundsForRange(unsigned, unsigned, Atspi::CoordinateType) const;
     struct TextAttributes {
-        HashMap<String, String> attributes;
+        UncheckedKeyHashMap<String, String> attributes;
         int startOffset;
         int endOffset;
     };
@@ -210,7 +210,7 @@ private:
     String localizedActionName() const;
     String actionKeyBinding() const;
 
-    HashMap<String, String> documentAttributes() const;
+    UncheckedKeyHashMap<String, String> documentAttributes() const;
     String documentLocale() const;
 
     String imageDescription() const;
@@ -246,7 +246,7 @@ private:
         } states;
 
         struct {
-            HashMap<String, Vector<String>> value;
+            UncheckedKeyHashMap<String, Vector<String>> value;
             Atspi::CollectionMatchType type;
         } attributes;
 

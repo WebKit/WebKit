@@ -42,7 +42,7 @@ class WebExtensionAPIMenus : public WebExtensionAPIObject, public JSWebExtension
 
 public:
 #if PLATFORM(COCOA)
-    using ClickHandlerMap = HashMap<String, Ref<WebExtensionCallbackHandler>>;
+    using ClickHandlerMap = UncheckedKeyHashMap<String, Ref<WebExtensionCallbackHandler>>;
 
     id createMenu(WebPage&, WebFrame&, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void update(WebPage&, WebFrame&, id identifier, NSDictionary *properties, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);

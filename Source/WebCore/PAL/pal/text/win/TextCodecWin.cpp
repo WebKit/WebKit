@@ -54,15 +54,15 @@ private:
 
 // Usage: a lookup table used to get CharsetInfo with code page ID.
 // Key: code page ID. Value: charset information.
-static HashMap<UINT, CString>& codePageCharsets()
+static UncheckedKeyHashMap<UINT, CString>& codePageCharsets()
 {
-    static HashMap<UINT, CString> cc;
+    static UncheckedKeyHashMap<UINT, CString> cc;
     return cc;
 }
 
-static HashMap<String, CharsetInfo>& knownCharsets()
+static UncheckedKeyHashMap<String, CharsetInfo>& knownCharsets()
 {
-    static HashMap<String, CharsetInfo> kc;
+    static UncheckedKeyHashMap<String, CharsetInfo> kc;
     return kc;
 }
 
@@ -97,7 +97,7 @@ LanguageManager::LanguageManager()
         if (!IsValidCodePage(cpInfo.uiCodePage))
             continue;
 
-        HashMap<UINT, CString>::iterator i = codePageCharsets().find(cpInfo.uiCodePage);
+        UncheckedKeyHashMap<UINT, CString>::iterator i = codePageCharsets().find(cpInfo.uiCodePage);
 
         CString name(String(cpInfo.wszWebCharset).latin1());
         if (i == codePageCharsets().end()) {
@@ -107,7 +107,7 @@ LanguageManager::LanguageManager()
             i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
         }
         if (i != codePageCharsets().end()) {
-            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(StringView { i->value.data(), i->value.length() });
+            UncheckedKeyHashMap<String, CharsetInfo>::iterator j = knownCharsets().find(StringView { i->value.data(), i->value.length() });
             ASSERT(j != knownCharsets().end());
             CharsetInfo& info = j->value;
             info.m_name = i->value.data();
@@ -126,8 +126,8 @@ static UINT getCodePage(const char* name)
 {
     // Explicitly use a "const" reference to fix the silly VS build error
     // saying "==" is not found for const_iterator and iterator
-    const HashMap<String, CharsetInfo>& charsets = knownCharsets();
-    HashMap<String, CharsetInfo>::const_iterator i = charsets.find(name);
+    const UncheckedKeyHashMap<String, CharsetInfo>& charsets = knownCharsets();
+    UncheckedKeyHashMap<String, CharsetInfo>::const_iterator i = charsets.find(name);
     return i == charsets.end() ? CP_ACP : i->value.m_codePage;
 }
 
@@ -147,7 +147,7 @@ void TextCodecWin::registerExtendedEncodingNames(EncodingNameRegistrar registrar
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
-        HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
+        UncheckedKeyHashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end()) {
             registrar(j->value.m_name.data(), j->value.m_name.data());
             for (Vector<CString>::const_iterator alias = j->value.m_aliases.begin(); alias != j->value.m_aliases.end(); ++alias)
@@ -160,7 +160,7 @@ void TextCodecWin::registerExtendedCodecs(TextCodecRegistrar registrar)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
-        HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
+        UncheckedKeyHashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end())
             registrar(j->value.m_name.data(), newTextCodecWin, 0);
     }
@@ -297,7 +297,7 @@ void TextCodecWin::enumerateSupportedEncodings(EncodingReceiver& receiver)
 {
     languageManager();
     for (CharsetSet::iterator i = supportedCharsets().begin(); i != supportedCharsets().end(); ++i) {
-        HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
+        UncheckedKeyHashMap<String, CharsetInfo>::iterator j = knownCharsets().find(*i);
         if (j != knownCharsets().end() && !receiver.receive(j->value.m_name.data(), j->value.m_friendlyName.charactersWithNullTermination()->data(), j->value.m_codePage))
             break;
     }

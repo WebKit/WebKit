@@ -53,14 +53,14 @@ public:
     void deleteAll(void* owner);
 
 protected:
-    using KeyValueStore = HashMap<void*, std::unique_ptr<SideData>>;
+    using KeyValueStore = UncheckedKeyHashMap<void*, std::unique_ptr<SideData>>;
     using AddResult = KeyValueStore::AddResult;
 
     SideDataRepository() = default;
 
     JS_EXPORT_PRIVATE AddResult add(void* owner, void* key, std::unique_ptr<SideData>) WTF_REQUIRES_LOCK(m_lock);
 
-    HashMap<void*, KeyValueStore> m_ownerStore WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<void*, KeyValueStore> m_ownerStore WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_lock;
 
     friend class LazyNeverDestroyed<SideDataRepository>;

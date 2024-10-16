@@ -161,7 +161,7 @@ private:
     Ref<PlatformCALayer> m_containerLayer;
 #endif
 
-    HashMap<TileIndex, TileInfo> m_tiles;
+    UncheckedKeyHashMap<TileIndex, TileInfo> m_tiles;
 
     IntRect m_primaryTileCoverageRect;
     Vector<FloatRect> m_secondaryTileCoverageRects;

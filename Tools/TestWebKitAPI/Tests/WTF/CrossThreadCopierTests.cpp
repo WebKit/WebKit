@@ -137,11 +137,11 @@ TEST(WTF_CrossThreadCopier, Variant)
     EXPECT_EQ(std::get<URL>(copy).string().impl(), impl);
 }
 
-TEST(WTF_CrossThreadCopier, HashMap)
+TEST(WTF_CrossThreadCopier, UncheckedKeyHashMap)
 {
-    HashMap<CString, StringImpl*> impls;
+    UncheckedKeyHashMap<CString, StringImpl*> impls;
 
-    HashMap<String, String> map;
+    UncheckedKeyHashMap<String, String> map;
     map.add("foo"_str, "fooValue"_str);
     map.add("bar"_str, "barValue"_str);
     for (auto& [key, value] : map) {
@@ -167,7 +167,7 @@ TEST(WTF_CrossThreadCopier, HashMap)
 
 TEST(WTF_CrossThreadCopier, HashSet)
 {
-    HashMap<CString, StringImpl*> impls;
+    UncheckedKeyHashMap<CString, StringImpl*> impls;
 
     HashSet<String> set;
     set.add("foo"_str);

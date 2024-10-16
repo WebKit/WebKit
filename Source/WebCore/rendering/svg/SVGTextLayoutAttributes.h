@@ -41,7 +41,7 @@ struct SVGCharacterData {
     float rotate;
 };
 
-typedef HashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
+typedef UncheckedKeyHashMap<unsigned, SVGCharacterData> SVGCharacterDataMap;
 
 class SVGTextLayoutAttributes {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributes);

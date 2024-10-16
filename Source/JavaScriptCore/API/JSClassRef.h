@@ -72,8 +72,8 @@ public:
 
 #undef STATIC_FUNCTION_ENTRY_METHOD
 
-typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticValueEntry>> OpaqueJSClassStaticValuesTable;
-typedef HashMap<RefPtr<StringImpl>, std::unique_ptr<StaticFunctionEntry>> OpaqueJSClassStaticFunctionsTable;
+typedef UncheckedKeyHashMap<RefPtr<StringImpl>, std::unique_ptr<StaticValueEntry>> OpaqueJSClassStaticValuesTable;
+typedef UncheckedKeyHashMap<RefPtr<StringImpl>, std::unique_ptr<StaticFunctionEntry>> OpaqueJSClassStaticFunctionsTable;
 
 struct OpaqueJSClass;
 

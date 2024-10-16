@@ -252,7 +252,7 @@ void EventDispatcher::dispatchTouchEvents()
 {
     TraceScope traceScope(DispatchTouchEventsStart, DispatchTouchEventsEnd);
 
-    HashMap<PageIdentifier, UniqueRef<TouchEventQueue>> localCopy;
+    UncheckedKeyHashMap<PageIdentifier, UniqueRef<TouchEventQueue>> localCopy;
     {
         Locker locker { m_touchEventsLock };
         localCopy.swap(m_touchEvents);

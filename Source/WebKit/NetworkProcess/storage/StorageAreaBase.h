@@ -68,7 +68,7 @@ public:
     bool hasListeners() const { return !m_listeners.isEmpty(); }
     void notifyListenersAboutClear();
 
-    virtual HashMap<String, String> allItems() = 0;
+    virtual UncheckedKeyHashMap<String, String> allItems() = 0;
     virtual Expected<void, StorageError> setItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, String&& key, String&& value, const String& urlString) = 0;
     virtual Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) = 0;
     virtual Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) = 0;
@@ -83,7 +83,7 @@ protected:
 private:
     unsigned m_quota;
     WebCore::ClientOrigin m_origin;
-    HashMap<IPC::Connection::UniqueID, StorageAreaMapIdentifier> m_listeners;
+    UncheckedKeyHashMap<IPC::Connection::UniqueID, StorageAreaMapIdentifier> m_listeners;
 };
 
 } // namespace WebKit

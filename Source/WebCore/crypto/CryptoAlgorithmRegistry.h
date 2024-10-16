@@ -62,8 +62,8 @@ private:
     void registerAlgorithm(const String& name, CryptoAlgorithmIdentifier, CryptoAlgorithmConstructor);
 
     Lock m_lock;
-    HashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
-    HashMap<unsigned, std::pair<String, CryptoAlgorithmConstructor>> m_constructors WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<String, CryptoAlgorithmIdentifier, ASCIICaseInsensitiveHash> m_identifiers WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<unsigned, std::pair<String, CryptoAlgorithmConstructor>> m_constructors WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WebCore

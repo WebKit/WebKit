@@ -105,7 +105,7 @@ private:
     bool hasCookies(const URL&);
 
     SQLiteDatabase m_database;
-    HashMap<String, std::unique_ptr<SQLiteStatement>> m_statements;
+    UncheckedKeyHashMap<String, std::unique_ptr<SQLiteStatement>> m_statements;
 };
 
 } // namespace WebCore

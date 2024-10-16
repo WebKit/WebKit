@@ -130,7 +130,7 @@ private:
     void queueAndProcessSerialAction(SerialAction&&);
 
     friend class UserMediaCaptureManagerProxySourceProxy;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
+    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<UserMediaCaptureManagerProxySourceProxy>> m_proxies;
     UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
     Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
@@ -139,7 +139,7 @@ private:
         ThreadSafeWeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
         ThreadSafeWeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
     };
-    HashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
+    UncheckedKeyHashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
 };
 
 }

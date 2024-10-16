@@ -339,7 +339,7 @@ private:
     RetainPtr<WKInspectorViewController> m_inspectorViewController;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorUIProxyObjCAdapter> m_objCAdapter;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    UncheckedKeyHashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     RunLoop::Timer m_closeFrontendAfterInactivityTimer;
     String m_urlString;
     WebCore::FloatRect m_sheetRect;

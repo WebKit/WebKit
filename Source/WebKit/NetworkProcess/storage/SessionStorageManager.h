@@ -59,8 +59,8 @@ private:
     StorageAreaIdentifier addStorageArea(Ref<MemoryStorageArea>&&, StorageNamespaceIdentifier);
 
     CheckedRef<StorageAreaRegistry> m_registry;
-    HashMap<StorageAreaIdentifier, Ref<MemoryStorageArea>> m_storageAreas;
-    HashMap<StorageNamespaceIdentifier, StorageAreaIdentifier> m_storageAreasByNamespace;
+    UncheckedKeyHashMap<StorageAreaIdentifier, Ref<MemoryStorageArea>> m_storageAreas;
+    UncheckedKeyHashMap<StorageNamespaceIdentifier, StorageAreaIdentifier> m_storageAreasByNamespace;
 };
 
 } // namespace WebKit

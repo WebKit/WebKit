@@ -209,7 +209,7 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteXRView>
     >;
 
-    HashMap<WebGPUIdentifier, Object> m_objects;
+    UncheckedKeyHashMap<WebGPUIdentifier, Object> m_objects;
 };
 
 } // namespace WebKit::WebGPU

@@ -182,8 +182,8 @@ void StorageAreaSync::syncTimerFired()
             m_itemsCleared = false;
         }
 
-        HashMap<String, String>::iterator changed_it = m_changedItems.begin();
-        HashMap<String, String>::iterator changed_end = m_changedItems.end();
+        UncheckedKeyHashMap<String, String>::iterator changed_it = m_changedItems.begin();
+        UncheckedKeyHashMap<String, String>::iterator changed_end = m_changedItems.end();
         for (int count = 0; changed_it != changed_end; ++count, ++changed_it) {
             if (count >= MaxiumItemsToSync && !m_finalSyncScheduled) {
                 partialSync = true;
@@ -196,8 +196,8 @@ void StorageAreaSync::syncTimerFired()
             // We can't do the fast path of simply clearing all items, so we'll need to manually
             // remove them one by one. Done under lock since m_itemsPendingSync is modified by
             // the background thread.
-            HashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
-            HashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
+            UncheckedKeyHashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
+            UncheckedKeyHashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
             for (; pending_it != pending_end; ++pending_it)
                 m_changedItems.remove(pending_it->key);
         }
@@ -333,7 +333,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    HashMap<String, String> itemMap;
+    UncheckedKeyHashMap<String, String> itemMap;
 
     int result = query->step();
     while (result == SQLITE_ROW) {
@@ -380,7 +380,7 @@ void StorageAreaSync::blockUntilImportComplete()
     m_storageArea = nullptr;
 }
 
-void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items)
+void StorageAreaSync::sync(bool clearItems, const UncheckedKeyHashMap<String, String>& items)
 {
     ASSERT(!isMainThread());
 
@@ -437,11 +437,11 @@ void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items
         return;
     }
 
-    HashMap<String, String>::const_iterator end = items.end();
+    UncheckedKeyHashMap<String, String>::const_iterator end = items.end();
 
     SQLiteTransaction transaction(m_database);
     transaction.begin();
-    for (HashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
+    for (UncheckedKeyHashMap<String, String>::const_iterator it = items.begin(); it != end; ++it) {
         // Based on the null-ness of the second argument, decide whether this is an insert or a delete.
         auto& query = it->value.isNull() ? remove : insert;
 
@@ -467,7 +467,7 @@ void StorageAreaSync::performSync()
     ASSERT(!isMainThread());
 
     bool clearItems;
-    HashMap<String, String> items;
+    UncheckedKeyHashMap<String, String> items;
     {
         Locker locker { m_syncLock };
 

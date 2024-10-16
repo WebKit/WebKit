@@ -169,7 +169,7 @@ header: "RemoteLayerBackingStore.h"
 headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 [CustomEncoder, CustomHeader] struct WebKit::ChangedLayers {
     [NotSerialized] HashSet<Ref<PlatformCALayerRemote>> changedLayers;
-    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<WebKit::LayerProperties>> changedLayerProperties;
+    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, UniqueRef<WebKit::LayerProperties>> changedLayerProperties;
 }
 
 [Nested] struct WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData {

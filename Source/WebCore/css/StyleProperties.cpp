@@ -365,7 +365,7 @@ bool StyleProperties::mayDependOnBaseURL() const
     return false;
 }
 
-void StyleProperties::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void StyleProperties::setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     for (auto property : *this)
         property.value()->setReplacementURLForSubresources(replacementURLStrings);

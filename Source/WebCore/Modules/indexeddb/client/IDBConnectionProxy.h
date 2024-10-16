@@ -165,13 +165,13 @@ private:
     Lock m_databaseInfoMapLock;
     Lock m_mainThreadTaskLock;
 
-    HashMap<IDBDatabaseConnectionIdentifier, IDBDatabase*> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
-    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations WTF_GUARDED_BY_LOCK(m_transactionOperationLock);
-    HashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks WTF_GUARDED_BY_LOCK(m_databaseInfoMapLock);
+    UncheckedKeyHashMap<IDBDatabaseConnectionIdentifier, IDBDatabase*> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations WTF_GUARDED_BY_LOCK(m_transactionOperationLock);
+    UncheckedKeyHashMap<IDBResourceIdentifier, Ref<IDBDatabaseNameAndVersionRequest>> m_databaseInfoCallbacks WTF_GUARDED_BY_LOCK(m_databaseInfoMapLock);
 
     CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;
     RefPtr<IDBConnectionToServer> m_mainThreadProtector WTF_GUARDED_BY_LOCK(m_mainThreadTaskLock);

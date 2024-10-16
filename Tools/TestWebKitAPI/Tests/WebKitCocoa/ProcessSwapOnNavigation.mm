@@ -304,8 +304,8 @@ static RetainPtr<WKWebView> createdWebView;
 
 @interface PSONScheme : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
-    HashMap<String, String> _redirects;
-    HashMap<String, RetainPtr<NSData>> _dataMappings;
+    UncheckedKeyHashMap<String, String> _redirects;
+    UncheckedKeyHashMap<String, RetainPtr<NSData>> _dataMappings;
     HashSet<id <WKURLSchemeTask>> _runningTasks;
     bool _shouldRespondAsynchronously;
 }
@@ -774,7 +774,7 @@ TEST(ProcessSwap, PSONRedirectionToExternal)
 {
     TestWebKitAPI::HTTPServer server(std::initializer_list<std::pair<String, TestWebKitAPI::HTTPResponse>> { }, TestWebKitAPI::HTTPServer::Protocol::Https);
 
-    HashMap<String, String> redirectHeaders;
+    UncheckedKeyHashMap<String, String> redirectHeaders;
     redirectHeaders.add("location"_s, "other://test"_s);
     TestWebKitAPI::HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));
 
@@ -7907,14 +7907,14 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
 {
     using namespace TestWebKitAPI;
 
-    HashMap<String, String> sourceHeaders;
+    UncheckedKeyHashMap<String, String> sourceHeaders;
     sourceHeaders.add("Content-Type"_s, "text/html"_s);
     if (sourceCOOP)
         sourceHeaders.add("Cross-Origin-Opener-Policy"_s, sourceCOOP);
     if (sourceCOEP)
         sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, sourceCOEP);
 
-    HashMap<String, String> destinationHeaders;
+    UncheckedKeyHashMap<String, String> destinationHeaders;
     destinationHeaders.add("Content-Type"_s, "text/html"_s);
     if (destinationCOOP)
         destinationHeaders.add("Cross-Origin-Opener-Policy"_s, destinationCOOP);
@@ -7929,7 +7929,7 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     server.addResponse("/main.html"_s, HTTPResponse { WTFMove(sourceHeaders), WTFMove(popupSource) });
 
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
-        HashMap<String, String> redirectHeaders;
+        UncheckedKeyHashMap<String, String> redirectHeaders;
         String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
         redirectHeaders.add("location"_s, WTFMove(redirectionURL));
         HTTPResponse redirectResponse(301, WTFMove(redirectHeaders));

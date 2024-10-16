@@ -502,7 +502,7 @@ static bool receivedStop;
 
 @interface SyncScheme : NSObject <WKURLSchemeHandler> {
 @public
-    HashMap<String, SchemeResourceInfo> resources;
+    UncheckedKeyHashMap<String, SchemeResourceInfo> resources;
 }
 @end
 

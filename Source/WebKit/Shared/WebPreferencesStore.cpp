@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-typedef HashMap<String, bool> BoolOverridesMap;
+typedef UncheckedKeyHashMap<String, bool> BoolOverridesMap;
 
 static BoolOverridesMap& boolTestRunnerOverridesMap()
 {

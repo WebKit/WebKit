@@ -2856,7 +2856,7 @@ static bool didStartURLSchemeTaskForImportedScript = false;
 
 @interface ServiceWorkerSchemeHandler : NSObject <WKURLSchemeHandler> {
     const char* _bytes;
-    HashMap<String, RetainPtr<NSData>> _dataMappings;
+    UncheckedKeyHashMap<String, RetainPtr<NSData>> _dataMappings;
 }
 - (instancetype)initWithBytes:(const char*)bytes;
 - (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
@@ -4236,7 +4236,7 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     [webView1 loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);
 
-    HashMap<String, String> sourceHeaders;
+    UncheckedKeyHashMap<String, String> sourceHeaders;
     sourceHeaders.add("Cache-Control"_s, "no-cache"_s);
     sourceHeaders.add("Content-Type"_s, "application/javascript"_s);
     server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTFMove(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });

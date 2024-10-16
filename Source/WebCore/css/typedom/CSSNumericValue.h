@@ -64,7 +64,7 @@ public:
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
     // https://drafts.css-houdini.org/css-typed-om/#sum-value-value
-    using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
+    using UnitMap = UncheckedKeyHashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
     struct Addend {
         double value;
         UnitMap units;

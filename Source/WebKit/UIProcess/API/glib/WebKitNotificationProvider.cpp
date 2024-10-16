@@ -66,7 +66,7 @@ private:
         m_provider.clearNotifications(notificationIDs);
     }
 
-    HashMap<String, bool> notificationPermissions() override
+    UncheckedKeyHashMap<String, bool> notificationPermissions() override
     {
         return m_provider.notificationPermissions();
     }
@@ -188,14 +188,14 @@ void WebKitNotificationProvider::clearNotifications(const Vector<WebNotification
         cancelNotificationByID(item);
 }
 
-HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
+UncheckedKeyHashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
 {
     if (m_webContext)
         webkitWebContextInitializeNotificationPermissions(m_webContext);
     return m_notificationPermissions;
 }
 
-void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, bool>&& permissionsMap)
+void WebKitNotificationProvider::setNotificationPermissions(UncheckedKeyHashMap<String, bool>&& permissionsMap)
 {
     m_notificationPermissions = WTFMove(permissionsMap);
 }

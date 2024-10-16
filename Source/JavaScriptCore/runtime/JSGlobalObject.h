@@ -580,7 +580,7 @@ public:
     bool isArgumentsPrototypeIteratorProtocolFastAndNonObservable();
 
 #if ENABLE(DFG_JIT)
-    using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
+    using ReferencedGlobalPropertyWatchpointSets = UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
     ReferencedGlobalPropertyWatchpointSets m_referencedGlobalPropertyWatchpointSets;
     ConcurrentJSLock m_referencedGlobalPropertyWatchpointSetsLock;
 #endif

@@ -37,7 +37,7 @@ namespace JSC { namespace Wasm {
 
 struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
-    using BranchHints = HashMap<uint32_t, BranchHintMap, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using BranchHints = UncheckedKeyHashMap<uint32_t, BranchHintMap, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
     ModuleInformation();
     ModuleInformation(const ModuleInformation&) = delete;

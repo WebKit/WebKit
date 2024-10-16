@@ -40,7 +40,7 @@
 
 namespace TestWebKitAPI {
 
-typedef WTF::HashMap<int, int> IntHashMap;
+typedef WTF::UncheckedKeyHashMap<int, int> IntHashMap;
 
 TEST(WTF_HashMap, HashTableIteratorComparison)
 {
@@ -64,7 +64,7 @@ struct TestDoubleHashTraits : HashTraits<double> {
     static const int minimumTableSize = 8;
 };
 
-typedef HashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits> DoubleHashMap;
+typedef UncheckedKeyHashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits> DoubleHashMap;
 
 static int bucketForKey(double key)
 {
@@ -105,7 +105,7 @@ TEST(WTF_HashMap, DoubleHashCollisions)
 
 TEST(WTF_HashMap, MoveOnlyValues)
 {
-    HashMap<unsigned, MoveOnly> moveOnlyValues;
+    UncheckedKeyHashMap<unsigned, MoveOnly> moveOnlyValues;
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
@@ -128,7 +128,7 @@ TEST(WTF_HashMap, MoveOnlyValues)
 
 TEST(WTF_HashMap, MoveOnlyKeys)
 {
-    HashMap<MoveOnly, unsigned> moveOnlyKeys;
+    UncheckedKeyHashMap<MoveOnly, unsigned> moveOnlyKeys;
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
@@ -151,7 +151,7 @@ TEST(WTF_HashMap, MoveOnlyKeys)
 
 TEST(WTF_HashMap, InitializerList)
 {
-    HashMap<unsigned, std::string> map = {
+    UncheckedKeyHashMap<unsigned, std::string> map = {
         { 1, "one" },
         { 2, "two" },
         { 3, "three" },
@@ -169,7 +169,7 @@ TEST(WTF_HashMap, InitializerList)
 
 TEST(WTF_HashMap, EfficientGetter)
 {
-    HashMap<unsigned, CopyMoveCounter> map;
+    UncheckedKeyHashMap<unsigned, CopyMoveCounter> map;
     map.set(1, CopyMoveCounter());
 
     {
@@ -193,7 +193,7 @@ TEST(WTF_HashMap, UniquePtrKey)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     map.add(WTFMove(uniquePtr), 2);
@@ -212,7 +212,7 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
     ConstructorDestructorCounter::TestingScope constructorDestructorCounterScope;
     DeleterCounter<ConstructorDestructorCounter>::TestingScope deleterCounterScope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int> map;
 
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
     map.add(WTFMove(uniquePtr), 2);
@@ -232,7 +232,7 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
 
 TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<int>, int> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -246,7 +246,7 @@ TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
 
 TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<int>, int> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -257,7 +257,7 @@ TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
 
 TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<int>, int> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -271,7 +271,7 @@ TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
@@ -291,7 +291,7 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    UncheckedKeyHashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
@@ -309,7 +309,7 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
 TEST(WTF_HashMap, UniqueRefValue)
 {
-    HashMap<int, UniqueRef<int>> map;
+    UncheckedKeyHashMap<int, UniqueRef<int>> map;
     UniqueRef<int> five = makeUniqueRefWithoutFastMallocCheck<int>(5);
     map.add(5, WTFMove(five));
     EXPECT_TRUE(map.contains(5));
@@ -331,7 +331,7 @@ TEST(WTF_HashMap, RefPtrKey_Add)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(ptr, 0);
@@ -345,7 +345,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(WTFMove(ptr), 0);
@@ -359,7 +359,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(WTFMove(ptr), 0);
@@ -373,7 +373,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(ptr.get(), 0);
@@ -386,7 +386,7 @@ TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -412,7 +412,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -438,7 +438,7 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -465,7 +465,7 @@ TEST(WTF_HashMap, RefPtrKey_Set)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -479,7 +479,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(WTFMove(ptr), 0);
@@ -494,7 +494,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(WTFMove(ptr), 0);
@@ -508,7 +508,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr.get(), 0);
@@ -522,7 +522,7 @@ TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -547,7 +547,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -572,7 +572,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        UncheckedKeyHashMap<RefPtr<RefLogger>, int> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -594,7 +594,7 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 
 TEST(WTF_HashMap, Ensure)
 {
-    HashMap<unsigned, unsigned> map;
+    UncheckedKeyHashMap<unsigned, unsigned> map;
     {
         auto addResult = map.ensure(1, [] { return 1; });
         EXPECT_EQ(1u, addResult.iterator->value);
@@ -609,7 +609,7 @@ TEST(WTF_HashMap, Ensure)
 
 TEST(WTF_HashMap, Ensure_MoveOnlyValues)
 {
-    HashMap<unsigned, MoveOnly> moveOnlyValues;
+    UncheckedKeyHashMap<unsigned, MoveOnly> moveOnlyValues;
     {
         auto addResult = moveOnlyValues.ensure(1, [] { return MoveOnly(1); });
         EXPECT_EQ(1u, addResult.iterator->value.value());
@@ -624,7 +624,7 @@ TEST(WTF_HashMap, Ensure_MoveOnlyValues)
 
 TEST(WTF_HashMap, Ensure_UniquePointer)
 {
-    HashMap<unsigned, std::unique_ptr<unsigned>> map;
+    UncheckedKeyHashMap<unsigned, std::unique_ptr<unsigned>> map;
     {
         auto addResult = map.ensure(1, [] { return makeUniqueWithoutFastMallocCheck<unsigned>(1); });
         EXPECT_EQ(1u, *map.get(1));
@@ -643,7 +643,7 @@ TEST(WTF_HashMap, Ensure_RefPtr)
 {
     DerivedRefLogger a("a");
 
-    HashMap<unsigned, RefPtr<RefLogger>> map;
+    UncheckedKeyHashMap<unsigned, RefPtr<RefLogger>> map;
 
     map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
@@ -670,14 +670,14 @@ public:
 
 static void testMovingUsingEnsure(Ref<RefLogger>&& logger)
 {
-    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
+    UncheckedKeyHashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
     
     map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTFMove(logger)); });
 }
 
 static void testMovingUsingAdd(Ref<RefLogger>&& logger)
 {
-    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
+    UncheckedKeyHashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
 
     auto& slot = map.add(1, nullptr).iterator->value;
     slot = makeUnique<ObjectWithRefLogger>(WTFMove(logger));
@@ -735,7 +735,7 @@ TEST(WTF_HashMap, ValueIsDestructedOnRemove)
         bool* destructed { nullptr };
     };
 
-    HashMap<int, DestructorObserver> map;
+    UncheckedKeyHashMap<int, DestructorObserver> map;
 
     bool destructed = false;
     map.add(5, DestructorObserver { &destructed });
@@ -768,7 +768,7 @@ TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
 {
     auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
-    HashMap<RefPtr<DerefObserver>, int> map;
+    UncheckedKeyHashMap<RefPtr<DerefObserver>, int> map;
     map.add(adoptRef(observer.get()), 5);
 
     auto iterator = map.find(observer.get());
@@ -792,7 +792,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -803,7 +803,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.set(WTFMove(ref), 1);
@@ -814,7 +814,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> refA(a);
         map.add(WTFMove(refA), 1);
@@ -828,7 +828,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.ensure(WTFMove(ref), []() { 
@@ -841,7 +841,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -858,7 +858,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -871,7 +871,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -883,7 +883,7 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<Ref<RefLogger>, int> map;
+        UncheckedKeyHashMap<Ref<RefLogger>, int> map;
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
@@ -901,7 +901,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -912,7 +912,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
         map.set(1, WTFMove(ref));
@@ -924,7 +924,7 @@ TEST(WTF_HashMap, Ref_Value)
         RefLogger a("a");
         RefLogger b("b");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> refA(a);
         map.add(1, WTFMove(refA));
@@ -938,7 +938,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -950,7 +950,7 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
         
         auto emptyGet = map.get(1);
         ASSERT_TRUE(emptyGet == nullptr);
@@ -959,7 +959,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -972,7 +972,7 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
         
         auto emptyTake = map.take(1);
         ASSERT_FALSE(static_cast<bool>(emptyTake));
@@ -981,7 +981,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -993,7 +993,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
 
         map.ensure(1, [&] {
             Ref<RefLogger> ref(a);
@@ -1004,7 +1004,7 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
+        UncheckedKeyHashMap<int, Ref<RefLogger>> map;
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
@@ -1018,7 +1018,7 @@ TEST(WTF_HashMap, Ref_Value)
 
 TEST(WTF_HashMap, DeletedAddressOfOperator)
 {
-    HashMap<int, DeletedAddressOfOperator> map1;
+    UncheckedKeyHashMap<int, DeletedAddressOfOperator> map1;
     for (auto& value : map1.values())
         (void)value;
 }
@@ -1050,7 +1050,7 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
 
     static_assert(!WTF::HashTraits<Value>::emptyValueIsZero);
 
-    HashMap<Ref<Key>, Value> map;
+    UncheckedKeyHashMap<Ref<Key>, Value> map;
     Vector<std::pair<Ref<Key>, int32_t>> vectorMap;
 
     for (int32_t i = 0; i < 160; ++i) {
@@ -1068,7 +1068,7 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
 
 TEST(WTF_HashMap, Random_Empty)
 {
-    HashMap<unsigned, unsigned> map;
+    UncheckedKeyHashMap<unsigned, unsigned> map;
 
     auto result = map.random();
     ASSERT_EQ(result, map.end());
@@ -1076,7 +1076,7 @@ TEST(WTF_HashMap, Random_Empty)
 
 TEST(WTF_HashMap, Random_WrapAround)
 {
-    HashMap<unsigned, unsigned, ZeroHash<unsigned>, BigTableHashTraits<unsigned>> map;
+    UncheckedKeyHashMap<unsigned, unsigned, ZeroHash<unsigned>, BigTableHashTraits<unsigned>> map;
     map.add(1, 1);
 
     auto result = map.random();
@@ -1085,7 +1085,7 @@ TEST(WTF_HashMap, Random_WrapAround)
 
 TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 {
-    HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    UncheckedKeyHashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
     map.add(0, 0);
     map.add(1, 1);
 
@@ -1109,7 +1109,7 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributed)
 
 TEST(WTF_HashMap, ReserveInitialCapacity)
 {
-    HashMap<String, String> map;
+    UncheckedKeyHashMap<String, String> map;
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(0u, map.capacity());
 
@@ -1140,7 +1140,7 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(8u, map.capacity());
 
-    HashMap<String, String> map2;
+    UncheckedKeyHashMap<String, String> map2;
     map2.reserveInitialCapacity(9999);
     EXPECT_FALSE(map2.remove("foo1"_s));
 
@@ -1158,7 +1158,7 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
 TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
 {
     for (size_t tableSize = 2; tableSize <= 2 * 6; ++tableSize) { // Our hash tables shrink at a load factor of 1 / 6.
-        HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+        UncheckedKeyHashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
         for (size_t i = 0; i < tableSize; ++i)
             map.add(i, i);
         for (size_t i = 2; i < tableSize; ++i)
@@ -1201,7 +1201,7 @@ private:
 
 TEST(WTF_HashMap, Clear_Reenter)
 {
-    HashMap<uint64_t, std::unique_ptr<TestObjectWithCustomDestructor>> map;
+    UncheckedKeyHashMap<uint64_t, std::unique_ptr<TestObjectWithCustomDestructor>> map;
     for (unsigned i = 1; i <= 10; ++i) {
         map.add(i, makeUnique<TestObjectWithCustomDestructor>([&map] {
             map.clear();
@@ -1217,7 +1217,7 @@ TEST(WTF_HashMap, Clear_Reenter)
 
 TEST(WTF_HashMap, Ensure_Translator)
 {
-    HashMap<String, unsigned> map;
+    UncheckedKeyHashMap<String, unsigned> map;
     auto addResult = map.ensure<StringViewHashTranslator>(StringView { "foo"_s }, [] { return 1u; });
     EXPECT_TRUE(addResult.isNewEntry);
     EXPECT_TRUE(map.contains<StringViewHashTranslator>(StringView { "foo"_s }));
@@ -1247,7 +1247,7 @@ TEST(WTF_HashMap, GetOptional)
             int b;
         };
 
-        HashMap<unsigned, Value> map;
+        UncheckedKeyHashMap<unsigned, Value> map;
         map.add(2, Value { 1, 2 });
         map.add(1000, Value { 3, 4 });
 
@@ -1274,7 +1274,7 @@ TEST(WTF_HashMap, GetOptional)
             int a { 123 };
         };
 
-        HashMap<unsigned, Ref<CountedValue>> map;
+        UncheckedKeyHashMap<unsigned, Ref<CountedValue>> map;
         map.add(2, adoptRef(*new CountedValue { }));
 
         auto optionalValue = map.getOptional(1);

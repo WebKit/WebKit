@@ -177,7 +177,7 @@ private:
     Vector<Ref<StyleRuleImport>> m_importRules;
     Vector<Ref<StyleRuleNamespace>> m_namespaceRules;
     Vector<Ref<StyleRuleBase>> m_childRules;
-    typedef HashMap<AtomString, AtomString> PrefixNamespaceURIMap;
+    typedef UncheckedKeyHashMap<AtomString, AtomString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
     AtomString m_defaultNamespace;
 

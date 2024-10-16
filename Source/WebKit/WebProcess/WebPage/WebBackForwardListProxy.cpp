@@ -47,7 +47,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<BackForwardItemIdentifier, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
+typedef UncheckedKeyHashMap<BackForwardItemIdentifier, RefPtr<HistoryItem>> IDToHistoryItemMap; // "ID" here is the item ID.
 static IDToHistoryItemMap& idToHistoryItemMap()
 {
     static NeverDestroyed<IDToHistoryItemMap> map;

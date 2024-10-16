@@ -92,10 +92,10 @@ struct HTTPResponse {
         : body(WTFMove(body)) { }
     HTTPResponse(const String& body)
         : body(bodyFromString(body)) { }
-    HTTPResponse(HashMap<String, String>&& headerFields, const String& body)
+    HTTPResponse(UncheckedKeyHashMap<String, String>&& headerFields, const String& body)
         : headerFields(WTFMove(headerFields))
         , body(bodyFromString(body)) { }
-    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, const String& body = { })
+    HTTPResponse(unsigned statusCode, UncheckedKeyHashMap<String, String>&& headerFields = { }, const String& body = { })
         : statusCode(statusCode)
         , headerFields(WTFMove(headerFields))
         , body(bodyFromString(body)) { }
@@ -113,7 +113,7 @@ struct HTTPResponse {
     static Vector<uint8_t> bodyFromString(const String&);
 
     unsigned statusCode { 200 };
-    HashMap<String, String> headerFields;
+    UncheckedKeyHashMap<String, String> headerFields;
     Vector<uint8_t> body;
     Behavior behavior { Behavior::SendResponseNormally };
 };

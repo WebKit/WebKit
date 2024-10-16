@@ -68,7 +68,7 @@ enum class DragApplicationFlags : uint8_t {
 class PasteboardContext;
 
 #if PLATFORM(WIN)
-typedef HashMap<unsigned, Vector<String>> DragDataMap;
+typedef UncheckedKeyHashMap<unsigned, Vector<String>> DragDataMap;
 #endif
 
 class DragData {

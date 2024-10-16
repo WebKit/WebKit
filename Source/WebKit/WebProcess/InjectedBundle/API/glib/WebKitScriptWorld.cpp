@@ -34,7 +34,7 @@ enum {
     LAST_SIGNAL
 };
 
-typedef HashMap<InjectedBundleScriptWorld*, WebKitScriptWorld*> ScriptWorldMap;
+typedef UncheckedKeyHashMap<InjectedBundleScriptWorld*, WebKitScriptWorld*> ScriptWorldMap;
 
 static ScriptWorldMap& scriptWorlds()
 {

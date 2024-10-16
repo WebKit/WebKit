@@ -284,7 +284,7 @@ public:
         result.iterator->value.append(WTFMove(validator));
     }
 
-    std::optional<Error> validateOverrides(const HashMap<String, ConstantValue>&);
+    std::optional<Error> validateOverrides(const UncheckedKeyHashMap<String, ConstantValue>&);
 
 private:
     String m_source;
@@ -322,7 +322,7 @@ private:
     std::optional<CallGraph> m_callGraph;
     Vector<std::function<void()>> m_replacements;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
-    HashMap<const AST::Expression*, Vector<Function<std::optional<String>(const ConstantValue&)>>> m_overrideValidations;
+    UncheckedKeyHashMap<const AST::Expression*, Vector<Function<std::optional<String>(const ConstantValue&)>>> m_overrideValidations;
 };
 
 } // namespace WGSL

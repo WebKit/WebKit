@@ -53,7 +53,7 @@ private:
     unsigned m_maxMatchCount;
     uint32_t m_matchCount { 0 };
     CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, bool> m_matches;
+    UncheckedKeyHashMap<WebCore::FrameIdentifier, bool> m_matches;
 };
 
 } // namespace WebKit

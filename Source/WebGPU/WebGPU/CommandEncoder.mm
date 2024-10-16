@@ -466,7 +466,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     const auto maxColorAttachmentBytesPerSample = m_device->limits().maxColorAttachmentBytesPerSample;
     uint32_t textureWidth = 0, textureHeight = 0, sampleCount = 0;
     using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
-    HashMap<void*, SliceSet> depthSlices;
+    UncheckedKeyHashMap<void*, SliceSet> depthSlices;
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
         if (!attachment.view)

@@ -58,7 +58,7 @@ private:
     explicit BackgroundFetchManager(ServiceWorkerRegistration&);
 
     ServiceWorkerRegistrationIdentifier m_identifier;
-    HashMap<String, Ref<BackgroundFetchRegistration>> m_backgroundFetchRegistrations;
+    UncheckedKeyHashMap<String, Ref<BackgroundFetchRegistration>> m_backgroundFetchRegistrations;
 };
 
 } // namespace WebCore

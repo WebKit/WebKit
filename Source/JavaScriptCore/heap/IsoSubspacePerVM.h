@@ -79,8 +79,8 @@ private:
 
     Lock m_lock;
 
-    HashMap<Heap*, IsoSubspace*> m_subspacePerHeap;
-    HashMap<VM*, GCClient::IsoSubspace*> m_clientSubspacePerVM WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<Heap*, IsoSubspace*> m_subspacePerHeap;
+    UncheckedKeyHashMap<VM*, GCClient::IsoSubspace*> m_clientSubspacePerVM WTF_GUARDED_BY_LOCK(m_lock);
     Function<SubspaceParameters(Heap&)> m_subspaceParameters;
 };
 

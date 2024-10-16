@@ -111,16 +111,16 @@ void WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins()
     allowsWebsiteDataRecordsForAllOrigins = true;
 }
 
-static HashMap<String, PAL::SessionID>& activeGeneralStorageDirectories()
+static UncheckedKeyHashMap<String, PAL::SessionID>& activeGeneralStorageDirectories()
 {
-    static MainThreadNeverDestroyed<HashMap<String, PAL::SessionID>> directoryToSessionMap;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<String, PAL::SessionID>> directoryToSessionMap;
     return directoryToSessionMap;
 }
 
-static HashMap<PAL::SessionID, WeakRef<WebsiteDataStore>>& allDataStores()
+static UncheckedKeyHashMap<PAL::SessionID, WeakRef<WebsiteDataStore>>& allDataStores()
 {
     RELEASE_ASSERT(isUIThread());
-    static NeverDestroyed<HashMap<PAL::SessionID, WeakRef<WebsiteDataStore>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<PAL::SessionID, WeakRef<WebsiteDataStore>>> map;
     return map;
 }
 
@@ -692,7 +692,7 @@ private:
         Ref<WorkQueue> m_queue;
         Function<void(Vector<WebsiteDataRecord>)> m_apply;
 
-        HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
+        UncheckedKeyHashMap<String, WebsiteDataRecord> m_websiteDataRecords;
         Ref<WebsiteDataStore> m_protectedDataStore;
     };
 
@@ -1344,7 +1344,7 @@ void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDo
     auto registrableTopFrameDomainString = registrableTopFrameDomain.string();
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> quirk { {
         WTFMove(registrableTopFrameDomainString)
-        , HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> { {
+        , UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> { {
             KeyValuePair { WTFMove(registrableTopFrameDomain),
                 subFrameDomains.map([](auto& domain) { return WebCore::RegistrableDomain::fromRawString(String { domain }); })
             },

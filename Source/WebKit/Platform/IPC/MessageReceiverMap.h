@@ -56,9 +56,9 @@ public:
 
 private:
     // Message receivers that don't require a destination ID.
-    HashMap<ReceiverName, WeakPtr<MessageReceiver>, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>> m_globalMessageReceivers;
+    UncheckedKeyHashMap<ReceiverName, WeakPtr<MessageReceiver>, WTF::IntHash<ReceiverName>, WTF::StrongEnumHashTraits<ReceiverName>> m_globalMessageReceivers;
 
-    HashMap<std::pair<ReceiverName, uint64_t>, WeakPtr<MessageReceiver>, DefaultHash<std::pair<ReceiverName, uint64_t>>, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
+    UncheckedKeyHashMap<std::pair<ReceiverName, uint64_t>, WeakPtr<MessageReceiver>, DefaultHash<std::pair<ReceiverName, uint64_t>>, PairHashTraits<WTF::StrongEnumHashTraits<ReceiverName>, HashTraits<uint64_t>>> m_messageReceivers;
 };
 
 };

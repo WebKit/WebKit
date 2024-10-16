@@ -70,7 +70,7 @@ private:
     void releaseRecorder(MediaRecorderIdentifier);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    HashMap<MediaRecorderIdentifier, std::unique_ptr<RemoteMediaRecorder>> m_recorders;
+    UncheckedKeyHashMap<MediaRecorderIdentifier, std::unique_ptr<RemoteMediaRecorder>> m_recorders;
 };
 
 }

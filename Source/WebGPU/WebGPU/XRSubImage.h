@@ -66,8 +66,8 @@ private:
     XRSubImage(bool, Device&);
     XRSubImage(Device&);
 
-    HashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_colorTextures;
-    HashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_depthTextures;
+    UncheckedKeyHashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_colorTextures;
+    UncheckedKeyHashMap<uint64_t, RefPtr<Texture>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_depthTextures;
     uint64_t m_currentTextureIndex { 0 };
 
     ThreadSafeWeakPtr<Device> m_device;

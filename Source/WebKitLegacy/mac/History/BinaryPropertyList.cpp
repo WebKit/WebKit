@@ -139,12 +139,12 @@ private:
 
     static ObjectReference invalidObjectReference() { return std::numeric_limits<ObjectReference>::max(); }
 
-    typedef HashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
+    typedef UncheckedKeyHashMap<IntegerArray, ObjectReference, IntegerArrayHash, IntegerArrayHashTraits> IntegerArrayMap;
 
     ObjectReference m_booleanTrueObjectReference;
     ObjectReference m_integerZeroObjectReference;
-    HashMap<int, ObjectReference> m_integers;
-    HashMap<String, ObjectReference> m_strings;
+    UncheckedKeyHashMap<int, ObjectReference> m_integers;
+    UncheckedKeyHashMap<String, ObjectReference> m_strings;
     IntegerArrayMap m_integerArrays;
 
     ObjectReference m_currentObjectReference;

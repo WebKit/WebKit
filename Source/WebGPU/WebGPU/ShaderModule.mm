@@ -96,8 +96,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
 {
-    HashMap<String, Ref<PipelineLayout>> hints;
-    HashMap<String, WGSL::PipelineLayout*> wgslHints;
+    UncheckedKeyHashMap<String, Ref<PipelineLayout>> hints;
+    UncheckedKeyHashMap<String, WGSL::PipelineLayout*> wgslHints;
     Vector<WGSL::PipelineLayout> wgslPipelineLayouts;
     wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
     for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
@@ -120,7 +120,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     if (std::holds_alternative<WGSL::Error>(prepareResult))
         return nullptr;
     auto& result = std::get<WGSL::PrepareResult>(prepareResult);
-    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
+    UncheckedKeyHashMap<String, WGSL::ConstantValue> wgslConstantValues;
     auto generationResult = WGSL::generate(shaderModule, result, wgslConstantValues);
     if (std::holds_alternative<WGSL::Error>(generationResult))
         return nullptr;
@@ -624,7 +624,7 @@ ShaderModule::FragmentInputs ShaderModule::parseFragmentInputs(const WGSL::AST::
     return result;
 }
 
-ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, UncheckedKeyHashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, UncheckedKeyHashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))

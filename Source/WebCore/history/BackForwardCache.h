@@ -87,7 +87,7 @@ private:
     void prune(PruningReason);
     void dump() const;
 
-    HashMap<BackForwardItemIdentifier, std::variant<PruningReason, UniqueRef<CachedPage>>> m_cachedPageMap;
+    UncheckedKeyHashMap<BackForwardItemIdentifier, std::variant<PruningReason, UniqueRef<CachedPage>>> m_cachedPageMap;
     ListHashSet<BackForwardItemIdentifier> m_items;
     unsigned m_maxSize {0};
 

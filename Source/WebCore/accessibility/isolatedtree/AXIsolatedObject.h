@@ -522,7 +522,7 @@ private:
     Widget* widgetForAttachmentView() const final;
     bool isPlugin() const final { return boolAttributeValue(AXPropertyName::IsPlugin); }
 
-    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const final;
+    UncheckedKeyHashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const final;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const final;
     FloatRect convertRectToPlatformSpace(const FloatRect&, AccessibilityConversionSpace) const final;

@@ -109,7 +109,7 @@ private:
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<DOMException> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
-    HashMap<uint64_t, Function<void()>> m_pendingTasks;
+    UncheckedKeyHashMap<uint64_t, Function<void()>> m_pendingTasks;
 };
 
 } // namespace WebCore

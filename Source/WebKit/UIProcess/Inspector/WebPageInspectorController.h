@@ -82,7 +82,7 @@ public:
     InspectorBrowserAgent* enabledBrowserAgent() const;
     void setEnabledBrowserAgent(InspectorBrowserAgent*);
 
-    void browserExtensionsEnabled(HashMap<String, String>&&);
+    void browserExtensionsEnabled(UncheckedKeyHashMap<String, String>&&);
     void browserExtensionsDisabled(HashSet<String>&&);
 
 private:
@@ -99,7 +99,7 @@ private:
     WeakRef<WebPageProxy> m_inspectedPage;
 
     CheckedPtr<Inspector::InspectorTargetAgent> m_targetAgent;
-    HashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
+    UncheckedKeyHashMap<String, std::unique_ptr<InspectorTargetProxy>> m_targets;
 
     CheckedPtr<InspectorBrowserAgent> m_enabledBrowserAgent;
 

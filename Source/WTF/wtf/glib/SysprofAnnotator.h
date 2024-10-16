@@ -476,7 +476,7 @@ private:
 
     ASCIILiteral m_processName;
     Lock m_lock;
-    HashMap<RawPointerPair, TimestampAndString> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<RawPointerPair, TimestampAndString> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
     static SysprofAnnotator* s_annotator;
 };
 

@@ -209,8 +209,8 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
     CALayer *container = node.ensureInteractionRegionsContainer();
 
-    HashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
-    HashMap<std::pair<String, InteractionRegion::Type>, CALayer *>reusableLayers;
+    UncheckedKeyHashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
+    UncheckedKeyHashMap<std::pair<String, InteractionRegion::Type>, CALayer *>reusableLayers;
     for (CALayer *sublayer in container.sublayers) {
         if (auto type = interactionRegionTypeForLayer(sublayer)) {
             auto result = existingLayers.add(std::make_pair(enclosingIntRect(sublayer.frame), *type), sublayer);

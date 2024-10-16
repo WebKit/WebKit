@@ -150,7 +150,7 @@ private:
     RefPtr<const RenderPipeline> m_pipeline;
     uint32_t m_maxVertexBufferSlot { 0 };
     uint32_t m_maxBindGroupSlot { 0 };
-    using UtilizedBufferIndicesContainer = HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using UtilizedBufferIndicesContainer = UncheckedKeyHashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     UtilizedBufferIndicesContainer m_utilizedBufferIndices;
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
@@ -179,9 +179,9 @@ private:
     };
     Vector<BufferAndOffset> m_vertexBuffers;
     Vector<BufferAndOffset> m_fragmentBuffers;
-    using BindGroupDynamicOffsetsContainer = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using BindGroupDynamicOffsetsContainer = UncheckedKeyHashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     std::optional<BindGroupDynamicOffsetsContainer> m_bindGroupDynamicOffsets;
-    HashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
+    UncheckedKeyHashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroups;
     RenderBundle::MinVertexCountsContainer m_minVertexCountForDrawCommand;
     NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
     id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };

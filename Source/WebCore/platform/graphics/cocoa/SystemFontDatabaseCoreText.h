@@ -117,7 +117,7 @@ private:
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
     static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);
 
-    HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
+    UncheckedKeyHashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
     MemoryCompactRobinHoodHashMap<String, String> m_serifFamilies;
     MemoryCompactRobinHoodHashMap<String, String> m_sansSeriferifFamilies;

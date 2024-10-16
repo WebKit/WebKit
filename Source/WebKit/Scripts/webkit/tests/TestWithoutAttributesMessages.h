@@ -451,14 +451,14 @@ private:
 
 class TemplateTest {
 public:
-    using Arguments = std::tuple<HashMap<String, std::pair<String, uint64_t>>>;
+    using Arguments = std::tuple<UncheckedKeyHashMap<String, std::pair<String, uint64_t>>>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_TemplateTest; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
 
-    explicit TemplateTest(const HashMap<String, std::pair<String, uint64_t>>& a)
+    explicit TemplateTest(const UncheckedKeyHashMap<String, std::pair<String, uint64_t>>& a)
         : m_arguments(a)
     {
     }
@@ -469,7 +469,7 @@ public:
     }
 
 private:
-    std::tuple<const HashMap<String, std::pair<String, uint64_t>>&> m_arguments;
+    std::tuple<const UncheckedKeyHashMap<String, std::pair<String, uint64_t>>&> m_arguments;
 };
 
 class SetVideoLayerID {

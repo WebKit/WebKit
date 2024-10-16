@@ -54,7 +54,7 @@ private:
 
     // The m_overridesMap maps string pasteboard names to pasteboard entries.
     // Each pasteboard entry is a map of a string type to a data buffer.
-    HashMap<String, HashMap<String, Vector<uint8_t>>> m_overridesMap;
+    UncheckedKeyHashMap<String, UncheckedKeyHashMap<String, Vector<uint8_t>>> m_overridesMap;
 };
 
 } // namespace WebKit

@@ -37,9 +37,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& overlayMap()
+static UncheckedKeyHashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& overlayMap()
 {
-    static NeverDestroyed<HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>> map;
     return map;
 }
 

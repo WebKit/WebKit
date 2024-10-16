@@ -60,7 +60,7 @@ String CSSMediaRule::cssText() const
     return builder.toString();
 }
 
-String CSSMediaRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSMediaRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder builder;
     builder.append("@media "_s, conditionText());

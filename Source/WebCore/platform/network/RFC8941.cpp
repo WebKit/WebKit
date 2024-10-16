@@ -126,7 +126,7 @@ template<typename CharType> static std::optional<BareItem> parseBareItem(StringP
 // Parsing Parameters (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3.2).
 template<typename CharType> static std::optional<Parameters> parseParameters(StringParsingBuffer<CharType>& buffer)
 {
-    HashMap<String, BareItem> parameters;
+    UncheckedKeyHashMap<String, BareItem> parameters;
     while (buffer.hasCharactersRemaining()) {
         if (!skipExactly(buffer, ';'))
             break;
@@ -197,9 +197,9 @@ template<typename CharType> static std::optional<std::pair<ItemOrInnerList, Para
 }
 
 // Parsing a dictionary (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.2).
-template<typename CharType> static std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionary(StringParsingBuffer<CharType>& buffer)
+template<typename CharType> static std::optional<UncheckedKeyHashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionary(StringParsingBuffer<CharType>& buffer)
 {
-    HashMap<String, std::pair<ItemOrInnerList, Parameters>> dictionary;
+    UncheckedKeyHashMap<String, std::pair<ItemOrInnerList, Parameters>> dictionary;
     while (buffer.hasCharactersRemaining()) {
         auto key = parseKey(buffer);
         if (key.isNull())
@@ -253,12 +253,12 @@ std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(Str
 }
 
 // https://datatracker.ietf.org/doc/html/rfc8941#section-4.2 with type "dictionary".
-std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header)
+std::optional<UncheckedKeyHashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header)
 {
     if (header.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> {
+    return readCharactersForParsing(WTFMove(header), [](auto buffer) -> std::optional<UncheckedKeyHashMap<String, std::pair<ItemOrInnerList, Parameters>>> {
         skipWhile(buffer, ' ');
 
         auto dictionary = parseDictionary(buffer);

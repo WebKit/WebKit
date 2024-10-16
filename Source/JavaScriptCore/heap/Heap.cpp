@@ -165,14 +165,14 @@ constexpr bool measurePhaseTiming()
     return false;
 }
 
-HashMap<const char*, GCTypeMap<SimpleStats>>& timingStats()
+UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>& timingStats()
 {
-    static HashMap<const char*, GCTypeMap<SimpleStats>>* result;
+    static UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>* result;
     static std::once_flag once;
     std::call_once(
         once,
         [] {
-            result = new HashMap<const char*, GCTypeMap<SimpleStats>>();
+            result = new UncheckedKeyHashMap<const char*, GCTypeMap<SimpleStats>>();
         });
     return *result;
 }
@@ -1500,7 +1500,7 @@ NEVER_INLINE bool Heap::runFixpointPhase(GCConductor conn)
     SlotVisitor& visitor = *m_collectorSlotVisitor;
     
     if (UNLIKELY(Options::logGC())) {
-        HashMap<const char*, size_t> visitMap;
+        UncheckedKeyHashMap<const char*, size_t> visitMap;
         forEachSlotVisitor(
             [&] (SlotVisitor& visitor) {
                 visitMap.add(visitor.codeName(), visitor.bytesVisited() / 1024);

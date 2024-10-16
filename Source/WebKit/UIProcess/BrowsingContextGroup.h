@@ -70,7 +70,7 @@ public:
 private:
     BrowsingContextGroup();
 
-    HashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
+    UncheckedKeyHashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
     WeakHashMap<WebPageProxy, HashSet<std::unique_ptr<RemotePageProxy>>> m_remotePages;
 };

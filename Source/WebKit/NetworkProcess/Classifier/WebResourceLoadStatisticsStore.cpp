@@ -1335,7 +1335,7 @@ void WebResourceLoadStatisticsStore::callUpdatePrevalentDomainsToBlockCookiesFor
             m_networkSession->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::SetDomainsWithUserInteraction(domainsWithUserInteractionQuirk), 0);
         }
 
-        HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
+        UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
         for (auto& [firstPartyDomain, requestingDomains] : domainsToBlock.domainsWithStorageAccess) {
             for (auto& requestingDomain : requestingDomains) {
                 if (NetworkStorageSession::loginDomainMatchesRequestingDomain(firstPartyDomain, requestingDomain))
@@ -1459,7 +1459,7 @@ void WebResourceLoadStatisticsStore::registrableDomains(CompletionHandler<void(V
     });
 }
 
-void WebResourceLoadStatisticsStore::registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
+void WebResourceLoadStatisticsStore::registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<UncheckedKeyHashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1469,7 +1469,7 @@ void WebResourceLoadStatisticsStore::registrableDomainsWithLastAccessedTime(Comp
     }
 
     postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
-        std::optional<HashMap<RegistrableDomain, WallTime>> result;
+        std::optional<UncheckedKeyHashMap<RegistrableDomain, WallTime>> result;
         if (m_statisticsStore)
             result = m_statisticsStore->allDomainsWithLastAccessedTime();
         postTaskReply([result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {

@@ -249,7 +249,7 @@ private:
     TypeStore& m_types;
     Vector<Error> m_errors;
     Vector<BreakTarget> m_breakTargetStack;
-    HashMap<String, OverloadedDeclaration> m_overloadedOperations;
+    UncheckedKeyHashMap<String, OverloadedDeclaration> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -461,7 +461,7 @@ void TypeChecker::visit(AST::Structure& structure)
 {
     visitAttributes(structure.attributes());
 
-    HashMap<String, const Type*> fields;
+    UncheckedKeyHashMap<String, const Type*> fields;
     for (unsigned i = 0; i < structure.members().size(); ++i) {
         auto& member = structure.members()[i];
         visitAttributes(member.attributes());
@@ -1271,7 +1271,7 @@ void TypeChecker::visit(AST::CallExpression& call)
                     return;
                 }
 
-                HashMap<String, ConstantValue> constantFields;
+                UncheckedKeyHashMap<String, ConstantValue> constantFields;
                 bool isConstant = true;
                 for (unsigned i = 0; i < numberOfArguments; ++i) {
                     auto& argument = call.arguments()[i];

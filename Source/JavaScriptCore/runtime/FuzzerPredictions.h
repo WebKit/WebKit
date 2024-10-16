@@ -38,7 +38,7 @@ public:
     std::optional<SpeculatedType> predictionFor(const String&);
 
 private:
-    HashMap<String, SpeculatedType> m_predictions;
+    UncheckedKeyHashMap<String, SpeculatedType> m_predictions;
 };
 
 JS_EXPORT_PRIVATE FuzzerPredictions& ensureGlobalFuzzerPredictions();

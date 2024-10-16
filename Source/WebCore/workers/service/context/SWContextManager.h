@@ -145,7 +145,7 @@ private:
 
     void stopWorker(ServiceWorkerThreadProxy&, Seconds, Function<void()>&&);
 
-    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> m_workerMap WTF_GUARDED_BY_LOCK(m_workerMapLock);
+    UncheckedKeyHashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> m_workerMap WTF_GUARDED_BY_LOCK(m_workerMapLock);
     mutable Lock m_workerMapLock;
     RefPtr<Connection> m_connection;
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
@@ -158,7 +158,7 @@ private:
     private:
         Timer m_timeoutTimer;
     };
-    HashMap<ServiceWorkerIdentifier, std::unique_ptr<ServiceWorkerTerminationRequest>> m_pendingServiceWorkerTerminationRequests;
+    UncheckedKeyHashMap<ServiceWorkerIdentifier, std::unique_ptr<ServiceWorkerTerminationRequest>> m_pendingServiceWorkerTerminationRequests;
 };
 
 } // namespace WebCore

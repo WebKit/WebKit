@@ -97,8 +97,8 @@ inline int jumpTargetForInstruction(Block* codeBlock, const JSInstructionStream:
     return codeBlock->outOfLineJumpOffset(instruction);
 }
 
-template<typename HashMap>
-inline int jumpTargetForInstruction(HashMap& outOfLineJumpTargets, const JSInstructionStream::Ref& instruction, unsigned target)
+template<typename UncheckedKeyHashMap>
+inline int jumpTargetForInstruction(UncheckedKeyHashMap& outOfLineJumpTargets, const JSInstructionStream::Ref& instruction, unsigned target)
 {
     if (target)
         return target;

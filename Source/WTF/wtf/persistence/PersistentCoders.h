@@ -193,8 +193,8 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
 
 template<typename T, size_t inlineCapacity> struct Coder<Vector<T, inlineCapacity>> : VectorCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct Coder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
-    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct Coder<UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
+    typedef UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 
     template<typename Encoder>
     static void encodeForPersistence(Encoder& encoder, const HashMapType& hashMap)

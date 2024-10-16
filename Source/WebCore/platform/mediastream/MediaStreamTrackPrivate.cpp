@@ -305,7 +305,7 @@ private:
     Ref<RealtimeMediaSource> m_source;
     std::unique_ptr<MediaStreamTrackPrivateSourceObserverSourceProxy> m_sourceProxy;
     std::function<void(Function<void()>&&)> m_postTask;
-    HashMap<uint64_t, ApplyConstraintsHandler> m_applyConstraintsCallbacks;
+    UncheckedKeyHashMap<uint64_t, ApplyConstraintsHandler> m_applyConstraintsCallbacks;
     uint64_t m_applyConstraintsCallbacksIdentifier { 0 };
 };
 

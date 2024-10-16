@@ -47,7 +47,7 @@ public:
     bool contains(CSSValueID) const;
 
 private:
-    // FIXME: A HashMap here is not ideal, as these tables are always constant expressions
+    // FIXME: A UncheckedKeyHashMap here is not ideal, as these tables are always constant expressions
     // and always quite small (currently always 4, but in the future will include one that
     // is 5 elements, hard coding a size of 4 would be unfortunate. A more ideal solution
     // would be to have this be a SortedArrayMap, but it currently has the restriction that
@@ -55,7 +55,7 @@ private:
     // use the size only at construction and store store a std::span instead (or a variant
     // version could be made).
 
-    HashMap<CSSValueID, CSSUnitType> m_table;
+    UncheckedKeyHashMap<CSSValueID, CSSUnitType> m_table;
 };
 
 }

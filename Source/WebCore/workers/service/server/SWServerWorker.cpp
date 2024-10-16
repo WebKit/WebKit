@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& SWServerWorker::allWorkers()
+UncheckedKeyHashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& SWServerWorker::allWorkers()
 {
-    static NeverDestroyed<HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>> workers;
+    static NeverDestroyed<UncheckedKeyHashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>> workers;
     return workers;
 }
 

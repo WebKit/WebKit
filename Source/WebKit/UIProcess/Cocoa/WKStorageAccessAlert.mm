@@ -137,7 +137,7 @@ void presentStorageAccessAlertQuirk(WKWebView *webView, const WebCore::Registrab
     displayStorageAccessAlert(webView, alertTitle, informativeText, nil, nil, WTFMove(completionHandler));
 }
 
-void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organizationName, const HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>>& domainPairings, CompletionHandler<void(bool)>&& completionHandler)
+void presentStorageAccessAlertSSOQuirk(WKWebView *webView, const String& organizationName, const UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>>& domainPairings, CompletionHandler<void(bool)>&& completionHandler)
 {
     NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow related %@ websites to share cookies and website data?", @"Message for requesting cross-site cookie and website data access."), organizationName.createCFString().get()];
 

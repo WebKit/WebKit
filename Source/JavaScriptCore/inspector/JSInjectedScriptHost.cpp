@@ -977,8 +977,8 @@ public:
 
 private:
     Lock m_mutex;
-    HashMap<JSCell*, HashSet<JSCell*>> m_predecessors;
-    HashMap<JSCell*, HashSet<JSCell*>> m_successors;
+    UncheckedKeyHashMap<JSCell*, HashSet<JSCell*>> m_predecessors;
+    UncheckedKeyHashMap<JSCell*, HashSet<JSCell*>> m_successors;
     HashSet<JSCell*> m_rootsToInclude;
     HashSet<JSCell*> m_rootsToIgnore;
     HashSet<JSCell*> m_holders;

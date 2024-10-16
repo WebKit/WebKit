@@ -72,7 +72,7 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
         return String();
 
     auto ext = string.toString();
-    static HashMap<String, String> mimetypeMap;
+    static UncheckedKeyHashMap<String, String> mimetypeMap;
     if (mimetypeMap.isEmpty()) {
         //fill with initial values
         mimetypeMap.add("txt"_s, "text/plain"_s);

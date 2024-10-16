@@ -79,7 +79,7 @@ static ImageType cocoaTypeToImageType(const String& cocoaType)
 }
 
 // String literals returned by this function must be defined exactly once
-// since read(PasteboardFileReader&) uses HashMap<const char*> to check uniqueness.
+// since read(PasteboardFileReader&) uses UncheckedKeyHashMap<const char*> to check uniqueness.
 static ASCIILiteral imageTypeToMIMEType(ImageType type)
 {
     switch (type) {

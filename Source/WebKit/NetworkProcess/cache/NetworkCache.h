@@ -235,8 +235,8 @@ private:
 #endif
 
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
-    HashMap<Key, Ref<AsyncRevalidation>> m_pendingAsyncRevalidations;
-    HashMap<GlobalFrameID, WeakHashSet<AsyncRevalidation>> m_pendingAsyncRevalidationByPage;
+    UncheckedKeyHashMap<Key, Ref<AsyncRevalidation>> m_pendingAsyncRevalidations;
+    UncheckedKeyHashMap<GlobalFrameID, WeakHashSet<AsyncRevalidation>> m_pendingAsyncRevalidationByPage;
 #endif
 
     unsigned m_traverseCount { 0 };

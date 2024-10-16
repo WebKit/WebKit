@@ -59,7 +59,7 @@ public:
 
 private:
     HashSet<WKRetainPtr<WKNotificationManagerRef>> m_knownManagers;
-    HashMap<WTF::UUID, WKNotificationManagerRef> m_owningManager;
+    UncheckedKeyHashMap<WTF::UUID, WKNotificationManagerRef> m_owningManager;
     WKRetainPtr<WKMutableDictionaryRef> m_permissions;
 
     HashSet<WKRetainPtr<WKNotificationRef>> m_knownPersistentNotifications;

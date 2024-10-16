@@ -90,7 +90,7 @@ private:
     Strong<JSGlobalObject> m_globalObject;
 
     ProtectCountSet m_protectCountSet;
-    HashMap<RuntimeObject*, JSC::Weak<RuntimeObject>> m_runtimeObjects; // We use a map to implement a set.
+    UncheckedKeyHashMap<RuntimeObject*, JSC::Weak<RuntimeObject>> m_runtimeObjects; // We use a map to implement a set.
 
     HashSet<InvalidationCallback*> m_invalidationCallbacks;
 };

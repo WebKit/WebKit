@@ -162,17 +162,17 @@ private:
         std::unique_ptr<ServiceWorkerJob> job;
         RefPtr<PendingActivity<ServiceWorkerContainer>> pendingActivity;
     };
-    HashMap<ServiceWorkerJobIdentifier, OngoingJob> m_jobMap;
+    UncheckedKeyHashMap<ServiceWorkerJobIdentifier, OngoingJob> m_jobMap;
 
     bool m_isStopped { false };
-    HashMap<ServiceWorkerRegistrationIdentifier, WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData>> m_registrations;
+    UncheckedKeyHashMap<ServiceWorkerRegistrationIdentifier, WeakRef<ServiceWorkerRegistration, WeakPtrImplWithEventTargetData>> m_registrations;
 
 #if ASSERT_ENABLED
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
 
     uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
-    HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
+    UncheckedKeyHashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
     bool m_shouldDeferMessageEvents { false };
     Vector<MessageEvent::MessageEventWithStrongData> m_deferredMessageEvents;
 };

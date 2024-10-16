@@ -176,7 +176,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
     HashSet<Ref<Node>> allTextNodes;
-    HashMap<unsigned, unsigned> fontSizeToCountMap;
+    UncheckedKeyHashMap<unsigned, unsigned> fontSizeToCountMap;
     unsigned numberOfIterations = 0;
     unsigned totalSampledTextLength = 0;
 

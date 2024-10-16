@@ -1752,9 +1752,9 @@ bool AXIsolatedObject::isNonNativeTextControl() const
     return false;
 }
 
-HashMap<String, AXEditingStyleValueVariant> AXIsolatedObject::resolvedEditingStyles() const
+UncheckedKeyHashMap<String, AXEditingStyleValueVariant> AXIsolatedObject::resolvedEditingStyles() const
 {
-    return Accessibility::retrieveValueFromMainThread<HashMap<String, AXEditingStyleValueVariant>>([this] () -> HashMap<String, AXEditingStyleValueVariant> {
+    return Accessibility::retrieveValueFromMainThread<UncheckedKeyHashMap<String, AXEditingStyleValueVariant>>([this] () -> UncheckedKeyHashMap<String, AXEditingStyleValueVariant> {
         if (auto* object = associatedAXObject())
             return object->resolvedEditingStyles();
         return { };

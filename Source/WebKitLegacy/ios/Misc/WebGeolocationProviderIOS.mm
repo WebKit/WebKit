@@ -52,7 +52,7 @@ using namespace WebCore;
 - (id)initWithProvider:(WebGeolocationProviderIOS*)provider;
 @end
 
-typedef HashMap<RetainPtr<WebView>, RetainPtr<id<WebGeolocationProviderInitializationListener> > > GeolocationInitializationCallbackMap;
+typedef UncheckedKeyHashMap<RetainPtr<WebView>, RetainPtr<id<WebGeolocationProviderInitializationListener> > > GeolocationInitializationCallbackMap;
 
 @implementation WebGeolocationProviderIOS {
 @private

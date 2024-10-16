@@ -158,15 +158,15 @@ public:
 
     explicit WebExtensionContext(Ref<WebExtension>&&);
 
-    using PermissionsMap = HashMap<String, WallTime>;
-    using PermissionMatchPatternsMap = HashMap<Ref<WebExtensionMatchPattern>, WallTime>;
+    using PermissionsMap = UncheckedKeyHashMap<String, WallTime>;
+    using PermissionMatchPatternsMap = UncheckedKeyHashMap<Ref<WebExtensionMatchPattern>, WallTime>;
 
     using UserScriptVector = Vector<Ref<API::UserScript>>;
     using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
 
-    using AlarmInfoMap = HashMap<String, double>;
+    using AlarmInfoMap = UncheckedKeyHashMap<String, double>;
 
-    using DynamicInjectedContentsMap = HashMap<String, WebExtension::InjectedContentData>;
+    using DynamicInjectedContentsMap = UncheckedKeyHashMap<String, WebExtension::InjectedContentData>;
 
     using PermissionsSet = WebExtension::PermissionsSet;
     using MatchPatternSet = WebExtension::MatchPatternSet;
@@ -177,14 +177,14 @@ public:
 
     using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
     using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType>;
-    using EventListenerTypePageMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakPageCountedSet>;
+    using EventListenerTypePageMap = UncheckedKeyHashMap<WebExtensionEventListenerTypeWorldPair, WeakPageCountedSet>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType>;
     using ContentWorldTypeSet = HashSet<WebExtensionContentWorldType>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
 
-    using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
+    using WindowIdentifierMap = UncheckedKeyHashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
     using WindowIdentifierVector = Vector<WebExtensionWindowIdentifier>;
-    using TabIdentifierMap = HashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
+    using TabIdentifierMap = UncheckedKeyHashMap<WebExtensionTabIdentifier, Ref<WebExtensionTab>>;
     using PageTabIdentifierMap = WeakHashMap<WebPageProxy, WebExtensionTabIdentifier>;
     using PopupPageActionMap = WeakHashMap<WebPageProxy, Ref<WebExtensionAction>>;
 
@@ -202,16 +202,16 @@ public:
     using MessagePageProxyIdentifierPair = std::pair<String, std::optional<WebPageProxyIdentifier>>;
     using PortCountedSet = HashCountedSet<PortWorldPair>;
     using PortTupleCountedSet = HashCountedSet<PortWorldTuple>;
-    using PageProxyIdentifierPortMap = HashMap<WebPageProxyIdentifier, PortTupleCountedSet>;
-    using PortQueuedMessageMap = HashMap<PortWorldPair, Vector<MessagePageProxyIdentifierPair>>;
-    using NativePortMap = HashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
+    using PageProxyIdentifierPortMap = UncheckedKeyHashMap<WebPageProxyIdentifier, PortTupleCountedSet>;
+    using PortQueuedMessageMap = UncheckedKeyHashMap<PortWorldPair, Vector<MessagePageProxyIdentifierPair>>;
+    using NativePortMap = UncheckedKeyHashMap<WebExtensionPortChannelIdentifier, Ref<WebExtensionMessagePort>>;
 
     using PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
 
     using CommandsVector = Vector<Ref<WebExtensionCommand>>;
 
     using MenuItemVector = Vector<Ref<WebExtensionMenuItem>>;
-    using MenuItemMap = HashMap<String, Ref<WebExtensionMenuItem>>;
+    using MenuItemMap = UncheckedKeyHashMap<String, Ref<WebExtensionMenuItem>>;
 
     using DeclarativeNetRequestValidatedRulesets = Expected<WebExtension::DeclarativeNetRequestRulesetVector, WebExtensionError>;
     using DeclarativeNetRequestMatchedRuleVector = Vector<WebExtensionMatchedRuleParameters>;
@@ -748,7 +748,7 @@ private:
     void cookiesGetAll(std::optional<PAL::SessionID>, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesSet(std::optional<PAL::SessionID>, const WebExtensionCookieParameters&, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
     void cookiesRemove(std::optional<PAL::SessionID>, const String& name, const URL&, CompletionHandler<void(Expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
-    void cookiesGetAllCookieStores(CompletionHandler<void(Expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&&);
+    void cookiesGetAllCookieStores(CompletionHandler<void(Expected<UncheckedKeyHashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&&);
     void fireCookiesChangedEventIfNeeded();
 
     // DeclarativeNetRequest APIs
@@ -951,7 +951,7 @@ private:
     WallTime m_nextDeniedPermissionMatchPatternsExpirationDate { WallTime::nan() };
 
     ListHashSet<URL> m_cachedPermissionURLs;
-    HashMap<URL, PermissionState> m_cachedPermissionStates;
+    UncheckedKeyHashMap<URL, PermissionState> m_cachedPermissionStates;
 
     size_t m_pendingPermissionRequests { 0 };
 
@@ -982,15 +982,15 @@ private:
     WeakHashMap<WebInspectorUIProxy, Ref<API::InspectorExtension>> m_inspectorExtensionMap;
 #endif
 
-    HashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
-    HashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
+    UncheckedKeyHashMap<Ref<WebExtensionMatchPattern>, UserScriptVector> m_injectedScriptsPerPatternMap;
+    UncheckedKeyHashMap<Ref<WebExtensionMatchPattern>, UserStyleSheetVector> m_injectedStyleSheetsPerPatternMap;
 
-    HashMap<String, Ref<WebExtensionDynamicScripts::WebExtensionRegisteredScript>> m_registeredScriptsMap;
+    UncheckedKeyHashMap<String, Ref<WebExtensionDynamicScripts::WebExtensionRegisteredScript>> m_registeredScriptsMap;
     RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> m_registeredContentScriptsStorage;
 
     UserStyleSheetVector m_dynamicallyInjectedUserStyleSheets;
 
-    HashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
+    UncheckedKeyHashMap<String, Ref<WebExtensionAlarm>> m_alarmMap;
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionAction>> m_actionWindowMap;
     WeakHashMap<WebExtensionTab, Ref<WebExtensionAction>> m_actionTabMap;
     RefPtr<WebExtensionAction> m_defaultAction;

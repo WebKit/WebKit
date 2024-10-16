@@ -968,7 +968,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithLegacyReceiver_TemplateTest:
         return Vector<ArgumentDescription> {
-            { "a"_s, "HashMap<String, std::pair<String, uint64_t>>"_s, ASCIILiteral(), false },
+            { "a"_s, "UncheckedKeyHashMap<String, std::pair<String, uint64_t>>"_s, ASCIILiteral(), false },
         };
     case MessageName::TestWithLegacyReceiver_SetVideoLayerID:
         return Vector<ArgumentDescription> {
@@ -1077,7 +1077,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         };
     case MessageName::TestWithoutAttributes_TemplateTest:
         return Vector<ArgumentDescription> {
-            { "a"_s, "HashMap<String, std::pair<String, uint64_t>>"_s, ASCIILiteral(), false },
+            { "a"_s, "UncheckedKeyHashMap<String, std::pair<String, uint64_t>>"_s, ASCIILiteral(), false },
         };
     case MessageName::TestWithoutAttributes_SetVideoLayerID:
         return Vector<ArgumentDescription> {

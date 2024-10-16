@@ -225,7 +225,7 @@ public:
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
-    void registrableDomainsWithLastAccessedTime(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&&);
+    void registrableDomainsWithLastAccessedTime(PAL::SessionID, CompletionHandler<void(std::optional<UncheckedKeyHashMap<RegistrableDomain, WallTime>>)>&&);
     void registrableDomainsExemptFromWebsiteDataDeletion(PAL::SessionID, CompletionHandler<void(HashSet<RegistrableDomain>)>&&);
     void clearPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void clearUserInteraction(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
@@ -553,7 +553,7 @@ private:
     void stopRunLoopIfNecessary();
 
     // Connections to WebProcesses.
-    HashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
@@ -561,14 +561,14 @@ private:
     mutable String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
-    using NetworkProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<NetworkProcessSupplement>>;
+    using NetworkProcessSupplementMap = UncheckedKeyHashMap<ASCIILiteral, std::unique_ptr<NetworkProcessSupplement>>;
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
 
-    HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
-    HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
-    HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    UncheckedKeyHashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
+    UncheckedKeyHashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);
@@ -598,7 +598,7 @@ private:
     static const Seconds defaultServiceWorkerFetchTimeout;
     Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 
-    HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
+    UncheckedKeyHashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
     HashSet<RefPtr<NetworkStorageManager>> m_closingStorageManagers;
     HashSet<String> m_localhostAliasesForTesting;
 

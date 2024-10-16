@@ -234,7 +234,7 @@ DOMPatchSupport::diff(const Vector<std::unique_ptr<Digest>>& oldList, const Vect
         newMap[newIndex].second = oldIndex;
     }
 
-    typedef HashMap<String, Vector<size_t>> DiffTable;
+    typedef UncheckedKeyHashMap<String, Vector<size_t>> DiffTable;
     DiffTable newTable;
     DiffTable oldTable;
 
@@ -296,7 +296,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
     Digest* oldBody = nullptr;
 
     // 1. First strip everything except for the nodes that retain. Collect pending merges.
-    HashMap<Digest*, Digest*> merges;
+    UncheckedKeyHashMap<Digest*, Digest*> merges;
     HashSet<size_t, IntHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>> usedNewOrdinals;
     for (size_t i = 0; i < oldList.size(); ++i) {
         if (oldMap[i].first) {

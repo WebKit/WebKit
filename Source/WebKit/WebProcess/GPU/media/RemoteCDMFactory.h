@@ -87,8 +87,8 @@ private:
     std::unique_ptr<WebCore::CDMPrivate> createCDM(const String&, const WebCore::CDMPrivateClient&) final;
     bool supportsKeySystem(const String&) final;
 
-    HashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
-    HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
+    UncheckedKeyHashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
+    UncheckedKeyHashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
 };
 
 }

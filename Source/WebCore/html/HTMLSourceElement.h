@@ -63,7 +63,7 @@ private:
 
     bool isURLAttribute(const Attribute&) const final;
     bool attributeContainsURL(const Attribute&) const final;
-    Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const override;
     void addCandidateSubresourceURLs(ListHashSet<URL>&) const override;
 
     // ActiveDOMObject.

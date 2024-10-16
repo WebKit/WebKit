@@ -94,7 +94,7 @@ private:
     WeakPtr<CookieJar> m_cookieJar;
     String m_host;
     uint64_t m_nextPromiseIdentifier { 0 };
-    HashMap<uint64_t, Ref<DeferredPromise>> m_promises;
+    UncheckedKeyHashMap<uint64_t, Ref<DeferredPromise>> m_promises;
 };
 
 }

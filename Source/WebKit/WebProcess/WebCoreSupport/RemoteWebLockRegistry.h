@@ -58,7 +58,7 @@ private:
     void didStealLock(WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier);
 
     struct LocksSnapshot;
-    HashMap<WebCore::ScriptExecutionContextIdentifier, LocksSnapshot> m_locksSnapshotPerClient;
+    UncheckedKeyHashMap<WebCore::ScriptExecutionContextIdentifier, LocksSnapshot> m_locksSnapshotPerClient;
 };
 
 } // namespace WebKit

@@ -34,7 +34,7 @@ using namespace WebCore;
 struct VideoFrameMetadataPrivate {
     std::optional<VideoFrameTimeMetadata> videoSampleMetadata;
     Lock lock;
-    HashMap<GstElement*, std::pair<GstClockTime, GstClockTime>> processingTimes WTF_GUARDED_BY_LOCK(lock);
+    UncheckedKeyHashMap<GstElement*, std::pair<GstClockTime, GstClockTime>> processingTimes WTF_GUARDED_BY_LOCK(lock);
 };
 
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(VideoFrameMetadataPrivate);

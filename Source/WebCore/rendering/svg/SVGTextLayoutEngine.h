@@ -82,7 +82,7 @@ private:
     Vector<InlineIterator::SVGTextBoxIterator> m_pathLayoutBoxes;
 
     // Output.
-    HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
+    UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
 
     SVGTextChunkBuilder m_chunkLayoutBuilder;
     HashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;

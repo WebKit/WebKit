@@ -116,7 +116,7 @@ RefPtr<ScrollingStateNode> AsyncScrollingCoordinator::stateNodeForNodeID(std::op
         return nullptr;
     }, [&] (const KeyValuePair<FrameIdentifier, UniqueRef<ScrollingStateTree>>& pair) {
         return pair.value->stateNodeForID(nodeID);
-    }, [&] (const HashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> RefPtr<ScrollingStateNode> {
+    }, [&] (const UncheckedKeyHashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> RefPtr<ScrollingStateNode> {
         for (auto& tree : map.values()) {
             if (RefPtr scrollingNode = tree->stateNodeForID(nodeID))
                 return scrollingNode;
@@ -164,7 +164,7 @@ ScrollingStateTree* AsyncScrollingCoordinator::stateTreeForNodeID(std::optional<
         if (RefPtr scrollingNode = pair.value->stateNodeForID(nodeID))
             return pair.value.ptr();
         return nullptr;
-    }, [&] (const HashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> ScrollingStateTree* {
+    }, [&] (const UncheckedKeyHashMap<FrameIdentifier, UniqueRef<ScrollingStateTree>>& map) -> ScrollingStateTree* {
         for (auto& tree : map.values()) {
             if (RefPtr scrollingNode = tree->stateNodeForID(nodeID))
                 return tree.ptr();

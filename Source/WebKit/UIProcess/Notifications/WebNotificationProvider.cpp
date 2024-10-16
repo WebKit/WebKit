@@ -97,9 +97,9 @@ void WebNotificationProvider::removeNotificationManager(WebNotificationManagerPr
     m_client.removeNotificationManager(toAPI(&manager), m_client.base.clientInfo);
 }
 
-HashMap<WTF::String, bool> WebNotificationProvider::notificationPermissions()
+UncheckedKeyHashMap<WTF::String, bool> WebNotificationProvider::notificationPermissions()
 {
-    HashMap<WTF::String, bool> permissions;
+    UncheckedKeyHashMap<WTF::String, bool> permissions;
     if (!m_client.notificationPermissions)
         return permissions;
 

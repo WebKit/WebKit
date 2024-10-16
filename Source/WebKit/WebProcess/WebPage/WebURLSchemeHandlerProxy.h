@@ -75,7 +75,7 @@ private:
     WeakRef<WebPage> m_webPage;
     WebURLSchemeHandlerIdentifier m_identifier;
 
-    HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;
+    UncheckedKeyHashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;
 }; // class WebURLSchemeHandlerProxy
 
 } // namespace WebKit

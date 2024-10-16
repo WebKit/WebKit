@@ -63,7 +63,7 @@ public:
 private:
     ModelProcessModelPlayerManager();
 
-    HashMap<WebCore::ModelPlayerIdentifier, WeakPtr<ModelProcessModelPlayer>> m_players;
+    UncheckedKeyHashMap<WebCore::ModelPlayerIdentifier, WeakPtr<ModelProcessModelPlayer>> m_players;
     ThreadSafeWeakPtr<ModelProcessConnection> m_modelProcessConnection;
 };
 

@@ -940,7 +940,7 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
     if (shortcut.isEmpty())
         return true;
 
-    static NeverDestroyed<HashMap<String, ModifierFlags>> modifierMap = HashMap<String, ModifierFlags> {
+    static NeverDestroyed<UncheckedKeyHashMap<String, ModifierFlags>> modifierMap = UncheckedKeyHashMap<String, ModifierFlags> {
         { "Ctrl"_s, ModifierFlags::Command },
         { "Command"_s, ModifierFlags::Command },
         { "Alt"_s, ModifierFlags::Option },
@@ -948,7 +948,7 @@ static bool parseCommandShortcut(const String& shortcut, OptionSet<ModifierFlags
         { "Shift"_s, ModifierFlags::Shift }
     };
 
-    static NeverDestroyed<HashMap<String, String>> specialKeyMap = HashMap<String, String> {
+    static NeverDestroyed<UncheckedKeyHashMap<String, String>> specialKeyMap = UncheckedKeyHashMap<String, String> {
         { "Comma"_s, ","_s },
         { "Period"_s, "."_s },
         { "Space"_s, " "_s },

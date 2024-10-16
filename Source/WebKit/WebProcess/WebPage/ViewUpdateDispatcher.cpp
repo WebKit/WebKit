@@ -74,7 +74,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
-    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> update;
+    UncheckedKeyHashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> update;
     {
         Locker locker { m_latestUpdateLock };
         update = std::exchange(m_latestUpdate, { });

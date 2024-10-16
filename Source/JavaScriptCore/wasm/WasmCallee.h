@@ -453,7 +453,7 @@ public:
 
     IPIntTierUpCounter& tierUpCounter() { return m_tierUpCounter; }
 
-    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UncheckedKeyHashMap<WasmInstructionStream::Offset, int>;
 
 private:
     IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&&);
@@ -541,7 +541,7 @@ public:
     const JumpTable& jumpTable(unsigned tableIndex) const;
     unsigned numberOfJumpTables() const;
 
-    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UncheckedKeyHashMap<WasmInstructionStream::Offset, int>;
 
 private:
     LLIntCallee(FunctionCodeBlockGenerator&, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&&);

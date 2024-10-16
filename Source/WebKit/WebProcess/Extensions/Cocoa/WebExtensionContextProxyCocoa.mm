@@ -47,9 +47,9 @@
 
 namespace WebKit {
 
-static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>& webExtensionContextProxies()
+static UncheckedKeyHashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>& webExtensionContextProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>> contexts;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>> contexts;
     return contexts;
 }
 

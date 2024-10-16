@@ -33,7 +33,7 @@ namespace WebCore {
 
 class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
 private:
-    using CustomPropertyValueMap = HashMap<AtomString, RefPtr<const CSSCustomPropertyValue>>;
+    using CustomPropertyValueMap = UncheckedKeyHashMap<AtomString, RefPtr<const CSSCustomPropertyValue>>;
 
 public:
     static Ref<StyleCustomPropertyData> create() { return adoptRef(*new StyleCustomPropertyData); }

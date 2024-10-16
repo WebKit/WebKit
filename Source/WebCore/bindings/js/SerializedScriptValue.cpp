@@ -1125,7 +1125,7 @@ public:
 #endif
 
 private:
-    using ObjectPoolMap = HashMap<JSObject*, uint32_t>;
+    using ObjectPoolMap = UncheckedKeyHashMap<JSObject*, uint32_t>;
 
     CloneSerializer(JSGlobalObject* lexicalGlobalObject, Vector<Ref<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, const Vector<RefPtr<ImageBitmap>>& imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -2644,9 +2644,9 @@ private:
 #if ENABLE(MEDIA_SOURCE_IN_WORKERS)
     ObjectPoolMap m_transferredMediaSourceHandles;
 #endif
-    typedef HashMap<RefPtr<UniquedStringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
+    typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
     StringConstantPool m_constantPool;
-    using ImageDataPool = HashMap<Ref<ImageData>, uint32_t>;
+    using ImageDataPool = UncheckedKeyHashMap<Ref<ImageData>, uint32_t>;
     ImageDataPool m_imageDataPool;
     Identifier m_emptyIdentifier;
     SerializationContext m_context;

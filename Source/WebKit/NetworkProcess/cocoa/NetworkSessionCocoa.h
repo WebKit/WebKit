@@ -68,9 +68,9 @@ struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper>, public CanMakeChe
 
     RetainPtr<NSURLSession> session;
     RetainPtr<WKNetworkSessionDelegate> delegate;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, ThreadSafeWeakPtr<NetworkDataTaskCocoa>> dataTaskMap;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> downloadMap;
-    HashMap<NetworkDataTaskCocoa::TaskIdentifier, WeakPtr<WebSocketTask>> webSocketDataTaskMap;
+    UncheckedKeyHashMap<NetworkDataTaskCocoa::TaskIdentifier, ThreadSafeWeakPtr<NetworkDataTaskCocoa>> dataTaskMap;
+    UncheckedKeyHashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> downloadMap;
+    UncheckedKeyHashMap<NetworkDataTaskCocoa::TaskIdentifier, WeakPtr<WebSocketTask>> webSocketDataTaskMap;
 };
 
 struct IsolatedSession {
@@ -92,7 +92,7 @@ public:
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(NavigatingToAppBoundDomain, NetworkSessionCocoa&);
 
     SessionWrapper& isolatedSession(WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain, NetworkSessionCocoa&);
-    HashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, std::unique_ptr<IsolatedSession>> isolatedSessions;
 
     std::unique_ptr<IsolatedSession> appBoundSession;
 
@@ -200,8 +200,8 @@ private:
     void forEachSessionWrapper(Function<void(SessionWrapper&)>&&);
 
     Ref<SessionSet> m_defaultSessionSet;
-    HashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
-    HashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
+    UncheckedKeyHashMap<WebPageProxyIdentifier, Ref<SessionSet>> m_perPageSessionSets;
+    UncheckedKeyHashMap<WebPageNetworkParameters, WeakPtr<SessionSet>> m_perParametersSessionSets;
 
     void initializeNSURLSessionsInSet(SessionSet&, NSURLSessionConfiguration *);
     SessionSet& sessionSetForPage(std::optional<WebPageProxyIdentifier>);
@@ -224,8 +224,8 @@ private:
     bool m_preventsSystemHTTPProxyAuthentication { false };
 
     class BlobDataTaskClient;
-    HashMap<DataTaskIdentifier, Ref<BlobDataTaskClient>> m_blobDataTasksForAPI;
-    HashMap<DataTaskIdentifier, RetainPtr<NSURLSessionDataTask>> m_dataTasksForAPI;
+    UncheckedKeyHashMap<DataTaskIdentifier, Ref<BlobDataTaskClient>> m_blobDataTasksForAPI;
+    UncheckedKeyHashMap<DataTaskIdentifier, RetainPtr<NSURLSessionDataTask>> m_dataTasksForAPI;
 };
 
 } // namespace WebKit

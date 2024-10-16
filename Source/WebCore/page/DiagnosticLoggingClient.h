@@ -40,7 +40,7 @@ enum class ShouldSample : bool { No, Yes };
 
 struct DiagnosticLoggingDictionary {
     using Payload = std::variant<String, uint64_t, int64_t, bool, double>;
-    using Dictionary = HashMap<String, Payload>;
+    using Dictionary = UncheckedKeyHashMap<String, Payload>;
     Dictionary dictionary;
     void set(String key, Payload value) { dictionary.set(WTFMove(key), WTFMove(value)); }
 };

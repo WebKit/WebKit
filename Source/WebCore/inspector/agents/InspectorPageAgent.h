@@ -175,7 +175,7 @@ private:
 
     WeakHashMap<Frame, String> m_frameToIdentifier;
     MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
-    HashMap<DocumentLoader*, String> m_loaderToIdentifier;
+    UncheckedKeyHashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     AtomString m_emulatedMedia;
     String m_bootstrapScript;

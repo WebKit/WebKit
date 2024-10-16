@@ -36,7 +36,7 @@ messages -> WebSWContextManagerConnection {
 
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
+    DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, UncheckedKeyHashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
     SkipWaitingCompleted(uint64_t matchAllRequestIdentifier)

@@ -200,7 +200,7 @@ public:
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
 
-    const HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>>& connections() const { return m_connections; }
+    const UncheckedKeyHashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>>& connections() const { return m_connections; }
     WEBCORE_EXPORT bool canHandleScheme(StringView) const;
 
     SWOriginStore& originStore() { return m_originStore; }
@@ -335,36 +335,36 @@ private:
 
     WeakPtr<SWServerDelegate> m_delegate;
 
-    HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
-    HashMap<ServiceWorkerRegistrationKey, WeakRef<SWServerRegistration>> m_scopeToRegistrationMap;
-    HashMap<ServiceWorkerRegistrationIdentifier, Ref<SWServerRegistration>> m_registrations;
-    HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
+    UncheckedKeyHashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
+    UncheckedKeyHashMap<ServiceWorkerRegistrationKey, WeakRef<SWServerRegistration>> m_scopeToRegistrationMap;
+    UncheckedKeyHashMap<ServiceWorkerRegistrationIdentifier, Ref<SWServerRegistration>> m_registrations;
+    UncheckedKeyHashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;
 
-    HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
+    UncheckedKeyHashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
-    HashMap<RegistrableDomain, HashSet<ScriptExecutionContextIdentifier>> m_clientsByRegistrableDomain;
+    UncheckedKeyHashMap<RegistrableDomain, HashSet<ScriptExecutionContextIdentifier>> m_clientsByRegistrableDomain;
     struct Clients {
         Vector<ScriptExecutionContextIdentifier> identifiers;
         std::unique_ptr<Timer> terminateServiceWorkersTimer;
         String userAgent;
     };
-    HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
-    HashMap<ScriptExecutionContextIdentifier, WeakRef<SWServerRegistration>> m_serviceWorkerPageIdentifierToRegistrationMap;
-    HashMap<ScriptExecutionContextIdentifier, UniqueRef<ServiceWorkerClientData>> m_clientsById;
-    HashMap<ScriptExecutionContextIdentifier, Vector<ServiceWorkerClientPendingMessage>> m_clientPendingMessagesById;
-    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
+    UncheckedKeyHashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
+    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, WeakRef<SWServerRegistration>> m_serviceWorkerPageIdentifierToRegistrationMap;
+    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, UniqueRef<ServiceWorkerClientData>> m_clientsById;
+    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, Vector<ServiceWorkerClientPendingMessage>> m_clientPendingMessagesById;
+    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
     MemoryCompactRobinHoodHashMap<String, ScriptExecutionContextIdentifier> m_visibleClientIdToInternalClientIdMap;
 
     UniqueRef<SWOriginStore> m_originStore;
     RefPtr<SWRegistrationStore> m_registrationStore;
-    HashMap<RegistrableDomain, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
-    HashMap<RegistrableDomain, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
+    UncheckedKeyHashMap<RegistrableDomain, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
+    UncheckedKeyHashMap<RegistrableDomain, UncheckedKeyHashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
     bool m_isProcessTerminationDelayEnabled { true };
     Vector<CompletionHandler<void()>> m_clearCompletionCallbacks;
     Vector<Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
-    HashMap<RegistrableDomain, WeakRef<SWServerToContextConnection>> m_contextConnections;
+    UncheckedKeyHashMap<RegistrableDomain, WeakRef<SWServerToContextConnection>> m_contextConnections;
 
     HashSet<RegistrableDomain> m_pendingConnectionDomains;
     Vector<CompletionHandler<void()>> m_importCompletedCallbacks;

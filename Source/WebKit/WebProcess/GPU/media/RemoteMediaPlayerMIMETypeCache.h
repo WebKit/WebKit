@@ -62,7 +62,7 @@ private:
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
 
     using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool, bool>;
-    std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
+    std::optional<UncheckedKeyHashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
     HashSet<String> m_supportedTypesCache;
     bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };
 };

@@ -83,8 +83,8 @@ private:
     CustomElementRegistry(LocalDOMWindow&, ScriptExecutionContext*);
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
-    HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
-    HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
+    UncheckedKeyHashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
+    UncheckedKeyHashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
     MemoryCompactRobinHoodHashSet<AtomString> m_disabledShadowSet;
 

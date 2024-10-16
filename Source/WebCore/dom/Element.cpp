@@ -184,9 +184,9 @@ static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>& attrNodeListMap()
+static UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>& attrNodeListMap()
 {
-    static NeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, Vector<RefPtr<Attr>>>> map;
     return map;
 }
 
@@ -251,9 +251,9 @@ static bool shouldAutofocus(const Element& element)
     return true;
 }
 
-static HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>& elementIdentifiersMap()
+static UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>& elementIdentifiersMap()
 {
-    static MainThreadNeverDestroyed<HashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>> map;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<WeakRef<Element, WeakPtrImplWithEventTargetData>, ElementIdentifier>> map;
     return map;
 }
 
@@ -5531,7 +5531,7 @@ String Element::completeURLsInAttributeValue(const URL& base, const Attribute& a
     return resolveURLStringIfNeeded(attribute.value(), resolveURLs, base);
 }
 
-Attribute Element::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>&) const
+Attribute Element::replaceURLsInAttributeValue(const Attribute& attribute, const UncheckedKeyHashMap<String, String>&) const
 {
     return attribute;
 }
@@ -5985,7 +5985,7 @@ TextStream& operator<<(TextStream& ts, ContentRelevancy relevancy)
 HTMLElement* Element::topmostPopoverAncestor(TopLayerElementType topLayerType)
 {
     // Store positions to avoid having to do O(n) search for every popover invoker.
-    HashMap<Ref<const Element>, size_t> topLayerPositions;
+    UncheckedKeyHashMap<Ref<const Element>, size_t> topLayerPositions;
     size_t i = 0;
     for (auto& element : document().autoPopoverList())
         topLayerPositions.add(element, i++);

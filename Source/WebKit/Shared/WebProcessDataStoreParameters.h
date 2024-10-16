@@ -49,7 +49,7 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
-    HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
+    UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccessQuirk;
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;

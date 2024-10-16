@@ -35,7 +35,7 @@ namespace WebCore {
 
 class WindowProxy;
 
-typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
+typedef UncheckedKeyHashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld>, public CanMakeSingleThreadWeakPtr<DOMWrapperWorld> {
 public:

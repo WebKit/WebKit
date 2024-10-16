@@ -68,7 +68,7 @@ private:
     void propertiesDidChange() const;
 
     Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
-    HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+    UncheckedKeyHashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
     PlatformDisplayID m_primaryDisplayID { 0 };
 };
 

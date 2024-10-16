@@ -77,9 +77,9 @@ static constexpr auto persistedFileName = "persisted"_s;
 static constexpr Seconds originLastModificationTimeUpdateInterval = 30_s;
 
 // FIXME: Remove this if rdar://104754030 is fixed.
-static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
+static UncheckedKeyHashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
 {
-    static MainThreadNeverDestroyed<HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>> pathToManagerMap;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>> pathToManagerMap;
     return pathToManagerMap;
 }
 
@@ -469,11 +469,11 @@ WallTime NetworkStorageManager::lastModificationTimeForOrigin(const WebCore::Cli
     return lastModificationTime;
 }
 
-void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>& domainsWithLastAccessedTime)
+void NetworkStorageManager::donePrepareForEviction(const std::optional<UncheckedKeyHashMap<WebCore::RegistrableDomain, WallTime>>& domainsWithLastAccessedTime)
 {
     assertIsCurrent(workQueue());
 
-    HashMap<WebCore::SecurityOriginData, AccessRecord> originRecords;
+    UncheckedKeyHashMap<WebCore::SecurityOriginData, AccessRecord> originRecords;
     uint64_t totalUsage = 0;
     for (auto& origin : getAllOrigins()) {
         auto usage = originStorageManager(origin).protectedQuotaManager()->usage();
@@ -503,7 +503,7 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
     performEviction(WTFMove(originRecords));
 }
 
-void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&& originRecords)
+void NetworkStorageManager::performEviction(UncheckedKeyHashMap<WebCore::SecurityOriginData, AccessRecord>&& originRecords)
 {
     assertIsCurrent(workQueue());
 
@@ -1014,7 +1014,7 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
     return allOrigins;
 }
 
-static void updateOriginData(HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap>& originTypes, const WebCore::SecurityOriginData& origin, const OriginStorageManager::DataTypeSizeMap& newTypeSizeMap)
+static void updateOriginData(UncheckedKeyHashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap>& originTypes, const WebCore::SecurityOriginData& origin, const OriginStorageManager::DataTypeSizeMap& newTypeSizeMap)
 {
     auto& typeSizeMap = originTypes.add(origin, OriginStorageManager::DataTypeSizeMap { }).iterator->value;
     for (auto [type, size] : newTypeSizeMap) {
@@ -1027,7 +1027,7 @@ Vector<WebsiteData::Entry> NetworkStorageManager::fetchDataFromDisk(OptionSet<We
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap> originTypes;
+    UncheckedKeyHashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap> originTypes;
     for (auto& origin : getAllOrigins()) {
         auto typeSizeMap = originStorageManager(origin).fetchDataTypesInList(targetTypes, shouldComputeSize == ShouldComputeSize::Yes);
         updateOriginData(originTypes, origin.clientOrigin, typeSizeMap);
@@ -1401,7 +1401,7 @@ bool NetworkStorageManager::isSiteAllowedForConnection(IPC::Connection::UniqueID
     return iter->value.contains(site);
 }
 
-void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
+void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, UncheckedKeyHashMap<String, String>, uint64_t)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(std::nullopt, { }, StorageAreaBase::nextMessageIdentifier()));
@@ -1419,12 +1419,12 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
         break;
     case WebCore::StorageType::Session:
         if (!namespaceIdentifier)
-            return completionHandler(std::nullopt, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
+            return completionHandler(std::nullopt, UncheckedKeyHashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
         resultIdentifier = originStorageManager.sessionStorageManager(*m_storageAreaRegistry).connectToSessionStorageArea(connectionIdentifier, sourceIdentifier, origin, *namespaceIdentifier);
     }
 
     if (!resultIdentifier)
-        return completionHandler(std::nullopt, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
+        return completionHandler(std::nullopt, UncheckedKeyHashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 
     if (RefPtr storageArea = m_storageAreaRegistry->getStorageArea(*resultIdentifier)) {
         completionHandler(*resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
@@ -1432,10 +1432,10 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
         return;
     }
 
-    return completionHandler(*resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
+    return completionHandler(*resultIdentifier, UncheckedKeyHashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 }
 
-void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, HashMap<String, String>, uint64_t)>&& completionHandler)
+void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<StorageAreaIdentifier>, UncheckedKeyHashMap<String, String>, uint64_t)>&& completionHandler)
 {
     connectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, origin, WTFMove(completionHandler));
 }
@@ -1484,12 +1484,12 @@ void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connectio
         originStorageManager(storageArea->origin()).sessionStorageManager(*m_storageAreaRegistry).disconnectFromStorageArea(connection.uniqueID(), identifier);
 }
 
-void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
+void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, UncheckedKeyHashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     bool hasError = false;
-    HashMap<String, String> allItems;
+    UncheckedKeyHashMap<String, String> allItems;
     RefPtr storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
         return completionHandler(hasError, WTFMove(allItems));
@@ -1507,12 +1507,12 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
     writeOriginToFileIfNecessary(storageArea->origin(), storageArea.get());
 }
 
-void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
+void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, UncheckedKeyHashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     bool hasError = false;
-    HashMap<String, String> allItems;
+    UncheckedKeyHashMap<String, String> allItems;
     RefPtr storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
         return completionHandler(hasError, WTFMove(allItems));
@@ -2017,7 +2017,7 @@ Vector<WebCore::ServiceWorkerScripts> NetworkStorageManager::updateServiceWorker
 {
     ASSERT(!RunLoop::isMain());
 
-    HashMap<WebCore::ClientOrigin, std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>>> originRegistrations;
+    UncheckedKeyHashMap<WebCore::ClientOrigin, std::pair<Vector<WebCore::ServiceWorkerContextData>, Vector<WebCore::ServiceWorkerRegistrationKey>>> originRegistrations;
     for (auto& registration : registrationsToUpdate) {
         auto origin = registration.registration.key.clientOrigin();
         auto& registrations = originRegistrations.ensure(origin, []() {
@@ -2026,7 +2026,7 @@ Vector<WebCore::ServiceWorkerScripts> NetworkStorageManager::updateServiceWorker
         registrations.append(WTFMove(registration));
     }
 
-    HashMap<WebCore::ClientOrigin, Vector<WebCore::ServiceWorkerRegistrationKey>> originRegistrationsToDelete;
+    UncheckedKeyHashMap<WebCore::ClientOrigin, Vector<WebCore::ServiceWorkerRegistrationKey>> originRegistrationsToDelete;
     for (auto&& key : registrationsToDelete) {
         auto origin = key.clientOrigin();
         auto& keys = originRegistrations.ensure(origin, []() {

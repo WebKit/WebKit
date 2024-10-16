@@ -36,9 +36,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& visitedLinkTableControllers()
+static UncheckedKeyHashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& visitedLinkTableControllers()
 {
-    static NeverDestroyed<HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
+    static NeverDestroyed<UncheckedKeyHashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
     RELEASE_ASSERT(isMainRunLoop());
     return visitedLinkTableControllers;
 }

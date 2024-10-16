@@ -233,9 +233,9 @@ void StorageAccessPromptQuirkController::didUpdateCachedListData()
     RELEASE_LOG(ResourceLoadStatistics, "StorageAccessPromptQuirkController::didUpdateCachedListData: Loaded %lu storage access prompt(s) quirks from WebPrivacy.", m_cachedListData.size());
 }
 
-static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
+static UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
 {
-    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> map;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> map;
     auto* topDomains = quirkDomains.allKeys;
     for (NSString *topDomain : topDomains) {
         Vector<WebCore::RegistrableDomain> subFrameDomains;
@@ -315,7 +315,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
-        HashMap<WebCore::RegistrableDomain, String> result;
+        UncheckedKeyHashMap<WebCore::RegistrableDomain, String> result;
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access user agent string quirks from WebPrivacy.");
         else {
@@ -385,7 +385,7 @@ void RestrictedOpenerDomainsController::update()
             return;
         }
 
-        HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> restrictedOpenerTypes;
+        UncheckedKeyHashMap<WebCore::RegistrableDomain, RestrictedOpenerType> restrictedOpenerTypes;
         restrictedOpenerTypes.reserveInitialCapacity(domains.count);
 
         for (WPRestrictedOpenerDomain *domainInfo in domains) {

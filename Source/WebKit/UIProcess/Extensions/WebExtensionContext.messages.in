@@ -53,7 +53,7 @@ messages -> WebExtensionContext {
     [EnabledIf='isCookiesMessageAllowed()'] CookiesGetAll(std::optional<PAL::SessionID> sessionID, URL url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (Expected<Vector<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
     [EnabledIf='isCookiesMessageAllowed()'] CookiesSet(std::optional<PAL::SessionID> sessionID, struct WebKit::WebExtensionCookieParameters cookie) -> (Expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
     [EnabledIf='isCookiesMessageAllowed()'] CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (Expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [EnabledIf='isCookiesMessageAllowed()'] CookiesGetAllCookieStores() -> (Expected<HashMap<PAL::SessionID, Vector<WebKit::WebExtensionTabIdentifier>>, WebKit::WebExtensionError> result)
+    [EnabledIf='isCookiesMessageAllowed()'] CookiesGetAllCookieStores() -> (Expected<UncheckedKeyHashMap<PAL::SessionID, Vector<WebKit::WebExtensionTabIdentifier>>, WebKit::WebExtensionError> result)
 
     // DeclarativeNetRequest APIs
     [EnabledIf='isDeclarativeNetRequestMessageAllowed()'] DeclarativeNetRequestGetEnabledRulesets() -> (Vector<String> rulesetIdentifiers)

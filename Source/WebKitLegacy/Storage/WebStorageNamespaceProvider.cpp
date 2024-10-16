@@ -116,7 +116,7 @@ RefPtr<StorageNamespace> WebStorageNamespaceProvider::sessionStorageNamespace(co
     if (m_sessionStorageNamespaces.find(page) == m_sessionStorageNamespaces.end()) {
         if (shouldCreate == ShouldCreateNamespace::No)
             return nullptr;
-        HashMap<SecurityOriginData, RefPtr<StorageNamespace>> map;
+        UncheckedKeyHashMap<SecurityOriginData, RefPtr<StorageNamespace>> map;
         m_sessionStorageNamespaces.set(page, map);
     }
     auto& sessionStorageNamespaces = m_sessionStorageNamespaces.find(page)->value;
@@ -140,7 +140,7 @@ void WebStorageNamespaceProvider::cloneSessionStorageNamespaceForPage(WebCore::P
         return;
 
     auto& srcPageSessionStorageNamespaces = srcPageIt->value;
-    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> dstPageSessionStorageNamespaces;
+    UncheckedKeyHashMap<SecurityOriginData, RefPtr<StorageNamespace>> dstPageSessionStorageNamespaces;
     for (auto& [origin, srcNamespace] : srcPageSessionStorageNamespaces)
         dstPageSessionStorageNamespaces.set(origin, srcNamespace->copy(dstPage));
 

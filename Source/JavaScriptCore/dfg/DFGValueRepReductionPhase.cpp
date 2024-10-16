@@ -96,7 +96,7 @@ private:
         if (candidates.isEmpty())
             return false;
 
-        HashMap<Node*, Vector<Node*>> usersOf;
+        UncheckedKeyHashMap<Node*, Vector<Node*>> usersOf;
         auto getUsersOf = [&] (Node* candidate) {
             auto iter = usersOf.find(candidate);
             RELEASE_ASSERT(iter != usersOf.end());

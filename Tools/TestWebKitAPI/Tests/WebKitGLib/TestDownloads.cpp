@@ -400,7 +400,7 @@ static void testDownloadLocalFileError(DownloadErrorTest* test, gconstpointer)
 
 static WebKitTestServer* kServer;
 static const char* kServerSuggestedFilename = "webkit-downloaded-file";
-static HashMap<CString, CString> s_userAgentMap;
+static UncheckedKeyHashMap<CString, CString> s_userAgentMap;
 
 #if USE(SOUP2)
 static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)

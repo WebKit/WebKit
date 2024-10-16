@@ -77,7 +77,7 @@ public:
             Vector<std::pair<Ref<JSRunLoopTimer>, MonotonicTime>> timers;
         };
 
-        HashMap<Ref<JSLock>, std::unique_ptr<PerVMData>> m_mapping;
+        UncheckedKeyHashMap<Ref<JSLock>, std::unique_ptr<PerVMData>> m_mapping;
     };
 
     JSRunLoopTimer(VM&);

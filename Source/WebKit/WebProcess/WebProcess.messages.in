@@ -53,7 +53,7 @@ messages -> WebProcess : AuxiliaryProcess NotRefCounted WantsAsyncDispatchMessag
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
-    UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
+    UpdateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     SetHasMouseDevice(bool hasMouseDevice)
@@ -167,7 +167,7 @@ messages -> WebProcess : AuxiliaryProcess NotRefCounted WantsAsyncDispatchMessag
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
     SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
-    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domains) -> ()
+    SetDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domains) -> ()
     SendResourceLoadStatisticsDataImmediately() -> ()
 
     UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);

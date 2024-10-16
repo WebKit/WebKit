@@ -45,9 +45,9 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXIsolatedTree);
 
 static const Seconds CreationFeedbackInterval { 3_s };
 
-HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
+UncheckedKeyHashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 {
-    static NeverDestroyed<HashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
     return map;
 }
 
@@ -1023,7 +1023,7 @@ void AXIsolatedTree::setFocusedNodeID(std::optional<AXID> axID)
     m_pendingFocusedNodeID = axID;
 }
 
-void AXIsolatedTree::updateRelations(const HashMap<AXID, AXRelations>& relations)
+void AXIsolatedTree::updateRelations(const UncheckedKeyHashMap<AXID, AXRelations>& relations)
 {
     AXTRACE("AXIsolatedTree::updateRelations"_s);
     ASSERT(isMainThread());

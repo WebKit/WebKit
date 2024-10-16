@@ -46,8 +46,8 @@ private:
     MediaCapabilities() = default;
 
     uint64_t m_nextTaskIdentifier { 0 };
-    HashMap<uint64_t, MediaEngineConfigurationFactory::DecodingConfigurationCallback> m_decodingTasks;
-    HashMap<uint64_t, MediaEngineConfigurationFactory::EncodingConfigurationCallback> m_encodingTasks;
+    UncheckedKeyHashMap<uint64_t, MediaEngineConfigurationFactory::DecodingConfigurationCallback> m_decodingTasks;
+    UncheckedKeyHashMap<uint64_t, MediaEngineConfigurationFactory::EncodingConfigurationCallback> m_encodingTasks;
 };
 
 } // namespace WebCore

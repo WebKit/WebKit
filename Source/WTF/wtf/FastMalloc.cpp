@@ -411,7 +411,7 @@ private:
     };
 
     Lock m_lock;
-    HashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<void*, std::unique_ptr<MallocSiteData>> m_addressMallocSiteData WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 MallocCallTracker& MallocCallTracker::singleton()
@@ -494,7 +494,7 @@ void MallocCallTracker::dumpStats()
         size_t totalUntrackedSize = 0;
         size_t totalUntrackedCount = 0;
 
-        HashMap<unsigned, std::unique_ptr<MallocSiteTotals>> callSiteToMallocData;
+        UncheckedKeyHashMap<unsigned, std::unique_ptr<MallocSiteTotals>> callSiteToMallocData;
         for (const auto& it : m_addressMallocSiteData) {
             auto result = callSiteToMallocData.ensure(it.value->stack.hash(), [] () {
                 // Intentionally using std::make_unique not to use FastMalloc for data structure tracking FastMalloc.

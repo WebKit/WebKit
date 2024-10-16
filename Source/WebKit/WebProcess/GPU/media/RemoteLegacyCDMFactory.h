@@ -90,10 +90,10 @@ private:
     bool supportsKeySystemAndMimeType(const String&, const String&);
     std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM*);
 
-    HashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
-    HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
-    HashMap<String, bool> m_supportsKeySystemCache;
-    HashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
+    UncheckedKeyHashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
+    UncheckedKeyHashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
+    UncheckedKeyHashMap<String, bool> m_supportsKeySystemCache;
+    UncheckedKeyHashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
 };
 
 }

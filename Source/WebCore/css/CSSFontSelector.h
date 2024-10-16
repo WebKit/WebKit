@@ -139,8 +139,8 @@ private:
             return ASCIICaseInsensitiveHash::equal(a.first, b.first) && DefaultHash<AtomString>::equal(a.second, b.second);
         }
     };
-    HashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
-    HashMap<String, Ref<FontFeatureValues>> m_featureValues;
+    UncheckedKeyHashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
+    UncheckedKeyHashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;

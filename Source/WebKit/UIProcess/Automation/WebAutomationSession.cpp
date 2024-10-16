@@ -616,7 +616,7 @@ void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& fra
     }
 }
 
-void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
+void WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout(UncheckedKeyHashMap<WebPageProxyIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
 {
     auto timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
     for (auto id : copyToVector(map.keys())) {
@@ -636,7 +636,7 @@ static WebPageProxy* findPageForFrameID(const WebProcessPool& processPool, Frame
     return nullptr;
 }
 
-void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
+void WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout(UncheckedKeyHashMap<FrameIdentifier, RefPtr<Inspector::BackendDispatcher::CallbackBase>>& map)
 {
     auto timeoutError = STRING_FOR_PREDEFINED_ERROR_NAME(Timeout);
     for (auto id : copyToVector(map.keys())) {

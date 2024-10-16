@@ -406,7 +406,7 @@ public:
 
     // international text input composition
     bool hasComposition() const { return m_compositionNode; }
-    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const HashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
+    WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, const UncheckedKeyHashMap<String, Vector<CharacterRange>>&, unsigned selectionStart, unsigned selectionEnd);
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void setWritingSuggestion(const String&, const CharacterRange& selection);
 #endif
@@ -429,7 +429,7 @@ public:
     bool compositionUsesCustomHighlights() const { return !m_customCompositionHighlights.isEmpty(); }
     const Vector<CompositionHighlight>& customCompositionHighlights() const { return m_customCompositionHighlights; }
     bool compositionUsesCustomAnnotations() const { return !m_customCompositionAnnotations.isEmpty(); }
-    const HashMap<String, Vector<CharacterRange>>& customCompositionAnnotations() const { return m_customCompositionAnnotations; }
+    const UncheckedKeyHashMap<String, Vector<CharacterRange>>& customCompositionAnnotations() const { return m_customCompositionAnnotations; }
 
     // FIXME: This should be a page-level concept (i.e. on EditorClient) instead of on the Editor, which
     // is a frame-specific concept, because executing an editing command can run JavaScript that can do
@@ -698,7 +698,7 @@ private:
     unsigned m_compositionEnd;
     Vector<CompositionUnderline> m_customCompositionUnderlines;
     Vector<CompositionHighlight> m_customCompositionHighlights;
-    HashMap<String, Vector<CharacterRange>> m_customCompositionAnnotations;
+    UncheckedKeyHashMap<String, Vector<CharacterRange>> m_customCompositionAnnotations;
     bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };

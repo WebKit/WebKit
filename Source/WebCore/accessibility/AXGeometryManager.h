@@ -68,7 +68,7 @@ private:
 
     // The cache that owns this instance.
     WeakPtr<AXObjectCache> m_cache;
-    HashMap<AXID, IntRect> m_cachedRects;
+    UncheckedKeyHashMap<AXID, IntRect> m_cachedRects;
     Timer m_updateObjectRegionsTimer;
 
 #if PLATFORM(MAC)

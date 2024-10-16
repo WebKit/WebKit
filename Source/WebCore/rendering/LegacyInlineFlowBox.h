@@ -34,7 +34,7 @@ class Font;
 
 struct GlyphOverflow;
 
-typedef HashMap<const LegacyInlineTextBox*, std::pair<Vector<SingleThreadWeakPtr<const Font>>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
+typedef UncheckedKeyHashMap<const LegacyInlineTextBox*, std::pair<Vector<SingleThreadWeakPtr<const Font>>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
 
 class LegacyInlineFlowBox : public LegacyInlineBox {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineFlowBox);

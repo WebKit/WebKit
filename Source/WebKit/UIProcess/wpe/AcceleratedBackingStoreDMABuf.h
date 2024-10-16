@@ -85,8 +85,8 @@ private:
     GRefPtr<WPEBuffer> m_pendingBuffer;
     GRefPtr<WPEBuffer> m_committedBuffer;
     WebCore::Region m_pendingDamageRegion;
-    HashMap<uint64_t, GRefPtr<WPEBuffer>> m_buffers;
-    HashMap<WPEBuffer*, uint64_t> m_bufferIDs;
+    UncheckedKeyHashMap<uint64_t, GRefPtr<WPEBuffer>> m_buffers;
+    UncheckedKeyHashMap<WPEBuffer*, uint64_t> m_bufferIDs;
 };
 
 } // namespace WebKit

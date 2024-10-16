@@ -286,7 +286,7 @@ public:
     }
 
 private:
-    HashMap<String, std::pair<uint32_t, std::variant<CString, GRefPtr<GBytes>>>> m_iconCache;
+    UncheckedKeyHashMap<String, std::pair<uint32_t, std::variant<CString, GRefPtr<GBytes>>>> m_iconCache;
     RunLoop::Timer m_timer;
 };
 

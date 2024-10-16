@@ -5395,11 +5395,11 @@ private:
     IndexSet<Value*> m_locked; // These are values that will have no Tmp in Air.
     IndexMap<Value*, Tmp> m_valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<Value*, Tmp> m_phiToTmp; // Each Phi gets its own Tmp.
-    HashMap<Value*, std::tuple<Tmp, Tmp>> m_int64ValueToTmps; // This is the same as m_valueToTmp for Values that are Int64, on platforms where that is represented as a tuple.
-    HashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
-    HashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
+    UncheckedKeyHashMap<Value*, std::tuple<Tmp, Tmp>> m_int64ValueToTmps; // This is the same as m_valueToTmp for Values that are Int64, on platforms where that is represented as a tuple.
+    UncheckedKeyHashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
+    UncheckedKeyHashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
-    HashMap<Variable*, Vector<Tmp>> m_variableToTmps;
+    UncheckedKeyHashMap<Variable*, Vector<Tmp>> m_variableToTmps;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;
@@ -5415,7 +5415,7 @@ private:
     Value* m_value;
 
     PatchpointSpecial* m_patchpointSpecial { nullptr };
-    HashMap<CheckSpecial::Key, CheckSpecial*> m_checkSpecials;
+    UncheckedKeyHashMap<CheckSpecial::Key, CheckSpecial*> m_checkSpecials;
 
     Procedure& m_procedure;
     Code& m_code;

@@ -59,7 +59,7 @@ public:
 
             // Break critical edges by inserting a "Jump" pad block in place of each
             // unique A->B critical edge.
-            HashMap<BasicBlock*, BasicBlock*> successorPads;
+            UncheckedKeyHashMap<BasicBlock*, BasicBlock*> successorPads;
 
             for (unsigned i = block->numSuccessors(); i--;) {
                 BasicBlock** successor = &block->successor(i);

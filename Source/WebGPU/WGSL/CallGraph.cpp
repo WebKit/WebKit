@@ -50,7 +50,7 @@ private:
 
     ShaderModule& m_shaderModule;
     CallGraph m_callGraph;
-    HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
+    UncheckedKeyHashMap<AST::Function*, unsigned> m_calleeBuildingMap;
     Vector<CallGraph::Callee>* m_callees { nullptr };
     AST::Function* m_currentFunction { nullptr };
     Deque<AST::Function*> m_queue;

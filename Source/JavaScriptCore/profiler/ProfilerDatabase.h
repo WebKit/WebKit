@@ -79,9 +79,9 @@ private:
     DatabaseID m_databaseID;
     VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
-    HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
+    UncheckedKeyHashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
     Vector<Ref<Compilation>> m_compilations;
-    HashMap<CodeBlock*, Ref<Compilation>> m_compilationMap;
+    UncheckedKeyHashMap<CodeBlock*, Ref<Compilation>> m_compilationMap;
     Vector<Event> m_events;
     bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;

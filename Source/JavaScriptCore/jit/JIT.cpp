@@ -1060,9 +1060,9 @@ int JIT::stackPointerOffsetFor(CodeBlock* codeBlock)
     return stackPointerOffsetFor(codeBlock->unlinkedCodeBlock());
 }
 
-HashMap<CString, Seconds> JIT::compileTimeStats()
+UncheckedKeyHashMap<CString, Seconds> JIT::compileTimeStats()
 {
-    HashMap<CString, Seconds> result;
+    UncheckedKeyHashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
         result.add("Total Compile Time", totalCompileTime());
         result.add("Baseline Compile Time", totalBaselineCompileTime);

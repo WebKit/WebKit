@@ -71,7 +71,7 @@ PageGroup::PageGroup(Page& page)
 
 PageGroup::~PageGroup() = default;
 
-typedef HashMap<String, PageGroup*> PageGroupMap;
+typedef UncheckedKeyHashMap<String, PageGroup*> PageGroupMap;
 static PageGroupMap* pageGroups = nullptr;
 
 PageGroup* PageGroup::pageGroup(const String& groupName)

@@ -48,7 +48,7 @@ struct JSGlobalObject::RareData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     unsigned profileGroup { 0 };
-    HashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;
+    UncheckedKeyHashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;
 };
 
 struct JSGlobalObject::GlobalPropertyInfo {

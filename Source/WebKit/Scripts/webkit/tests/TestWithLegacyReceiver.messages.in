@@ -51,7 +51,7 @@ messages -> TestWithLegacyReceiver {
 
     TestParameterAttributes([AttributeOne AttributeTwo] uint64_t foo, double bar, [AttributeThree] double baz)
 
-    TemplateTest(HashMap<String, std::pair<String, uint64_t>> a)
+    TemplateTest(UncheckedKeyHashMap<String, std::pair<String, uint64_t>> a)
 
     SetVideoLayerID(WebCore::PlatformLayerIdentifier videoLayerID)
 

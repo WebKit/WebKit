@@ -226,7 +226,7 @@ void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& k
 }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-void AuxiliaryProcess::preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences)
+void AuxiliaryProcess::preferencesDidUpdate(UncheckedKeyHashMap<String, std::optional<String>> domainlessPreferences, UncheckedKeyHashMap<std::pair<String, String>, std::optional<String>> preferences)
 {
     for (auto& [key, value] : domainlessPreferences)
         preferenceDidUpdate(String(), key, value);

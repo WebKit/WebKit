@@ -214,7 +214,7 @@ void Node::dumpStatistics()
     size_t fragmentNodes = 0;
     size_t shadowRootNodes = 0;
 
-    HashMap<String, size_t> perTagCount;
+    UncheckedKeyHashMap<String, size_t> perTagCount;
 
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
@@ -222,7 +222,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
+    UncheckedKeyHashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
     for (auto& node : liveNodeSet()) {
@@ -253,7 +253,7 @@ void Node::dumpStatistics()
 
                 // Tag stats
                 Element& element = uncheckedDowncast<Element>(node);
-                HashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
+                UncheckedKeyHashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
 
@@ -2538,9 +2538,9 @@ WeakHashSet<MutationObserverRegistration>* Node::transientMutationObserverRegist
     return &data->transientRegistry;
 }
 
-HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
+UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
 {
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
+    UncheckedKeyHashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
     ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
 
     auto collectMatchingObserversForMutation = [&](MutationObserverRegistration& registration) {

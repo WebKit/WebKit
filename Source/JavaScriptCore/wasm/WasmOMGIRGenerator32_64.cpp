@@ -964,8 +964,8 @@ private:
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     FixedBitVector& m_directCallees; // Note this includes call targets from functions we inline.
     unsigned* m_osrEntryScratchBufferSize;
-    HashMap<ValueKey, Value*> m_constantPool;
-    HashMap<const TypeDefinition*, B3::Type> m_tupleMap;
+    UncheckedKeyHashMap<ValueKey, Value*> m_constantPool;
+    UncheckedKeyHashMap<const TypeDefinition*, B3::Type> m_tupleMap;
     InsertionSet m_constantInsertionValues;
     Value* m_framePointer { nullptr };
     bool m_makesCalls { false };

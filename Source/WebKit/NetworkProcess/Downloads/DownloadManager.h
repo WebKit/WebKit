@@ -126,8 +126,8 @@ public:
 
 private:
     CheckedRef<Client> m_client;
-    HashMap<DownloadID, Ref<PendingDownload>> m_pendingDownloads;
-    HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
+    UncheckedKeyHashMap<DownloadID, Ref<PendingDownload>> m_pendingDownloads;
+    UncheckedKeyHashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     DownloadMap m_downloads;
 };
 

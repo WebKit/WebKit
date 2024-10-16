@@ -82,15 +82,15 @@ private:
 
     WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     RefPtr<FileSystemStorageConnection> m_mainThreadConnection;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::SameEntryCallback> m_sameEntryCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleCallback> m_getHandleCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::ResolveCallback> m_resolveCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::GetAccessHandleCallback> m_getAccessHandlCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::VoidCallback> m_voidCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleNamesCallback> m_getHandleNamesCallbacks;
-    HashMap<CallbackIdentifier, FileSystemStorageConnection::StringCallback> m_stringCallbacks;
-    HashMap<FileSystemSyncAccessHandleIdentifier, Function<void()>> m_accessHandleInvalidationHandlers;
-    HashMap<FileSystemSyncAccessHandleIdentifier, WeakPtr<FileSystemSyncAccessHandle>> m_syncAccessHandles;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::SameEntryCallback> m_sameEntryCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleCallback> m_getHandleCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::ResolveCallback> m_resolveCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::GetAccessHandleCallback> m_getAccessHandlCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::VoidCallback> m_voidCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleNamesCallback> m_getHandleNamesCallbacks;
+    UncheckedKeyHashMap<CallbackIdentifier, FileSystemStorageConnection::StringCallback> m_stringCallbacks;
+    UncheckedKeyHashMap<FileSystemSyncAccessHandleIdentifier, Function<void()>> m_accessHandleInvalidationHandlers;
+    UncheckedKeyHashMap<FileSystemSyncAccessHandleIdentifier, WeakPtr<FileSystemSyncAccessHandle>> m_syncAccessHandles;
 };
 
 } // namespace WebCore

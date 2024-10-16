@@ -167,7 +167,7 @@ private:
     WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_frontendWindowController;
     String m_inspectedURL;
-    HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
+    UncheckedKeyHashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;
     WebCore::FloatRect m_sheetRect;
 #endif
 };

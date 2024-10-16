@@ -42,7 +42,7 @@ namespace IDBServer {
 
 class MemoryIndex;
 
-typedef HashMap<IDBKeyData, std::unique_ptr<IndexValueEntry>, IDBKeyDataHash, IDBKeyDataHashTraits> IndexKeyValueMap;
+typedef UncheckedKeyHashMap<IDBKeyData, std::unique_ptr<IndexValueEntry>, IDBKeyDataHash, IDBKeyDataHashTraits> IndexKeyValueMap;
 
 class IndexValueStore final : public CanMakeThreadSafeCheckedPtr<IndexValueStore> {
     WTF_MAKE_TZONE_ALLOCATED(IndexValueStore);

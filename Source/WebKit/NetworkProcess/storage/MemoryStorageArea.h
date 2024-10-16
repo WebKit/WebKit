@@ -53,7 +53,7 @@ private:
 
     // StorageAreaBase
     StorageAreaBase::StorageType storageType() const final { return m_storageType; }
-    HashMap<String, String> allItems() final;
+    UncheckedKeyHashMap<String, String> allItems() final;
     Expected<void, StorageError> setItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, String&& key, String&& value, const String& urlString) final;
     Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
     Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;

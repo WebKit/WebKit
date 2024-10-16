@@ -96,7 +96,7 @@ private:
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
 #elif USE(INSPECTOR_SOCKET_SERVER)
-    HashMap<String, CallHandler>& dispatchMap() override;
+    UncheckedKeyHashMap<String, CallHandler>& dispatchMap() override;
     void didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID) final;
     void sendWebInspectorEvent(const String&);
 
@@ -114,7 +114,7 @@ private:
     uint64_t m_connectionID { 0 };
     Target m_target;
 
-    HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
+    UncheckedKeyHashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
     String m_targetIp;
     uint16_t m_targetPort { 0 };

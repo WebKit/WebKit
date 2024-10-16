@@ -71,7 +71,7 @@ private:
     PatternData* buildPattern(RenderElement&, OptionSet<RenderSVGResourceMode>, GraphicsContext&);
 
     PatternAttributes m_attributes;
-    HashMap<SingleThreadWeakRef<RenderElement>, std::unique_ptr<PatternData>> m_patternMap;
+    UncheckedKeyHashMap<SingleThreadWeakRef<RenderElement>, std::unique_ptr<PatternData>> m_patternMap;
     bool m_shouldCollectPatternAttributes { true };
 };
 

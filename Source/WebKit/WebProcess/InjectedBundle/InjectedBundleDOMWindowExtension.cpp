@@ -40,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using ExtensionMap = HashMap<WeakRef<WebCore::DOMWindowExtension>, WeakRef<InjectedBundleDOMWindowExtension>>;
+using ExtensionMap = UncheckedKeyHashMap<WeakRef<WebCore::DOMWindowExtension>, WeakRef<InjectedBundleDOMWindowExtension>>;
 static ExtensionMap& allExtensions()
 {
     static NeverDestroyed<ExtensionMap> map;

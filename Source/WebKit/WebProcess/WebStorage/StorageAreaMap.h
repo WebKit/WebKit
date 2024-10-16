@@ -83,8 +83,8 @@ public:
 private:
     StorageAreaMap(StorageNamespaceImpl&, Ref<const WebCore::SecurityOrigin>&&);
 
-    void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
-    void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
+    void didSetItem(uint64_t mapSeed, const String& key, bool hasError, UncheckedKeyHashMap<String, String>&&);
+    void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, UncheckedKeyHashMap<String, String>&&);
     void didClear(uint64_t mapSeed);
 
     // Message handlers.
@@ -92,7 +92,7 @@ private:
     void clearCache(uint64_t messageIdentifier);
 
     void syncOneItem(const String& key, const String& value);
-    void syncItems(HashMap<String, String>&&);
+    void syncItems(UncheckedKeyHashMap<String, String>&&);
     WebCore::StorageMap& ensureMap();
     WebCore::StorageType computeStorageType() const;
     WebCore::ClientOrigin clientOrigin() const;
@@ -104,7 +104,7 @@ private:
     enum class SendMode : bool { Async, Sync };
     void sendConnectMessage(SendMode);
     void connectSync();
-    void didConnect(std::optional<StorageAreaIdentifier>, HashMap<String, String>&&, uint64_t messageIdentifier);
+    void didConnect(std::optional<StorageAreaIdentifier>, UncheckedKeyHashMap<String, String>&&, uint64_t messageIdentifier);
 
     Ref<StorageNamespaceImpl> protectedNamespace() const;
 

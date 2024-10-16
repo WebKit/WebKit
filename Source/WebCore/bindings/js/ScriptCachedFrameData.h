@@ -52,7 +52,7 @@ public:
     void clear();
 
 private:
-    typedef HashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow>> JSDOMWindowSet;
+    typedef UncheckedKeyHashMap<RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow>> JSDOMWindowSet;
     JSDOMWindowSet m_windows;
 };
 

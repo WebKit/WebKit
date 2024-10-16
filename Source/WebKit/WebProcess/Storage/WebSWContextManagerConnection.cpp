@@ -379,7 +379,7 @@ void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier iden
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& script, UncheckedKeyHashMap<URL, ScriptBuffer>&& importedScripts)
 {
     assertIsCurrent(m_queue.get());
 

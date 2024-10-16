@@ -624,7 +624,7 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<
         completionHandler();
 }
 
-void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
+void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<UncheckedKeyHashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {

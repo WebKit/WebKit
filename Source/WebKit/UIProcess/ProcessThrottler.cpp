@@ -115,7 +115,7 @@ private:
         RunLoop::Timer m_expirationTimer;
     };
 
-    HashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
+    UncheckedKeyHashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
     bool m_isEnabled { true };
 };
 

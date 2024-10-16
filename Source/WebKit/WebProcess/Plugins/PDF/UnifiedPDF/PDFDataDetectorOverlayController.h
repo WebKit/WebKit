@@ -104,7 +104,7 @@ private:
     using PDFDataDetectorItemWithHighlightPtr = std::pair<RefPtr<PDFDataDetectorItem>, RefPtr<WebCore::DataDetectorHighlight>>;
     using PDFDataDetectorItemsWithHighlights = Vector<PDFDataDetectorItemWithHighlight>;
     template <typename Key, typename Value>
-    using HashMapWithUnsignedIntegralZeroKeyAllowed = HashMap<Key, Value, WTF::IntHash<Key>, WTF::UnsignedWithZeroKeyHashTraits<Key>>;
+    using HashMapWithUnsignedIntegralZeroKeyAllowed = UncheckedKeyHashMap<Key, Value, WTF::IntHash<Key>, WTF::UnsignedWithZeroKeyHashTraits<Key>>;
     using PDFDataDetectorItemsWithHighlightsMap = HashMapWithUnsignedIntegralZeroKeyAllowed<PDFDocumentLayout::PageIndex, PDFDataDetectorItemsWithHighlights>;
 
     PDFDataDetectorItemsWithHighlightsMap m_pdfDataDetectorItemsWithHighlightsMap;

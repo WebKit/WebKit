@@ -98,8 +98,8 @@ private:
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
 
-    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
-    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
+    UncheckedKeyHashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
+    UncheckedKeyHashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
 
     mutable Lock m_layerHitTestMutex;
 

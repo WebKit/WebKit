@@ -81,7 +81,7 @@ private:
     const unsigned m_quotaInBytes;
     std::optional<Identifier> m_storageNamespaceID;
 
-    HashMap<WebCore::SecurityOriginData, Ref<StorageAreaMap>> m_storageAreaMaps;
+    UncheckedKeyHashMap<WebCore::SecurityOriginData, Ref<StorageAreaMap>> m_storageAreaMaps;
 };
 
 inline WebCore::PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const

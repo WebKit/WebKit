@@ -200,10 +200,10 @@ struct alignas(16) AlignedPackingTarget {
     WTF_ALLOW_STRUCT_COMPACT_POINTERS;
     unsigned m_value { 0 };
 };
-TEST(WTF_CompactPtr, HashMap)
+TEST(WTF_CompactPtr, UncheckedKeyHashMap)
 {
     Vector<AlignedPackingTarget> vector;
-    HashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
+    UncheckedKeyHashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
         vector.append(AlignedPackingTarget { i });
@@ -220,7 +220,7 @@ TEST(WTF_CompactPtr, HashMap)
 TEST(WTF_CompactPtr, HashMapRemoveAndAdd)
 {
     Vector<AlignedPackingTarget> vector;
-    HashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
+    UncheckedKeyHashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
         vector.append(AlignedPackingTarget { i });

@@ -109,7 +109,7 @@ private:
         String trackingAnimationId;
         ComputedEffectTiming lastComputedTiming;
     };
-    HashMap<StyleOriginatedAnimation*, UniqueRef<TrackedStyleOriginatedAnimationData>> m_trackedStyleOriginatedAnimationData;
+    UncheckedKeyHashMap<StyleOriginatedAnimation*, UniqueRef<TrackedStyleOriginatedAnimationData>> m_trackedStyleOriginatedAnimationData;
 };
 
 } // namespace WebCore

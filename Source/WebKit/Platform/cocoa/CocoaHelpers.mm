@@ -537,9 +537,9 @@ HashSet<String> toImpl(NSSet *set)
     return result;
 }
 
-HashMap<String, Ref<API::Data>> toDataMap(NSDictionary *dictionary)
+UncheckedKeyHashMap<String, Ref<API::Data>> toDataMap(NSDictionary *dictionary)
 {
-    HashMap<String, Ref<API::Data>> result;
+    UncheckedKeyHashMap<String, Ref<API::Data>> result;
     result.reserveInitialCapacity(dictionary.count);
 
     for (id key in dictionary) {

@@ -254,7 +254,7 @@ bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>&
     });
 }
 
-void CSSValue::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+void CSSValue::setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
 {
     return visitDerived([&](auto& value) {
         return value.customSetReplacementURLForSubresources(replacementURLStrings);

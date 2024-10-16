@@ -174,7 +174,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
     WebCore::GraphicsLayer* m_rootCompositingLayer { nullptr };
     WebCore::GraphicsLayer* m_overlayCompositingLayer { nullptr };
-    HashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
+    UncheckedKeyHashMap<Nicosia::PlatformLayer::LayerID, WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
     bool m_didInitializeRootCompositingLayer { false };
     bool m_layerFlushSchedulingEnabled { true };
     bool m_isFlushingLayerChanges { false };
@@ -204,7 +204,7 @@ private:
     std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
     std::unique_ptr<WebCore::SkiaThreadedPaintingPool> m_skiaThreadedPaintingPool;
 #endif
-    HashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
+    UncheckedKeyHashMap<uint64_t, Ref<WebCore::CoordinatedImageBackingStore>> m_imageBackingStores;
     struct {
         RefPtr<Nicosia::Scene> scene;
         RefPtr<Nicosia::SceneIntegration> sceneIntegration;

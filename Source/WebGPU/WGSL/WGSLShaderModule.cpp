@@ -30,7 +30,7 @@
 
 namespace WGSL {
 
-std::optional<Error> ShaderModule::validateOverrides(const HashMap<String, ConstantValue>& constantValues)
+std::optional<Error> ShaderModule::validateOverrides(const UncheckedKeyHashMap<String, ConstantValue>& constantValues)
 {
     for (const auto& [expression, validators] : m_overrideValidations) {
         auto maybeValue = evaluate(*expression, constantValues);

@@ -29,8 +29,8 @@ namespace WebCore {
 class AffineTransform;
 class SVGInlineTextBox;
 
-using SVGChunkTransformMap = HashMap<InlineIterator::SVGTextBox::Key, AffineTransform>;
-using SVGTextFragmentMap = HashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>>;
+using SVGChunkTransformMap = UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, AffineTransform>;
+using SVGTextFragmentMap = UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>>;
 
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
 class SVGTextChunk {

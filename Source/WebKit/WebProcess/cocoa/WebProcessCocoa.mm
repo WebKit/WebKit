@@ -979,7 +979,7 @@ static NSURL *origin(WebPage& page)
     return [NSURL URLWithString:rootFrameOriginString];
 }
 
-static Vector<String> activePagesOrigins(const HashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
+static Vector<String> activePagesOrigins(const UncheckedKeyHashMap<PageIdentifier, RefPtr<WebPage>>& pageMap)
 {
     Vector<String> origins;
     for (auto& page : pageMap.values()) {

@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& indexMap)
+IDBObjectStoreInfo::IDBObjectStoreInfo(IDBObjectStoreIdentifier identifier, const String& name, std::optional<IDBKeyPath>&& keyPath, bool autoIncrement, UncheckedKeyHashMap<uint64_t, IDBIndexInfo>&& indexMap)
     : m_identifier(identifier)
     , m_name(name)
     , m_keyPath(WTFMove(keyPath))

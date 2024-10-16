@@ -80,8 +80,8 @@ struct EntryUsageData {
     EntryUsage usage;
     uint32_t bindGroup;
 };
-using EntryMap = HashMap<uint64_t, EntryUsageData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
-using EntryMapContainer = HashMap<const void*, EntryMap>;
+using EntryMap = UncheckedKeyHashMap<uint64_t, EntryUsageData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+using EntryMapContainer = UncheckedKeyHashMap<const void*, EntryMap>;
 struct BindGroupId {
     uint32_t bindGroup { 0 };
 };

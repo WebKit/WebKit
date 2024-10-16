@@ -106,7 +106,7 @@ namespace JSC {
 
         void setSlow(JSGlobalObject*, JSCell* owner, const String& evalSource, BytecodeIndex, DirectEvalExecutable*);
 
-        typedef HashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
+        typedef UncheckedKeyHashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;
         Lock m_lock;
     };

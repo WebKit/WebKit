@@ -456,10 +456,10 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return *keyframes;
 
     // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
-    // to copy the HashMap into a Vector.
+    // to copy the UncheckedKeyHashMap into a Vector.
     // Merge keyframes with a similar offset and timing function.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
-    HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
+    UncheckedKeyHashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);

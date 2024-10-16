@@ -1330,12 +1330,12 @@ void NetworkProcessProxy::setDomainsWithUserInteraction(HashSet<WebCore::Registr
         processPool->setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> { domains });
 }
 
-void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {    
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>> { domains }, [callbackAggregator] { });
+        processPool->setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> { domains }, [callbackAggregator] { });
 }
 
 void NetworkProcessProxy::setPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
@@ -1634,7 +1634,7 @@ void NetworkProcessProxy::setWebProcessHasUploads(WebCore::ProcessIdentifier pro
         m_uploadActivity = UploadActivity {
             ProcessAssertion::create(getCurrentProcessID(), "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
             ProcessAssertion::create(*this, "WebKit uploads"_s, ProcessAssertionType::UnboundedNetworking),
-            HashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>>()
+            UncheckedKeyHashMap<WebCore::ProcessIdentifier, RefPtr<ProcessAssertion>>()
         };
     }
 
@@ -1782,7 +1782,7 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
     // Since we're already in UIProcess, we look up the permissions here to remove a round trip.
     if (!DeprecatedGlobalSettings::builtInNotificationsEnabled()) {
         permission = PushPermissionState::Prompt;
-        HashMap<String, bool> permissions;
+        UncheckedKeyHashMap<String, bool> permissions;
 
         if (RefPtr dataStore = websiteDataStoreFromSessionID(sessionID))
             permissions = dataStore->client().notificationPermissions();

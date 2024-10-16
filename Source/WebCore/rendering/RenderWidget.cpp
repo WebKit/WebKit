@@ -47,9 +47,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderWidget);
 
-static HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
+static UncheckedKeyHashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>& widgetRendererMap()
 {
-    static NeverDestroyed<HashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
+    static NeverDestroyed<UncheckedKeyHashMap<SingleThreadWeakRef<const Widget>, SingleThreadWeakRef<RenderWidget>>> staticWidgetRendererMap;
     return staticWidgetRendererMap;
 }
 

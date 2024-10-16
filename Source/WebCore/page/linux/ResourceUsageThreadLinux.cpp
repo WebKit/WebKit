@@ -121,9 +121,9 @@ struct ThreadInfo {
     unsigned long long previousStime { 0 };
 };
 
-static HashMap<pid_t, ThreadInfo>& threadInfoMap()
+static UncheckedKeyHashMap<pid_t, ThreadInfo>& threadInfoMap()
 {
-    static LazyNeverDestroyed<HashMap<pid_t, ThreadInfo>> map;
+    static LazyNeverDestroyed<UncheckedKeyHashMap<pid_t, ThreadInfo>> map;
     static std::once_flag flag;
     std::call_once(flag, [&] {
         map.construct();
@@ -248,7 +248,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         }
     }
 
-    HashMap<pid_t, String> knownWorkerThreads;
+    UncheckedKeyHashMap<pid_t, String> knownWorkerThreads;
     {
         for (auto& thread : WorkerOrWorkletThread::workerOrWorkletThreads()) {
             // Ignore worker threads that have not been fully started yet.

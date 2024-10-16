@@ -286,7 +286,7 @@ private:
     LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     WeakPtr<PlatformCALayerRemote> m_superlayer;
-    HashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
+    UncheckedKeyHashMap<String, RefPtr<WebCore::PlatformCAAnimation>> m_animations;
 
     bool m_acceleratesDrawing { false };
     WeakPtr<RemoteLayerTreeContext> m_context;

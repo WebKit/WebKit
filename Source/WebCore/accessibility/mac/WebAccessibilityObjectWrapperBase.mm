@@ -811,7 +811,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
 
 #pragma mark Search helpers
 
-typedef HashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
+typedef UncheckedKeyHashMap<String, AccessibilitySearchKey> AccessibilitySearchKeyMap;
 
 struct SearchKeyEntry {
     String key;

@@ -50,7 +50,7 @@ public:
     bool isEmpty() const override;
 
     Vector<ITPThirdPartyData> aggregatedThirdPartyData() const override;
-    const HashMap<RegistrableDomain, UniqueRef<WebCore::ResourceLoadStatistics>>& data() const { return m_resourceStatisticsMap; }
+    const UncheckedKeyHashMap<RegistrableDomain, UniqueRef<WebCore::ResourceLoadStatistics>>& data() const { return m_resourceStatisticsMap; }
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
@@ -135,7 +135,7 @@ private:
     bool isMemoryStore() const final { return true; }
     std::optional<WallTime> mostRecentUserInteractionTime(const ResourceLoadStatistics&);
 
-    HashMap<RegistrableDomain, UniqueRef<ResourceLoadStatistics>> m_resourceStatisticsMap;
+    UncheckedKeyHashMap<RegistrableDomain, UniqueRef<ResourceLoadStatistics>> m_resourceStatisticsMap;
     Vector<OperatingDate> m_operatingDates;
 };
 

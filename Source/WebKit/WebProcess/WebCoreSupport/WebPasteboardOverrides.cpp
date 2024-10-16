@@ -44,7 +44,7 @@ WebPasteboardOverrides::WebPasteboardOverrides()
 
 void WebPasteboardOverrides::addOverride(const String& pasteboardName, const String& type, const Vector<uint8_t>& data)
 {
-    auto& overrides = m_overridesMap.add(pasteboardName, HashMap<String, Vector<uint8_t>>()).iterator->value;
+    auto& overrides = m_overridesMap.add(pasteboardName, UncheckedKeyHashMap<String, Vector<uint8_t>>()).iterator->value;
     overrides.set(type, data);
 }
 

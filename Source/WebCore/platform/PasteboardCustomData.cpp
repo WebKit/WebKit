@@ -115,7 +115,7 @@ PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persisten
         return { };
     result.m_origin = WTFMove(*origin);
 
-    std::optional<HashMap<String, String>> sameOriginCustomStringData;
+    std::optional<UncheckedKeyHashMap<String, String>> sameOriginCustomStringData;
     decoder >> sameOriginCustomStringData;
     if (!sameOriginCustomStringData)
         return { };
@@ -201,9 +201,9 @@ bool PasteboardCustomData::hasSameOriginCustomData() const
     });
 }
 
-HashMap<String, String> PasteboardCustomData::sameOriginCustomStringData() const
+UncheckedKeyHashMap<String, String> PasteboardCustomData::sameOriginCustomStringData() const
 {
-    HashMap<String, String> customData;
+    UncheckedKeyHashMap<String, String> customData;
     for (auto& entry : m_data)
         customData.set(entry.type, entry.customData);
     return customData;

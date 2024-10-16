@@ -148,7 +148,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
         change.apply();
 }
 
-void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomString, AtomString>&& replacementMap)
+void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, UncheckedKeyHashMap<AtomString, AtomString>&& replacementMap)
 {
     Vector<AttributeChange> changes;
     for (Ref element : descendantsOfType<Element>(fragment)) {
@@ -1228,7 +1228,7 @@ String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node
     return accumulator.serializeNodes(const_cast<Node&>(node), root);
 }
 
-String serializeFragmentWithURLReplacement(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
+String serializeFragmentWithURLReplacement(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, std::optional<SerializationSyntax> serializationSyntax, UncheckedKeyHashMap<String, String>&& replacementURLStrings, UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, SerializeShadowRoots serializeShadowRoots, Vector<Ref<ShadowRoot>>&& explicitShadowRoots, const Vector<MarkupExclusionRule>& exclusionRules)
 {
     if (!serializationSyntax)
         serializationSyntax = node.document().isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML;

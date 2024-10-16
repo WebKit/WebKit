@@ -39,9 +39,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& webExtensionContexts()
+static UncheckedKeyHashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& webExtensionContexts()
 {
-    static NeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>> contexts;
+    static NeverDestroyed<UncheckedKeyHashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>> contexts;
     return contexts;
 }
 

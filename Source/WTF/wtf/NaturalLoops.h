@@ -353,7 +353,7 @@ private:
     Graph& m_graph;
     
     // If we ever had a scalability problem in our natural loop finder, we could
-    // use some HashMap's here. But it just feels a heck of a lot less convenient.
+    // use some UncheckedKeyHashMap's here. But it just feels a heck of a lot less convenient.
     Vector<NaturalLoop<Graph>, 4> m_loops;
     
     typename Graph::template Map<InnerMostLoopIndices> m_innerMostLoopIndices;

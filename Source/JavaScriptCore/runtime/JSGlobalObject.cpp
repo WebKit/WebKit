@@ -2131,7 +2131,7 @@ public:
 private:
     void visit(JSObject*);
 
-    HashMap<JSGlobalObject*, HashSet<JSGlobalObject*>> m_dependencies;
+    UncheckedKeyHashMap<JSGlobalObject*, HashSet<JSGlobalObject*>> m_dependencies;
 };
 
 inline void GlobalObjectDependencyFinder::addDependency(JSGlobalObject* key, JSGlobalObject* dependent)

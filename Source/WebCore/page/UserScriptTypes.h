@@ -37,6 +37,6 @@ class DOMWrapperWorld;
 class UserScript;
 
 typedef Vector<std::unique_ptr<UserScript>> UserScriptVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserScriptVector>> UserScriptMap;
+typedef UncheckedKeyHashMap<RefPtr<DOMWrapperWorld>, std::unique_ptr<UserScriptVector>> UserScriptMap;
 
 } // namespace WebCore

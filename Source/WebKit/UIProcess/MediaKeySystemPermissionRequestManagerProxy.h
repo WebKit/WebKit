@@ -68,7 +68,7 @@ private:
 
     WeakRef<WebPageProxy> m_page;
 
-    HashMap<WebCore::MediaKeySystemRequestIdentifier, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
+    UncheckedKeyHashMap<WebCore::MediaKeySystemRequestIdentifier, RefPtr<MediaKeySystemPermissionRequestProxy>> m_pendingRequests;
     HashSet<String> m_validAuthorizationTokens;
 
 #if !RELEASE_LOG_DISABLED

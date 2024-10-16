@@ -112,7 +112,7 @@ private:
     // is particularly great for the cti_optimize OSR slow path, which wants
     // to know: did I get here because a better version of me just got
     // compiled?
-    HashMap<JITCompilationKey, RefPtr<JITPlan>> m_plans;
+    UncheckedKeyHashMap<JITCompilationKey, RefPtr<JITPlan>> m_plans;
 
     // Used to quickly find which plans have been compiled and are ready to
     // be completed.

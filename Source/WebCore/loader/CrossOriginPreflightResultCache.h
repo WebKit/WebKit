@@ -76,7 +76,7 @@ private:
     friend NeverDestroyed<CrossOriginPreflightResultCache>;
     CrossOriginPreflightResultCache();
 
-    HashMap<std::tuple<PAL::SessionID, String, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
+    UncheckedKeyHashMap<std::tuple<PAL::SessionID, String, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
 };
 
 inline CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem(MonotonicTime absoluteExpiryTime, StoredCredentialsPolicy  storedCredentialsPolicy, HashSet<String>&& methods, HashSet<String, ASCIICaseInsensitiveHash>&& headers)

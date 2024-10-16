@@ -122,7 +122,7 @@ public:
         return returnAddress - instructionsBegin;
     }
 
-    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+    UncheckedKeyHashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
     unsigned addSignature(const TypeDefinition&);
 
@@ -134,7 +134,7 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { m_exceptionHandlers.append(handler); }
 
 private:
-    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = UncheckedKeyHashMap<WasmInstructionStream::Offset, int>;
 
     FunctionCodeIndex m_functionIndex;
 
@@ -151,7 +151,7 @@ private:
     Vector<WasmInstructionStream::Offset> m_jumpTargets;
     Vector<const TypeDefinition*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
-    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    UncheckedKeyHashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<JumpTable> m_jumpTables;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     FixedBitVector m_callees;

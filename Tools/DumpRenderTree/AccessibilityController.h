@@ -83,7 +83,7 @@ private:
 
     HWINEVENTHOOK m_allEventsHook { nullptr };
     HWINEVENTHOOK m_notificationsEventHook { nullptr };
-    HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
+    UncheckedKeyHashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
 #endif
 
 #if PLATFORM(COCOA)

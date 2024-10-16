@@ -66,7 +66,7 @@ private:
         RetainPtr<USVideoUsage> usageTracker;
     };
 
-    HashMap<WebCore::MediaSessionIdentifier, std::unique_ptr<SessionMediaUsage>> m_mediaSessions;
+    UncheckedKeyHashMap<WebCore::MediaSessionIdentifier, std::unique_ptr<SessionMediaUsage>> m_mediaSessions;
 };
 
 } // namespace WebKit

@@ -199,7 +199,7 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
     }
 
     if (!databaseExists) {
-        m_cache = HashMap<String, Value> { };
+        m_cache = UncheckedKeyHashMap<String, Value> { };
         m_cacheSize = 0;
     }
 
@@ -280,14 +280,14 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
     return makeUnexpected(StorageError::ItemNotFound);
 }
 
-HashMap<String, String> SQLiteStorageArea::allItems()
+UncheckedKeyHashMap<String, String> SQLiteStorageArea::allItems()
 {
     ASSERT(!isMainRunLoop());
 
     if (!prepareDatabase(ShouldCreateIfNotExists::No) || !m_database)
-        return HashMap<String, String> { };
+        return UncheckedKeyHashMap<String, String> { };
 
-    HashMap<String, String> items;
+    UncheckedKeyHashMap<String, String> items;
     if (m_cache) {
         items.reserveInitialCapacity(m_cache->size());
         for (auto& [key, value] : *m_cache) {
@@ -310,7 +310,7 @@ HashMap<String, String> SQLiteStorageArea::allItems()
         return { };
     }
 
-    m_cache = HashMap<String, Value> { };
+    m_cache = UncheckedKeyHashMap<String, Value> { };
     m_cacheSize = 0;
     auto result = statement->step();
     while (result == SQLITE_ROW) {

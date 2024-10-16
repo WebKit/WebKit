@@ -241,7 +241,7 @@ private:
     RefPtr<Buffer> m_pendingBuffer;
     RefPtr<Buffer> m_committedBuffer;
     WebCore::Region m_pendingDamageRegion;
-    HashMap<uint64_t, RefPtr<Buffer>> m_buffers;
+    UncheckedKeyHashMap<uint64_t, RefPtr<Buffer>> m_buffers;
 };
 
 } // namespace WebKit

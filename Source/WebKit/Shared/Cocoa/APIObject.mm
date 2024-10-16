@@ -599,7 +599,7 @@ RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
         return API::Array::create(WTFMove(result));
     }
     if ([object isKindOfClass:NSDictionary.class]) {
-        __block HashMap<WTF::String, RefPtr<API::Object>> result;
+        __block UncheckedKeyHashMap<WTF::String, RefPtr<API::Object>> result;
         [(NSDictionary *)object enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
             if (auto valueObject = fromNSObject(value); valueObject && [key isKindOfClass:NSString.class])
                 result.add(key, WTFMove(valueObject));

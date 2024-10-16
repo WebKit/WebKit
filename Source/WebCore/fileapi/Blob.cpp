@@ -66,7 +66,7 @@ public:
     static URLRegistry& registry();
 
     Lock m_urlsPerContextLock;
-    HashMap<ScriptExecutionContextIdentifier, HashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
+    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, HashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
 };
 
 void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)

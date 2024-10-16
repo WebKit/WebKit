@@ -51,7 +51,7 @@ enum class WebKit::WebContentMode : uint8_t {
 };
 
 struct WebKit::WebsitePoliciesData {
-    HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
+    UncheckedKeyHashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     Vector<WebCore::TargetedElementSelectors> visibilityAdjustmentSelectors;
     String customUserAgent;

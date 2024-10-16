@@ -107,7 +107,7 @@ private:
     WeakPtr<HTMLMediaElement> m_mediaElement;
     uint32_t m_nextId { 0 };
 
-    using CallbackMap = HashMap<int32_t, Ref<RemotePlaybackAvailabilityCallback>>;
+    using CallbackMap = UncheckedKeyHashMap<int32_t, Ref<RemotePlaybackAvailabilityCallback>>;
     CallbackMap m_callbackMap;
 
     using PromiseVector = Vector<Ref<DeferredPromise>>;

@@ -75,7 +75,7 @@ public:
     void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
     void resumeSharedWorker(WebCore::SharedWorkerIdentifier);
 
-    const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
+    const UncheckedKeyHashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -99,7 +99,7 @@ private:
     WeakPtr<NetworkConnectionToWebProcess> m_connection;
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::RegistrableDomain m_registrableDomain;
-    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
     WebCore::Timer m_idleTerminationTimer;
     bool m_shouldTerminateWhenPossible { false };
 };

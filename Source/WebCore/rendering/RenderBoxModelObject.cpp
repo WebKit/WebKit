@@ -83,7 +83,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderBoxModelObject);
 
-// The HashMap for storing continuation pointers.
+// The UncheckedKeyHashMap for storing continuation pointers.
 // An inline can be split with blocks occuring in between the inline content.
 // When this occurs we need a pointer to the next object. We can basically be
 // split into a sequence of inlines and blocks. The continuation will either be

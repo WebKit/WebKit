@@ -499,7 +499,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void remove(iterator);
         void removeWithoutEntryConsistencyCheck(iterator);
         void removeWithoutEntryConsistencyCheck(const_iterator);
-        // FIXME: This feels like it should be Invocable<bool(const ValueType&)> but that breaks many HashMap users.
+        // FIXME: This feels like it should be Invocable<bool(const ValueType&)> but that breaks many UncheckedKeyHashMap users.
         bool removeIf(const Invocable<bool(ValueType&)> auto&);
         void clear();
 

@@ -103,7 +103,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         void serialize(Vector<uint8_t>&) const;
         static ModifyHeaderInfo deserialize(std::span<const uint8_t>);
         static size_t serializedLength(std::span<const uint8_t>);
-        void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
+        void applyToRequest(ResourceRequest&, UncheckedKeyHashMap<String, ModifyHeadersOperationType>&);
     };
 
     enum class HashTableType : uint8_t { Empty, Deleted, Full } hashTableType;
@@ -130,7 +130,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     void serialize(Vector<uint8_t>&) const;
     static ModifyHeadersAction deserialize(std::span<const uint8_t>);
     static size_t serializedLength(std::span<const uint8_t>);
-    void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
+    void applyToRequest(ResourceRequest&, UncheckedKeyHashMap<String, ModifyHeadersOperationType>&);
 };
 
 struct WEBCORE_EXPORT RedirectAction {

@@ -130,7 +130,7 @@ void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImp
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, HashMap<String, String>&& allItems) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, UncheckedKeyHashMap<String, String>&& allItems) mutable {
         if (weakThis)
             weakThis->didRemoveItem(seed, key, hasError, WTFMove(allItems));
     };
@@ -170,7 +170,7 @@ StorageMap& StorageAreaMap::ensureMap()
     return *m_map;
 }
 
-void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
+void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasError, UncheckedKeyHashMap<String, String>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
@@ -182,7 +182,7 @@ void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasErr
         syncItems(WTFMove(remoteItems));
 }
 
-void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
+void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, UncheckedKeyHashMap<String, String>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
@@ -209,7 +209,7 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
 
     // A null key means clear.
     if (!key) {
-        syncItems(HashMap<String, String> { });
+        syncItems(UncheckedKeyHashMap<String, String> { });
         return;
     }
 
@@ -239,7 +239,7 @@ void StorageAreaMap::clearCache(uint64_t messageIdentifier)
         return;
 
     m_lastHandledMessageIdentifier = messageIdentifier;
-    syncItems(HashMap<String, String> { });
+    syncItems(UncheckedKeyHashMap<String, String> { });
 }
 
 void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
@@ -327,7 +327,7 @@ void StorageAreaMap::connect()
     sendConnectMessage(SendMode::Async);
 }
 
-void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, HashMap<String, String>&& items, uint64_t messageIdentifier)
+void StorageAreaMap::didConnect(std::optional<StorageAreaIdentifier> remoteAreaIdentifier, UncheckedKeyHashMap<String, String>&& items, uint64_t messageIdentifier)
 {
     m_isWaitingForConnectReply = false;
     if (messageIdentifier < m_lastHandledMessageIdentifier)
@@ -390,7 +390,7 @@ void StorageAreaMap::syncOneItem(const String& key, const String& value)
     m_map->setItemIgnoringQuota(key, value);
 }
 
-void StorageAreaMap::syncItems(HashMap<String, String>&& items)
+void StorageAreaMap::syncItems(UncheckedKeyHashMap<String, String>&& items)
 {
     // Once the pending clear request is handled by remote area, these items will be gone.
     if (!m_map || m_hasPendingClear)

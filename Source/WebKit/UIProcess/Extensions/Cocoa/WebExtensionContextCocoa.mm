@@ -2340,7 +2340,7 @@ void WebExtensionContext::didActivateTab(const WebExtensionTab& tab, const WebEx
 
 void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
 {
-    HashMap<WebExtensionWindowIdentifier, Vector<WebExtensionTabIdentifier>> windowToTabs;
+    UncheckedKeyHashMap<WebExtensionWindowIdentifier, Vector<WebExtensionTabIdentifier>> windowToTabs;
 
     for (Ref tab : tabs) {
         ASSERT(isValidTab(tab));

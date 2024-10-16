@@ -467,12 +467,12 @@ private:
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
 
-    HashMap<WebCore::WebSocketIdentifier, std::unique_ptr<NetworkSocketChannel>> m_networkSocketChannels;
+    UncheckedKeyHashMap<WebCore::WebSocketIdentifier, std::unique_ptr<NetworkSocketChannel>> m_networkSocketChannels;
     NetworkResourceLoadMap m_networkResourceLoaders;
-    HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
+    UncheckedKeyHashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
-    HashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
+    UncheckedKeyHashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
 
 
 #if USE(LIBWEBRTC)
@@ -502,7 +502,7 @@ private:
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 
     HashSet<WebCore::MessagePortIdentifier> m_processEntangledPorts;
-    HashMap<uint64_t, CompletionHandler<void()>> m_messageBatchDeliveryCompletionHandlers;
+    UncheckedKeyHashMap<uint64_t, CompletionHandler<void()>> m_messageBatchDeliveryCompletionHandlers;
     Ref<NetworkSchemeRegistry> m_schemeRegistry;
     UniqueRef<NetworkOriginAccessPatterns> m_originAccessPatterns;
         
@@ -515,7 +515,7 @@ private:
     IPCTester m_ipcTester;
 #endif
 
-    HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;
+    UncheckedKeyHashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;
 };
 
 } // namespace WebKit

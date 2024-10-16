@@ -36,7 +36,7 @@ struct ListStyleType;
 class StyleRuleCounterStyle;
 enum CSSValueID : uint16_t;
 
-using CounterStyleMap = HashMap<AtomString, RefPtr<CSSCounterStyle>>;
+using CounterStyleMap = UncheckedKeyHashMap<AtomString, RefPtr<CSSCounterStyle>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 class CSSCounterStyleRegistry {

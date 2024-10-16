@@ -86,12 +86,12 @@ enum class ProcessLaunchType {
 struct ProcessLaunchOptions {
     WebCore::ProcessIdentifier processIdentifier;
     ProcessLaunchType processType { ProcessLaunchType::Web };
-    HashMap<String, String> extraInitializationData { };
+    UncheckedKeyHashMap<String, String> extraInitializationData { };
     bool nonValidInjectedCodeAllowed { false };
     bool shouldMakeProcessLaunchFailForTesting { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    HashMap<CString, SandboxPermission> extraSandboxPaths { };
+    UncheckedKeyHashMap<CString, SandboxPermission> extraSandboxPaths { };
 #if ENABLE(DEVELOPER_MODE)
     String processCmdPrefix { };
 #endif

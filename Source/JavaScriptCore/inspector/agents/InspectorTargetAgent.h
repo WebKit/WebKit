@@ -71,7 +71,7 @@ private:
     Inspector::FrontendRouter& m_router;
     std::unique_ptr<TargetFrontendDispatcher> m_frontendDispatcher;
     Ref<TargetBackendDispatcher> m_backendDispatcher;
-    HashMap<String, InspectorTarget*> m_targets;
+    UncheckedKeyHashMap<String, InspectorTarget*> m_targets;
     bool m_isConnected { false };
     bool m_shouldPauseOnStart { false };
 };

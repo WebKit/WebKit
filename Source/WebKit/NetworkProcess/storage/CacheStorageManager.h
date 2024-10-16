@@ -95,8 +95,8 @@ private:
     Ref<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     Vector<Ref<CacheStorageCache>> m_caches;
-    HashMap<WebCore::DOMCacheIdentifier, Ref<CacheStorageCache>> m_removedCaches;
-    HashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
+    UncheckedKeyHashMap<WebCore::DOMCacheIdentifier, Ref<CacheStorageCache>> m_removedCaches;
+    UncheckedKeyHashMap<WebCore::DOMCacheIdentifier, Vector<IPC::Connection::UniqueID>> m_cacheRefConnections;
     HashSet<IPC::Connection::UniqueID> m_activeConnections;
     Ref<WorkQueue> m_queue;
     Deque<std::pair<uint64_t, CompletionHandler<void(bool)>>> m_pendingSpaceRequests;

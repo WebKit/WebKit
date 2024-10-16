@@ -33,7 +33,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBDatabaseInfo);
 
-IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, HashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
+IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, UncheckedKeyHashMap<IDBObjectStoreIdentifier, IDBObjectStoreInfo>&& objectStoreMap)
     : m_name(name)
     , m_version(version)
     , m_maxIndexID(maxIndexID)

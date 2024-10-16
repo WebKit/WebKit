@@ -124,7 +124,7 @@ public:
     WEBCORE_EXPORT CachedResource* cachedResource(const String& url) const;
     CachedResource* cachedResource(const URL& url) const;
 
-    typedef HashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
+    typedef UncheckedKeyHashMap<String, CachedResourceHandle<CachedResource>> DocumentResourceMap;
     const DocumentResourceMap& allCachedResources() const { return m_documentResources; }
 
     void notifyFinished(const CachedResource&);

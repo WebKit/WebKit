@@ -173,7 +173,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     String overrideContentSecurityPolicy;
     std::optional<double> cpuLimit;
 
-    HashMap<String, WebKit::WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
+    UncheckedKeyHashMap<String, WebKit::WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
     Vector<String> urlSchemesWithLegacyCustomProtocolHandlers;
 
 #if ENABLE(APPLICATION_MANIFEST)

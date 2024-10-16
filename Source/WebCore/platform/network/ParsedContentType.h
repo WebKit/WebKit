@@ -66,7 +66,7 @@ private:
     void setContentType(String&&, Mode);
     void setContentTypeParameter(const String&, const String&, Mode);
 
-    typedef HashMap<String, String> KeyValuePairs;
+    typedef UncheckedKeyHashMap<String, String> KeyValuePairs;
     String m_contentType;
     KeyValuePairs m_parameterValues;
     Vector<String> m_parameterNames;

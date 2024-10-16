@@ -61,7 +61,7 @@ public:
     void insert(const Key&, const Type*);
 
 private:
-    HashMap<EncodedKey, const Type*> m_storage;
+    UncheckedKeyHashMap<EncodedKey, const Type*> m_storage;
 };
 
 class TypeStore {
@@ -92,7 +92,7 @@ public:
     const Type* textureDepthCubeArrayType() const { return m_textureDepthArrayCube; }
     const Type* textureDepthMultisampled2dType() const { return m_textureDepthMultisampled2d; }
 
-    const Type* structType(AST::Structure&, HashMap<String, const Type*>&& = { });
+    const Type* structType(AST::Structure&, UncheckedKeyHashMap<String, const Type*>&& = { });
     const Type* arrayType(const Type*, Types::Array::Size);
     const Type* vectorType(uint8_t, const Type*);
     const Type* matrixType(uint8_t columns, uint8_t rows, const Type*);

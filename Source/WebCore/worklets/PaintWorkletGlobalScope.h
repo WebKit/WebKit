@@ -68,7 +68,7 @@ public:
     ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const AtomString& name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
 
-    HashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
+    UncheckedKeyHashMap<String, std::unique_ptr<PaintDefinition>>& paintDefinitionMap() WTF_REQUIRES_LOCK(m_paintDefinitionLock);
     Lock& paintDefinitionLock() WTF_RETURNS_LOCK(m_paintDefinitionLock) { return m_paintDefinitionLock; }
 
     void prepareForDestruction() final
@@ -99,12 +99,12 @@ private:
 
     bool isPaintWorkletGlobalScope() const final { return true; }
 
-    HashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
+    UncheckedKeyHashMap<String, std::unique_ptr<PaintDefinition>> m_paintDefinitionMap WTF_GUARDED_BY_LOCK(m_paintDefinitionLock);
     Lock m_paintDefinitionLock;
     bool m_hasPreparedForDestruction { false };
 };
 
-inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> HashMap<String, std::unique_ptr<PaintDefinition>>&
+inline auto PaintWorkletGlobalScope::paintDefinitionMap() -> UncheckedKeyHashMap<String, std::unique_ptr<PaintDefinition>>&
 {
     ASSERT(m_paintDefinitionLock.isLocked());
     return m_paintDefinitionMap;

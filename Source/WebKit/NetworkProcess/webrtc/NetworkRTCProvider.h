@@ -173,7 +173,7 @@ private:
     NetworkRTCMonitor m_rtcMonitor;
 
 #if PLATFORM(COCOA)
-    HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
+    UncheckedKeyHashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     CString m_applicationBundleIdentifier;
     Ref<WorkQueue> m_rtcNetworkThreadQueue;

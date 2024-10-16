@@ -264,7 +264,7 @@ void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifie
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     // Send file-mapped ScriptBuffers over to the ServiceWorker process so that it can replace its heap-allocated copies and save on dirty memory.
     auto scriptToSend = script.containsSingleFileMappedSegment() ? script : ScriptBuffer();
-    HashMap<URL, ScriptBuffer> importedScriptsToSend;
+    UncheckedKeyHashMap<URL, ScriptBuffer> importedScriptsToSend;
     for (auto& pair : importedScripts) {
         if (pair.value.containsSingleFileMappedSegment())
             importedScriptsToSend.add(pair.key, pair.value);

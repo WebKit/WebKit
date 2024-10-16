@@ -163,7 +163,7 @@ private:
 
     void willCommitLayerTree(IPC::Connection&, TransactionID);
     void commitLayerTreeNotTriggered(IPC::Connection&, TransactionID);
-    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&, HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
+    void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&, UncheckedKeyHashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
 
@@ -179,7 +179,7 @@ private:
     bool maybePauseDisplayRefreshCallbacks();
 
     ProcessState m_webPageProxyProcessState;
-    HashMap<WebCore::ProcessIdentifier, ProcessState> m_remotePageProcessState;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, ProcessState> m_remotePageProcessState;
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;

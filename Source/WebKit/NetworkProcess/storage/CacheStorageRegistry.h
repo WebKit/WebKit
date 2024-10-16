@@ -46,7 +46,7 @@ public:
 
 private:
     CacheStorageRegistry();
-    HashMap<WebCore::DOMCacheIdentifier, WeakPtr<CacheStorageCache>> m_caches;
+    UncheckedKeyHashMap<WebCore::DOMCacheIdentifier, WeakPtr<CacheStorageCache>> m_caches;
 };
 
 }

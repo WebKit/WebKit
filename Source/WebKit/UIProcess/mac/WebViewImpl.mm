@@ -2651,7 +2651,7 @@ bool WebViewImpl::isEditable() const
     return m_page->isEditable();
 }
 
-typedef HashMap<SEL, String> SelectorNameMap;
+typedef UncheckedKeyHashMap<SEL, String> SelectorNameMap;
 
 // Map selectors into Editor command names.
 // This is not needed for any selectors that have the same name as the Editor command.

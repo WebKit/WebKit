@@ -181,8 +181,8 @@ protected:
     int pollingTimeout();
 
     mutable Lock m_connectionsLock;
-    HashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients WTF_GUARDED_BY_LOCK(m_connectionsLock);
-    HashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    UncheckedKeyHashMap<ConnectionID, std::unique_ptr<ClientConnection>> m_clients WTF_GUARDED_BY_LOCK(m_connectionsLock);
+    UncheckedKeyHashMap<ConnectionID, std::unique_ptr<ListenerConnection>> m_listeners WTF_GUARDED_BY_LOCK(m_connectionsLock);
 
     PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
     PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };

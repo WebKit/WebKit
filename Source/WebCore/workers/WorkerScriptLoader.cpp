@@ -53,10 +53,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerScriptLoader);
 
 static Lock workerScriptLoaderControlledCallbackMapLock;
-static void accessWorkerScriptLoaderMap(CompletionHandler<void(HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
+static void accessWorkerScriptLoaderMap(CompletionHandler<void(UncheckedKeyHashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>&)>&& callback)
 {
     Locker locker { workerScriptLoaderControlledCallbackMapLock };
-    static NeverDestroyed<HashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<ScriptExecutionContextIdentifier, Ref<WorkerScriptLoader::ServiceWorkerDataManager>>> map;
     callback(map.get());
 }
 

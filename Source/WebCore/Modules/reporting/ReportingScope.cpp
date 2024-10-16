@@ -129,7 +129,7 @@ void ReportingScope::parseReportingEndpoints(const String& headerValue, const UR
 }
 
 // https://w3c.github.io/reporting/#process-header
-// FIXME: The value in the HashMap should probably be a URL, not a String.
+// FIXME: The value in the UncheckedKeyHashMap should probably be a URL, not a String.
 MemoryCompactRobinHoodHashMap<String, String> ReportingScope::parseReportingEndpointsFromHeader(const String& headerValue, const URL& baseURL)
 {
     MemoryCompactRobinHoodHashMap<String, String> reportingEndpoints;

@@ -627,13 +627,13 @@ private:
     Vector<PendingSyncReply> m_pendingSyncReplies WTF_GUARDED_BY_LOCK(m_syncReplyStateLock);
 
     Lock m_incomingSyncMessageCallbackLock;
-    HashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
+    UncheckedKeyHashMap<uint64_t, WTF::Function<void()>> m_incomingSyncMessageCallbacks WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock);
     uint64_t m_nextIncomingSyncMessageCallbackID WTF_GUARDED_BY_LOCK(m_incomingSyncMessageCallbackLock) { 0 };
 
-    using AsyncReplyHandlerMap = HashMap<AsyncReplyID, CompletionHandler<void(Decoder*)>>;
+    using AsyncReplyHandlerMap = UncheckedKeyHashMap<AsyncReplyID, CompletionHandler<void(Decoder*)>>;
     AsyncReplyHandlerMap m_asyncReplyHandlers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
-    using AsyncReplyHandlerWithDispatcherMap = HashMap<AsyncReplyID, CompletionHandler<void(std::unique_ptr<Decoder>&&)>>;
+    using AsyncReplyHandlerWithDispatcherMap = UncheckedKeyHashMap<AsyncReplyID, CompletionHandler<void(std::unique_ptr<Decoder>&&)>>;
     AsyncReplyHandlerWithDispatcherMap m_asyncReplyHandlerWithDispatchers WTF_GUARDED_BY_LOCK(m_incomingMessagesLock);
 
 #if ENABLE(IPC_TESTING_API)

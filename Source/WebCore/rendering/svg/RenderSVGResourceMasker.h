@@ -61,7 +61,7 @@ private:
     void element() const = delete;
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
-    HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;
 };
 
 }

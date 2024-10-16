@@ -67,7 +67,7 @@ private:
 
     Ref<WTF::WorkQueue> m_queue;
     Lock m_latestUpdateLock;
-    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate WTF_GUARDED_BY_LOCK(m_latestUpdateLock);
+    UncheckedKeyHashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate WTF_GUARDED_BY_LOCK(m_latestUpdateLock);
 };
 
 } // namespace WebKit

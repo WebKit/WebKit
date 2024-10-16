@@ -72,7 +72,7 @@ private:
     void releaseUnusedReplyBlock(uint64_t replyID);
 
     WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
-    HashMap<uint64_t, RefPtr<ProcessThrottler::BackgroundActivity>> m_pendingReplies;
+    UncheckedKeyHashMap<uint64_t, RefPtr<ProcessThrottler::BackgroundActivity>> m_pendingReplies;
 };
 
 } // namespace WebKit

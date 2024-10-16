@@ -39,7 +39,7 @@ ClobberSet::~ClobberSet() = default;
 
 void ClobberSet::add(AbstractHeap heap)
 {
-    HashMap<AbstractHeap, bool>::AddResult result = m_clobbers.add(heap, true);
+    UncheckedKeyHashMap<AbstractHeap, bool>::AddResult result = m_clobbers.add(heap, true);
     if (!result.isNewEntry) {
         if (result.iterator->value)
             return;
@@ -63,15 +63,15 @@ void ClobberSet::addAll(const ClobberSet& other)
     if (this == &other)
         return;
     
-    HashMap<AbstractHeap, bool>::const_iterator iter = other.m_clobbers.begin();
-    HashMap<AbstractHeap, bool>::const_iterator end = other.m_clobbers.end();
+    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator iter = other.m_clobbers.begin();
+    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator end = other.m_clobbers.end();
     for (; iter != end; ++iter)
         m_clobbers.add(iter->key, iter->value).iterator->value |= iter->value;
 }
 
 bool ClobberSet::contains(AbstractHeap heap) const
 {
-    HashMap<AbstractHeap, bool>::const_iterator iter = m_clobbers.find(heap);
+    UncheckedKeyHashMap<AbstractHeap, bool>::const_iterator iter = m_clobbers.find(heap);
     if (iter == m_clobbers.end())
         return false;
     return iter->value;

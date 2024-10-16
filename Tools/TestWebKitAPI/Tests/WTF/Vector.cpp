@@ -1052,7 +1052,7 @@ TEST(WTF_Vector, MapLambdaMove)
 
 TEST(WTF_Vector, MapFromHashMap)
 {
-    HashMap<String, String> map;
+    UncheckedKeyHashMap<String, String> map;
     map.set("k1"_s, "v1"_s);
     map.set("k2"_s, "v2"_s);
     map.set("k3"_s, "v3"_s);
@@ -1518,7 +1518,7 @@ TEST(WTF_Vector, CopyToVectorOf)
 
 TEST(WTF_Vector, CopyToVectorSizeRangeIterator)
 {
-    HashMap<int, float> map {
+    UncheckedKeyHashMap<int, float> map {
         { 1, 9 },
         { 2, 8 },
         { 3, 7 }

@@ -61,7 +61,7 @@ struct ScreenData {
 #endif
 };
 
-using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
+using ScreenDataMap = UncheckedKeyHashMap<PlatformDisplayID, ScreenData>;
 
 struct ScreenProperties {
     PlatformDisplayID primaryDisplayID { 0 };

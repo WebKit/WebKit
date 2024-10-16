@@ -44,7 +44,7 @@ inline Expected<String, WGSL::FailedCheck> translate(const String& wgsl, const S
     auto prepareResult = WGSL::prepare(ast, entryPointName, { });
     if (auto* maybeError = std::get_if<WGSL::Error>(&prepareResult))
         return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });
-    HashMap<String, WGSL::ConstantValue> constantValues;
+    UncheckedKeyHashMap<String, WGSL::ConstantValue> constantValues;
     auto generationResult = WGSL::generate(ast, std::get<WGSL::PrepareResult>(prepareResult), constantValues);
     if (auto* maybeError = std::get_if<WGSL::Error>(&generationResult))
         return makeUnexpected(WGSL::FailedCheck { { *maybeError }, { } });

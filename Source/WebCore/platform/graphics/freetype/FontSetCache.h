@@ -85,7 +85,7 @@ private:
         Vector<std::pair<FcPattern*, FcCharSet*>> patterns;
     };
 
-    HashMap<FontSetCacheKey, std::unique_ptr<FontSet>, FontSetCacheKeyHash, SimpleClassHashTraits<FontSetCacheKey>> m_cache;
+    UncheckedKeyHashMap<FontSetCacheKey, std::unique_ptr<FontSet>, FontSetCacheKeyHash, SimpleClassHashTraits<FontSetCacheKey>> m_cache;
 };
 
 } // namespace WebCore

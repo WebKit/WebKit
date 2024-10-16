@@ -57,7 +57,7 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     void* styleSheetList;
     void* styleScope;
     void* slotAssignment;
-    std::optional<HashMap<AtomString, AtomString>> partMappings;
+    std::optional<UncheckedKeyHashMap<AtomString, AtomString>> partMappings;
 };
 
 static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot should stay small");

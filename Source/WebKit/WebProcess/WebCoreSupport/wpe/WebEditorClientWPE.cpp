@@ -139,8 +139,8 @@ static const KeyPressEntry keyPressEntries[] = {
 
 static const char* interpretKeyEvent(const KeyboardEvent& event)
 {
-    static NeverDestroyed<HashMap<int, const char*>> keyDownCommandsMap;
-    static NeverDestroyed<HashMap<int, const char*>> keyPressCommandsMap;
+    static NeverDestroyed<UncheckedKeyHashMap<int, const char*>> keyDownCommandsMap;
+    static NeverDestroyed<UncheckedKeyHashMap<int, const char*>> keyPressCommandsMap;
 
     if (keyDownCommandsMap.get().isEmpty()) {
         for (unsigned i = 0; i < std::size(keyDownEntries); i++)

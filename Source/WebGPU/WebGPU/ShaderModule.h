@@ -55,7 +55,7 @@ class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule
 
     using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
 public:
-    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, UncheckedKeyHashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, UncheckedKeyHashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
         return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, device));
     }
@@ -85,13 +85,13 @@ public:
     const String& defaultFragmentEntryPoint() const;
     const String& defaultComputeEntryPoint() const;
 
-    using VertexStageIn = HashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using VertexStageIn = UncheckedKeyHashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using FragmentOutputs = UncheckedKeyHashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     struct VertexOutputFragmentInput {
         MTLDataType dataType { MTLDataTypeNone };
         std::optional<WGSL::AST::Interpolation> interpolation { std::nullopt };
     };
-    using VertexOutputs = HashMap<uint32_t, VertexOutputFragmentInput, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using VertexOutputs = UncheckedKeyHashMap<uint32_t, VertexOutputFragmentInput, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentInputs = VertexOutputs;
     const FragmentOutputs* fragmentReturnTypeForEntryPoint(const String&) const;
     const FragmentInputs* fragmentInputsForEntryPoint(const String&) const;
@@ -104,14 +104,14 @@ public:
     bool usesFragDepth(const String&) const;
 
 private:
-    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
+    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, UncheckedKeyHashMap<String, Ref<PipelineLayout>>&&, UncheckedKeyHashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
     ShaderModule(Device&, CheckResult&&);
 
     CheckResult convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&);
 
     const CheckResult m_checkResult;
-    const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
-    const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
+    const UncheckedKeyHashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
+    const UncheckedKeyHashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
     const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
     void populateFragmentInputs(const WGSL::Type&, ShaderModule::FragmentInputs&, const String&);
     FragmentInputs parseFragmentInputs(const WGSL::AST::Function&);
@@ -121,11 +121,11 @@ private:
 
     const Ref<Device> m_device;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
-    HashMap<String, String> m_constantIdentifiersToNames;
-    HashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
-    HashMap<String, FragmentInputs> m_fragmentInputsForEntryPoint;
-    HashMap<String, VertexOutputs> m_vertexReturnTypeForEntryPoint;
-    HashMap<String, VertexStageIn> m_stageInTypesForEntryPoint;
+    UncheckedKeyHashMap<String, String> m_constantIdentifiersToNames;
+    UncheckedKeyHashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
+    UncheckedKeyHashMap<String, FragmentInputs> m_fragmentInputsForEntryPoint;
+    UncheckedKeyHashMap<String, VertexOutputs> m_vertexReturnTypeForEntryPoint;
+    UncheckedKeyHashMap<String, VertexStageIn> m_stageInTypesForEntryPoint;
 
     String m_defaultVertexEntryPoint;
     String m_defaultFragmentEntryPoint;
@@ -140,7 +140,7 @@ private:
     };
     const ShaderModuleState* shaderModuleState(const String&) const;
     ShaderModuleState& populateShaderModuleState(const String&);
-    HashMap<String, ShaderModuleState> m_usageInformationPerEntryPoint;
+    UncheckedKeyHashMap<String, ShaderModuleState> m_usageInformationPerEntryPoint;
 };
 
 } // namespace WebGPU

@@ -180,7 +180,7 @@ protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<WorkerClient>&&);
 
     void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
-    void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts);
+    void updateSourceProviderBuffers(const ScriptBuffer& mainScript, const UncheckedKeyHashMap<URL, ScriptBuffer>& importedScripts);
 
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier) override;
 

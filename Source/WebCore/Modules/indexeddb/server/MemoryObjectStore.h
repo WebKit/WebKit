@@ -53,7 +53,7 @@ namespace IDBServer {
 
 class MemoryBackingStoreTransaction;
 
-typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
+typedef UncheckedKeyHashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryObjectStore : public RefCounted<MemoryObjectStore>, public CanMakeWeakPtr<MemoryObjectStore> {
 public:
@@ -126,9 +126,9 @@ private:
     std::unique_ptr<IDBKeyDataSet> m_orderedKeys;
 
     void unregisterIndex(MemoryIndex&);
-    HashMap<uint64_t, RefPtr<MemoryIndex>> m_indexesByIdentifier;
-    HashMap<String, RefPtr<MemoryIndex>> m_indexesByName;
-    HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryObjectStoreCursor>> m_cursors;
+    UncheckedKeyHashMap<uint64_t, RefPtr<MemoryIndex>> m_indexesByIdentifier;
+    UncheckedKeyHashMap<String, RefPtr<MemoryIndex>> m_indexesByName;
+    UncheckedKeyHashMap<IDBResourceIdentifier, std::unique_ptr<MemoryObjectStoreCursor>> m_cursors;
 };
 
 } // namespace IDBServer

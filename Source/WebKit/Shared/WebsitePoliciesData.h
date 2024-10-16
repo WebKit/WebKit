@@ -59,7 +59,7 @@ struct WebsitePoliciesData {
 public:
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
-    HashMap<String, Vector<String>> activeContentRuleListActionPatterns;
+    UncheckedKeyHashMap<String, Vector<String>> activeContentRuleListActionPatterns;
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     Vector<WebCore::TargetedElementSelectors> visibilityAdjustmentSelectors;
     String customUserAgent;

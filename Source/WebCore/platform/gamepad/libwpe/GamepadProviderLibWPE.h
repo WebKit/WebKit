@@ -72,7 +72,7 @@ private:
     void inputNotificationTimerFired();
 
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
-    HashMap<uintptr_t, std::unique_ptr<GamepadLibWPE>> m_gamepadMap;
+    UncheckedKeyHashMap<uintptr_t, std::unique_ptr<GamepadLibWPE>> m_gamepadMap;
     bool m_initialGamepadsConnected { false };
 
     std::unique_ptr<struct wpe_gamepad_provider, void (*)(struct wpe_gamepad_provider*)> m_provider;

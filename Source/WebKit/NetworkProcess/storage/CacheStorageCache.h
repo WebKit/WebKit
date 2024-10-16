@@ -77,7 +77,7 @@ private:
     Vector<WebCore::DOMCacheEngine::CacheIdentifierCallback> m_pendingInitializationCallbacks;
     String m_name;
     String m_uniqueName;
-    HashMap<String, Vector<CacheStorageRecordInformation>> m_records;
+    UncheckedKeyHashMap<String, Vector<CacheStorageRecordInformation>> m_records;
 #if ASSERT_ENABLED
     Ref<WorkQueue> m_queue;
 #endif

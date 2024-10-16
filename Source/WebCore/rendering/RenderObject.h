@@ -1324,7 +1324,7 @@ private:
     RenderObjectRareData& ensureRareData();
     void removeRareData();
     
-    using RareDataMap = HashMap<SingleThreadWeakRef<const RenderObject>, std::unique_ptr<RenderObjectRareData>>;
+    using RareDataMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderObject>, std::unique_ptr<RenderObjectRareData>>;
 
     static RareDataMap& rareDataMap();
 

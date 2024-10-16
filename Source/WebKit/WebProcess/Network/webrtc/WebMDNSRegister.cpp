@@ -60,7 +60,7 @@ void WebMDNSRegister::unregisterMDNSNames(ScriptExecutionContextIdentifier ident
 void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& callback)
 {
     auto& map = m_registeringDocuments.ensure(identifier, [] {
-        return HashMap<String, String> { };
+        return UncheckedKeyHashMap<String, String> { };
     }).iterator->value;
 
     auto iterator = map.find(ipAddress);

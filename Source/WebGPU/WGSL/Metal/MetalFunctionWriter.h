@@ -35,7 +35,7 @@ struct PrepareResult;
 
 namespace Metal {
 
-void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const HashMap<String, ConstantValue>&);
+void emitMetalFunctions(StringBuilder&, ShaderModule&, PrepareResult&, const UncheckedKeyHashMap<String, ConstantValue>&);
 
 } // namespace Metal
 } // namespace WGSL

@@ -55,7 +55,7 @@ public:
 
 private:
     using WeakElementPtr = WeakPtr<Element, WeakPtrImplWithEventTargetData>;
-    HashMap<QualifiedName, std::variant<AtomString, WeakElementPtr, Vector<WeakElementPtr>>> m_map;
+    UncheckedKeyHashMap<QualifiedName, std::variant<AtomString, WeakElementPtr, Vector<WeakElementPtr>>> m_map;
 };
 
 }; // namespace WebCore

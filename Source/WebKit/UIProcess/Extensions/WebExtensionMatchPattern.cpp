@@ -84,9 +84,9 @@ bool WebExtensionMatchPattern::patternsMatchPattern(const MatchPatternSet& match
     return false;
 }
 
-static HashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
+static UncheckedKeyHashMap<String, RefPtr<WebExtensionMatchPattern>>& patternCache()
 {
-    static MainThreadNeverDestroyed<HashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
+    static MainThreadNeverDestroyed<UncheckedKeyHashMap<String, RefPtr<WebExtensionMatchPattern>>> cache;
     return cache;
 }
 

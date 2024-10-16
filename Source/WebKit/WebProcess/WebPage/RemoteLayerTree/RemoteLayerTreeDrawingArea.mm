@@ -509,7 +509,7 @@ bool RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encod
 
     TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     bool flushSucceeded = true;
-    HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>> handles;
+    UncheckedKeyHashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>> handles;
     for (auto& flusher : flushers) {
         flushSucceeded = flusher->flushAndCollectHandles(handles);
         if (!flushSucceeded)

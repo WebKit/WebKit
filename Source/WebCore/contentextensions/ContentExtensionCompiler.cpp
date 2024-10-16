@@ -53,7 +53,7 @@ struct PendingDisplayNoneActions {
     Vector<uint32_t> clientLocations;
 };
 
-using PendingDisplayNoneActionsMap = HashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits>;
+using PendingDisplayNoneActionsMap = UncheckedKeyHashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits>;
 
 static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<uint32_t>& actionLocations, PendingDisplayNoneActionsMap& map)
 {
@@ -74,10 +74,10 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
     Vector<uint32_t> actionLocations;
 
     using ActionLocation = uint32_t;
-    using ActionMap = HashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
-    using StringActionMap = HashMap<std::pair<String, ResourceFlags>, ActionLocation, DefaultHash<std::pair<String, ResourceFlags>>, PairHashTraits<HashTraits<String>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
-    using RedirectActionMap = HashMap<std::pair<RedirectAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<RedirectAction, ResourceFlags>>, PairHashTraits<HashTraits<RedirectAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
-    using ModifyHeadersActionMap = HashMap<std::pair<ModifyHeadersAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<ModifyHeadersAction, ResourceFlags>>, PairHashTraits<HashTraits<ModifyHeadersAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using ActionMap = UncheckedKeyHashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
+    using StringActionMap = UncheckedKeyHashMap<std::pair<String, ResourceFlags>, ActionLocation, DefaultHash<std::pair<String, ResourceFlags>>, PairHashTraits<HashTraits<String>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using RedirectActionMap = UncheckedKeyHashMap<std::pair<RedirectAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<RedirectAction, ResourceFlags>>, PairHashTraits<HashTraits<RedirectAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
+    using ModifyHeadersActionMap = UncheckedKeyHashMap<std::pair<ModifyHeadersAction, ResourceFlags>, ActionLocation, DefaultHash<std::pair<ModifyHeadersAction, ResourceFlags>>, PairHashTraits<HashTraits<ModifyHeadersAction>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     ActionMap blockLoadActionsMap;
     ActionMap blockCookiesActionsMap;
     PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;

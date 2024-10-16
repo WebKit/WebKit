@@ -103,7 +103,7 @@ void WebNotificationManagerProxy::derefWebContextSupplement()
     API::Object::deref();
 }
 
-HashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
+UncheckedKeyHashMap<String, bool> WebNotificationManagerProxy::notificationPermissions()
 {
     return m_provider->notificationPermissions();
 }

@@ -225,7 +225,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_rowsContainerLayer;
     Vector<RowData> m_rows;
 
-    HashMap<WebCore::PlatformLayerIdentifier, unsigned> m_layerIDToRowIndexMap;
+    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, unsigned> m_layerIDToRowIndexMap;
     std::optional<PDFDocumentLayout::DisplayMode> m_displayModeAtLastLayerSetup;
 
     unsigned m_visibleRowIndex { 0 };

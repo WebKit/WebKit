@@ -60,7 +60,7 @@ public:
     AnchorPositionResolutionStage stage;
 };
 
-using AnchorsForAnchorName = HashMap<AtomString, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
+using AnchorsForAnchorName = UncheckedKeyHashMap<AtomString, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
 
 using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 

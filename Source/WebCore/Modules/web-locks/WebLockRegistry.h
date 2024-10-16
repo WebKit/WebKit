@@ -77,7 +77,7 @@ private:
     Ref<PerOriginRegistry> ensureRegistryForOrigin(PAL::SessionID, const ClientOrigin&);
     RefPtr<PerOriginRegistry> existingRegistryForOrigin(PAL::SessionID, const ClientOrigin&) const;
 
-    HashMap<std::pair<PAL::SessionID, ClientOrigin>, WeakPtr<PerOriginRegistry>> m_perOriginRegistries;
+    UncheckedKeyHashMap<std::pair<PAL::SessionID, ClientOrigin>, WeakPtr<PerOriginRegistry>> m_perOriginRegistries;
 };
 
 } // namespace WebCore

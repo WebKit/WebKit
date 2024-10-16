@@ -87,7 +87,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorBrowserAgent::disable()
     return { };
 }
 
-void InspectorBrowserAgent::extensionsEnabled(HashMap<String, String>&& extensionIDToName)
+void InspectorBrowserAgent::extensionsEnabled(UncheckedKeyHashMap<String, String>&& extensionIDToName)
 {
     ASSERT(enabled());
 

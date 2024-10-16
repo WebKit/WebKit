@@ -53,7 +53,7 @@ private:
     friend class NeverDestroyed<PathSegListCache, MainThreadAccessTraits>;
     PathSegListCache() = default;
 
-    HashMap<AtomString, DataRef<SVGPathByteStream::Data>> m_cache;
+    UncheckedKeyHashMap<AtomString, DataRef<SVGPathByteStream::Data>> m_cache;
     uint64_t m_sizeInBytes { 0 };
     static constexpr uint64_t maxItemSizeInBytes = 5 * 1024; // 5 Kb.
     static constexpr uint64_t maxCacheSizeInBytes = 150 * 1024; // 150 Kb.

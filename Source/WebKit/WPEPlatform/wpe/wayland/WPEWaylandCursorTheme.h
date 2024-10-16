@@ -60,7 +60,7 @@ private:
 
     std::unique_ptr<CursorTheme> m_theme;
     std::unique_ptr<WaylandSHMPool> m_pool;
-    HashMap<std::pair<CString, uint32_t>, Vector<Image>> m_cursors;
+    UncheckedKeyHashMap<std::pair<CString, uint32_t>, Vector<Image>> m_cursors;
 };
 
 } // namespace WPE

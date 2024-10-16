@@ -77,9 +77,9 @@ public:
     void clear();
 
 private:
-    using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>>;
-    using RenderingResourceHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::RenderingResource>>;
-    using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
+    using ImageBufferHashMap = UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<RemoteImageBufferProxy>>;
+    using RenderingResourceHashMap = UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::RenderingResource>>;
+    using FontHashMap = UncheckedKeyHashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
 
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier) override;
     void clearRenderingResourceMap();

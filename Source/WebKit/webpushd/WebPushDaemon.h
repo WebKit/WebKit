@@ -136,7 +136,7 @@ private:
 
     PushClientConnection* toPushClientConnection(xpc_connection_t);
     HashSet<xpc_connection_t> m_pendingConnectionSet;
-    HashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
+    UncheckedKeyHashMap<xpc_connection_t, Ref<PushClientConnection>> m_connectionMap;
 
     RefPtr<PushService> m_pushService;
     bool m_usingMockPushService { false };

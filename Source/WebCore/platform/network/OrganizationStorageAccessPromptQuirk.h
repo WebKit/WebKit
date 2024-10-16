@@ -33,12 +33,12 @@ namespace WebCore {
 
 struct OrganizationStorageAccessPromptQuirk {
     String organizationName;
-    HashMap<RegistrableDomain, Vector<RegistrableDomain>> quirkDomains;
+    UncheckedKeyHashMap<RegistrableDomain, Vector<RegistrableDomain>> quirkDomains;
     Vector<URL> triggerPages;
 
     bool isHashTableDeletedValue() const { return organizationName.isHashTableDeletedValue(); }
 
-    OrganizationStorageAccessPromptQuirk(String&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
+    OrganizationStorageAccessPromptQuirk(String&& organizationName, UncheckedKeyHashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
         : organizationName { WTFMove(organizationName) }
         , quirkDomains { WTFMove(quirkDomains) }
         , triggerPages { WTFMove(triggerPages) }

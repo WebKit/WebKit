@@ -59,9 +59,9 @@ public:
     WebCore::IDBServer::UniqueIDBDatabaseTransaction* transaction(WebCore::IDBResourceIdentifier);
 
 private:
-    HashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;
-    HashMap<WebCore::IDBDatabaseConnectionIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
-    HashMap<WebCore::IDBResourceIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction>> m_transactions;
+    UncheckedKeyHashMap<WebCore::IDBConnectionIdentifier, std::unique_ptr<IDBStorageConnectionToClient>> m_connectionsToClient;
+    UncheckedKeyHashMap<WebCore::IDBDatabaseConnectionIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection>> m_connections;
+    UncheckedKeyHashMap<WebCore::IDBResourceIdentifier, WeakPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction>> m_transactions;
 };
 
 } // namespace WebKit

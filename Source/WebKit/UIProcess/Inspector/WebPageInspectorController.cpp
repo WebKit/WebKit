@@ -275,7 +275,7 @@ void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* a
         inspectedPage->uiClient().didDisableInspectorBrowserDomain(inspectedPage);
 }
 
-void WebPageInspectorController::browserExtensionsEnabled(HashMap<String, String>&& extensionIDToName)
+void WebPageInspectorController::browserExtensionsEnabled(UncheckedKeyHashMap<String, String>&& extensionIDToName)
 {
     if (m_enabledBrowserAgent)
         m_enabledBrowserAgent->extensionsEnabled(WTFMove(extensionIDToName));

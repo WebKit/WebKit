@@ -97,7 +97,7 @@ private:
 #endif
 
     // Connections to WebProcesses.
-    HashMap<WebCore::ProcessIdentifier, Ref<ModelConnectionToWebProcess>> m_webProcessConnections;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, Ref<ModelConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
 
     HashSet<PAL::SessionID> m_sessions;

@@ -38,6 +38,6 @@ namespace Reflection {
 struct EntryPointInformation;
 };
 
-std::optional<Error> rewriteGlobalVariables(ShaderModule&, const HashMap<String, PipelineLayout*>&, HashMap<String, Reflection::EntryPointInformation>&);
+std::optional<Error> rewriteGlobalVariables(ShaderModule&, const UncheckedKeyHashMap<String, PipelineLayout*>&, UncheckedKeyHashMap<String, Reflection::EntryPointInformation>&);
 
 } // namespace WGSL

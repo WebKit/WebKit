@@ -49,7 +49,7 @@ static bool shouldForceContentSniffing;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 
-typedef HashMap<AtomString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
+typedef UncheckedKeyHashMap<AtomString, ResourceHandle::BuiltinConstructor> BuiltinResourceHandleConstructorMap;
 static BuiltinResourceHandleConstructorMap& builtinResourceHandleConstructorMap()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -66,7 +66,7 @@ void ResourceHandle::registerBuiltinConstructor(const AtomString& protocol, Reso
     builtinResourceHandleConstructorMap().add(protocol, constructor);
 }
 
-typedef HashMap<AtomString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
+typedef UncheckedKeyHashMap<AtomString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
 static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
 {
     ASSERT(isMainThread());

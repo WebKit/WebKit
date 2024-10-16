@@ -81,19 +81,19 @@ public:
     const Vector<uint32_t>* vertexOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* fragmentOffsets(uint32_t, const Vector<uint32_t>&);
     const Vector<uint32_t>* computeOffsets(uint32_t, const Vector<uint32_t>&);
-    using BindGroupHashMap = HashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using BindGroupHashMap = UncheckedKeyHashMap<uint32_t, RefPtr<const BindGroup>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     NSString* errorValidatingBindGroupCompatibility(const BindGroupHashMap&) const;
 private:
     PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&&, bool, Device&);
     PipelineLayout(Device&);
 
     std::optional<Vector<Ref<BindGroupLayout>>> m_bindGroupLayouts;
-    using DynamicOffsetMap = HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using DynamicOffsetMap = UncheckedKeyHashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     DynamicOffsetMap m_vertexDynamicOffsets;
     DynamicOffsetMap m_fragmentDynamicOffsets;
     DynamicOffsetMap m_computeDynamicOffsets;
 
-    using DynamicOffsetBufferMap = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using DynamicOffsetBufferMap = UncheckedKeyHashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     mutable DynamicOffsetBufferMap m_vertexOffsets;
     mutable DynamicOffsetBufferMap m_fragmentOffsets;
     mutable DynamicOffsetBufferMap m_computeOffsets;

@@ -74,7 +74,7 @@ struct VariationDefaults {
     }
 };
 
-typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
+typedef UncheckedKeyHashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
 
 enum class FontTypeForPreparation : bool {
     SystemFont,

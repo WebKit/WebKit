@@ -256,7 +256,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         if (!caller)
             return;
 
-        // FIXME: This should probably be a variant of FixedVector<UnlinkedWasmToWasmCall> and HashMap<FunctionIndex, FixedVector<UnlinkedWasmToWasmCall>> for big functions.
+        // FIXME: This should probably be a variant of FixedVector<UnlinkedWasmToWasmCall> and UncheckedKeyHashMap<FunctionIndex, FixedVector<UnlinkedWasmToWasmCall>> for big functions.
         for (UnlinkedWasmToWasmCall& callsite : caller->wasmToWasmCallsites()) {
             if (callsite.functionIndexSpace == functionSpaceIndex) {
                 dataLogLnIf(verbose, "Repatching call [", toCodeIndex(caller->index()), "] at: ", RawPointer(callsite.callLocation.dataLocation()), " to ", RawPointer(entrypoint.taggedPtr()));

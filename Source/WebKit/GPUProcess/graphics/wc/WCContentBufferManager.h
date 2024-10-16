@@ -52,7 +52,7 @@ public:
     void removeAllContentBuffersForProcess(WebCore::ProcessIdentifier);
 
 private:
-    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessInfo>> m_processMap;
+    UncheckedKeyHashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessInfo>> m_processMap;
 };
 
 } // namespace WebKit

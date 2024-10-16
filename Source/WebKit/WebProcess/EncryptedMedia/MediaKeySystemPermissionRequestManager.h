@@ -60,8 +60,8 @@ private:
 
     WeakRef<WebPage> m_page;
 
-    HashMap<WebCore::MediaKeySystemRequestIdentifier, Ref<WebCore::MediaKeySystemRequest>> m_ongoingMediaKeySystemRequests;
-    HashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::MediaKeySystemRequest>>> m_pendingMediaKeySystemRequests;
+    UncheckedKeyHashMap<WebCore::MediaKeySystemRequestIdentifier, Ref<WebCore::MediaKeySystemRequest>> m_ongoingMediaKeySystemRequests;
+    UncheckedKeyHashMap<RefPtr<WebCore::Document>, Vector<Ref<WebCore::MediaKeySystemRequest>>> m_pendingMediaKeySystemRequests;
 };
 
 } // namespace WebKit

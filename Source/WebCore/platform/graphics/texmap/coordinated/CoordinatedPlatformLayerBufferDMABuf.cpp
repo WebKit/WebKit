@@ -141,10 +141,10 @@ struct YUVPlaneInfo {
     IntSize subsampling;
 };
 
-static const HashMap<uint32_t, Vector<YUVPlaneInfo>>& yuvFormatPlaneInfo()
+static const UncheckedKeyHashMap<uint32_t, Vector<YUVPlaneInfo>>& yuvFormatPlaneInfo()
 {
-    static NeverDestroyed<HashMap<uint32_t, Vector<YUVPlaneInfo>>> yuvFormatsMap = [] {
-        HashMap<uint32_t, Vector<YUVPlaneInfo>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<uint32_t, Vector<YUVPlaneInfo>>> yuvFormatsMap = [] {
+        UncheckedKeyHashMap<uint32_t, Vector<YUVPlaneInfo>> map;
         // 1 plane formats.
         map.set(DRM_FORMAT_AYUV, Vector<YUVPlaneInfo> {
             { DRM_FORMAT_ABGR8888, 0, 0, { 1, 1 } },

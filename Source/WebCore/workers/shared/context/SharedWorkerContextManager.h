@@ -81,7 +81,7 @@ private:
     SharedWorkerContextManager() = default;
 
     std::unique_ptr<Connection> m_connection;
-    HashMap<SharedWorkerIdentifier, Ref<SharedWorkerThreadProxy>> m_workerMap;
+    UncheckedKeyHashMap<SharedWorkerIdentifier, Ref<SharedWorkerThreadProxy>> m_workerMap;
 };
 
 } // namespace WebCore

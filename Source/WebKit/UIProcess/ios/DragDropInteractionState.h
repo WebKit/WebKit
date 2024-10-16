@@ -59,7 +59,7 @@ struct DragSourceState {
     NSInteger itemIdentifier { 0 };
 };
 
-using DragItemToPreviewMap = HashMap<RetainPtr<UIDragItem>, RetainPtr<UITargetedDragPreview>>;
+using DragItemToPreviewMap = UncheckedKeyHashMap<RetainPtr<UIDragItem>, RetainPtr<UITargetedDragPreview>>;
 
 enum class AddPreviewViewToContainer : bool;
 

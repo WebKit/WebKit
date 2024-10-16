@@ -58,7 +58,7 @@ private:
     Type type() const final { return StorageAreaBase::Type::SQLite; };
     StorageType storageType() const final { return StorageAreaBase::StorageType::Local; };
     bool isEmpty() final;
-    HashMap<String, String> allItems() final;
+    UncheckedKeyHashMap<String, String> allItems() final;
     Expected<void, StorageError> setItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, String&& key, String&& value, const String& urlString) final;
     Expected<void, StorageError> removeItem(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& key, const String& urlString) final;
     Expected<void, StorageError> clear(IPC::Connection::UniqueID, StorageAreaImplIdentifier, const String& urlString) final;
@@ -92,7 +92,7 @@ private:
     std::unique_ptr<WebCore::SQLiteTransaction> m_transaction;
     Vector<std::unique_ptr<WebCore::SQLiteStatement>> m_cachedStatements;
     using Value = std::variant<String, unsigned>;
-    std::optional<HashMap<String, Value>> m_cache;
+    std::optional<UncheckedKeyHashMap<String, Value>> m_cache;
     std::optional<unsigned> m_cacheSize;
 };
 

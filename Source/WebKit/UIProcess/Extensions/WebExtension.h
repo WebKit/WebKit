@@ -64,7 +64,7 @@ class WebExtension : public API::ObjectImpl<API::Object::Type::WebExtension>, pu
     WTF_MAKE_NONCOPYABLE(WebExtension);
 
 public:
-    using Resources = HashMap<String, Ref<API::Data>>;
+    using Resources = UncheckedKeyHashMap<String, Ref<API::Data>>;
 
     template<typename... Args>
     static Ref<WebExtension> create(Args&&... args)
@@ -402,7 +402,7 @@ private:
     RetainPtr<NSString> m_actionPopupPath;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    HashMap<String, Ref<WebCore::Icon>> m_sidebarIconsCache;
+    UncheckedKeyHashMap<String, Ref<WebCore::Icon>> m_sidebarIconsCache;
     String m_sidebarDocumentPath;
     String m_sidebarTitle;
 #endif

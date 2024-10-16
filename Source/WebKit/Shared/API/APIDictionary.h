@@ -36,7 +36,7 @@ class Array;
 
 class Dictionary final : public ObjectImpl<Object::Type::Dictionary> {
 public:
-    using MapType = HashMap<WTF::String, RefPtr<Object>>;
+    using MapType = UncheckedKeyHashMap<WTF::String, RefPtr<Object>>;
 
     static Ref<Dictionary> create();
     static Ref<Dictionary> createWithCapacity(size_t);

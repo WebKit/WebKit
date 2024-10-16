@@ -322,7 +322,7 @@ public:
     WebCore::Color underPageBackgroundColorOverride;
     WebCore::Color underlayColor;
     RunLoop::Timer updateReportedMediaCaptureStateTimer;
-    HashMap<WebURLSchemeHandlerIdentifier, Ref<WebURLSchemeHandler>> urlSchemeHandlersByIdentifier;
+    UncheckedKeyHashMap<WebURLSchemeHandlerIdentifier, Ref<WebURLSchemeHandler>> urlSchemeHandlersByIdentifier;
     std::optional<WebCore::FloatRect> viewExposedRect;
     std::optional<WebCore::FloatSize> viewportSizeForCSSViewportUnits;
     VisibleWebPageToken visiblePageToken;
@@ -334,7 +334,7 @@ public:
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
     WeakHashSet<WebPageProxy> m_openedPages;
-    HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
+    UncheckedKeyHashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> sleepDisablers;
 
 #if ENABLE(APPLE_PAY)
     RefPtr<WebPaymentCoordinatorProxy> paymentCoordinator;
@@ -400,10 +400,10 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    HashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
-    HashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
-    HashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
+    UncheckedKeyHashMap<WTF::UUID, WebCore::TextIndicatorData> textIndicatorDataForAnimationID;
+    UncheckedKeyHashMap<WTF::UUID, CompletionHandler<void(WebCore::TextAnimationRunMode)>> completionHandlerForAnimationID;
+    UncheckedKeyHashMap<WTF::UUID, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>)>> completionHandlerForDestinationTextIndicatorForSourceID;
+    UncheckedKeyHashMap<WTF::UUID, WTF::UUID> sourceAnimationIDtoDestinationAnimationID;
 #endif
 
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
@@ -429,7 +429,7 @@ public:
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
-    HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
+    UncheckedKeyHashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
     PageLoadTimingFrameLoadStateObserver pageLoadTimingFrameLoadStateObserver;
 

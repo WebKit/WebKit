@@ -113,10 +113,10 @@ struct PackingTarget {
     WTF_ALLOW_STRUCT_COMPACT_POINTERS;
     unsigned m_value { 0 };
 };
-TEST(WTF_Packed, HashMap)
+TEST(WTF_Packed, UncheckedKeyHashMap)
 {
     Vector<PackingTarget> vector;
-    HashMap<PackedPtr<PackingTarget>, unsigned> map;
+    UncheckedKeyHashMap<PackedPtr<PackingTarget>, unsigned> map;
     vector.reserveCapacity(10000);
     for (unsigned i = 0; i < 10000; ++i)
         vector.append(PackingTarget { i });

@@ -718,7 +718,7 @@ String Cache::recordsPathIsolatedCopy() const
 
 void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
 {
-    HashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
+    UncheckedKeyHashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
     traverse([protectedThis = Ref { *this }, shouldComputeSize, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
         if (traversalEntry) {
             auto url = traversalEntry->entry.response().url();

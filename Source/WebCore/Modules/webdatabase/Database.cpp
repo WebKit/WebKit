@@ -153,9 +153,9 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
 // FIXME: move all guid-related functions to a DatabaseVersionTracker class.
 static Lock guidLock;
 
-static HashMap<DatabaseGUID, String>& guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
+static UncheckedKeyHashMap<DatabaseGUID, String>& guidToVersionMap() WTF_REQUIRES_LOCK(guidLock)
 {
-    static NeverDestroyed<HashMap<DatabaseGUID, String>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<DatabaseGUID, String>> map;
     return map;
 }
 
@@ -171,9 +171,9 @@ static inline void updateGUIDVersionMap(DatabaseGUID guid, const String& newVers
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap() WTF_REQUIRES_LOCK(guidLock)
+static UncheckedKeyHashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap() WTF_REQUIRES_LOCK(guidLock)
 {
-    static NeverDestroyed<HashMap<DatabaseGUID, HashSet<Database*>>> map;
+    static NeverDestroyed<UncheckedKeyHashMap<DatabaseGUID, HashSet<Database*>>> map;
     return map;
 }
 

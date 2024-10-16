@@ -183,7 +183,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         InlineLayoutUnit top { 0 };
         InlineLayoutUnit bottom { 0 };
     };
-    HashMap<const InlineLevelBox*, AbsoluteTopAndBottom> inlineLevelBoxAbsoluteTopAndBottomMap;
+    UncheckedKeyHashMap<const InlineLevelBox*, AbsoluteTopAndBottom> inlineLevelBoxAbsoluteTopAndBottomMap;
 
     auto minimumLogicalTop = std::optional<InlineLayoutUnit> { };
     auto maximumLogicalBottom = std::optional<InlineLayoutUnit> { };
@@ -248,7 +248,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     auto& formattingUtils = this->formattingUtils();
     auto hasTopAlignedInlineLevelBox = false;
 
-    HashMap<const InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
+    UncheckedKeyHashMap<const InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
     inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
     auto maximumTopOffsetFromRootInlineBoxBaseline = std::optional<InlineLayoutUnit> { };

@@ -281,8 +281,8 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
-    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
 };

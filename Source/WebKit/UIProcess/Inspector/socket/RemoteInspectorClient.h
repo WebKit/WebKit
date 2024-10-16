@@ -70,7 +70,7 @@ public:
         String url;
     };
 
-    const HashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
+    const UncheckedKeyHashMap<ConnectionID, Vector<Target>>& targets() const { return m_targets; }
     const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
     void inspect(ConnectionID, TargetID, Inspector::DebuggableType);
@@ -88,15 +88,15 @@ private:
     void setBackendCommands(const Event&);
 
     void didClose(Inspector::RemoteInspectorSocketEndpoint&, ConnectionID) final;
-    HashMap<String, CallHandler>& dispatchMap() final;
+    UncheckedKeyHashMap<String, CallHandler>& dispatchMap() final;
 
     void sendWebInspectorEvent(const String&);
 
     String m_backendCommandsURL;
     CheckedRef<RemoteInspectorObserver> m_observer;
     std::optional<ConnectionID> m_connectionID;
-    HashMap<ConnectionID, Vector<Target>> m_targets;
-    HashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;
+    UncheckedKeyHashMap<ConnectionID, Vector<Target>> m_targets;
+    UncheckedKeyHashMap<std::pair<ConnectionID, TargetID>, std::unique_ptr<RemoteInspectorProxy>> m_inspectorProxyMap;
 };
 
 } // namespace WebKit

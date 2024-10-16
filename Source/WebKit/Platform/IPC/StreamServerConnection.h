@@ -139,7 +139,7 @@ private:
     bool m_isProcessingStreamMessage { false };
     std::unique_ptr<IPC::Encoder> m_syncReplyToDispatch;
     Lock m_receiversLock;
-    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
+    using ReceiversMap = UncheckedKeyHashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
     Semaphore m_clientWaitSemaphore;

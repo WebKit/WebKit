@@ -1094,7 +1094,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
         processUnverifiedStackTraces();
     }
 
-    HashMap<SourceID, Ref<SourceProvider>> sources;
+    UncheckedKeyHashMap<SourceID, Ref<SourceProvider>> sources;
 
     auto stackFrameAsJSON = [&](StackFrame& stackFrame) {
         auto [provider, sourceID] = stackFrame.sourceProviderAndID();
@@ -1218,7 +1218,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    HashMap<String, size_t> functionCounts;
+    UncheckedKeyHashMap<String, size_t> functionCounts;
     for (StackTrace& stackTrace : m_stackTraces) {
         if (!stackTrace.frames.size())
             continue;
@@ -1284,8 +1284,8 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     }
 
     size_t totalSamples = 0;
-    HashMap<String, size_t> bytecodeCounts;
-    HashMap<String, size_t> tierCounts;
+    UncheckedKeyHashMap<String, size_t> bytecodeCounts;
+    UncheckedKeyHashMap<String, size_t> tierCounts;
 
     auto forEachTier = [&] (auto func) {
         func(Tiers::llint);

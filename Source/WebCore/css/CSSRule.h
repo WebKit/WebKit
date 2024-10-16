@@ -45,7 +45,7 @@ public:
     virtual StyleRuleType styleRuleType() const = 0;
     virtual bool isGroupingRule() const { return false; }
     virtual String cssText() const = 0;
-    virtual String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const { return cssText(); }
+    virtual String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const { return cssText(); }
     virtual void reattach(StyleRuleBase&) = 0;
 
     void setParentStyleSheet(CSSStyleSheet*);

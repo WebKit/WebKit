@@ -40,7 +40,7 @@
 @implementation WebScriptWorldPrivate
 @end
 
-using WorldMap = HashMap<SingleThreadWeakRef<WebCore::DOMWrapperWorld>, WebScriptWorld*>;
+using WorldMap = UncheckedKeyHashMap<SingleThreadWeakRef<WebCore::DOMWrapperWorld>, WebScriptWorld*>;
 static WorldMap& allWorlds()
 {
     static WorldMap& map = *new WorldMap;

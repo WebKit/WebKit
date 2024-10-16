@@ -1595,7 +1595,7 @@ static void testJSCObject()
 typedef struct _Foo Foo;
 struct _Foo {
     int foo;
-    HashMap<CString, int> properties;
+    UncheckedKeyHashMap<CString, int> properties;
     Foo* sibling;
 };
 

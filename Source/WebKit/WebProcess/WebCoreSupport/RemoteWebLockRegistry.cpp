@@ -43,8 +43,8 @@ struct LockRequest : LockInfo {
 };
 
 struct RemoteWebLockRegistry::LocksSnapshot {
-    HashMap<WebCore::WebLockIdentifier, LockRequest> pendingRequests;
-    HashMap<WebCore::WebLockIdentifier, LockInfo> heldLocks;
+    UncheckedKeyHashMap<WebCore::WebLockIdentifier, LockRequest> pendingRequests;
+    UncheckedKeyHashMap<WebCore::WebLockIdentifier, LockInfo> heldLocks;
 
     bool isEmpty() const { return pendingRequests.isEmpty() && heldLocks.isEmpty(); }
 };

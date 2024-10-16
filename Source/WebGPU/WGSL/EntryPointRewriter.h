@@ -32,6 +32,6 @@ namespace WGSL {
 class ShaderModule;
 struct PipelineLayout;
 
-void rewriteEntryPoints(ShaderModule&, const HashMap<String, PipelineLayout*>&);
+void rewriteEntryPoints(ShaderModule&, const UncheckedKeyHashMap<String, PipelineLayout*>&);
 
 } // namespace WGSL

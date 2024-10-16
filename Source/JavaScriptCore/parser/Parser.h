@@ -996,7 +996,7 @@ private:
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_variablesBeingHoisted;
-    HashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
+    UncheckedKeyHashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
     HashSet<UniquedStringImpl*> m_closedVariableCandidates;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };

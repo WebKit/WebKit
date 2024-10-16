@@ -55,7 +55,7 @@ public:
 private:
     class FormKeyGenerator;
     class SavedFormState;
-    using SavedFormStateMap = HashMap<String, SavedFormState>;
+    using SavedFormStateMap = UncheckedKeyHashMap<String, SavedFormState>;
 
     FormControlState takeStateForFormElement(const ValidatedFormListedElement&);
     static SavedFormStateMap parseStateVector(const Vector<AtomString>&);

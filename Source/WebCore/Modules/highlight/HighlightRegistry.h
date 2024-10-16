@@ -54,12 +54,12 @@ public:
 #endif
     
     WEBCORE_EXPORT void addAnnotationHighlightWithRange(Ref<StaticRange>&&);
-    const HashMap<AtomString, Ref<Highlight>>& map() const { return m_map; }
+    const UncheckedKeyHashMap<AtomString, Ref<Highlight>>& map() const { return m_map; }
     const Vector<AtomString>& highlightNames() const { return m_highlightNames; }
     
 private:
     HighlightRegistry() = default;
-    HashMap<AtomString, Ref<Highlight>> m_map;
+    UncheckedKeyHashMap<AtomString, Ref<Highlight>> m_map;
     Vector<AtomString> m_highlightNames;
 
     HighlightVisibility m_highlightVisibility { HighlightVisibility::Hidden };

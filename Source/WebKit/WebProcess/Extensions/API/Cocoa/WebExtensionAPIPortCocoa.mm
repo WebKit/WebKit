@@ -45,7 +45,7 @@
 
 namespace WebKit {
 
-using PortChannelPortMap = HashMap<WebExtensionPortChannelIdentifier, HashSet<WeakRef<WebExtensionAPIPort>>>;
+using PortChannelPortMap = UncheckedKeyHashMap<WebExtensionPortChannelIdentifier, HashSet<WeakRef<WebExtensionAPIPort>>>;
 
 static PortChannelPortMap& webExtensionPorts()
 {

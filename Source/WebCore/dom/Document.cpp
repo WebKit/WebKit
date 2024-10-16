@@ -1122,8 +1122,8 @@ Element* Document::elementForAccessKey(const String& key)
 
 void Document::buildAccessKeyCache()
 {
-    m_accessKeyCache = makeUnique<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>>([this] {
-        HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
+    m_accessKeyCache = makeUnique<UncheckedKeyHashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>>([this] {
+        UncheckedKeyHashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
         for (auto& node : composedTreeDescendants(*this)) {
             auto element = dynamicDowncast<Element>(node);
             if (!element)

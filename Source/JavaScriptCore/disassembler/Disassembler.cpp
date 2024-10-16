@@ -42,7 +42,7 @@ namespace Disassembler {
 
 Lock labelMapLock;
 
-using LabelMap = HashMap<void*, std::variant<CString, const char*>>;
+using LabelMap = UncheckedKeyHashMap<void*, std::variant<CString, const char*>>;
 LazyNeverDestroyed<LabelMap> labelMap;
 
 static LabelMap& ensureLabelMap() WTF_REQUIRES_LOCK(labelMapLock)

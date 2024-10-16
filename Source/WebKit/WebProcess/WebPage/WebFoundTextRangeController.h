@@ -99,8 +99,8 @@ private:
 
     WebFoundTextRange m_highlightedRange;
 
-    HashMap<WebFoundTextRange, std::optional<WebCore::SimpleRange>> m_cachedFoundRanges;
-    HashMap<WebFoundTextRange, FindDecorationStyle> m_decoratedRanges;
+    UncheckedKeyHashMap<WebFoundTextRange, std::optional<WebCore::SimpleRange>> m_cachedFoundRanges;
+    UncheckedKeyHashMap<WebFoundTextRange, FindDecorationStyle> m_decoratedRanges;
 
     RefPtr<WebCore::TextIndicator> m_textIndicator;
 };

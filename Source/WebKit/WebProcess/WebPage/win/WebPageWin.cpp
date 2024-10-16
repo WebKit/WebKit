@@ -188,12 +188,12 @@ const char* WebPage::interpretKeyEvent(const WebCore::KeyboardEvent* evt)
 {
     ASSERT(evt->type() == eventNames().keydownEvent || evt->type() == eventNames().keypressEvent);
 
-    static HashMap<int, const char*>* keyDownCommandsMap = 0;
-    static HashMap<int, const char*>* keyPressCommandsMap = 0;
+    static UncheckedKeyHashMap<int, const char*>* keyDownCommandsMap = 0;
+    static UncheckedKeyHashMap<int, const char*>* keyPressCommandsMap = 0;
 
     if (!keyDownCommandsMap) {
-        keyDownCommandsMap = new HashMap<int, const char*>;
-        keyPressCommandsMap = new HashMap<int, const char*>;
+        keyDownCommandsMap = new UncheckedKeyHashMap<int, const char*>;
+        keyPressCommandsMap = new UncheckedKeyHashMap<int, const char*>;
 
         for (size_t i = 0; i < std::size(keyDownEntries); ++i)
             keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);

@@ -100,9 +100,9 @@ private:
     void supportsKeySystem(const String& keySystem, CompletionHandler<void(bool)>&&);
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
-    HashMap<RemoteCDMIdentifier, RefPtr<RemoteCDMProxy>> m_proxies;
-    HashMap<RemoteCDMInstanceIdentifier, std::unique_ptr<RemoteCDMInstanceProxy>> m_instances;
-    HashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;
+    UncheckedKeyHashMap<RemoteCDMIdentifier, RefPtr<RemoteCDMProxy>> m_proxies;
+    UncheckedKeyHashMap<RemoteCDMInstanceIdentifier, std::unique_ptr<RemoteCDMInstanceProxy>> m_instances;
+    UncheckedKeyHashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;
 
 #if !RELEASE_LOG_DISABLED
     mutable RefPtr<Logger> m_logger;

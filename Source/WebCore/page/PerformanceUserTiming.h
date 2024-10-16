@@ -40,7 +40,7 @@ namespace WebCore {
 
 class Performance;
 
-using PerformanceEntryMap = HashMap<String, Vector<Ref<PerformanceEntry>>>;
+using PerformanceEntryMap = UncheckedKeyHashMap<String, Vector<Ref<PerformanceEntry>>>;
 
 class PerformanceUserTiming {
     WTF_MAKE_TZONE_ALLOCATED(PerformanceUserTiming);

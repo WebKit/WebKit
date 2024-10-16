@@ -88,9 +88,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static HashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
+static UncheckedKeyHashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>& browsingContextControllerMap()
 {
-    static NeverDestroyed<HashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
+    static NeverDestroyed<UncheckedKeyHashMap<WeakRef<WebKit::WebPageProxy>, __unsafe_unretained WKBrowsingContextController *>> browsingContextControllerMap;
     return browsingContextControllerMap;
 }
 ALLOW_DEPRECATED_DECLARATIONS_END

@@ -394,7 +394,7 @@ public:
 
 #if ENABLE(JIT)
     // This is const because we generally think of FunctionSignatures as immutable.
-    // Conceptually this more like using the `const FunctionSignature*` as a global HashMap
+    // Conceptually this more like using the `const FunctionSignature*` as a global UncheckedKeyHashMap
     // key to the JIT code though.
     CodePtr<JSEntryPtrTag> jsToWasmICEntrypoint() const;
 #endif
@@ -956,8 +956,8 @@ public:
     static void tryCleanup();
 private:
     HashSet<Wasm::TypeHash> m_typeSet;
-    HashMap<TypeIndex, RefPtr<const TypeDefinition>> m_unrollingCache;
-    HashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
+    UncheckedKeyHashMap<TypeIndex, RefPtr<const TypeDefinition>> m_unrollingCache;
+    UncheckedKeyHashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
     HashSet<RefPtr<TypeDefinition>> m_placeholders;
     const FunctionSignature* thunkTypes[numTypes];
     RefPtr<TypeDefinition> m_I64_Void;

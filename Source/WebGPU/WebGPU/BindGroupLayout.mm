@@ -201,7 +201,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     size_t sizeOfDynamicOffsets[stageCount] = { 0, 0, 0 };
     uint32_t bindingOffset[stageCount] = { 0, 0, 0 };
     uint32_t bufferCounts[stageCount] = { 0, 0, 0 };
-    HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> slotForEntry;
+    UncheckedKeyHashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> slotForEntry;
     const auto maxBindingIndex = limits().maxBindingsPerBindGroup;
     HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
     uint32_t dynamicUniformBuffers = 0;

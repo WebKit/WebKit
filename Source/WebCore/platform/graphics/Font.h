@@ -303,7 +303,7 @@ private:
 
     const FontPlatformData m_platformData;
 
-    mutable HashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
+    mutable UncheckedKeyHashMap<unsigned, RefPtr<GlyphPage>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_glyphPages;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     // FIXME: Find a more efficient way to represent std::optional<Path>.

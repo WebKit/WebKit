@@ -89,7 +89,7 @@ private:
 inline bool isNotificationIDValid(uint64_t id)
 {
     // This check makes sure that the ID is not equal to values needed by
-    // HashMap for bucketing.
+    // UncheckedKeyHashMap for bucketing.
     return id && id != static_cast<uint64_t>(-1);
 }
 

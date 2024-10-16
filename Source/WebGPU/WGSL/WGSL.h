@@ -218,7 +218,7 @@ struct EntryPointInformation {
     String originalName;
     String mangledName;
     std::optional<PipelineLayout> defaultLayout; // If the input PipelineLayout is nullopt, the compiler computes a layout and returns it. https://gpuweb.github.io/gpuweb/#default-pipeline-layout
-    HashMap<String, SpecializationConstant> specializationConstants;
+    UncheckedKeyHashMap<String, SpecializationConstant> specializationConstants;
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
     size_t sizeForWorkgroupVariables { 0 };
 };
@@ -226,15 +226,15 @@ struct EntryPointInformation {
 } // namespace Reflection
 
 struct PrepareResult {
-    HashMap<String, Reflection::EntryPointInformation> entryPoints;
+    UncheckedKeyHashMap<String, Reflection::EntryPointInformation> entryPoints;
     CompilationScope compilationScope;
 };
 
-std::variant<PrepareResult, Error> prepare(ShaderModule&, const HashMap<String, PipelineLayout*>&);
+std::variant<PrepareResult, Error> prepare(ShaderModule&, const UncheckedKeyHashMap<String, PipelineLayout*>&);
 std::variant<PrepareResult, Error> prepare(ShaderModule&, const String& entryPointName, PipelineLayout*);
 
-std::variant<String, Error> generate(ShaderModule&, PrepareResult&, HashMap<String, ConstantValue>&);
+std::variant<String, Error> generate(ShaderModule&, PrepareResult&, UncheckedKeyHashMap<String, ConstantValue>&);
 
-std::optional<ConstantValue> evaluate(const AST::Expression&, const HashMap<String, ConstantValue>&);
+std::optional<ConstantValue> evaluate(const AST::Expression&, const UncheckedKeyHashMap<String, ConstantValue>&);
 
 } // namespace WGSL

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
+typedef UncheckedKeyHashMap<const CSSStyleRule*, String> SelectorTextCache;
 static SelectorTextCache& selectorTextCache()
 {
     static NeverDestroyed<SelectorTextCache> cache;
@@ -163,7 +163,7 @@ void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
         rules.append("\n  "_s, item(index)->cssText());
 }
 
-String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSStyleRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     StringBuilder declarations;
     StringBuilder rules;
@@ -179,7 +179,7 @@ String CSSStyleRule::cssTextWithReplacementURLs(const HashMap<String, String>& r
     return cssTextInternal(declarations, rules);
 }
 
-void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
 {
     for (unsigned index = 0; index < length(); index++)
         rules.append("\n  "_s, item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));

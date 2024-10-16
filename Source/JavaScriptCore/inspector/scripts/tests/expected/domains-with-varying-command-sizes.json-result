@@ -337,7 +337,7 @@ void Network3BackendDispatcher::dispatch(long protocol_requestId, const String& 
     auto protocol_parameters = protocol_message->getObject("params"_s);
 
     using CallHandler = void (Network3BackendDispatcher::*)(long protocol_requestId, RefPtr<JSON::Object>&& protocol_message);
-    using DispatchMap = HashMap<String, CallHandler>;
+    using DispatchMap = UncheckedKeyHashMap<String, CallHandler>;
     static NeverDestroyed<DispatchMap> dispatchMap = DispatchMap({
         { "loadResource1"_s, &Network3BackendDispatcher::loadResource1 },
         { "loadResource2"_s, &Network3BackendDispatcher::loadResource2 },

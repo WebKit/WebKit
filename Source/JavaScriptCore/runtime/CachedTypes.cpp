@@ -274,7 +274,7 @@ private:
     ptrdiff_t m_baseOffset;
     Page* m_currentPage;
     Vector<Page> m_pages;
-    HashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
+    UncheckedKeyHashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
     LeafExecutableMap m_leafExecutables;
 };
 
@@ -664,9 +664,9 @@ private:
 };
 
 template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>, typename TableTraits = WTF::HashTableTraits>
-class CachedHashMap : public VariableLengthObject<HashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>> {
+class CachedHashMap : public VariableLengthObject<UncheckedKeyHashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>> {
     template<typename K, typename V>
-    using Map = HashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>;
+    using Map = UncheckedKeyHashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>;
 
 public:
     void encode(Encoder& encoder, const Map<SourceType<Key>, SourceType<Value>>& map)

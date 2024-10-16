@@ -2629,13 +2629,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [[webView _editingDelegateForwarder] webView:webView doCommandBySelector:selector];
 }
 
-typedef HashMap<SEL, String> SelectorNameMap;
+typedef UncheckedKeyHashMap<SEL, String> SelectorNameMap;
 
 // Map selectors into Editor command names.
 // This is not needed for any selectors that have the same name as the Editor command.
 static const SelectorNameMap* createSelectorExceptionMap()
 {
-    SelectorNameMap* map = new HashMap<SEL, String>;
+    SelectorNameMap* map = new UncheckedKeyHashMap<SEL, String>;
 
     map->add(@selector(insertNewlineIgnoringFieldEditor:), "InsertNewline"_s);
     map->add(@selector(insertParagraphSeparator:), "InsertNewline"_s);

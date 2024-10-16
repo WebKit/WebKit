@@ -309,7 +309,7 @@ static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId, 
 WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)
 {
     auto type = WebEventType::TouchMove;
-    static NeverDestroyed<HashMap<int32_t, int32_t, DefaultHash<int32_t>, WTF::UnsignedWithZeroKeyHashTraits<int32_t>>> activeTrackingTouchPoints;
+    static NeverDestroyed<UncheckedKeyHashMap<int32_t, int32_t, DefaultHash<int32_t>, WTF::UnsignedWithZeroKeyHashTraits<int32_t>>> activeTrackingTouchPoints;
     static int32_t uniqueTouchPointId = WebCore::mousePointerID + 1;
     int32_t pointId;
 

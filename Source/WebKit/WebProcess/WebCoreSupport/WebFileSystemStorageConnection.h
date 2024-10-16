@@ -91,7 +91,7 @@ private:
     void unregisterSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
 
-    HashMap<WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier> m_syncAccessHandles;
+    UncheckedKeyHashMap<WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier> m_syncAccessHandles;
     RefPtr<IPC::Connection> m_connection;
 };
 

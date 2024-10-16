@@ -56,7 +56,7 @@ public:
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
-    static HashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& allItems();
+    static UncheckedKeyHashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& allItems();
 
     WebCore::BackForwardItemIdentifier itemID() const;
     WebPageProxyIdentifier pageID() const { return m_pageID; }

@@ -682,7 +682,7 @@ static void testURIResponseHTTPHeaders(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(soup_message_headers_get_one(headers, "Foo"), ==, "bar");
 }
 
-static HashMap<CString, CString> s_userAgentMap;
+static UncheckedKeyHashMap<CString, CString> s_userAgentMap;
 
 static void testUserAgent(WebViewTest* test, gconstpointer)
 {

@@ -32,8 +32,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
-// SortedArrayMap is a map like HashMap, but it's read-only. It uses much less memory than HashMap.
-// It uses binary search instead of hashing, so can be outperformed by HashMap for large maps.
+// SortedArrayMap is a map like UncheckedKeyHashMap, but it's read-only. It uses much less memory than UncheckedKeyHashMap.
+// It uses binary search instead of hashing, so can be outperformed by UncheckedKeyHashMap for large maps.
 // The array passed to the constructor has std::pair elements: keys first and values second.
 // The array and the SortedArrayMap should typically both be global constant expressions.
 
@@ -55,10 +55,10 @@ public:
     constexpr SortedArrayMap(const ArrayType&);
     template<typename KeyArgument> bool contains(const KeyArgument&) const;
 
-    // FIXME: To match HashMap interface better, would be nice to get the default value from traits.
+    // FIXME: To match UncheckedKeyHashMap interface better, would be nice to get the default value from traits.
     template<typename KeyArgument> ValueType get(const KeyArgument&, const ValueType& defaultValue = { }) const;
 
-    // FIXME: Should add a function like this to HashMap so the two kinds of maps are more interchangable.
+    // FIXME: Should add a function like this to UncheckedKeyHashMap so the two kinds of maps are more interchangable.
     template<typename KeyArgument> const ValueType* tryGet(const KeyArgument&) const;
 
 private:

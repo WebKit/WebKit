@@ -187,7 +187,7 @@ private:
     RetainPtr<WebEditorUndoTarget> m_undoTarget;
     bool m_haveUndoRedoOperations { false };
     
-    HashMap<WebCore::TextCheckingRequestIdentifier, Ref<WebCore::TextCheckingRequest>> m_requestsInFlight;
+    UncheckedKeyHashMap<WebCore::TextCheckingRequestIdentifier, Ref<WebCore::TextCheckingRequest>> m_requestsInFlight;
 
 #if PLATFORM(IOS_FAMILY)
     bool m_delayingContentChangeNotifications { false };

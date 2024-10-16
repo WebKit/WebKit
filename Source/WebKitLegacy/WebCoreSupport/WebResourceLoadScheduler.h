@@ -121,7 +121,7 @@ private:
     CheckedPtr<HostInformation> hostForURL(const URL&, CreateHostPolicy = FindOnly);
     void servePendingRequests(CheckedRef<HostInformation>&&, WebCore::ResourceLoadPriority);
 
-    typedef HashMap<String, std::unique_ptr<HostInformation>, StringHash> HostMap;
+    typedef UncheckedKeyHashMap<String, std::unique_ptr<HostInformation>, StringHash> HostMap;
     HostMap m_hosts;
     UniqueRef<HostInformation> m_nonHTTPProtocolHost;
         

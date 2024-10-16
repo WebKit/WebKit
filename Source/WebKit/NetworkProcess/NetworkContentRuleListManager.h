@@ -59,8 +59,8 @@ private:
 
     Ref<NetworkProcess> protectedNetworkProcess() const;
 
-    HashMap<UserContentControllerIdentifier, std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend>> m_contentExtensionBackends;
-    HashMap<UserContentControllerIdentifier, Vector<BackendCallback>> m_pendingCallbacks;
+    UncheckedKeyHashMap<UserContentControllerIdentifier, std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend>> m_contentExtensionBackends;
+    UncheckedKeyHashMap<UserContentControllerIdentifier, Vector<BackendCallback>> m_pendingCallbacks;
     WeakRef<NetworkProcess> m_networkProcess;
 };
 

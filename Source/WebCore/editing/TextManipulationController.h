@@ -108,7 +108,7 @@ private:
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodesWithNewContent;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_addedOrNewlyRenderedNodes;
 
-    HashMap<String, bool> m_cachedFontFamilyExclusionResults;
+    UncheckedKeyHashMap<String, bool> m_cachedFontFamilyExclusionResults;
 
     bool m_didScheduleObservationUpdate { false };
 
@@ -116,7 +116,7 @@ private:
     Vector<TextManipulationItem> m_pendingItemsForCallback;
 
     Vector<ExclusionRule> m_exclusionRules;
-    HashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
+    UncheckedKeyHashMap<TextManipulationItemIdentifier, ManipulationItemData> m_items;
 };
 
 } // namespace WebCore

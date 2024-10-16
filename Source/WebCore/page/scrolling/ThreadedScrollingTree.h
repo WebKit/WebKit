@@ -144,8 +144,8 @@ private:
     // Dynamically allocated because it has to use the ScrollingThread's runloop.
     std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer WTF_GUARDED_BY_LOCK(m_treeLock);
 
-    HashMap<ScrollingNodeID, RequestedScrollData> m_nodesWithPendingScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
-    HashMap<ScrollingNodeID, RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
+    UncheckedKeyHashMap<ScrollingNodeID, RequestedScrollData> m_nodesWithPendingScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
+    UncheckedKeyHashMap<ScrollingNodeID, RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
     const bool m_scrollAnimatorEnabled { false };
     bool m_hasNodesWithSynchronousScrollingReasons WTF_GUARDED_BY_LOCK(m_treeLock) { false };
     std::atomic<bool> m_renderingUpdateWasScheduled;

@@ -1145,11 +1145,11 @@ namespace JSC {
 
         using BigIntMapEntry = std::tuple<UniquedStringImpl*, uint8_t, bool>;
 
-        using NumberMap = HashMap<double, JSValue>;
-        using IdentifierStringMap = HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
-        using IdentifierBigIntMap = HashMap<BigIntMapEntry, JSValue>;
+        using NumberMap = UncheckedKeyHashMap<double, JSValue>;
+        using IdentifierStringMap = UncheckedKeyHashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
+        using IdentifierBigIntMap = UncheckedKeyHashMap<BigIntMapEntry, JSValue>;
         using TemplateObjectDescriptorSet = HashSet<Ref<TemplateObjectDescriptor>>;
-        using TemplateDescriptorMap = HashMap<uint64_t, JSTemplateObjectDescriptor*, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+        using TemplateDescriptorMap = UncheckedKeyHashMap<uint64_t, JSTemplateObjectDescriptor*, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
         // Helper for emitCall() and emitConstruct(). This works because the set of
         // expected functions have identical behavior for both call and construct
@@ -1241,7 +1241,7 @@ namespace JSC {
             Optimize,
             DoNotOptimize
         };
-        typedef HashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
+        typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
 
     public:
         JSString* addStringConstant(const Identifier&);
@@ -1327,7 +1327,7 @@ namespace JSC {
         RegisterID* m_emptyValueRegister { nullptr };
         RegisterID* m_newTargetRegister { nullptr };
         RegisterID* m_isDerivedConstuctor { nullptr };
-        HashMap<LinkTimeConstant, RegisterID*, WTF::IntHash<LinkTimeConstant>, WTF::StrongEnumHashTraits<LinkTimeConstant>> m_linkTimeConstantRegisters;
+        UncheckedKeyHashMap<LinkTimeConstant, RegisterID*, WTF::IntHash<LinkTimeConstant>, WTF::StrongEnumHashTraits<LinkTimeConstant>> m_linkTimeConstantRegisters;
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
         RegisterID* m_promiseRegister { nullptr };
 
@@ -1381,7 +1381,7 @@ namespace JSC {
         // Constant pool
         IdentifierMap m_identifierMap;
 
-        typedef HashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
+        typedef UncheckedKeyHashMap<EncodedJSValueWithRepresentation, unsigned, EncodedJSValueWithRepresentationHash, EncodedJSValueWithRepresentationHashTraits> JSValueMap;
         JSValueMap m_jsValueMap;
         IdentifierStringMap m_stringMap;
         IdentifierBigIntMap m_bigIntMap;

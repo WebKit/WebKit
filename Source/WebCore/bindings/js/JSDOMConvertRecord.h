@@ -116,7 +116,7 @@ private:
         JSC::JSObject* object = JSC::asObject(value);
     
         ReturnType result;
-        HashMap<KeyType, size_t> resultMap;
+        UncheckedKeyHashMap<KeyType, size_t> resultMap;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
         JSC::PropertyNameArray keys(vm, JSC::PropertyNameMode::StringsAndSymbols, JSC::PrivateSymbolMode::Exclude);

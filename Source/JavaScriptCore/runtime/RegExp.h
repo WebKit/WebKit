@@ -215,7 +215,7 @@ private:
         // This first element of the RHS vector is the subpatternId in the non-duplicate case.
         // For the duplicate case, the first element is the namedCaptureGroupId.
         // The remaining elements are the subpatternIds for each of the duplicate groups.
-        HashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
+        UncheckedKeyHashMap<String, Vector<unsigned>> m_namedGroupToParenIndices;
     };
 
     String m_patternString;

@@ -48,7 +48,7 @@ struct LineContent {
     bool endsWithHyphen { false };
     size_t partialTrailingContentLength { 0 };
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
-    HashMap<const Box*, InlineLayoutUnit> rubyBaseAlignmentOffsetList { };
+    UncheckedKeyHashMap<const Box*, InlineLayoutUnit> rubyBaseAlignmentOffsetList { };
     InlineLayoutUnit rubyAnnotationOffset { 0.f };
 };
 

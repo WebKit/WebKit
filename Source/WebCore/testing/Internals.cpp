@@ -7389,7 +7389,7 @@ String Internals::dumpStyleResolvers()
     document->updateStyleIfNeeded();
 
     unsigned currentIdentifier = 0;
-    HashMap<Style::Resolver*, unsigned> resolverIdentifiers;
+    UncheckedKeyHashMap<Style::Resolver*, unsigned> resolverIdentifiers;
 
     StringBuilder result;
 

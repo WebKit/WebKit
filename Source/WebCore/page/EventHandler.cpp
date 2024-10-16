@@ -4944,7 +4944,7 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
 
     // A different view on the 'touches' list above, filtered and grouped by event target. Used for the
     // 'targetTouches' list in the JS event.
-    typedef HashMap<EventTarget*, RefPtr<TouchList>> TargetTouchesMap;
+    typedef UncheckedKeyHashMap<EventTarget*, RefPtr<TouchList>> TargetTouchesMap;
     TargetTouchesMap touchesByTarget;
 
     // Array of touches per state, used to assemble the 'changedTouches' list in the JS event.

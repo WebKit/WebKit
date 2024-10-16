@@ -174,7 +174,7 @@ private:
 class SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR ObjectBase : public Value {
 private:
     friend class Value;
-    using DataStorage = HashMap<String, Ref<Value>>;
+    using DataStorage = UncheckedKeyHashMap<String, Ref<Value>>;
     using OrderStorage = Vector<String>;
 
 public:

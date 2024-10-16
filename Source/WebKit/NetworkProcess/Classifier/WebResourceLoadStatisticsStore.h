@@ -80,7 +80,7 @@ struct RegistrableDomainsToBlockCookiesFor {
     Vector<WebCore::RegistrableDomain> domainsToBlockAndDeleteCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsToBlockButKeepCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsWithUserInteractionAsFirstParty;
-    HashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccess;
+    UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> domainsWithStorageAccess;
     RegistrableDomainsToBlockCookiesFor isolatedCopy() const & { return { crossThreadCopy(domainsToBlockAndDeleteCookiesFor), crossThreadCopy(domainsToBlockButKeepCookiesFor), crossThreadCopy(domainsWithUserInteractionAsFirstParty), crossThreadCopy(domainsWithStorageAccess) }; }
     RegistrableDomainsToBlockCookiesFor isolatedCopy() && { return { crossThreadCopy(WTFMove(domainsToBlockAndDeleteCookiesFor)), crossThreadCopy(WTFMove(domainsToBlockButKeepCookiesFor)), crossThreadCopy(WTFMove(domainsWithUserInteractionAsFirstParty)), crossThreadCopy(WTFMove(domainsWithStorageAccess)) }; }
 };
@@ -140,7 +140,7 @@ public:
     void removeDataForDomain(const RegistrableDomain, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     void registrableDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&&);
-    void registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&&);
+    void registrableDomainsWithLastAccessedTime(CompletionHandler<void(std::optional<UncheckedKeyHashMap<RegistrableDomain, WallTime>>)>&&);
     void registrableDomainsExemptFromWebsiteDataDeletion(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     StorageAccessWasGranted grantStorageAccessInStorageSession(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, StorageAccessScope);
@@ -261,8 +261,8 @@ private:
     HashSet<RegistrableDomain> m_domainsWithEphemeralUserInteraction;
 
     HashSet<RegistrableDomain> m_domainsWithUserInteractionQuirk;
-    HashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;
-    HashMap<RegistrableDomain, std::pair<IsLoggedIn, std::optional<WebCore::LoginStatus>>> m_loginStatus;
+    UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;
+    UncheckedKeyHashMap<RegistrableDomain, std::pair<IsLoggedIn, std::optional<WebCore::LoginStatus>>> m_loginStatus;
 
     bool m_hasScheduledProcessStats { false };
     bool m_firstNetworkProcessCreated { false };
@@ -273,7 +273,7 @@ private:
         WallTime lastLoadTime;
     };
     using StorageAccessRequestRecordKey = std::pair<WebCore::FrameIdentifier, RegistrableDomain>;
-    HashMap<StorageAccessRequestRecordKey, StorageAccessRequestRecordValue> m_storageAccessRequestRecords;
+    UncheckedKeyHashMap<StorageAccessRequestRecordKey, StorageAccessRequestRecordValue> m_storageAccessRequestRecords;
 };
 
 } // namespace WebKit

@@ -149,7 +149,7 @@ TypeStore::TypeStore()
     m_atomicU32 = allocateType<Atomic>(m_u32);
 }
 
-const Type* TypeStore::structType(AST::Structure& structure, HashMap<String, const Type*>&& fields)
+const Type* TypeStore::structType(AST::Structure& structure, UncheckedKeyHashMap<String, const Type*>&& fields)
 {
     return allocateType<Struct>(structure, fields);
 }

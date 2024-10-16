@@ -277,7 +277,7 @@ private:
     mutable Vector<SingleThreadWeakPtr<RenderTableCol>> m_columnRenderers;
 
     unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
-    using EffectiveColumnIndexMap = HashMap<SingleThreadWeakRef<const RenderTableCol>, unsigned>;
+    using EffectiveColumnIndexMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderTableCol>, unsigned>;
     mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
 
     mutable SingleThreadWeakPtr<RenderTableSection> m_head;

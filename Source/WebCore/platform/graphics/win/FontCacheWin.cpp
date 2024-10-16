@@ -100,7 +100,7 @@ WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vecto
 
 static const Vector<String>* getLinkedFonts(String& family)
 {
-    static HashMap<String, Vector<String>*> systemLinkMap;
+    static UncheckedKeyHashMap<String, Vector<String>*> systemLinkMap;
     Vector<String>* result = systemLinkMap.get(family);
     if (result)
         return result;

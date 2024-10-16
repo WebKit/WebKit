@@ -43,8 +43,8 @@ public:
     TextTrackCueGeneric* find(InbandGenericCueIdentifier);
 
 private:
-    using CueToDataMap = HashMap<TextTrackCue*, InbandGenericCueIdentifier>;
-    using CueDataToCueMap = HashMap<InbandGenericCueIdentifier, RefPtr<TextTrackCueGeneric>>;
+    using CueToDataMap = UncheckedKeyHashMap<TextTrackCue*, InbandGenericCueIdentifier>;
+    using CueDataToCueMap = UncheckedKeyHashMap<InbandGenericCueIdentifier, RefPtr<TextTrackCueGeneric>>;
 
     CueToDataMap m_cueToDataMap;
     CueDataToCueMap m_dataToCueMap;

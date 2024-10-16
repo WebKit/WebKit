@@ -55,14 +55,14 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& userContentControllers()
+static UncheckedKeyHashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>& userContentControllers()
 {
-    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>> userContentControllers;
+    static NeverDestroyed<UncheckedKeyHashMap<UserContentControllerIdentifier, WeakPtr<WebUserContentController>>> userContentControllers;
 
     return userContentControllers;
 }
 
-typedef HashMap<ContentWorldIdentifier, std::pair<Ref<InjectedBundleScriptWorld>, unsigned>> WorldMap;
+typedef UncheckedKeyHashMap<ContentWorldIdentifier, std::pair<Ref<InjectedBundleScriptWorld>, unsigned>> WorldMap;
 
 static WorldMap& worldMap()
 {

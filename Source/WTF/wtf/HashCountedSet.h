@@ -32,7 +32,7 @@ template<typename Value, typename HashFunctions, typename Traits>
 class HashCountedSet final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    using ImplType = HashMap<Value, unsigned, HashFunctions, Traits>;
+    using ImplType = UncheckedKeyHashMap<Value, unsigned, HashFunctions, Traits>;
 public:
     using ValueType = Value;
     using iterator = typename ImplType::iterator;

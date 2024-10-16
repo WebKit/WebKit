@@ -71,9 +71,9 @@ struct PendingReply {
     RefPtr<WebKit::RemoteObjectRegistry> _remoteObjectRegistry;
 
     RetainPtr<NSMapTable> _remoteObjectProxies;
-    HashMap<String, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
+    UncheckedKeyHashMap<String, std::pair<RetainPtr<id>, RetainPtr<_WKRemoteObjectInterface>>> _exportedObjects;
 
-    HashMap<uint64_t, PendingReply> _pendingReplies;
+    UncheckedKeyHashMap<uint64_t, PendingReply> _pendingReplies;
 }
 
 - (void)registerExportedObject:(id)object interface:(_WKRemoteObjectInterface *)interface

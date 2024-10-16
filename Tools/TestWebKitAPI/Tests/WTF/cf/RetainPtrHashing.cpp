@@ -57,7 +57,7 @@ TEST(RetainPtrHashing, HashSet)
 
 TEST(RetainPtrHashing, HashMapKey)
 {
-    HashMap<RetainPtr<CFArrayRef>, int> map;
+    UncheckedKeyHashMap<RetainPtr<CFArrayRef>, int> map;
 
     RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
@@ -79,7 +79,7 @@ TEST(RetainPtrHashing, HashMapKey)
 
 TEST(RetainPtrHashing, HashMapValue)
 {
-    HashMap<int, RetainPtr<CFArrayRef>> map;
+    UncheckedKeyHashMap<int, RetainPtr<CFArrayRef>> map;
 
     RetainPtr<CFArrayRef> foo = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, nullptr));
 
