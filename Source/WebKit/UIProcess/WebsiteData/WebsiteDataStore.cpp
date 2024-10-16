@@ -163,6 +163,9 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(AuthenticatorManager::create())
 #endif
+#if ENABLE(DEVICE_ORIENTATION)
+    , m_deviceOrientationAndMotionAccessController(*this)
+#endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
     , m_webLockRegistry(WebCore::LocalWebLockRegistry::create())
 {

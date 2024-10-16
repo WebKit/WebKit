@@ -347,6 +347,7 @@ public:
 
 #if ENABLE(DEVICE_ORIENTATION)
     WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
+    Ref<WebDeviceOrientationAndMotionAccessController> protectedDeviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
 #endif
 
 #if HAVE(APP_SSO)
