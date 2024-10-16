@@ -88,7 +88,7 @@ void TZoneLog::osLogWithLineBuffer(const char* format, va_list list)
         return;
 
     char* nextBufferPtr = m_buffer + m_bufferCursor;
-    bool endsWithNewline = format[strlen(format) - 1] == '\n';
+    bool endsWithNewline = format[len - 1] == '\n';
 
     auto newCursor = vsnprintf(nextBufferPtr, s_osLogBufferSize - m_bufferCursor, format, list) + m_bufferCursor;
 
