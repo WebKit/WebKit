@@ -584,8 +584,8 @@ bool VideoPresentationManagerProxy::isPlayingVideoInEnhancedFullscreen() const
 
 RefPtr<PlatformVideoPresentationInterface> VideoPresentationManagerProxy::controlsManagerInterface()
 {
-    if (auto contextId = m_playbackSessionManagerProxy->controlsManagerContextId())
-        return ensureInterface(contextId);
+    if (auto contextId = protectedPlaybackSessionManagerProxy()->controlsManagerContextId())
+        return ensureInterface(*contextId);
     return nullptr;
 }
 
@@ -725,13 +725,13 @@ void VideoPresentationManagerProxy::requestBitmapImageForCurrentTime(PlaybackSes
         return;
     }
 
-    auto playerIdentifier = valueOrDefault(interface->playerIdentifier());
+    auto playerIdentifier = interface->playerIdentifier();
     if (!playerIdentifier) {
         completionHandler(std::nullopt);
         return;
     }
 
-    gpuProcess->requestBitmapImageForCurrentTime(page->protectedLegacyMainFrameProcess()->coreProcessIdentifier(), playerIdentifier, WTFMove(completionHandler));
+    gpuProcess->requestBitmapImageForCurrentTime(page->protectedLegacyMainFrameProcess()->coreProcessIdentifier(), *playerIdentifier, WTFMove(completionHandler));
 }
 
 void VideoPresentationManagerProxy::addVideoInPictureInPictureDidChangeObserver(const VideoInPictureInPictureDidChangeObserver& observer)

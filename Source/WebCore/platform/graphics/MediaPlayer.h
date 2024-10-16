@@ -338,7 +338,7 @@ public:
 
     virtual PlatformVideoTarget mediaPlayerVideoTarget() const { return nullptr; }
 
-    virtual MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const { return { }; }
+    virtual std::optional<MediaPlayerClientIdentifier> mediaPlayerClientIdentifier() const { return std::nullopt; }
 
 #if !RELEASE_LOG_DISABLED
     virtual uint64_t mediaPlayerLogIdentifier() { return 0; }
@@ -745,7 +745,7 @@ public:
     String audioOutputDeviceIdOverride() const;
     void audioOutputDeviceChanged();
 
-    MediaPlayerIdentifier identifier() const;
+    std::optional<MediaPlayerIdentifier> identifier() const;
     bool hasMediaEngine() const;
 
     std::optional<VideoFrameMetadata> videoFrameMetadata();
@@ -781,7 +781,7 @@ public:
     bool isInFullscreenOrPictureInPicture() const;
 
     PlatformVideoTarget videoTarget() const { return client().mediaPlayerVideoTarget(); }
-    MediaPlayerClientIdentifier clientIdentifier() const { return client().mediaPlayerClientIdentifier(); }
+    std::optional<MediaPlayerClientIdentifier> clientIdentifier() const { return client().mediaPlayerClientIdentifier(); }
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool supportsLinearMediaPlayer() const;

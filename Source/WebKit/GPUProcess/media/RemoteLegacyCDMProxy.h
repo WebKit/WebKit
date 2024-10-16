@@ -32,6 +32,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include <WebCore/LegacyCDM.h>
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,7 +42,7 @@ class RemoteLegacyCDMProxy
     : public IPC::MessageReceiver
     , public WebCore::LegacyCDMClient {
 public:
-    static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
+    static std::unique_ptr<RemoteLegacyCDMProxy> create(WeakPtr<RemoteLegacyCDMFactoryProxy>, std::optional<WebCore::MediaPlayerIdentifier>, std::unique_ptr<WebCore::LegacyCDM>&&);
     ~RemoteLegacyCDMProxy();
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
@@ -49,7 +50,7 @@ public:
 
 private:
     friend class RemoteLegacyCDMFactoryProxy;
-    RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, WebCore::MediaPlayerIdentifier&&, std::unique_ptr<WebCore::LegacyCDM>&&);
+    RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&&, std::optional<WebCore::MediaPlayerIdentifier>, std::unique_ptr<WebCore::LegacyCDM>&&);
 
     RefPtr<RemoteLegacyCDMFactoryProxy> protectedFactory() const { return m_factory.get(); }
 
@@ -62,13 +63,13 @@ private:
     void supportsMIMEType(const String&, SupportsMIMETypeCallback&&);
     using CreateSessionCallback = CompletionHandler<void(std::optional<RemoteLegacyCDMSessionIdentifier>&&)>;
     void createSession(const String&, uint64_t, CreateSessionCallback&&);
-    void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier>&&);
+    void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier> playerId) { m_playerId = playerId; }
 
     // LegacyCDMClient
     RefPtr<WebCore::MediaPlayer> cdmMediaPlayer(const WebCore::LegacyCDM*) const final;
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;
-    WebCore::MediaPlayerIdentifier m_playerId;
+    Markable<WebCore::MediaPlayerIdentifier> m_playerId;
     std::unique_ptr<WebCore::LegacyCDM> m_cdm;
 };
 

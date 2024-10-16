@@ -60,7 +60,7 @@ public:
 
     bool supportsMIMEType(const String&) final;
     std::unique_ptr<WebCore::LegacyCDMSession> createSession(WebCore::LegacyCDMSessionClient&) final;
-    void setPlayerId(WebCore::MediaPlayerIdentifier);
+    void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier>);
 
 private:
     RemoteLegacyCDM(WeakPtr<RemoteLegacyCDMFactory>&&, RemoteLegacyCDMIdentifier&&);

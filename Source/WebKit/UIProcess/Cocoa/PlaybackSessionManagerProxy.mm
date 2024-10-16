@@ -602,12 +602,12 @@ void PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID(PlaybackSes
         return;
 
     if (m_controlsManagerContextId)
-        removeClientForContext(m_controlsManagerContextId);
+        removeClientForContext(*m_controlsManagerContextId);
 
     m_controlsManagerContextId = contextId;
     m_controlsManagerContextIsVideo = isVideo;
-    ensureInterface(m_controlsManagerContextId)->ensureControlsManager();
-    addClientForContext(m_controlsManagerContextId);
+    ensureInterface(*m_controlsManagerContextId)->ensureControlsManager();
+    addClientForContext(*m_controlsManagerContextId);
 
     if (RefPtr page = m_page.get())
         page->videoControlsManagerDidChange();
@@ -618,8 +618,8 @@ void PlaybackSessionManagerProxy::clearPlaybackControlsManager()
     if (!m_controlsManagerContextId)
         return;
 
-    removeClientForContext(m_controlsManagerContextId);
-    m_controlsManagerContextId = { };
+    removeClientForContext(*m_controlsManagerContextId);
+    m_controlsManagerContextId = std::nullopt;
     m_controlsManagerContextIsVideo = false;
 
     if (RefPtr page = m_page.get())
@@ -997,7 +997,10 @@ void PlaybackSessionManagerProxy::setSoundStageSize(PlaybackSessionContextIdenti
 
 bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 {
-    auto it = m_contextMap.find(m_controlsManagerContextId);
+    if (!m_controlsManagerContextId)
+        return true;
+
+    auto it = m_contextMap.find(*m_controlsManagerContextId);
     if (it == m_contextMap.end())
         return true;
 
@@ -1007,7 +1010,7 @@ bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (RefPtr page = m_page.get(); m_controlsManagerContextId)
-        page->protectedLegacyMainFrameProcess()->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(m_controlsManagerContextId), page->webPageIDInMainFrameProcess());
+        page->protectedLegacyMainFrameProcess()->send(Messages::PlaybackSessionManager::HandleControlledElementIDRequest(*m_controlsManagerContextId), page->webPageIDInMainFrameProcess());
 }
 
 RefPtr<PlatformPlaybackSessionInterface> PlaybackSessionManagerProxy::controlsManagerInterface()
@@ -1015,7 +1018,7 @@ RefPtr<PlatformPlaybackSessionInterface> PlaybackSessionManagerProxy::controlsMa
     if (!m_controlsManagerContextId)
         return nullptr;
 
-    return ensureInterface(m_controlsManagerContextId);
+    return ensureInterface(*m_controlsManagerContextId);
 }
 
 bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier identifier) const

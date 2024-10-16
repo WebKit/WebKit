@@ -295,12 +295,12 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
     auto previousContextId = m_controlsManagerContextId;
     m_controlsManagerContextId = contextId;
     if (previousContextId)
-        removeClientForContext(previousContextId);
+        removeClientForContext(*previousContextId);
 
-    addClientForContext(m_controlsManagerContextId);
+    addClientForContext(*m_controlsManagerContextId);
 
     m_page->videoControlsManagerDidChange();
-    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(m_controlsManagerContextId, mediaElement.isVideo()));
+    m_page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(*m_controlsManagerContextId, mediaElement.isVideo()));
 }
 
 void PlaybackSessionManager::clearPlaybackControlsManager()
@@ -308,8 +308,8 @@ void PlaybackSessionManager::clearPlaybackControlsManager()
     if (!m_controlsManagerContextId)
         return;
 
-    removeClientForContext(m_controlsManagerContextId);
-    m_controlsManagerContextId = { };
+    removeClientForContext(*m_controlsManagerContextId);
+    m_controlsManagerContextId = std::nullopt;
 
     m_page->videoControlsManagerDidChange();
     m_page->send(Messages::PlaybackSessionManagerProxy::ClearPlaybackControlsManager());
@@ -334,7 +334,7 @@ void PlaybackSessionManager::mediaEngineChanged(HTMLMediaElement& mediaElement)
     if (!m_controlsManagerContextId)
         return;
 
-    auto it = m_contextMap.find(m_controlsManagerContextId);
+    auto it = m_contextMap.find(*m_controlsManagerContextId);
     if (it == m_contextMap.end())
         return;
 
@@ -353,7 +353,7 @@ WebCore::HTMLMediaElement* PlaybackSessionManager::currentPlaybackControlsElemen
     if (!m_controlsManagerContextId)
         return nullptr;
 
-    auto iter = m_contextMap.find(m_controlsManagerContextId);
+    auto iter = m_contextMap.find(*m_controlsManagerContextId);
     if (iter == m_contextMap.end())
         return nullptr;
 

@@ -200,12 +200,12 @@ WebMediaSessionManager::WebMediaSessionManager()
 
 WebMediaSessionManager::~WebMediaSessionManager() = default;
 
-PlaybackTargetClientContextIdentifier WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId)
+std::optional<PlaybackTargetClientContextIdentifier> WebMediaSessionManager::addPlaybackTargetPickerClient(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId)
 {
     size_t index = find(&client, contextId);
     ASSERT(index == notFound);
     if (index != notFound)
-        return { };
+        return std::nullopt;
 
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, contextId.toUInt64());
     m_clientState.append(makeUnique<ClientState>(client, contextId));

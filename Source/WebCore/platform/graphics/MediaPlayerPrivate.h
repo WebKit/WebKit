@@ -331,7 +331,7 @@ public:
 
     virtual void audioOutputDeviceChanged() { }
 
-    virtual MediaPlayerIdentifier identifier() const { return { }; }
+    virtual std::optional<MediaPlayerIdentifier> identifier() const { return std::nullopt; }
 
     virtual bool supportsPlayAtHostTime() const { return false; }
     virtual bool supportsPauseAtHostTime() const { return false; }

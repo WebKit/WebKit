@@ -59,16 +59,6 @@ header: <wtf/text/AtomString.h>
     [Validator='((static_cast<UInt128>(*high) << 64) | *low) != WTF::UUID::deletedValue'] uint64_t low();
 }
 
-template: struct WebCore::MediaKeySystemRequestIdentifierType
-template: struct WebCore::MediaPlayerIdentifierType
-template: struct WebCore::MediaPlayerClientIdentifierType
-template: struct WebCore::MediaSessionIdentifierType
-template: struct WebCore::ModelPlayerIdentifierType
-template: struct WebCore::PlaybackTargetClientContextIdentifierType
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::LegacyNullableObjectIdentifier {
-    [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
-}
-
 header: <wtf/ObjectIdentifier.h>
 template: class WebKit::WebURLSchemeHandler
 template: enum class WebCore::AXIDType
@@ -130,9 +120,15 @@ template: struct WebCore::AttributedStringTextTableIDType
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::DictationContextType
 template: struct WebCore::FrameIdentifierType
+template: struct WebCore::MediaKeySystemRequestIdentifierType
+template: struct WebCore::MediaPlayerIdentifierType
+template: struct WebCore::MediaPlayerClientIdentifierType
+template: struct WebCore::MediaSessionIdentifierType
+template: struct WebCore::ModelPlayerIdentifierType
 template: struct WebCore::NavigationIdentifierType
 template: struct WebCore::PageIdentifierType
 template: struct WebCore::PlatformLayerIdentifierType
+template: struct WebCore::PlaybackTargetClientContextIdentifierType
 template: struct WebCore::ScrollingNodeIDType
 template: struct WebCore::SharedWorkerObjectIdentifierType
 template: struct WebCore::SleepDisablerIdentifierType

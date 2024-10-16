@@ -36,14 +36,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteLegacyCDMProxy> RemoteLegacyCDMProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy> factory, MediaPlayerIdentifier&& playerId, std::unique_ptr<WebCore::LegacyCDM>&& cdm)
+std::unique_ptr<RemoteLegacyCDMProxy> RemoteLegacyCDMProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy> factory, std::optional<MediaPlayerIdentifier> playerId, std::unique_ptr<WebCore::LegacyCDM>&& cdm)
 {
-    return std::unique_ptr<RemoteLegacyCDMProxy>(new RemoteLegacyCDMProxy(WTFMove(factory), WTFMove(playerId), WTFMove(cdm)));
+    return std::unique_ptr<RemoteLegacyCDMProxy>(new RemoteLegacyCDMProxy(WTFMove(factory), playerId, WTFMove(cdm)));
 }
 
-RemoteLegacyCDMProxy::RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, MediaPlayerIdentifier&& playerId, std::unique_ptr<WebCore::LegacyCDM>&& cdm)
+RemoteLegacyCDMProxy::RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, std::optional<MediaPlayerIdentifier> playerId, std::unique_ptr<WebCore::LegacyCDM>&& cdm)
     : m_factory(WTFMove(factory))
-    , m_playerId(WTFMove(playerId))
+    , m_playerId(playerId)
     , m_cdm(WTFMove(cdm))
 {
     m_cdm->setClient(this);
@@ -75,13 +75,6 @@ void RemoteLegacyCDMProxy::createSession(const String& keySystem, uint64_t logId
     callback(WTFMove(sessionIdentifier));
 }
 
-void RemoteLegacyCDMProxy::setPlayerId(std::optional<MediaPlayerIdentifier>&& playerId)
-{
-    if (!playerId)
-        m_playerId = { };
-    m_playerId = WTFMove(*playerId);
-}
-
 RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
 {
     RefPtr factory = m_factory.get();
@@ -92,7 +85,7 @@ RefPtr<MediaPlayer> RemoteLegacyCDMProxy::cdmMediaPlayer(const LegacyCDM*) const
     if (!gpuConnectionToWebProcess)
         return nullptr;
 
-    return gpuConnectionToWebProcess->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(m_playerId);
+    return gpuConnectionToWebProcess->protectedRemoteMediaPlayerManagerProxy()->mediaPlayer(*m_playerId);
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMProxy::sharedPreferencesForWebProcess() const

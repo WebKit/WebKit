@@ -430,19 +430,19 @@ void VideoPresentationManager::exitVideoFullscreenForVideoElement(HTMLVideoEleme
 
     ASSERT(m_page);
 
-    if (!m_videoElements.contains(videoElement)) {
+    auto contextId = m_videoElements.get(videoElement);
+    if (!contextId) {
         completionHandler(false);
         return;
     }
 
-    auto contextId = m_videoElements.get(videoElement);
-    auto interface = ensureInterface(contextId);
+    auto interface = ensureInterface(*contextId);
     if (interface->animationState() != VideoPresentationInterfaceContext::AnimationType::None) {
         completionHandler(false);
         return;
     }
 
-    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, videoElementPtr = &videoElement, interface = WTFMove(interface), completionHandler = WTFMove(completionHandler)](auto success) mutable {
+    m_page->sendWithAsyncReply(Messages::VideoPresentationManagerProxy::ExitFullscreen(*contextId, inlineVideoFrame(videoElement)), [protectedThis = Ref { *this }, this, videoElementPtr = &videoElement, interface = WTFMove(interface), completionHandler = WTFMove(completionHandler)](auto success) mutable {
         if (!success) {
             completionHandler(false);
             return;
@@ -463,24 +463,16 @@ void VideoPresentationManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVid
 
     ASSERT(m_page);
 
-    if (!m_videoElements.contains(videoElement))
+    auto contextId = m_videoElements.get(videoElement);
+    if (!contextId)
         return;
 
     if (m_videoElementInPictureInPicture == &videoElement)
         m_videoElementInPictureInPicture = nullptr;
 
-    auto contextId = m_videoElements.get(videoElement);
-    if (!contextId.isValid()) {
-        // We have somehow managed to be asked to exit video fullscreen
-        // for a video element which was either never in fullscreen or
-        // has already been removed. Bail.
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    setCurrentlyInFullscreen(ensureInterface(*contextId), false);
 
-    setCurrentlyInFullscreen(ensureInterface(contextId), false);
-
-    m_page->send(Messages::VideoPresentationManagerProxy::ExitFullscreenWithoutAnimationToMode(contextId, targetMode));
+    m_page->send(Messages::VideoPresentationManagerProxy::ExitFullscreenWithoutAnimationToMode(*contextId, targetMode));
 }
 
 void VideoPresentationManager::setVideoFullscreenMode(HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
@@ -489,17 +481,12 @@ void VideoPresentationManager::setVideoFullscreenMode(HTMLVideoElement& videoEle
 
     ASSERT(m_page);
 
-    if (!m_videoElements.contains(videoElement))
-        return;
-
     auto contextId = m_videoElements.get(videoElement);
-    if (!contextId.isValid()) {
-        ASSERT_NOT_REACHED();
+    if (!contextId)
         return;
-    }
 
     if (m_page)
-        m_page->send(Messages::VideoPresentationManagerProxy::SetVideoFullscreenMode(contextId, mode));
+        m_page->send(Messages::VideoPresentationManagerProxy::SetVideoFullscreenMode(*contextId, mode));
 }
 
 void VideoPresentationManager::clearVideoFullscreenMode(HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
@@ -508,17 +495,12 @@ void VideoPresentationManager::clearVideoFullscreenMode(HTMLVideoElement& videoE
 
     ASSERT(m_page);
 
-    if (!m_videoElements.contains(videoElement))
-        return;
-
     auto contextId = m_videoElements.get(videoElement);
-    if (!contextId.isValid()) {
-        ASSERT_NOT_REACHED();
+    if (!contextId)
         return;
-    }
 
     if (m_page)
-        m_page->send(Messages::VideoPresentationManagerProxy::ClearVideoFullscreenMode(contextId, mode));
+        m_page->send(Messages::VideoPresentationManagerProxy::ClearVideoFullscreenMode(*contextId, mode));
 }
 
 #pragma mark Interface to VideoPresentationInterfaceContext:
@@ -830,7 +812,9 @@ void VideoPresentationManager::updateTextTrackRepresentationForVideoElement(WebC
     if (!m_page)
         return;
     auto contextId = m_videoElements.get(videoElement);
-    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationUpdate(contextId, WTFMove(textTrack)));
+    if (!contextId)
+        return;
+    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationUpdate(*contextId, WTFMove(textTrack)));
 }
 
 void VideoPresentationManager::setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement& videoElement, float scale)
@@ -838,7 +822,9 @@ void VideoPresentationManager::setTextTrackRepresentationContentScaleForVideoEle
     if (!m_page)
         return;
     auto contextId = m_videoElements.get(videoElement);
-    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationSetContentsScale(contextId, scale));
+    if (!contextId)
+        return;
+    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationSetContentsScale(*contextId, scale));
 
 }
 
@@ -847,7 +833,9 @@ void VideoPresentationManager::setTextTrackRepresentationIsHiddenForVideoElement
     if (!m_page)
         return;
     auto contextId = m_videoElements.get(videoElement);
-    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationSetHidden(contextId, hidden));
+    if (!contextId)
+        return;
+    m_page->send(Messages::VideoPresentationManagerProxy::TextTrackRepresentationSetHidden(*contextId, hidden));
 
 }
 

@@ -261,7 +261,7 @@ private:
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
 
-    PlaybackSessionContextIdentifier controlsManagerContextId() const { return m_controlsManagerContextId; }
+    std::optional<PlaybackSessionContextIdentifier> controlsManagerContextId() const { return m_controlsManagerContextId; }
 
     // Messages from PlaybackSessionManager
     void setUpPlaybackControlsManagerWithID(PlaybackSessionContextIdentifier, bool isVideo);
@@ -336,7 +336,7 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
-    PlaybackSessionContextIdentifier m_controlsManagerContextId;
+    Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     bool m_controlsManagerContextIsVideo { false };
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 

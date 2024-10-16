@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct PlaybackTargetClientContextIdentifierType;
-using PlaybackTargetClientContextIdentifier = LegacyNullableObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
+using PlaybackTargetClientContextIdentifier = ObjectIdentifier<PlaybackTargetClientContextIdentifierType>;
 
 }
 
