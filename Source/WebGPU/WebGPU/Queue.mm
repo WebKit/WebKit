@@ -736,7 +736,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     if (isCompressed && (widthMismatch || multipleOfBlockSize)) {
 
         const auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
-        auto checkedNewBytesPerImage = checkedProduct<uint32_t>(newBytesPerRow, std::max<size_t>(blockHeight, logicalSize.height / blockHeight), logicalSize.height % blockHeight ? 1 : 0);
+        auto checkedNewBytesPerImage = checkedProduct<uint32_t>(newBytesPerRow, std::max<size_t>(blockHeight, logicalSize.height / blockHeight));
         if (checkedNewBytesPerImage.hasOverflowed())
             return;
         auto newBytesPerImage = checkedNewBytesPerImage.value();
