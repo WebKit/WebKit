@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Error: assert_equals: expected 2 but got 1
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT NavigationHistoryEntry's key and id on cross-document back navigation Test timed out
+PASS NavigationHistoryEntry's key and id on cross-document back navigation
 

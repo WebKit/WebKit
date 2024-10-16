@@ -352,14 +352,34 @@ public:
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (page->backForward().currentItem() == historyItem.ptr()) {
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+        if (frame.isMainFrame()) {
+            if (page->backForward().currentItem() == historyItem.ptr()) {
+                if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
+                    localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+                return;
+            }
+
+            auto completionHandler = std::exchange(m_completionHandler, nullptr);
+            page->goToItem(page->mainFrame(), historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+            completionHandler(ScheduleHistoryNavigationResult::Completed);
+            return;
+        }
+
+        // If we are not the main frame then we need to do some work to only traverse the subframe.
+        RefPtr currentItem = page->backForward().currentItem();
+        if (!currentItem) {
+            m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
+            return;
+        }
+
+        RefPtr newItem = currentItem->copy();
+        if (!newItem->recursiveReplaceChildItem(WTFMove(historyItem))) {
+            m_completionHandler(ScheduleHistoryNavigationResult::Aborted);
             return;
         }
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
-        page->goToItem(page->mainFrame(), historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        page->goToItem(page->mainFrame(), *newItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
         completionHandler(ScheduleHistoryNavigationResult::Completed);
     }
 

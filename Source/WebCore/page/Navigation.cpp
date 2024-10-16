@@ -120,13 +120,14 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
     RefPtr currentItem = frame()->history().currentItem();
     if (!currentItem)
         return;
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(frame()->frameID() == currentItem->frameID());
+
     // For main frames we can still rely on the page b/f list. However for subframes we need below logic to not lose the bookkeeping done in the previous window.
     if (previousWindow && !frame()->isMainFrame()) {
         Ref previousNavigation = previousWindow->protectedNavigation();
         bool shouldProcessPreviousNavigationEntries = [&]() {
             if (!previousNavigation->m_entries.size())
-                return false;
-            if (navigationType == NavigationNavigationType::Traverse)
                 return false;
             if (!frame()->document()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->document()->protectedSecurityOrigin()))
                 return false;
@@ -135,11 +136,22 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
         if (shouldProcessPreviousNavigationEntries) {
             for (auto& entry : previousNavigation->m_entries)
                 m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), entry.get()));
-            m_currentEntryIndex = previousNavigation->m_currentEntryIndex;
-            if (navigationType == NavigationNavigationType::Reload) {
-                updateForActivation(currentItem.get(), navigationType);
-                return;
+
+            Ref previousEntry = m_entries[*previousNavigation->m_currentEntryIndex];
+
+            if (navigationType == NavigationNavigationType::Push) {
+                m_entries.resize(*previousNavigation->m_currentEntryIndex + 1); // Prune forward entries.
+                m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), *currentItem));
             }
+
+            if (navigationType == NavigationNavigationType::Replace)
+                m_entries[*previousNavigation->m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), *currentItem);
+
+            m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
+
+            if (navigationType)
+                m_activation = NavigationActivation::create(*navigationType, *currentEntry(), WTFMove(previousEntry));
+            return;
         }
     }
 
@@ -223,7 +235,7 @@ RefPtr<NavigationActivation> Navigation::createForPageswapEvent(HistoryItem* new
     if (frame()->document() && frame()->document()->settings().navigationAPIEnabled())
         oldEntry = currentEntry();
     else if (RefPtr currentItem = frame()->checkedHistory()->currentItem())
-        oldEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *currentItem);
+        oldEntry = NavigationHistoryEntry::create(scriptExecutionContext(), *currentItem); // FIXME
 
     RefPtr<NavigationHistoryEntry> newEntry;
     if (*type == NavigationNavigationType::Reload) {

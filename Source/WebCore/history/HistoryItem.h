@@ -165,6 +165,7 @@ public:
     WEBCORE_EXPORT HistoryItem* childItemWithFrameID(FrameIdentifier);
     HistoryItem* childItemWithDocumentSequenceNumber(long long number);
     WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const;
+    bool recursiveReplaceChildItem(HistoryItem&);
     void clearChildren();
     
     bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;

@@ -1,4 +1,4 @@
 
 
-FAIL navigation.activation after replace assert_equals: expected 1 but got 2
+PASS navigation.activation after replace
 

@@ -1,4 +1,4 @@
 
 
-FAIL cross-document traverseTo(), back(), and forward() assert_equals: expected 2 but got 1
+PASS cross-document traverseTo(), back(), and forward()
 

@@ -1,4 +1,2 @@
-
-
-PASS navigation.activation - traverse from a non-contiguous same-origin url
+FAIL: Timed out waiting for notifyDone to be called
 

@@ -1,4 +1,4 @@
 
 
-FAIL entry.getState() behavior after navigating away and back assert_equals: expected 2 but got 1
+PASS entry.getState() behavior after navigating away and back
 

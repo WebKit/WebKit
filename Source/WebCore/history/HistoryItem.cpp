@@ -323,6 +323,23 @@ void HistoryItem::setNavigationAPIStateObject(RefPtr<SerializedScriptValue>&& ob
     m_navigationAPIStateObject = WTFMove(object);
 }
 
+bool HistoryItem::recursiveReplaceChildItem(HistoryItem& child)
+{
+    ASSERT(child.frameID());
+
+    for (size_t i = 0; i < m_children.size(); i++) {
+        Ref existingChild = m_children[i];
+        if (existingChild->frameID() == child.frameID()) {
+            m_children[i] = child;
+            return true;
+        }
+        if (existingChild->recursiveReplaceChildItem(child))
+            return true;
+    }
+
+    return false;
+}
+
 void HistoryItem::addChildItem(Ref<HistoryItem>&& child)
 {
     ASSERT(!child->frameID() || !childItemWithFrameID(*child->frameID()));
@@ -480,7 +497,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
         prefix.append("  "_span);
     prefix.append('\0');
 
-    fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
+    fprintf(stderr, "%s+-%s (%p) (id=%s) (frame=%s) (item=%ld)\n", prefix.data(), m_urlString.utf8().data(), this, m_identifier.toString().utf8().data(), m_frameID->toString().utf8().data(), m_itemSequenceNumber);
     
     int totalSubItems = 0;
     for (unsigned i = 0; i < m_children.size(); ++i)
