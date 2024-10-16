@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BackForwardItemIdentifier.h"
 #include "HistoryItem.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -72,6 +73,9 @@ public:
     void markPagesForCaptionPreferencesChanged();
 #endif
 
+    bool isInBackForwardCache(BackForwardItemIdentifier) const;
+    bool hasCachedPageExpired(BackForwardItemIdentifier) const;
+
 private:
     BackForwardCache();
     ~BackForwardCache() = delete; // Make sure nobody accidentally calls delete -- WebCore does not delete singletons.
@@ -83,7 +87,8 @@ private:
     void prune(PruningReason);
     void dump() const;
 
-    ListHashSet<RefPtr<HistoryItem>> m_items;
+    HashMap<BackForwardItemIdentifier, std::variant<PruningReason, UniqueRef<CachedPage>>> m_cachedPageMap;
+    ListHashSet<BackForwardItemIdentifier> m_items;
     unsigned m_maxSize {0};
 
 #if ASSERT_ENABLED

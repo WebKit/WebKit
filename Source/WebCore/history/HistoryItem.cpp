@@ -59,7 +59,6 @@ HistoryItem::HistoryItem(Client& client, const String& urlString, const String& 
     , m_originalURLString(urlString)
     , m_title(title)
     , m_displayTitle(alternateTitle)
-    , m_pruningReason(PruningReason::None)
     , m_identifier(identifier ? *identifier : BackForwardItemIdentifier::generate())
     , m_uuidIdentifier(WTF::UUID::createVersion4Weak())
     , m_client(client)
@@ -68,7 +67,7 @@ HistoryItem::HistoryItem(Client& client, const String& urlString, const String& 
 
 HistoryItem::~HistoryItem()
 {
-    ASSERT(!m_cachedPage);
+    ASSERT(!BackForwardCache::singleton().isInBackForwardCache(m_identifier));
 }
 
 HistoryItem::HistoryItem(const HistoryItem& item)
@@ -90,7 +89,6 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_documentSequenceNumber(item.m_documentSequenceNumber)
     , m_formData(item.m_formData ? RefPtr<FormData> { item.m_formData->copy() } : nullptr)
     , m_formContentType(item.m_formContentType)
-    , m_pruningReason(PruningReason::None)
 #if PLATFORM(IOS_FAMILY)
     , m_obscuredInsets(item.m_obscuredInsets)
     , m_scale(item.m_scale)
@@ -156,25 +154,14 @@ const String& HistoryItem::alternateTitle() const
     return m_displayTitle;
 }
 
+bool HistoryItem::isInBackForwardCache() const
+{
+    return BackForwardCache::singleton().isInBackForwardCache(m_identifier);
+}
+
 bool HistoryItem::hasCachedPageExpired() const
 {
-    return m_cachedPage ? m_cachedPage->hasExpired() : false;
-}
-
-void HistoryItem::setCachedPage(std::unique_ptr<CachedPage>&& cachedPage)
-{
-    bool wasInBackForwardCache = isInBackForwardCache();
-    m_cachedPage = WTFMove(cachedPage);
-    if (wasInBackForwardCache != isInBackForwardCache())
-        notifyChanged();
-}
-
-std::unique_ptr<CachedPage> HistoryItem::takeCachedPage()
-{
-    ASSERT(m_cachedPage);
-    auto cachedPage = std::exchange(m_cachedPage, nullptr);
-    notifyChanged();
-    return cachedPage;
+    return BackForwardCache::singleton().hasCachedPageExpired(m_identifier);
 }
 
 URL HistoryItem::url() const
