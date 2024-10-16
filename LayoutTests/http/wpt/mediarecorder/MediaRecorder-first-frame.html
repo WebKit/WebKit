@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder First Frame Check</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../common/canvas-tests.js"></script>
+    <link rel="stylesheet" href="../common/canvas-tests.css">
+</head>
+<body>
+<script>
+    function arraysAreApproximatelyEqual(array, expected, tolerance) {
+        if (array.length != expected.length)
+            return false;
+
+        for (var index in array) {
+            if (Math.abs(array[index] - expected[index]) <= tolerance)
+                continue;
+            return false;
+        }
+        return true;
+    }
+
+    function runTest(t, mimeType) {
+        const video = document.createElement('video');
+        video.playsinline = true;
+        video.muted = true;
+        document.body.appendChild(video);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        let stream = canvas.captureStream(24.0);
+        let context = canvas.getContext("2d");
+
+        let audioContext = new AudioContext({sampleRate: 48000});
+        audioContext.suspend();
+        let destination = audioContext.createMediaStreamDestination();
+        let hum = audioContext.createOscillator();
+        let humGain = audioContext.createGain();
+        hum.connect(humGain);
+        hum.frequency.value = 125.0;
+        humGain.gain.value = 0.10;
+        humGain.connect(destination);
+        humGain.connect(audioContext.destination);
+        hum.start(0);
+        let audioTrack = destination.stream.getTracks()[0];
+        stream.addTrack(audioTrack);
+
+        let doRedImageDraw = () => {
+            context.fillStyle = "#ff0000";
+            context.fillRect(0, 0, 640, 480);
+        }
+
+        let doGreenImageDraw = () => {
+            context.fillStyle = "#00ff00";
+            context.fillRect(0, 0, 640, 480);
+        };
+
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+            assert_true(false, `MediaRecorder with ${mimeType} is not supported`);
+            t.done();
+            return;
+        }
+
+        const recorder = new MediaRecorder(stream, { mimeType });
+        let blobs;
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+            assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+            assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+            assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+            if (!blobEvent.data.size)
+                return;
+            blobs = new Blob([blobs, event.data]);
+            video.src = URL.createObjectURL(blobEvent.data);
+            video.load();
+        });
+
+        video.onerror = () => {
+            assert_not_reached();
+        };
+
+        video.onloadedmetadata = t.step_func(e => {
+            assert_true(video.readyState >= video.HAVE_METADATA, "we've obtained the video's metadata");
+            assert_equals(video.videoWidth, 640, "video has the right width");
+            assert_equals(video.videoHeight, 480, "video has the right height");
+        });
+
+        video.onloadeddata = t.step_func(e => {
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            // We leave some time for the first frame to be painted.
+            setTimeout(t.step_func_done(() => {
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                let pixelData = ctx.getImageData(10, 10, 1, 1).data;
+                let redColorTVRange = new Uint8ClampedArray([245, 35, 0, 255]);
+                let redColorFullRange = new Uint8ClampedArray([255, 0, 0, 255]);
+                assert_true(arraysAreApproximatelyEqual(pixelData, redColorTVRange, 10) || arraysAreApproximatelyEqual(pixelData, redColorFullRange, 10), "pixel is approximately red");
+            }), 100);
+        });
+
+        doRedImageDraw();
+        recorder.start();
+        assert_equals(stream.getTracks().length, 2, "MediaStream has two tracks");
+        audioContext.resume();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        let interval = setInterval(() => {
+            doGreenImageDraw();
+            if (stream.getTracks()[0] instanceof CanvasCaptureMediaStreamTrack)
+                stream.getTracks()[0].requestFrame();
+        }, 41); // wait the duration of one frame before drawing green.
+        setTimeout(() => {
+            recorder.stop();
+            audioContext.suspend();
+            clearInterval(interval);
+        }, 500);
+    }
+
+    async_test(t => runTest(t, "video/mp4"), "Verify MP4 MediaRecorder doesn't drop first frame");
+
+    async_test(t => runTest(t, "video/webm"), "Verify WebM MediaRecorder doesn't drop first frame");
+</script>
+</body>
+</html>

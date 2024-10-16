@@ -317,9 +317,6 @@ void MediaRecorderPrivateWriterWebM::appendVideoFrame(Ref<VideoFrame>&& frame)
         });
     }
 
-    if (!m_hasStartedWriting) // We don't record video frames received before the first audio frame.
-        return;
-
     // We take the time before m_firstVideoFrameAudioTime is set so that the first frame will always apepar to have a timestamp of 0 but with a longer duration.
     auto sampleTime = m_firstVideoFrameAudioTime ? nextVideoFrameTime() : resumeVideoTime();
 
