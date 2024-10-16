@@ -1089,6 +1089,16 @@ void RenderView::unregisterContainerQueryBox(const RenderBox& box)
     m_containerQueryBoxes.remove(box);
 }
 
+void RenderView::registerAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.add(renderer);
+}
+
+void RenderView::unregisterAnchor(const RenderBoxModelObject& renderer)
+{
+    m_anchors.remove(renderer);
+}
+
 void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
 {
     m_countersNeedingUpdate.add(renderer);

@@ -136,6 +136,18 @@ static FirstLetterRemainingTextMap& firstLetterRemainingTextMap()
     return map;
 }
 
+void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+{
+    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+
+    if (!style().anchorNames().isEmpty())
+        view().registerAnchor(*this);
+    else if (oldStyle && !oldStyle->anchorNames().isEmpty())
+        view().unregisterAnchor(*this);
+
+    RenderLayerModelObject::styleWillChange(diff, newStyle);
+}
+
 void RenderBoxModelObject::setSelectionState(HighlightState state)
 {
     if (state == HighlightState::Inside && selectionState() != HighlightState::None)
