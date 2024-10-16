@@ -46,8 +46,6 @@
 #include <pal/spi/cocoa/NetworkSPI.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 #define RTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - NetworkRTCMonitor::" fmt, this, ##__VA_ARGS__)
@@ -213,7 +211,7 @@ static UncheckedKeyHashMap<String, RTCNetwork> gatherNetworkMap()
 
         auto name = span(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
-        auto networkKey = makeString(StringView { name }, "-"_s, prefixLength, "-"_s, StringView { std::span(prefixString.c_str(), prefixString.length()) });
+        auto networkKey = makeString(StringView { name }, "-"_s, prefixLength, "-"_s, StringView { makeSpan(prefixString) });
 
         networkMap.ensure(networkKey, [&] {
             return RTCNetwork { name, networkKey.utf8().span(), address->second, prefixLength, interfaceAdapterType(iterator->ifa_name), 0, 0, true, false, scopeID, { } };
@@ -339,14 +337,10 @@ static bool isEqual(const Vector<RTCNetwork::InterfaceAddress>& a, const Vector<
     if (a.size() != b.size())
         return false;
 
-    auto iteratorA = a.begin();
-    auto iteratorB = b.begin();
-
-    while (iteratorA != a.end()) {
-        if (!isEqual(*iteratorA++, *iteratorB++))
+    for (size_t i = 0; i < a.size(); ++i) {
+        if (!isEqual(a[i], b[i]))
             return false;
     }
-
     return true;
 }
 
@@ -366,7 +360,7 @@ static bool sortNetworks(const RTCNetwork& a, const RTCNetwork& b)
     if (precedenceA != precedenceB)
         return precedenceA < precedenceB;
 
-    return codePointCompare(StringView { std::span(a.description.data(), a.description.size()) }, StringView { std::span(b.description.data(), b.description.size()) }) < 0;
+    return codePointCompare(StringView { a.description.span() }, StringView { b.description.span() }) < 0;
 }
 
 void NetworkManager::onGatheredNetworks(RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6, UncheckedKeyHashMap<String, RTCNetwork>&& networkMap)
@@ -474,7 +468,5 @@ void NetworkRTCMonitor::deref()
 } // namespace WebKit
 
 #undef RTC_RELEASE_LOG
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

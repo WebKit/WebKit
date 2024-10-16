@@ -45,8 +45,6 @@
 #include <WebCore/ServiceWorkerContextData.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -159,7 +157,7 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
 
     std::optional<std::span<const uint8_t>> ipcData;
     if (data)
-        ipcData = std::span<const uint8_t> { data->data(), data->size() };
+        ipcData = data->span();
     sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTFMove(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed, std::optional<NotificationPayload>&& resultPayload) mutable {
         if (CheckedPtr checkedThis = weakThis.get(); checkedThis && !--checkedThis->m_processingFunctionalEventCount)
             checkedThis->protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { checkedThis->webProcessIdentifier() }, 0);
@@ -445,5 +443,3 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
 
 #undef MESSAGE_CHECK
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

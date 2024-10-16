@@ -422,8 +422,6 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
@@ -1441,7 +1439,7 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
 #if PLATFORM(COCOA)
     auto accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty()) {
-        registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
+        registerWebProcessAccessibilityToken(accessibilityToken.span());
     }
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -15475,5 +15473,3 @@ Ref<BrowsingContextGroup> WebPageProxy::protectedBrowsingContextGroup() const
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK_URL
 #undef MESSAGE_CHECK
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
