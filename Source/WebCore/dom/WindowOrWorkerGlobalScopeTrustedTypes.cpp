@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerGlobalScopeTrustedTypes);
+
 class DOMWindowTrustedTypes : public Supplement<LocalDOMWindow>, public LocalDOMWindowProperty {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DOMWindowTrustedTypes);
 public:
