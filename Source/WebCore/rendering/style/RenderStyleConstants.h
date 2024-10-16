@@ -991,16 +991,6 @@ enum class ImageRendering : uint8_t {
     Pixelated
 };
 
-enum class ImageResolutionSource : bool {
-    Specified,
-    FromImage
-};
-
-enum class ImageResolutionSnap : bool {
-    None,
-    Pixels
-};
-
 enum class Order : bool {
     Logical,
     Visual

@@ -155,8 +155,6 @@ enum class GridTrackSizingDirection : uint8_t;
 enum class HangingPunctuation : uint8_t;
 enum class Hyphens : uint8_t;
 enum class ImageRendering : uint8_t;
-enum class ImageResolutionSnap : bool;
-enum class ImageResolutionSource : bool;
 enum class InputSecurity : bool;
 enum class InsideLink : uint8_t;
 enum class Isolation : bool;
@@ -2050,9 +2048,6 @@ public:
     static constexpr OptionSet<LineBoxContain> initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();
-    static constexpr ImageResolutionSource initialImageResolutionSource();
-    static constexpr ImageResolutionSnap initialImageResolutionSnap();
-    static float initialImageResolution() { return 1; }
     static StyleImage* initialBorderImageSource() { return nullptr; }
     static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();

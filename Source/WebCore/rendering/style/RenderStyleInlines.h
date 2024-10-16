@@ -400,8 +400,6 @@ inline const AtomString& RenderStyle::initialHyphenationString() { return nullAt
 constexpr Hyphens RenderStyle::initialHyphens() { return Hyphens::Manual; }
 constexpr ImageOrientation RenderStyle::initialImageOrientation() { return ImageOrientation::Orientation::FromImage; }
 constexpr ImageRendering RenderStyle::initialImageRendering() { return ImageRendering::Auto; }
-constexpr ImageResolutionSnap RenderStyle::initialImageResolutionSnap() { return ImageResolutionSnap::None; }
-constexpr ImageResolutionSource RenderStyle::initialImageResolutionSource() { return ImageResolutionSource::Specified; }
 constexpr IntSize RenderStyle::initialInitialLetter() { return { }; }
 constexpr InputSecurity RenderStyle::initialInputSecurity() { return InputSecurity::Auto; }
 constexpr LineJoin RenderStyle::initialJoinStyle() { return LineJoin::Miter; }
