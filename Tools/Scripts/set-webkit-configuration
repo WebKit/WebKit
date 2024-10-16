@@ -158,7 +158,7 @@ if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
 }
 
 if ($ltoMode) {
-    open LTO, ">", "$baseProductDir/LTO" or die;
+    open LTO, ">", File::Spec->catfile($baseProductDir, "LTO") or die;
     print LTO "$ltoMode";
     close LTO;
 }

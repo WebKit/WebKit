@@ -759,7 +759,7 @@ sub determineLTOMode
     return if defined $ltoMode;
     determineBaseProductDir();
 
-    if (open LTO, "$baseProductDir/LTO") {
+    if (open LTO, File::Spec->catfile($baseProductDir, "LTO")) {
         $ltoMode = <LTO>;
         close LTO;
         chomp $ltoMode;
