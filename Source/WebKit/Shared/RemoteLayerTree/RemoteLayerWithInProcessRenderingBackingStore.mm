@@ -228,7 +228,7 @@ void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
 {
     ASSERT(!m_frontBufferFlushers.size());
 
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return;

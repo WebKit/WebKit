@@ -56,6 +56,16 @@ RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayer
 
 RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = default;
 
+void RemoteLayerBackingStoreCollection::ref() const
+{
+    return m_layerTreeContext->ref();
+}
+
+void RemoteLayerBackingStoreCollection::deref() const
+{
+    return m_layerTreeContext->deref();
+}
+
 void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
     Vector<RemoteRenderingBackendProxy::LayerPrepareBuffersData> prepareBuffersData;

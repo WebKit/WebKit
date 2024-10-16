@@ -114,13 +114,13 @@ RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote& layer)
     : m_layer(layer)
     , m_lastDisplayTime(-MonotonicTime::infinity())
 {
-    if (auto* collection = backingStoreCollection())
+    if (RefPtr collection = backingStoreCollection())
         collection->backingStoreWasCreated(*this);
 }
 
 RemoteLayerBackingStore::~RemoteLayerBackingStore()
 {
-    if (auto* collection = backingStoreCollection())
+    if (RefPtr collection = backingStoreCollection())
         collection->backingStoreWillBeDestroyed(*this);
 }
 
@@ -223,7 +223,7 @@ void RemoteLayerBackingStoreProperties::dump(TextStream& ts) const
 
 bool RemoteLayerBackingStore::layerWillBeDisplayed()
 {
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return false;
@@ -234,7 +234,7 @@ bool RemoteLayerBackingStore::layerWillBeDisplayed()
 
 bool RemoteLayerBackingStore::layerWillBeDisplayedWithRenderingSuppression()
 {
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return false;
@@ -331,7 +331,7 @@ void RemoteLayerBackingStore::setDelegatedContents(const PlatformCALayerRemoteDe
 
 bool RemoteLayerBackingStore::needsDisplay() const
 {
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return false;
@@ -611,19 +611,19 @@ Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> RemoteLayerBackingStore
 
 void RemoteLayerBackingStore::purgeFrontBufferForTesting()
 {
-    if (auto* collection = backingStoreCollection())
+    if (RefPtr collection = backingStoreCollection())
         collection->purgeFrontBufferForTesting(*this);
 }
 
 void RemoteLayerBackingStore::purgeBackBufferForTesting()
 {
-    if (auto* collection = backingStoreCollection())
+    if (RefPtr collection = backingStoreCollection())
         collection->purgeBackBufferForTesting(*this);
 }
 
 void RemoteLayerBackingStore::markFrontBufferVolatileForTesting()
 {
-    if (auto* collection = backingStoreCollection())
+    if (RefPtr collection = backingStoreCollection())
         collection->markFrontBufferVolatileForTesting(*this);
 }
 

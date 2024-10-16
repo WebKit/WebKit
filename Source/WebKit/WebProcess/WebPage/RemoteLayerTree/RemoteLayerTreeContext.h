@@ -126,7 +126,7 @@ private:
 
     HashSet<WeakRef<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
-    std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
+    UniqueRef<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 
     WebCore::LayerPool m_layerPool;
 

@@ -44,7 +44,7 @@ using namespace WebCore;
 RemoteLayerWithRemoteRenderingBackingStore::RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote& layer)
     : RemoteLayerBackingStore(layer)
 {
-    auto* collection = backingStoreCollection();
+    RefPtr collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return;
