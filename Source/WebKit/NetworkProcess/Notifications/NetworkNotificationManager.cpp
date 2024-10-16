@@ -44,6 +44,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
+static inline Ref<NetworkConnectionToWebProcess> connectionToWebProcess(const IPC::Connection& connection)
+{
+    // FIXME: Check the type.
+    return static_cast<NetworkConnectionToWebProcess&>(*connection.client());
+}
+
 NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())
@@ -246,11 +252,7 @@ void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginD
 
 std::optional<SharedPreferencesForWebProcess> NetworkNotificationManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    if (auto webProcessProxy = WebProcessProxy::processForConnection(connection))
-        return webProcessProxy->sharedPreferencesForWebProcess();
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
+    return connectionToWebProcess(connection)->sharedPreferencesForWebProcess();
 }
 
 RefPtr<WebPushD::Connection> NetworkNotificationManager::protectedConnection() const
