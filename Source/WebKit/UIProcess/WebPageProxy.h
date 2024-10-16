@@ -627,6 +627,7 @@ public:
     DrawingAreaProxy* provisionalDrawingArea() const;
 
     WebNavigationState& navigationState() { return *m_navigationState; }
+    Ref<WebNavigationState> protectedNavigationState();
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
     Ref<WebsiteDataStore> protectedWebsiteDataStore() const;
@@ -3219,7 +3220,7 @@ private:
     std::unique_ptr<WebPageInjectedBundleClient> m_injectedBundleClient;
     RefPtr<PageLoadStateObserverBase> m_pageLoadStateObserver;
 
-    std::unique_ptr<WebNavigationState> m_navigationState;
+    UniqueRef<WebNavigationState> m_navigationState;
     String m_failingProvisionalLoadURL;
     bool m_isLoadingAlternateHTMLStringForFailingProvisionalLoad { false };
 

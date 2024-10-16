@@ -36,7 +36,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebNavigationState);
 
-WebNavigationState::WebNavigationState()
+WebNavigationState::WebNavigationState(WebPageProxy& page)
+    : m_page(page)
 {
 }
 
@@ -122,6 +123,16 @@ void WebNavigationState::clearNavigationsFromProcess(WebCore::ProcessIdentifier 
     }
     for (auto navigationID : navigationIDsToRemove)
         m_navigations.remove(navigationID);
+}
+
+void WebNavigationState::ref() const
+{
+    m_page->ref();
+}
+
+void WebNavigationState::deref() const
+{
+    m_page->deref();
 }
 
 } // namespace WebKit
