@@ -33,8 +33,6 @@
 
 (allow mach-lookup
     (global-name "com.apple.surfboard.applicationservice"))
-(allow mach-lookup
-    (xpc-service-name "com.apple.ImageIOXPCService"))
 
 (allow syscall-mach (machtrap-number MSC_mk_timer_arm_leeway))
 
