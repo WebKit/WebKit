@@ -1445,7 +1445,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.setUpPropertiesForTest()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        command=['Tools/Scripts/generate-bundle', '--release', '--platform=gtk', '--bundle=MiniBrowser', '--syslibs=bundle-all', '--compression=tar.xz', '--compression-level=9', '--revision=261281@main', '--builder-name', 'GTK-Linux-64-bit-Release-Build'],
                         logEnviron=True,
                         timeout=1200,
                         )
@@ -1453,7 +1453,8 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='generated minibrowser bundle')
         rc = self.runStep()
-        self.assertTrue(UploadMiniBrowserBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        self.assertTrue(TestMiniBrowserBundle() in self.build.addedStepsAfterCurrentStep)
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
         return rc
 
     def test_failure_generate_minibrowser_bundle(self):
@@ -1461,13 +1462,46 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.setUpPropertiesForTest()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['Tools/Scripts/generate-bundle', '--builder-name', 'GTK-Linux-64-bit-Release-Build', '--bundle=MiniBrowser', '--platform=gtk', '--release', '--revision=261281@main'],
+                        command=['Tools/Scripts/generate-bundle', '--release', '--platform=gtk', '--bundle=MiniBrowser', '--syslibs=bundle-all', '--compression=tar.xz', '--compression-level=9', '--revision=261281@main', '--builder-name', 'GTK-Linux-64-bit-Release-Build'],
                         logEnviron=True,
                         timeout=1200,
                         )
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='generated minibrowser bundle (failure)')
+        rc = self.runStep()
+        self.assertTrue(TestMiniBrowserBundle() not in self.build.addedStepsAfterCurrentStep)
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_success_test_minibrowser_bundle(self):
+        self.setupStep(TestMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-bundle', '--platform=gtk', '--bundle-type=universal', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='tested minibrowser bundle')
+        rc = self.runStep()
+        self.assertTrue(UploadMiniBrowserBundleViaSftp() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_test_minibrowser_bundle(self):
+        self.setupStep(TestMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/test-bundle', '--platform=gtk', '--bundle-type=universal', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='tested minibrowser bundle (failure)')
         rc = self.runStep()
         self.assertTrue(UploadMiniBrowserBundleViaSftp() not in self.build.addedStepsAfterCurrentStep)
         return rc

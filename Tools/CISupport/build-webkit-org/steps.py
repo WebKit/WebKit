@@ -624,9 +624,9 @@ class GenerateJSCBundle(shell.ShellCommandNewStyle):
 
 
 class GenerateMiniBrowserBundle(shell.ShellCommandNewStyle):
-    command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
-               "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
-               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
+    command = ["Tools/Scripts/generate-bundle",  WithProperties("--%(configuration)s"), WithProperties("--platform=%(fullPlatform)s"),
+               "--bundle=MiniBrowser", "--syslibs=bundle-all", "--compression=tar.xz", "--compression-level=9",
+               WithProperties("--revision=%(archive_revision)s"), "--builder-name", WithProperties("%(buildername)s")]
     name = "generate-minibrowser-bundle"
     description = ["generating minibrowser bundle"]
     descriptionDone = ["generated minibrowser bundle"]
@@ -636,9 +636,24 @@ class GenerateMiniBrowserBundle(shell.ShellCommandNewStyle):
     def run(self):
         rc = yield super().run()
         if rc in (SUCCESS, WARNINGS):
-            self.build.addStepsAfterCurrentStep([UploadMiniBrowserBundleViaSftp()])
+            self.build.addStepsAfterCurrentStep([TestMiniBrowserBundle()])
         defer.returnValue(rc)
 
+
+class TestMiniBrowserBundle(shell.ShellCommandNewStyle):
+    command = ["Tools/Scripts/test-bundle", WithProperties("--platform=%(fullPlatform)s"), "--bundle-type=universal",
+               WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.tar.xz")]
+    name = "test-minibrowser-bundle"
+    description = ["testing minibrowser bundle"]
+    descriptionDone = ["tested minibrowser bundle"]
+    haltOnFailure = False
+
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        if rc in (SUCCESS, WARNINGS):
+            self.build.addStepsAfterCurrentStep([UploadMiniBrowserBundleViaSftp()])
+        defer.returnValue(rc)
 
 class ExtractBuiltProduct(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/built-product-archive",
