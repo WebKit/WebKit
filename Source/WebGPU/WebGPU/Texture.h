@@ -72,7 +72,7 @@ public:
 
     // For depth-stencil textures, the input value to texelBlockSize()
     // needs to be the output of aspectSpecificFormat().
-    static uint32_t texelBlockSize(WGPUTextureFormat); // Bytes
+    static Checked<uint32_t> texelBlockSize(WGPUTextureFormat); // Bytes
     static bool containsDepthAspect(WGPUTextureFormat);
     static bool containsStencilAspect(WGPUTextureFormat);
     static bool isDepthOrStencilFormat(WGPUTextureFormat);

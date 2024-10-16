@@ -2157,10 +2157,11 @@ NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth,
         return 0;
     }
     NSUInteger blocksInWidth = textureWidth / blockWidth;
-    return Texture::texelBlockSize(format) * blocksInWidth * sampleCount;
+    auto product = checkedProduct<NSUInteger>(Texture::texelBlockSize(format), blocksInWidth, sampleCount);
+    return product.hasOverflowed() ? NSUIntegerMax : product.value();
 }
 
-uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
+Checked<uint32_t> Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
 {
     // For depth-stencil textures, the input value to this function
     // needs to be the output of aspectSpecificFormat().
