@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event and promise ordering when navigate() is called repeatedly and handled by intercept() Test timed out
+PASS event and promise ordering when navigate() is called repeatedly and handled by intercept()
 

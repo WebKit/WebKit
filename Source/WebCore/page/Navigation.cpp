@@ -724,7 +724,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
         rejectFinishedPromise(m_ongoingAPIMethodTracker.get(), exception, domException);
 
     if (m_transition) {
-        m_transition->rejectPromise(exception);
+        m_transition->rejectPromise(exception, domException);
         m_transition = nullptr;
     }
 }
@@ -950,6 +950,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
                 }
             }
             auto exception = Exception(ExceptionCode::UnknownError, errorMessage);
+            auto domException = createDOMException(*protectedScriptExecutionContext()->globalObject(), exception.isolatedCopy());
 
             dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
 
@@ -957,7 +958,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
                 apiMethodTracker->finishedPromise->reject<IDLAny>(result, RejectAsHandled::Yes);
 
             if (RefPtr transition = std::exchange(m_transition, nullptr))
-                transition->rejectPromise(exception);
+                transition->rejectPromise(exception, domException);
         });
 
         // If a new event has been dispatched in our event handler then we were aborted above.
