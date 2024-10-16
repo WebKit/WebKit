@@ -110,6 +110,7 @@ struct MockMediaDevice;
 #if PLATFORM(COCOA)
 class PowerSourceNotifier;
 #endif
+class UserAgentStringOverrides;
 }
 
 namespace WebKit {
@@ -565,6 +566,10 @@ public:
 #endif
 #endif
 
+    template<typename T>
+    void setUserAgentStringQuirks(T);
+    WebCore::UserAgentStringOverrides* userAgentStringQuirks() const;
+
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
@@ -609,6 +614,9 @@ private:
 
     void platformInitializeWebProcess(const WebProcessProxy&, WebProcessCreationParameters&);
     void platformInvalidateContext();
+
+    static String userAgentOverrideDirectory();
+    static String additionalUserAgentOverrideDirectoryForTesting();
 
     std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&);
     void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, const WebCore::RegistrableDomain&, const API::Navigation&, WebProcessProxy::LockdownMode, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
@@ -816,6 +824,7 @@ private:
     ProcessSuppressionDisabledCounter m_processSuppressionDisabledForPageCounter;
     HiddenPageThrottlingAutoIncreasesCounter m_hiddenPageThrottlingAutoIncreasesCounter;
     RunLoop::Timer m_hiddenPageThrottlingTimer;
+    std::unique_ptr<WebCore::UserAgentStringOverrides> m_userAgentStringOverrides;
 
 #if ENABLE(GPU_PROCESS)
     RunLoop::Timer m_resetGPUProcessCrashCountTimer;

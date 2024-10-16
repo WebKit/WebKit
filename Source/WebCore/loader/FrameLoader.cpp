@@ -3142,11 +3142,6 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 String FrameLoader::userAgent(const URL& url) const
 {
     String userAgent;
-    if (RefPtr document = m_frame->document()) {
-        if (auto userAgentQuirk = document->quirks().storageAccessUserAgentStringQuirkForDomain(url); !userAgentQuirk.isEmpty())
-            userAgent = userAgentQuirk;
-    }
-
     if (userAgent.isEmpty()) {
         Ref mainFrame = m_frame->mainFrame();
         if (m_frame->settings().needsSiteSpecificQuirks())

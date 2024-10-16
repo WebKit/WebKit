@@ -227,8 +227,6 @@ public:
     void setHasStylusDevice(bool);
 #endif
 
-    void updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<WebCore::RegistrableDomain, String>&&);
-
     WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>) const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
     void removeWebFrame(WebCore::FrameIdentifier, std::optional<WebPageProxyIdentifier>);

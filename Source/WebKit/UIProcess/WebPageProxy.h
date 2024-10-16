@@ -224,6 +224,8 @@ enum class TextAnimationRunMode : uint8_t;
 enum class TextCheckingType : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class TrackingType : uint8_t;
+enum class UserAgentStringAgent : uint8_t;
+enum class UserAgentStringPlatform : uint8_t;
 enum class UserInterfaceLayoutDirection : bool;
 enum class VideoFrameRotation : uint16_t;
 enum class WheelEventProcessingSteps : uint8_t;
@@ -1290,6 +1292,7 @@ public:
 #else
     String predictedUserAgentForRequest(const WebCore::ResourceRequest&) const { return userAgent(); }
 #endif
+    void adjustPolicyWithCustomUserAgentAndPlatform(API::WebsitePolicies&, WebCore::UserAgentStringPlatform, const Vector<std::variant<WebCore::UserAgentStringPlatform, WebCore::UserAgentStringAgent>>&);
 
     bool supportsTextEncoding() const;
     void setCustomTextEncodingName(const String&);

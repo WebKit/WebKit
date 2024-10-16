@@ -1903,6 +1903,7 @@ $(PROJECT_DIR)/page/ShareData.idl
 $(PROJECT_DIR)/page/StructuredSerializeOptions.idl
 $(PROJECT_DIR)/page/UndoItem.idl
 $(PROJECT_DIR)/page/UndoManager.idl
+$(PROJECT_DIR)/page/UserAgentStringOverrides.json
 $(PROJECT_DIR)/page/UserMessageHandler.idl
 $(PROJECT_DIR)/page/UserMessageHandlersNamespace.idl
 $(PROJECT_DIR)/page/VisualViewport.idl
@@ -1917,6 +1918,7 @@ $(PROJECT_DIR)/page/WindowPostMessageOptions.idl
 $(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl
 $(PROJECT_DIR)/page/csp/CSPViolationReportBody.idl
+$(PROJECT_DIR)/page/make-user-agent-string-overrides.py
 $(PROJECT_DIR)/platform/ColorData.gperf
 $(PROJECT_DIR)/platform/network/HTTPHeaderNames.in
 $(PROJECT_DIR)/platform/network/create-http-header-name-table

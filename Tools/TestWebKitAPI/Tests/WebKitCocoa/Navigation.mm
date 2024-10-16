@@ -178,6 +178,222 @@ TEST(WKNavigation, UserAgentAndAccept)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(WKNavigation, UserAgentOverrideQuirks)
+{
+    using namespace TestWebKitAPI;
+
+    auto headerFromRequest = [](const Vector<char>& request, const ASCIILiteral& headerPrefix) {
+        StringView requestView(request.span());
+        auto headerStart = requestView.find(headerPrefix);
+        const auto headerLen = strlen(headerPrefix);
+        if (headerStart == notFound)
+            return ""_str;
+        auto headerValueStart = headerStart + headerLen;
+        auto headerEnd = requestView.find("\r\n"_s, headerValueStart);
+        if (headerEnd == notFound)
+            return ""_str;
+        return requestView.substring(headerValueStart, headerEnd - headerValueStart).toStringWithoutCopying();
+    };
+
+    bool didReceiveRequest { false };
+    auto httpsServer = makeUnique<HTTPServer>(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> Task {
+        while (1) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+
+            auto path = HTTPServer::parsePath(request);
+            auto host = headerFromRequest(request, "Host: "_s);
+            auto userAgentString = headerFromRequest(request, "User-Agent: "_s);
+
+            if (host == "teams.live.com"_s) {
+#if PLATFORM(MAC)
+                EXPECT_TRUE(userAgentString.contains("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"_s));
+                EXPECT_TRUE(userAgentString.contains("Chrome/110.0.0.0"_s));
+#else
+                EXPECT_FALSE(userAgentString.contains("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"_s));
+                EXPECT_FALSE(userAgentString.contains("Chrome/110.0.0.0"_s));
+#endif
+
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+
+            if (host == "shopee.sg"_s) {
+#if PLATFORM(IOS_FAMILY)
+                if (path  == "/payment/account-linking/landing"_s)
+                    EXPECT_TRUE(userAgentString.contains("Mozilla/5.0 (iPhone; CPU iPhone OS"_s));
+#endif
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+
+            if (host == "nonexistant.example"_s) {
+#if PLATFORM(MAC)
+                if (path  == "/path1.html"_s)
+                    EXPECT_WK_STREQ(userAgentString, "not a real user agent string"_s);
+                else
+                    EXPECT_FALSE(userAgentString == "not a real user agent string"_s);
+#else
+                EXPECT_FALSE(userAgentString == "not a real user agent string"_s);
+#endif
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+            if (host == "www.nonexistant2.example"_s) {
+                EXPECT_TRUE(userAgentString.contains("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"_s));
+                EXPECT_TRUE(userAgentString.contains("Chrome/110.0.0.0"_s));
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+            if (host == "sub.domain.nonexistant3.example"_s) {
+                if (path  == "/page1.html"_s) {
+#if PLATFORM(MAC)
+                    EXPECT_WK_STREQ(userAgentString, "not a real user agent string"_s);
+#else
+                    EXPECT_TRUE(userAgentString.contains("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"_s));
+                    EXPECT_TRUE(userAgentString.contains("Chrome/110.0.0.0"_s));
+#endif
+                } else {
+                    EXPECT_FALSE(userAgentString == "not a real user agent string"_s);
+                    EXPECT_FALSE(userAgentString.contains("Chrome/110.0.0.0"_s));
+                }
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+            if (host == "sub2.domain.nonexistant4.example"_s) {
+#if PLATFORM(MAC)
+                if (path  == "/page2.html"_s)
+                    EXPECT_WK_STREQ(userAgentString, "not a real user agent string"_s);
+#else
+                if (path  == "/page1.html"_s)
+                    EXPECT_WK_STREQ(userAgentString, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/605.1.15"_s);
+#endif
+                else {
+                    EXPECT_FALSE(userAgentString == "not a real user agent string"_s);
+                    EXPECT_FALSE(userAgentString.contains("Chrome/110.0.0.0"_s));
+                }
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+            if (host == "www.nonexistant5.example"_s) {
+                EXPECT_WK_STREQ(userAgentString, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15"_s);
+                didReceiveRequest = true;
+                co_await connection.awaitableSend(HTTPResponse("<body></body>"_s).serialize());
+                continue;
+            }
+
+            EXPECT_FALSE(true);
+        }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer->port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        done = true;
+    };
+    delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+
+#if PLATFORM(MAC)
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"UserAgentStringOverrides" withExtension:@"json" subdirectory:@"WebCore.framework/Versions/Current/Resources"] encoding:NSUTF8StringEncoding error:nil];
+#else
+    NSString *quirksFile = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"UserAgentStringOverrides" withExtension:@"json" subdirectory:@"WebCore.framework"] encoding:NSUTF8StringEncoding error:nil];
+#endif
+    EXPECT_NOT_NULL(quirksFile);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+#if OS(MACOS)
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://teams.live.com"]]];
+    TestWebKitAPI::Util::run(&didReceiveRequest);
+    done = false;
+#endif
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://shopee.sg/payment/account-linking/landing"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    didReceiveRequest = false;
+
+    // Test entries are defined in Tools/TestWebKitAPI/Tests/WebKit/UserAgentStringOverrides.json
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://nonexistant.example/path1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://nonexistant.example/path2.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.nonexistant2.example"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.nonexistant2.example/page1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub.domain.nonexistant3.example"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub.domain.nonexistant3.example/page1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub.domain.nonexistant3.example/page1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub.domain.nonexistant3.example/"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub2.domain.nonexistant4.example/"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub2.domain.nonexistant4.example/page1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sub2.domain.nonexistant4.example/page2.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.nonexistant5.example/page1.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_TRUE(didReceiveRequest);
+    done = false;
+    didReceiveRequest = false;
+}
+
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForNavigations:(size_t)count;
 - (void)clearState;

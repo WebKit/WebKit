@@ -244,6 +244,8 @@
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextExtractionTypes.h>
 #include <WebCore/TextIndicator.h>
+#include <WebCore/UserAgent.h>
+#include <WebCore/UserAgentStringOverrides.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WrappedCryptoKey.h>
@@ -7612,6 +7614,15 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 if (RefPtr policies = navigation->websitePolicies()) {
                     navigation->setEffectiveContentMode(effectiveContentModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
                     adjustAdvancedPrivacyProtectionsIfNeeded(*policies);
+                    auto* userAgentStringQuirks = processInitiatingNavigation->processPool().userAgentStringQuirks();
+                    if (auto attributes = userAgentStringQuirks ? userAgentStringQuirks->overrideAttributesForURLAndType(requestURL, UserAgentStringOverrides::getPlatform()) : std::nullopt) {
+                        WTF::switchOn(*attributes, [this, &policies] (const Vector<UserAgentOverridesAttributes>& attributes) {
+                            adjustPolicyWithCustomUserAgentAndPlatform(*policies, UserAgentStringOverrides::getPlatform(), attributes);
+                        }, [&policies] (const String& custom) {
+                            RELEASE_LOG(Network, "WebPageProxy::decidePolicyForNavigationAction: custom string: %s", custom.ascii().data());
+                            policies->setCustomUserAgent(custom);
+                        });
+                    }
                 }
             }
             receivedNavigationActionPolicyDecision(processInitiatingNavigation, policyAction, navigation.get(), WTFMove(navigationAction), processSwapRequestedByClient, frame, frameInfo, wasNavigationIntercepted, requestURL, WTFMove(message), WTFMove(completionHandler));
@@ -14136,6 +14147,18 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
+
+void WebPageProxy::adjustPolicyWithCustomUserAgentAndPlatform(API::WebsitePolicies& policies, UserAgentStringPlatform userAgentStringPlatform, const Vector<UserAgentOverridesAttributes>& attributes)
+{
+    if (!m_preferences->needsSiteSpecificQuirks())
+        return;
+
+    if (auto userAgentString = UserAgentStringOverrides::userAgentToString(userAgentStringPlatform, attributes); !userAgentString.isEmpty())
+        policies.setCustomUserAgent(userAgentString);
+
+    if (auto navigatorPlatform = UserAgentStringOverrides::attributesToNavigatorPlatformString(attributes); !navigatorPlatform.isEmpty())
+        policies.setCustomNavigatorPlatform(navigatorPlatform);
+}
 
 void WebPageProxy::addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {

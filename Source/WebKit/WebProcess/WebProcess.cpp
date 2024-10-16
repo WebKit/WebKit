@@ -643,7 +643,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         prewarmGlobally();
 #endif
 
-    updateStorageAccessUserAgentStringQuirks(WTFMove(parameters.storageAccessUserAgentStringQuirksData));
     updateDomainsWithStorageAccessQuirks(WTFMove(parameters.storageAccessPromptQuirksDomains));
     updateScriptTelemetryFilter(WTFMove(parameters.scriptTelemetryRules));
 
@@ -883,11 +882,6 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
 
-void WebProcess::updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&& userAgentStringQuirk)
-{
-    Quirks::updateStorageAccessUserAgentStringQuirks(WTFMove(userAgentStringQuirk));
-}
-    
 WebPage* WebProcess::webPage(PageIdentifier pageID) const
 {
     return m_pageMap.get(pageID);

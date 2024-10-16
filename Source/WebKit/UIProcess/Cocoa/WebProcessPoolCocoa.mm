@@ -82,6 +82,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cf/CFURLExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -304,6 +305,58 @@ static void logProcessPoolState(const WebProcessPool& pool)
     }
 }
 
+String WebProcessPool::userAgentOverrideDirectory()
+{
+    static NeverDestroyed<String> resourceDirectory;
+    if (!resourceDirectory->isEmpty())
+        return resourceDirectory;
+
+    CFBundleRef webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
+    RetainPtr<CFURLRef> resourceURL = adoptCF(CFBundleCopyResourcesDirectoryURL(webCoreBundle));
+    CFErrorRef error = nullptr;
+    resourceURL = adoptCF(CFURLCreateFilePathURL(nullptr, resourceURL.get(), &error));
+
+    if (error || !resourceURL) {
+        RELEASE_LOG(Network, "WebProcessProxy::userAgentOverrideDirectory: error creating url");
+        return String();
+    }
+
+    RetainPtr<CFStringRef> resourceURLString = adoptCF(CFURLCopyFileSystemPath(resourceURL.get(), kCFURLPOSIXPathStyle));
+    resourceDirectory.get() = String(resourceURLString.get());
+    return resourceDirectory.get();
+}
+
+String WebProcessPool::additionalUserAgentOverrideDirectoryForTesting()
+{
+    static NeverDestroyed<String> resourceDirectory;
+    if (!resourceDirectory->isEmpty())
+        return resourceDirectory;
+
+    CFBundleRef appBundle = CFBundleGetBundleWithIdentifier(applicationBundleIdentifier().createCFString().get());
+    RetainPtr<CFURLRef> resourceURL = adoptCF(CFBundleCopyResourcesDirectoryURL(appBundle));
+    CFErrorRef error = nullptr;
+    resourceURL = adoptCF(CFURLCreateFilePathURL(nullptr, resourceURL.get(), &error));
+
+    if (error || !resourceURL) {
+        RELEASE_LOG(Network, "WebProcessProxy::additionalUserAgentOverrideDirectoryForTesting: error creating url");
+        return String();
+    }
+
+#if PLATFORM(MAC)
+    resourceURL = CFURLCreateCopyAppendingPathComponent(nullptr, resourceURL.get(), CFSTR("TestWebKitAPIResources.bundle/Contents/Resources/"), false);
+#else
+    resourceURL = CFURLCreateCopyAppendingPathComponent(nullptr, resourceURL.get(), CFSTR("TestWebKitAPIResources.bundle/"), false);
+#endif
+    if (error || !resourceURL) {
+        RELEASE_LOG(Network, "WebProcessProxy::additionalUserAgentOverrideDirectoryForTesting: error creating resources url");
+        return String();
+    }
+
+    RetainPtr<CFStringRef> resourceURLString = adoptCF(CFURLCopyFileSystemPath(resourceURL.get(), kCFURLPOSIXPathStyle));
+    resourceDirectory.get() = String(resourceURLString.get());
+    return resourceDirectory.get();
+}
+
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlobalStaticInitialization)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -520,9 +573,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    // FIXME: Filter by process's site when site isolation is enabled
-    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::sharedSingleton().cachedListData();
-
     for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
             for (auto&& page : entry.triggerPages)

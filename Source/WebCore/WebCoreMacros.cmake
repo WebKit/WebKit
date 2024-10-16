@@ -220,3 +220,14 @@ function(GENERATE_DOM_NAME_ENUM _enum)
         COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/dom/make_names.pl --outputDir ${WebCore_DERIVED_SOURCES_DIR} --enum ${_enum} --elements ${WEBCORE_DIR}/html/HTMLTagNames.in --elements ${WEBCORE_DIR}/svg/svgtags.in --elements ${WEBCORE_DIR}/mathml/mathtags.in --attrs ${WEBCORE_DIR}/html/HTMLAttributeNames.in --attrs ${WEBCORE_DIR}/mathml/mathattrs.in --attrs ${WEBCORE_DIR}/svg/svgattrs.in --attrs ${WEBCORE_DIR}/svg/xlinkattrs.in --attrs ${WEBCORE_DIR}/xml/xmlattrs.in --attrs ${WEBCORE_DIR}/xml/xmlnsattrs.in
         VERBATIM)
 endfunction()
+
+
+macro(USER_AGENT_STRING_OVERRIDES_VALIDATION _infile)
+    set(OVERRIDES_VALIDATION_SCRIPT ${WEBCORE_DIR}/page/make-user-agent-string-overrides.py)
+
+    add_custom_command(
+        TARGET WebCore PRE_LINK
+        WORKING_DIRECTORY ${arg_BASE_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${OVERRIDES_VALIDATION_SCRIPT} --input ${_infile}
+        VERBATIM)
+endmacro()

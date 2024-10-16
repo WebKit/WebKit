@@ -1202,6 +1202,7 @@
 		CE78705F2107AB980053AC67 /* MoveOnlyLifecycleLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE78705D2107AB8C0053AC67 /* MoveOnlyLifecycleLogger.cpp */; };
 		CEA7F57D2089624B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */; };
 		D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D04CF93E285C77C9005D6337 /* MachSendRight.cpp */; };
+		D2A7EEC62C234A7700AED0C5 /* UserAgentStringOverrides.json in Copy Resources */ = {isa = PBXBuildFile; fileRef = D2A7EEBE2C234A7600AED0C5 /* UserAgentStringOverrides.json */; };
 		D84FAD9A29FAC1D0008D338F /* RenderStyleChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D84FAD9829FAC1D0008D338F /* RenderStyleChange.cpp */; };
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD403D4928EB932F009B4684 /* libbmalloc.a */; };
@@ -1989,6 +1990,7 @@
 				A17C48132C98E5C20023F3C7 /* two-paragraph-contenteditable.html in Copy Resources */,
 				A17C484A2C98E6360023F3C7 /* two-videos.html in Copy Resources */,
 				A17C48142C98E5C20023F3C7 /* UnitBox.usdz in Copy Resources */,
+				D2A7EEC62C234A7700AED0C5 /* UserAgentStringOverrides.json in Copy Resources */,
 				A17C46FA2C98E54B0023F3C7 /* UserInstalledAhem.html in Copy Resources */,
 				A17C46882C98E4D20023F3C7 /* verboseMarkup.html in Copy Resources */,
 				A17C48152C98E5C20023F3C7 /* video-with-audio-and-web-audio.html in Copy Resources */,
@@ -3519,6 +3521,7 @@
 		CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "editable-region-composited-and-non-composited-overlap.html"; path = "ios/editable-region-composited-and-non-composited-overlap.html"; sourceTree = SOURCE_ROOT; };
 		D04CF93E285C77C9005D6337 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		D20C03AE2B704A26004C414A /* download.example.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = download.example.webarchive; path = Tests/WebKitCocoa/download.example.webarchive; sourceTree = "<group>"; };
+		D2A7EEBE2C234A7600AED0C5 /* UserAgentStringOverrides.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserAgentStringOverrides.json; sourceTree = "<group>"; };
 		D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewGetContents.mm; sourceTree = "<group>"; };
 		D84FAD9829FAC1D0008D338F /* RenderStyleChange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderStyleChange.cpp; sourceTree = "<group>"; };
 		DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedLambda.cpp; sourceTree = "<group>"; };
@@ -5783,6 +5786,7 @@
 				524BBCA019E30C63002F1AF1 /* test.mp4 */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
 				44D3F8422BE1DAD800BE0218 /* test.xml */,
+				D2A7EEBE2C234A7600AED0C5 /* UserAgentStringOverrides.json */,
 				1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */,
 				C9C9A91C21DED79400FDE96E /* video-with-play-button.html */,
 				07CD32F72065B72A0064A4BE /* video.html */,
