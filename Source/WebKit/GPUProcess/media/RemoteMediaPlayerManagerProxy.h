@@ -120,7 +120,7 @@ private:
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     struct VideoRecevierEndpointCacheEntry {
-        WebCore::MediaPlayerIdentifier playerIdentifier;
+        Markable<WebCore::MediaPlayerIdentifier> playerIdentifier;
         WebCore::VideoReceiverEndpoint endpoint;
         WebCore::PlatformVideoTarget videoTarget;
     };

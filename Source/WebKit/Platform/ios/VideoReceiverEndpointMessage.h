@@ -46,14 +46,14 @@ public:
     OSObjectPtr<xpc_object_t> encode() const;
 
     std::optional<WebCore::ProcessIdentifier> processIdentifier() const { return m_processIdentifier; }
-    std::optional<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier() const { return m_mediaElementIdentifier; }
-    const WebCore::MediaPlayerIdentifier& playerIdentifier() const { return m_playerIdentifier; }
+    WebCore::HTMLMediaElementIdentifier mediaElementIdentifier() const { return m_mediaElementIdentifier; }
+    std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
     const WebCore::VideoReceiverEndpoint& endpoint() const { return m_endpoint; }
 
 private:
     Markable<WebCore::ProcessIdentifier> m_processIdentifier;
     WebCore::HTMLMediaElementIdentifier m_mediaElementIdentifier;
-    WebCore::MediaPlayerIdentifier m_playerIdentifier;
+    Markable<WebCore::MediaPlayerIdentifier> m_playerIdentifier;
     WebCore::VideoReceiverEndpoint m_endpoint;
 };
 
