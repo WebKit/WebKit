@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,10 +152,11 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
     vm.heap.deprecatedReportExtraMemory(size);
 }
 
+extern "C" JS_EXPORT void JSAsynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" JS_EXPORT void JSSynchronousEdenCollectForDebugging(JSContextRef);
 
-void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
+static void garbageCollectForDebugging(JSContextRef ctx, Synchronousness synchronousness)
 {
     if (!ctx)
         return;
@@ -163,7 +164,17 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    vm.heap.collectNow(Sync, CollectionScope::Full);
+    vm.heap.collectNow(synchronousness, CollectionScope::Full);
+}
+
+void JSAsynchronousGarbageCollectForDebugging(JSContextRef ctx)
+{
+    garbageCollectForDebugging(ctx, Async);
+}
+
+void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
+{
+    garbageCollectForDebugging(ctx, Sync);
 }
 
 void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
