@@ -720,14 +720,16 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
         return std::make_pair(nil, 0ull);
 
     id<MTLBuffer> indirectBuffer = indexedIndirectBuffer.indirectBuffer();
-    if (!indirectBuffer || !minVertexCount || !minInstanceCount || indexBufferOffsetInBytes >= indexBuffer.length)
+    auto indexSize = indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
+    auto checkedOffsetPlusSize = checkedSum<uint32_t>(indexBufferOffsetInBytes, indexSize);
+    if (!indirectBuffer || !minVertexCount || !minInstanceCount || checkedOffsetPlusSize.hasOverflowed() || checkedOffsetPlusSize.value() >= indexBuffer.length)
         return std::make_pair(nil, 0ull);
 
     if (!indexedIndirectBuffer.indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount))
         return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
 
     CHECKED_SET_PSO(renderCommandEncoder, device.indexedIndirectBufferClampPipeline(rasterSampleCount), std::make_pair(nil, 0ull));
-    uint32_t indexBufferCount = static_cast<uint32_t>(indexBuffer.length / (indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t)));
+    uint32_t indexBufferCount = static_cast<uint32_t>((indexBuffer.length - indexBufferOffsetInBytes) / indexSize);
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.buffer() offset:indirectOffset atIndex:0];
     [renderCommandEncoder setVertexBuffer:indexedIndirectBuffer.indirectIndexedBuffer() offset:0 atIndex:1];
     [renderCommandEncoder setVertexBuffer:indirectBuffer offset:0 atIndex:2];
