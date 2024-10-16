@@ -2029,6 +2029,8 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
 
         jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+        // Restore the stack pointer since it may have been lowered if our callee did a tail call.
+        jit.addPtr(CCallHelpers::TrustedImm32(-params.code().frameSize()), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
     });
     auto callResult = patchpoint;
 
@@ -5643,8 +5645,11 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
                     handle->generate(jit, params, this);
                 if (isTailCall)
                     jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
-                else
+                else {
                     jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
+                    // Restore the stack pointer since it may have been lowered if our callee did a tail call.
+                    jit.addPtr(CCallHelpers::TrustedImm32(-params.code().frameSize()), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
+                }
             });
         };
 

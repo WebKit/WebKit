@@ -840,6 +840,7 @@ asm (
 
 void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth savedFPWidth)
 {
+    JIT_COMMENT(*this, "Probe start");
     sub64(TrustedImm32(sizeof(IncomingProbeRecord)), sp);
 
     storePair64(x24, x25, sp, TrustedImm32(offsetof(IncomingProbeRecord, x24)));
@@ -858,6 +859,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth sav
     // ctiMasmProbeTrampoline should have restored every register except for lr and the sp.
     load64(Address(sp, offsetof(LRRestorationRecord, lr)), lr);
     add64(TrustedImm32(sizeof(LRRestorationRecord)), sp);
+    JIT_COMMENT(*this, "First non-probe instruction");
 }
 
 void MacroAssemblerARM64::collectCPUFeatures()
