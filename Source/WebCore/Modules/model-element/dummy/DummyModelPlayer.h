@@ -42,7 +42,7 @@ private:
 
     // ModelPlayer overrides.
 #if ENABLE(MODEL_PROCESS)
-    ModelPlayerIdentifier identifier() const final;
+    ModelPlayerIdentifier identifier() const final { return m_id; }
 #endif
     void load(Model&, LayoutSize) override;
     void sizeDidChange(LayoutSize) override;

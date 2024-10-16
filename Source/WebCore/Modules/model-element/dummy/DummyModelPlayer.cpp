@@ -38,20 +38,13 @@ Ref<DummyModelPlayer> DummyModelPlayer::create(ModelPlayerClient& client)
 
 DummyModelPlayer::DummyModelPlayer(ModelPlayerClient& client)
     : m_client { client }
-{
 #if ENABLE(MODEL_PROCESS)
-    m_id = ModelPlayerIdentifier::generate();
+    , m_id(ModelPlayerIdentifier::generate())
 #endif
+{
 }
 
 DummyModelPlayer::~DummyModelPlayer() = default;
-
-#if ENABLE(MODEL_PROCESS)
-ModelPlayerIdentifier DummyModelPlayer::identifier() const
-{
-    return m_id;
-}
-#endif
 
 void DummyModelPlayer::load(Model& model, LayoutSize)
 {
