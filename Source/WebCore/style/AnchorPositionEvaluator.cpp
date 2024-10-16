@@ -574,10 +574,9 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
     auto anchorsForAnchorName = collectAnchorsForAnchorName(document);
 
     for (auto elementAndState : document.styleScope().anchorPositionedStates()) {
-        CheckedRef element = elementAndState.key;
         auto& state = *elementAndState.value;
         if (state.stage == AnchorPositionResolutionStage::Initial) {
-            state.anchorElements = findAnchorsForAnchorPositionedElement(element, state.anchorNames, anchorsForAnchorName);
+            state.anchorElements = findAnchorsForAnchorPositionedElement(Ref { elementAndState.key }, state.anchorNames, anchorsForAnchorName);
             state.stage = AnchorPositionResolutionStage::FoundAnchors;
             continue;
         }
