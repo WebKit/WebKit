@@ -30,6 +30,7 @@
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include <array>
+#include <wtf/TZoneMalloc.h>
 
 #define REPATCH_OFFSET_CALL_R11 3
 
@@ -40,6 +41,7 @@ namespace JSC {
 using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerX86_64 : public AbstractMacroAssembler<Assembler> {
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerX86_64);
 public:
     static constexpr size_t nearJumpRange = 2 * GB;
 

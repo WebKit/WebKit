@@ -33,8 +33,11 @@
 #include "ProbeContext.h"
 #include <wtf/PrintStream.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssemblerBase);
 
 const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
 

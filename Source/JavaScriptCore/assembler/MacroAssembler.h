@@ -28,6 +28,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "JSCJSValue.h"
+#include <wtf/TZoneMalloc.h>
 
 #define DEFINE_SIMD_FUNC(name, func, lane) \
     template <typename ...Args> \
@@ -119,6 +120,7 @@ typedef Vector<PrintRecord> PrintRecordList;
 using MacroAssemblerBase = TARGET_MACROASSEMBLER;
 
 class MacroAssembler : public MacroAssemblerBase {
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerBase);
 public:
     using Base = MacroAssemblerBase;
 
