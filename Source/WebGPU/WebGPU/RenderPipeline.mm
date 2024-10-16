@@ -1313,6 +1313,10 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         return returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s);
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+#if ENABLE(WEBGPU_BY_DEFAULT)
+    mtlRenderPipelineDescriptor.shaderValidation = MTLShaderValidationEnabled;
+#endif
+
     auto label = fromAPI(descriptor.label);
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
     mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;

@@ -38,6 +38,10 @@ namespace WebGPU {
 static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
+#if ENABLE(WEBGPU_BY_DEFAULT)
+    computePipelineDescriptor.shaderValidation = MTLShaderValidationEnabled;
+#endif
+
     computePipelineDescriptor.computeFunction = function;
     computePipelineDescriptor.maxTotalThreadsPerThreadgroup = size.width * size.height * size.depth;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
