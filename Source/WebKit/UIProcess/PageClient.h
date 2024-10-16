@@ -95,15 +95,6 @@ OBJC_CLASS WKView;
 #endif
 #endif
 
-namespace WebKit {
-class PageClient;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::PageClient> : std::true_type { };
-}
-
 namespace API {
 class Attachment;
 class HitTestResult;
