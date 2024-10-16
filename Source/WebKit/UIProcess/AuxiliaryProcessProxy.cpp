@@ -313,7 +313,7 @@ bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     ASSERT(!m_connection);
     ASSERT(isMainRunLoop());
@@ -330,7 +330,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
     m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
-    RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier, Thread::QOS::UserInteractive);
+    RefPtr connection = IPC::Connection::createServerConnection(WTFMove(connectionIdentifier), Thread::QOS::UserInteractive);
     m_connection = connection.copyRef();
     auto addResult = connectionToProcessMap().add(m_connection->uniqueID(), *this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);

@@ -71,7 +71,7 @@ bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientId
     return true;
 }
 
-void Connection::platformInitialize(Identifier identifier)
+void Connection::platformInitialize(Identifier&& identifier)
 {
     m_connectionPipe = identifier.handle;
 }
