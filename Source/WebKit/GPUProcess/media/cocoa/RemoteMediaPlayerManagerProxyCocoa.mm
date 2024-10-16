@@ -46,16 +46,16 @@ PlatformVideoTarget RemoteMediaPlayerManagerProxy::videoTargetForMediaElementIde
 
 void RemoteMediaPlayerManagerProxy::handleVideoReceiverEndpointMessage(const VideoReceiverEndpointMessage& endpointMessage)
 {
-    ASSERT(endpointMessage.mediaElementIdentifier().isValid());
-    if (!endpointMessage.mediaElementIdentifier().isValid())
+    ASSERT(endpointMessage.mediaElementIdentifier());
+    if (!endpointMessage.mediaElementIdentifier())
         return;
 
-    auto cachedEntry = m_videoReceiverEndpointCache.find(endpointMessage.mediaElementIdentifier());
+    auto cachedEntry = m_videoReceiverEndpointCache.find(*endpointMessage.mediaElementIdentifier());
     if (cachedEntry == m_videoReceiverEndpointCache.end()) {
         // If no entry for the specified mediaElementIdentifier exists, add a new entry to
         // the cache, and set the new t on the specified MediaPlayer.
         auto videoTarget = WebCore::VideoTargetFactory::createTargetFromEndpoint(endpointMessage.endpoint());
-        m_videoReceiverEndpointCache.set(endpointMessage.mediaElementIdentifier(), VideoRecevierEndpointCacheEntry { endpointMessage.playerIdentifier(), endpointMessage.endpoint(), videoTarget });
+        m_videoReceiverEndpointCache.set(*endpointMessage.mediaElementIdentifier(), VideoRecevierEndpointCacheEntry { endpointMessage.playerIdentifier(), endpointMessage.endpoint(), videoTarget });
 
         if (RefPtr mediaPlayer = this->mediaPlayer(endpointMessage.playerIdentifier()))
             mediaPlayer->setVideoTarget(videoTarget);

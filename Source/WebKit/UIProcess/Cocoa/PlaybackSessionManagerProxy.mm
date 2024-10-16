@@ -962,7 +962,7 @@ void PlaybackSessionManagerProxy::uncacheVideoReceiverEndpoint(PlaybackSessionCo
     if (!xpcConnection)
         return;
 
-    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), contextId, { }, nullptr);
+    VideoReceiverEndpointMessage endpointMessage(WTFMove(processIdentifier), contextId, std::nullopt, nullptr);
     xpc_connection_send_message(xpcConnection.get(), endpointMessage.encode().get());
 #else
     UNUSED_PARAM(contextId);

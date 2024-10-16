@@ -39,20 +39,18 @@ namespace WebKit {
 
 class VideoReceiverEndpointMessage {
 public:
-    VideoReceiverEndpointMessage(std::optional<WebCore::ProcessIdentifier>, WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier, WebCore::VideoReceiverEndpoint);
+    VideoReceiverEndpointMessage(std::optional<WebCore::ProcessIdentifier>, WebCore::HTMLMediaElementIdentifier, std::optional<WebCore::MediaPlayerIdentifier>, WebCore::VideoReceiverEndpoint);
 
     static ASCIILiteral messageName() { return "video-receiver-endpoint"_s; }
     static VideoReceiverEndpointMessage decode(xpc_object_t);
     OSObjectPtr<xpc_object_t> encode() const;
 
     std::optional<WebCore::ProcessIdentifier> processIdentifier() const { return m_processIdentifier; }
-    const WebCore::HTMLMediaElementIdentifier& mediaElementIdentifier() const { return m_mediaElementIdentifier; }
+    std::optional<WebCore::HTMLMediaElementIdentifier> mediaElementIdentifier() const { return m_mediaElementIdentifier; }
     const WebCore::MediaPlayerIdentifier& playerIdentifier() const { return m_playerIdentifier; }
     const WebCore::VideoReceiverEndpoint& endpoint() const { return m_endpoint; }
 
 private:
-    VideoReceiverEndpointMessage() = default;
-
     Markable<WebCore::ProcessIdentifier> m_processIdentifier;
     WebCore::HTMLMediaElementIdentifier m_mediaElementIdentifier;
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
