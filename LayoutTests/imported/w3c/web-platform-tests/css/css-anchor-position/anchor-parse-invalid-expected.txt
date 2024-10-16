@@ -18,9 +18,9 @@ PASS e.style['top'] = "anchor(--foo top, 1)" should not set the property value
 PASS e.style['top'] = "anchor(--foo top, 100s)" should not set the property value
 PASS e.style['top'] = "anchor(--foo top, bottom)" should not set the property value
 PASS e.style['top'] = "anchor(--foo top, anchor(bar top))" should not set the property value
-FAIL e.style['top'] = "anchor(--foo top, anchor-size(--bar height))" should not set the property value assert_equals: expected "" but got "anchor(--foo top, anchor-size(--bar height))"
+PASS e.style['top'] = "anchor(--foo top, anchor-size(bar height))" should not set the property value
 PASS e.style['top'] = "anchor(--foo top, auto" should not set the property value
 PASS e.style['top'] = "calc(anchor(foo top) + 10px + 10%)" should not set the property value
 PASS e.style['top'] = "calc(10px + 100 * anchor(--foo top, anchor(bar bottom)))" should not set the property value
-FAIL e.style['top'] = "min(anchor(--foo top), anchor(--bar bottom), anchor-size(--baz height))" should not set the property value assert_equals: expected "" but got "min(anchor(--foo top), anchor(--bar bottom), anchor-size(--baz height))"
+PASS e.style['top'] = "min(anchor(--foo top), anchor(--bar bottom), anchor-size(baz height))" should not set the property value
 

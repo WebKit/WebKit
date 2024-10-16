@@ -19,9 +19,27 @@ FAIL .target 1 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 5 but got 0
 FAIL .target 2 assert_equals:
@@ -44,9 +62,27 @@ FAIL .target 2 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 7 but got 0
 FAIL .target 3 assert_equals:
@@ -69,9 +105,27 @@ FAIL .target 3 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 5 but got 0
 FAIL .target 4 assert_equals:
@@ -94,9 +148,27 @@ FAIL .target 4 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 7 but got 0
 FAIL .target 5 assert_equals:
@@ -119,9 +191,27 @@ FAIL .target 5 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 5 but got 0
 FAIL .target 6 assert_equals:
@@ -144,9 +234,27 @@ FAIL .target 6 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 7 but got 0
 FAIL .target 7 assert_equals:
@@ -169,9 +277,27 @@ FAIL .target 7 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 5 but got 0
 FAIL .target 8 assert_equals:
@@ -194,9 +320,27 @@ FAIL .target 8 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 7 but got 0
 FAIL .target 9 assert_equals:
@@ -219,9 +363,27 @@ FAIL .target 9 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 5 but got 0
 FAIL .target 10 assert_equals:
@@ -244,9 +406,27 @@ FAIL .target 10 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 7 but got 0
 FAIL .target 11 assert_equals:
@@ -269,9 +449,27 @@ FAIL .target 11 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 5 but got 0
 FAIL .target 12 assert_equals:
@@ -294,9 +492,27 @@ FAIL .target 12 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 width expected 7 but got 0
 FAIL .target 13 assert_equals:
@@ -319,11 +535,29 @@ FAIL .target 13 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
-width expected 5 but got 0
+offsetLeft expected 5 but got 0
 FAIL .target 14 assert_equals:
 <div class="container">
     <div class="anchor1"></div>
@@ -344,9 +578,629 @@ FAIL .target 14 assert_equals:
     <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
     <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
 
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
     <!-- Implicit <anchor-size> -->
     <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
     <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+offsetTop expected 7 but got 0
+FAIL .target 15 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+offsetLeft expected 7 but got 0
+FAIL .target 16 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+offsetTop expected 5 but got 0
+FAIL .target 17 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-left expected "5" but got "0"
+FAIL .target 18 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-top expected "7" but got "0"
+FAIL .target 19 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-right expected "7" but got "0"
+FAIL .target 20 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-bottom expected "5" but got "0"
+FAIL .target 21 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+width expected 5 but got 0
+FAIL .target 22 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
   </div>
 height expected 7 but got 0
+FAIL .target 23 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+offsetLeft expected 5 but got 0
+FAIL .target 24 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+offsetTop expected 7 but got 0
+FAIL .target 25 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-left expected "5" but got "0"
+FAIL .target 26 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-right expected "5" but got "0"
+FAIL .target 27 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-top expected "7" but got "0"
+FAIL .target 28 assert_equals:
+<div class="container">
+    <div class="anchor1"></div>
+
+    <!-- Basic cases of all `anchor-size`s. -->
+    <div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 height)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 block)" data-expected-height="7"></div>
+    <div class="target" style="width: anchor-size(--a1 self-inline)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1 self-block)" data-expected-height="7"></div>
+
+    <!-- Different axes should work. -->
+    <div class="target" style="height: anchor-size(--a1 width)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 height)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 block)" data-expected-width="7"></div>
+    <div class="target" style="height: anchor-size(--a1 self-inline)" data-expected-height="5"></div>
+    <div class="target" style="width: anchor-size(--a1 self-block)" data-expected-width="7"></div>
+
+    <!-- anchor-size() in insets -->
+    <div class="target" style="left: anchor-size(--a1 width)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1 height)" data-offset-y="7"></div>
+    <div class="target" style="left: anchor-size(--a1 height)" data-offset-x="7"></div>
+    <div class="target" style="top: anchor-size(--a1 width" data-offset-y="5"></div>
+
+    <!-- anchor-size() in margins -->
+    <div class="target" style="margin-left: anchor-size(--a1 width)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1 height)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-right: anchor-size(--a1 height)" data-expected-margin-right="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1 width" data-expected-margin-bottom="5"></div>
+
+    <!-- Implicit <anchor-size> -->
+    <div class="target" style="width: anchor-size(--a1)" data-expected-width="5"></div>
+    <div class="target" style="height: anchor-size(--a1)" data-expected-height="7"></div>
+    <div class="target" style="left: anchor-size(--a1)" data-offset-x="5"></div>
+    <div class="target" style="top: anchor-size(--a1)" data-offset-y="7"></div>
+    <div class="target" style="margin-left: anchor-size(--a1)" data-expected-margin-left="5"></div>
+    <div class="target" style="margin-right: anchor-size(--a1)" data-expected-margin-right="5"></div>
+    <div class="target" style="margin-top: anchor-size(--a1)" data-expected-margin-top="7"></div>
+    <div class="target" style="margin-bottom: anchor-size(--a1)" data-expected-margin-bottom="7"></div>
+  </div>
+margin-bottom expected "7" but got "0"
 

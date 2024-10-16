@@ -16,7 +16,6 @@ PASS Invalid anchor function, --unknown left
 FAIL Invalid anchor function, --unknown width assert_equals: right expected "188.4375px" but got "200px"
 PASS Invalid anchor function, cross-axis query (vertical)
 PASS Invalid anchor function,  cross-axis query (horizontal)
-PASS Invalid anchor function, anchor-size() in inset
 PASS Invalid anchor function, anchor() in sizing property
 PASS Invalid anchor function, nested left
 PASS Invalid anchor function, nested right
