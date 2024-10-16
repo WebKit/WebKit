@@ -43,7 +43,7 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSGradientValue&) const;
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
     {

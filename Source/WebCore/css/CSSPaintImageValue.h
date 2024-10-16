@@ -51,7 +51,7 @@ public:
     bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
     String customCSSText() const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSPaintImageValue(String&&, Ref<CSSVariableData>&&);

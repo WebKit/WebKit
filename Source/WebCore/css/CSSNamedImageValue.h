@@ -47,7 +47,7 @@ public:
     String customCSSText() const;
     bool equals(const CSSNamedImageValue&) const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSNamedImageValue(String&&);

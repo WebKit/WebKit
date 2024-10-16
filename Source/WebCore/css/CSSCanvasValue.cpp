@@ -49,7 +49,7 @@ bool CSSCanvasValue::equals(const CSSCanvasValue& other) const
     return m_name == other.m_name;
 }
 
-RefPtr<StyleImage> CSSCanvasValue::createStyleImage(Style::BuilderState&) const
+RefPtr<StyleImage> CSSCanvasValue::createStyleImage(const Style::BuilderState&) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;

@@ -50,7 +50,7 @@ public:
         return func(m_imageValue.get());
     }
 
-    RefPtr<StyleCursorImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleCursorImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSValue>&& hotSpot, URL, LoadedFromOpaqueSource);

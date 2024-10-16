@@ -98,7 +98,7 @@ bool BuilderState::useSVGZoomRulesForLength() const
     return is<SVGElement>(element()) && !(is<SVGSVGElement>(*element()) && element()->parentNode());
 }
 
-RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
+RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value) const
 {
     if (auto* imageValue = dynamicDowncast<CSSImageValue>(value))
         return imageValue->createStyleImage(*this);
@@ -121,7 +121,7 @@ RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
     return nullptr;
 }
 
-FilterOperations BuilderState::createFilterOperations(const CSSValue& inValue)
+FilterOperations BuilderState::createFilterOperations(const CSSValue& inValue) const
 {
     return WebCore::Style::createFilterOperations(document(), m_style, m_cssToLengthConversionData, inValue);
 }

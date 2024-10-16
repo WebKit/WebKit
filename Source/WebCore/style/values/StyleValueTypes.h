@@ -69,7 +69,7 @@ template<typename> struct StyleToCSSMapping;
 //
 //    template<> struct WebCore::Style::ToStyle<CSSType> {
 //        StyleType operator()(const CSSType&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
-//        StyleType operator()(const CSSType&, BuilderState&, const CSSCalcSymbolTable&);
+//        StyleType operator()(const CSSType&, const BuilderState&, const CSSCalcSymbolTable&);
 //        StyleType operator()(const CSSType&, NoConversionDataRequiredToken, const CSSCalcSymbolTable&);
 //    };
 
@@ -407,12 +407,12 @@ template<typename CSSType> decltype(auto) toStyle(const CSSType& cssType, const 
     return ToStyle<PrimaryCSSType<CSSType>>{}(cssType, conversionData, CSSCalcSymbolTable { });
 }
 
-template<typename CSSType> decltype(auto) toStyle(const CSSType& cssType, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+template<typename CSSType> decltype(auto) toStyle(const CSSType& cssType, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
 {
     return ToStyle<PrimaryCSSType<CSSType>>{}(cssType, builderState, symbolTable);
 }
 
-template<typename CSSType> decltype(auto) toStyle(const CSSType& cssType, BuilderState& builderState)
+template<typename CSSType> decltype(auto) toStyle(const CSSType& cssType, const BuilderState& builderState)
 {
     return ToStyle<PrimaryCSSType<CSSType>>{}(cssType, builderState, CSSCalcSymbolTable { });
 }
@@ -438,7 +438,7 @@ template<typename To, typename From, typename... Args> auto toStyleNoConversionD
 }
 
 // Conversion Utility Types
-template<typename CSSType> using StyleType = std::decay_t<decltype(toStyle(std::declval<const CSSType&>(), std::declval<BuilderState&>(), std::declval<const CSSCalcSymbolTable&>()))>;
+template<typename CSSType> using StyleType = std::decay_t<decltype(toStyle(std::declval<const CSSType&>(), std::declval<const BuilderState&>(), std::declval<const CSSCalcSymbolTable&>()))>;
 template<typename... CSSTypes> using StyleVariant = std::variant<StyleType<CSSTypes>...>;
 template<typename... CSSTypes> using StyleTuple = std::tuple<StyleType<CSSTypes>...>;
 
@@ -448,7 +448,7 @@ template<typename CSSType> requires (TreatAsNonConverting<CSSType>) struct ToSty
     {
         return value;
     }
-    constexpr decltype(auto) operator()(const CSSType& value, BuilderState&, const CSSCalcSymbolTable&)
+    constexpr decltype(auto) operator()(const CSSType& value, const BuilderState&, const CSSCalcSymbolTable&)
     {
         return value;
     }
@@ -464,7 +464,7 @@ template<typename CSSType> requires (CSS::TreatAsTupleLike<CSSType>) struct ToSt
     {
         return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, conversionData, symbolTable);
     }
-    decltype(auto) operator()(const CSSType& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSSType& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, builderState, symbolTable);
     }
@@ -480,7 +480,7 @@ template<typename CSSType> struct ToStyle<std::optional<CSSType>> {
     {
         return value ? std::make_optional(toStyle(*value, conversionData, symbolTable)) : std::nullopt;
     }
-    decltype(auto) operator()(const std::optional<CSSType>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const std::optional<CSSType>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return value ? std::make_optional(toStyle(*value, builderState, symbolTable)) : std::nullopt;
     }
@@ -496,7 +496,7 @@ template<typename... CSSTypes> struct ToStyle<std::variant<CSSTypes...>> {
     {
         return WTF::switchOn(value, [&](const auto& alternative) { return StyleVariant<CSSTypes...> { toStyle(alternative, conversionData, symbolTable) }; });
     }
-    decltype(auto) operator()(const std::variant<CSSTypes...>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const std::variant<CSSTypes...>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return WTF::switchOn(value, [&](const auto& alternative) { return StyleVariant<CSSTypes...> { toStyle(alternative, builderState, symbolTable) }; });
     }
@@ -512,7 +512,7 @@ template<CSSValueID Name, typename CSSType> struct ToStyle<CSS::FunctionNotation
     {
         return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, conversionData, symbolTable) };
     }
-    decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, builderState, symbolTable) };
     }
@@ -530,7 +530,7 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CSS::SpaceSepar
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, conversionData, symbolTable); }) };
     }
-    decltype(auto) operator()(const CSS::SpaceSeparatedVector<CSSType, inlineCapacity>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::SpaceSeparatedVector<CSSType, inlineCapacity>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, builderState, symbolTable); }) };
     }
@@ -548,7 +548,7 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CSS::CommaSepar
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, conversionData, symbolTable); }) };
     }
-    decltype(auto) operator()(const CSS::CommaSeparatedVector<CSSType, inlineCapacity>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::CommaSeparatedVector<CSSType, inlineCapacity>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, builderState, symbolTable); }) };
     }
@@ -566,7 +566,7 @@ template<typename CSSType, size_t N> struct ToStyle<CSS::SpaceSeparatedArray<CSS
     {
         return Result { toStyleOnTupleLike<typename Result::Array>(value, conversionData, symbolTable) };
     }
-    decltype(auto) operator()(const CSS::SpaceSeparatedArray<CSSType, N>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::SpaceSeparatedArray<CSSType, N>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { toStyleOnTupleLike<typename Result::Array>(value, builderState, symbolTable) };
     }
@@ -584,7 +584,7 @@ template<typename CSSType, size_t N> struct ToStyle<CSS::CommaSeparatedArray<CSS
     {
         return Result { toStyleOnTupleLike<typename Result::Array>(value, conversionData, symbolTable) };
     }
-    decltype(auto) operator()(const CSS::CommaSeparatedArray<CSSType, N>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::CommaSeparatedArray<CSSType, N>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { toStyleOnTupleLike<typename Result::Array>(value, builderState, symbolTable) };
     }
@@ -602,7 +602,7 @@ template<typename... CSSTypes> struct ToStyle<CSS::SpaceSeparatedTuple<CSSTypes.
     {
         return Result { toStyleOnTupleLike<typename Result::Tuple>(value, conversionData, symbolTable) };
     }
-    decltype(auto) operator()(const CSS::SpaceSeparatedTuple<CSSTypes...>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::SpaceSeparatedTuple<CSSTypes...>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { toStyleOnTupleLike<typename Result::Tuple>(value, builderState, symbolTable) };
     }
@@ -620,7 +620,7 @@ template<typename... CSSTypes> struct ToStyle<CSS::CommaSeparatedTuple<CSSTypes.
     {
         return Result { toStyleOnTupleLike<typename Result::Tuple>(value, conversionData, symbolTable) };
     }
-    decltype(auto) operator()(const CSS::CommaSeparatedTuple<CSSTypes...>& value, BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    decltype(auto) operator()(const CSS::CommaSeparatedTuple<CSSTypes...>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { toStyleOnTupleLike<typename Result::Tuple>(value, builderState, symbolTable) };
     }

@@ -101,24 +101,24 @@ auto ToCSS<GradientDeprecatedColorStop>::operator()(const GradientDeprecatedColo
 
 // MARK: - Conversion: CSS -> Style
 
-static auto toStyleStopColor(const RefPtr<CSSPrimitiveValue>& color, BuilderState& state, const CSSCalcSymbolTable&) -> std::optional<StyleColor>
+static auto toStyleStopColor(const RefPtr<CSSPrimitiveValue>& color, const BuilderState& state, const CSSCalcSymbolTable&) -> std::optional<StyleColor>
 {
     if (!color)
         return std::nullopt;
     return state.colorFromPrimitiveValue(*color);
 }
 
-static auto toStyleStopPosition(const CSS::GradientLinearColorStopPosition& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientLinearColorStopPosition
+static auto toStyleStopPosition(const CSS::GradientLinearColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientLinearColorStopPosition
 {
     return toStyle(position, state, symbolTable);
 }
 
-static auto toStyleStopPosition(const CSS::GradientAngularColorStopPosition& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientAngularColorStopPosition
+static auto toStyleStopPosition(const CSS::GradientAngularColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientAngularColorStopPosition
 {
     return toStyle(position, state, symbolTable);
 }
 
-static auto toStyleStopPosition(const CSS::GradientDeprecatedColorStopPosition& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStopPosition
+static auto toStyleStopPosition(const CSS::GradientDeprecatedColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStopPosition
 {
     return WTF::switchOn(position,
         [&](const CSS::Number<>& number) {
@@ -130,7 +130,7 @@ static auto toStyleStopPosition(const CSS::GradientDeprecatedColorStopPosition& 
     );
 }
 
-template<typename T> decltype(auto) toStyleColorStop(const T& stop, BuilderState& state, const CSSCalcSymbolTable& symbolTable)
+template<typename T> decltype(auto) toStyleColorStop(const T& stop, const BuilderState& state, const CSSCalcSymbolTable& symbolTable)
 {
     return GradientColorStop {
         toStyleStopColor(stop.color, state, symbolTable),
@@ -138,17 +138,17 @@ template<typename T> decltype(auto) toStyleColorStop(const T& stop, BuilderState
     };
 }
 
-auto ToStyle<CSS::GradientAngularColorStop>::operator()(const CSS::GradientAngularColorStop& stop, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientAngularColorStop
+auto ToStyle<CSS::GradientAngularColorStop>::operator()(const CSS::GradientAngularColorStop& stop, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientAngularColorStop
 {
     return toStyleColorStop(stop, state, symbolTable);
 }
 
-auto ToStyle<CSS::GradientLinearColorStop>::operator()(const CSS::GradientLinearColorStop& stop, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientLinearColorStop
+auto ToStyle<CSS::GradientLinearColorStop>::operator()(const CSS::GradientLinearColorStop& stop, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientLinearColorStop
 {
     return toStyleColorStop(stop, state, symbolTable);
 }
 
-auto ToStyle<CSS::GradientDeprecatedColorStop>::operator()(const CSS::GradientDeprecatedColorStop& stop, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStop
+auto ToStyle<CSS::GradientDeprecatedColorStop>::operator()(const CSS::GradientDeprecatedColorStop& stop, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStop
 {
     return toStyleColorStop(stop, state, symbolTable);
 }

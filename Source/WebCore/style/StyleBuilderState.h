@@ -94,8 +94,8 @@ public:
     bool useSVGZoomRulesForLength() const;
     ScopeOrdinal styleScopeOrdinal() const { return m_currentProperty->styleScopeOrdinal; }
 
-    RefPtr<StyleImage> createStyleImage(const CSSValue&);
-    FilterOperations createFilterOperations(const CSSValue&);
+    RefPtr<StyleImage> createStyleImage(const CSSValue&) const;
+    FilterOperations createFilterOperations(const CSSValue&) const;
 
     static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
     StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
@@ -104,7 +104,7 @@ public:
     void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-    CSSToStyleMap& styleMap() { return m_styleMap; }
+    const CSSToStyleMap& styleMap() const { return m_styleMap; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 

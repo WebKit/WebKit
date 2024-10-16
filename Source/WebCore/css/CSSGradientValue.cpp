@@ -131,7 +131,7 @@ template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct StyleImag
 
 // MARK: -
 
-RefPtr<StyleImage> CSSGradientValue::createStyleImage(Style::BuilderState& state) const
+RefPtr<StyleImage> CSSGradientValue::createStyleImage(const Style::BuilderState& state) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;

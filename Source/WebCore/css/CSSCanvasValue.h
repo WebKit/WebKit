@@ -44,7 +44,7 @@ public:
     String customCSSText() const;
     bool equals(const CSSCanvasValue&) const;
 
-    RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
+    RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSCanvasValue(String&&);

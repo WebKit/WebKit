@@ -60,7 +60,7 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state) const
+RefPtr<StyleImage> CSSImageSetValue::createStyleImage(const Style::BuilderState& state) const
 {
     size_t length = this->length();
 

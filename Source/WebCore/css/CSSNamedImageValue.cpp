@@ -49,7 +49,7 @@ bool CSSNamedImageValue::equals(const CSSNamedImageValue& other) const
     return m_name == other.m_name;
 }
 
-RefPtr<StyleImage> CSSNamedImageValue::createStyleImage(Style::BuilderState&) const
+RefPtr<StyleImage> CSSNamedImageValue::createStyleImage(const Style::BuilderState&) const
 {
     if (m_cachedStyleImage)
         return m_cachedStyleImage;

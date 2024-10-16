@@ -50,7 +50,7 @@ static LengthPercentage<> makeLengthPercentageForRoot(Calculation::Child&& root)
     };
 }
 
-auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> Position
+auto ToStyle<CSS::Position>::operator()(const CSS::Position& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> Position
 {
     auto convertTo100PercentMinus = [](LengthPercentage<> value) -> LengthPercentage<> {
         return value.value.switchOn(

@@ -58,7 +58,7 @@ template<size_t I> const auto& get(const Position& position)
 }
 
 template<> struct ToCSS<Position> { auto operator()(const Position&, const RenderStyle&) -> CSS::Position; };
-template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&, BuilderState&, const CSSCalcSymbolTable&) -> Position; };
+template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&, const BuilderState&, const CSSCalcSymbolTable&) -> Position; };
 
 } // namespace Style
 } // namespace WebCore

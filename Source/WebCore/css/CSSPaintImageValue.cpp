@@ -49,7 +49,7 @@ String CSSPaintImageValue::customCSSText() const
     return makeString("paint("_s, m_name, ')');
 }
 
-RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(Style::BuilderState&) const
+RefPtr<StyleImage> CSSPaintImageValue::createStyleImage(const Style::BuilderState&) const
 {
     return StylePaintImage::create(m_name, m_arguments);
 }

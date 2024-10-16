@@ -90,9 +90,9 @@ template<> struct ToCSS<GradientAngularColorStop> { auto operator()(const Gradie
 template<> struct ToCSS<GradientLinearColorStop> { auto operator()(const GradientLinearColorStop&, const RenderStyle&) -> CSS::GradientLinearColorStop; };
 template<> struct ToCSS<GradientDeprecatedColorStop> { auto operator()(const GradientDeprecatedColorStop&, const RenderStyle&) -> CSS::GradientDeprecatedColorStop; };
 
-template<> struct ToStyle<CSS::GradientAngularColorStop> { auto operator()(const CSS::GradientAngularColorStop&, BuilderState&, const CSSCalcSymbolTable&) -> GradientAngularColorStop; };
-template<> struct ToStyle<CSS::GradientLinearColorStop> { auto operator()(const CSS::GradientLinearColorStop&, BuilderState&, const CSSCalcSymbolTable&) -> GradientLinearColorStop; };
-template<> struct ToStyle<CSS::GradientDeprecatedColorStop> { auto operator()(const CSS::GradientDeprecatedColorStop&, BuilderState&, const CSSCalcSymbolTable&) -> GradientDeprecatedColorStop; };
+template<> struct ToStyle<CSS::GradientAngularColorStop> { auto operator()(const CSS::GradientAngularColorStop&, const BuilderState&, const CSSCalcSymbolTable&) -> GradientAngularColorStop; };
+template<> struct ToStyle<CSS::GradientLinearColorStop> { auto operator()(const CSS::GradientLinearColorStop&, const BuilderState&, const CSSCalcSymbolTable&) -> GradientLinearColorStop; };
+template<> struct ToStyle<CSS::GradientDeprecatedColorStop> { auto operator()(const CSS::GradientDeprecatedColorStop&, const BuilderState&, const CSSCalcSymbolTable&) -> GradientDeprecatedColorStop; };
 
 // MARK: - LinearGradient
 

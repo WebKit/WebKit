@@ -34,14 +34,14 @@ namespace Style {
 // MARK: - Conversion Data specialization
 
 template<typename T> struct ConversionDataSpecializer {
-    static CSSToLengthConversionData conversionData(BuilderState& state)
+    static CSSToLengthConversionData conversionData(const BuilderState& state)
     {
         return state.cssToLengthConversionData();
     }
 };
 
 template<auto R> struct ConversionDataSpecializer<CSS::LengthRaw<R>> {
-    static CSSToLengthConversionData conversionData(BuilderState& state)
+    static CSSToLengthConversionData conversionData(const BuilderState& state)
     {
         return state.useSVGZoomRulesForLength()
              ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
@@ -49,7 +49,7 @@ template<auto R> struct ConversionDataSpecializer<CSS::LengthRaw<R>> {
     }
 };
 
-template<typename T> CSSToLengthConversionData conversionData(BuilderState& state)
+template<typename T> CSSToLengthConversionData conversionData(const BuilderState& state)
 {
     return ConversionDataSpecializer<T>::conversionData(state);
 }
@@ -135,15 +135,15 @@ template<auto R> struct ToStyle<CSS::AnglePercentage<R>> {
         return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
-    auto operator()(const typename From::Raw& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
-    auto operator()(const typename From::Calc& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Calc& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
-    auto operator()(const From& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const From& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
@@ -194,15 +194,15 @@ template<auto R> struct ToStyle<CSS::LengthPercentage<R>> {
         return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
-    auto operator()(const typename From::Raw& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
-    auto operator()(const typename From::Calc& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Calc& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
-    auto operator()(const From& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const From& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<typename From::Raw>(state), symbolTable);
     }
@@ -247,15 +247,15 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
         return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
-    auto operator()(const typename From::Raw& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<RawType>(state), symbolTable);
     }
-    auto operator()(const typename From::Calc& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const typename From::Calc& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<RawType>(state), symbolTable);
     }
-    auto operator()(const CSS::PrimitiveNumeric<RawType>& value, BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
+    auto operator()(const CSS::PrimitiveNumeric<RawType>& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return (*this)(value, conversionData<RawType>(state), symbolTable);
     }
@@ -277,7 +277,7 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
 // None just needs its trivial implementation.
 template<> struct ToStyle<CSS::None> {
     auto operator()(const CSS::None&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) -> None { return { }; }
-    auto operator()(const CSS::None&, BuilderState&, const CSSCalcSymbolTable&) -> None { return { }; }
+    auto operator()(const CSS::None&, const BuilderState&, const CSSCalcSymbolTable&) -> None { return { }; }
     auto operator()(const CSS::None&, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) -> None { return { }; }
 };
 

@@ -55,7 +55,7 @@ Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, 
     return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
 }
 
-Ref<ViewTimeline> ViewTimeline::createFromCSSValue(Style::BuilderState& builderState, const CSSViewValue& cssViewValue)
+Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const Style::BuilderState& builderState, const CSSViewValue& cssViewValue)
 {
     auto axisValue = cssViewValue.axis();
     auto axis = axisValue ? fromCSSValueID<ScrollAxis>(axisValue->valueID()) : ScrollAxis::Block;

@@ -85,7 +85,7 @@ URL CSSImageValue::reresolvedURL(const Document& document) const
     return document.completeURL(m_location.resolvedURL.string());
 }
 
-RefPtr<StyleImage> CSSImageValue::createStyleImage(Style::BuilderState& state) const
+RefPtr<StyleImage> CSSImageValue::createStyleImage(const Style::BuilderState& state) const
 {
     auto location = makeResolvedURL(reresolvedURL(state.document()));
     if (m_location == location)
