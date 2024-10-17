@@ -5,6 +5,10 @@ find_package(Freetype 2.9.0 REQUIRED)
 find_package(Fontconfig 2.13.0 REQUIRED)
 find_package(WebP REQUIRED COMPONENTS mux)
 
+if (ANDROID)
+    find_package(EXPAT REQUIRED)
+endif ()
+
 #
 # SKIA_ROOT_DIR may point to a checkout from the upstream Skia repository,
 # where a static build has been done under "out/Static" as follows:
@@ -873,13 +877,11 @@ add_library(Skia STATIC
     src/opts/SkOpts_hsw.cpp
     src/opts/SkOpts_skx.cpp
 
-    src/ports/SkDebug_stdio.cpp
     src/ports/SkFontConfigInterface.cpp
     src/ports/SkFontConfigInterface_direct.cpp
     src/ports/SkFontConfigInterface_direct_factory.cpp
     src/ports/SkFontHost_FreeType.cpp
     src/ports/SkFontHost_FreeType_common.cpp
-    src/ports/SkFontMgr_fontconfig.cpp
     src/ports/SkGlobalInitialization_default.cpp
     src/ports/SkImageGenerator_skia.cpp
     src/ports/SkMemory_malloc.cpp
@@ -895,9 +897,25 @@ add_library(Skia STATIC
     modules/skcms/src/skcms_TransformSkx.cc
 )
 
+if (ANDROID)
+    target_sources(Skia PRIVATE src/ports/SkDebug_android.cpp)
+    target_sources(Skia PRIVATE src/ports/SkFontMgr_android.cpp)
+    target_sources(Skia PRIVATE src/ports/SkFontMgr_android_parser.cpp)
+
+    target_link_libraries(Skia PRIVATE
+        EXPAT::EXPAT
+    )
+else ()
+    target_sources(Skia PRIVATE src/ports/SkDebug_stdio.cpp)
+    target_sources(Skia PRIVATE src/ports/SkFontMgr_fontconfig.cpp)
+
+    target_link_libraries(Skia PRIVATE
+       Fontconfig::Fontconfig
+    )
+endif ()
+
 target_link_libraries(Skia PRIVATE
     Epoxy::Epoxy
-    Fontconfig::Fontconfig
     Freetype::Freetype
     JPEG::JPEG
     PNG::PNG
