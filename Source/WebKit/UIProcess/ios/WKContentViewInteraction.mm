@@ -11563,7 +11563,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (void)setGrammarCheckingEnabled:(BOOL)enabled
 {
-    if (static_cast<bool>(enabled) == WebKit::TextChecker::state().isGrammarCheckingEnabled)
+    if (static_cast<bool>(enabled) == WebKit::TextChecker::state().contains(WebKit::TextCheckerState::GrammarCheckingEnabled))
         return;
 
     WebKit::TextChecker::setGrammarCheckingEnabled(enabled);

@@ -9654,27 +9654,27 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
 
     case ContextMenuItemTagSmartQuotes:
-        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
     case ContextMenuItemTagSmartDashes:
-        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
     case ContextMenuItemTagSmartLinks:
-        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
     case ContextMenuItemTagTextReplacement:
-        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
     case ContextMenuItemTagCorrectSpellingAutomatically:
-        TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
+        TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticSpellingCorrectionEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
@@ -9697,12 +9697,12 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         break;
 
     case ContextMenuItemTagCheckSpellingWhileTyping:
-        TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().isContinuousSpellCheckingEnabled);
+        TextChecker::setContinuousSpellCheckingEnabled(!TextChecker::state().contains(TextCheckerState::ContinuousSpellCheckingEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
     case ContextMenuItemTagCheckGrammarWithSpelling:
-        TextChecker::setGrammarCheckingEnabled(!TextChecker::state().isGrammarCheckingEnabled);
+        TextChecker::setGrammarCheckingEnabled(!TextChecker::state().contains(TextCheckerState::GrammarCheckingEnabled));
             protectedLegacyMainFrameProcess()->updateTextCheckerState();
         return;
 
@@ -12464,25 +12464,25 @@ void WebPageProxy::toggleSmartInsertDelete()
 void WebPageProxy::toggleAutomaticQuoteSubstitution()
 {
     if (TextChecker::isTestingMode())
-        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
 }
 
 void WebPageProxy::toggleAutomaticLinkDetection()
 {
     if (TextChecker::isTestingMode())
-        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
 }
 
 void WebPageProxy::toggleAutomaticDashSubstitution()
 {
     if (TextChecker::isTestingMode())
-        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
 }
 
 void WebPageProxy::toggleAutomaticTextReplacement()
 {
     if (TextChecker::isTestingMode())
-        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
 }
 
 #endif

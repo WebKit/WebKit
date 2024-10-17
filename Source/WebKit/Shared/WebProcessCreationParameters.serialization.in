@@ -81,7 +81,7 @@
     bool hasRichContentServices;
 #endif
 
-    WebKit::TextCheckerState textCheckerState;
+    OptionSet<WebKit::TextCheckerState> textCheckerState;
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;

@@ -1525,7 +1525,7 @@ gboolean webkit_web_context_get_spell_checking_enabled(WebKitWebContext* context
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
 
 #if ENABLE(SPELLCHECK)
-    return TextChecker::state().isContinuousSpellCheckingEnabled;
+    return TextChecker::state().contains(TextCheckerState::ContinuousSpellCheckingEnabled);
 #else
     return false;
 #endif

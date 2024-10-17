@@ -1469,10 +1469,10 @@ void WebProcess::stopMemorySampler()
 #endif
 }
 
-void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
+void WebProcess::setTextCheckerState(OptionSet<TextCheckerState> textCheckerState)
 {
-    bool continuousSpellCheckingTurnedOff = !textCheckerState.isContinuousSpellCheckingEnabled && m_textCheckerState.isContinuousSpellCheckingEnabled;
-    bool grammarCheckingTurnedOff = !textCheckerState.isGrammarCheckingEnabled && m_textCheckerState.isGrammarCheckingEnabled;
+    bool continuousSpellCheckingTurnedOff = !textCheckerState.contains(TextCheckerState::ContinuousSpellCheckingEnabled) && m_textCheckerState.contains(TextCheckerState::ContinuousSpellCheckingEnabled);
+    bool grammarCheckingTurnedOff = !textCheckerState.contains(TextCheckerState::GrammarCheckingEnabled) && m_textCheckerState.contains(TextCheckerState::GrammarCheckingEnabled);
 
     m_textCheckerState = textCheckerState;
 

@@ -35,13 +35,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-static TextCheckerState& checkerState()
+static OptionSet<TextCheckerState>& checkerState()
 {
-    static TextCheckerState textCheckerState;
+    static OptionSet<TextCheckerState> textCheckerState;
     return textCheckerState;
 }
 
-const TextCheckerState& TextChecker::state()
+OptionSet<TextCheckerState> TextChecker::state()
 {
     return checkerState();
 }
