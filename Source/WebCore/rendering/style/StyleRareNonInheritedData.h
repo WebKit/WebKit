@@ -207,8 +207,6 @@ public:
     Vector<AtomString> anchorNames;
     AtomString positionAnchor;
 
-    TextEdge textBoxEdge;
-
     std::optional<Length> blockStepSize;
     unsigned blockStepInsert : 1; // BlockStepInsert
 

@@ -670,7 +670,7 @@
             }
         },
         "text-box-edge": {
-            "inherited": false,
+            "inherited": true,
             "values": [
                 "auto",
                 "text",

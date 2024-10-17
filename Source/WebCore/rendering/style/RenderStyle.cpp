@@ -878,9 +878,6 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.textBoxTrim != second.textBoxTrim)
         return true;
 
-    if (first.textBoxEdge != second.textBoxEdge)
-        return true;
-
     if (first.maxLines != second.maxLines)
         return true;
 
@@ -898,6 +895,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textAlignLast != second.textAlignLast
         || first.textJustify != second.textJustify
         || first.textIndentLine != second.textIndentLine
+        || first.textBoxEdge != second.textBoxEdge
         || first.lineFitEdge != second.lineFitEdge
         || first.usedZoom != second.usedZoom
         || first.textZoom != second.textZoom
@@ -1946,8 +1944,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyScrollSnapStop);
         if (first.scrollSnapType != second.scrollSnapType)
             changingProperties.m_properties.set(CSSPropertyScrollSnapType);
-        if (first.textBoxEdge != second.textBoxEdge)
-            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
         if (first.maxLines != second.maxLines)
             changingProperties.m_properties.set(CSSPropertyMaxLines);
         if (first.overflowContinue != second.overflowContinue)
@@ -2081,6 +2077,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyImageRendering);
         if (first.textAlignLast != second.textAlignLast)
             changingProperties.m_properties.set(CSSPropertyTextAlignLast);
+        if (first.textBoxEdge != second.textBoxEdge)
+            changingProperties.m_properties.set(CSSPropertyTextBoxEdge);
         if (first.lineFitEdge != second.lineFitEdge)
             changingProperties.m_properties.set(CSSPropertyLineFitEdge);
         if (first.textJustify != second.textJustify)
@@ -3766,12 +3764,12 @@ bool RenderStyle::hasSnapPosition() const
 
 TextEdge RenderStyle::textBoxEdge() const
 {
-    return m_nonInheritedData->rareData->textBoxEdge;
+    return m_rareInheritedData->textBoxEdge;
 }
 
-void RenderStyle::setTextBoxEdge(TextEdge textBoxEdgeValue)
+void RenderStyle::setTextBoxEdge(TextEdge value)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, textBoxEdge, textBoxEdgeValue);
+    SET_VAR(m_rareInheritedData, textBoxEdge, value);
 }
 
 TextEdge RenderStyle::initialTextBoxEdge()
@@ -3784,9 +3782,9 @@ TextEdge RenderStyle::lineFitEdge() const
     return m_rareInheritedData->lineFitEdge;
 }
 
-void RenderStyle::setLineFitEdge(TextEdge lineFitEdgeValue)
+void RenderStyle::setLineFitEdge(TextEdge value)
 {
-    SET_VAR(m_rareInheritedData, lineFitEdge, lineFitEdgeValue);
+    SET_VAR(m_rareInheritedData, lineFitEdge, value);
 }
 
 TextEdge RenderStyle::initialLineFitEdge()
