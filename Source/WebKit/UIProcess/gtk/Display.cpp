@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Display.h"
 
-#include "SystemSettingsManager.h"
+#include "SystemSettingsManagerProxy.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/GLDisplay.h>
 #include <WebCore/GtkVersioning.h>
@@ -55,7 +55,7 @@ Display::Display()
         return;
 
     // As soon as gtk is initialized we listen to GtkSettings.
-    SystemSettingsManager::initialize();
+    SystemSettingsManagerProxy::initialize();
 
     m_gdkDisplay = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (!m_gdkDisplay)

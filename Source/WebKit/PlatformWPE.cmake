@@ -487,7 +487,7 @@ else ()
 endif ()
 
 list(APPEND WebKit_MESSAGES_IN_FILES
-    WebProcess/glib/SystemSettingsProxy
+    WebProcess/glib/SystemSettingsManager
 )
 
 if (ENABLE_WPE_PLATFORM)

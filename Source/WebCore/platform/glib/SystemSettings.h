@@ -59,7 +59,7 @@ public:
 
     using State = SystemSettingsState;
 
-    void updateSettings(SystemSettings::State&&);
+    void updateSettings(const SystemSettings::State&);
 
     const State& settingsState() const { return m_state; }
 

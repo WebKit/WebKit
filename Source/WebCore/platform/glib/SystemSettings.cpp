@@ -38,7 +38,7 @@ SystemSettings& SystemSettings::singleton()
 
 SystemSettings::SystemSettings() = default;
 
-void SystemSettings::updateSettings(SystemSettings::State&& state)
+void SystemSettings::updateSettings(const SystemSettings::State& state)
 {
     if (state.themeName)
         m_state.themeName = state.themeName;

@@ -28,17 +28,15 @@
 #include "WebProcess.h"
 
 #include "Logging.h"
-#include "SystemSettingsProxy.h"
+#include "SystemSettingsManager.h"
 #include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessExtensionManager.h"
 
-#include <WebCore/FontRenderOptions.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/ScreenProperties.h>
-#include <WebCore/ScrollbarTheme.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspector.h>
@@ -63,7 +61,6 @@
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include <WebCore/PlatformDisplayGBM.h>
 #include <WebCore/PlatformDisplaySurfaceless.h>
-#include <WebCore/SystemSettings.h>
 #endif
 
 #if PLATFORM(GTK)
@@ -131,6 +128,8 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     // Disable RealTimeThreads in WebProcess initially, since it depends on having a visible web page.
     RealTimeThreads::singleton().setEnabled(false);
 #endif
+
+    addSupplement<SystemSettingsManager>();
 }
 
 void WebProcess::initializePlatformDisplayIfNeeded() const
@@ -172,9 +171,6 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    SystemSettingsProxy::initialize();
-    WebCore::SystemSettings::singleton().updateSettings(WTFMove(parameters.systemSettings));
-
 #if USE(SKIA)
     const char* enableCPURendering = getenv("WEBKIT_SKIA_ENABLE_CPU_RENDERING");
     if (enableCPURendering && strcmp(enableCPURendering, "0"))
@@ -239,31 +235,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!m_dmaBufRendererBufferMode.isEmpty())
         WebCore::setScreenProperties(parameters.screenProperties);
 #endif
-
-    WebCore::SystemSettings::singleton().addObserver([](const SystemSettings::State& state) {
-        auto& systemSettings = WebCore::SystemSettings::singleton();
-        auto& fontRenderOptions = FontRenderOptions::singleton();
-        bool antialiasSettingsDidChange = state.xftAntialias || state.xftRGBA;
-        bool hintingSettingsDidChange = state.xftHinting || state.xftHintStyle;
-        bool themeDidChange = state.themeName || state.darkMode;
-
-        if (themeDidChange)
-            RenderTheme::singleton().platformColorsDidChange();
-
-        if (hintingSettingsDidChange)
-            fontRenderOptions.setHinting(systemSettings.hintStyle());
-
-        if (antialiasSettingsDidChange) {
-            fontRenderOptions.setSubpixelOrder(systemSettings.subpixelOrder());
-            fontRenderOptions.setAntialias(systemSettings.antialiasMode());
-        }
-
-        if (state.overlayScrolling || state.themeName)
-            ScrollbarTheme::theme().themeChanged();
-
-        if (themeDidChange || antialiasSettingsDidChange || hintingSettingsDidChange)
-            Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
-    }, this);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
@@ -272,7 +243,6 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 
 void WebProcess::platformTerminate()
 {
-    WebCore::SystemSettings::singleton().removeObserver(this);
 }
 
 void WebProcess::sendMessageToWebProcessExtension(UserMessage&& message)

@@ -24,15 +24,14 @@
  */
 
 #include "config.h"
-#include "SystemSettingsManager.h"
+#include "SystemSettingsManagerProxy.h"
 
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-String SystemSettingsManager::themeName() const
+String SystemSettingsManagerProxy::themeName() const
 {
     if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
         String name = String::fromUTF8(themeNameEnv);
@@ -49,7 +48,7 @@ String SystemSettingsManager::themeName() const
     return name;
 }
 
-bool SystemSettingsManager::darkMode() const
+bool SystemSettingsManagerProxy::darkMode() const
 {
     gboolean preferDarkTheme;
     g_object_get(m_settings, "gtk-application-prefer-dark-theme", &preferDarkTheme, nullptr);
@@ -69,87 +68,87 @@ bool SystemSettingsManager::darkMode() const
     return false;
 }
 
-String SystemSettingsManager::fontName() const
+String SystemSettingsManagerProxy::fontName() const
 {
     GUniqueOutPtr<char> fontNameSetting;
     g_object_get(m_settings, "gtk-font-name", &fontNameSetting.outPtr(), nullptr);
     return String::fromUTF8(fontNameSetting.get());
 }
 
-int SystemSettingsManager::xftAntialias() const
+int SystemSettingsManagerProxy::xftAntialias() const
 {
     int antialiasSetting;
     g_object_get(m_settings, "gtk-xft-antialias", &antialiasSetting, nullptr);
     return antialiasSetting;
 }
 
-int SystemSettingsManager::xftHinting() const
+int SystemSettingsManagerProxy::xftHinting() const
 {
     int hintingSetting;
     g_object_get(m_settings, "gtk-xft-hinting", &hintingSetting, nullptr);
     return hintingSetting;
 }
 
-String SystemSettingsManager::xftHintStyle() const
+String SystemSettingsManagerProxy::xftHintStyle() const
 {
     GUniqueOutPtr<char> hintStyleSetting;
     g_object_get(m_settings, "gtk-xft-hintstyle", &hintStyleSetting.outPtr(), nullptr);
     return String::fromUTF8(hintStyleSetting.get());
 }
 
-String SystemSettingsManager::xftRGBA() const
+String SystemSettingsManagerProxy::xftRGBA() const
 {
     GUniqueOutPtr<char> rgbaSetting;
     g_object_get(m_settings, "gtk-xft-rgba", &rgbaSetting.outPtr(), nullptr);
     return String::fromUTF8(rgbaSetting.get());
 }
 
-int SystemSettingsManager::xftDPI() const
+int SystemSettingsManagerProxy::xftDPI() const
 {
     int dpiSetting;
     g_object_get(m_settings, "gtk-xft-dpi", &dpiSetting, nullptr);
     return dpiSetting;
 }
 
-bool SystemSettingsManager::cursorBlink() const
+bool SystemSettingsManagerProxy::cursorBlink() const
 {
     gboolean cursorBlinkSetting;
     g_object_get(m_settings, "gtk-cursor-blink", &cursorBlinkSetting, nullptr);
     return cursorBlinkSetting ? true : false;
 }
 
-int SystemSettingsManager::cursorBlinkTime() const
+int SystemSettingsManagerProxy::cursorBlinkTime() const
 {
     int cursorBlinkTimeSetting;
     g_object_get(m_settings, "gtk-cursor-blink-time", &cursorBlinkTimeSetting, nullptr);
     return cursorBlinkTimeSetting;
 }
 
-bool SystemSettingsManager::primaryButtonWarpsSlider() const
+bool SystemSettingsManagerProxy::primaryButtonWarpsSlider() const
 {
     gboolean buttonSetting;
     g_object_get(m_settings, "gtk-primary-button-warps-slider", &buttonSetting, nullptr);
     return buttonSetting ? true : false;
 }
 
-bool SystemSettingsManager::overlayScrolling() const
+bool SystemSettingsManagerProxy::overlayScrolling() const
 {
     gboolean overlayScrollingSetting;
     g_object_get(m_settings, "gtk-overlay-scrolling", &overlayScrollingSetting, nullptr);
     return overlayScrollingSetting ? true : false;
 }
 
-bool SystemSettingsManager::enableAnimations() const
+bool SystemSettingsManagerProxy::enableAnimations() const
 {
     gboolean enableAnimationsSetting;
     g_object_get(m_settings, "gtk-enable-animations", &enableAnimationsSetting, nullptr);
     return enableAnimationsSetting ? true : false;
 }
 
-SystemSettingsManager::SystemSettingsManager()
+SystemSettingsManagerProxy::SystemSettingsManagerProxy()
     : m_settings(gtk_settings_get_default())
 {
-    auto settingsChangedCallback = +[](SystemSettingsManager* settingsManager) {
+    auto settingsChangedCallback = +[](SystemSettingsManagerProxy* settingsManager) {
         settingsManager->settingsDidChange();
     };
 

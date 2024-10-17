@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 Igalia S.L.
  * Copyright (C) 2021 Purism SPC
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,91 +25,92 @@
  */
 
 #include "config.h"
-#include "SystemSettingsManager.h"
+#include "SystemSettingsManagerProxy.h"
 
-#include "SystemSettingsProxyMessages.h"
+#include "SystemSettingsManagerMessages.h"
 #include "WebProcessPool.h"
+#include <WebCore/SystemSettings.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 #if !PLATFORM(GTK)
 
-SystemSettingsManager::SystemSettingsManager() = default;
+SystemSettingsManagerProxy::SystemSettingsManagerProxy() = default;
 
-String SystemSettingsManager::themeName() const
+String SystemSettingsManagerProxy::themeName() const
 {
     return emptyString();
 }
 
-bool SystemSettingsManager::darkMode() const
+bool SystemSettingsManagerProxy::darkMode() const
 {
     return false;
 }
 
-String SystemSettingsManager::fontName() const
+String SystemSettingsManagerProxy::fontName() const
 {
     return "Sans 10"_s;
 }
 
-int SystemSettingsManager::xftAntialias() const
+int SystemSettingsManagerProxy::xftAntialias() const
 {
     return -1;
 }
 
-int SystemSettingsManager::xftHinting() const
+int SystemSettingsManagerProxy::xftHinting() const
 {
     return -1;
 }
 
-String SystemSettingsManager::xftHintStyle() const
+String SystemSettingsManagerProxy::xftHintStyle() const
 {
     return emptyString();
 }
 
-String SystemSettingsManager::xftRGBA() const
+String SystemSettingsManagerProxy::xftRGBA() const
 {
     return "rgb"_s;
 }
 
-int SystemSettingsManager::xftDPI() const
+int SystemSettingsManagerProxy::xftDPI() const
 {
     return -1;
 }
 
-bool SystemSettingsManager::cursorBlink() const
+bool SystemSettingsManagerProxy::cursorBlink() const
 {
     return true;
 }
 
-int SystemSettingsManager::cursorBlinkTime() const
+int SystemSettingsManagerProxy::cursorBlinkTime() const
 {
     return 1200;
 }
 
-bool SystemSettingsManager::primaryButtonWarpsSlider() const
+bool SystemSettingsManagerProxy::primaryButtonWarpsSlider() const
 {
     return true;
 }
 
-bool SystemSettingsManager::overlayScrolling() const
+bool SystemSettingsManagerProxy::overlayScrolling() const
 {
     return true;
 }
 
-bool SystemSettingsManager::enableAnimations() const
+bool SystemSettingsManagerProxy::enableAnimations() const
 {
     return true;
 }
 
 #endif // !PLATFORM(GTK)
 
-void SystemSettingsManager::initialize()
+void SystemSettingsManagerProxy::initialize()
 {
-    static NeverDestroyed<SystemSettingsManager> manager;
+    static NeverDestroyed<SystemSettingsManagerProxy> manager;
 }
 
-void SystemSettingsManager::settingsDidChange()
+void SystemSettingsManagerProxy::settingsDidChange()
 {
     auto& oldState = SystemSettings::singleton().settingsState();
     SystemSettings::State changedState;
@@ -166,9 +168,9 @@ void SystemSettingsManager::settingsDidChange()
         changedState.enableAnimations = enableAnimations;
 
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToAllProcesses(Messages::SystemSettingsProxy::DidChange(changedState));
+        processPool->sendToAllProcesses(Messages::SystemSettingsManager::DidChange(changedState));
 
-    SystemSettings::singleton().updateSettings(WTFMove(changedState));
+    SystemSettings::singleton().updateSettings(changedState);
 }
 
 } // namespace WebKit

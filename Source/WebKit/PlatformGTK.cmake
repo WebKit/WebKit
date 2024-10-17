@@ -64,7 +64,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf
 
-    WebProcess/glib/SystemSettingsProxy
+    WebProcess/glib/SystemSettingsManager
 )
 
 if (USE_GBM)

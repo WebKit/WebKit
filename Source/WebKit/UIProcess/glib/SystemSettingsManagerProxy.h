@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Purism SPC
  * Copyright (C) 2024 Igalia S.L.
+ * Copyright (C) 2021 Purism SPC
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,20 +26,28 @@
 
 #pragma once
 
-#include <WebCore/SystemSettings.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
+
+#if PLATFORM(GTK)
+typedef struct _GtkSettings GtkSettings;
+using PlatformSettings = GtkSettings;
+#else
+using PlatformSettings = void;
+#endif
 
 namespace WebKit {
 
-class SystemSettingsManager {
-    WTF_MAKE_NONCOPYABLE(SystemSettingsManager);
-    friend NeverDestroyed<SystemSettingsManager>;
+class SystemSettingsManagerProxy {
+    WTF_MAKE_NONCOPYABLE(SystemSettingsManagerProxy);
+    friend NeverDestroyed<SystemSettingsManagerProxy>;
 
 public:
     static void initialize();
 
 private:
-    SystemSettingsManager();
+    SystemSettingsManagerProxy();
 
     void settingsDidChange();
 
@@ -57,7 +65,7 @@ private:
     bool overlayScrolling() const;
     bool enableAnimations() const;
 
-    void* m_settings = nullptr;
+    PlatformSettings* m_settings { nullptr };
 };
 
 } // namespace WebKit

@@ -254,7 +254,7 @@ UIProcess/glib/DisplayVBlankMonitorDRM.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/FenceMonitor.cpp
 UIProcess/glib/ScreenManager.cpp
-UIProcess/glib/SystemSettingsManager.cpp
+UIProcess/glib/SystemSettingsManagerProxy.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
@@ -276,7 +276,7 @@ UIProcess/gtk/PointerLockManager.cpp @no-unify
 UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
 UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
 UIProcess/gtk/ScreenManagerGtk.cpp @no-unify
-UIProcess/gtk/SystemSettingsManagerGtk.cpp
+UIProcess/gtk/SystemSettingsManagerProxyGtk.cpp
 UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify
@@ -340,7 +340,7 @@ WebProcess/WebPage/glib/WebPageGLib.cpp
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
-WebProcess/glib/SystemSettingsProxy.cpp
+WebProcess/glib/SystemSettingsManager.cpp
 WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/gtk/WebProcessMainGtk.cpp

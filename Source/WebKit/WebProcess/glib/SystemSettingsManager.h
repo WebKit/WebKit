@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024 Igalia S.L.
  * Copyright (C) 2021 Purism SPC
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,26 +27,32 @@
 #pragma once
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-
 #include "MessageReceiver.h"
+#include "WebProcessSupplement.h"
 #include <WebCore/SystemSettings.h>
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+class WebProcess;
 
-class SystemSettingsProxy : private IPC::MessageReceiver {
-    WTF_MAKE_NONCOPYABLE(SystemSettingsProxy);
-    friend NeverDestroyed<SystemSettingsProxy>;
+class SystemSettingsManager final : public WebProcessSupplement, public IPC::MessageReceiver {
+    WTF_MAKE_TZONE_ALLOCATED(SystemSettingsManager);
+    WTF_MAKE_NONCOPYABLE(SystemSettingsManager);
 public:
-    static void initialize();
+    explicit SystemSettingsManager(WebProcess&);
+    ~SystemSettingsManager();
+
+    static ASCIILiteral supplementName();
 
 private:
-    SystemSettingsProxy();
+    // WebProcessSupplement.
+    void initialize(const WebProcessCreationParameters&) override;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didChange(WebCore::SystemSettings::State&&);
+    void didChange(const WebCore::SystemSettings::State&);
 };
 
 } // namespace WebKit

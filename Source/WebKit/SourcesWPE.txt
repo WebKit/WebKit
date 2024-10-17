@@ -224,7 +224,7 @@ UIProcess/glib/DisplayVBlankMonitorDRM.cpp
 UIProcess/glib/DisplayVBlankMonitorTimer.cpp
 UIProcess/glib/FenceMonitor.cpp
 UIProcess/glib/ScreenManager.cpp
-UIProcess/glib/SystemSettingsManager.cpp
+UIProcess/glib/SystemSettingsManagerProxy.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
@@ -302,7 +302,7 @@ WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
 
 WebProcess/WebPage/wpe/WebPageWPE.cpp
 
-WebProcess/glib/SystemSettingsProxy.cpp
+WebProcess/glib/SystemSettingsManager.cpp
 WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/wpe/WebProcessMainWPE.cpp
