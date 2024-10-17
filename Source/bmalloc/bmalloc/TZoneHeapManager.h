@@ -165,13 +165,7 @@ private:
 
     BINLINE Mutex& mutex() { return m_mutex; }
 
-    BINLINE unsigned bucketCountForSizeClass(SizeAndAlign typeSizeAlign)
-    {
-        if (typeSizeAlign.size() > 128)
-            return 4;
-
-        return 8;
-    }
+    inline unsigned bucketCountForSizeClass(SizeAndAlign typeSizeAlign);
 
     inline unsigned tzoneBucketForKey(UniqueLockHolder&, bmalloc_type*, unsigned bucketCountForSize);
     TZoneTypeBuckets* populateBucketsForSizeClass(UniqueLockHolder&, SizeAndAlign);

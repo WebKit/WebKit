@@ -35,6 +35,7 @@
 #include "VMAllocate.h"
 #include "bmalloc.h"
 #include "bmalloc_heap_inlines.h"
+#include <string.h>
 
 #if BOS(DARWIN)
 #include <stdlib.h>
@@ -44,6 +45,8 @@
 #endif
 
 namespace bmalloc { namespace api {
+
+#define BUSE_BUCKETS_FOR_SIZE_CLASSES_FROM_ENVVAR 0
 
 TZoneHeapManager* TZoneHeapManager::theTZoneHeapManager = nullptr;
 
@@ -55,6 +58,16 @@ static const unsigned SizeBase64Size = 3;
 static const unsigned AlignmentBase64Size = 1;
 static const unsigned IndexSize = 2;
 static const unsigned typeNameLen = 12;
+
+#if BUSE(BUCKETS_FOR_SIZE_CLASSES_FROM_ENVVAR)
+static unsigned bucketsForSmallSizes = 8;
+static unsigned bucketsForLargeSizes = 4;
+static unsigned maxSmallSize = 128;
+#else
+static constexpr unsigned bucketsForSmallSizes = 8;
+static constexpr unsigned bucketsForLargeSizes = 4;
+static constexpr unsigned maxSmallSize = 128;
+#endif
 
 typedef union {
     struct {
@@ -84,6 +97,39 @@ void TZoneHeapManager::init()
 
     if constexpr (verbose)
         TZONE_LOG_DEBUG("TZoneHeapManager initialization ");
+
+#if BUSE(BUCKETS_FOR_SIZE_CLASSES_FROM_ENVVAR)
+    // Allow the setting the bucket per size class params via an environment variable.
+    // TZONE_BUCKET_CONFIG=<bucket-for-small-sizes>:<buckets-for-large-sizes>:<max-small-size>
+    // Note that one, two or all three params can be given.
+    // For example, to specific 1 bucket for all size classes use TZONE_BUCKET_CONFIG=1:1
+    char* bucketsForSizeClassesValue = getenv("TZONE_BUCKET_CONFIG");
+    if (bucketsForSizeClassesValue && *bucketsForSizeClassesValue) {
+        constexpr unsigned numParams = 3;
+        constexpr unsigned bufferLength = 30;
+        char buffer[bufferLength + 1];
+        unsigned paramsAsNumbers[numParams];
+        unsigned paramsProvided = 0;
+
+        memcpy(buffer, bucketsForSizeClassesValue, bufferLength);
+        buffer[bufferLength] = '\0';
+        auto tempString = buffer;
+        char* param = nullptr;
+
+        for (paramsProvided = 0; paramsProvided < numParams && (param = strsep(&tempString, ":")) != nullptr; paramsProvided++)
+            paramsAsNumbers[paramsProvided] = static_cast<unsigned>(atol(param));
+
+        if (paramsProvided > 0)
+            bucketsForSmallSizes = paramsAsNumbers[0];
+        if (paramsProvided > 1)
+            bucketsForLargeSizes = paramsAsNumbers[1];
+        if (paramsProvided > 2)
+            maxSmallSize = paramsAsNumbers[2];
+
+        if constexpr (verbose)
+            TZONE_LOG_DEBUG("Buckets from env (%s): bucketsForSmallSizes: %u, bucketsForLargeSizes: %u, small sizes <= %u bytes\n",  bucketsForSizeClassesValue, bucketsForSmallSizes, bucketsForLargeSizes, maxSmallSize);
+    }
+#endif
 
 #if BOS(DARWIN)
     // Use the boot UUID and the process' name to seed the key.
@@ -294,6 +340,14 @@ void TZoneHeapManager::ensureSingleton()
         }
     );
 };
+
+BINLINE unsigned TZoneHeapManager::bucketCountForSizeClass(SizeAndAlign typeSizeAlign)
+{
+    if (typeSizeAlign.size() > maxSmallSize)
+        return bucketsForLargeSizes;
+
+    return bucketsForSmallSizes;
+}
 
 BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
