@@ -123,7 +123,7 @@ public:
         
         Payload(const void* pointer)
             : m_isTop(false)
-            , m_value(bitwise_cast<intptr_t>(pointer))
+            , m_value(static_cast<int64_t>(reinterpret_cast<uintptr_t>(pointer)))
         {
         }
 
