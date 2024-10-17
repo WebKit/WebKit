@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,13 @@ namespace JSC {
 
 class VM;
 
-REFTRACKER_DECL(StrongRefTracker);
+#if ENABLE(REFTRACKER)
+void initializeSystemForStrongRefTracker();
+#endif
+
+REFTRACKER_DECL(StrongRefTracker, {
+    initializeSystemForStrongRefTracker();
+});
 
 // A strongly referenced handle that prevents the object it points to from being garbage collected.
 template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock> class Strong final : public Handle<T> {

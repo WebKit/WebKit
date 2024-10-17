@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,10 @@
 #include "JSCJSValueInlines.h"
 #include "VM.h"
 
+#if ENABLE(REFTRACKER)
+#include "InitializeThreading.h"
+#endif
+
 namespace JSC {
 
 template <typename T, ShouldStrongDestructorGrabLock shouldStrongDestructorGrabLock>
@@ -51,5 +55,16 @@ inline void Strong<T, shouldStrongDestructorGrabLock>::set(VM& vm, ExternalType 
         setSlot(vm.heap.handleSet()->allocate());
     set(value);
 }
+
+#if ENABLE(REFTRACKER)
+inline void initializeSystemForStrongRefTracker()
+{
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        WTF::initializeMainThread();
+        JSC::initialize();
+    });
+}
+#endif // ENABLE(REFTRACKER)
 
 } // namespace JSC
