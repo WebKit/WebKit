@@ -81,7 +81,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
     auto* drawingArea = page->drawingArea();
     RELEASE_ASSERT(drawingArea);
 
-    m_drawingArea = makeUnique<RemotePageDrawingAreaProxy>(*drawingArea, m_process);
+    m_drawingArea = RemotePageDrawingAreaProxy::create(*drawingArea, m_process);
     m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
 
     m_process->send(

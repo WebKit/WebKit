@@ -35,6 +35,11 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePageDrawingAreaProxy);
 
+Ref<RemotePageDrawingAreaProxy> RemotePageDrawingAreaProxy::create(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
+{
+    return adoptRef(*new RemotePageDrawingAreaProxy(drawingArea, process));
+}
+
 RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
     : m_drawingArea(drawingArea)
     , m_identifier(drawingArea.identifier())

@@ -117,7 +117,7 @@ private:
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
     const WebCore::Site m_site;
-    std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
+    RefPtr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     UniqueRef<WebProcessActivityState> m_processActivityState;
