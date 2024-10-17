@@ -417,6 +417,9 @@ public:
         // object from the nodemap, and rely on the normal updateChildren flow to repair parent relationships
         // as needed.
         m_nodeMap.remove(axID);
+        // Any queued parent updates no longer need to happen (and if we do try to process them, we'll crash,
+        // since this object is no longer in the node map).
+        m_needsParentUpdate.remove(axID);
     }
 #endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
@@ -500,7 +503,7 @@ private:
     RefPtr<AXIsolatedTree> m_replacingTree;
     RefPtr<AccessibilityObject> m_rootOfSubtreeBeingUpdated;
 
-    // Stores the parent ID and children IDS for a given IsolatedObject.
+    // Stores the parent ID and children IDs for a given IsolatedObject.
     struct ParentChildrenIDs {
         Markable<AXID> parentID;
         Vector<AXID> childrenIDs;

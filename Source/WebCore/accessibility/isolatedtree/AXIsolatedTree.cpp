@@ -439,10 +439,28 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AccessibilityObject& axObject)
         return;
 
     auto* axParent = axObject.parentInCoreTree();
+    auto parentID = axParent ? axParent->objectID() : std::nullopt;
+    auto axChildrenCopy = axObject.children();
+
     auto iterator = m_nodeMap.find(*axObject.objectID());
-    if (iterator == m_nodeMap.end())
+    if (iterator == m_nodeMap.end()) {
         m_unresolvedPendingAppends.set(*axObject.objectID(), AttachWrapper::OnMainThread);
-    else {
+
+        Vector<AXID> axChildrenIDs;
+        axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
+        for (const auto& axChild : axChildrenCopy) {
+            if (!axChild || axChild.get() == &axObject) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            axChildrenIDs.append(*axChild->objectID());
+            collectNodeChangesForSubtree(downcast<AccessibilityObject>(*axChild));
+        }
+        axChildrenIDs.shrinkToFit();
+
+        m_nodeMap.set(*axObject.objectID(), ParentChildrenIDs { parentID, WTFMove(axChildrenIDs) });
+    } else {
         // This object is already in the isolated tree, so there's no need to create full node change for it (doing so is expensive).
         // Protect this object from being deleted. This is important when |axObject| was a child of some other object,
         // but no longer is, and thus the other object will try to queue it for removal. But the fact that we're here
@@ -450,26 +468,22 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AccessibilityObject& axObject)
         m_protectedFromDeletionIDs.add(*axObject.objectID());
         // Update the object's parent if it has changed (but only if we aren't going to create a node change for it,
         // as the act of creating a new node change will correct this as part of creating the new AXIsolatedObject).
-        if (axParent && iterator->value.parentID != *axParent->objectID() && !m_unresolvedPendingAppends.contains(*axObject.objectID()))
+        if (parentID && iterator->value.parentID != *parentID && !m_unresolvedPendingAppends.contains(*axObject.objectID()))
             m_needsParentUpdate.add(*axObject.objectID());
-    }
 
-    auto axChildrenCopy = axObject.children();
-    Vector<AXID> axChildrenIDs;
-    axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
-    for (const auto& axChild : axChildrenCopy) {
-        if (!axChild || axChild.get() == &axObject) {
-            ASSERT_NOT_REACHED();
-            continue;
+        // Only update the parentID so that we have the right one set for when we process m_needsParentUpdate. We explicitly
+        // don't want to update the children IDs in this case, as we need to keep the "old" children around in order for
+        // `AXIsolatedTree::updateChildren` to behave correctly.
+        iterator->value.parentID = parentID;
+
+        for (const auto& axChild : axChildrenCopy) {
+            if (!axChild || axChild.get() == &axObject) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+            collectNodeChangesForSubtree(downcast<AccessibilityObject>(*axChild));
         }
-
-        axChildrenIDs.append(*axChild->objectID());
-        collectNodeChangesForSubtree(downcast<AccessibilityObject>(*axChild));
     }
-    axChildrenIDs.shrinkToFit();
-
-    // Update the m_nodeMap.
-    m_nodeMap.set(*axObject.objectID(), ParentChildrenIDs { axParent ? axParent->objectID() : std::nullopt, WTFMove(axChildrenIDs) });
 }
 
 void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
@@ -1141,13 +1155,6 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(std::optional<AXID> objectID, Acce
             removals.appendVector(it->value.childrenIDs);
             m_nodeMap.remove(*axID);
         }
-    }
-
-    // Update the childrenIDs of the parent since one of its children has been removed.
-    if (axParent) {
-        auto ids = m_nodeMap.get(*axParentID);
-        ids.childrenIDs = axParent->childrenIDs();
-        m_nodeMap.set(*axParentID, WTFMove(ids));
     }
 }
 
