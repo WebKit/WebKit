@@ -85,12 +85,13 @@ BackgroundFetchLoad::~BackgroundFetchLoad()
 
 void BackgroundFetchLoad::abort()
 {
-    if (!m_task)
+    RefPtr task = m_task;
+    if (!task)
         return;
 
-    ASSERT(m_task->client() == this);
-    m_task->clearClient();
-    m_task->cancel();
+    ASSERT(task->client() == this);
+    task->clearClient();
+    task->cancel();
     m_task = nullptr;
 }
 
@@ -114,8 +115,9 @@ void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRe
     loadParameters.storedCredentialsPolicy = m_networkLoadChecker->options().credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
     loadParameters.clientCredentialPolicy = ClientCredentialPolicy::CannotAskClientForCredentials;
 
-    m_task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
-    m_task->resume();
+    Ref task = NetworkDataTask::create(*networkSession, *this, WTFMove(loadParameters));
+    m_task = task.ptr();
+    task->resume();
 }
 
 void BackgroundFetchLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
@@ -141,7 +143,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
 {
     BGLOAD_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        m_networkLoadChecker->networkProcess().protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
+        Ref { m_networkLoadChecker }->protectedNetworkProcess()->protectedAuthenticationManager()->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

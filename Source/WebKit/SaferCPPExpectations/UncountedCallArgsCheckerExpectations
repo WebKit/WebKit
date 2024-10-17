@@ -34,7 +34,6 @@ JSWebExtensionAPIWebRequest.mm
 JSWebExtensionAPIWebRequestEvent.mm
 JSWebExtensionAPIWindows.mm
 JSWebExtensionAPIWindowsEvent.mm
-NetworkProcess/BackgroundFetchLoad.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 NetworkProcess/Downloads/Download.cpp

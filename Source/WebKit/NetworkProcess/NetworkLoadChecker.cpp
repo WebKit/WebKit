@@ -561,6 +561,11 @@ void NetworkLoadChecker::storeRedirectionIfNeeded(const ResourceRequest& request
     m_loadInformation.transactions.append(NetworkTransactionInformation { NetworkTransactionInformation::Type::Redirection, ResourceRequest { request }, ResourceResponse { response }, { } });
 }
 
+Ref<NetworkProcess> NetworkLoadChecker::protectedNetworkProcess()
+{
+    return m_networkProcess;
+}
+
 } // namespace WebKit
 
 #undef LOAD_CHECKER_RELEASE_LOG
