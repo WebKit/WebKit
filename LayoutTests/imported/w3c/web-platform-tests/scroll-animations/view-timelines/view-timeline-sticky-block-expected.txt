@@ -1,6 +1,4 @@
 Subject
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline with sticky target, block axis. Test timed out
+FAIL View timeline with sticky target, block axis. assert_equals: Effect at the midpoint of the active range: cover 0% to cover 100% expected "0.5" but got "0.7"
 

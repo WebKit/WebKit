@@ -1,14 +1,12 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Canceling an animation should cause its start time and hold time to be unresolved
 PASS A play-pending ready promise should be rejected when the animation is canceled
-TIMEOUT A pause-pending ready promise should be rejected when the animation is canceled Test timed out
-NOTRUN When an animation is canceled, it should create a resolved Promise
-NOTRUN The ready promise should be replaced when the animation is canceled
-NOTRUN The finished promise should NOT be rejected if the animation is already idle
-NOTRUN The cancel event should NOT be fired if the animation is already idle
-NOTRUN Canceling an animation should fire cancel event on orphaned element
-NOTRUN Canceling an animation with inactive timeline should cause its start time and hold time to be unresolved
-NOTRUN oncancel event is fired when the timeline is inactive.
+PASS A pause-pending ready promise should be rejected when the animation is canceled
+PASS When an animation is canceled, it should create a resolved Promise
+PASS The ready promise should be replaced when the animation is canceled
+PASS The finished promise should NOT be rejected if the animation is already idle
+PASS The cancel event should NOT be fired if the animation is already idle
+PASS Canceling an animation should fire cancel event on orphaned element
+PASS Canceling an animation with inactive timeline should cause its start time and hold time to be unresolved
+PASS oncancel event is fired when the timeline is inactive.
 

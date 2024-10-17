@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline with subject that is not a direct descendant of the scroll container Test timed out
+FAIL View timeline with subject that is not a direct descendant of the scroll container assert_approx_equals: values do not match for "Timeline's current time at start offset" expected 0 +/- 0.125 but got 150
 

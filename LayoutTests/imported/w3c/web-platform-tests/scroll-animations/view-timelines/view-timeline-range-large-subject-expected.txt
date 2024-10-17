@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline with range set via delays. Test timed out
+FAIL View timeline with range set via delays. assert_equals: Effect at the start of the active phase: cover 0% to cover 100% expected "0.3" but got "0.693333"
 

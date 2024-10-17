@@ -1,12 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Scroll timeline with percentage range [JavaScript API] Test timed out
-NOTRUN Scroll timeline with px range [JavaScript API]
-NOTRUN Scroll timeline with calculated range [JavaScript API]
-NOTRUN Scroll timeline with EM range [JavaScript API]
-NOTRUN Scroll timeline with percentage range [CSS]
-NOTRUN Scroll timeline with px range [CSS]
-NOTRUN Scroll timeline with calculated range [CSS]
-NOTRUN Scroll timeline with EM range [CSS]
+FAIL Scroll timeline with percentage range [JavaScript API] assert_approx_equals: expected 0.7 +/- 0.001 but got 0.6000000381469727
+FAIL Scroll timeline with px range [JavaScript API] assert_approx_equals: expected 0.8484848484848485 +/- 0.001 but got 0.6000000381469727
+FAIL Scroll timeline with calculated range [JavaScript API] assert_approx_equals: expected 0.7647058823529411 +/- 0.001 but got 0.6000000381469727
+FAIL Scroll timeline with EM range [JavaScript API] assert_approx_equals: expected 0.6111111111111112 +/- 0.001 but got 0.6000000381469727
+FAIL Scroll timeline with percentage range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with px range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with calculated range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Scroll timeline with EM range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 
