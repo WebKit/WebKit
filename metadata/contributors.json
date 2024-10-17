@@ -8243,9 +8243,12 @@
    },
    {
       "emails" : [
-         "yoav@yoav.ws"
+         "yoav@yoav.ws",
+         "yoav.weiss@shopify.com"
       ],
-      "name" : "Yoav Weiss"
+      "github" : "yoavweiss",
+      "name" : "Yoav Weiss",
+      "status" : "committer"
    },
    {
       "emails" : [
