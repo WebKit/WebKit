@@ -97,7 +97,8 @@ class SftpClient(object):
             upload_instructions_file.write('progress\n')
             upload_instructions_file.write(f'put "{local_path_archive_to_transfer_scaped_quotes}" "{remote_archive_path_scaped_quotes}"\n')
             if self._remote_cfg.generate_sha256sum:
-                remote_archive_path_no_ext, _ = os.path.splitext(remote_archive_path)
+                ext_ndots = 2 if '.tar.' in remote_archive_path else 1
+                remote_archive_path_no_ext = '.'.join(remote_archive_path.split('.')[:-ext_ndots])
                 remote_archive_path_hash_scaped_quotes = remote_archive_path_no_ext.replace('"', '\\"') + '.sha256sum'
                 upload_instructions_file.write(f'put "{hash_check_file.name}" "{remote_archive_path_hash_scaped_quotes}"\n')
             if self._remote_cfg.update_last_is_file:

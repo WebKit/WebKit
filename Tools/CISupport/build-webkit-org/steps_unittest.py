@@ -1543,7 +1543,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.setUpPropertiesForTest()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-minibrowser-bundle-upload-config.json', '--remote-file', 'MiniBrowser_gtk_261281@main.zip', 'WebKitBuild/MiniBrowser_gtk_release.zip'],
+                        command=['python3', 'Tools/CISupport/Shared/transfer-archive-via-sftp', '--remote-config-file', '../../remote-minibrowser-bundle-upload-config.json', '--remote-file', 'MiniBrowser_gtk_261281@main.tar.xz', 'WebKitBuild/MiniBrowser_gtk_release.tar.xz'],
                         logEnviron=True,
                         timeout=1200,
                         )

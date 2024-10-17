@@ -587,8 +587,8 @@ class UploadBuiltProductViaSftp(shell.ShellCommandNewStyle):
 class UploadMiniBrowserBundleViaSftp(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
                "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json",
-               "--remote-file", WithProperties("MiniBrowser_%(fullPlatform)s_%(archive_revision)s.zip"),
-               WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.zip")]
+               "--remote-file", WithProperties("MiniBrowser_%(fullPlatform)s_%(archive_revision)s.tar.xz"),
+               WithProperties("WebKitBuild/MiniBrowser_%(fullPlatform)s_%(configuration)s.tar.xz")]
     name = "upload-minibrowser-bundle-via-sftp"
     description = ["uploading minibrowser bundle via sftp"]
     descriptionDone = ["uploaded minibrowser bundle via sftp"]
