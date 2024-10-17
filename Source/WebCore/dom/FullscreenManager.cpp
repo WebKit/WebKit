@@ -70,7 +70,7 @@ FullscreenManager::~FullscreenManager() = default;
 
 Element* FullscreenManager::fullscreenElement() const
 {
-    for (auto& element : makeReversedRange(document().topLayerElements())) {
+    for (Ref element : makeReversedRange(document().topLayerElements())) {
         if (element->hasFullscreenFlag())
             return element.ptr();
     }
@@ -423,18 +423,18 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
 
     auto unfullscreenDocument = [](const Ref<Document>& document) {
         Vector<Ref<Element>> toRemove;
-        for (auto& element : document->topLayerElements()) {
+        for (Ref element : document->topLayerElements()) {
             if (!element->hasFullscreenFlag())
                 continue;
             clearFullscreenFlags(element);
             toRemove.append(element);
         }
-        for (auto& element : toRemove)
+        for (Ref element : toRemove)
             element->removeFromTopLayer();
     };
 
     auto exitDocuments = documentsToUnfullscreen(currentDocument);
-    for (auto& exitDocument : exitDocuments) {
+    for (Ref exitDocument : exitDocuments) {
         addDocumentToFullscreenChangeEventQueue(exitDocument);
         if (mode == ExitMode::Resize)
             unfullscreenDocument(exitDocument);
@@ -756,7 +756,7 @@ void FullscreenManager::addDocumentToFullscreenChangeEventQueue(Document& docume
 bool FullscreenManager::isSimpleFullscreenDocument() const
 {
     bool foundFullscreenFlag = false;
-    for (auto& element : document().topLayerElements()) {
+    for (Ref element : document().topLayerElements()) {
         if (element->hasFullscreenFlag()) {
             if (foundFullscreenFlag)
                 return false;
