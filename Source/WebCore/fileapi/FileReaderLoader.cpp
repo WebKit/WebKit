@@ -34,6 +34,7 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
+#include "ContentSecurityPolicy.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
 #include "HTTPHeaderNames.h"
@@ -89,6 +90,11 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
         failed(ExceptionCode::SecurityError);
         return;
     }
+
+    CheckedPtr contentSecurityPolicy = scriptExecutionContext->contentSecurityPolicy();
+    if (!contentSecurityPolicy)
+        return;
+
     ThreadableBlobRegistry::registerBlobURL(scriptExecutionContext->securityOrigin(), scriptExecutionContext->policyContainer(), m_urlForReading, blobURL);
 
     // Construct and load the request.
