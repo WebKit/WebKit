@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class HTTPSByDefaultMode : uint8_t { Disabled, UpgradeWithHTTPFallback, UpgradeAndFailClosed };
+enum class HTTPSByDefaultMode : uint8_t { Disabled, UpgradeWithAutomaticFallback, UpgradeWithUserMediatedFallback, UpgradeAndNoFallback };
 
 };

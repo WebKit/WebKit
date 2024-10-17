@@ -2664,9 +2664,9 @@ void DocumentLoader::setHTTPSByDefaultMode(HTTPSByDefaultMode mode)
 {
     if (mode == HTTPSByDefaultMode::Disabled) {
         if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnly))
-            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeAndFailClosed;
+            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeWithUserMediatedFallback;
         else if (m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSFirst))
-            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeWithHTTPFallback;
+            m_httpsByDefaultMode = HTTPSByDefaultMode::UpgradeWithAutomaticFallback;
     } else
         m_httpsByDefaultMode = mode;
 }
