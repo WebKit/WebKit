@@ -2970,3 +2970,4 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 # webkit.org/b/279712 Clipboard API not supported on WK1
 imported/w3c/web-platform-tests/clipboard-apis/clipboard-item.https.html [ Skip ]
 
+webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-error-events.html [ Pass Failure ]
