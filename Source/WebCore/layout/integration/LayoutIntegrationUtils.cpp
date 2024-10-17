@@ -44,16 +44,22 @@ void IntegrationUtils::layoutWithFormattingContextForBox(const ElementBox& box, 
     m_globalLayoutState.layoutWithFormattingContextForBox(box, widthConstraint);
 }
 
-LayoutUnit IntegrationUtils::maxContentSize(const ElementBox& box) const
+LayoutUnit IntegrationUtils::maxContentWidth(const ElementBox& box) const
 {
     ASSERT(box.isFlexItem());
     return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContent);
 }
 
-LayoutUnit IntegrationUtils::minContentSize(const ElementBox& box) const
+LayoutUnit IntegrationUtils::minContentWidth(const ElementBox& box) const
 {
     ASSERT(box.isFlexItem());
     return m_globalLayoutState.logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContent);
+}
+
+LayoutUnit IntegrationUtils::minContentHeight(const ElementBox& box) const
+{
+    ASSERT(box.isFlexItem());
+    return m_globalLayoutState.logicalHeightWithFormattingContextForBox(box, LayoutIntegration::LogicalHeightType::MinContent);
 }
 
 }

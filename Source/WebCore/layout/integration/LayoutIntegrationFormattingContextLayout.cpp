@@ -83,5 +83,26 @@ LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& bo
     }
 }
 
+LayoutUnit formattingContextRootLogicalHeightForType(const Layout::ElementBox& box, LogicalHeightType logicalHeightType)
+{
+    ASSERT(box.establishesFormattingContext());
+
+    auto& renderer = downcast<RenderBox>(*box.rendererForIntegration());
+    switch (logicalHeightType) {
+    case LogicalHeightType::MinContent: {
+        // Since currently we can't ask RenderBox for content height, this is limited to flex items
+        // where the legacy flex layout "fixed" this by caching the content height in RenderBox::updateLogicalHeight
+        // before additional height constraints applied.
+        if (auto* flexContainer = dynamicDowncast<RenderFlexibleBox>(renderer.parent()))
+            return flexContainer->cachedFlexItemIntrinsicContentLogicalHeight(renderer);
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
 }
 }

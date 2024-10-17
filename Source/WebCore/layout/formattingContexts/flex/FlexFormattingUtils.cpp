@@ -82,10 +82,13 @@ LayoutUnit FlexFormattingUtils::usedMinimumSizeInMainAxis(const LogicalFlexItem&
     if (auto mainAxisMinimumWidth = flexItem.mainAxis().minimumSize)
         return *mainAxisMinimumWidth;
 
-    auto minimumContentSize = formattingContext().integrationUtils().minContentSize(downcast<ElementBox>(flexItem.layoutBox()));
-    if (auto mainAxisWidth = flexItem.mainAxis().size)
-        return std::min(*mainAxisWidth, minimumContentSize);
+    auto isMainAxisParallelWithInlineAxis = this->isMainAxisParallelWithInlineAxis(formattingContext().root());
+    auto& flexItemBox = downcast<ElementBox>(flexItem.layoutBox());
 
+    auto minimumContentSize = LayoutUnit { };
+    minimumContentSize = isMainAxisParallelWithInlineAxis ? formattingContext().integrationUtils().minContentWidth(flexItemBox) : formattingContext().integrationUtils().minContentHeight(flexItemBox);
+    if (auto mainAxisWidth = flexItem.mainAxis().size)
+        minimumContentSize = std::min(*mainAxisWidth, minimumContentSize);
     return minimumContentSize;
 }
 
@@ -102,7 +105,7 @@ LayoutUnit FlexFormattingUtils::usedMaxContentSizeInMainAxis(const LogicalFlexIt
 
     auto contentSize = LayoutUnit { };
     if (isMainAxisParallelWithInlineAxis)
-        contentSize = formattingContext().integrationUtils().maxContentSize(flexItemBox);
+        contentSize = formattingContext().integrationUtils().maxContentWidth(flexItemBox);
     else {
         formattingContext().integrationUtils().layoutWithFormattingContextForBox(flexItemBox);
         contentSize = formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight();

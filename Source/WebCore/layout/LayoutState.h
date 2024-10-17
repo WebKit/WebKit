@@ -48,6 +48,7 @@ class Document;
 
 namespace LayoutIntegration {
 enum class LogicalWidthType : uint8_t;
+enum class LogicalHeightType : uint8_t;
 }
 
 namespace Layout {
@@ -68,8 +69,9 @@ public:
 
     using FormattingContextLayoutFunction = Function<void(const ElementBox&, std::optional<LayoutUnit>, LayoutState&)>;
     using FormattingContextLogicalWidthFunction = Function<LayoutUnit(const ElementBox&, LayoutIntegration::LogicalWidthType)>;
+    using FormattingContextLogicalHeightFunction = Function<LayoutUnit(const ElementBox&, LayoutIntegration::LogicalHeightType)>;
 
-    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextLogicalWidthFunction&&);
+    LayoutState(const Document&, const ElementBox& rootContainer, Type, FormattingContextLayoutFunction&&, FormattingContextLogicalWidthFunction&&, FormattingContextLogicalHeightFunction&&);
     ~LayoutState();
 
     Type type() const { return m_type; }
@@ -112,6 +114,7 @@ public:
 
     void layoutWithFormattingContextForBox(const ElementBox&, std::optional<LayoutUnit> widthConstraint) const;
     LayoutUnit logicalWidthWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalWidthType) const;
+    LayoutUnit logicalHeightWithFormattingContextForBox(const ElementBox&, LayoutIntegration::LogicalHeightType) const;
 
 private:
     void setQuirksMode(QuirksMode quirksMode) { m_quirksMode = quirksMode; }
@@ -135,6 +138,7 @@ private:
 
     FormattingContextLayoutFunction m_formattingContextLayoutFunction;
     FormattingContextLogicalWidthFunction m_formattingContextLogicalWidthFunction;
+    FormattingContextLogicalHeightFunction m_formattingContextLogicalHeightFunction;
 };
 
 inline bool LayoutState::hasBoxGeometry(const Box& layoutBox) const
