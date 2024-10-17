@@ -36,6 +36,7 @@
 				537CF84822EFD72000C6EBB3 /* Check .xcfilelists */,
 			);
 			dependencies = (
+				94E0F7CC2CC328700007B54B /* PBXTargetDependency */,
 				3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */,
 				7B9FC58828A26D83007570E7 /* PBXTargetDependency */,
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
@@ -599,7 +600,14 @@
 		93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
 		93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FCDB33263631560046DD7D /* SortedArrayMap.cpp */; };
+		940E06BC2CD9417B008EDD95 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E0F7AA2CC2F4B90007B54B /* Tests.swift */; };
+		940E06C82CD94937008EDD95 /* TestWebGPU.h in Sources */ = {isa = PBXBuildFile; fileRef = 940E06C72CD948D9008EDD95 /* TestWebGPU.h */; };
 		946422142BC83114001B42B3 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9464220C2BC8306D001B42B3 /* SerializedScriptValue.cpp */; };
+		94E0F7B72CC2F7CD0007B54B /* RefCountTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E0F7AB2CC2F6890007B54B /* RefCountTests.cpp */; };
+		94E0F7B82CC2F7CD0007B54B /* TestWebGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E0F7A52CC2F16E0007B54B /* TestWebGPU.cpp */; };
+		94E0F7B92CC2F80A0007B54B /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF3A83728930475005920CF /* libgtest.a */; };
+		94E0F7BB2CC2F8210007B54B /* WebGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E0F7BA2CC2F8210007B54B /* WebGPU.framework */; };
+		94E0F7C92CC324110007B54B /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E0F7C82CC324110007B54B /* libWTF.a */; };
 		9528E5FD279A0341008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9528E5FC279A0338008ADFEF /* BundleCSSStyleDeclarationHandlePlugIn.mm */; };
 		95C52729275F35E100DA7E40 /* FontShadowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95C52728275F35E100DA7E40 /* FontShadowTests.cpp */; };
 		9B0786A51C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */; };
@@ -1414,6 +1422,20 @@
 			remoteGlobalIDString = 7CCE7E8B1A41144E00447C4C;
 			remoteInfo = TestWebKitAPILibrary;
 		};
+		940E06BA2CD9340F008EDD95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
+		94E0F7CB2CC328700007B54B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94E0F7AF2CC2F79C0007B54B;
+			remoteInfo = TestWebGPU;
+		};
 		A13EBBB21B87441900097110 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -1550,6 +1572,15 @@
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		94E0F7AE2CC2F79C0007B54B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 		A17C464B2C98E4520023F3C7 /* Copy Resources */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -3148,7 +3179,16 @@
 		93F7E86B14DC8E4D00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutFrames.cpp; sourceTree = "<group>"; };
 		93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp; sourceTree = "<group>"; };
 		93FCDB33263631560046DD7D /* SortedArrayMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SortedArrayMap.cpp; sourceTree = "<group>"; };
+		940E06C72CD948D9008EDD95 /* TestWebGPU.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = TestWebGPU.h; sourceTree = "<group>"; };
 		9464220C2BC8306D001B42B3 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
+		94E0F7A52CC2F16E0007B54B /* TestWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestWebGPU.cpp; sourceTree = "<group>"; };
+		94E0F7A62CC2F1A30007B54B /* TestWebGPU.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebGPU.xcconfig; sourceTree = "<group>"; };
+		94E0F7A72CC2F47C0007B54B /* TestWebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = TestWebGPU.modulemap; sourceTree = "<group>"; };
+		94E0F7AA2CC2F4B90007B54B /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
+		94E0F7AB2CC2F6890007B54B /* RefCountTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountTests.cpp; sourceTree = "<group>"; };
+		94E0F7B02CC2F79C0007B54B /* TestWebGPU */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWebGPU; sourceTree = BUILT_PRODUCTS_DIR; };
+		94E0F7BA2CC2F8210007B54B /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		94E0F7C82CC324110007B54B /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		95095F1F262FFFA50000D920 /* SampledPageTopColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampledPageTopColor.mm; sourceTree = "<group>"; };
 		950E4CC0252E75230071659F /* iOSStylusSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSStylusSupport.mm; sourceTree = "<group>"; };
 		95194CBF28A580E900343FDE /* red.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = red.html; sourceTree = "<group>"; };
@@ -3942,6 +3982,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		94E0F7AD2CC2F79C0007B54B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94E0F7B92CC2F80A0007B54B /* libgtest.a in Frameworks */,
+				94E0F7C92CC324110007B54B /* libWTF.a in Frameworks */,
+				94E0F7BB2CC2F8210007B54B /* WebGPU.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A1798B7D22431D18000764BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4170,6 +4220,7 @@
 				A17C46462C98E3430023F3C7 /* TestWebKitAPIResources.bundle */,
 				A17C58022C9AA12F009DD0B5 /* TestWebKitAPI.app */,
 				A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */,
+				94E0F7B02CC2F79C0007B54B /* TestWebGPU */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4903,6 +4954,7 @@
 				7B9FC5A928A38F2E007570E7 /* libWebKitIPC.a */,
 				7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */,
 				3A5DDB2028D54269004DA950 /* libwgsl.a */,
+				94E0F7C82CC324110007B54B /* libWTF.a */,
 				7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */,
 				578CBD66204FB2C70083B9F2 /* LocalAuthentication.framework */,
 				516281282325C45400BB7E42 /* PDFKit.framework */,
@@ -4910,6 +4962,7 @@
 				574F55D0204D471C002948C6 /* Security.framework */,
 				A17C58242C9AAA25009DD0B5 /* UIKit.framework */,
 				7B9FC5B628A52236007570E7 /* WebCore.framework */,
+				94E0F7BA2CC2F8210007B54B /* WebGPU.framework */,
 				2B648DBA28C1C1F700791F2B /* WebKit.framework */,
 				A17C58452C9BF45A009DD0B5 /* XCTest.framework */,
 			);
@@ -4930,6 +4983,18 @@
 				37C7CC2B1EA4146B007BD956 /* WeakLinking.cpp */,
 			);
 			path = darwin;
+			sourceTree = "<group>";
+		};
+		94E0F79D2CC2F1570007B54B /* WebGPU */ = {
+			isa = PBXGroup;
+			children = (
+				94E0F7AB2CC2F6890007B54B /* RefCountTests.cpp */,
+				94E0F7AA2CC2F4B90007B54B /* Tests.swift */,
+				94E0F7A52CC2F16E0007B54B /* TestWebGPU.cpp */,
+				940E06C72CD948D9008EDD95 /* TestWebGPU.h */,
+				94E0F7A72CC2F47C0007B54B /* TestWebGPU.modulemap */,
+			);
+			path = WebGPU;
 			sourceTree = "<group>";
 		};
 		9BD5111A1FE8E10200D2B630 /* mac */ = {
@@ -5422,6 +5487,7 @@
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */,
+				94E0F7A62CC2F1A30007B54B /* TestWebGPU.xcconfig */,
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
 				51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */,
 				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
@@ -5876,6 +5942,7 @@
 				7B774903267CCE38009873B4 /* Misc */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
+				94E0F79D2CC2F1570007B54B /* WebGPU */,
 				BC9096411255616000083756 /* WebKit */,
 				1ABC3DEC1899BE55004F0626 /* WebKit Cocoa */,
 				BC3C4C6F14575B1D0025FB62 /* WebKit Objective-C */,
@@ -6310,6 +6377,25 @@
 			productReference = 8DD76FA10486AA7600D96B5E /* TestWebKitAPI */;
 			productType = "com.apple.product-type.tool";
 		};
+		94E0F7AF2CC2F79C0007B54B /* TestWebGPU */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94E0F7B42CC2F79C0007B54B /* Build configuration list for PBXNativeTarget "TestWebGPU" */;
+			buildPhases = (
+				94E0F7AC2CC2F79C0007B54B /* Sources */,
+				94E0F7AD2CC2F79C0007B54B /* Frameworks */,
+				94E0F7AE2CC2F79C0007B54B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				940E06BB2CD9340F008EDD95 /* PBXTargetDependency */,
+			);
+			name = TestWebGPU;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestWebKitAPI;
+			productReference = 94E0F7B02CC2F79C0007B54B /* TestWebGPU */;
+			productType = "com.apple.product-type.tool";
+		};
 		A13EBB481B87339E00097110 /* WebProcessPlugIn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A13EBB4C1B87339E00097110 /* Build configuration list for PBXNativeTarget "WebProcessPlugIn" */;
@@ -6420,6 +6506,9 @@
 					8DD76F960486AA7600D96B5E = {
 						ProvisioningStyle = Manual;
 					};
+					94E0F7AF2CC2F79C0007B54B = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					A13EBB481B87339E00097110 = {
 						CreatedOnToolsVersion = 7.0;
 						ProvisioningStyle = Manual;
@@ -6471,6 +6560,7 @@
 				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
 				A13EBB481B87339E00097110 /* WebProcessPlugIn */,
 				537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */,
+				94E0F7AF2CC2F79C0007B54B /* TestWebGPU */,
 			);
 		};
 /* End PBXProject section */
@@ -7323,6 +7413,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		94E0F7AC2CC2F79C0007B54B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94E0F7B72CC2F7CD0007B54B /* RefCountTests.cpp in Sources */,
+				940E06BC2CD9417B008EDD95 /* Tests.swift in Sources */,
+				94E0F7B82CC2F7CD0007B54B /* TestWebGPU.cpp in Sources */,
+				940E06C82CD94937008EDD95 /* TestWebGPU.h in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A13EBB451B87339E00097110 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7484,6 +7585,16 @@
 			isa = PBXTargetDependency;
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 			targetProxy = 7CCE7F501A4124DB00447C4C /* PBXContainerItemProxy */;
+		};
+		940E06BB2CD9340F008EDD95 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 940E06BA2CD9340F008EDD95 /* PBXContainerItemProxy */;
+		};
+		94E0F7CC2CC328700007B54B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94E0F7AF2CC2F79C0007B54B /* TestWebGPU */;
+			targetProxy = 94E0F7CB2CC328700007B54B /* PBXContainerItemProxy */;
 		};
 		A13EBBB31B87441900097110 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7675,6 +7786,20 @@
 			};
 			name = Release;
 		};
+		94E0F7B52CC2F79C0007B54B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94E0F7A62CC2F1A30007B54B /* TestWebGPU.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		94E0F7B62CC2F79C0007B54B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94E0F7A62CC2F1A30007B54B /* TestWebGPU.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		A13EBB4D1B87339E00097110 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A13EBB521B87346600097110 /* WebProcessPlugIn.xcconfig */;
@@ -7834,6 +7959,15 @@
 			buildConfigurations = (
 				7CCE7E9D1A41144E00447C4C /* Debug */,
 				7CCE7E9E1A41144E00447C4C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		94E0F7B42CC2F79C0007B54B /* Build configuration list for PBXNativeTarget "TestWebGPU" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				94E0F7B52CC2F79C0007B54B /* Debug */,
+				94E0F7B62CC2F79C0007B54B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

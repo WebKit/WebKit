@@ -42,7 +42,7 @@ class DarwinPort(ApplePort):
     CURRENT_VERSION = None
     SDK = None
 
-    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']
+    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL', 'TestWebGPU']
 
     def __init__(self, host, port_name, **kwargs):
         ApplePort.__init__(self, host, port_name, **kwargs)
