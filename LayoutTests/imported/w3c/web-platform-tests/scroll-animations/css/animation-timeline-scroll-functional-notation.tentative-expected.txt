@@ -1,9 +1,9 @@
 
-FAIL animation-timeline: scroll(nearest) assert_equals: expected "50px" but got "50.130001px"
-FAIL animation-timeline: scroll(root) assert_equals: expected "50px" but got "50.080002px"
-FAIL animation-timeline: scroll(self) assert_equals: expected "100px" but got "50.169998px"
-FAIL animation-timeline: scroll(self), on non-scroller assert_equals: expected "none" but got "50.169998px"
-FAIL animation-timeline: scroll(inline) assert_equals: expected "100px" but got "50.169998px"
-FAIL animation-timeline: scroll(x) assert_equals: expected "100px" but got "50.169998px"
-FAIL animation-timeline: scroll(y) assert_equals: expected "100px" but got "50.169998px"
+FAIL animation-timeline: scroll(nearest) assert_equals: expected "50px" but got "none"
+FAIL animation-timeline: scroll(root) assert_equals: expected "50px" but got "none"
+FAIL animation-timeline: scroll(self) assert_equals: expected "100px" but got "none"
+PASS animation-timeline: scroll(self), on non-scroller
+FAIL animation-timeline: scroll(inline) assert_equals: expected "100px" but got "none"
+FAIL animation-timeline: scroll(x) assert_equals: expected "100px" but got "none"
+FAIL animation-timeline: scroll(y) assert_equals: expected "100px" but got "none"
 

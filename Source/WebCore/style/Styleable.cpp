@@ -854,7 +854,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
         updateCSSTransitionsForStyleableAndProperty(*this, customProperty, currentStyle, newStyle, generationTime, newStyleOriginatedAnimations);
 }
 
-void Styleable::updateCSSScrollDrivenTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const
+void Styleable::updateCSSScrollTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const
 {
     auto updateAnonymousScrollTimelines = [&]() {
         if (currentStyle && currentStyle->scrollTimelines() == afterChangeStyle.scrollTimelines())
@@ -899,6 +899,56 @@ void Styleable::updateCSSScrollDrivenTimelines(const RenderStyle* currentStyle, 
 
     updateAnonymousScrollTimelines();
     updateNamedScrollTimelines();
+};
+
+void Styleable::updateCSSViewTimelines(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle) const
+{
+    auto updateAnonymousViewTimelines = [&]() {
+        if (currentStyle && currentStyle->viewTimelines() == afterChangeStyle.viewTimelines())
+            return;
+
+        auto& currentTimelines = afterChangeStyle.viewTimelines();
+        for (auto& currentTimeline : currentTimelines)
+            currentTimeline->setSubject(&element);
+
+        if (!currentStyle)
+            return;
+
+        for (auto& previousTimeline : currentStyle->viewTimelines()) {
+            if (!currentTimelines.contains(previousTimeline) && previousTimeline->subject() == &element)
+                previousTimeline->setSubject(nullptr);
+        }
+    };
+
+    auto updateNamedViewTimelines = [&]() {
+        if (currentStyle && currentStyle->viewTimelineNames() == afterChangeStyle.viewTimelineNames())
+            return;
+
+        CheckedRef timelinesController = element.protectedDocument()->ensureTimelinesController();
+
+        auto& currentTimelineNames = afterChangeStyle.viewTimelineNames();
+        auto& currentTimelineAxes = afterChangeStyle.viewTimelineAxes();
+        auto& currentTimelineInsets = afterChangeStyle.viewTimelineInsets();
+        auto numberOfAxes = currentTimelineAxes.size();
+        auto numberOfInsets = currentTimelineInsets.size();
+        for (size_t i = 0; i < currentTimelineNames.size(); ++i) {
+            auto& name = currentTimelineNames[i];
+            auto axis = numberOfAxes ? currentTimelineAxes[i % numberOfAxes] : ScrollAxis::Block;
+            auto insets = numberOfInsets ? ViewTimelineInsets(currentTimelineInsets[i % numberOfInsets]) : ViewTimelineInsets();
+            timelinesController->registerNamedViewTimeline(name, element, axis, WTFMove(insets));
+        }
+
+        if (!currentStyle)
+            return;
+
+        for (auto& previousTimelineName : currentStyle->viewTimelineNames()) {
+            if (!currentTimelineNames.contains(previousTimelineName))
+                timelinesController->unregisterNamedViewTimeline(previousTimelineName);
+        }
+    };
+
+    updateAnonymousViewTimelines();
+    updateNamedViewTimelines();
 };
 
 void Styleable::queryContainerDidChange() const

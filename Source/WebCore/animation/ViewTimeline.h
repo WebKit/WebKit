@@ -54,9 +54,13 @@ public:
     static Ref<ViewTimeline> createFromCSSValue(const Style::BuilderState&, const CSSViewValue&);
 
     Element* subject() const { return m_subject.get(); }
+    void setSubject(Element*);
+
+    const ViewTimelineInsets& insets() const { return m_insets; }
+    void setInsets(ViewTimelineInsets&& insets) { m_insets = WTFMove(insets); }
+
     const CSSNumericValue& startOffset();
     const CSSNumericValue& endOffset();
-    const ViewTimelineInsets& insets() const { return m_insets; }
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
 

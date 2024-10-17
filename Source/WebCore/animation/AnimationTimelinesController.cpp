@@ -34,7 +34,9 @@
 #include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "Page.h"
+#include "ScrollTimeline.h"
 #include "Settings.h"
+#include "ViewTimeline.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <JavaScriptCore/VM.h>
@@ -330,6 +332,31 @@ void AnimationTimelinesController::unregisterNamedScrollTimeline(const AtomStrin
 ScrollTimeline* AnimationTimelinesController::scrollTimelineForName(const AtomString& name) const
 {
     return m_nameToScrollTimelineMap.get(name);
+}
+
+void AnimationTimelinesController::registerNamedViewTimeline(const AtomString& name, Element& subject, ScrollAxis axis, ViewTimelineInsets&& insets)
+{
+    auto it = m_nameToViewTimelineMap.find(name);
+    if (it != m_nameToViewTimelineMap.end()) {
+        auto& existingViewTimeline = it->value;
+        existingViewTimeline->setSubject(&subject);
+        existingViewTimeline->setAxis(axis);
+        existingViewTimeline->setInsets(WTFMove(insets));
+    } else {
+        auto newViewTimeline = ViewTimeline::create(name, axis, WTFMove(insets));
+        newViewTimeline->setSubject(&subject);
+        m_nameToViewTimelineMap.set(name, WTFMove(newViewTimeline));
+    }
+}
+
+void AnimationTimelinesController::unregisterNamedViewTimeline(const AtomString& name)
+{
+    m_nameToViewTimelineMap.remove(name);
+}
+
+ViewTimeline* AnimationTimelinesController::viewTimelineForName(const AtomString& name) const
+{
+    return m_nameToViewTimelineMap.get(name);
 }
 
 } // namespace WebCore

@@ -1,13 +1,13 @@
 
-FAIL animation-timeline: view() without timeline range name assert_equals: At 0% expected "0" but got "0.04"
-FAIL animation-timeline: view(50px) without timeline range name assert_equals: At 0% expected "0" but got "0.04"
-FAIL animation-timeline: view(auto 50px) without timeline range name assert_equals: At 0% expected "0" but got "0.04"
-FAIL animation-timeline: view(inline) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 0.984
-FAIL animation-timeline: view(x) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 0.983
-FAIL animation-timeline: view(y) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 0.983
-FAIL animation-timeline: view(x 50px) without timeline range name assert_equals: At 75% expected "0.25" but got "0.984"
-FAIL animation-timeline: view(50px), view(inline 50px) without timeline range name assert_equals: At 75% inline expected "25px" but got "10.32px"
-FAIL animation-timeline: view(inline) changes to view(inline 50px), withouttimeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 0.984
+FAIL animation-timeline: view() without timeline range name assert_equals: At 0% expected "0" but got "1"
+FAIL animation-timeline: view(50px) without timeline range name assert_equals: At 0% expected "0" but got "1"
+FAIL animation-timeline: view(auto 50px) without timeline range name assert_equals: At 0% expected "0" but got "1"
+FAIL animation-timeline: view(inline) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 1
+FAIL animation-timeline: view(x) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 1
+FAIL animation-timeline: view(y) without timeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 1
+FAIL animation-timeline: view(x 50px) without timeline range name assert_equals: At 75% expected "0.25" but got "1"
+FAIL animation-timeline: view(50px), view(inline 50px) without timeline range name assert_equals: At 75% inline expected "25px" but got "16px"
+FAIL animation-timeline: view(inline) changes to view(inline 50px), withouttimeline range name assert_approx_equals: At 66.7% expected 0.33333 +/- 0.00001 but got 1
 FAIL animation-timeline: view() assert_equals: At entry 0% expected "0" but got "1"
 FAIL animation-timeline: view(50px) assert_equals: At entry 0% expected "0" but got "1"
 FAIL animation-timeline: view(auto 50px) assert_equals: At entry 0% expected "0" but got "1"

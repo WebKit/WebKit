@@ -150,6 +150,27 @@ ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimeline
 {
 }
 
+void ViewTimeline::setSubject(Element* subject)
+{
+    if (subject == m_subject)
+        return;
+
+    RefPtr previousSubject = m_subject.get();
+    m_subject = subject;
+    RefPtr newSubject = m_subject.get();
+
+    if (previousSubject && newSubject && &previousSubject->document() == &newSubject->document())
+        return;
+
+    if (previousSubject) {
+        if (CheckedPtr timelinesController = previousSubject->protectedDocument()->timelinesController())
+            timelinesController->removeTimeline(*this);
+    }
+
+    if (newSubject)
+        newSubject->protectedDocument()->ensureTimelinesController().addTimeline(*this);
+}
+
 void ViewTimeline::dump(TextStream& ts) const
 {
     auto hasAxis = axis() != ScrollAxis::Block;

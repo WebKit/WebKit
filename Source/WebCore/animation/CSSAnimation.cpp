@@ -123,7 +123,12 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
         [&] (Animation::TimelineKeyword keyword) {
             setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
         }, [&] (const AtomString& name) {
-            setTimeline(CheckedRef { document->ensureTimelinesController() }->scrollTimelineForName(name));
+            // FIXME: we should account for timeline-scope here.
+            CheckedRef timelinesController = document->ensureTimelinesController();
+            if (RefPtr scrollTimeline = timelinesController->scrollTimelineForName(name))
+                setTimeline(WTFMove(scrollTimeline));
+            else if (RefPtr viewTimeline = timelinesController->viewTimelineForName(name))
+                setTimeline(WTFMove(viewTimeline));
         }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
             setTimeline(RefPtr { anonymousTimeline.ptr() });
         }

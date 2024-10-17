@@ -41,7 +41,10 @@ class AnimationTimeline;
 class CSSTransition;
 class Document;
 class ScrollTimeline;
+class ViewTimeline;
 class WebAnimation;
+
+struct ViewTimelineInsets;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 class AnimationTimelinesController final : public CanMakeCheckedPtr<AnimationTimelinesController> {
@@ -66,7 +69,11 @@ public:
 
     void registerNamedScrollTimeline(const AtomString&, Element&, ScrollAxis);
     void unregisterNamedScrollTimeline(const AtomString&);
-    ScrollTimeline* scrollTimelineForName(const AtomString& name) const;
+    ScrollTimeline* scrollTimelineForName(const AtomString&) const;
+
+    void registerNamedViewTimeline(const AtomString&, Element&, ScrollAxis, ViewTimelineInsets&&);
+    void unregisterNamedViewTimeline(const AtomString&);
+    ViewTimeline* viewTimelineForName(const AtomString&) const;
 
 private:
     ReducedResolutionSeconds liveCurrentTime() const;
@@ -75,6 +82,7 @@ private:
 
     UncheckedKeyHashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
     UncheckedKeyHashMap<AtomString, Ref<ScrollTimeline>> m_nameToScrollTimelineMap;
+    UncheckedKeyHashMap<AtomString, Ref<ViewTimeline>> m_nameToViewTimelineMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;
