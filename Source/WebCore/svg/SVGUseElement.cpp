@@ -618,6 +618,9 @@ void SVGUseElement::updateExternalDocument()
 {
     URL externalDocumentURL;
     Ref<Document> document = this->document();
+    // FIXME: This early exit should be removed once the ASSERT(!url.protocolIsData()) is removed from isExternalURIReference().
+    if (document->completeURL(href()).protocolIsData())
+        return;
     if (isConnected() && isExternalURIReference(href(), document)) {
         externalDocumentURL = document->completeURL(href());
         if (!externalDocumentURL.hasFragmentIdentifier())
