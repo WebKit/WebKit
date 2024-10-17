@@ -295,12 +295,6 @@ bool ColorInputType::shouldRespectListAttribute()
     return true;
 }
 
-bool ColorInputType::typeMismatchFor(const String& value) const
-{
-    ASSERT(element());
-    return !!parseColorValue(value, *element());
-}
-
 bool ColorInputType::shouldResetOnDocumentActivation()
 {
     return true;

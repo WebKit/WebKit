@@ -54,7 +54,6 @@ public:
     void selectColor(StringView);
 
     virtual ~ColorInputType();
-    bool typeMismatchFor(const String&) const final;
 
     void detach() final;
 
