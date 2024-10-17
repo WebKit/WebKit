@@ -80,6 +80,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
         auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
+        auto isReversedInCrossAxis = FlexFormattingUtils::areFlexLinesReversedInCrossAxis(root());
 
         for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
             auto& flexItemGeometry = m_globalLayoutState.geometryForBox(*flexItem);
@@ -141,25 +142,31 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 crossAxis.maximumSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.maxHeight() : style.maxWidth(), flexContainerCrossInnerSize);
 
                 auto marginStart = [&]() -> std::optional<LayoutUnit> {
-                    if (direction == FlexDirection::Row && !style.marginBefore().isAuto())
-                        return flexItemGeometry.marginBefore();
-                    if (direction == FlexDirection::RowReverse && !style.marginAfter().isAuto())
-                        return flexItemGeometry.marginAfter();
-                    if (direction == FlexDirection::Column && !style.marginStart().isAuto())
-                        return flexItemGeometry.marginStart();
-                    if (direction == FlexDirection::ColumnReverse && !style.marginEnd().isAuto())
-                        return flexItemGeometry.marginEnd();
+                    if (!isReversedInCrossAxis) {
+                        if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+                            return !style.marginBefore().isAuto() ? std::make_optional(flexItemGeometry.marginBefore()) : std::nullopt;
+                        if (direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse)
+                            return !style.marginStart().isAuto() ? std::make_optional(flexItemGeometry.marginStart()) : std::nullopt;
+                        return { };
+                    }
+                    if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+                        return !style.marginAfter().isAuto() ? std::make_optional(flexItemGeometry.marginAfter()) : std::nullopt;
+                    if (direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse)
+                        return !style.marginEnd().isAuto() ? std::make_optional(flexItemGeometry.marginEnd()) : std::nullopt;
                     return { };
                 };
                 auto marginEnd = [&]() -> std::optional<LayoutUnit> {
-                    if (direction == FlexDirection::Row && !style.marginAfter().isAuto())
-                        return flexItemGeometry.marginAfter();
-                    if (direction == FlexDirection::RowReverse && !style.marginBefore().isAuto())
-                        return flexItemGeometry.marginBefore();
-                    if (direction == FlexDirection::Column && !style.marginEnd().isAuto())
-                        return flexItemGeometry.marginEnd();
-                    if (direction == FlexDirection::ColumnReverse && !style.marginStart().isAuto())
-                        return flexItemGeometry.marginStart();
+                    if (!isReversedInCrossAxis) {
+                        if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+                            return !style.marginAfter().isAuto() ? std::make_optional(flexItemGeometry.marginAfter()) : std::nullopt;
+                        if (direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse)
+                            return !style.marginEnd().isAuto() ? std::make_optional(flexItemGeometry.marginEnd()) : std::nullopt;
+                        return { };
+                    }
+                    if (direction == FlexDirection::Row || direction == FlexDirection::RowReverse)
+                        return !style.marginBefore().isAuto() ? std::make_optional(flexItemGeometry.marginBefore()) : std::nullopt;
+                    if (direction == FlexDirection::Column || direction == FlexDirection::ColumnReverse)
+                        return !style.marginStart().isAuto() ? std::make_optional(flexItemGeometry.marginStart()) : std::nullopt;
                     return { };
                 };
                 crossAxis.marginStart = marginStart();
