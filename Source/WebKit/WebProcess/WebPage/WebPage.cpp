@@ -4778,7 +4778,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if PLATFORM(IOS_FAMILY)
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
-    m_selectionHonorsOverflowScrolling = store.getBoolValueForKey(WebPreferencesKey::selectionHonorsOverflowScrollingKey());
 #endif
 
     if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkerEntitlementDisabledForTestingKey()))

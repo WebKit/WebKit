@@ -6447,11 +6447,14 @@ SelectionHonorsOverflowScrolling:
   status: internal
   humanReadableName: "Selection Honors Overflow Scrolling"
   humanReadableDescription: "Selection honors overflow scrolling"
-  webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
       default: false
 
 SendMouseEventsToDisabledFormControlsEnabled:

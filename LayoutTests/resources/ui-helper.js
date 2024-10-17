@@ -1990,7 +1990,8 @@ window.UIHelper = class UIHelper {
 
     static async longPressElement(element)
     {
-        return this.longPressAtPoint(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);
+        const { x, y } = this.midPointOfRect(element.getBoundingClientRect());
+        return this.longPressAtPoint(x, y);
     }
 
     static async longPressAtPoint(x, y)

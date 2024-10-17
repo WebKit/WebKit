@@ -125,6 +125,6 @@ struct WebKit::EditorState {
     Vector<WebCore::SelectionGeometry> markedTextRects;
     WebCore::IntRect markedTextCaretRectAtStart;
     WebCore::IntRect markedTextCaretRectAtEnd;
-    std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
+    std::optional<WebCore::PlatformLayerIdentifier> enclosingLayerID;
 #endif
 };

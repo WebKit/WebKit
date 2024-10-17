@@ -92,6 +92,7 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/HTMLAreaElement.h>
 #import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLBodyElement.h>
@@ -142,8 +143,7 @@
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
-#import <WebCore/RenderLayerScrollableArea.h>
-#import <WebCore/RenderObjectInlines.h>
+#import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
@@ -161,7 +161,6 @@
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
-#import <wtf/IterationStatus.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/RuntimeApplicationChecks.h>
@@ -5558,61 +5557,7 @@ void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionH
     completion(targetSize.width() >= minimumSizeForDismissal.width() && targetSize.height() >= minimumSizeForDismissal.height());
 }
 
-static CheckedPtr<RenderBox> enclosingScroller(RenderObject* renderer)
-{
-    if (!renderer)
-        return { };
-
-    auto containingRenderer = [](const RenderObject& renderer) -> CheckedPtr<RenderElement> {
-        if (CheckedPtr container = renderer.container())
-            return container;
-
-        if (RefPtr owner = renderer.protectedDocument()->ownerElement())
-            return owner->renderer();
-
-        return { };
-    };
-
-    CheckedPtr candidate = dynamicDowncast<RenderElement>(renderer) ?: renderer->container();
-    for (; candidate; candidate = containingRenderer(*candidate)) {
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*candidate); renderBox && renderBox->canBeScrolledAndHasScrollableArea())
-            return renderBox.get();
-    }
-
-    return { };
-}
-
-static void forEachEnclosingScroller(const VisibleSelection& selection, Function<IterationStatus(const std::optional<ScrollingNodeID>&, const IntRect&)>&& callback)
-{
-    RefPtr ancestor = commonInclusiveAncestor(selection.start(), selection.end());
-    if (!ancestor)
-        return;
-
-    for (CheckedPtr scroller = enclosingScroller(ancestor->renderer()); scroller; scroller = enclosingScroller(scroller->container())) {
-        Ref view = scroller->checkedView()->frameView();
-        IntRect scrollerClipRectInContent;
-        std::optional<ScrollingNodeID> enclosingScrollingNodeID;
-        if (CheckedPtr renderView = dynamicDowncast<RenderView>(*scroller)) {
-            if (renderView->protectedDocument()->isTopDocument())
-                break;
-
-            scrollerClipRectInContent = view->visibleContentRect();
-            enclosingScrollingNodeID = view->scrollingNodeID();
-        } else if (CheckedPtr layer = scroller->layer()) {
-            CheckedPtr scrollableArea = layer->scrollableArea();
-            if (!scrollableArea)
-                continue;
-
-            scrollerClipRectInContent = scroller->absoluteBoundingBoxRect();
-            enclosingScrollingNodeID = scrollableArea->scrollingNodeID();
-        }
-
-        if (callback(WTFMove(enclosingScrollingNodeID), view->contentsToRootView(scrollerClipRectInContent)) == IterationStatus::Done)
-            break;
-    }
-}
-
-void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, const VisibleSelection& selection, const IntRect& editableRootBounds) const
+void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection& selection) const
 {
     if (selection.isNoneOrOrphaned())
         return;
@@ -5620,37 +5565,45 @@ void WebPage::computeSelectionClipRectAndEnclosingScroller(EditorState& state, c
     if (!state.isContentEditable && selection.isCaret())
         return;
 
-    if (!m_selectionHonorsOverflowScrolling) {
-        state.visualData->selectionClipRect = editableRootBounds;
+    RefPtr startContainer = selection.start().containerNode();
+    if (!startContainer)
         return;
-    }
 
-    std::optional<ScrollingNodeID> enclosingScrollingNodeID;
-    IntRect enclosingScrollingClipRect;
-    IntRect innerScrollingClipRect;
-    forEachEnclosingScroller(selection, [&](const std::optional<ScrollingNodeID>& scrollingNodeID, const IntRect& clipRectInRootView) {
-        if (scrollingNodeID) {
-            enclosingScrollingClipRect = clipRectInRootView;
-            enclosingScrollingNodeID = scrollingNodeID;
-            return IterationStatus::Done;
-        }
+    RefPtr endContainer = selection.end().containerNode();
+    if (!endContainer)
+        return;
 
-        if (innerScrollingClipRect.isEmpty())
-            innerScrollingClipRect = clipRectInRootView;
+    CheckedPtr startRenderer = startContainer->renderer();
+    if (!startRenderer)
+        return;
 
-        return IterationStatus::Continue;
-    });
+    CheckedPtr endRenderer = startContainer->renderer();
+    if (!endRenderer)
+        return;
 
-    if (enclosingScrollingNodeID)
-        state.visualData->enclosingScrollingNodeID = { WTFMove(*enclosingScrollingNodeID) };
+    CheckedPtr startLayer = startRenderer->enclosingLayer();
+    if (!startLayer)
+        return;
 
-    if (!innerScrollingClipRect.isEmpty()) {
-        // We need to clip the selection to the inner scroller, even if that scroller does not have a
-        // node in the scrolling tree. For example, this allows us to clip the selection in a scrollable
-        // single-line text form control, even if it's inside a larger scrollable area.
-        if (!editableRootBounds.isEmpty())
-            innerScrollingClipRect.unite(editableRootBounds);
-        state.visualData->selectionClipRect = WTFMove(innerScrollingClipRect);
+    CheckedPtr endLayer = endRenderer->enclosingLayer();
+    if (!endLayer)
+        return;
+
+    for (CheckedPtr layer = startLayer->commonAncestorWithLayer(*endLayer); layer; layer = layer->enclosingContainingBlockLayer(CrossFrameBoundaries::Yes)) {
+        if (!layer->isComposited())
+            continue;
+
+        auto* layerBacking = layer->backing();
+        RefPtr graphicsLayer = layerBacking->scrolledContentsLayer() ?: layerBacking->graphicsLayer();
+        if (!graphicsLayer)
+            continue;
+
+        auto identifier = graphicsLayer->primaryLayerID();
+        if (!identifier)
+            continue;
+
+        state.visualData->enclosingLayerID = WTFMove(identifier);
+        return;
     }
 }
 

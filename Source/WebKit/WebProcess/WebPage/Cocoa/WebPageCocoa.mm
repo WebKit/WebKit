@@ -666,7 +666,8 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
         }();
     }
 
-    if (RefPtr editableRootOrFormControl = enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement()) {
+    RefPtr enclosingFormControl = enclosingTextFormControl(selection.start());
+    if (RefPtr editableRootOrFormControl = enclosingFormControl.get() ?: selection.rootEditableElement()) {
         postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
 #if PLATFORM(IOS_FAMILY)
         result.visualData->editableRootBounds = rootViewInteractionBounds(Ref { *editableRootOrFormControl });
@@ -674,8 +675,13 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     }
 
 #if PLATFORM(IOS_FAMILY)
-    computeSelectionClipRectAndEnclosingScroller(result, selection, result.visualData->editableRootBounds);
-#endif
+    bool honorOverflowScrolling = m_page->settings().selectionHonorsOverflowScrolling();
+    if (enclosingFormControl || !honorOverflowScrolling)
+        result.visualData->selectionClipRect = result.visualData->editableRootBounds;
+
+    if (honorOverflowScrolling)
+        computeEnclosingLayerID(result, selection);
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)

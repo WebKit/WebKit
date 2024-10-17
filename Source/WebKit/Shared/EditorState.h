@@ -31,7 +31,7 @@
 #include <WebCore/ElementContext.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/ScrollingNodeID.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/WritingDirection.h>
 #include <wtf/text/WTFString.h>
 
@@ -154,8 +154,8 @@ struct EditorState {
         Vector<WebCore::SelectionGeometry> markedTextRects;
         WebCore::IntRect markedTextCaretRectAtStart;
         WebCore::IntRect markedTextCaretRectAtEnd;
-        std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
-#endif
+        std::optional<WebCore::PlatformLayerIdentifier> enclosingLayerID;
+#endif // PLATFORM(IOS_FAMILY)
     };
 
     bool hasVisualData() const { return !!visualData; }

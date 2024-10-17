@@ -1887,7 +1887,7 @@ private:
     void clearSelectionAfterTapIfNeeded();
     void scheduleLayoutViewportHeightExpansionUpdate();
     void scheduleEditorStateUpdateAfterAnimationIfNeeded(const WebCore::Element&);
-    void computeSelectionClipRectAndEnclosingScroller(EditorState&, const WebCore::VisibleSelection&, const WebCore::IntRect& editableRootBounds) const;
+    void computeEnclosingLayerID(EditorState&, const WebCore::VisibleSelection&) const;
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
@@ -2731,7 +2731,6 @@ private:
     std::unique_ptr<WebCore::IgnoreSelectionChangeForScope> m_ignoreSelectionChangeScopeForDictation;
 
     bool m_isMobileDoctype { false };
-    bool m_selectionHonorsOverflowScrolling { false };
 #endif // PLATFORM(IOS_FAMILY)
 
     WebCore::Timer m_layerVolatilityTimer;

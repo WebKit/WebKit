@@ -29,7 +29,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "RemoteLayerTreeNode.h"
+#import "RemoteLayerTreeViews.h"
 #import "WKContentViewInteraction.h"
+#import <WebCore/TileController.h>
 
 @implementation WKTextInteractionWrapper {
     __weak WKContentView *_view;
@@ -107,19 +110,41 @@
 
 - (void)prepareToMoveSelectionContainer:(UIView *)newContainer
 {
-    if (!_view.selectionHonorsOverflowScrolling)
-        return;
-
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     RetainPtr displayInteraction = [self textSelectionDisplayInteraction];
-    if ([displayInteraction highlightView].superview == newContainer)
+    RetainPtr highlightView = [displayInteraction highlightView];
+    if ([highlightView superview] == newContainer)
         return;
 
     // Calling these delegate methods tells the display interaction to remove and reparent all internally
     // managed views (e.g. selection highlight views, selection handles) in the new selection container.
     [displayInteraction willMoveToView:_view];
     [displayInteraction didMoveToView:_view];
-#endif
+    if (newContainer == _view)
+        return;
+
+    RetainPtr<WKCompositingView> tileGridContainer;
+    auto tileGridContainerName = WebCore::TileController::tileGridContainerLayerName();
+    for (UIView *view in newContainer.subviews) {
+        RetainPtr compositingView = dynamic_objc_cast<WKCompositingView>(view);
+        if ([[compositingView layer].name isEqualToString:tileGridContainerName]) {
+            tileGridContainer = WTFMove(compositingView);
+            break;
+        }
+    }
+
+    if (!tileGridContainer)
+        return;
+
+    auto reinsertAboveTileGridContainer = [&](UIView *view) {
+        if (newContainer == view.superview)
+            [newContainer insertSubview:view aboveSubview:tileGridContainer.get()];
+    };
+
+    reinsertAboveTileGridContainer(highlightView.get());
+    reinsertAboveTileGridContainer([[[displayInteraction handleViews] firstObject] superview]);
+    reinsertAboveTileGridContainer([displayInteraction cursorView]);
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 }
 
 - (void)activateSelection

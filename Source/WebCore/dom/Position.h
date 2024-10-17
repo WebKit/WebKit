@@ -250,7 +250,7 @@ Position lastPositionInNode(Node* anchorNode);
 
 bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
 
-WEBCORE_EXPORT Node* commonInclusiveAncestor(const Position&, const Position&);
+Node* commonInclusiveAncestor(const Position&, const Position&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
 

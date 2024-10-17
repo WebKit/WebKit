@@ -182,7 +182,7 @@ public:
     RenderLayer* firstChild() const { return m_first; }
     RenderLayer* lastChild() const { return m_last; }
     bool isDescendantOf(const RenderLayer&) const;
-    RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
+    WEBCORE_EXPORT RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
 
     // This does an ancestor tree walk. Avoid it!
     const RenderLayer* root() const
@@ -593,7 +593,7 @@ public:
     RenderLayer* enclosingAncestorForPosition(PositionType) const;
     
     RenderLayer* enclosingLayerInContainingBlockOrder() const;
-    RenderLayer* enclosingContainingBlockLayer(CrossFrameBoundaries) const;
+    WEBCORE_EXPORT RenderLayer* enclosingContainingBlockLayer(CrossFrameBoundaries) const;
     RenderLayer* enclosingFrameRenderLayer() const;
 
     // The layer relative to which clipping rects for this layer are computed.

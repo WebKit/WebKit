@@ -216,24 +216,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [super gestureRecognizerShouldBegin:gestureRecognizer];
 }
 
-- (UIView *)scrolledContentView
-{
-    auto firstNonEmptyWebKitChildView = [](UIView *view) -> UIView * {
-        for (UIView *subview in view.subviews) {
-            if (![subview isKindOfClass:WKCompositingView.class] && ![subview isKindOfClass:WKContentView.class])
-                continue;
-
-            if (CGRectIsEmpty(subview.bounds))
-                continue;
-
-            return subview;
-        }
-
-        return nil;
-    };
-    return firstNonEmptyWebKitChildView(self) ?: firstNonEmptyWebKitChildView(self.subviews.firstObject);
-}
-
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

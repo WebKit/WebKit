@@ -199,7 +199,7 @@ public:
     IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
     IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
     void setScrollOffset(const ScrollOffset&) final;
-    WEBCORE_EXPORT std::optional<ScrollingNodeID> scrollingNodeID() const final;
+    std::optional<ScrollingNodeID> scrollingNodeID() const final;
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const final;
     IntSize overhangAmount() const final;
