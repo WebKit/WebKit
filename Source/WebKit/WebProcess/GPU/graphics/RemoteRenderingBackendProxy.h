@@ -170,11 +170,11 @@ public:
 private:
     explicit RemoteRenderingBackendProxy(SerialFunctionDispatcher&);
 
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename U, typename V, typename W> auto send(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto send(T&& message) { return send(std::forward<T>(message), renderingBackendIdentifier()); }
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename U, typename V, typename W> auto sendSync(T&& message, ObjectIdentifierGeneric<U, V, W>);
     template<typename T> auto sendSync(T&& message) { return sendSync(std::forward<T>(message), renderingBackendIdentifier()); }
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> auto sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W, supportsNullState>);
+    template<typename T, typename C, typename U, typename V, typename W> auto sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W>);
     template<typename T, typename C> auto sendWithAsyncReply(T&& message, C&& callback) { return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(callback), renderingBackendIdentifier()); }
 
     // Connection::Client

@@ -36,7 +36,7 @@ class WebNotificationManagerProxy;
 class WebPageProxy;
 
 enum class WebNotificationIdentifierType;
-using WebNotificationIdentifier = LegacyNullableObjectIdentifier<WebNotificationIdentifierType>;
+using WebNotificationIdentifier = ObjectIdentifier<WebNotificationIdentifierType>;
 }
 
 namespace WebCore {

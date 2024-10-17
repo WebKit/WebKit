@@ -56,6 +56,8 @@ public:
 protected:
 #if PLATFORM(COCOA)
     NetworkTransportReceiveStream(NetworkTransportSession&, nw_connection_t);
+#else
+    NetworkTransportReceiveStream();
 #endif
 
 private:

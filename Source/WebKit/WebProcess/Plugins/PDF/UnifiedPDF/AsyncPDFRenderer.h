@@ -58,6 +58,25 @@ struct TileForGrid {
 
 WTF::TextStream& operator<<(WTF::TextStream&, const TileForGrid&);
 
+struct PDFTileRenderType;
+using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
+
+struct TileRenderInfo {
+    WebCore::FloatRect tileRect;
+    std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
+    PDFPageCoverageAndScales pageCoverage;
+
+    bool equivalentForPainting(const TileRenderInfo& other) const
+    {
+        return tileRect == other.tileRect && pageCoverage == other.pageCoverage;
+    }
+};
+
+struct TileRenderData {
+    PDFTileRenderIdentifier renderIdentifier;
+    TileRenderInfo renderInfo;
+};
+
 } // namespace WebKit
 
 namespace WTF {
@@ -83,14 +102,18 @@ template<> struct HashTraits<WebKit::TileForGrid> : GenericHashTraits<WebKit::Ti
 };
 template<> struct DefaultHash<WebKit::TileForGrid> : TileForGridHash { };
 
+template<> struct HashTraits<WebKit::TileRenderData> : SimpleClassHashTraits<WebKit::TileRenderData> {
+    static constexpr bool emptyValueIsZero = false;
+    static constexpr bool hasIsEmptyValueFunction = true;
+    static WebKit::TileRenderData emptyValue() { return { HashTraits<WebKit::PDFTileRenderIdentifier>::emptyValue(), { } }; }
+    static bool isEmptyValue(const WebKit::TileRenderData& data) { return HashTraits<WebKit::PDFTileRenderIdentifier>::isEmptyValue(data.renderIdentifier); }
+};
+
 } // namespace WTF
 
 namespace WebKit {
 
 class PDFPresentationController;
-
-struct PDFTileRenderType;
-using PDFTileRenderIdentifier = LegacyNullableObjectIdentifier<PDFTileRenderType>;
 
 class AsyncPDFRenderer final : public WebCore::TiledBackingClient,
     public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AsyncPDFRenderer> {
@@ -126,17 +149,6 @@ private:
     AsyncPDFRenderer(PDFPresentationController&);
 
     WebCore::GraphicsLayer* layerForTileGrid(WebCore::TileGridIdentifier) const;
-
-    struct TileRenderInfo {
-        WebCore::FloatRect tileRect;
-        std::optional<WebCore::FloatRect> clipRect; // If set, represents the portion of the tile that needs repaint (in the same coordinate system as tileRect).
-        PDFPageCoverageAndScales pageCoverage;
-
-        bool equivalentForPainting(const TileRenderInfo& other) const
-        {
-            return tileRect == other.tileRect && pageCoverage == other.pageCoverage;
-        }
-    };
 
     TileRenderInfo renderInfoForTile(const WebCore::TiledBacking&, const TileForGrid& tileInfo, const WebCore::FloatRect& tileRect, const std::optional<WebCore::FloatRect>& clipRect = { }) const;
 
@@ -208,10 +220,6 @@ private:
 
     Ref<ConcurrentWorkQueue> m_paintingWorkQueue;
 
-    struct TileRenderData {
-        PDFTileRenderIdentifier renderIdentifier;
-        TileRenderInfo renderInfo;
-    };
     UncheckedKeyHashMap<TileForGrid, TileRenderData> m_currentValidTileRenders;
 
     const int m_maxConcurrentTileRenders { 4 };

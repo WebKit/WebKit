@@ -87,12 +87,12 @@ private:
     void processCapabilities(GVariant*);
 
     void setNotificationID(WebNotificationIdentifier, uint32_t);
-    WebNotificationIdentifier findNotification(uint32_t);
-    WebNotificationIdentifier findNotification(const String&);
+    std::optional<WebNotificationIdentifier> findNotification(uint32_t);
+    std::optional<WebNotificationIdentifier> findNotification(const String&);
 
     static void handleSignal(GDBusProxy*, char*, char*, GVariant*, NotificationService*);
-    void didClickNotification(WebNotificationIdentifier);
-    void didCloseNotification(WebNotificationIdentifier);
+    void didClickNotification(std::optional<WebNotificationIdentifier>);
+    void didCloseNotification(std::optional<WebNotificationIdentifier>);
 
     GRefPtr<GDBusProxy> m_proxy;
     OptionSet<Capabilities> m_capabilities;

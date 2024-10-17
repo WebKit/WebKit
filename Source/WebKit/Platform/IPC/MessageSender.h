@@ -49,8 +49,8 @@ public:
     template<typename T> inline bool send(T&& message, OptionSet<SendOption>); // Defined in MessageSenderInlines.h.
     template<typename T> inline bool send(T&& message, uint64_t destinationID); // Defined in MessageSenderInlines.h.
     template<typename T> inline bool send(T&& message, uint64_t destinationID, OptionSet<SendOption>); // Defined in MessageSenderInlines.h.
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline bool send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline bool send(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<SendOption>);
+    template<typename T, typename U, typename V, typename W> inline bool send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID);
+    template<typename T, typename U, typename V, typename W> inline bool send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption>);
 
     template<typename T> using SendSyncResult = ConnectionSendSyncResult<T>;
     template<typename T> inline SendSyncResult<T> sendSync(T&& message);
@@ -59,17 +59,17 @@ public:
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID);
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout);
     template<typename T> inline SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout, OptionSet<SendSyncOption>);
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, Timeout);
-    template<typename T, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, Timeout, OptionSet<SendSyncOption>);
+    template<typename T, typename U, typename V, typename W> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID);
+    template<typename T, typename U, typename V, typename W> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout);
+    template<typename T, typename U, typename V, typename W> inline SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout, OptionSet<SendSyncOption>);
 
     using AsyncReplyID = IPC::AsyncReplyID;
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption>);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID);
     template<typename T, typename C> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption>);
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID);
-    template<typename T, typename C, typename U, typename V, typename W, SupportsObjectIdentifierNullState supportsNullState> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W, supportsNullState> destinationID, OptionSet<SendOption>);
+    template<typename T, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID);
+    template<typename T, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption>);
 
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message);
     template<typename T> Ref<typename T::Promise> inline sendWithPromisedReply(T&& message, uint64_t destinationID);

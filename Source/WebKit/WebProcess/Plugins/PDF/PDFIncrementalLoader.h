@@ -48,7 +48,7 @@ class PDFPluginBase;
 class PDFPluginStreamLoaderClient;
 
 enum class ByteRangeRequestIdentifierType { };
-using ByteRangeRequestIdentifier = LegacyNullableObjectIdentifier<ByteRangeRequestIdentifierType>;
+using ByteRangeRequestIdentifier = ObjectIdentifier<ByteRangeRequestIdentifierType>;
 using DataRequestCompletionHandler = Function<void(std::span<const uint8_t>)>;
 
 enum class CheckValidRanges : bool;
@@ -103,7 +103,7 @@ private:
     void forgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
     void cancelAndForgetStreamLoader(WebCore::NetscapePlugInStreamLoader&);
 
-    ByteRangeRequestIdentifier identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
+    std::optional<ByteRangeRequestIdentifier> identifierForLoader(WebCore::NetscapePlugInStreamLoader*);
     void removeOutstandingByteRangeRequest(ByteRangeRequestIdentifier);
 
 

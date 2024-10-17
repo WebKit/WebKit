@@ -32,6 +32,13 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportReceiveStream);
 
+#if !PLATFORM(COCOA)
+NetworkTransportReceiveStream::NetworkTransportReceiveStream()
+    : m_identifier(WebTransportStreamIdentifier::generate())
+{
+}
+#endif
+
 NetworkTransportReceiveStream::~NetworkTransportReceiveStream() = default;
 
 }

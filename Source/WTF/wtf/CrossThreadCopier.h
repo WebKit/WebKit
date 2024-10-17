@@ -179,8 +179,8 @@ template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     }
 };
 
-template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U, V, supportsNullState>> {
-    using Type = ObjectIdentifierGeneric<T, U, V, supportsNullState>;
+template<typename T, typename U, typename V> struct CrossThreadCopierBase<false, false, ObjectIdentifierGeneric<T, U, V>> {
+    using Type = ObjectIdentifierGeneric<T, U, V>;
     static constexpr bool IsNeeded = false;
     static Type copy(const Type& source)
     {
@@ -231,9 +231,9 @@ template<typename T> struct CrossThreadCopierBase<false, false, HashSet<T> > {
     }
 };
 
-template<typename T, typename U, typename V, SupportsObjectIdentifierNullState supportsNullState>
-struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U, V, supportsNullState>>> {
-    typedef HashSet<ObjectIdentifierGeneric<T, U, V, supportsNullState>> Type;
+template<typename T, typename U, typename V>
+struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U, V>>> {
+    typedef HashSet<ObjectIdentifierGeneric<T, U, V>> Type;
     static Type copy(const Type& identifiers) { return identifiers; }
 };
 
