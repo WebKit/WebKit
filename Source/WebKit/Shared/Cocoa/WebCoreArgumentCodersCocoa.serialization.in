@@ -181,11 +181,11 @@ header: <WebCore/AttributedString.h>
     CGFloat marginMaxXEdge;
     CGFloat marginMaxYEdge;
 
-    RetainPtr<PlatformColor> backgroundColor;
-    RetainPtr<PlatformColor> borderMinXEdgeColor;
-    RetainPtr<PlatformColor> borderMinYEdgeColor;
-    RetainPtr<PlatformColor> borderMaxXEdgeColor;
-    RetainPtr<PlatformColor> borderMaxYEdgeColor;
+    RetainPtr<WebCore::CocoaColor> backgroundColor;
+    RetainPtr<WebCore::CocoaColor> borderMinXEdgeColor;
+    RetainPtr<WebCore::CocoaColor> borderMinYEdgeColor;
+    RetainPtr<WebCore::CocoaColor> borderMaxXEdgeColor;
+    RetainPtr<WebCore::CocoaColor> borderMaxYEdgeColor;
 }
 
 header: <WebCore/AttributedString.h>

@@ -679,6 +679,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     [typesNeedingDescriptions minusSet:typesHavingDescriptions];
     [typesNeedingDescriptions minusSet:fundamentalTypes];
 
+    // Note: This set should only be shrinking. If you need to add to this set to fix the test,
+    // add IPC metadata in a *.serialization.in file instead.
     NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
         @"CTFontDescriptorOptions",
         @"NSObject<NSSecureCoding>",
@@ -687,7 +689,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"NSURLRequest",
 #endif
         @"MachSendRight",
-        @"NSParagraphStyle",
 #if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
         @"DDScannerResult",
 #endif
@@ -697,7 +698,6 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 #endif
         @"WebCore::ContextMenuAction",
 #endif
-        @"WebCore::FromDownloadAttribute"
     ]];
     if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
         EXPECT_TRUE(false);

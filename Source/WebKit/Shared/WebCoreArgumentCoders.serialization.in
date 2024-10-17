@@ -8440,6 +8440,7 @@ enum class WebCore::ShouldRequireExplicitConsentForGamepadAccess : bool;
 enum class WebCore::WillInternallyHandleFailure : bool
 enum class WebCore::ApplyTrackingPrevention : bool
 enum class WebCore::ShouldSample : bool
+enum class WebCore::FromDownloadAttribute : bool
 
 [Nested] struct WebCore::Allowlist::AllowAllOrigins {
 };
