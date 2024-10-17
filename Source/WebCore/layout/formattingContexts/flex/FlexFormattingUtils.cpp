@@ -59,22 +59,22 @@ bool FlexFormattingUtils::areFlexLinesReversedInCrossAxis(const ElementBox& flex
     return flexContainer.style().flexWrap() == FlexWrap::Reverse;
 }
 
-LayoutUnit FlexFormattingUtils::rowGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight)
+LayoutUnit FlexFormattingUtils::mainAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth)
 {
     ASSERT(flexContainer.isFlexBox());
-    auto& rowGap = flexContainer.style().rowGap();
-    if (rowGap.isNormal())
+    auto& gapValue = isMainAxisParallelWithInlineAxis(flexContainer) ? flexContainer.style().columnGap() : flexContainer.style().rowGap();
+    if (gapValue.isNormal())
         return { };
-    return valueForLength(rowGap.length(), flexContainerContentBoxHeight);
+    return valueForLength(gapValue.length(), flexContainerContentBoxWidth);
 }
 
-LayoutUnit FlexFormattingUtils::columnGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth)
+LayoutUnit FlexFormattingUtils::crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight)
 {
     ASSERT(flexContainer.isFlexBox());
-    auto& columnGap = flexContainer.style().columnGap();
-    if (columnGap.isNormal())
+    auto& gapValue = isMainAxisParallelWithInlineAxis(flexContainer) ? flexContainer.style().rowGap() : flexContainer.style().columnGap();
+    if (gapValue.isNormal())
         return { };
-    return valueForLength(columnGap.length(), flexContainerContentBoxWidth);
+    return valueForLength(gapValue.length(), flexContainerContentBoxHeight);
 }
 
 LayoutUnit FlexFormattingUtils::usedMinimumSizeInMainAxis(const LogicalFlexItem& flexItem) const

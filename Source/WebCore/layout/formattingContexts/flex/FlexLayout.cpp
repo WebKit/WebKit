@@ -116,13 +116,13 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const ConstraintsForFlexCont
 
     auto computeFlexItemRects = [&] {
         auto flexRects = LogicalFlexItemRects { flexItems.size() };
-        auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerConstraints.mainAxis().availableSize.value_or(0_lu));
-        auto rowGapValue = FlexFormattingUtils::rowGapValue(flexContainer(), flexContainerConstraints.crossAxis().availableSize.value_or(0_lu));
+        auto mainAxisGapValue = FlexFormattingUtils::mainAxisGapValue(flexContainer(), flexContainerConstraints.mainAxis().availableSize.value_or(0_lu));
+        auto crossAxisGapValue = FlexFormattingUtils::crossAxisGapValue(flexContainer(), flexContainerConstraints.crossAxis().availableSize.value_or(0_lu));
         for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
             auto lineRange = lineRanges[lineIndex];
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
-                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position + (flexItemIndex - lineRange.begin()) * columnGapValue;
-                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position + lineIndex * rowGapValue;
+                auto flexItemMainPosition = mainPositionAndMargins[flexItemIndex].position + (flexItemIndex - lineRange.begin()) * mainAxisGapValue;
+                auto flexItemCrossPosition = linesCrossPositionList[lineIndex] + crossPositionAndMargins[flexItemIndex].position + lineIndex * crossAxisGapValue;
 
                 flexRects[flexItemIndex] = {
                     { flexItemMainPosition, flexItemCrossPosition, flexItemsMainSizeList[flexItemIndex], flexItemsCrossSizeList[flexItemIndex] },
@@ -222,15 +222,15 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
     if (isSingleLineFlexContainer())
         return { { 0, flexBaseAndHypotheticalMainSizeList.size() } };
 
-    auto columnGapValue = FlexFormattingUtils::columnGapValue(flexContainer(), flexContainerInnerMainSize);
+    auto mainAxisGapValue = FlexFormattingUtils::mainAxisGapValue(flexContainer(), flexContainerInnerMainSize);
     auto lineRanges = LineRanges { };
     size_t lastWrapIndex = 0;
     auto flexItemsMainSize = LayoutUnit { };
     for (size_t flexItemIndex = 0; flexItemIndex < flexBaseAndHypotheticalMainSizeList.size(); ++flexItemIndex) {
         auto flexItemHypotheticalOuterMainSize = outerMainSize(flexItems[flexItemIndex], flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
         auto numberOfFlexItemsOnLine = flexItemIndex - lastWrapIndex;
-        auto columnGapSize = columnGapValue * numberOfFlexItemsOnLine;
-        if (!numberOfFlexItemsOnLine || flexItemsMainSize + flexItemHypotheticalOuterMainSize + columnGapSize <= flexContainerInnerMainSize) {
+        auto mainAxisGapSize = mainAxisGapValue * numberOfFlexItemsOnLine;
+        if (!numberOfFlexItemsOnLine || flexItemsMainSize + flexItemHypotheticalOuterMainSize + mainAxisGapSize <= flexContainerInnerMainSize) {
             flexItemsMainSize += flexItemHypotheticalOuterMainSize;
             continue;
         }
@@ -876,14 +876,14 @@ LayoutUnit FlexLayout::mainAxisAvailableSpaceForItemAlignment(LayoutUnit mainAxi
 {
     if (numberOfFlexItems == 1)
         return mainAxisAvailableSpace;
-    return mainAxisAvailableSpace - (FlexFormattingUtils::columnGapValue(flexContainer(), mainAxisAvailableSpace) * (numberOfFlexItems - 1));
+    return mainAxisAvailableSpace - (FlexFormattingUtils::mainAxisGapValue(flexContainer(), mainAxisAvailableSpace) * (numberOfFlexItems - 1));
 }
 
 LayoutUnit FlexLayout::crossAxisAvailableSpaceForLineSizingAndAlignment(LayoutUnit crossAxisAvailableSpace, size_t numberOfFlexLines) const
 {
     if (numberOfFlexLines == 1)
         return crossAxisAvailableSpace;
-    return crossAxisAvailableSpace - (FlexFormattingUtils::rowGapValue(flexContainer(), crossAxisAvailableSpace) * (numberOfFlexLines - 1));
+    return crossAxisAvailableSpace - (FlexFormattingUtils::crossAxisGapValue(flexContainer(), crossAxisAvailableSpace) * (numberOfFlexLines - 1));
 }
 
 const ElementBox& FlexLayout::flexContainer() const
