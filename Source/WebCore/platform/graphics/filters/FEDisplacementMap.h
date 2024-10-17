@@ -50,6 +50,8 @@ public:
     float scale() const { return m_scale; }
     bool setScale(float);
 
+    static IntOutsets calculateOutsets(const FloatSize& adjustedScale);
+
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float, DestinationColorSpace);
 

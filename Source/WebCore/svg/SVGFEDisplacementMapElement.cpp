@@ -23,6 +23,7 @@
 
 #include "FEDisplacementMap.h"
 #include "NodeName.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -118,6 +119,14 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
         SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
         break;
     }
+}
+
+IntOutsets SVGFEDisplacementMapElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
+{
+    auto halfScale = std::abs(this->scale() / 2);
+    auto maxDisplacement = FloatSize { halfScale, halfScale };
+    auto adjustedDisplacement = SVGFilter::calculateResolvedSize(maxDisplacement, targetBoundingBox, primitiveUnits);
+    return FEDisplacementMap::calculateOutsets(adjustedDisplacement);
 }
 
 RefPtr<FilterEffect> SVGFEDisplacementMapElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
