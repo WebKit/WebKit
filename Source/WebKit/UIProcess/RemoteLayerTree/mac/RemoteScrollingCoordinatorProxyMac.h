@@ -32,15 +32,6 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
-class RemoteScrollingCoordinatorProxyMac;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteScrollingCoordinatorProxyMac> : std::true_type { };
-}
-
-namespace WebKit {
 
 #if ENABLE(SCROLLING_THREAD)
 class RemoteLayerTreeEventDispatcher;
@@ -48,6 +39,7 @@ class RemoteLayerTreeEventDispatcher;
 
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
     WTF_MAKE_TZONE_ALLOCATED(RemoteScrollingCoordinatorProxyMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteScrollingCoordinatorProxyMac);
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
     ~RemoteScrollingCoordinatorProxyMac();
