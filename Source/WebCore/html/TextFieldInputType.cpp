@@ -88,6 +88,8 @@ TextFieldInputType::~TextFieldInputType()
 {
 #if ENABLE(DATALIST_ELEMENT)
     closeSuggestions();
+    if (RefPtr suggestionPicker = m_suggestionPicker)
+        suggestionPicker->detach();
 #endif
 }
 
@@ -207,8 +209,8 @@ auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallB
         return ShouldCallBaseEventHandler::Yes;
 #if ENABLE(DATALIST_ELEMENT)
     const String& key = event.keyIdentifier();
-    if (m_suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s)) {
-        m_suggestionPicker->handleKeydownWithIdentifier(key);
+    if (RefPtr suggestionPicker = m_suggestionPicker; suggestionPicker && (key == "Enter"_s || key == "Up"_s || key == "Down"_s)) {
+        suggestionPicker->handleKeydownWithIdentifier(key);
         event.setDefaultHandled();
     }
 #endif
@@ -1000,7 +1002,8 @@ void TextFieldInputType::didSelectDataListOption(const String& selectedOption)
 void TextFieldInputType::didCloseSuggestions()
 {
     m_cachedSuggestions = { };
-    m_suggestionPicker = nullptr;
+    if (RefPtr suggestionPicker = std::exchange(m_suggestionPicker, nullptr))
+        suggestionPicker->detach();
     if (element()->renderer())
         element()->renderer()->repaint();
 }
@@ -1016,16 +1019,14 @@ void TextFieldInputType::displaySuggestions(DataListSuggestionActivationType typ
     if (!m_suggestionPicker && suggestions().size() > 0)
         m_suggestionPicker = chrome()->createDataListSuggestionPicker(*this);
 
-    if (!m_suggestionPicker)
-        return;
-
-    m_suggestionPicker->displayWithActivationType(type);
+    if (RefPtr suggestionPicker = m_suggestionPicker)
+        suggestionPicker->displayWithActivationType(type);
 }
 
 void TextFieldInputType::closeSuggestions()
 {
-    if (m_suggestionPicker)
-        m_suggestionPicker->close();
+    if (RefPtr suggestionPicker = m_suggestionPicker)
+        suggestionPicker->close();
 }
 
 bool TextFieldInputType::isPresentingAttachedView() const

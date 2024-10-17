@@ -5661,13 +5661,13 @@ void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker& dat
 
 void WebPage::didSelectDataListOption(const String& selectedOption)
 {
-    if (m_activeDataListSuggestionPicker)
-        m_activeDataListSuggestionPicker->didSelectOption(selectedOption);
+    if (RefPtr activeDataListSuggestionPicker = m_activeDataListSuggestionPicker.get())
+        activeDataListSuggestionPicker->didSelectOption(selectedOption);
 }
 
 void WebPage::didCloseSuggestions()
 {
-    if (auto picker = std::exchange(m_activeDataListSuggestionPicker, nullptr))
+    if (RefPtr picker = std::exchange(m_activeDataListSuggestionPicker, nullptr).get())
         picker->didCloseSuggestions();
 }
 

@@ -459,7 +459,7 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& cli
 
 #if ENABLE(DATALIST_ELEMENT)
 
-std::unique_ptr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+RefPtr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     notifyPopupOpeningObservers();
     return m_client->createDataListSuggestionPicker(client);

@@ -28,17 +28,9 @@
 #if ENABLE(DATALIST_ELEMENT)
 
 #include <WebCore/DataListSuggestionPicker.h>
-#include <wtf/CheckedRef.h>
-#include <wtf/WeakRef.h>
-
-namespace WebKit {
-class WebDataListSuggestionPicker;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::WebDataListSuggestionPicker> : std::true_type { };
-}
+#include <wtf/CheckedPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class DataListSuggestionsClient;
@@ -48,21 +40,32 @@ namespace WebKit {
 
 class WebPage;
 
-class WebDataListSuggestionPicker final : public WebCore::DataListSuggestionPicker {
+class WebDataListSuggestionPicker final : public WebCore::DataListSuggestionPicker, public RefCounted<WebDataListSuggestionPicker> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DataListSuggestionPicker);
 public:
-    WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
+    static Ref<WebDataListSuggestionPicker> create(WebPage& page, WebCore::DataListSuggestionsClient& client)
+    {
+        return adoptRef(*new WebDataListSuggestionPicker(page, client));
+    }
+
     ~WebDataListSuggestionPicker();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void didSelectOption(const String&);
     void didCloseSuggestions();
 
 private:
+    WebDataListSuggestionPicker(WebPage&, WebCore::DataListSuggestionsClient&);
+
     void handleKeydownWithIdentifier(const String&) final;
     void displayWithActivationType(WebCore::DataListSuggestionActivationType) final;
     void close() final;
+    void detach() final;
 
-    CheckedRef<WebCore::DataListSuggestionsClient> m_client;
-    WeakRef<WebPage> m_page;
+    CheckedPtr<WebCore::DataListSuggestionsClient> m_client;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

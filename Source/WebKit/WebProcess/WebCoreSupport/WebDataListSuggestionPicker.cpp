@@ -46,35 +46,51 @@ WebDataListSuggestionPicker::~WebDataListSuggestionPicker() = default;
 
 void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), m_page.get().identifier());
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::HandleKeydownInDataList(key), page->identifier());
 }
 
 void WebDataListSuggestionPicker::didSelectOption(const String& selectedOption)
 {
-    m_client->didSelectDataListOption(selectedOption);
+    if (CheckedPtr client = m_client)
+        client->didSelectDataListOption(selectedOption);
 }
 
 void WebDataListSuggestionPicker::didCloseSuggestions()
 {
-    m_client->didCloseSuggestions();
+    if (CheckedPtr client = m_client)
+        client->didCloseSuggestions();
 }
 
 void WebDataListSuggestionPicker::close()
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDataListSuggestions(), m_page.get().identifier());
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::EndDataListSuggestions(), page->identifier());
 }
 
 void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSuggestionActivationType type)
 {
-    auto suggestions = m_client->suggestions();
+    CheckedPtr client = m_client;
+    if (!client)
+        return;
+
+    auto suggestions = client->suggestions();
     if (suggestions.isEmpty()) {
         close();
         return;
     }
 
-    Ref page { m_page.get() };
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
 
-    auto elementRectInRootViewCoordinates = m_client->elementRectInRootViewCoordinates();
+    auto elementRectInRootViewCoordinates = client->elementRectInRootViewCoordinates();
     if (RefPtr view = page->localMainFrameView()) {
         auto unobscuredRootViewRect = view->contentsToRootView(view->unobscuredContentRect());
         if (!unobscuredRootViewRect.intersects(elementRectInRootViewCoordinates))
@@ -85,6 +101,11 @@ void WebDataListSuggestionPicker::displayWithActivationType(WebCore::DataListSug
 
     WebCore::DataListSuggestionInformation info { type, WTFMove(suggestions), WTFMove(elementRectInRootViewCoordinates) };
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowDataListSuggestions(info), page->identifier());
+}
+
+void WebDataListSuggestionPicker::detach()
+{
+    m_client = nullptr;
 }
 
 } // namespace WebKit

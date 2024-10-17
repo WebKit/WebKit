@@ -849,9 +849,9 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
 
 #if ENABLE(DATALIST_ELEMENT)
 
-std::unique_ptr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
+RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
-    return makeUnique<WebDataListSuggestionPicker>(protectedPage(), client);
+    return WebDataListSuggestionPicker::create(protectedPage(), client);
 }
 
 bool WebChromeClient::canShowDataListSuggestionLabels() const

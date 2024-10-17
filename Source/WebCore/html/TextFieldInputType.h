@@ -150,7 +150,7 @@ private:
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;
 
     std::pair<String, Vector<DataListSuggestion>> m_cachedSuggestions;
-    std::unique_ptr<DataListSuggestionPicker> m_suggestionPicker;
+    RefPtr<DataListSuggestionPicker> m_suggestionPicker;
 #endif
 
     RefPtr<HTMLElement> m_container;
