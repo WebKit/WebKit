@@ -646,15 +646,17 @@ private:
     void readyReadHandler();
     bool processMessage();
     bool sendOutputMessage(UnixMessage&);
+    int socketDescriptor() const;
 
     Vector<uint8_t> m_readBuffer;
     Vector<int> m_fileDescriptors;
-    int m_socketDescriptor;
     std::unique_ptr<UnixMessage> m_pendingOutputMessage;
 #if USE(GLIB)
     GRefPtr<GSocket> m_socket;
     GSocketMonitor m_readSocketMonitor;
     GSocketMonitor m_writeSocketMonitor;
+#else
+    int m_socketDescriptor;
 #endif
 #if PLATFORM(PLAYSTATION)
     RefPtr<WTF::Thread> m_socketMonitor;
