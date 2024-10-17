@@ -27,6 +27,7 @@
 
 #if BUSE(TZONE)
 
+#include "BCompiler.h"
 #include "BPlatform.h"
 #include "ProcessCheck.h"
 #include "Sizes.h"
@@ -45,6 +46,8 @@
 namespace bmalloc { namespace api {
 
 TZoneHeapManager* TZoneHeapManager::theTZoneHeapManager = nullptr;
+
+static constexpr bool verbose = false;
 
 static const char base64Chars[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -70,9 +73,9 @@ static_assert(sizeof(TypeNameTemplate) == typeNameLen);
 
 static TypeNameTemplate typeNameTemplate;
 
-static void dumpRegisterdTypesAtExit(void)
+static void dumpRegisteredTypesAtExit(void)
 {
-    TZoneHeapManager::singleton().dumpRegisterdTypes();
+    TZoneHeapManager::singleton().dumpRegisteredTypes();
 }
 
 void TZoneHeapManager::init()
@@ -99,13 +102,12 @@ void TZoneHeapManager::init()
     }
     primordialSeed = timeValue.tv_sec * 1000 * 1000 + timeValue.tv_usec;
 
-    if constexpr (verbose)
-        TZONE_LOG_DEBUG("primordialSeed: 0x%llx\n", primordialSeed);
-
     const char* procName = processNameString();
 
-    if constexpr (verbose)
+    if constexpr (verbose) {
+        TZONE_LOG_DEBUG("primordialSeed: 0x%llx\n", primordialSeed);
         TZONE_LOG_DEBUG("Process Name: \"%s\"\n", procName);
+    }
 
     unsigned byteIdx = 0;
 
@@ -122,6 +124,21 @@ void TZoneHeapManager::init()
 
     for (; byteIdx < rawSeedLength; byteIdx++)
         rawSeed[byteIdx] = 'Q' - (byteIdx & 0xf);
+
+    if constexpr (verbose) {
+        TZONE_LOG_DEBUG("rawSeed (len %zu): 0x", rawSeedLength);
+        size_t i = 0;
+        while (true) {
+            TZONE_LOG_DEBUG("%02x", rawSeed[i]);
+            if (++i >= rawSeedLength)
+                break;
+            if (!(i % 32)) {
+                TZONE_LOG_DEBUG("\n");
+                TZONE_LOG_DEBUG("                 ... ");
+            }
+        }
+        TZONE_LOG_DEBUG("\n");
+    }
 
     (void)CC_SHA256(&rawSeed, rawSeedLength, (unsigned char*)&m_tzoneKey.seed);
 #else // OS(DARWIN) => !OS(DARWIN)
@@ -141,7 +158,8 @@ void TZoneHeapManager::init()
 
     m_state = TZoneHeapManager::Seeded;
 
-    atexit(dumpRegisterdTypesAtExit);
+    if (verbose)
+        atexit(dumpRegisteredTypesAtExit);
 }
 
 bool TZoneHeapManager::isReady()
@@ -189,7 +207,7 @@ static char* nameForTypeUpdateIndex(UniqueLockHolder&, unsigned index)
     return &typeNameTemplate.string[0];
 }
 
-void TZoneHeapManager::dumpRegisterdTypes()
+void TZoneHeapManager::dumpRegisteredTypes()
 {
     if (verbose && m_state >= TZoneHeapManager::Seeded) {
         if (!m_typeSizes.size())
@@ -201,27 +219,44 @@ void TZoneHeapManager::dumpRegisterdTypes()
         Vector<unsigned> bucketCountHistogram;
         unsigned totalTypeCount = 0;
         unsigned totalUseBucketCount = 0;
+        unsigned largestSizeClassCount = 0;
+
+        SizeAndAlign largestSizeClass;
 
         TZONE_LOG_DEBUG("TZoneHeap registered size classes: %zu\n", m_typeSizes.size());
-        TZONE_LOG_DEBUG("        Size      Align    Buckets    TypeCnt   UsedBkts\n");
-        TZONE_LOG_DEBUG("    --------   --------   --------   --------   --------\n");
+
+        TZONE_LOG_DEBUG("      Size  Align  Bckts  Types  Inuse ");
+        for (unsigned i = 0; i < largestBucketCount; i++)
+            TZONE_LOG_DEBUG("  %sBkt%u", i < 10 ? " " : "", i);
+        TZONE_LOG_DEBUG("\n");
+
+        TZONE_LOG_DEBUG("    ------  -----  -----  -----  ----- ");
+        for (unsigned i = 0; i < largestBucketCount; i++)
+            TZONE_LOG_DEBUG("  -----");
+        TZONE_LOG_DEBUG("\n");
+
         for (auto iter = m_typeSizes.begin(); iter < typeSizesEnd; iter++) {
             SizeAndAlign typeSizeAlign = *iter;
-
-            auto typeCount = m_typeCountBySizeAndAlignment.get(typeSizeAlign);
-            totalTypeCount += typeCount;
+            unsigned numBucketsThisSizeClass = bucketCountForSizeClass(typeSizeAlign);
 
             TZoneTypeBuckets* bucketsForSize = m_heapRefsBySizeAndAlignment.get(typeSizeAlign);
+            unsigned typeCount = bucketsForSize->numberOfTypesThisSizeClass;
+            totalTypeCount += bucketsForSize->numberOfTypesThisSizeClass;
+
             unsigned usedBuckets = 0;
 
             for (unsigned bucket = 0; bucket < bucketsForSize->numberOfBuckets; ++bucket) {
-                if (bucketsForSize->usedBucketBitmap & 1<<bucket)
+                if (bucketsForSize->bucketUseCounts[bucket])
                     usedBuckets++;
             }
 
             totalUseBucketCount += usedBuckets;
 
-            TZONE_LOG_DEBUG("    %8u   %8u   %8u   %8u   %8u\n", typeSizeAlign.size(), typeSizeAlign.alignment(), bucketCountForSizeClass(typeSizeAlign), typeCount, usedBuckets);
+            TZONE_LOG_DEBUG("    %6u  %5u  %5u  %5u  %5u ", typeSizeAlign.size(), typeSizeAlign.alignment(), numBucketsThisSizeClass, typeCount, usedBuckets);
+
+            for (unsigned bucket = 0; bucket < bucketsForSize->numberOfBuckets; ++bucket)
+                TZONE_LOG_DEBUG("  %5u", bucketsForSize->bucketUseCounts[bucket]);
+            TZONE_LOG_DEBUG("\n");
 
             auto bucketCount = bucketCountForSizeClass(typeSizeAlign);
 
@@ -231,7 +266,7 @@ void TZoneHeapManager::dumpRegisterdTypes()
             bucketCountHistogram[bucketCount] = bucketCountHistogram[bucketCount] + 1;
             if (typeCount > largestSizeClassCount) {
                 largestSizeClassCount = typeCount;
-                m_largestSizeClass = typeSizeAlign;
+                largestSizeClass = typeSizeAlign;
             }
         }
 
@@ -244,7 +279,7 @@ void TZoneHeapManager::dumpRegisterdTypes()
         }
         TZONE_LOG_DEBUG("\n");
 
-        TZONE_LOG_DEBUG("    Most populated size class:  size: %u alignment %u type count: %u\n", m_largestSizeClass.size(), m_largestSizeClass.alignment(), largestSizeClassCount);
+        TZONE_LOG_DEBUG("    Most populated size class:  size: %u alignment %u type count: %u\n", largestSizeClass.size(), largestSizeClass.alignment(), largestSizeClassCount);
     }
 }
 
@@ -260,6 +295,40 @@ void TZoneHeapManager::ensureSingleton()
     );
 };
 
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(UniqueLockHolder&, bmalloc_type* type, unsigned bucketCountForSize)
+{
+    static constexpr bool verboseBucketSelection = false;
+
+    SHA256ResultAsUnsigned sha256Result;
+
+    m_tzoneKey.className = type->name;
+    m_tzoneKey.sizeOfType = type->size;
+    m_tzoneKey.alignmentOfType = type->alignment;
+
+    (void)CC_SHA256(&m_tzoneKey, sizeof(TZoneHeapRandomizeKey), (unsigned char*)&sha256Result);
+
+    unsigned bucket = sha256Result[3] % bucketCountForSize;
+
+    if constexpr (verboseBucketSelection) {
+        TZONE_LOG_DEBUG("Choosing Bucket name: %p  size: %u  align: %u  ", m_tzoneKey.className, m_tzoneKey.sizeOfType, m_tzoneKey.alignmentOfType);
+        TZONE_LOG_DEBUG(" seed { ");
+        for (unsigned i = 0; i < CC_SHA1_DIGEST_LENGTH; ++i)
+            TZONE_LOG_DEBUG("%02x",  m_tzoneKey.seed[i]);
+        TZONE_LOG_DEBUG(" }\n");
+
+        TZONE_LOG_DEBUG("Result: {");
+        for (unsigned i = 0; i < 4; ++i)
+            TZONE_LOG_DEBUG(" %02llx",  sha256Result[i]);
+        TZONE_LOG_DEBUG(" }  bucket: %u\n", bucket);
+    }
+
+    return bucket;
+}
+
+BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClass(UniqueLockHolder& lock, SizeAndAlign typeSizeAlign)
 {
     RELEASE_BASSERT(m_state >= TZoneHeapManager::Seeded);
@@ -267,15 +336,18 @@ TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClas
 
     auto bucketCount = bucketCountForSizeClass(typeSizeAlign);
 
-    if (verbose) {
-        m_typeSizes.push(typeSizeAlign);
+    if constexpr (verbose) {
+        if (bucketCount > largestBucketCount)
+            largestBucketCount = bucketCount;
 
-        m_typeCountBySizeAndAlignment.set(typeSizeAlign, 1);
+        m_typeSizes.push(typeSizeAlign);
     }
 
     TZoneTypeBuckets* buckets = static_cast<TZoneTypeBuckets*>(zeroedMalloc(SIZE_TZONE_TYPE_BUCKETS(bucketCount), CompactAllocationMode::NonCompact));
 
     buckets->numberOfBuckets = bucketCount;
+    buckets->numberOfTypesThisSizeClass = 0;
+    buckets->bucketUseCounts.resize(bucketCount);
 
     for (unsigned i = 0; i < bucketCount; ++i) {
         char* typeName = !i ? nameForType(lock, typeSizeAlign.size(), typeSizeAlign.alignment(), i) : nameForTypeUpdateIndex(lock, i);
@@ -305,21 +377,20 @@ pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(bmalloc_type* classType)
 
     TZoneTypeBuckets* bucketsForSize = nullptr;
 
-    if (m_heapRefsBySizeAndAlignment.contains(typeSizeAlign)) {
+    if (m_heapRefsBySizeAndAlignment.contains(typeSizeAlign))
         bucketsForSize = m_heapRefsBySizeAndAlignment.get(typeSizeAlign);
-        if (verbose) {
-            unsigned count = m_typeCountBySizeAndAlignment.get(typeSizeAlign);
-            m_typeCountBySizeAndAlignment.set(typeSizeAlign, ++count);
-        }
-    } else
+    else
         bucketsForSize = populateBucketsForSizeClass(lock, typeSizeAlign);
 
     unsigned bucket = tzoneBucketForKey(lock, classType, bucketsForSize->numberOfBuckets);
 
-    if (verbose) {
+    if constexpr (verbose) {
+        bucketsForSize->numberOfTypesThisSizeClass++;
+        bucketsForSize->bucketUseCounts[bucket]++;
+
         bucketsForSize->usedBucketBitmap |= 1 << bucket;
-        if (!(++registerHeapCount % 5))
-            dumpRegisterdTypes();
+        if (!(++registerHeapCount % 10))
+            dumpRegisteredTypes();
     }
 
     return &bucketsForSize->buckets[bucket].heapref;
