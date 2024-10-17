@@ -51,46 +51,46 @@ public:
     struct MoveToSegment {
         FloatPoint targetPoint;
     };
-    virtual std::optional<MoveToSegment> parseMoveToSegment() = 0;
+    virtual std::optional<MoveToSegment> parseMoveToSegment(FloatPoint currentPoint) = 0;
 
     struct LineToSegment {
         FloatPoint targetPoint;
     };
-    virtual std::optional<LineToSegment> parseLineToSegment() = 0;
+    virtual std::optional<LineToSegment> parseLineToSegment(FloatPoint currentPoint) = 0;
 
     struct LineToHorizontalSegment {
         float x = 0;
     };
-    virtual std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment() = 0;
+    virtual std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment(FloatPoint currentPoint) = 0;
 
     struct LineToVerticalSegment {
         float y = 0;
     };
-    virtual std::optional<LineToVerticalSegment> parseLineToVerticalSegment() = 0;
+    virtual std::optional<LineToVerticalSegment> parseLineToVerticalSegment(FloatPoint currentPoint) = 0;
 
     struct CurveToCubicSegment {
         FloatPoint point1;
         FloatPoint point2;
         FloatPoint targetPoint;
     };
-    virtual std::optional<CurveToCubicSegment> parseCurveToCubicSegment() = 0;
+    virtual std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint currentPoint) = 0;
 
     struct CurveToCubicSmoothSegment {
         FloatPoint point2;
         FloatPoint targetPoint;
     };
-    virtual std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment() = 0;
+    virtual std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint currentPoint) = 0;
 
     struct CurveToQuadraticSegment {
         FloatPoint point1;
         FloatPoint targetPoint;
     };
-    virtual std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment() = 0;
+    virtual std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint currentPoint) = 0;
 
     struct CurveToQuadraticSmoothSegment {
         FloatPoint targetPoint;
     };
-    virtual std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() = 0;
+    virtual std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint currentPoint) = 0;
 
     struct ArcToSegment {
         float rx = 0;
@@ -100,7 +100,7 @@ public:
         bool sweep = false;
         FloatPoint targetPoint;
     };
-    virtual std::optional<ArcToSegment> parseArcToSegment() = 0;
+    virtual std::optional<ArcToSegment> parseArcToSegment(FloatPoint currentPoint) = 0;
 };
 
 } // namespace WebCore

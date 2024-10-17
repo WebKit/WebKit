@@ -55,7 +55,7 @@ std::optional<SVGPathSegType> SVGPathSegListSource::parseSVGSegmentType()
     return pathSegType;
 }
 
-std::optional<SVGPathSource::MoveToSegment> SVGPathSegListSource::parseMoveToSegment()
+std::optional<SVGPathSource::MoveToSegment> SVGPathSegListSource::parseMoveToSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::MoveToAbs || m_segment->pathSegType() == SVGPathSegType::MoveToRel);
@@ -66,7 +66,7 @@ std::optional<SVGPathSource::MoveToSegment> SVGPathSegListSource::parseMoveToSeg
     return segment;
 }
 
-std::optional<SVGPathSource::LineToSegment> SVGPathSegListSource::parseLineToSegment()
+std::optional<SVGPathSource::LineToSegment> SVGPathSegListSource::parseLineToSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::LineToAbs || m_segment->pathSegType() == SVGPathSegType::LineToRel);
@@ -77,7 +77,7 @@ std::optional<SVGPathSource::LineToSegment> SVGPathSegListSource::parseLineToSeg
     return segment;
 }
 
-std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathSegListSource::parseLineToHorizontalSegment()
+std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathSegListSource::parseLineToHorizontalSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::LineToHorizontalAbs || m_segment->pathSegType() == SVGPathSegType::LineToHorizontalRel);
@@ -88,7 +88,7 @@ std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathSegListSource::pars
     return segment;
 }
 
-std::optional<SVGPathSource::LineToVerticalSegment> SVGPathSegListSource::parseLineToVerticalSegment()
+std::optional<SVGPathSource::LineToVerticalSegment> SVGPathSegListSource::parseLineToVerticalSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::LineToVerticalAbs || m_segment->pathSegType() == SVGPathSegType::LineToVerticalRel);
@@ -99,7 +99,7 @@ std::optional<SVGPathSource::LineToVerticalSegment> SVGPathSegListSource::parseL
     return segment;
 }
 
-std::optional<SVGPathSource::CurveToCubicSegment> SVGPathSegListSource::parseCurveToCubicSegment()
+std::optional<SVGPathSource::CurveToCubicSegment> SVGPathSegListSource::parseCurveToCubicSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::CurveToCubicAbs || m_segment->pathSegType() == SVGPathSegType::CurveToCubicRel);
@@ -112,7 +112,7 @@ std::optional<SVGPathSource::CurveToCubicSegment> SVGPathSegListSource::parseCur
     return segment;
 }
 
-std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathSegListSource::parseCurveToCubicSmoothSegment()
+std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathSegListSource::parseCurveToCubicSmoothSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::CurveToCubicSmoothAbs || m_segment->pathSegType() == SVGPathSegType::CurveToCubicSmoothRel);
@@ -124,7 +124,7 @@ std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathSegListSource::pa
     return segment;
 }
 
-std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathSegListSource::parseCurveToQuadraticSegment()
+std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathSegListSource::parseCurveToQuadraticSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::CurveToQuadraticAbs || m_segment->pathSegType() == SVGPathSegType::CurveToQuadraticRel);
@@ -136,7 +136,7 @@ std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathSegListSource::pars
     return segment;
 }
 
-std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathSegListSource::parseCurveToQuadraticSmoothSegment()
+std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathSegListSource::parseCurveToQuadraticSmoothSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::CurveToQuadraticSmoothAbs || m_segment->pathSegType() == SVGPathSegType::CurveToQuadraticSmoothRel);
@@ -147,7 +147,7 @@ std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathSegListSource
     return segment;
 }
 
-std::optional<SVGPathSource::ArcToSegment> SVGPathSegListSource::parseArcToSegment()
+std::optional<SVGPathSource::ArcToSegment> SVGPathSegListSource::parseArcToSegment(FloatPoint)
 {
     ASSERT(m_segment);
     ASSERT(m_segment->pathSegType() == SVGPathSegType::ArcAbs || m_segment->pathSegType() == SVGPathSegType::ArcRel);

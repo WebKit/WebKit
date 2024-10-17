@@ -84,7 +84,7 @@ private:
         return SVGPathSegType::MoveToAbs;
     }
 
-    std::optional<MoveToSegment> parseMoveToSegment() override
+    std::optional<MoveToSegment> parseMoveToSegment(FloatPoint) override
     {
         if (!m_nextIndex)
             return MoveToSegment { floatPointForLengthPoint(m_start, m_boxSize) };
@@ -93,25 +93,25 @@ private:
         return MoveToSegment { floatPointForLengthPoint(moveSegment.offset(), m_boxSize) };
     }
 
-    std::optional<LineToSegment> parseLineToSegment() override
+    std::optional<LineToSegment> parseLineToSegment(FloatPoint) override
     {
         auto& lineSegment = currentValue<ShapeLineSegment>();
         return LineToSegment { floatPointForLengthPoint(lineSegment.offset(), m_boxSize) };
     }
 
-    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment() override
+    std::optional<LineToHorizontalSegment> parseLineToHorizontalSegment(FloatPoint) override
     {
         auto& lineSegment = currentValue<ShapeHorizontalLineSegment>();
         return LineToHorizontalSegment { floatValueForLength(lineSegment.length(), m_boxSize.width()) };
     }
 
-    std::optional<LineToVerticalSegment> parseLineToVerticalSegment() override
+    std::optional<LineToVerticalSegment> parseLineToVerticalSegment(FloatPoint) override
     {
         auto& lineSegment = currentValue<ShapeVerticalLineSegment>();
         return LineToVerticalSegment { floatValueForLength(lineSegment.length(), m_boxSize.height()) };
     }
 
-    std::optional<CurveToCubicSegment> parseCurveToCubicSegment() override
+    std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint) override
     {
         auto& curveSegment = currentValue<ShapeCurveSegment>();
         ASSERT(curveSegment.controlPoint2());
@@ -122,7 +122,7 @@ private:
         };
     }
 
-    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment() override
+    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint) override
     {
         auto& curveSegment = currentValue<ShapeCurveSegment>();
         ASSERT(!curveSegment.controlPoint2());
@@ -132,7 +132,7 @@ private:
         };
     }
 
-    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment() override
+    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint) override
     {
         auto& smoothSegment = currentValue<ShapeSmoothSegment>();
         ASSERT(smoothSegment.intermediatePoint());
@@ -142,13 +142,13 @@ private:
         };
     }
 
-    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment() override
+    std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint) override
     {
         auto& smoothSegment = currentValue<ShapeSmoothSegment>();
         return CurveToQuadraticSmoothSegment { floatPointForLengthPoint(smoothSegment.offset(), m_boxSize) };
     }
 
-    std::optional<ArcToSegment> parseArcToSegment() override
+    std::optional<ArcToSegment> parseArcToSegment(FloatPoint) override
     {
         auto& arcSegment = currentValue<ShapeArcSegment>();
         auto radius = floatSizeForLengthSize(arcSegment.ellipseSize(), m_boxSize);

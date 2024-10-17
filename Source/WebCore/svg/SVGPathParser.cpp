@@ -75,7 +75,7 @@ void SVGPathParser::parseClosePathSegment()
 
 bool SVGPathParser::parseMoveToSegment()
 {
-    auto result = m_source->parseMoveToSegment();
+    auto result = m_source->parseMoveToSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -94,7 +94,7 @@ bool SVGPathParser::parseMoveToSegment()
 
 bool SVGPathParser::parseLineToSegment()
 {
-    auto result = m_source->parseLineToSegment();
+    auto result = m_source->parseLineToSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -111,7 +111,7 @@ bool SVGPathParser::parseLineToSegment()
 
 bool SVGPathParser::parseLineToHorizontalSegment()
 {
-    auto result = m_source->parseLineToHorizontalSegment();
+    auto result = m_source->parseLineToHorizontalSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -128,7 +128,7 @@ bool SVGPathParser::parseLineToHorizontalSegment()
 
 bool SVGPathParser::parseLineToVerticalSegment()
 {
-    auto result = m_source->parseLineToVerticalSegment();
+    auto result = m_source->parseLineToVerticalSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -145,7 +145,7 @@ bool SVGPathParser::parseLineToVerticalSegment()
 
 bool SVGPathParser::parseCurveToCubicSegment()
 {
-    auto result = m_source->parseCurveToCubicSegment();
+    auto result = m_source->parseCurveToCubicSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -166,7 +166,7 @@ bool SVGPathParser::parseCurveToCubicSegment()
 
 bool SVGPathParser::parseCurveToCubicSmoothSegment()
 {
-    auto result = m_source->parseCurveToCubicSmoothSegment();
+    auto result = m_source->parseCurveToCubicSmoothSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -196,7 +196,7 @@ bool SVGPathParser::parseCurveToCubicSmoothSegment()
 
 bool SVGPathParser::parseCurveToQuadraticSegment()
 {
-    auto result = m_source->parseCurveToQuadraticSegment();
+    auto result = m_source->parseCurveToQuadraticSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -226,7 +226,7 @@ bool SVGPathParser::parseCurveToQuadraticSegment()
 
 bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
 {
-    auto result = m_source->parseCurveToQuadraticSmoothSegment();
+    auto result = m_source->parseCurveToQuadraticSmoothSegment(m_currentPoint);
     if (!result)
         return false;
 
@@ -260,7 +260,7 @@ bool SVGPathParser::parseCurveToQuadraticSmoothSegment()
 
 bool SVGPathParser::parseArcToSegment()
 {
-    auto result = m_source->parseArcToSegment();
+    auto result = m_source->parseArcToSegment(m_currentPoint);
     if (!result)
         return false;
 
