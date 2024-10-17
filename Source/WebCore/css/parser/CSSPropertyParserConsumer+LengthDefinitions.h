@@ -30,7 +30,7 @@ namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
 struct LengthValidator {
-    static bool isValid(CSSUnitType unitType, CSSPropertyParserOptions options)
+    static constexpr bool isValid(CSSUnitType unitType, CSSPropertyParserOptions options)
     {
         switch (unitType) {
         case CSSUnitType::CSS_QUIRKY_EM:
