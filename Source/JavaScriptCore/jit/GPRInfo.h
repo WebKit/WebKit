@@ -779,16 +779,16 @@ public:
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
 
-    static constexpr GPRReg regWS0 = RICSV64Registers::x6;
-    static constexpr GPRReg regWS1 = RICSV64Registers::x7;
-    static constexpr GPRReg regWA0 = RICSV64Registers::x10;
-    static constexpr GPRReg regWA1 = RICSV64Registers::x11;
-    static constexpr GPRReg regWA2 = RICSV64Registers::x12;
-    static constexpr GPRReg regWA3 = RICSV64Registers::x13;
-    static constexpr GPRReg regWA4 = RICSV64Registers::x14;
-    static constexpr GPRReg regWA5 = RICSV64Registers::x15;
-    static constexpr GPRReg regWA6 = RICSV64Registers::x16;
-    static constexpr GPRReg regWA7 = RICSV64Registers::x17;
+    static constexpr GPRReg regWS0 = RISCV64Registers::x6;
+    static constexpr GPRReg regWS1 = RISCV64Registers::x7;
+    static constexpr GPRReg regWA0 = RISCV64Registers::x10;
+    static constexpr GPRReg regWA1 = RISCV64Registers::x11;
+    static constexpr GPRReg regWA2 = RISCV64Registers::x12;
+    static constexpr GPRReg regWA3 = RISCV64Registers::x13;
+    static constexpr GPRReg regWA4 = RISCV64Registers::x14;
+    static constexpr GPRReg regWA5 = RISCV64Registers::x15;
+    static constexpr GPRReg regWA6 = RISCV64Registers::x16;
+    static constexpr GPRReg regWA7 = RISCV64Registers::x17;
 
     static constexpr GPRReg patchpointScratchRegister = RISCV64Registers::x30; // Should match dataTempRegister
 
