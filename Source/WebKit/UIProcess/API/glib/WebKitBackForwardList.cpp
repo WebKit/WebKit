@@ -61,7 +61,9 @@ struct _WebKitBackForwardListPrivate {
     BackForwardListItemsMap itemsMap;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT, GObject)
 

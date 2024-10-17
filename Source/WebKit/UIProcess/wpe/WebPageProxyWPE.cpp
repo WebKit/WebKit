@@ -149,7 +149,9 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
             auto* modifiers = wpe_buffer_dma_buf_formats_get_format_modifiers(formats, i, j);
             format.modifiers.reserveInitialCapacity(modifiers->len);
             for (unsigned k = 0; k < modifiers->len; ++k) {
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                 auto* modifier = &g_array_index(modifiers, guint64, k);
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 format.modifiers.append(*modifier);
             }
             dmabufFormat.formats.append(WTFMove(format));

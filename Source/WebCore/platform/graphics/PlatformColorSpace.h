@@ -29,8 +29,10 @@
 #include <wtf/RetainPtr.h>
 typedef struct CGColorSpace* CGColorSpaceRef;
 #elif USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkData.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #else
 #include <optional>
 #endif

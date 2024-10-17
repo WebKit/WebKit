@@ -40,7 +40,9 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkColor.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #if USE(CG)

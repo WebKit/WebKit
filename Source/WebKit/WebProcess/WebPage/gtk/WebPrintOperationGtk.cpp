@@ -81,6 +81,7 @@ WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* print
     }
 
     if (printOperation->m_pagesToPrint == GTK_PRINT_PAGES_RANGES) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         Vector<GtkPageRange> pageRanges;
         GtkPageRange* ranges = printOperation->m_pageRanges;
         size_t rangesCount = printOperation->m_pageRangesCount;
@@ -103,7 +104,7 @@ WebPrintOperationGtk::PrintPagesData::PrintPagesData(WebPrintOperationGtk* print
             for (int j = pageRanges[i].start; j <= pageRanges[i].end; ++j)
                 pages.append(j);
         }
-
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     } else {
         for (int i = 0; i < printOperation->pageCount(); ++i)
             pages.append(i);

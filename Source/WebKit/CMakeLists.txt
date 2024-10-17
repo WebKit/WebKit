@@ -731,6 +731,13 @@ set(WebKit_GENERATED_SERIALIZERS_SUFFIX cpp)
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
+if (PORT STREQUAL GTK OR PORT STREQUAL WPE)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit
+        -Wunsafe-buffer-usage
+        -fsafe-buffer-usage-suggestions
+    )
+endif ()
+
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyHeaders
         DESTINATION ${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit

@@ -136,6 +136,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         "application/vnd.portal.files", // Deprecated, but added for compatibility
     };
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     static const char* const supportedMimeTypes[] = {
         "application/vnd.portal.filetransfer",
         "application/vnd.portal.files", // Deprecated, but added for compatibility
@@ -145,6 +146,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         "application/vnd.webkitgtk.smartpaste",
         "org.webkitgtk.WebKit.custom-pasteboard-data"
     };
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool transferredFilesFromPortal = false;
     for (unsigned i = 0; i < G_N_ELEMENTS(supportedMimeTypes); ++i) {
@@ -189,11 +191,13 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 gsize length;
                 const auto* markupData = g_bytes_get_data(data.get(), &length);
                 if (length) {
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
                     if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                         m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1 }));
                     else
                         m_selectionData->setMarkup(String::fromUTF8(std::span(static_cast<const char*>(markupData), length)));
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
                 gsize length;

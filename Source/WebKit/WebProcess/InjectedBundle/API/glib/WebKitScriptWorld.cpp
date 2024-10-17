@@ -53,7 +53,9 @@ struct _WebKitScriptWorldPrivate {
     CString name;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitScriptWorld, webkit_script_world, G_TYPE_OBJECT, GObject)
 

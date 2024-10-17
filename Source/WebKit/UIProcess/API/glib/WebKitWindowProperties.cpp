@@ -29,6 +29,8 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 /**
@@ -532,3 +534,5 @@ gboolean webkit_window_properties_get_fullscreen(WebKitWindowProperties* windowP
 
     return windowProperties->priv->fullscreen;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

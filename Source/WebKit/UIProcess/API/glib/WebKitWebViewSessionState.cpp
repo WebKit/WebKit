@@ -401,6 +401,7 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
 
 static bool decodeSessionState(GBytes* data, SessionState& sessionState)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     static const char* sessionStateTypeStringVersions[] = {
         SESSION_STATE_TYPE_STRING_V2,
         SESSION_STATE_TYPE_STRING_V1,
@@ -415,6 +416,8 @@ static bool decodeSessionState(GBytes* data, SessionState& sessionState)
             break;
         variant = nullptr;
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     if (!variant)
         return false;
 

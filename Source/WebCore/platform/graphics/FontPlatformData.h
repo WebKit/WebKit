@@ -42,7 +42,9 @@
 #include "RefPtrCairo.h"
 #elif USE(SKIA)
 #include <hb.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkFont.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #if ENABLE(MATHML) && USE(HARFBUZZ)

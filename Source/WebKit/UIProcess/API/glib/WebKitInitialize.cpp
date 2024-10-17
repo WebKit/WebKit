@@ -61,6 +61,8 @@ static void initializeRemoteInspectorServer()
             return nullptr;
 
         GUniquePtr<char> inspectorAddress(g_strdup(address));
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         char* portPtr = g_strrstr(inspectorAddress.get(), ":");
         if (!portPtr)
             return nullptr;
@@ -77,6 +79,7 @@ static void initializeRemoteInspectorServer()
             addressPtr++;
             *(portPtr - 2) = '\0';
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         return adoptGRef(g_inet_socket_address_new_from_string(addressPtr, port));
     };

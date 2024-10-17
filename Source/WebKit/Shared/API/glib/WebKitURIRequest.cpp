@@ -32,7 +32,9 @@ enum {
     N_PROPERTIES,
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 using namespace WebCore;
 
@@ -150,7 +152,10 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
         return;
 
     request->priv->resourceRequest.setURL(url);
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(request), sObjProperties[PROP_URI]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**

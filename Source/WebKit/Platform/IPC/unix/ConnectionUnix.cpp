@@ -62,6 +62,8 @@
 #endif
 #endif // SOCK_SEQPACKET
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 static const size_t messageMaxSize = 4096;
@@ -664,3 +666,5 @@ pid_t readPIDFromPeer(int socket)
 #endif
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

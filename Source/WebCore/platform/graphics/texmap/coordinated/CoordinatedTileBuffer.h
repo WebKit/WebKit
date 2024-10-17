@@ -39,8 +39,10 @@
 
 #if USE(SKIA)
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 IGNORE_CLANG_WARNINGS_END
 #endif
 

@@ -65,6 +65,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_delayFailTimer(RunLoop::main(), this, &WebSocketTask::delayFailTimerFired)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto protocolList = protocol.split(',');
     GUniquePtr<char*> protocols;
     if (!protocolList.isEmpty()) {
@@ -73,6 +74,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
         for (auto& subprotocol : protocolList)
             protocols.get()[i++] = g_strdup(subprotocol.trim(isASCIIWhitespaceWithoutFF<UChar>).utf8().data());
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if USE(SOUP2)
     // Ensure a new connection is used for WebSockets.

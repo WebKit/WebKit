@@ -29,7 +29,9 @@
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKImage.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkImage.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #ifdef __cplusplus
 extern "C" {

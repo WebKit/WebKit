@@ -33,8 +33,10 @@
 #include <wtf/EnumTraits.h>
 
 #if USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkData.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #if PLATFORM(GTK)

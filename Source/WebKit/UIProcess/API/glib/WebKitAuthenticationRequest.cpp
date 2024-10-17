@@ -75,7 +75,9 @@ struct _WebKitAuthenticationRequestPrivate {
     std::optional<bool> canSaveCredentials;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT, GObject)
 
@@ -497,7 +499,9 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
     request->priv->acceptedCredential = std::nullopt;
     request->priv->handledRequest = true;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(request, signals[CANCELLED], 0);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**

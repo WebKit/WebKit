@@ -67,12 +67,15 @@ Clipboard::Type Clipboard::type() const
 
 void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     gsize mimeTypesCount;
     const char* const* mimeTypes = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
 
     Vector<String> result(mimeTypesCount, [&](size_t i) {
         return String::fromUTF8(mimeTypes[i]);
     });
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     completionHandler(WTFMove(result));
 }
 

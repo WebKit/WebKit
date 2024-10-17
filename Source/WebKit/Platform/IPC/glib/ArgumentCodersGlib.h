@@ -26,6 +26,8 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace IPC {
 
 template<> struct ArgumentCoder<GUniquePtr<char*>> {
@@ -63,3 +65,5 @@ template<> struct ArgumentCoder<GUniquePtr<char*>> {
 };
 
 } // namespace IPC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

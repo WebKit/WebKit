@@ -57,6 +57,8 @@
 
 #define FEATURE_DEFAULT(featureName) ((DEFAULT_VALUE_FOR_ ## featureName) ? TRUE : FALSE)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
@@ -4444,3 +4446,5 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
     UNUSED_PARAM(udpPortsRange);
 #endif
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

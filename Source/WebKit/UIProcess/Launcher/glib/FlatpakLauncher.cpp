@@ -32,6 +32,8 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, int pidSocket, GError** error)
@@ -97,6 +99,8 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
 
     return adoptGRef(g_subprocess_launcher_spawnv(launcher, newArgv, error));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 };
 

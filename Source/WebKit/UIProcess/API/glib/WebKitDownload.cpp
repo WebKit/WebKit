@@ -36,6 +36,8 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -725,3 +727,5 @@ void webkit_download_set_allow_overwrite(WebKitDownload* download, gboolean allo
     download->priv->allowOverwrite = allowed;
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_ALLOW_OVERWRITE]);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

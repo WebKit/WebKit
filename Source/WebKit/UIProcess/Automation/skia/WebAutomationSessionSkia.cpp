@@ -32,7 +32,9 @@
 #include <WebCore/NotImplemented.h>
 #include <skia/core/SkData.h>
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/encode/SkPngEncoder.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 IGNORE_CLANG_WARNINGS_END
 #include <span>
 #include <wtf/text/Base64.h>

@@ -55,6 +55,8 @@
 #endif
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
@@ -341,5 +343,7 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBDRM)

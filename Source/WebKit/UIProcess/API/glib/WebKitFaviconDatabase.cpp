@@ -40,6 +40,8 @@
 #include <WebCore/RefPtrCairo.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -319,3 +321,5 @@ void webkit_favicon_database_clear(WebKitFaviconDatabase* database)
 
     database->priv->iconDatabase->clear([] { });
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

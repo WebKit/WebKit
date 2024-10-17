@@ -69,7 +69,9 @@ enum {
     N_PROPERTIES,
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     FINISHED,
@@ -104,7 +106,9 @@ struct _WebKitPrintOperationPrivate {
     guint signalId { 0 };
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitPrintOperation, webkit_print_operation, G_TYPE_OBJECT, GObject)
 
@@ -759,7 +763,10 @@ void webkit_print_operation_set_print_settings(WebKitPrintOperation* printOperat
         return;
 
     printOperation->priv->printSettings = printSettings;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(printOperation), sObjProperties[PROP_PRINT_SETTINGS]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -800,7 +807,10 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
         return;
 
     printOperation->priv->pageSetup = pageSetup;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(printOperation), sObjProperties[PROP_PAGE_SETUP]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**

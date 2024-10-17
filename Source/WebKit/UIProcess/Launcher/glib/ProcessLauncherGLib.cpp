@@ -115,12 +115,14 @@ void ProcessLauncher::launchProcess()
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         unsigned nargs = 3;
         char** argv = g_newa(char*, nargs);
         unsigned i = 0;
         argv[i++] = processIdentifier.get();
         argv[i++] = webkitSocket.get();
         argv[i++] = nullptr;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, webkitSocketPair.client);
         if (m_processID <= -1)
@@ -177,6 +179,8 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     char** argv = g_newa(char*, nargs);
     unsigned i = 0;
 #if ENABLE(DEVELOPER_MODE)
@@ -193,6 +197,8 @@ void ProcessLauncher::launchProcess()
         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
 #endif
     argv[i++] = nullptr;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
     // order to better accommodate applications that use a huge amount of memory or address space

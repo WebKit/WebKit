@@ -180,6 +180,8 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
     if (m_args.isEmpty())
         return;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     int syncFds[2];
     if (pipe(syncFds) == -1)
         g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
@@ -204,6 +206,8 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
     for (const auto& arg : args)
         argv[i++] = const_cast<char*>(arg.data());
     argv[i] = nullptr;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
     // order to better accommodate applications that use a huge amount of memory or address space

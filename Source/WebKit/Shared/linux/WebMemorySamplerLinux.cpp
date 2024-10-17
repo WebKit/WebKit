@@ -54,7 +54,9 @@ static inline String nextToken(FILE* file)
     if (!file)
         return String();
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     char buffer[maxBuffer] = {0, };
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     unsigned int index = 0;
     while (index < maxBuffer) {
         int ch = fgetc(file);

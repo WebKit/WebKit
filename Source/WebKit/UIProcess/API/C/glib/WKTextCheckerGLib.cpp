@@ -69,8 +69,10 @@ void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
 {
 #if ENABLE(SPELLCHECK)
     Vector<String> spellCheckingLanguages;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (size_t i = 0; languages[i]; ++i)
         spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }

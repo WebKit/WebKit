@@ -297,6 +297,8 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     proxy->sendMessageToFrontend(String::fromUTF8(message));
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
 {
     if (m_targets.isEmpty())
@@ -366,6 +368,8 @@ GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType)
 
     return html;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebKit
 

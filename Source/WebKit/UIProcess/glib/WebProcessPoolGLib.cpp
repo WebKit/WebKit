@@ -70,7 +70,9 @@
 #endif
 
 #if !USE(SYSTEM_MALLOC) && OS(LINUX)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <bmalloc/valgrind.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 namespace WebKit {
@@ -209,8 +211,10 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
     }
 
 #if !USE(SYSTEM_MALLOC)
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (RUNNING_ON_VALGRIND)
         return;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     if (const char* disableSandbox = getenv("WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS")) {

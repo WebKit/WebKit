@@ -77,7 +77,9 @@ enum {
     LAST_SIGNAL
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass* klass)
 {
@@ -408,10 +410,14 @@ public:
     {
 #if ENABLE(2022_GLIB_API)
         GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #else
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         webkit_javascript_result_unref(jsResult);
 #endif
     }

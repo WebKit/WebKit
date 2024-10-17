@@ -27,7 +27,9 @@
 
 #if USE(SKIA)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkColorSpace.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 

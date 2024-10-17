@@ -80,8 +80,12 @@ static inline Vector<String> toStringVector(const char* const* strv)
         return Vector<String>();
 
     Vector<String> result;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (auto str = strv; *str; ++str)
         result.append(String::fromUTF8(*str));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     return result;
 }
 

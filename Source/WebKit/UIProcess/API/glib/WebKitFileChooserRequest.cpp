@@ -316,10 +316,14 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
 
     GRefPtr<GPtrArray> selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     Vector<String> chosenFiles;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (int i = 0; files[i]; i++) {
         chosenFiles.append(PAL::decodeURLEscapeSequences(String::fromUTF8(files[i])));
         g_ptr_array_add(selectedFiles.get(), g_strdup(files[i]));
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     g_ptr_array_add(selectedFiles.get(), nullptr);
 
     // Select the files in WebCore and update local private attributes.

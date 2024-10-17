@@ -118,6 +118,8 @@
 #include "WebKitJavascriptResultPrivate.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -5736,3 +5738,5 @@ webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
 
     return webView->priv->defaultContentSecurityPolicy.data();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

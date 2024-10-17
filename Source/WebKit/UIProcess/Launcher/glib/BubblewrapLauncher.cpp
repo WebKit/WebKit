@@ -40,6 +40,8 @@
 #include "Display.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 #include <linux/memfd.h>
 #endif
@@ -955,5 +957,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 }
 
 };
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(BUBBLEWRAP_SANDBOX)

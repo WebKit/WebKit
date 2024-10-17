@@ -33,7 +33,9 @@ enum {
     N_PROPERTIES,
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 using namespace WebKit;
 using namespace WebCore;

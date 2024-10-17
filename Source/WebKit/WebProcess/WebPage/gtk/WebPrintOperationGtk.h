@@ -36,11 +36,13 @@
 #if USE(CAIRO)
 #include <WebCore/RefPtrCairo.h>
 #elif USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkDocument.h>
 #include <skia/core/SkPicture.h>
 #include <skia/core/SkPictureRecorder.h>
 #include <skia/core/SkStream.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 typedef struct _GtkPrintSettings GtkPrintSettings;

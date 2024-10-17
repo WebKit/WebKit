@@ -104,7 +104,9 @@ Data concatenate(const Data& a, const Data& b)
         return a;
 
     size_t size = a.size() + b.size();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     uint8_t* data = static_cast<uint8_t*>(fastMalloc(size));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gsize aLength;
     const auto* aData = g_bytes_get_data(a.bytes(), &aLength);
     memcpy(data, aData, aLength);

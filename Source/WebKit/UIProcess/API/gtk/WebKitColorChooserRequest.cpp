@@ -63,7 +63,9 @@ enum {
     N_PROPERTIES,
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 enum {
     FINISHED,
@@ -79,7 +81,9 @@ struct _WebKitColorChooserRequestPrivate {
     bool handled;
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static guint signals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitColorChooserRequest, webkit_color_chooser_request, G_TYPE_OBJECT, GObject)
 
@@ -180,7 +184,10 @@ void webkit_color_chooser_request_set_rgba(WebKitColorChooserRequest* request, c
         return;
 
     request->priv->rgba = *rgba;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(request), sObjProperties[PROP_RGBA]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -243,7 +250,10 @@ void webkit_color_chooser_request_finish(WebKitColorChooserRequest* request)
         return;
 
     request->priv->handled = true;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(request, signals[FINISHED], 0);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -270,7 +280,10 @@ void webkit_color_chooser_request_cancel(WebKitColorChooserRequest* request)
 #if ENABLE(INPUT_TYPE_COLOR)
     request->priv->colorChooser->cancel();
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(request, signals[FINISHED], 0);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

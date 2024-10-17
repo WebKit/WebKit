@@ -51,11 +51,13 @@
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 #elif USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
 IGNORE_CLANG_WARNINGS_END
 #include <skia/core/SkStream.h>
 #include <skia/encode/SkPngEncoder.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #if PLATFORM(GTK)

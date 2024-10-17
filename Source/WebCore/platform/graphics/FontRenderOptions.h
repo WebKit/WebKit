@@ -32,9 +32,11 @@
 #if USE(CAIRO)
 #include "CairoUniquePtr.h"
 #elif USE(SKIA)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkFont.h>
 #include <skia/core/SkFontTypes.h>
 #include <skia/core/SkSurfaceProps.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 namespace WebCore {
