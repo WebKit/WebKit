@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -1861,8 +1861,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
                 unsigned startIndex = resultIndex;
                 bool success = resultArray->appendMemcpy(globalObject, vm, resultIndex, otherArray);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                if (!success)
+                if (!success) {
                     moveArrayElements<ArrayFillMode::Empty>(globalObject, vm, resultArray, startIndex, otherArray, otherArray->length());
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
                 resultIndex += length;
             } else {
                 for (uint64_t index = 0; index < length; ++index) {
