@@ -38,6 +38,15 @@ namespace WGSL {
 
 using namespace Types;
 
+namespace Types {
+
+size_t Array::stride() const
+{
+    return WTF::roundUpToMultipleOf(element->alignment(), element->size());
+}
+
+} // namespace Types
+
 void Type::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,

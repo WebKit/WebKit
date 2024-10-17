@@ -147,6 +147,8 @@ struct Array {
     bool isRuntimeSized() const { return std::holds_alternative<std::monostate>(size); }
     bool isCreationFixed() const { return std::holds_alternative<unsigned>(size); }
     bool isOverrideSized() const { return std::holds_alternative<AST::Expression*>(size); }
+
+    size_t stride() const;
 };
 
 struct Struct {

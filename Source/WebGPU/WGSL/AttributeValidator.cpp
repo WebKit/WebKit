@@ -68,6 +68,7 @@ private:
     void validateBuiltinIO(const SourceSpan&, const Type*, ShaderStage, Builtin, Direction, Builtins&);
     void validateLocationIO(const SourceSpan&, const Type*, ShaderStage, unsigned, Locations&);
     void validateStructIO(ShaderStage, const Types::Struct&, Direction, Builtins&, Locations&);
+    void validateAlignment(const SourceSpan&, AddressSpace, const Type*);
 
     template<typename T>
     void update(const SourceSpan&, std::optional<T>&, const T&);
@@ -271,6 +272,52 @@ void AttributeValidator::visit(AST::Variable& variable)
 
     if (isResource && (!variable.m_group || !variable.m_binding))
         error(variable.span(), "resource variables require @group and @binding attributes"_s);
+
+    if (isResource && m_errors.isEmpty())
+        validateAlignment(variable.span(), *variable.addressSpace(), variable.storeType());
+}
+
+void AttributeValidator::validateAlignment(const SourceSpan& span, AddressSpace addressSpace, const Type* type)
+{
+    const auto& requiredAlignment = [&](const Type* type) {
+        auto alignment = type->alignment();
+        if (addressSpace == AddressSpace::Uniform && (std::holds_alternative<Types::Array>(*type) || std::holds_alternative<Types::Struct>(*type)))
+            alignment = WTF::roundUpToMultipleOf(16, alignment);
+        return alignment;
+    };
+
+    if (auto* arrayType = std::get_if<Types::Array>(type)) {
+        if (arrayType->stride() % requiredAlignment(arrayType->element))
+            error(span, "array must have a stride multiple of "_s, String::number(requiredAlignment(arrayType->element)), " bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
+
+        if (addressSpace == AddressSpace::Uniform && (arrayType->stride() % 16))
+            error(span, "arrays in the uniform address space must have a stride multiple of 16 bytes, but has a stride of "_s, String::number(arrayType->stride()), " bytes"_s);
+
+        validateAlignment(span, addressSpace, arrayType->element);
+    }
+
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        auto& structure = structType->structure;
+        auto memberCount = structure.members().size();
+        for (unsigned i = 0; i < memberCount; ++i) {
+            auto& member = structure.members()[i];
+            auto* type = member.type().inferredType();
+
+            validateAlignment(member.span(), addressSpace, type);
+
+            if (member.offset() % requiredAlignment(type))
+                error(member.span(), "offset of struct member "_s, structure.name(), "::"_s, member.name(), " must be a multiple of "_s, String::number(requiredAlignment(type)), " bytes, but its offset is "_s, String::number(member.offset()), " bytes"_s);
+
+            if (addressSpace == AddressSpace::Uniform && std::holds_alternative<Types::Struct>(*type) && (i + 1) < memberCount) {
+                auto& nextMember = structure.members()[i + 1];
+                auto spaceBetweenMembers = nextMember.offset() - member.offset();
+                auto minimumNumberOfBytes = WTF::roundUpToMultipleOf(16, type->size());
+                if (spaceBetweenMembers < minimumNumberOfBytes)
+                    error(member.span(), "uniform address space requires that the number of bytes between "_s, structure.name(), "::"_s, member.name(), " and "_s, structure.name(), "::"_s, nextMember.name(), " must be at least "_s, String::number(minimumNumberOfBytes), " bytes, but it is "_s, String::number(spaceBetweenMembers), " bytes"_s);
+            }
+        }
+
+    }
 }
 
 void AttributeValidator::visit(AST::Structure& structure)
@@ -401,9 +448,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
                 continue;
             }
 
-            // FIXME: validate that alignment is a multiple of RequiredAlignOf(T,C)
-            auto* type = member.type().inferredType();
-            update(attribute.span(), member.m_alignment, std::max<unsigned>(alignmentValue, type ? type->alignment() : 1u));
+            update<unsigned>(attribute.span(), member.m_alignment, alignmentValue);
             continue;
         }
 
