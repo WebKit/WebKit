@@ -96,7 +96,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
 
     auto mimeType = observer.mimeType();
     if (mimeType == "image/svg+xml"_s)
-        return SVGImage::create(observer);
+        return SVGImage::create(&observer);
 
     auto url = observer.sourceUrl();
     if (isPDFResource(mimeType, url)) {

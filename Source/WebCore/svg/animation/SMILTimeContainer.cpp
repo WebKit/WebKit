@@ -118,7 +118,6 @@ void SMILTimeContainer::begin()
     if (isStarted())
         return;
 
-    ASSERT(Page::nonUtilityPageCount());
     if (!Page::nonUtilityPageCount())
         return;
 

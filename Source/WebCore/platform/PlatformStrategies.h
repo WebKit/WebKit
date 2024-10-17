@@ -39,6 +39,9 @@ class PushStrategy;
 
 class PlatformStrategies {
 public:
+    PlatformStrategies() = default;
+    virtual ~PlatformStrategies() = default;
+
     LoaderStrategy* loaderStrategy()
     {
         if (!m_loaderStrategy)
@@ -77,18 +80,11 @@ public:
     }
 #endif
 
-protected:
-    PlatformStrategies() = default;
-
-    virtual ~PlatformStrategies()
-    {
-    }
-
 private:
-    virtual LoaderStrategy* createLoaderStrategy() = 0;
-    virtual PasteboardStrategy* createPasteboardStrategy() = 0;
-    virtual MediaStrategy* createMediaStrategy() = 0;
-    virtual BlobRegistry* createBlobRegistry() = 0;
+    virtual LoaderStrategy* createLoaderStrategy() { return nullptr; }
+    virtual PasteboardStrategy* createPasteboardStrategy() { return nullptr; }
+    virtual MediaStrategy* createMediaStrategy() { return nullptr; }
+    virtual BlobRegistry* createBlobRegistry() { return nullptr; }
 
     LoaderStrategy* m_loaderStrategy { };
     PasteboardStrategy* m_pasteboardStrategy { };
@@ -97,7 +93,7 @@ private:
     BlobRegistry* m_blobRegistry { };
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    virtual PushStrategy* createPushStrategy() = 0;
+    virtual PushStrategy* createPushStrategy() { return nullptr; }
     PushStrategy* m_pushStrategy { };
 #endif
 };

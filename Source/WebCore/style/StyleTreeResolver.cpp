@@ -1305,8 +1305,10 @@ PostResolutionCallbackDisabler::PostResolutionCallbackDisabler(Document& documen
 {
     ++resolutionNestingDepth;
 
-    if (resolutionNestingDepth == 1)
-        platformStrategies()->loaderStrategy()->suspendPendingRequests();
+    if (resolutionNestingDepth == 1) {
+        if (auto loaderStrategy = platformStrategies()->loaderStrategy())
+            loaderStrategy->suspendPendingRequests();
+    }
 
     // FIXME: It's strange to build this into the disabler.
     suspendMemoryCacheClientCalls(document);
@@ -1330,7 +1332,8 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
         }
         queue.clear();
 
-        platformStrategies()->loaderStrategy()->resumePendingRequests();
+        if (auto loaderStrategy = platformStrategies()->loaderStrategy())
+            loaderStrategy->resumePendingRequests();
     }
 
     --resolutionNestingDepth;
