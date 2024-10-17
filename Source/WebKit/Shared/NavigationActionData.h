@@ -45,6 +45,8 @@
 namespace WebKit {
 
 struct NavigationActionData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
     OptionSet<WebEventModifier> modifiers;
     WebMouseEventButton mouseButton { WebMouseEventButton::None };

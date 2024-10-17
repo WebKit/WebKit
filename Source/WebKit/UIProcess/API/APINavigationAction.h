@@ -111,7 +111,7 @@ private:
 
     RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
-    WebKit::NavigationActionData m_navigationActionData;
+    const WebKit::NavigationActionData m_navigationActionData;
     RefPtr<Navigation> m_mainFrameNavigation;
 };
 

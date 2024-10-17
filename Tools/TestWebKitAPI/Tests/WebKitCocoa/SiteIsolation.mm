@@ -469,9 +469,25 @@ TEST(SiteIsolation, OpenWithNoopener)
         { "/webkit"_s, { "hi"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto [opener, opened] = openerAndOpenedViews(server);
-    checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
-    checkFrameTreesInProcesses(opened.webView.get(), { { "https://webkit.org"_s } });
+    auto [opener, opened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+    __block RetainPtr openerView = opener.webView;
+    __block RetainPtr openedView = opened.webView;
+    opened.navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^completionHandler)(WKNavigationActionPolicy)) {
+        checkFrameTreesInProcesses(openerView.get(), { { "https://example.com"_s } });
+        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } }); // FIXME: This should be https://webkit.org
+        EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    opened.navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        checkFrameTreesInProcesses(openerView.get(), { { "https://example.com"_s } });
+        checkFrameTreesInProcesses(openedView.get(), { { "://"_s } }); // FIXME: This should be https://webkit.org
+        EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+    [opened.navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(openerView.get(), { { "https://example.com"_s } });
+    checkFrameTreesInProcesses(openedView.get(), { { "https://webkit.org"_s } });
+    EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
 }
 
 TEST(SiteIsolation, PreferencesUpdatesToAllProcesses)

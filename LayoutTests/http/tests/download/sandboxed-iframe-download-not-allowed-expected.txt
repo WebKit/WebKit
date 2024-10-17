@@ -1,5 +1,7 @@
 CONSOLE MESSAGE: Not allowed to download due to sandboxing
 CONSOLE MESSAGE: Not allowed to download due to sandboxing
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
+CONSOLE MESSAGE: Not allowed to download due to sandboxing
 This test passes if no download is started.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

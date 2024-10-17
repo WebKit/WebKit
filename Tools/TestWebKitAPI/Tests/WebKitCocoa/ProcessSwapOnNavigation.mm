@@ -1441,7 +1441,7 @@ TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
 
 enum class ExpectSwap : bool { No, Yes };
 enum class WindowHasName : bool { No, Yes };
-static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName, ExpectSwap expectSwap)
+static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -1482,10 +1482,7 @@ static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName, Expec
     EXPECT_TRUE(!!pid2);
 
     // Since there is no opener, we process-swap, even though the navigation is same-site.
-    if (expectSwap == ExpectSwap::Yes)
-        EXPECT_NE(pid1, pid2);
-    else
-        EXPECT_EQ(pid1, pid2);
+    EXPECT_NE(pid1, pid2);
 
     done = false;
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/popup2.html"]];
@@ -1503,15 +1500,12 @@ static void runSameSiteWindowOpenNoOpenerTest(WindowHasName windowHasName, Expec
 TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
 {
     // We process-swap even though the navigation is same-site, because the popup has no opener.
-    runSameSiteWindowOpenNoOpenerTest(WindowHasName::No, ExpectSwap::Yes);
+    runSameSiteWindowOpenNoOpenerTest(WindowHasName::No);
 }
 
 TEST(ProcessSwap, SameSiteWindowOpenWithNameNoOpener)
 {
-    // We currently do no process-swap when navigating same-site a popup without opener if the window
-    // has a name. We should be able to support this but we would need to pass the window name over
-    // to the new process.
-    runSameSiteWindowOpenNoOpenerTest(WindowHasName::Yes, ExpectSwap::No);
+    runSameSiteWindowOpenNoOpenerTest(WindowHasName::Yes);
 }
 
 TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)

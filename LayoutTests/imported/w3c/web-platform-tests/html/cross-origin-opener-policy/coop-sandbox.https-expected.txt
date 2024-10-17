@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Navigation was blocked by Cross-Origin-Opener-Policy
+CONSOLE MESSAGE: Navigation was blocked by Cross-Origin-Opener-Policy
 
 PASS <iframe sandbox="allow-popups allow-scripts allow-same-origin"> Sandboxed Cross-Origin-Opener-Policy popup should result in a network error
 PASS <iframe sandbox="allow-popups allow-scripts"> Sandboxed Cross-Origin-Opener-Policy popup should result in a network error

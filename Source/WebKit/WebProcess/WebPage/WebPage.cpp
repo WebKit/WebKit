@@ -493,10 +493,13 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage")
 
 Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
+    String openedMainFrameName = parameters.openedMainFrameName;
     auto page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
 
     if (RefPtr injectedBundle = WebProcess::singleton().injectedBundle())
         injectedBundle->didCreatePage(page);
+
+    page->corePage()->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
 
 #if HAVE(SANDBOX_STATE_FLAGS)
     setHasLaunchedWebContentProcess();
@@ -1110,8 +1113,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (parameters.windowFeatures) {
         m_page->applyWindowFeatures(*parameters.windowFeatures);
         m_page->chrome().show();
+        m_page->setOpenedByDOM();
     }
-    m_page->mainFrame().tree().setSpecifiedName(AtomString(parameters.openedMainFrameName));
 }
 
 void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& parameters)
