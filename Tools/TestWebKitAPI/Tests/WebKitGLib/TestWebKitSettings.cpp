@@ -412,6 +412,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     g_assert_cmpstr("", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
     webkit_settings_set_webrtc_udp_ports_range(settings, "20000:30000");
     g_assert_cmpstr("20000:30000", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "20000:0");
+    g_assert_cmpstr("20000:0", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
+    webkit_settings_set_webrtc_udp_ports_range(settings, "0:20000");
+    g_assert_cmpstr("0:20000", ==, webkit_settings_get_webrtc_udp_ports_range(settings));
 #endif
 
     g_object_unref(G_OBJECT(settings));

@@ -1705,7 +1705,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * In some constrained environments where a firewall blocks UDP network traffic excepted on a
      * specific port range, this settings can be used to give hints to the WebRTC backend regarding
      * which ports to allocate. The format is min-port:max-port, so for instance 20000:30000. The
-     * default value is 0:0 which means the OS will use no hints from the WebRTC backend.
+     * default empty string value means the OS will use no hints from the WebRTC backend. Using 0
+     * for one of the values is allowed and means the value is unspecified.
      *
      * Since: 2.48
      */

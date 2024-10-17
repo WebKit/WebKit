@@ -309,6 +309,12 @@ std::optional<MediaCapabilitiesEncodingInfo> WebRTCProvider::videoEncodingCapabi
 
 void WebRTCProvider::setPortAllocatorRange(StringView range)
 {
+    if (range.isEmpty())
+        return;
+
+    if (range == "0:0"_s)
+        return;
+
     auto components = range.toStringWithoutCopying().split(':');
     if (UNLIKELY(components.size() != 2)) {
         WTFLogAlways("Invalid format for UDP port range. Should be \"min-port:max-port\"");
@@ -316,15 +322,25 @@ void WebRTCProvider::setPortAllocatorRange(StringView range)
         return;
     }
 
-    auto minPort = WTF::parseInteger<int>(components[0]).value_or(0);
-    auto maxPort = WTF::parseInteger<int>(components[1]).value_or(0);
+    auto minPort = WTF::parseInteger<int>(components[0]);
+    auto maxPort = WTF::parseInteger<int>(components[1]);
     if (!minPort || !maxPort) {
         WTFLogAlways("Invalid format for UDP port range. Should be \"min-port:max-port\"");
         ASSERT_NOT_REACHED();
         return;
     }
 
-    m_portAllocatorRange = { { minPort, maxPort } };
+    if (*minPort < 0) {
+        WTFLogAlways("Invalid value for UDP minimum port value: %d", *minPort);
+        return;
+    }
+
+    if (*maxPort < 0) {
+        WTFLogAlways("Invalid value for UDP maximum port value: %d", *maxPort);
+        return;
+    }
+
+    m_portAllocatorRange = { { *minPort, *maxPort } };
 }
 
 std::optional<std::pair<int, int>> WebRTCProvider::portAllocatorRange() const
