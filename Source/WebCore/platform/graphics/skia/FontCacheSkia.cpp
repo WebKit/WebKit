@@ -29,7 +29,11 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "StyleFontSizeFunctions.h"
+#if defined(__ANDROID__) || defined(ANDROID)
+#include <skia/ports/SkFontMgr_android.h>
+#else
 #include <skia/ports/SkFontMgr_fontconfig.h>
+#endif
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/CharacterProperties.h>
@@ -47,8 +51,13 @@ void FontCache::platformInit()
 
 SkFontMgr& FontCache::fontManager() const
 {
-    if (!m_fontManager)
+    if (!m_fontManager) {
+#if defined(__ANDROID__) || defined(ANDROID)
+        m_fontManager = SkFontMgr_New_Android(nullptr);
+#else
         m_fontManager = SkFontMgr_New_FontConfig(FcConfigReference(nullptr));
+#endif
+    }
     RELEASE_ASSERT(m_fontManager);
     return *m_fontManager.get();
 }
