@@ -50,7 +50,7 @@ enum class AnchorPositionResolutionStage : uint8_t {
     Positioned,
 };
 
-using AnchorElements = HashMap<AtomString, WeakRef<Element, WeakPtrImplWithEventTargetData>>;
+using AnchorElements = UncheckedKeyHashMap<AtomString, WeakRef<Element, WeakPtrImplWithEventTargetData>>;
 
 struct AnchorPositionedState {
     WTF_MAKE_TZONE_ALLOCATED(AnchorPositionedState);
