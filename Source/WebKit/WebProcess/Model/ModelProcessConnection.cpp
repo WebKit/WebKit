@@ -71,7 +71,7 @@ RefPtr<ModelProcessConnection> ModelProcessConnection::create(IPC::Connection& p
 }
 
 ModelProcessConnection::ModelProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
-    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
+    : m_connection(IPC::Connection::createServerConnection(WTFMove(connectionIdentifier)))
 {
     m_connection->open(*this);
 }

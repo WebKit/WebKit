@@ -229,11 +229,13 @@ void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IP
     didClose(connection);
 }
 
-void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void ModelProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    bool didTerminate = !connectionIdentifier;
 
-    if (!connectionIdentifier) {
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIdentifier));
+
+    if (didTerminate) {
         modelProcessExited(ProcessTerminationReason::Crash);
         return;
     }

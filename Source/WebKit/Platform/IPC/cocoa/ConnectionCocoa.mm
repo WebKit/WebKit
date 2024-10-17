@@ -137,7 +137,7 @@ void Connection::cancelReceiveSource()
     m_receivePort = MACH_PORT_NULL;
 }
 
-void Connection::platformInitialize(Identifier identifier)
+void Connection::platformInitialize(Identifier&& identifier)
 {
     if (m_isServer) {
         RELEASE_ASSERT(MACH_PORT_VALID(identifier.port)); // Caller error. MACH_DEAD_NAME does not make sense, as we do not transfer receive rights.

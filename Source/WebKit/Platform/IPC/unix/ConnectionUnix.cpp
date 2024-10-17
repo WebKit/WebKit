@@ -98,9 +98,9 @@ private:
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
 
-void Connection::platformInitialize(Identifier identifier)
+void Connection::platformInitialize(Identifier&& identifier)
 {
-    m_socketDescriptor = identifier.handle;
+    m_socketDescriptor = WTFMove(identifier.handle);
 #if USE(GLIB)
     m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
 #endif

@@ -76,7 +76,7 @@ void AuxiliaryProcess::didClose(IPC::Connection&)
 #endif
 }
 
-void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters& parameters)
+void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& parameters)
 {
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
@@ -110,7 +110,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    Ref connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
+    Ref connection = IPC::Connection::createClientConnection(WTFMove(parameters.connectionIdentifier));
     m_connection = connection.ptr();
     initializeConnection(connection.ptr());
     connection->open(*this);
