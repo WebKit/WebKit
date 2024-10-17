@@ -956,7 +956,8 @@ webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word
 webkit.org/b/186262 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-lo-000.html [ ImageOnlyFailure ]
 
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html [ Failure ]
-webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html [ Failure ]
+webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.tentative.html [ Failure ]
+
 webkit.org/b/180645 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/valueMode.html [ Failure ]
 webkit.org/b/180645 accessibility/color-input-value-changes.html [ Timeout ]
 

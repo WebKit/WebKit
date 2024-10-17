@@ -3582,6 +3582,21 @@ InputTypeColorEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
+InputTypeColorEnhancementsEnabled:
+  type: bool
+  status: unstable
+  category: html
+  condition: ENABLE(INPUT_TYPE_COLOR)
+  humanReadableName: "HTML alpha and colorspace attribute support for color inputs"
+  humanReadableDescription: "Enable HTML alpha and colorspace attribute support for input elements of type color"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 InputTypeDateEnabled:
   type: bool
   status: embedder

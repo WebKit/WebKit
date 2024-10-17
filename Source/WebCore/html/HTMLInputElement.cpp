@@ -899,6 +899,15 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 #endif
         }
         break;
+#if ENABLE(INPUT_TYPE_COLOR)
+    case AttributeNames::alphaAttr:
+    case AttributeNames::colorspaceAttr:
+        if (isColorControl() && document().settings().inputTypeColorEnhancementsEnabled()) {
+            updateValueIfNeeded();
+            updateValidity();
+        }
+        break;
+#endif
     default:
         break;
     }
@@ -1563,6 +1572,30 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
     if (CheckedPtr cache = document().existingAXObjectCache())
         cache->autofillTypeChanged(*this);
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+bool HTMLInputElement::alpha()
+{
+    return document().settings().inputTypeColorEnhancementsEnabled() && hasAttributeWithoutSynchronization(alphaAttr);
+}
+
+String HTMLInputElement::colorSpace()
+{
+    if (!document().settings().inputTypeColorEnhancementsEnabled())
+        return nullString();
+
+    if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(colorspaceAttr), "display-p3"_s))
+        return "display-p3"_s;
+
+    return "limited-srgb"_s;
+}
+
+void HTMLInputElement::setColorSpace(const AtomString& value)
+{
+    ASSERT(document().settings().inputTypeColorEnhancementsEnabled());
+    setAttributeWithoutSynchronization(colorspaceAttr, value);
+}
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 FileList* HTMLInputElement::files()
 {

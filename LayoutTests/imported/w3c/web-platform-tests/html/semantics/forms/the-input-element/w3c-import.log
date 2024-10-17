@@ -25,7 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/click-user-gesture.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/clone.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/cloning-steps.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color-attributes.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/color.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/date.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local-trailing-zeros.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/datetime-local.html

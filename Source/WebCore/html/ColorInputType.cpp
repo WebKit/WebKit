@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,6 +37,7 @@
 
 #include "AXObjectCache.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Color.h"
 #include "Chrome.h"
 #include "Color.h"
 #include "ColorSerialization.h"
@@ -64,6 +65,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ColorInputType);
 
 using namespace HTMLNames;
 
+using LazySlowPathColorParsingParameters = std::tuple<
+    CSSPropertyParserHelpers::CSSColorParsingOptions,
+    CSSUnresolvedColorResolutionState,
+    std::optional<CSSUnresolvedColorResolutionDelegate>
+>;
+
 // https://html.spec.whatwg.org/multipage/infrastructure.html#valid-simple-colour
 static bool isValidSimpleColor(StringView string)
 {
@@ -84,6 +91,59 @@ static std::optional<SRGBA<uint8_t>> parseSimpleColorValue(StringView string)
     if (!isValidSimpleColor(string))
         return std::nullopt;
     return { { toASCIIHexValue(string[1], string[2]), toASCIIHexValue(string[3], string[4]), toASCIIHexValue(string[5], string[6]) } };
+}
+
+static LazySlowPathColorParsingParameters colorParsingParameters()
+{
+    return {
+        CSSPropertyParserHelpers::CSSColorParsingOptions {
+            .allowedColorTypes = { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System }
+        },
+        CSSUnresolvedColorResolutionState {
+            .resolvedCurrentColor = Color::black
+        },
+        std::nullopt
+    };
+}
+
+static std::optional<Color> parseColorValue(StringView string, HTMLInputElement& context)
+{
+    if (context.colorSpace().isNull())
+        return parseSimpleColorValue(string);
+
+    auto parserContext = context.document().cssParserContext();
+    parserContext.mode = HTMLStandardMode;
+    auto color = CSSPropertyParserHelpers::parseColorRaw(string.toString(), parserContext, [] {
+        return colorParsingParameters();
+    });
+
+    if (!color.isValid())
+        return { };
+
+    return color;
+}
+
+static String serializeColorValue(Color input, HTMLInputElement& context)
+{
+    auto alpha = context.alpha();
+    auto colorSpace = context.colorSpace();
+
+    if (!alpha)
+        input = input.opaqueColor();
+
+    if (colorSpace.isNull() || colorSpace == "limited-srgb"_s) {
+        auto inputAsRGBA = input.toColorTypeLossy<SRGBA<uint8_t>>();
+        // When the alpha attribute is set the specification requires the modern color() serialization.
+        if (alpha)
+            input = { inputAsRGBA, { Color::Flags::UseColorFunctionSerialization } };
+        else
+            input = inputAsRGBA.resolved();
+    } else {
+        ASSERT(colorSpace == "display-p3"_s);
+        input = input.toColorTypeLossy<ExtendedDisplayP3<float>>().resolved();
+    }
+
+    return serializationForHTML(input);
 }
 
 ColorInputType::~ColorInputType()
@@ -124,21 +184,27 @@ bool ColorInputType::supportsRequired() const
 
 String ColorInputType::fallbackValue() const
 {
-    return "#000000"_s;
+    ASSERT(element());
+    return serializeColorValue(Color::black, *element());
 }
 
 String ColorInputType::sanitizeValue(const String& proposedValue) const
 {
-    if (!isValidSimpleColor(proposedValue))
+    ASSERT(element());
+    auto color = parseColorValue(proposedValue, *element());
+
+    if (!color)
         return fallbackValue();
 
-    return proposedValue.convertToASCIILowercase();
+    return serializeColorValue(*color, *element());
 }
 
 Color ColorInputType::valueAsColor() const
 {
     ASSERT(element());
-    return parseSimpleColorValue(element()->value()).value();
+    auto color = parseColorValue(element()->value(), *element());
+    ASSERT(!!color);
+    return *color;
 }
 
 void ColorInputType::createShadowSubtree()
@@ -231,7 +297,8 @@ bool ColorInputType::shouldRespectListAttribute()
 
 bool ColorInputType::typeMismatchFor(const String& value) const
 {
-    return !isValidSimpleColor(value);
+    ASSERT(element());
+    return !!parseColorValue(value, *element());
 }
 
 bool ColorInputType::shouldResetOnDocumentActivation()
@@ -246,13 +313,12 @@ void ColorInputType::didChooseColor(const Color& color)
     if (element()->isDisabledFormControl())
         return;
 
-    auto sRGBAColor = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-    auto sRGBColor = sRGBAColor.colorWithAlphaByte(255);
-    if (sRGBColor == valueAsColor())
+    auto serializedColor = serializeColorValue(color, *element());
+    if (serializedColor == element()->value())
         return;
 
     EventQueueScope scope;
-    element()->setValueFromRenderer(serializationForHTML(sRGBColor));
+    element()->setValueFromRenderer(serializedColor);
     updateColorSwatch();
     element()->dispatchFormControlChangeEvent();
 
@@ -312,7 +378,7 @@ Vector<Color> ColorInputType::suggestedColors() const
     ASSERT(element());
     if (auto dataList = element()->dataList()) {
         for (auto& option : dataList->suggestions()) {
-            if (auto color = parseSimpleColorValue(option.value()))
+            if (auto color = parseColorValue(option.value(), *element()))
                 suggestions.append(*color);
         }
     }
@@ -322,8 +388,9 @@ Vector<Color> ColorInputType::suggestedColors() const
 
 void ColorInputType::selectColor(StringView string)
 {
-    if (auto color = parseSimpleColorValue(string))
-        didChooseColor(color.value());
+    ASSERT(element());
+    if (auto color = parseColorValue(string, *element()))
+        didChooseColor(*color);
 }
 
 } // namespace WebCore

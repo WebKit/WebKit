@@ -1,0 +1,4 @@
+
+PASS <input type=color>: alpha attribute
+PASS <input type=color>: colorspace attribute
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -25,10 +25,12 @@
     Exposed=Window
 ] interface HTMLInputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
+    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded, Reflect] attribute boolean alpha;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
+    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;

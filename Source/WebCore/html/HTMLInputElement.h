@@ -65,8 +65,15 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool alpha();
+#endif
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
+#if ENABLE(INPUT_TYPE_COLOR)
+    String colorSpace();
+    void setColorSpace(const AtomString&);
+#endif
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
