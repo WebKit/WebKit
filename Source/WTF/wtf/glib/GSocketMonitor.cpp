@@ -33,6 +33,7 @@ namespace WTF {
 
 GSocketMonitor::~GSocketMonitor()
 {
+    RELEASE_ASSERT(!m_isExecutingCallback);
     stop();
 }
 
@@ -40,7 +41,17 @@ gboolean GSocketMonitor::socketSourceCallback(GSocket*, GIOCondition condition, 
 {
     if (g_cancellable_is_cancelled(monitor->m_cancellable.get()))
         return G_SOURCE_REMOVE;
-    return monitor->m_callback(condition);
+
+    monitor->m_isExecutingCallback = true;
+    gboolean result = monitor->m_callback(condition);
+    monitor->m_isExecutingCallback = false;
+
+    if (monitor->m_shouldDestroyCallback) {
+        monitor->m_callback = nullptr;
+        monitor->m_shouldDestroyCallback = false;
+    }
+
+    return result;
 }
 
 void GSocketMonitor::start(GSocket* socket, GIOCondition condition, RunLoop& runLoop, Function<gboolean(GIOCondition)>&& callback)
@@ -65,7 +76,13 @@ void GSocketMonitor::stop()
     m_cancellable = nullptr;
     g_source_destroy(m_source.get());
     m_source = nullptr;
-    m_callback = nullptr;
+
+    // It's normal to stop the socket monitor from inside its callback.
+    // Don't destroy the callback while it's still executing.
+    if (m_isExecutingCallback)
+        m_shouldDestroyCallback = true;
+    else
+        m_callback = nullptr;
 }
 
 } // namespace WTF
