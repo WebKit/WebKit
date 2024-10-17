@@ -35,6 +35,10 @@ namespace WTF {
 
 class UnixFileDescriptor {
 public:
+    // This class is noncopyable because otherwise it's very hard to avoid accidental file
+    // descriptor duplication. If you intentionally want a dup, call the duplicate method.
+    WTF_MAKE_NONCOPYABLE(UnixFileDescriptor);
+
     UnixFileDescriptor() = default;
 
     enum AdoptionTag { Adopt };
@@ -52,12 +56,6 @@ public:
     UnixFileDescriptor(UnixFileDescriptor&& o)
     {
         m_value = o.release();
-    }
-
-    explicit UnixFileDescriptor(const UnixFileDescriptor& o)
-    {
-        if (o.m_value >= 0)
-            m_value = dupCloseOnExec(o.m_value);
     }
 
     UnixFileDescriptor& operator=(UnixFileDescriptor&& o)

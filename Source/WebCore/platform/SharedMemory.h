@@ -70,7 +70,11 @@ public:
 #endif
 
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
+#if USE(UNIX_DOMAIN_SOCKETS)
+    explicit SharedMemoryHandle(const SharedMemoryHandle&);
+#else
     explicit SharedMemoryHandle(const SharedMemoryHandle&) = default;
+#endif
     WEBCORE_EXPORT SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
 
     SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
