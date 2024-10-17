@@ -7418,6 +7418,8 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-wit
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/cancel-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/pause-animation.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/play-animation.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/reverse-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-fill-modes.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-phases.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-inactive-timeline.html [ Skip ]
@@ -7426,6 +7428,7 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeli
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-playback-rate.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/update-playback-rate.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
 # webkit.org/b/263871 [scroll-animations] some WPT tests are failures or flaky failures
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-multiple.html [ Pass Failure ]
@@ -7465,13 +7468,10 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.
 
 # webkit.org/b/281481 [scroll-animations] some WPT tests are crashing
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/finish-animation.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/play-animation.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/reverse-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-current-time.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-start-time.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
 # webkit.org/b/281482 [scroll-animations] some WPT reftests can't find their reference
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-update-reversed-animation.html [ Skip ]

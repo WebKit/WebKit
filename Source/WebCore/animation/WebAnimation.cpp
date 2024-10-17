@@ -732,7 +732,7 @@ auto WebAnimation::playState() const -> PlayState
     // animation's effective playback rate > 0 and current time ≥ target effect end; or
     // animation's effective playback rate < 0 and current time ≤ 0,
     // → finished
-    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + timeEpsilon()) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - timeEpsilon()) <= 0_s)))
+    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + timeEpsilon()) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - timeEpsilon()) <= zeroTime())))
         return PlayState::Finished;
 
     // Otherwise → running
@@ -998,16 +998,16 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
                 m_holdTime = endTime;
             else
                 m_holdTime = std::max(m_previousCurrentTime.value(), endTime);
-        } else if (m_playbackRate < 0 && unconstrainedCurrentTime <= 0_s) {
+        } else if (m_playbackRate < 0 && unconstrainedCurrentTime <= zeroTime()) {
             // If animation playback rate < 0 and unconstrained current time is less than or equal to 0,
             // If did seek is true, let the hold time be the value of unconstrained current time.
             if (didSeek == DidSeek::Yes)
                 m_holdTime = unconstrainedCurrentTime;
             // If did seek is false, let the hold time be the minimum value of previous current time and zero. If the previous current time is unresolved, let the hold time be zero.
             else if (!m_previousCurrentTime)
-                m_holdTime = 0_s;
+                m_holdTime = zeroTime();
             else
-                m_holdTime = std::min(m_previousCurrentTime.value(), CSSNumberishTime { 0_s });
+                m_holdTime = std::min(m_previousCurrentTime.value(), zeroTime());
         } else if (m_playbackRate && m_timeline && m_timeline->currentTime()) {
             // If animation playback rate ≠ 0, and animation is associated with an active timeline,
             // Perform the following steps:
