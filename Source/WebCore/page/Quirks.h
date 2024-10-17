@@ -113,7 +113,7 @@ public:
 
     bool needsPrimeVideoUserSelectNoneQuirk() const;
 
-    bool needsYouTubeDarkModeQuirk() const;
+    bool needsScrollbarWidthThinDisabledQuirk() const;
 
     bool shouldOpenAsAboutBlank(const String&) const;
 
@@ -276,7 +276,7 @@ private:
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
     mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
-    mutable std::optional<bool> m_needsYouTubeDarkModeQuirk;
+    mutable std::optional<bool> m_needsScrollbarWidthThinDisabledQuirk;
     mutable std::optional<bool> m_needsPrimeVideoUserSelectNoneQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;

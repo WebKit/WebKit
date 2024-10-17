@@ -656,15 +656,16 @@ bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
 }
 
 // youtube.com rdar://135886305
-bool Quirks::needsYouTubeDarkModeQuirk() const
+// NOTE: Also remove `BuilderConverter::convertScrollbarWidth` and related code when removing this quirk.
+bool Quirks::needsScrollbarWidthThinDisabledQuirk() const
 {
     if (!needsQuirks())
         return false;
 
-    if (!m_needsYouTubeDarkModeQuirk)
-        m_needsYouTubeDarkModeQuirk = isDomain("youtube.com"_s);
+    if (!m_needsScrollbarWidthThinDisabledQuirk)
+        m_needsScrollbarWidthThinDisabledQuirk = isDomain("youtube.com"_s);
 
-    return *m_needsYouTubeDarkModeQuirk;
+    return *m_needsScrollbarWidthThinDisabledQuirk;
 }
 
 // gizmodo.com rdar://102227302

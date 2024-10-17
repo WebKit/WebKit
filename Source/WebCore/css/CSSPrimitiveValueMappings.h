@@ -64,7 +64,7 @@ template<typename TargetType> TargetType fromCSSValue(const CSSValue& value)
 
 class TypeDeducingCSSValueMapper {
 public:
-    TypeDeducingCSSValueMapper(Style::BuilderState& builderState, const CSSValue& value)
+    TypeDeducingCSSValueMapper(const Style::BuilderState& builderState, const CSSValue& value)
         : m_builderState { builderState }
         , m_value { value }
     {
@@ -113,11 +113,11 @@ private:
         return value;
     }
 
-    Style::BuilderState& m_builderState;
+    const Style::BuilderState& m_builderState;
     const CSSValue& m_value;
 };
 
-inline TypeDeducingCSSValueMapper fromCSSValueDeducingType(Style::BuilderState& builderState, const CSSValue& value)
+inline TypeDeducingCSSValueMapper fromCSSValueDeducingType(const Style::BuilderState& builderState, const CSSValue& value)
 {
     return { builderState, value };
 }
