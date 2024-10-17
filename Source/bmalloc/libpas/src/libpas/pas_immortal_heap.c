@@ -52,8 +52,9 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
                                                        const char* name,
                                                        pas_allocation_kind allocation_kind)
 {
-    static const unsigned verbose = 0;
-    
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_IMMORTAL_HEAPS);
+    static const unsigned verbosity = 0;
+
     uintptr_t aligned_bump;
 
     pas_heap_lock_assert_held();
@@ -88,7 +89,7 @@ void* pas_immortal_heap_allocate_with_manual_alignment(size_t size,
 
     if (verbose) {
         pas_log("pas_immortal_heap allocated %zu for %s at %p.\n", size, name, (void*)aligned_bump);
-        if (verbose >= 2) {
+        if (verbose && verbosity >= 2) {
             pas_log("immortal heap internal size: %zu.\n", pas_immortal_heap_allocated_internal);
             pas_log("immortal heap external size: %zu.\n", pas_immortal_heap_allocated_external);
         }
@@ -104,7 +105,8 @@ void* pas_immortal_heap_allocate_with_alignment(size_t size,
                                                 const char* name,
                                                 pas_allocation_kind allocation_kind)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_IMMORTAL_HEAPS);
+
     void* result;
     result = pas_immortal_heap_allocate_with_manual_alignment(
         size, PAS_MAX(alignment, PAS_INTERNAL_MIN_ALIGN), name, allocation_kind);

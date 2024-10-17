@@ -79,7 +79,7 @@ pas_segregated_directory_get_data_slow(pas_segregated_directory* directory,
 
 uint64_t pas_segregated_directory_get_use_epoch(pas_segregated_directory* directory)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     uintptr_t last_empty_plus_one;
     size_t index;
@@ -144,7 +144,7 @@ pas_page_sharing_participant_payload*
 pas_segregated_directory_get_sharing_payload(pas_segregated_directory* directory,
                                              pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_directory_data* data;
     pas_segregated_directory_sharing_payload_ptr* payload_ptr;
@@ -282,7 +282,7 @@ bool pas_segregated_directory_view_did_become_empty_at_index(
     pas_segregated_directory* directory,
     size_t index)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     bool did_add_first_empty;
     

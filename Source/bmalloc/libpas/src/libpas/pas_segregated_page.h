@@ -267,7 +267,7 @@ pas_segregated_page_number_of_objects(unsigned object_size,
                                       pas_segregated_page_config page_config,
                                       pas_segregated_page_role role)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     unsigned result;
     
     result = pas_segregated_page_useful_object_payload_size(object_size, page_config, role) / object_size;

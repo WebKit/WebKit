@@ -72,7 +72,7 @@ pas_segregated_directory_iterate_iterate_callback(
     void* arg,
     bool is_forward)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_directory_iterate_config* config;
     pas_segregated_directory_bitvector_segment segment;
@@ -150,7 +150,7 @@ static PAS_ALWAYS_INLINE bool
 pas_segregated_directory_iterate_forward(
     pas_segregated_directory_iterate_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_directory_data* data;
     pas_found_index found_index;
@@ -244,7 +244,7 @@ static PAS_ALWAYS_INLINE bool
 pas_segregated_directory_iterate_forward_to_take_first_eligible(
     pas_segregated_directory_iterate_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     static const bool simple_eligibility = false;
 
     if (verbose)

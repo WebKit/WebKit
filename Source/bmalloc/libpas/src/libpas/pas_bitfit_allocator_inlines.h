@@ -59,7 +59,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
                                   pas_allocation_mode allocation_mode,
                                   pas_bitfit_page_config config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     pas_bitfit_view* view;
 

@@ -116,7 +116,7 @@ static PAS_ALWAYS_INLINE pas_allocator_index
 pas_segregated_size_directory_num_allocator_indices_for_config(
     pas_segregated_page_config config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     size_t size;
 
@@ -151,7 +151,7 @@ pas_segregated_size_directory_take_first_eligible_impl(
     pas_segregated_view (*create_new_view_callback)(
         pas_segregated_directory_iterate_config* config))
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     bool did_find_something;
     const pas_segregated_page_config* page_config_ptr;

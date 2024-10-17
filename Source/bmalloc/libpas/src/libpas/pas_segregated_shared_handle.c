@@ -91,7 +91,7 @@ void pas_segregated_shared_handle_destroy(pas_segregated_shared_handle* handle)
 void pas_segregated_shared_handle_note_emptiness(
     pas_segregated_shared_handle* handle)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_segregated_shared_view* shared_view;
 

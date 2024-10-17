@@ -38,7 +38,7 @@ pas_segregated_shared_handle_partial_view_ptr_for_index(
     size_t index,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     index >>= page_config.sharing_shift;
     if (verbose)
@@ -63,7 +63,7 @@ pas_segregated_shared_handle_partial_view_for_object(
     uintptr_t begin,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     uintptr_t offset;
     uintptr_t index;

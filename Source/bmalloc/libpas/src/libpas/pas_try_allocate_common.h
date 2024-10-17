@@ -83,7 +83,7 @@ pas_try_allocate_common_impl_fast(
     size_t alignment,
     pas_allocation_mode allocation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_allocation_result result;
     result = pas_local_allocator_try_allocate(allocator,
@@ -110,7 +110,7 @@ pas_try_allocate_common_impl_slow(
     pas_allocator_counts* allocator_counts,
     pas_size_lookup_mode size_lookup_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_baseline_allocator_result baseline_allocator_result;
     pas_allocation_result result;
@@ -244,7 +244,7 @@ pas_try_allocate_common_impl(
     pas_allocation_result (*slow)(pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode),
     pas_local_allocator_result allocator_result)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     if (verbose) {
         pas_log("heap_ref = %p allocating size = %zu, alignment = %zu.\n",

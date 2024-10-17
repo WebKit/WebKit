@@ -52,7 +52,7 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
                                       const pas_bitfit_page_config* config,
                                       pas_lock_hold_mode commit_lock_hold_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     pas_bitfit_directory* directory;
     pas_segregated_heap* heap;
@@ -224,7 +224,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
                                                      size_t largest_available,
                                                      const pas_bitfit_page_config* config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     pas_bitfit_directory* directory;
     pas_bitfit_size_class* size_class;

@@ -89,7 +89,7 @@ pas_aligned_allocation_result
 pas_page_malloc_try_allocate_without_deallocating_padding(
     size_t size, pas_alignment alignment)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     size_t aligned_size;
     size_t mapped_size;
@@ -239,7 +239,7 @@ static void decommit_impl(void* ptr, size_t size,
                           bool do_mprotect,
                           pas_mmap_capability mmap_capability)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     uintptr_t base_as_int;
     uintptr_t end_as_int;

@@ -57,7 +57,7 @@ pas_try_allocate_for_reallocate_and_copy(
     pas_try_reallocate_allocate_callback allocate_callback,
     void* allocate_callback_arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_allocation_result result;
 
@@ -574,7 +574,7 @@ pas_try_reallocate_primitive_allocate_callback(
     pas_allocation_mode allocation_mode,
     void* arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_try_reallocate_primitive_allocate_data* data;
     pas_allocation_result result;

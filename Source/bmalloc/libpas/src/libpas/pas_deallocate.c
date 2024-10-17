@@ -122,7 +122,7 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
                                       const pas_heap_config* config_ptr,
                                       pas_deallocation_mode deallocation_mode)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     uintptr_t begin;
 

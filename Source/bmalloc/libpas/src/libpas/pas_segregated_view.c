@@ -289,7 +289,7 @@ static bool for_each_live_object(
     pas_segregated_view_for_each_live_object_callback callback,
     void *arg)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_page_config page_config;
     pas_full_alloc_bits full_alloc_bits;
@@ -433,7 +433,7 @@ bool pas_segregated_view_for_each_live_object(
 static pas_tri_state should_be_eligible(pas_segregated_view view,
                                         const pas_segregated_page_config* page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_full_alloc_bits full_alloc_bits;
     pas_segregated_page* page;
@@ -528,7 +528,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
 pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
                                                      const pas_segregated_page_config* page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_tri_state result;
 

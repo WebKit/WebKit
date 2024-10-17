@@ -44,7 +44,7 @@ pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
     pas_segregated_size_directory* directory,
     size_t index)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     
     pas_segregated_exclusive_view* result;
 

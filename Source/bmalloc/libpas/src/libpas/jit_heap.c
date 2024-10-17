@@ -52,14 +52,17 @@ pas_allocator_counts jit_allocator_counts;
 
 void jit_heap_add_fresh_memory(pas_range range)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
 
     if (verbose)
-        pas_log("JIT heap at %p...%p\n", (void*)range.begin, (void*)range.end);
+        pas_log("JIT heap adding memory at %p...%p\n", (void*)range.begin, (void*)range.end);
     
     pas_heap_lock_lock();
     jit_heap_config_add_fresh_memory(range);
     pas_heap_lock_unlock();
+
+    if (verbose)
+        pas_log("JIT heap done adding memory\n");
 }
 
 PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
@@ -74,18 +77,21 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
 
 void* jit_heap_try_allocate(size_t size)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
     void* result;
     if (verbose)
-        pas_log("going to allocate in jit\n");
+        pas_log("jit heap allocating %lu\n", size);
     result = (void*)jit_try_allocate_common_primitive_impl(size, 1, pas_always_compact_allocation_mode).begin;
     if (verbose)
-        pas_log("done allocating in jit, returning %p\n", result);
+        pas_log("jit heap done allocating, returning %p\n", result);
     return result;
 }
 
 void jit_heap_shrink(void* object, size_t new_size)
 {
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
+    if (verbose)
+        pas_log("jit heap trying to shrink %p to %lu\n", object, new_size);
     /* NOTE: the shrink call will fail (return false) for segregated allocations, and that's fine because we
        only use segregated allocations for smaller sizes (so the amount of potential memory savings from
        shrinking is small). */
@@ -99,6 +105,9 @@ size_t jit_heap_get_size(void* object)
 
 void jit_heap_deallocate(void* object)
 {
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
+    if (verbose)
+        pas_log("jit heap deallocating %p\n", object);
     pas_deallocate(object, JIT_HEAP_CONFIG);
 }
 

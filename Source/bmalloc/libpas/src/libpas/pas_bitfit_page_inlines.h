@@ -57,7 +57,7 @@ static PAS_ALWAYS_INLINE bool pas_bitfit_page_allocation_satisfies_alignment(
     uintptr_t alignment,
     pas_bitfit_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t begin_offset;
     uintptr_t end_offset;
@@ -207,7 +207,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     pas_allocation_mode allocation_mode,
     pas_bitfit_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     bool did_overflow;
     uintptr_t offset_in_page;
@@ -262,7 +262,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
     pas_lock_hold_mode commit_lock_hold_mode,
     size_t* bytes_committed)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t word_index;
     uint64_t* free_words;
@@ -542,7 +542,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     pas_bitfit_page_deallocate_with_page_impl_mode mode,
     size_t new_size)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
     
     uintptr_t offset;
     uintptr_t bit_index;

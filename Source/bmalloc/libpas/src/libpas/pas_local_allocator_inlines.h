@@ -169,7 +169,7 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
     pas_full_alloc_bits full_alloc_bits,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     unsigned* alloc_bits;
     size_t index;
@@ -423,7 +423,7 @@ pas_local_allocator_prepare_to_allocate(
     pas_segregated_size_directory* directory,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     uintptr_t page_boundary;
 
@@ -504,7 +504,7 @@ pas_local_allocator_set_up_primordial_bump(
     pas_local_allocator_primordial_bump_allocation_mode mode,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     uintptr_t page_boundary;
     unsigned object_size;
@@ -611,7 +611,7 @@ pas_local_allocator_start_allocating_in_primordial_partial_view(
     pas_segregated_size_directory* size_directory,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     unsigned size;
     unsigned alignment;
@@ -747,7 +747,7 @@ pas_local_allocator_bless_primordial_partial_view_before_stopping(
     pas_lock_hold_mode heap_lock_hold_mode,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     /* We're sitting on a still-ineligible partial view. Nobody else can do things to it. We need
        to grab the heap lock in order to allocate the full alloc bits. This is called with the
@@ -910,7 +910,7 @@ pas_local_allocator_refill_with_known_config(
     pas_allocator_counts* counts,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_segregated_view new_view;
     pas_segregated_view old_view;
@@ -1272,7 +1272,7 @@ pas_local_allocator_return_memory_to_page_for_role(
     pas_segregated_page_config page_config,
     pas_segregated_page_role role)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     uintptr_t begin;
     uintptr_t end;
@@ -1379,7 +1379,7 @@ pas_local_allocator_try_allocate_with_free_bits(
     pas_allocation_mode allocation_mode,
     pas_segregated_page_config page_config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
 
     uintptr_t found_bit_index;
     uint64_t current_word;
@@ -1504,7 +1504,7 @@ pas_local_allocator_try_allocate_inline_cases(pas_local_allocator* allocator,
                                               pas_allocation_mode allocation_mode,
                                               pas_heap_config config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     unsigned remaining;
     unsigned object_size;
@@ -1613,7 +1613,7 @@ pas_local_allocator_try_allocate_out_of_line_cases(
     pas_allocation_mode allocation_mode,
     pas_heap_config config)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
     pas_local_allocator_config_kind our_kind;
     our_kind = allocator->config_kind;
@@ -1684,7 +1684,7 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
                                            pas_heap_config config,
                                            pas_allocator_counts* counts)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
 
     if (verbose) {
         pas_log("Called try_allocate_slow with kind = %s\n",
@@ -1762,7 +1762,7 @@ pas_local_allocator_try_allocate_inline_only(pas_local_allocator* allocator,
                                              pas_heap_config config,
                                              pas_allocation_result_filter result_filter)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     pas_allocation_result result;
 
     if (verbose) {
@@ -1804,7 +1804,7 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
                                  pas_allocator_counts* counts,
                                  pas_allocation_result_filter result_filter)
 {
-    static const bool verbose = false;
+    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     pas_allocation_result result;
 
     PAS_TESTING_ASSERT(!allocator->scavenger_data.is_in_use);
