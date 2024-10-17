@@ -9279,7 +9279,7 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
 
 
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
-    HEADER = '### Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13)\n'
+    HEADER = '### Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13) (https://github.com/WebKit/WebKit/commit/7e4dc83588490a785f71acac4724e4e43a705077)\n'
 
     def setUp(self):
         return self.setUpBuildStep()
@@ -9292,6 +9292,8 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setupStep(DisplaySaferCPPResults())
         self.setProperty('buildnumber', '123')
         self.setProperty('github.number', '17')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7e4dc83588490a785f71acac4724e4e43a705077')
 
         def loadResultsData(self, path):
             return {

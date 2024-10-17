@@ -7387,10 +7387,11 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         if not num_failures and not num_passes:
             return
 
+        commit_url = GitHub.commit_url(self.getProperty('github.head.sha'), self.getProperty('repository', ''))
         results_link = self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html"
         build_link = f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}'
         formatted_build_link = f'[#{self.getProperty("buildnumber", "")}]({build_link})'
-        comment = f'### Safer C++ Build {formatted_build_link}\n'
+        comment = f'### Safer C++ Build {formatted_build_link} ({commit_url})\n'
 
         if num_failures:
             pluralSuffix = 's' if num_issues > 1 else ''
