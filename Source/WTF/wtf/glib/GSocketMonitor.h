@@ -51,6 +51,8 @@ private:
     GRefPtr<GSource> m_source;
     GRefPtr<GCancellable> m_cancellable;
     Function<gboolean(GIOCondition)> m_callback;
+    bool m_isExecutingCallback { false };
+    bool m_shouldDestroyCallback { false };
 };
 
 } // namespace WTF
