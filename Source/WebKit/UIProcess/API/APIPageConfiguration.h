@@ -455,7 +455,7 @@ public:
     bool overlayRegionsEnabled() const { return m_data.overlayRegionsEnabled; }
     void setOverlayRegionsEnabled(bool value) { m_data.overlayRegionsEnabled = value; }
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool cssTransformStyleSeparatedEnabled() const { return m_data.cssTransformStyleSeparatedEnabled; }
     void setCSSTransformStyleSeparatedEnabled(bool value) { m_data.cssTransformStyleSeparatedEnabled = value; }
 #endif
@@ -645,7 +645,7 @@ private:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
         bool overlayRegionsEnabled { false };
 #endif
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         bool cssTransformStyleSeparatedEnabled { false };
 #endif
 

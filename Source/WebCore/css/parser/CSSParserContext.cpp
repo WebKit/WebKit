@@ -82,7 +82,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , useSystemAppearance { document.page() ? document.page()->useSystemAppearance() : false }
     , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , springTimingFunctionEnabled { document.settings().springTimingFunctionEnabled() }
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , cssTransformStyleSeparatedEnabled { document.settings().cssTransformStyleSeparatedEnabled() }
 #endif
     , masonryEnabled { document.settings().masonryEnabled() }
@@ -120,7 +120,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.isContentOpaque                           << 2
         | context.useSystemAppearance                       << 3
         | context.springTimingFunctionEnabled               << 4
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | context.cssTransformStyleSeparatedEnabled         << 5
 #endif
         | context.masonryEnabled                            << 6

@@ -1542,7 +1542,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_cssTransformStyleSeparatedEnabled
 {
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     return _pageConfiguration->cssTransformStyleSeparatedEnabled();
 #else
     return NO;
@@ -1550,7 +1550,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 }
 - (void)_setCSSTransformStyleSeparatedEnabled:(BOOL)enabled
 {
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     _pageConfiguration->setCSSTransformStyleSeparatedEnabled(enabled);
 #endif
 }

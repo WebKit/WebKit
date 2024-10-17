@@ -1301,7 +1301,7 @@ TextStream& operator<<(TextStream& ts, TransformStyle3D transformStyle)
     switch (transformStyle) {
     case TransformStyle3D::Flat: ts << "flat"; break;
     case TransformStyle3D::Preserve3D: ts << "preserve-3d"; break;
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     case TransformStyle3D::Separated: ts << "separated"; break;
 #endif
     }

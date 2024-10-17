@@ -4601,7 +4601,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueFlat);
         case TransformStyle3D::Preserve3D:
             return CSSPrimitiveValue::create(CSSValuePreserve3d);
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         case TransformStyle3D::Separated:
             return CSSPrimitiveValue::create(CSSValueSeparated);
 #endif

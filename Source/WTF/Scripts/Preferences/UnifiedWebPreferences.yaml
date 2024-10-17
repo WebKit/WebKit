@@ -1628,11 +1628,11 @@ CSSTextWrapStyleEnabled:
 
 CSSTransformStyleSeparatedEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: css
   humanReadableName: "CSS transform-style: separated"
   humanReadableDescription: "Enable transform-style: separated property to access the separated graphics layer"
-  condition: ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+  condition: HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
   defaultValue:
     WebKitLegacy:
       default: false

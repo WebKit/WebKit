@@ -81,6 +81,7 @@ workers [ Skip ]
 fast/events/pointer [ Pass ]
 interaction-region [ Pass ]
 overlay-region [ Pass ]
+platform/visionos/transforms [ Pass ]
 
 imported/w3c/web-platform-tests/webxr [ Pass ]
 http/wpt/webxr [ Pass ]

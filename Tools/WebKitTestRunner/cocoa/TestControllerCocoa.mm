@@ -179,7 +179,7 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
         [configuration _setOverlayRegionsEnabled:YES];
 #endif
 
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         [configuration _setCSSTransformStyleSeparatedEnabled:YES];
 #endif
 

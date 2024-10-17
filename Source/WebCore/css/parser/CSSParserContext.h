@@ -76,7 +76,7 @@ struct CSSParserContext {
     // Settings, excluding those affecting properties.
     bool counterStyleAtRuleImageSymbolsEnabled : 1 { false };
     bool springTimingFunctionEnabled : 1 { false };
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     bool cssTransformStyleSeparatedEnabled : 1 { false };
 #endif
     bool masonryEnabled : 1 { false };

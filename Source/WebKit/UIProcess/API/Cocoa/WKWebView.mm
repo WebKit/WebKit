@@ -551,7 +551,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     pageConfiguration->preferences().setApplePayEnabled(!![_configuration _applePayEnabled]);
 #endif
 
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     pageConfiguration->preferences().setCSSTransformStyleSeparatedEnabled(!![_configuration _cssTransformStyleSeparatedEnabled]);
 #endif
 

@@ -1991,7 +1991,7 @@ constexpr CSSValueID toCSSValueID(TransformStyle3D e)
         return CSSValueFlat;
     case TransformStyle3D::Preserve3D:
         return CSSValuePreserve3d;
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     case TransformStyle3D::Separated:
         return CSSValueSeparated;
 #endif
@@ -2007,7 +2007,7 @@ template<> constexpr TransformStyle3D fromCSSValueID(CSSValueID valueID)
         return TransformStyle3D::Flat;
     case CSSValuePreserve3d:
         return TransformStyle3D::Preserve3D;
-#if ENABLE(CSS_TRANSFORM_STYLE_SEPARATED)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     case CSSValueSeparated:
         return TransformStyle3D::Separated;
 #endif
