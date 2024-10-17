@@ -55,7 +55,7 @@ I=0
 for DISTRO in ${DISTROS_TO_TEST[@]}; do
     echo "[INFO] Start testing on distro: ${DISTRO}"
     docker pull "${DISTRO}"
-    docker run -it --rm \
+    docker run --init --rm \
                 -v "${MYDIR}:/testdata:ro" \
                 -v "${FBUNDLE}:/testbundle.tar.xz:ro" \
                 -v "/tmp/.X11-unix:/tmp/.X11-unix" \

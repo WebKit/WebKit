@@ -13,6 +13,8 @@ else
     exit 1
 fi
 
+export PYTHONUNBUFFERED=1
+
 # Install needed packages
 case "${CURRENT_DISTRO}" in
     alpine)
