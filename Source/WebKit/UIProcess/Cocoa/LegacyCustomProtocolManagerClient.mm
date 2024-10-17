@@ -81,12 +81,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    if (!_customProtocolManagerProxy)
+    RefPtr customProtocolManagerProxy = _customProtocolManagerProxy.get();
+    if (!customProtocolManagerProxy)
         return;
 
     WebCore::ResourceError coreError(error);
-    _customProtocolManagerProxy->didFailWithError(*_customProtocolID, coreError);
-    _customProtocolManagerProxy->stopLoading(*_customProtocolID);
+    customProtocolManagerProxy->didFailWithError(*_customProtocolID, coreError);
+    customProtocolManagerProxy->stopLoading(*_customProtocolID);
 }
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse
@@ -98,28 +99,31 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    if (!_customProtocolManagerProxy)
+    RefPtr customProtocolManagerProxy = _customProtocolManagerProxy.get();
+    if (!customProtocolManagerProxy)
         return;
 
     WebCore::ResourceResponse coreResponse(response);
-    _customProtocolManagerProxy->didReceiveResponse(*_customProtocolID, coreResponse, WebKit::toCacheStoragePolicy(_storagePolicy));
+    customProtocolManagerProxy->didReceiveResponse(*_customProtocolID, coreResponse, WebKit::toCacheStoragePolicy(_storagePolicy));
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    if (!_customProtocolManagerProxy)
+    RefPtr customProtocolManagerProxy = _customProtocolManagerProxy.get();
+    if (!customProtocolManagerProxy)
         return;
 
-    _customProtocolManagerProxy->didLoadData(*_customProtocolID, span(data));
+    customProtocolManagerProxy->didLoadData(*_customProtocolID, span(data));
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
-    if (!_customProtocolManagerProxy)
+    RefPtr customProtocolManagerProxy = _customProtocolManagerProxy.get();
+    if (!customProtocolManagerProxy)
         return nil;
 
     if (redirectResponse) {
-        _customProtocolManagerProxy->wasRedirectedToRequest(*_customProtocolID, request, redirectResponse);
+        customProtocolManagerProxy->wasRedirectedToRequest(*_customProtocolID, request, redirectResponse);
         return nil;
     }
     return request;
@@ -127,11 +131,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    if (!_customProtocolManagerProxy)
+    RefPtr customProtocolManagerProxy = _customProtocolManagerProxy.get();
+    if (!customProtocolManagerProxy)
         return;
 
-    _customProtocolManagerProxy->didFinishLoading(*_customProtocolID);
-    _customProtocolManagerProxy->stopLoading(*_customProtocolID);
+    customProtocolManagerProxy->didFinishLoading(*_customProtocolID);
+    customProtocolManagerProxy->stopLoading(*_customProtocolID);
 }
 
 @end

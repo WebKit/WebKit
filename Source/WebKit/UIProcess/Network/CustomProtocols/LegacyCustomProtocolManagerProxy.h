@@ -36,15 +36,6 @@
 OBJC_CLASS WKCustomProtocolLoader;
 #endif
 
-namespace WebKit {
-class LegacyCustomProtocolManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LegacyCustomProtocolManagerProxy> : std::true_type { };
-}
-
 namespace WebCore {
 class ResourceError;
 class ResourceRequest;
@@ -56,9 +47,9 @@ namespace WebKit {
 enum class CacheStoragePolicy : uint8_t;
 class NetworkProcessProxy;
 
-class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
+class LegacyCustomProtocolManagerProxy final : public IPC::MessageReceiver {
 public:
-    LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
+    explicit LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();
 
     void startLoading(LegacyCustomProtocolID, const WebCore::ResourceRequest&);
@@ -71,6 +62,9 @@ public:
     void didLoadData(LegacyCustomProtocolID, std::span<const uint8_t>);
     void didFailWithError(LegacyCustomProtocolID, const WebCore::ResourceError&);
     void didFinishLoading(LegacyCustomProtocolID);
+
+    void ref() const;
+    void deref() const;
 
 private:
     Ref<NetworkProcessProxy> protectedProcess();

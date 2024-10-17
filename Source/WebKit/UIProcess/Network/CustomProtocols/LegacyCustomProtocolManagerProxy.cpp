@@ -37,6 +37,16 @@ LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy(NetworkProces
     networkProcessProxy.addMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName(), *this);
 }
 
+void LegacyCustomProtocolManagerProxy::ref() const
+{
+    m_networkProcessProxy->ref();
+}
+
+void LegacyCustomProtocolManagerProxy::deref() const
+{
+    m_networkProcessProxy->deref();
+}
+
 Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 {
     return m_networkProcessProxy.get();
