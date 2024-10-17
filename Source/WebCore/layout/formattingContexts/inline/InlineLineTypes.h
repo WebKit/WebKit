@@ -32,6 +32,8 @@ namespace Layout {
 
 class InlineItem;
 
+using InlineBoxBoundaryTextSpacings = WTF::HashMap<size_t, float, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
+
 enum class LineEndingTruncationPolicy : uint8_t {
     NoTruncation,
     WhenContentOverflowsInInlineDirection,

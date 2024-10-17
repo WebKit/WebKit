@@ -36,7 +36,7 @@ struct LineCandidate;
 
 class LineBuilder final : public AbstractLineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+    LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&, InlineBoxBoundaryTextSpacings = { });
     virtual ~LineBuilder() { };
     LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&) final;
 
@@ -95,6 +95,7 @@ private:
     Vector<InlineItem, 1> m_lineSpanningInlineBoxes;
     OptionSet<UsedFloat> m_lineIsConstrainedByFloat { };
     std::optional<InlineLayoutUnit> m_initialLetterClearGap;
+    InlineBoxBoundaryTextSpacings m_inlineBoxBoundaryTextSpacings { };
 };
 
 }

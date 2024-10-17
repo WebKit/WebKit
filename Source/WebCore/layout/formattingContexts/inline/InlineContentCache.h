@@ -36,7 +36,6 @@
 namespace WebCore {
 namespace Layout {
 
-using InlineBoxBoundaryTextSpacings = WTF::UncheckedKeyHashMap<size_t, float, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(InlineContentCache);

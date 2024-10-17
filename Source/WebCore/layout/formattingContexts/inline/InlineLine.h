@@ -48,7 +48,7 @@ public:
 
     void initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool isFirstFormattedLine);
 
-    void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
     // Reserved for TextOnlySimpleLineBuilder
     void appendTextFast(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
@@ -137,21 +137,22 @@ public:
         TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
         bool hasTextCombine() const;
+        InlineLayoutUnit textSpacingAdjustment() const { return m_textSpacingAdjustment; }
 
         UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
         // FIXME: Maybe add create functions intead?
         Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
-        Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineItem& lineSpanningInlineBoxItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
 
     private:
         friend class Line;
         friend class InlineContentAligner;
         friend class RubyFormattingContext;
 
-        Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
-        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
 
         const RenderStyle& style() const { return m_style; }
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
@@ -192,6 +193,7 @@ public:
         std::optional<TrailingWhitespace> m_trailingWhitespace { };
         std::optional<size_t> m_lastNonWhitespaceContentStart { };
         std::optional<Text> m_textContent;
+        InlineLayoutUnit m_textSpacingAdjustment { 0 };
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
@@ -222,7 +224,7 @@ private:
 
     void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendAtomicInlineBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0.f);
     void appendInlineBoxEnd(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&, const RenderStyle&);
     void appendWordBreakOpportunity(const InlineItem&, const RenderStyle&);

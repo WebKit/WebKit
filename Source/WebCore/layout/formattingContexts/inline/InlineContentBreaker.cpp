@@ -891,9 +891,9 @@ void InlineContentBreaker::ContinuousContent::setTrailingSoftHyphenWidth(InlineL
     m_hasTrailingSoftHyphen = true;
 }
 
-void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth)
+void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit offset, InlineLayoutUnit contentWidth, InlineLayoutUnit textSpacingAdjustment)
 {
-    m_runs.append({ inlineItem, style, offset, contentWidth });
+    m_runs.append({ inlineItem, style, offset, contentWidth, textSpacingAdjustment });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + offset + contentWidth);
 }
 
@@ -905,12 +905,12 @@ void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
     m_isFullyTrimmable = false;
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     ASSERT(inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque());
     m_isTextOnlyContent = false;
     m_hasTrailingWordSeparator = m_hasTrailingWordSeparator && !inlineItem.isAtomicInlineBox();
-    appendToRunList(inlineItem, style, { }, logicalWidth);
+    appendToRunList(inlineItem, style, { }, logicalWidth, textSpacingAdjustment);
     if (inlineItem.isAtomicInlineBox()) {
         // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting trimmed/hung
         // but atomic inline level boxes do.

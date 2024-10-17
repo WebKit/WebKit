@@ -188,7 +188,7 @@ struct LineCandidate {
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
-        void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+        void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment = 0);
         void reset();
         bool isEmpty() const { return m_continuousContent.runs().isEmpty() && !trailingWordBreakOpportunity() && !trailingLineBreak(); }
 
@@ -217,10 +217,10 @@ struct LineCandidate {
     const InlineItem* floatItem { nullptr };
 };
 
-inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
+inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, InlineLayoutUnit textSpacingAdjustment)
 {
     if (inlineItem.isAtomicInlineBox() || inlineItem.isInlineBoxStartOrEnd() || inlineItem.isOpaque())
-        return m_continuousContent.append(inlineItem, style, logicalWidth);
+        return m_continuousContent.append(inlineItem, style, logicalWidth, textSpacingAdjustment);
 
     if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem))
         return m_continuousContent.appendTextContent(*inlineTextItem, style, logicalWidth);
@@ -254,9 +254,10 @@ inline void LineCandidate::reset()
 }
 
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, InlineBoxBoundaryTextSpacings inlineBoxBoundaryTextSpacings)
     : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
+    , m_inlineBoxBoundaryTextSpacings(WTFMove(inlineBoxBoundaryTextSpacings))
 {
 }
 
@@ -664,9 +665,14 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     auto trailingSoftHyphenInlineTextItemIndex = std::optional<size_t> { };
     HashSet<const Box*> inlineBoxListWithClonedDecorationEnd;
     auto accumulatedDecorationEndWidth = InlineLayoutUnit { 0.f };
+    InlineLayoutUnit textSpacingAdjustment = 0.f;
     for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
+        if (inlineItem.isInlineBoxStart()) {
+            if (auto inlineBoxBoundaryTextSpacing = m_inlineBoxBoundaryTextSpacings.find(index); inlineBoxBoundaryTextSpacing != m_inlineBoxBoundaryTextSpacings.end())
+                textSpacingAdjustment = inlineBoxBoundaryTextSpacing->value;
+        }
 
         auto needsLayout = inlineItem.isFloat() || inlineItem.isAtomicInlineBox() || (inlineItem.isOpaque() && inlineItem.layoutBox().isRubyAnnotationBox());
         if (needsLayout) {
@@ -711,7 +717,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
                 else if (inlineBoxListWithClonedDecorationEnd.contains(&layoutBox))
                     accumulatedDecorationEndWidth += logicalWidth;
             }
-            lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth);
+            lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth, textSpacingAdjustment);
             currentLogicalRight += logicalWidth;
             continue;
         }
@@ -1064,7 +1070,7 @@ LineBuilder::Result LineBuilder::processLineBreakingResult(const LineCandidate& 
     if (lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep) {
         // This continuous content can be fully placed on the current line.
         for (auto& run : candidateRuns)
-            m_line.append(run.inlineItem, run.style, run.contentWidth());
+            m_line.append(run.inlineItem, run.style, run.contentWidth(), run.textSpacingAdjustment);
         // We are keeping this content on the line but we need to check if we could have wrapped here
         // in order to be able to revert back to this position if needed.
         // Let's just ignore cases like collapsed leading whitespace for now.
@@ -1163,12 +1169,12 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
                 return;
             }
             // The partial run is the last content to commit.
-            m_line.append(run.inlineItem, run.style, run.contentWidth());
+            m_line.append(run.inlineItem, run.style, run.contentWidth(), run.textSpacingAdjustment);
             if (auto hyphenWidth = partialTrailingContent.hyphenWidth)
                 m_line.addTrailingHyphen(*hyphenWidth);
             return;
         }
-        m_line.append(run.inlineItem, run.style, run.contentWidth());
+        m_line.append(run.inlineItem, run.style, run.contentWidth(), run.textSpacingAdjustment);
     }
 }
 

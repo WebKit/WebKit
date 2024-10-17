@@ -407,6 +407,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
 
     appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), writingMode), lineBox.rootInlineBox().hasContent(), boxes);
 
+    auto textSpacingAdjustment = 0.f;
     for (size_t index = 0; index < lineLayoutResult.inlineContent.size(); ++index) {
         auto& lineRun = lineLayoutResult.inlineContent[index];
         if (lineRun.isWordBreakOpportunity() || lineRun.isInlineBoxEnd())
@@ -422,8 +423,22 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             continue;
         }
 
+        auto adjustLogicalRectForTextSpacing = [&](InlineRect& rect) {
+            rect.expandHorizontally(-textSpacingAdjustment);
+            rect.moveHorizontally(textSpacingAdjustment);
+        };
+
         auto logicalRect = [&]() -> InlineRect {
-            if (lineRun.isText() || lineRun.isSoftLineBreak())
+            if (lineRun.isText()) {
+                auto rect = lineBox.logicalRectForTextRun(lineRun);
+                if (textSpacingAdjustment) {
+                    adjustLogicalRectForTextSpacing(rect);
+                    // text-spacing adjustment is retrivied while handling the run corresponding to the inline box start and must be reset here.
+                    textSpacingAdjustment = 0;
+                }
+                return rect;
+            }
+            if (lineRun.isSoftLineBreak())
                 return lineBox.logicalRectForTextRun(lineRun);
             if (lineRun.isHardLineBreak())
                 return lineBox.logicalRectForLineBreakBox(layoutBox);
@@ -431,7 +446,14 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             if (lineRun.isAtomicInlineBox() || lineRun.isListMarker())
                 return lineBox.logicalBorderBoxForAtomicInlineBox(layoutBox, boxGeometry);
-            if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
+            if (lineRun.isInlineBoxStart()) {
+                auto rect = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+                // The Run representing the InlineBoxStart transports the text spacing adjustment. The adjustment is used here and for the rect representing the following text node. Therefore, we should reset such adjustment when handling the next run which is text.
+                if ((textSpacingAdjustment = lineRun.textSpacingAdjustment()))
+                    adjustLogicalRectForTextSpacing(rect);
+                return rect;
+            }
+            if (lineRun.isLineSpanningInlineBoxStart())
                 return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
             ASSERT_NOT_REACHED();
             return { };
