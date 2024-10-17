@@ -61,7 +61,7 @@ public:
 
     RemotePageProxy* remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
 
-    std::unique_ptr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebProcessProxy&);
+    RefPtr<RemotePageProxy> takeRemotePageInProcessForProvisionalPage(const WebPageProxy&, const WebProcessProxy&);
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::Site& openerSite);
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::Site& provisionalNavigationFailureSite);
 
@@ -72,7 +72,7 @@ private:
 
     UncheckedKeyHashMap<WebCore::Site, WeakPtr<FrameProcess>> m_processMap;
     WeakListHashSet<WebPageProxy> m_pages;
-    WeakHashMap<WebPageProxy, HashSet<std::unique_ptr<RemotePageProxy>>> m_remotePages;
+    WeakHashMap<WebPageProxy, HashSet<Ref<RemotePageProxy>>> m_remotePages;
 };
 
 }

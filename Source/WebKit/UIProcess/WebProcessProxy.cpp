@@ -222,8 +222,8 @@ Vector<Ref<WebPageProxy>> WebProcessProxy::globalPages()
 Vector<Ref<WebPageProxy>> WebProcessProxy::pages() const
 {
     auto pages = mainPages();
-    for (auto& remotePage : m_remotePages) {
-        if (RefPtr page = remotePage.page())
+    for (Ref remotePage : m_remotePages) {
+        if (RefPtr page = remotePage->page())
             pages.append(page.releaseNonNull());
     }
     return pages;
@@ -1310,8 +1310,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     for (auto& page : pages)
         page->dispatchProcessDidTerminate(*this, reason);
 
-    for (auto& remotePage : m_remotePages)
-        remotePage.processDidTerminate(coreProcessIdentifier());
+    for (Ref remotePage : m_remotePages)
+        remotePage->processDidTerminate(coreProcessIdentifier());
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t indexOfObjectFailingDecoding)

@@ -36,15 +36,6 @@
 #include <WebCore/Site.h>
 #include <wtf/TZoneMalloc.h>
 
-namespace WebKit {
-class RemotePageProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemotePageProxy> : std::true_type { };
-}
-
 namespace IPC {
 class Connection;
 class Decoder;
@@ -78,10 +69,10 @@ struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
-class RemotePageProxy : public IPC::MessageReceiver {
+class RemotePageProxy : public IPC::MessageReceiver, public RefCounted<RemotePageProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
+    static Ref<RemotePageProxy> create(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration* = nullptr);
     ~RemotePageProxy();
 
     WebPageProxy* page() const;
@@ -102,6 +93,7 @@ public:
     WebProcessActivityState& processActivityState();
 
 private:
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void decidePolicyForResponse(FrameInfoData&&, std::optional<WebCore::NavigationIdentifier>, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&&);
