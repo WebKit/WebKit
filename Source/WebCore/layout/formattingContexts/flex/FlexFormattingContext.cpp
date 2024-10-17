@@ -129,7 +129,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 };
                 mainAxis.marginStart = marginStart();
                 mainAxis.marginEnd = marginEnd();
-                mainAxis.borderAndPadding = flexContainerMainInnerSize ? flexItemGeometry.horizontalBorderAndPadding() : flexItemGeometry.verticalBorderAndPadding();
+                mainAxis.borderAndPadding = isMainAxisParallelWithInlineAxis ? flexItemGeometry.horizontalBorderAndPadding() : flexItemGeometry.verticalBorderAndPadding();
             };
             setMainAxisValues();
 
