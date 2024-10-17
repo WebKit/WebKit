@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    try {
+        const canvasElement = HTMLDocument.parseHTMLUnsafe('').createElement('canvas');
+        const offscreenCanvas = canvasElement.transferControlToOffscreen();
+        await (await offscreenCanvas.getContext('2d').canvas.convertToBlob({})).arrayBuffer();
+    } catch {}
+    globalThis.testRunner?.notifyDone();
+})();
+</script>
+</body>
+</html>
