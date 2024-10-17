@@ -73,32 +73,35 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
-    _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+    scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
     _inUserInteraction = YES;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        _scrollingTreeNodeDelegate->scrollViewWillStartPanGesture();
-    _scrollingTreeNodeDelegate->scrollWillStart();
+        scrollingTreeNodeDelegate->scrollViewWillStartPanGesture();
+    scrollingTreeNodeDelegate->scrollWillStart();
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
     if (![scrollView isZooming]) {
         auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
-        _scrollingTreeNodeDelegate->clearActiveTouchActions();
+        scrollingTreeNodeDelegate->clearActiveTouchActions();
         
         if (touchActions && !touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation })) {
             auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
@@ -109,61 +112,64 @@
         }
     }
 
-    std::optional<unsigned> originalHorizontalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex();
-    std::optional<unsigned> originalVerticalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex();
+    std::optional<unsigned> originalHorizontalSnapPosition = scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex();
+    std::optional<unsigned> originalVerticalSnapPosition = scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex();
 
     WebCore::FloatSize viewportSize(static_cast<float>(CGRectGetWidth([scrollView bounds])), static_cast<float>(CGRectGetHeight([scrollView bounds])));
     const auto& snapOffsetsInfo = _scrollingTreeNodeDelegate->scrollingNode().snapOffsetsInfo();
     if (!snapOffsetsInfo.horizontalSnapOffsets.isEmpty()) {
         auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Horizontal, viewportSize, WebCore::FloatPoint(*targetContentOffset), velocity.x, scrollView.contentOffset.x);
-        _scrollingTreeNodeDelegate->scrollingNode().setCurrentHorizontalSnapPointIndex(index);
+        scrollingTreeNodeDelegate->scrollingNode().setCurrentHorizontalSnapPointIndex(index);
         if (targetContentOffset->x >= 0 && targetContentOffset->x <= scrollView.contentSize.width)
             targetContentOffset->x = potentialSnapPosition;
     }
 
     if (!snapOffsetsInfo.verticalSnapOffsets.isEmpty()) {
         auto [potentialSnapPosition, index] = snapOffsetsInfo.closestSnapOffset(WebCore::ScrollEventAxis::Vertical, viewportSize, WebCore::FloatPoint(*targetContentOffset), velocity.y, scrollView.contentOffset.y);
-        _scrollingTreeNodeDelegate->scrollingNode().setCurrentVerticalSnapPointIndex(index);
+        scrollingTreeNodeDelegate->scrollingNode().setCurrentVerticalSnapPointIndex(index);
         if (targetContentOffset->y >= 0 && targetContentOffset->y <= scrollView.contentSize.height)
             targetContentOffset->y = potentialSnapPosition;
     }
 
     if (originalHorizontalSnapPosition != _scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex()
         || originalVerticalSnapPosition != _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex()) {
-        _scrollingTreeNodeDelegate->currentSnapPointIndicesDidChange(_scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex(), _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex());
+        scrollingTreeNodeDelegate->currentSnapPointIndicesDidChange(_scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex(), scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex());
     }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)willDecelerate
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
     if (_inUserInteraction && !willDecelerate) {
         _inUserInteraction = NO;
-        _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
-        _scrollingTreeNodeDelegate->scrollDidEnd();
+        scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        scrollingTreeNodeDelegate->scrollDidEnd();
     }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
     if (_inUserInteraction) {
         _inUserInteraction = NO;
-        _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
-        _scrollingTreeNodeDelegate->scrollDidEnd();
+        scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        scrollingTreeNodeDelegate->scrollDidEnd();
     }
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
-    _scrollingTreeNodeDelegate->scrollDidEnd();
+    scrollingTreeNodeDelegate->scrollDidEnd();
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
@@ -173,23 +179,25 @@
 
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
-    _scrollingTreeNodeDelegate->cancelPointersForGestureRecognizer(gestureRecognizer);
+    scrollingTreeNodeDelegate->cancelPointersForGestureRecognizer(gestureRecognizer);
 }
 
 #pragma mark - WKBaseScrollViewDelegate
 
 - (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return UIAxisNeither;
 
     auto panGestureRecognizer = scrollView.panGestureRecognizer;
-    _scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
+    scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
 
-    auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
+    auto touchActions = scrollingTreeNodeDelegate->activeTouchActions();
     if (!touchActions) {
         [self cancelPointersForGestureRecognizer:panGestureRecognizer];
         return UIAxisNeither;
@@ -216,11 +224,12 @@
 
 - (WKBEScrollView *)parentScrollViewForScrollView:(WKBEScrollView *)scrollView
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return nil;
 
     // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
-    return dynamic_objc_cast<WKBEScrollView>(_scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
+    return dynamic_objc_cast<WKBEScrollView>(scrollingTreeNodeDelegate->findActingScrollParent(scrollView));
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -236,10 +245,11 @@
 
 - (void)scrollView:(WKBaseScrollView *)scrollView handleScrollUpdate:(WKBEScrollViewScrollUpdate *)update completion:(void (^)(BOOL handled))completion
 {
-    if (UNLIKELY(!_scrollingTreeNodeDelegate))
+    CheckedPtr scrollingTreeNodeDelegate = _scrollingTreeNodeDelegate.get();
+    if (UNLIKELY(!scrollingTreeNodeDelegate))
         return;
 
-    _scrollingTreeNodeDelegate->handleAsynchronousCancelableScrollEvent(scrollView, update, completion);
+    scrollingTreeNodeDelegate->handleAsynchronousCancelableScrollEvent(scrollView, update, completion);
 }
 
 #endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
