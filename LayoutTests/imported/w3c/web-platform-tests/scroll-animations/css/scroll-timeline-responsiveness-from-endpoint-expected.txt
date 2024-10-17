@@ -1,3 +1,3 @@
 
-FAIL Test that the scroll animation is still responsive after moving from 100% assert_equals: 'actual' unit type must be 'percent' for "Timeline time when animation is ready" expected (string) "percent" but got (undefined) undefined
+FAIL Test that the scroll animation is still responsive after moving from 100% promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 

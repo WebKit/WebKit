@@ -1,4 +1,4 @@
 
-FAIL Keyframes with same easing and timeline offset are merged. assert_equals: number of frames:  expected 4 but got 0
-FAIL Keyframes with same timeline offset but different easing function are not merged. assert_equals: number of frames:  expected 5 but got 0
+FAIL Keyframes with same easing and timeline offset are merged. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Keyframes with same timeline offset but different easing function are not merged. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 

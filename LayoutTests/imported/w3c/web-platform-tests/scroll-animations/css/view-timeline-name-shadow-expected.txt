@@ -1,6 +1,6 @@
 
-FAIL Outer animation can see view timeline defined by :host assert_equals: expected (string) "y" but got (undefined) undefined
-FAIL Outer animation can see view timeline defined by ::slotted assert_equals: expected (string) "y" but got (undefined) undefined
-FAIL Inner animation can see view timeline defined by ::part assert_equals: expected (string) "x" but got (undefined) undefined
-FAIL Slotted element can see view timeline within the shadow assert_equals: expected (string) "y" but got (undefined) undefined
+FAIL Outer animation can see view timeline defined by :host assert_equals: expected 1 but got 0
+FAIL Outer animation can see view timeline defined by ::slotted assert_equals: expected 1 but got 0
+FAIL Inner animation can see view timeline defined by ::part assert_equals: expected 1 but got 0
+FAIL Slotted element can see view timeline within the shadow assert_equals: expected 1 but got 0
 

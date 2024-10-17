@@ -1,3 +1,5 @@
 
-FAIL Keyframes with timeline-offsets ignored when timeline is inactive assert_equals: number of frames: Initial keyframes with active view-timeline expected 5 but got 3
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Keyframes with timeline-offsets ignored when timeline is inactive Test timed out
 

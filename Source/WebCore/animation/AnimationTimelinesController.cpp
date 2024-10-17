@@ -308,5 +308,29 @@ void AnimationTimelinesController::maybeClearCachedCurrentTime()
         m_cachedCurrentTime = std::nullopt;
 }
 
+void AnimationTimelinesController::registerNamedScrollTimeline(const AtomString& name, Element& source, ScrollAxis axis)
+{
+    auto it = m_nameToScrollTimelineMap.find(name);
+    if (it != m_nameToScrollTimelineMap.end()) {
+        auto& existingScrollTimeline = it->value;
+        existingScrollTimeline->setSource(&source);
+        existingScrollTimeline->setAxis(axis);
+    } else {
+        auto newScrollTimeline = ScrollTimeline::create(name, axis);
+        newScrollTimeline->setSource(&source);
+        m_nameToScrollTimelineMap.set(name, WTFMove(newScrollTimeline));
+    }
+}
+
+void AnimationTimelinesController::unregisterNamedScrollTimeline(const AtomString& name)
+{
+    m_nameToScrollTimelineMap.remove(name);
+}
+
+ScrollTimeline* AnimationTimelinesController::scrollTimelineForName(const AtomString& name) const
+{
+    return m_nameToScrollTimelineMap.get(name);
+}
+
 } // namespace WebCore
 

@@ -27,6 +27,7 @@
 
 #include "FrameRateAligner.h"
 #include "ReducedResolutionSeconds.h"
+#include "ScrollAxis.h"
 #include "Timer.h"
 #include <wtf/CancellableTask.h>
 #include <wtf/CheckedRef.h>
@@ -36,9 +37,10 @@
 
 namespace WebCore {
 
+class AnimationTimeline;
 class CSSTransition;
 class Document;
-class AnimationTimeline;
+class ScrollTimeline;
 class WebAnimation;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
@@ -62,12 +64,17 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     bool animationsAreSuspended() const { return m_isSuspended; }
 
+    void registerNamedScrollTimeline(const AtomString&, Element&, ScrollAxis);
+    void unregisterNamedScrollTimeline(const AtomString&);
+    ScrollTimeline* scrollTimelineForName(const AtomString& name) const;
+
 private:
     ReducedResolutionSeconds liveCurrentTime() const;
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
 
     UncheckedKeyHashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
+    UncheckedKeyHashMap<AtomString, Ref<ScrollTimeline>> m_nameToScrollTimelineMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;

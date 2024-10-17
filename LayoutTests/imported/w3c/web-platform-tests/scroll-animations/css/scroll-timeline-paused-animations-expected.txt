@@ -1,4 +1,4 @@
 
-FAIL Test that the scroll animation is paused assert_equals: 'actual' unit type must be 'percent' for "timeline time reset" expected (string) "percent" but got (undefined) undefined
-FAIL Test that the scroll animation is paused by updating animation-play-state assert_equals: 'actual' unit type must be 'percent' for "timeline time reset" expected (string) "percent" but got (undefined) undefined
+FAIL Test that the scroll animation is paused promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Test that the scroll animation is paused by updating animation-play-state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 

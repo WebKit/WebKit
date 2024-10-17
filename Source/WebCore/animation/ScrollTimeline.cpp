@@ -101,6 +101,27 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
     m_scroller = scroller;
 }
 
+void ScrollTimeline::setSource(Element* source)
+{
+    if (source == m_source)
+        return;
+
+    RefPtr previousSource = m_source.get();
+    m_source = source;
+    RefPtr newSource = m_source.get();
+
+    if (previousSource && newSource && &previousSource->document() == &newSource->document())
+        return;
+
+    if (previousSource) {
+        if (CheckedPtr timelinesController = previousSource->protectedDocument()->timelinesController())
+            timelinesController->removeTimeline(*this);
+    }
+
+    if (newSource)
+        newSource->protectedDocument()->ensureTimelinesController().addTimeline(*this);
+}
+
 void ScrollTimeline::dump(TextStream& ts) const
 {
     auto hasScroller = m_scroller != Scroller::Nearest;
