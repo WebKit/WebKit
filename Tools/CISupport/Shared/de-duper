@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import hashlib
+import os
+import sys
+
+CHUNK_SIZE = 8192
+
+
+def parse_args(args):
+    parser = argparse.ArgumentParser(
+        description='Program which de-duplicates PNG files in a directory using hard links'
+    )
+    parser.add_argument(
+        'root', nargs='?',
+        help='Path to root of directory to de-duplicate PNG files in',
+        type=str, default='.',
+    )
+    parser.add_argument(
+        '-s', '--storage',
+        help='Directory to store images the program is linking to',
+        type=str,
+        default='storage',
+    )
+    parser.add_argument(
+        '-d', '--dry-run',
+        action='store_true',
+        dest='dry_run',
+        default=False,
+    )
+    return parser.parse_args(args)
+
+
+def sha1(path):
+    try:
+        with open(path, 'rb') as file:
+            hsh = hashlib.sha1()
+            chunk = file.read(CHUNK_SIZE)
+            while chunk:
+                hsh.update(chunk)
+                chunk = file.read(CHUNK_SIZE)
+        return hsh.hexdigest()
+    except OSError:
+        return None
+
+
+def main(args):
+    args = parse_args(args)
+
+    args.root = os.path.abspath(args.root)
+    args.storage = os.path.join(args.root, args.storage)
+    if not os.path.isdir(args.root):
+        print(f"'{args.root}' is a path which does not exist\n", file=sys.stderr)
+        return 1
+    storage_parent = os.path.dirname(args.storage)
+    if not os.path.isdir(storage_parent):
+        print(f"'{storage_parent}' is a path which does not exist\n", file=sys.stderr)
+        return 1
+
+    if not os.path.isdir(args.storage):
+        os.mkdir(args.storage)
+
+    cleaned_up = 0
+    de_duped = 0
+    processed = 0
+
+    existing_links = set()
+    with os.scandir(args.storage) as existing_files:
+        for existing_file in existing_files:
+            if not existing_file.name.startswith('.') and existing_file.is_file():
+                continue
+            if '.' not in existing_file.name:
+                continue
+            sha_value, extension = existing_file.name.split('.', 1)
+            if extension != 'png':
+                continue
+            if not existing_file.inode() <= 1:
+                if args.dry_run:
+                    print(f'[dry-run] Removing {existing_file.path}')
+                else:
+                    os.remove(existing_file.path)
+                cleaned_up += 1
+            else:
+                existing_links.add(sha_value)
+
+    for root, _, files in os.walk(args.root, topdown=False):
+        for file in files:
+            if not file.endswith('.png'):
+                continue
+            processed += 1
+            full_path = os.path.join(root, file)
+            if os.stat(full_path).st_nlink > 1:
+                continue
+            sha_value = sha1(full_path)
+            if sha_value in existing_links:
+                if args.dry_run:
+                    print(f'[dry-run] Linking {full_path} to {sha_value}.png')
+                else:
+                    os.remove(full_path)
+                    os.link(os.path.join(args.storage, f'{sha_value}.png'), full_path)
+                de_duped += 1
+            elif not sha_value:
+                print(f"Failed to compute SHA for '{full_path}'\n", file=sys.stderr)
+            else:
+                if args.dry_run:
+                    print(f'[dry-run] Storing and linking {full_path} to {sha_value}.png')
+                else:
+                    os.link(full_path, os.path.join(args.storage, f'{sha_value}.png'))
+                existing_links.add(sha_value)
+
+    print(f'{len(existing_links)} unique png files in storage of {processed} processed')
+    print(f'{cleaned_up} files removed, {de_duped} de-duped')
+
+    return 0
+
+if '__main__' == __name__:
+     sys.exit(main(sys.argv[1:]))
