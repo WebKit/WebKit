@@ -164,7 +164,7 @@ Element* MathMLSelectElement::getSelectedSemanticsChild()
     if (!child)
         return nullptr;
 
-    if (!is<MathMLElement>(*child) || !downcast<MathMLElement>(*child).isPresentationMathML()) {
+    if (auto* childElement = dynamicDowncast<MathMLElement>(*child); !childElement || !childElement->isPresentationMathML()) {
         // The first child is not a presentation MathML element. Hence we move to the second child and start searching an annotation child that could be displayed.
         child = child->nextElementSibling();
     } else if (!downcast<MathMLElement>(*child).isSemanticAnnotation()) {
