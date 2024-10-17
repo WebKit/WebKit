@@ -33,15 +33,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class MockHidConnection;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::MockHidConnection> : std::true_type { };
-}
-
-namespace WebKit {
 
 // The following basically simulates an external HID token that:
 //    1. Supports only one protocol, either CTAP2 or U2F.
@@ -52,11 +43,14 @@ namespace WebKit {
 // There are indefinite stages for each U2F request:
 // FSM: Info::Init => Info::Msg => [Request::Init => Request::Msg]+
 // According to different combinations of error and stages, error will manifest differently.
-class MockHidConnection final : public CanMakeWeakPtr<MockHidConnection>, public HidConnection {
+class MockHidConnection final : public HidConnection {
 public:
-    MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
+    static Ref<MockHidConnection> create(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
+    virtual ~MockHidConnection() = default;
 
 private:
+    MockHidConnection(IOHIDDeviceRef, const WebCore::MockWebAuthenticationConfiguration&);
+
     // HidConnection
     void initialize() final;
     void terminate() final;

@@ -86,9 +86,9 @@ void HidService::platformStartDiscovery()
 #endif
 }
 
-UniqueRef<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
+Ref<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return makeUniqueRef<HidConnection>(device);
+    return HidConnection::create(device);
 }
 
 void HidService::deviceAdded(IOHIDDeviceRef device)

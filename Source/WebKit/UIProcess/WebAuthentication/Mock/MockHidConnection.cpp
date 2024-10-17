@@ -44,6 +44,11 @@ using namespace WebCore;
 using namespace cbor;
 using namespace fido;
 
+Ref<MockHidConnection> MockHidConnection::create(IOHIDDeviceRef device, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockHidConnection(device, configuration));
+}
+
 MockHidConnection::MockHidConnection(IOHIDDeviceRef device, const MockWebAuthenticationConfiguration& configuration)
     : HidConnection(device)
     , m_configuration(configuration)

@@ -30,7 +30,6 @@
 #include "FidoService.h"
 #include <pal/spi/cocoa/IOKitSPI.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
@@ -48,7 +47,7 @@ private:
 
     // Overrided by MockHidService.
     virtual void platformStartDiscovery();
-    virtual UniqueRef<HidConnection> createHidConnection(IOHIDDeviceRef) const;
+    virtual Ref<HidConnection> createHidConnection(IOHIDDeviceRef) const;
 
     RetainPtr<IOHIDManagerRef> m_manager;
 };

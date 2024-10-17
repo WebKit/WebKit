@@ -59,7 +59,10 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
 }
 #endif // HAVE(SECURITY_KEY_API)
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(HidConnection);
+Ref<HidConnection> HidConnection::create(IOHIDDeviceRef device)
+{
+    return adoptRef(*new HidConnection(device));
+}
 
 HidConnection::HidConnection(IOHIDDeviceRef device)
     : m_device(device)

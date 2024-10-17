@@ -48,9 +48,9 @@ void MockHidService::platformStartDiscovery()
     LOG_ERROR("No hid authenticators is available.");
 }
 
-UniqueRef<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
+Ref<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
 {
-    return makeUniqueRef<MockHidConnection>(device, m_configuration);
+    return MockHidConnection::create(device, m_configuration);
 }
 
 } // namespace WebKit

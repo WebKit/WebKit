@@ -38,7 +38,7 @@ public:
 
 private:
     void platformStartDiscovery() final;
-    UniqueRef<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
+    Ref<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
 };

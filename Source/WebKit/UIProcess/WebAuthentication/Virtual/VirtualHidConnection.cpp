@@ -45,6 +45,11 @@ using namespace WebCore;
 
 const size_t CtapChannelIdSize = 4;
 
+Ref<VirtualHidConnection> VirtualHidConnection::create(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
+{
+    return adoptRef(*new VirtualHidConnection(authenticatorId, configuration, manager));
+}
+
 VirtualHidConnection::VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration& configuration, const WeakPtr<VirtualAuthenticatorManager>& manager)
     : HidConnection(nullptr)
     , m_manager(manager)

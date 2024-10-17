@@ -61,7 +61,7 @@ public:
         Read
     };
 
-    explicit CtapHidDriverWorker(UniqueRef<HidConnection>&&);
+    explicit CtapHidDriverWorker(Ref<HidConnection>&&);
     ~CtapHidDriverWorker();
 
     void transact(fido::FidoHidMessage&&, MessageCallback&&);
@@ -73,7 +73,9 @@ private:
     void returnMessage();
     void reset();
 
-    UniqueRef<HidConnection> m_connection;
+    Ref<HidConnection> protectedConnection() { return m_connection; }
+
+    Ref<HidConnection> m_connection;
     State m_state { State::Idle };
     std::optional<fido::FidoHidMessage> m_requestMessage;
     std::optional<fido::FidoHidMessage> m_responseMessage;
@@ -93,7 +95,7 @@ public:
         Busy
     };
 
-    explicit CtapHidDriver(UniqueRef<HidConnection>&&);
+    explicit CtapHidDriver(Ref<HidConnection>&&);
 
     void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
     void cancel() final;
