@@ -8245,9 +8245,9 @@
          "yoav@yoav.ws",
          "yoav.weiss@shopify.com"
       ],
-      "github": "yoavweiss",
+      "github" : "yoavweiss",
       "name" : "Yoav Weiss",
-      "status": "committer"
+      "status" : "committer"
    },
    {
       "emails" : [
