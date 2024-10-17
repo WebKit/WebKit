@@ -118,6 +118,8 @@ Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp
 Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp
 Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm
 Modules/async-clipboard/mac/ClipboardImageReaderMac.mm
+Modules/compression/cocoa/CompressionStreamEncoderCocoa.mm
+Modules/compression/cocoa/DecompressionStreamDecoderCocoa.mm
 Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp
 Modules/model-element/scenekit/SceneKitModel.mm
 Modules/model-element/scenekit/SceneKitModelLoader.mm
