@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointerover': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointermove': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointerdown': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointermove': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointerup': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'pointerout': Inside passive event listener.
 
 PASS Canceling passive pointerevents does not affect compat mouseevents
 

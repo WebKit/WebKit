@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'wheel': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'wheel': Inside passive event listener.
 Tests that a wheel event handler on the window is passive (cannot prevent scrolling)
 PASS windowScrollEventCount > 0 is true
 PASS defaultPrevented is false

@@ -32,6 +32,8 @@
 #include "Performance.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -170,6 +172,15 @@ void Event::setUnderlyingEvent(Event* underlyingEvent)
             return;
     }
     m_underlyingEvent = underlyingEvent;
+}
+
+void Event::preventDefault()
+{
+    if (!setCanceledFlagIfPossible() && m_isExecutingPassiveEventListener) {
+        auto consoleMessage = makeString("Unable to preventDefault() on event of type '"_s, m_type, "': "_s, "Inside passive event listener."_s);
+        if (RefPtr scriptExecutionContext = m_target ? m_target->scriptExecutionContext() : nullptr)
+            scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Warning, consoleMessage));
+    }
 }
 
 DOMHighResTimeStamp Event::timeStampForBindings(ScriptExecutionContext& context) const

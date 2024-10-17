@@ -130,7 +130,7 @@ public:
     void resetAfterDispatch();
 
     bool defaultPrevented() const { return m_wasCanceled; }
-    void preventDefault();
+    WEBCORE_EXPORT void preventDefault();
 
     bool defaultHandled() const { return m_defaultHandled; }
     void setDefaultHandled() { m_defaultHandled = true; }
@@ -168,7 +168,7 @@ protected:
 private:
     explicit Event(MonotonicTime createTime, enum EventInterfaceType, const AtomString& type, IsTrusted, CanBubble, IsCancelable, IsComposed);
 
-    void setCanceledFlagIfPossible();
+    bool setCanceledFlagIfPossible();
 
     unsigned m_isInitialized : 1;
     unsigned m_canBubble : 1;
@@ -204,11 +204,6 @@ private:
     RefPtr<Event> m_underlyingEvent;
 };
 
-inline void Event::preventDefault()
-{
-    setCanceledFlagIfPossible();
-}
-
 inline void Event::setLegacyReturnValue(bool returnValue)
 {
     if (!returnValue)
@@ -216,12 +211,13 @@ inline void Event::setLegacyReturnValue(bool returnValue)
 }
 
 // https://dom.spec.whatwg.org/#set-the-canceled-flag
-inline void Event::setCanceledFlagIfPossible()
+inline bool Event::setCanceledFlagIfPossible()
 {
-    if (m_cancelable && !m_isExecutingPassiveEventListener)
+    if (m_cancelable && !m_isExecutingPassiveEventListener) {
         m_wasCanceled = true;
-    // FIXME: Specification suggests we log something to the console when preventDefault is called but
-    // doesn't do anything because the event is not cancelable or is executing passive event listeners.
+        return true;
+    }
+    return false;
 }
 
 inline void Event::setCancelBubble(bool cancel)
