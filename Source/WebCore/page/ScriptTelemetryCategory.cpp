@@ -62,6 +62,8 @@ ASCIILiteral description(ScriptTelemetryCategory category)
         return "ScreenOrViewport"_s;
     case ScriptTelemetryCategory::Speech:
         return "Speech"_s;
+    case ScriptTelemetryCategory::FormControls:
+        return "FormControls"_s;
     }
     ASSERT_NOT_REACHED();
     return { };

@@ -253,6 +253,8 @@ void HTMLSelectElement::remove(int optionIndex)
 
 String HTMLSelectElement::value() const
 {
+    if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
+        return emptyString();
     for (auto& item : listItems()) {
         if (RefPtr option = dynamicDowncast<HTMLOptionElement>(item.get())) {
             if (option->selected())

@@ -338,6 +338,8 @@ void HTMLTextAreaElement::updateValue() const
 
 String HTMLTextAreaElement::value() const
 {
+    if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
+        return emptyString();
     updateValue();
     return m_value;
 }
