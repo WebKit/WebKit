@@ -1080,6 +1080,11 @@ void PluginView::setPDFDisplayModeForTesting(const String& mode)
     protectedPlugin()->setPDFDisplayModeForTesting(mode);
 }
 
+void PluginView::unlockPDFDocumentForTesting(const String& password)
+{
+    protectedPlugin()->attemptToUnlockPDF(password);
+}
+
 Vector<WebCore::FloatRect> PluginView::pdfAnnotationRectsForTesting() const
 {
     return protectedPlugin()->annotationRectsForTesting();

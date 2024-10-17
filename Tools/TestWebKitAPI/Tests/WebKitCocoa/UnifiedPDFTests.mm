@@ -42,8 +42,6 @@
 
 namespace TestWebKitAPI {
 
-#if PLATFORM(MAC)
-
 static constexpr auto defaultSamplingInterval = 100;
 static Vector<WebCore::Color> sampleColorsInWebView(TestWKWebView *webView, unsigned interval = defaultSamplingInterval)
 {
@@ -57,6 +55,8 @@ static Vector<WebCore::Color> sampleColorsInWebView(TestWKWebView *webView, unsi
     }
     return samples;
 }
+
+#if PLATFORM(MAC)
 
 UNIFIED_PDF_TEST(KeyboardScrollingInSinglePageMode)
 {
@@ -169,6 +169,27 @@ UNIFIED_PDF_TEST(StablePresentationUpdateCallback)
 }
 
 #endif
+
+UNIFIED_PDF_TEST(PasswordFormShouldDismissAfterNavigation)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"notEncrypted" withExtension:@"pdf"]]];
+    auto colorsBefore = sampleColorsInWebView(webView.get(), 2);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"encrypted" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+
+    [webView synchronouslyGoBack];
+    [webView synchronouslyGoForward];
+    // FIXME: Perform the document unlock after detecting the plugin element, either through MutationObserver scripting or some TestWKWebView hook.
+    Util::runFor(50_ms);
+
+    [webView objectByEvaluatingJavaScript:@"internals.unlockPDFDocumentForTesting(document.querySelector('embed'), 'test')"];
+    auto colorsAfter = sampleColorsInWebView(webView.get(), 2);
+
+    EXPECT_EQ(colorsBefore, colorsAfter);
+}
 
 } // namespace TestWebKitAPI
 

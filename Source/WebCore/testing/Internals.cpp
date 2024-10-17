@@ -7573,6 +7573,19 @@ void Internals::setPDFDisplayModeForTesting(Element& element, const String& disp
     pluginViewBase->setPDFDisplayModeForTesting(displayMode);
 }
 
+void Internals::unlockPDFDocumentForTesting(Element& element, const String& password) const
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return;
+
+    RefPtr pluginViewBase = pluginElement->pluginWidget();
+    if (!pluginViewBase)
+        return;
+
+    pluginViewBase->unlockPDFDocumentForTesting(password);
+}
+
 bool Internals::sendEditingCommandToPDFForTesting(Element& element, const String& commandName, const String& argument) const
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);

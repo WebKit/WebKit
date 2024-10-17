@@ -1400,6 +1400,7 @@ enum RenderingMode {
     sequence<PDFAnnotationRect> pdfAnnotationRectsForTesting(Element element);
     undefined registerPDFTest(VoidCallback callback, Element element);
     undefined setPDFDisplayModeForTesting(Element element, DOMString mode);
+    undefined unlockPDFDocumentForTesting(Element element, DOMString password);
     boolean sendEditingCommandToPDFForTesting(Element element, DOMString commandName, optional DOMString argument = "");
 
     readonly attribute DOMString defaultSpatialTrackingLabel;

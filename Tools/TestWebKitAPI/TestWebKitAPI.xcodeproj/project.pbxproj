@@ -123,6 +123,7 @@
 		318210CE2C59AEFF00C334B4 /* CSSTokenizerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 318210CD2C59AEFF00C334B4 /* CSSTokenizerTests.cpp */; };
 		31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31E9BDA0247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm */; };
 		33976D8324DC479B00812304 /* IndexSparseSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33976D8224DC479B00812304 /* IndexSparseSet.cpp */; };
+		33B767682CC066E400E4314F /* notEncrypted.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33B767672CC066E400E4314F /* notEncrypted.pdf */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33C2C9C12651F5B900E407F6 /* SmallSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C2C9C02651F5B900E407F6 /* SmallSet.cpp */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -1886,6 +1887,7 @@
 				A17C47D82C98E5C20023F3C7 /* nested-frames.html in Copy Resources */,
 				A17C47D92C98E5C20023F3C7 /* nested-lists.html in Copy Resources */,
 				A17C46D92C98E54B0023F3C7 /* no-autoplay-with-controls.html in Copy Resources */,
+				33B767682CC066E400E4314F /* notEncrypted.pdf in Copy Resources */,
 				A17C47DA2C98E5C20023F3C7 /* notify-resourceLoadObserver.html in Copy Resources */,
 				A17C47DB2C98E5C20023F3C7 /* now-playing.html in Copy Resources */,
 				A17C47DC2C98E5C20023F3C7 /* offscreen-iframe-of-media-document.html in Copy Resources */,
@@ -2382,6 +2384,7 @@
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIWebNavigation.mm; sourceTree = "<group>"; };
 		33976D8224DC479B00812304 /* IndexSparseSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexSparseSet.cpp; sourceTree = "<group>"; };
+		33B767672CC066E400E4314F /* notEncrypted.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = notEncrypted.pdf; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
 		33C2C9C02651F5B900E407F6 /* SmallSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SmallSet.cpp; sourceTree = "<group>"; };
@@ -5751,6 +5754,7 @@
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
 				5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */,
 				C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */,
+				33B767672CC066E400E4314F /* notEncrypted.pdf */,
 				4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */,
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
 				468BC454226539C800A36C96 /* open-window-then-write-to-it.html */,
