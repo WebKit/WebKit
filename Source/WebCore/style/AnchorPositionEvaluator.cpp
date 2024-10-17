@@ -430,9 +430,14 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
     if (anchorPositionedState.stage == AnchorPositionResolutionStage::Initial)
         return { };
 
-    // Anchor value may now be resolved using layout information
     CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
-    ASSERT(anchorPositionedRenderer);
+    if (!anchorPositionedRenderer) {
+        // If no render tree information is present, the procedure is finished.
+        anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
+        return { };
+    }
+
+    // Anchor value may now be resolved using layout information
 
     RefPtr anchorElement = elementName.isNull() ? nullptr : anchorPositionedState.anchorElements.get(elementName);
     if (!anchorElement) {
@@ -576,7 +581,9 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
     for (auto elementAndState : document.styleScope().anchorPositionedStates()) {
         auto& state = *elementAndState.value;
         if (state.stage == AnchorPositionResolutionStage::Initial) {
-            state.anchorElements = findAnchorsForAnchorPositionedElement(Ref { elementAndState.key }, state.anchorNames, anchorsForAnchorName);
+            Ref element { elementAndState.key };
+            if (element->renderer())
+                state.anchorElements = findAnchorsForAnchorPositionedElement(element, state.anchorNames, anchorsForAnchorName);
             state.stage = AnchorPositionResolutionStage::FoundAnchors;
             continue;
         }

@@ -8087,6 +8087,7 @@ imported/w3c/web-platform-tests/css/css-anchor-position/position-area-inline-con
 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-target-with-children.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-try-switch-from-fixed-anchor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-try-switch-to-fixed-anchor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-add-no-overflow.html [ ImageOnlyFailure ]
@@ -8114,10 +8115,6 @@ imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-remo
 
 # timeouts
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.html [ Skip ]
-
-# crashes
-imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-004.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-anchor-position/position-anchor-target-with-children.html [ Skip ]
 
 # -- End: Anchor Positioning -- #
 
