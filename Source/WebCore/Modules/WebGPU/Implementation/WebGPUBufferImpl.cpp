@@ -91,9 +91,7 @@ std::span<uint8_t> BufferImpl::getBufferContents()
     if (!m_backing.get())
         return { };
 
-    auto* pointer = wgpuBufferGetBufferContents(m_backing.get());
-    auto bufferSize = wgpuBufferGetCurrentSize(m_backing.get());
-    return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
+    return wgpuBufferGetBufferContents(m_backing.get());
 }
 
 #if ENABLE(WEBGPU_SWIFT)

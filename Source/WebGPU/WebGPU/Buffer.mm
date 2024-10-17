@@ -272,9 +272,11 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
-uint8_t* Buffer::getBufferContents()
+std::span<uint8_t> Buffer::getBufferContents()
 {
-    return static_cast<uint8_t*>(m_buffer.contents);
+    auto* pointer = static_cast<uint8_t*>(m_buffer.contents);
+    auto bufferSize = currentSize();
+    return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
 }
 
 NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
@@ -541,7 +543,7 @@ void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
     return WebGPU::fromAPI(buffer).getMappedRange(offset, size);
 }
 
-void* wgpuBufferGetBufferContents(WGPUBuffer buffer)
+std::span<uint8_t> wgpuBufferGetBufferContents(WGPUBuffer buffer)
 {
     return WebGPU::fromAPI(buffer).getBufferContents();
 }

@@ -97,7 +97,7 @@ public:
     Device& device() const { return m_device; }
     bool isDestroyed() const;
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
-    uint8_t* getBufferContents();
+    std::span<uint8_t> getBufferContents();
     bool indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType, uint32_t firstInstance) const;
     bool indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
     bool indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
