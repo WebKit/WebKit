@@ -195,7 +195,7 @@ public:
     template <typename T>
     void addSupplement()
     {
-        m_supplements.add(T::supplementName(), makeUnique<T>(*this));
+        m_supplements.add(T::supplementName(), makeUniqueWithoutRefCountedCheck<T>(*this));
     }
 
     WebPage* webPage(WebCore::PageIdentifier) const;

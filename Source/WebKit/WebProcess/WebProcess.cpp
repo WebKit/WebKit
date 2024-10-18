@@ -2272,7 +2272,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 #endif
 
     if (useGPUProcessForMedia)
-        mediaEngineConfigurationFactory().registerFactory();
+        Ref { mediaEngineConfigurationFactory() }->registerFactory();
     else
         MediaEngineConfigurationFactory::resetFactories();
 
