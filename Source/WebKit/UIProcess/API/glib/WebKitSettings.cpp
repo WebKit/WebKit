@@ -4413,7 +4413,7 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
 const gchar*
 webkit_settings_get_webrtc_udp_ports_range(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), nullptr);
 #if ENABLE(WEB_RTC)
     return settings->priv->webrtcUDPPortsRange.data();
 #else
