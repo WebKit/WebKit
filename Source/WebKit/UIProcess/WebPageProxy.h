@@ -2055,6 +2055,7 @@ public:
     void updateCurrentModifierState();
 
     ProvisionalPageProxy* provisionalPageProxy() const { return m_provisionalPage.get(); }
+    RefPtr<ProvisionalPageProxy> protectedProvisionalPageProxy() const;
     void commitProvisionalPage(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
     void destroyProvisionalPage();
 
@@ -2740,7 +2741,7 @@ private:
     };
 
     void launchProcess(const WebCore::Site&, ProcessLaunchReason);
-    void swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy>);
+    void swapToProvisionalPage(Ref<ProvisionalPageProxy>&&);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
     void finishAttachingToWebProcess(const WebCore::Site&, ProcessLaunchReason);
@@ -3596,7 +3597,7 @@ private:
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
     bool m_isServiceWorkerPage { false };
 
-    std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
+    RefPtr<ProvisionalPageProxy> m_provisionalPage;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;
     WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 

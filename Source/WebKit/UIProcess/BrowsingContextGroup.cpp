@@ -207,11 +207,11 @@ void BrowsingContextGroup::transitionPageToRemotePage(WebPageProxy& page, const 
 
 void BrowsingContextGroup::transitionProvisionalPageToRemotePage(ProvisionalPageProxy& page, const Site& provisionalNavigationFailureSite)
 {
-    auto& set = m_remotePages.ensure(page.page(), [] {
+    auto& set = m_remotePages.ensure(*page.page(), [] {
         return HashSet<Ref<RemotePageProxy>> { };
     }).iterator->value;
 
-    Ref newRemotePage = RemotePageProxy::create(page.page(), page.process(), provisionalNavigationFailureSite, &page.messageReceiverRegistration());
+    Ref newRemotePage = RemotePageProxy::create(*page.page(), page.process(), provisionalNavigationFailureSite, &page.messageReceiverRegistration());
 #if ASSERT_ENABLED
     for (auto& existingPage : set) {
         ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());

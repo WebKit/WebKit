@@ -504,25 +504,27 @@ bool WebProcessProxy::hasSameGPUAndNetworkProcessPreferencesAs(const API::PageCo
 
 void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
+    ASSERT(provisionalPage.page());
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "addProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page()->identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
 
     ASSERT(!m_isInProcessCache);
     ASSERT(!m_provisionalPages.contains(provisionalPage));
     markProcessAsRecentlyUsed();
     m_provisionalPages.add(provisionalPage);
-    initializePreferencesForGPUAndNetworkProcesses(provisionalPage.protectedPage());
+    initializePreferencesForGPUAndNetworkProcesses(*provisionalPage.protectedPage());
     updateRegistrationWithDataStore();
 }
 
 void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page().identifier().toUInt64(), provisionalPage.webPageID().toUInt64());
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeProvisionalPageProxy: provisionalPage=%p, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, &provisionalPage, provisionalPage.page() ? provisionalPage.page()->identifier().toUInt64() : 0, provisionalPage.webPageID().toUInt64());
 
     ASSERT(m_provisionalPages.contains(provisionalPage));
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
     if (m_provisionalPages.isEmptyIgnoringNullReferences()) {
-        reportProcessDisassociatedWithPageIfNecessary(provisionalPage.page().identifier());
+        if (RefPtr page = provisionalPage.page())
+            reportProcessDisassociatedWithPageIfNecessary(page->identifier());
         maybeShutDown();
     }
 }
@@ -1076,8 +1078,8 @@ bool WebProcessProxy::shouldDisableJITCage() const
 
 bool WebProcessProxy::hasProvisionalPageWithID(WebPageProxyIdentifier pageID) const
 {
-    for (auto& provisionalPage : m_provisionalPages) {
-        if (provisionalPage.page().identifier() == pageID)
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (provisionalPage->page() && provisionalPage->page()->identifier() == pageID)
             return true;
     }
     return false;
@@ -1268,7 +1270,7 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
 
     auto pages = mainPages();
 
-    Vector<WeakPtr<ProvisionalPageProxy>> provisionalPages;
+    Vector<Ref<ProvisionalPageProxy>> provisionalPages;
     m_provisionalPages.forEach([&] (auto& page) {
         provisionalPages.append(page);
     });
@@ -1302,10 +1304,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         return transaction;
     });
 
-    for (auto& provisionalPage : provisionalPages) {
-        if (provisionalPage)
-            provisionalPage->processDidTerminate();
-    }
+    for (auto& provisionalPage : provisionalPages)
+        provisionalPage->processDidTerminate();
 
     for (auto& page : pages)
         page->dispatchProcessDidTerminate(*this, reason);
@@ -2227,8 +2227,8 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
 {
     if (m_pageMap.contains(pageID))
         return true;
-    for (auto& provisionalPage : m_provisionalPages) {
-        if (provisionalPage.page().identifier() == pageID)
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (provisionalPage->page() && provisionalPage->page()->identifier() == pageID)
             return true;
     }
     for (auto& suspendedPage : m_suspendedPages) {
