@@ -43,6 +43,12 @@ namespace WebCore {
 
 using CoordinatePair = LengthPoint;
 
+struct ControlPoint {
+    LengthPoint offset;
+    std::optional<ControlPointAnchoring> anchoring;
+    bool operator==(const ControlPoint&) const = default;
+};
+
 class ShapeSegmentBase {
 public:
     explicit ShapeSegmentBase(CoordinateAffinity affinity)
@@ -137,7 +143,7 @@ private:
 
 class ShapeCurveSegment final : public ShapeSegmentBase {
 public:
-    ShapeCurveSegment(CoordinateAffinity affinity, CoordinatePair&& offset, CoordinatePair&& controlPoint1, std::optional<CoordinatePair>&& controlPoint2 = std::nullopt)
+    ShapeCurveSegment(CoordinateAffinity affinity, CoordinatePair&& offset, ControlPoint&& controlPoint1, std::optional<ControlPoint>&& controlPoint2 = std::nullopt)
         : ShapeSegmentBase(affinity)
         , m_offset(WTFMove(offset))
         , m_controlPoint1(WTFMove(controlPoint1))
@@ -148,11 +154,11 @@ public:
     const CoordinatePair& offset() const { return m_offset; }
     void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
-    const CoordinatePair& controlPoint1() const { return m_controlPoint1; }
-    void setControlPoint1(const CoordinatePair& p) { m_controlPoint1 = p; }
+    const ControlPoint& controlPoint1() const { return m_controlPoint1; }
+    void setControlPoint1(const ControlPoint& p) { m_controlPoint1 = p; }
 
-    const std::optional<CoordinatePair>& controlPoint2() const { return m_controlPoint2; };
-    void setControlPoint2(const CoordinatePair& p) { m_controlPoint2 = p; }
+    const std::optional<ControlPoint>& controlPoint2() const { return m_controlPoint2; };
+    void setControlPoint2(const ControlPoint& p) { m_controlPoint2 = p; }
 
     ShapeCurveSegment(const ShapeCurveSegment&) = default;
     ShapeCurveSegment& operator=(const ShapeCurveSegment&) = default;
@@ -160,13 +166,13 @@ public:
 
 private:
     CoordinatePair m_offset;
-    CoordinatePair m_controlPoint1;
-    std::optional<CoordinatePair> m_controlPoint2;
+    ControlPoint m_controlPoint1;
+    std::optional<ControlPoint> m_controlPoint2;
 };
 
 class ShapeSmoothSegment final : public ShapeSegmentBase {
 public:
-    ShapeSmoothSegment(CoordinateAffinity affinity, CoordinatePair&& offset, std::optional<CoordinatePair>&& intermediatePoint = std::nullopt)
+    ShapeSmoothSegment(CoordinateAffinity affinity, CoordinatePair&& offset, std::optional<ControlPoint>&& intermediatePoint = std::nullopt)
         : ShapeSegmentBase(affinity)
         , m_offset(WTFMove(offset))
         , m_intermediatePoint(WTFMove(intermediatePoint))
@@ -176,8 +182,8 @@ public:
     const CoordinatePair& offset() const { return m_offset; }
     void setOffset(const CoordinatePair& offset) { m_offset = offset; }
 
-    const std::optional<CoordinatePair>& intermediatePoint() const { return m_intermediatePoint; };
-    void setIntermediatePoint(const CoordinatePair& p) { m_intermediatePoint = p; }
+    const std::optional<ControlPoint>& intermediatePoint() const { return m_intermediatePoint; };
+    void setIntermediatePoint(const ControlPoint& p) { m_intermediatePoint = p; }
 
     ShapeSmoothSegment(const ShapeSmoothSegment&) = default;
     ShapeSmoothSegment& operator=(const ShapeSmoothSegment&) = default;
@@ -185,7 +191,7 @@ public:
 
 private:
     CoordinatePair m_offset;
-    std::optional<CoordinatePair> m_intermediatePoint;
+    std::optional<ControlPoint> m_intermediatePoint;
 };
 
 class ShapeArcSegment final : public ShapeSegmentBase {
@@ -291,6 +297,7 @@ private:
     Vector<ShapeSegment> m_segments;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, const ControlPoint&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeShape::ShapeSegment&);
 
 } // namespace WebCore

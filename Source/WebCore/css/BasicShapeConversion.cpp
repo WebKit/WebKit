@@ -44,9 +44,54 @@
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 #include "SVGPathByteStream.h"
+#include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {
+
+static Length convertToLengthOrAuto(const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | AutoConversion>(conversionData);
+}
+
+Length convertToLength(const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
+}
+
+LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    return { convertToLength(conversionData, value.protectedFirst()), convertToLength(conversionData, value.protectedSecond()) };
+}
+
+LengthPoint coordinatePairToLengthPoint(const CSSToLengthConversionData& conversionData, const CSSValue& value)
+{
+    RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
+    if (!pairValue)
+        return { };
+
+    return { convertToLength(conversionData, pairValue->first()), convertToLength(conversionData, pairValue->second()) };
+}
+
+LengthPoint positionOrCoordinatePairToLengthPoint(const CSSValue& value, CoordinateAffinity affinity, const Style::BuilderState& builderState)
+{
+    if (affinity == CoordinateAffinity::Absolute)
+        return Style::BuilderConverter::convertPosition(builderState, value);
+
+    RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
+    if (!pairValue)
+        return { };
+
+    return coordinatePairToLengthPoint(builderState.cssToLengthConversionData(), value);
+}
+
+static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSValue* value)
+{
+    if (!value)
+        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+
+    return convertToLengthSize(conversionData, *value);
+}
 
 static Ref<CSSPrimitiveValue> basicShapeRadiusToCSSValue(const RenderStyle& style, const BasicShapeRadius& radius)
 {
@@ -177,33 +222,6 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     }
     }
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-static Length convertToLength(const CSSToLengthConversionData& conversionData, const CSSValue& value)
-{
-    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData);
-}
-
-static Length convertToLengthOrAuto(const CSSToLengthConversionData& conversionData, const CSSValue& value)
-{
-    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | CalculatedConversion | AutoConversion>(conversionData);
-}
-
-static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSValue* value)
-{
-    if (!value)
-        return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-
-    return { convertToLength(conversionData, value->protectedFirst()), convertToLength(conversionData, value->protectedSecond()) };
-}
-
-static LengthPoint convertToLengthPoint(const CSSToLengthConversionData& conversionData, const CSSValue& value)
-{
-    RefPtr pairValue = dynamicDowncast<CSSValuePair>(value);
-    if (!pairValue)
-        return { };
-
-    return { convertToLength(conversionData, pairValue->first()), convertToLength(conversionData, pairValue->second()) };
 }
 
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, const CSSValue* value)
@@ -366,7 +384,8 @@ Ref<BasicShapeShape> basicShapeShapeForValue(const CSSShapeValue& shapeValue, co
         segments.append(fromCSSShapeSegmentValue(*shapeSegment, builderState));
     }
 
-    return BasicShapeShape::create(shapeValue.windRule(), convertToLengthPoint(builderState.cssToLengthConversionData(), shapeValue.protectedFromCoordinates().get()), WTFMove(segments));
+    auto fromPoint = positionOrCoordinatePairToLengthPoint(shapeValue.protectedFromCoordinates().get(), CoordinateAffinity::Absolute, builderState);
+    return BasicShapeShape::create(shapeValue.windRule(), WTFMove(fromPoint), WTFMove(segments));
 }
 
 float floatValueForCenterCoordinate(const BasicShapeCenterCoordinate& center, float boxDimension)

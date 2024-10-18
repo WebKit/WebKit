@@ -846,6 +846,16 @@ TextStream& operator<<(TextStream& ts, CoordinateAffinity affinity)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ControlPointAnchoring anchoring)
+{
+    switch (anchoring) {
+    case ControlPointAnchoring::FromStart: ts << "from start"_s; break;
+    case ControlPointAnchoring::FromEnd: ts << "from end"_s; break;
+    case ControlPointAnchoring::FromOrigin: ts << "from origin"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const BasicShapeRadius& radius)
 {
     ts.dumpProperty("value", radius.value());

@@ -481,12 +481,12 @@ bool CSSInsetShapeValue::equals(const CSSInsetShapeValue& other) const
 
 // MARK: -
 
-Ref<CSSShapeValue> CSSShapeValue::create(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
+Ref<CSSShapeValue> CSSShapeValue::create(WindRule windRule, Ref<CSSValue>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
 {
     return adoptRef(*new CSSShapeValue(windRule, WTFMove(fromCoordinates), WTFMove(shapeSegments)));
 }
 
-CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValuePair>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
+CSSShapeValue::CSSShapeValue(WindRule windRule, Ref<CSSValue>&& fromCoordinates, CSSValueListBuilder&& shapeSegments)
     : CSSValueContainingVector(ClassType::Shape, CommaSeparator, WTFMove(shapeSegments))
     , m_fromCoordinates(WTFMove(fromCoordinates))
     , m_windRule(windRule)

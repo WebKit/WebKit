@@ -45,6 +45,18 @@ class CSSToLengthConversionData;
 
 enum class CoordinateAffinity : uint8_t;
 
+struct ControlPointValue {
+    Ref<CSSValue> coordinatePair; // This is a CSSValuePair.
+    std::optional<ControlPointAnchoring> anchoring;
+
+    bool operator==(const ControlPointValue& other) const
+    {
+        return compareCSSValue(coordinatePair, other.coordinatePair) && anchoring == other.anchoring;
+    }
+
+    String cssText() const;
+};
+
 class CSSShapeSegmentValue : public CSSValue {
 public:
     enum class SegmentType : uint8_t {
@@ -71,10 +83,10 @@ public:
     static Ref<CSSShapeSegmentValue> createHorizontalLine(CoordinateAffinity, Ref<CSSValue>&& length);
     static Ref<CSSShapeSegmentValue> createVerticalLine(CoordinateAffinity, Ref<CSSValue>&& length);
 
-    static Ref<CSSShapeSegmentValue> createCubicCurve(CoordinateAffinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& p1, Ref<CSSValue>&& p2);
-    static Ref<CSSShapeSegmentValue> createQuadraticCurve(CoordinateAffinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& p1);
+    static Ref<CSSShapeSegmentValue> createCubicCurve(CoordinateAffinity, Ref<CSSValue>&& offset, ControlPointValue&& p1, ControlPointValue&& p2);
+    static Ref<CSSShapeSegmentValue> createQuadraticCurve(CoordinateAffinity, Ref<CSSValue>&& offset, ControlPointValue&& p1);
 
-    static Ref<CSSShapeSegmentValue> createSmoothCubicCurve(CoordinateAffinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& p1);
+    static Ref<CSSShapeSegmentValue> createSmoothCubicCurve(CoordinateAffinity, Ref<CSSValue>&& offset, ControlPointValue&& p1);
     static Ref<CSSShapeSegmentValue> createSmoothQuadraticCurve(CoordinateAffinity, Ref<CSSValue>&& offset);
 
     static Ref<CSSShapeSegmentValue> createArc(CoordinateAffinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& radius, CSSValueID sweep, CSSValueID size, Ref<CSSValue>&& angle);
@@ -108,9 +120,9 @@ private:
     };
 
     struct OnePointData : public ShapeSegmentData {
-        Ref<CSSValue> p1;
+        ControlPointValue p1;
 
-        OnePointData(CoordinateAffinity affinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& p1)
+        OnePointData(CoordinateAffinity affinity, Ref<CSSValue>&& offset, ControlPointValue&& p1)
             : ShapeSegmentData(SegmentDataType::OnePoint, affinity, WTFMove(offset))
             , p1(WTFMove(p1))
         { }
@@ -121,15 +133,15 @@ private:
                 return false;
 
             auto& otherOnePoint = static_cast<const OnePointData&>(other);
-            return compareCSSValue(p1, otherOnePoint.p1);
+            return p1 == otherOnePoint.p1;
         }
     };
 
     struct TwoPointData : public ShapeSegmentData {
-        Ref<CSSValue> p1;
-        Ref<CSSValue> p2;
+        ControlPointValue p1;
+        ControlPointValue p2;
 
-        TwoPointData(CoordinateAffinity affinity, Ref<CSSValue>&& offset, Ref<CSSValue>&& p1, Ref<CSSValue>&& p2)
+        TwoPointData(CoordinateAffinity affinity, Ref<CSSValue>&& offset, ControlPointValue&& p1, ControlPointValue&& p2)
             : ShapeSegmentData(SegmentDataType::TwoPoint, affinity, WTFMove(offset))
             , p1(WTFMove(p1))
             , p2(WTFMove(p2))
@@ -141,8 +153,7 @@ private:
                 return false;
 
             auto& otherTwoPoint = static_cast<const TwoPointData&>(other);
-            return compareCSSValue(p1, otherTwoPoint.p1)
-                && compareCSSValue(p2, otherTwoPoint.p2);
+            return p1 == otherTwoPoint.p1 && p2 == otherTwoPoint.p2;
         }
     };
 

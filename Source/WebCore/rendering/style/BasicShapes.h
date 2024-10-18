@@ -55,6 +55,12 @@ enum class CoordinateAffinity : uint8_t {
     Relative, Absolute
 };
 
+enum class ControlPointAnchoring : uint8_t {
+    FromStart,
+    FromEnd,
+    FromOrigin
+};
+
 class BasicShape : public RefCounted<BasicShape> {
     WTF_MAKE_TZONE_ALLOCATED(BasicShape);
 public:
@@ -495,6 +501,7 @@ private:
     LengthSize m_bottomLeftRadius;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, ControlPointAnchoring);
 WTF::TextStream& operator<<(WTF::TextStream&, CoordinateAffinity);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeRadius&);
 WTF::TextStream& operator<<(WTF::TextStream&, const BasicShapeCenterCoordinate&);

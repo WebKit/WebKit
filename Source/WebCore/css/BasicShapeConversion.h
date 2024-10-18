@@ -48,8 +48,17 @@ class CSSShapeValue;
 class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
+enum class CoordinateAffinity : uint8_t;
+struct Length;
+struct LengthPoint;
+struct LengthSize;
 
 enum class SVGPathConversion : bool { None, ForceAbsolute };
+
+Length convertToLength(const CSSToLengthConversionData&, const CSSValue&);
+LengthSize convertToLengthSize(const CSSToLengthConversionData&, const CSSValue&);
+LengthPoint coordinatePairToLengthPoint(const CSSToLengthConversionData&, const CSSValue&);
+LengthPoint positionOrCoordinatePairToLengthPoint(const CSSValue&, CoordinateAffinity, const Style::BuilderState&);
 
 Ref<CSSValue> valueForBasicShape(const RenderStyle&, const BasicShape&, SVGPathConversion = SVGPathConversion::None);
 Ref<CSSValue> valueForSVGPath(const BasicShapePath&, SVGPathConversion = SVGPathConversion::None);

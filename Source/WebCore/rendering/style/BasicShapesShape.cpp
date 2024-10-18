@@ -111,34 +111,40 @@ private:
         return LineToVerticalSegment { floatValueForLength(lineSegment.length(), m_boxSize.height()) };
     }
 
-    std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint) override
+    std::optional<CurveToCubicSegment> parseCurveToCubicSegment(FloatPoint currentPosition) override
     {
         auto& curveSegment = currentValue<ShapeCurveSegment>();
         ASSERT(curveSegment.controlPoint2());
+
+        auto segmentOffset = floatPointForLengthPoint(curveSegment.offset(), m_boxSize);
         return CurveToCubicSegment {
-            floatPointForLengthPoint(curveSegment.controlPoint1(), m_boxSize),
-            floatPointForLengthPoint(curveSegment.controlPoint2().value(), m_boxSize),
-            floatPointForLengthPoint(curveSegment.offset(), m_boxSize)
+            resolveControlPoint(curveSegment, currentPosition, segmentOffset, curveSegment.controlPoint1()),
+            resolveControlPoint(curveSegment, currentPosition, segmentOffset, curveSegment.controlPoint2().value()),
+            segmentOffset
         };
     }
 
-    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint) override
+    std::optional<CurveToQuadraticSegment> parseCurveToQuadraticSegment(FloatPoint currentPosition) override
     {
         auto& curveSegment = currentValue<ShapeCurveSegment>();
         ASSERT(!curveSegment.controlPoint2());
+
+        auto segmentOffset = floatPointForLengthPoint(curveSegment.offset(), m_boxSize);
         return CurveToQuadraticSegment {
-            floatPointForLengthPoint(curveSegment.controlPoint1(), m_boxSize),
-            floatPointForLengthPoint(curveSegment.offset(), m_boxSize)
+            resolveControlPoint(curveSegment, currentPosition, segmentOffset, curveSegment.controlPoint1()),
+            segmentOffset
         };
     }
 
-    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint) override
+    std::optional<CurveToCubicSmoothSegment> parseCurveToCubicSmoothSegment(FloatPoint currentPosition) override
     {
         auto& smoothSegment = currentValue<ShapeSmoothSegment>();
         ASSERT(smoothSegment.intermediatePoint());
+
+        auto segmentOffset = floatPointForLengthPoint(smoothSegment.offset(), m_boxSize);
         return CurveToCubicSmoothSegment {
-            floatPointForLengthPoint(smoothSegment.intermediatePoint().value(), m_boxSize),
-            floatPointForLengthPoint(smoothSegment.offset(), m_boxSize)
+            resolveControlPoint(smoothSegment, currentPosition, segmentOffset, smoothSegment.intermediatePoint().value()),
+            segmentOffset
         };
     }
 
@@ -202,6 +208,36 @@ private:
         );
     }
 
+    FloatPoint resolveControlPoint(const ShapeSegmentBase& segment, FloatPoint currentPosition, FloatPoint segmentOffset, const ControlPoint& controlPoint) const
+    {
+        auto contolPointOffset = floatPointForLengthPoint(controlPoint.offset, m_boxSize);
+
+        auto absoluteControlPoint = FloatPoint { };
+
+        auto defaultAnchor = (segment.affinity() == CoordinateAffinity::Relative) ? ControlPointAnchoring::FromStart : ControlPointAnchoring::FromOrigin;
+        switch (controlPoint.anchoring.value_or(defaultAnchor)) {
+        case ControlPointAnchoring::FromStart: {
+            auto absoluteStartPoint = currentPosition;
+            absoluteControlPoint = absoluteStartPoint + contolPointOffset;
+            break;
+        }
+
+        case ControlPointAnchoring::FromEnd: {
+            auto absoluteEndPoint = (segment.affinity() == CoordinateAffinity::Relative) ? currentPosition + toFloatSize(segmentOffset) : segmentOffset;
+            absoluteControlPoint = absoluteEndPoint + contolPointOffset;
+            break;
+        }
+        case ControlPointAnchoring::FromOrigin:
+            absoluteControlPoint = contolPointOffset;
+            break;
+        }
+
+        if (segment.affinity() == CoordinateAffinity::Relative)
+            return absoluteControlPoint - toFloatSize(currentPosition);
+
+        return absoluteControlPoint;
+    }
+
     template<typename T>
     const T& currentValue() const
     {
@@ -242,6 +278,11 @@ private:
     static CoordinatePair fromPoint(FloatPoint p)
     {
         return { Length(p.x(), LengthType::Fixed), Length(p.y(), LengthType::Fixed) };
+    }
+
+    static ControlPoint controlPointFromPoint(FloatPoint p)
+    {
+        return { fromPoint(p), { } };
     }
 
     void incrementPathSegmentCount() override
@@ -285,22 +326,22 @@ private:
     void curveToCubic(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
     {
         auto offset = fromPoint(offsetPoint);
-        auto c1 = fromPoint(controlPoint1);
-        auto c2 = fromPoint(controlPoint2);
+        auto c1 = controlPointFromPoint(controlPoint1);
+        auto c2 = controlPointFromPoint(controlPoint2);
         m_segmentList.append(ShapeCurveSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(c1), WTFMove(c2)));
     }
 
     void curveToQuadratic(const FloatPoint& controlPoint, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
     {
         auto offset = fromPoint(offsetPoint);
-        auto cp = fromPoint(controlPoint);
+        auto cp = controlPointFromPoint(controlPoint);
         m_segmentList.append(ShapeCurveSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(cp)));
     }
 
     void curveToCubicSmooth(const FloatPoint& controlPoint2, const FloatPoint& offsetPoint, PathCoordinateMode mode) override
     {
         auto offset = fromPoint(offsetPoint);
-        auto c2 = fromPoint(controlPoint2);
+        auto c2 = controlPointFromPoint(controlPoint2);
         m_segmentList.append(ShapeSmoothSegment(fromCoordinateMode(mode), WTFMove(offset), WTFMove(c2)));
     }
 
@@ -385,6 +426,11 @@ bool BasicShapeShape::canBlend(const ShapeSegment& segment1, const ShapeSegment&
     if (segment1.index() != segment2.index())
         return false;
 
+    auto controlPointsAnchoringMatches = [](CoordinateAffinity affinity, const ControlPoint& controlPoint1, const ControlPoint& controlPoint2) {
+        auto defaultAnchoring = affinity == CoordinateAffinity::Absolute ? ControlPointAnchoring::FromOrigin : ControlPointAnchoring::FromStart;
+        return controlPoint1.anchoring.value_or(defaultAnchoring) == controlPoint2.anchoring.value_or(defaultAnchoring);
+    };
+
     return WTF::switchOn(segment1,
         [&](const ShapeMoveSegment& segment) {
             const auto& otherSegment = get<ShapeMoveSegment>(segment2);
@@ -406,11 +452,28 @@ bool BasicShapeShape::canBlend(const ShapeSegment& segment1, const ShapeSegment&
             const auto& otherSegment = get<ShapeCurveSegment>(segment2);
             if (segment.affinity() != otherSegment.affinity())
                 return false;
-            return segment.controlPoint2().has_value() == otherSegment.controlPoint2().has_value();
+
+            if (!controlPointsAnchoringMatches(segment.affinity(), segment.controlPoint1(), otherSegment.controlPoint1()))
+                return false;
+
+            if (segment.controlPoint2().has_value() != otherSegment.controlPoint2().has_value())
+                return false;
+
+            if (!segment.controlPoint2())
+                return true;
+
+            return controlPointsAnchoringMatches(segment.affinity(), segment.controlPoint2().value(), otherSegment.controlPoint2().value());
         },
         [&](const ShapeSmoothSegment& segment) {
             const auto& otherSegment = get<ShapeSmoothSegment>(segment2);
-            return segment.intermediatePoint().has_value() == otherSegment.intermediatePoint().has_value();
+
+            if (segment.intermediatePoint().has_value() != otherSegment.intermediatePoint().has_value())
+                return false;
+
+            if (!segment.intermediatePoint())
+                return true;
+
+            return controlPointsAnchoringMatches(segment.affinity(), segment.intermediatePoint().value(), otherSegment.intermediatePoint().value());
         },
         [&](const ShapeArcSegment& segment) {
             const auto& otherSegment = get<ShapeArcSegment>(segment2);
@@ -445,6 +508,13 @@ auto BasicShapeShape::blend(const ShapeSegment& fromSegment, const ShapeSegment&
     ASSERT(fromSegment.index() == toSegment.index());
     ASSERT(canBlend(fromSegment, toSegment));
 
+    auto blendedControlPoint = [&](const ControlPoint& controlPoint1, const ControlPoint& controlPoint2) {
+        auto result = ControlPoint { WebCore::blend(controlPoint1.offset, controlPoint2.offset, context), { } };
+        if (controlPoint1.anchoring.has_value() && controlPoint2.anchoring.has_value())
+            result.anchoring = controlPoint1.anchoring;
+        return result;
+    };
+
     return WTF::switchOn(fromSegment,
         [&](const ShapeMoveSegment& fromSegment) {
             const auto& toMoveSegment = get<ShapeMoveSegment>(toSegment);
@@ -475,10 +545,13 @@ auto BasicShapeShape::blend(const ShapeSegment& fromSegment, const ShapeSegment&
             auto result = fromSegment;
 
             result.setOffset(WebCore::blend(fromSegment.offset(), toCurveSegment.offset(), context));
-            result.setControlPoint1(WebCore::blend(fromSegment.controlPoint1(), toCurveSegment.controlPoint1(), context));
+
+            auto blendedPoint = blendedControlPoint(fromSegment.controlPoint1(), toCurveSegment.controlPoint1());
+            result.setControlPoint1(WTFMove(blendedPoint));
             if (fromSegment.controlPoint2()) {
                 ASSERT(toCurveSegment.controlPoint2().has_value());
-                result.setControlPoint2(WebCore::blend(fromSegment.controlPoint2().value(), toCurveSegment.controlPoint2().value(), context));
+                auto blendedPoint2 = blendedControlPoint(fromSegment.controlPoint2().value(), toCurveSegment.controlPoint2().value());
+                result.setControlPoint2(WTFMove(blendedPoint2));
             }
 
             return ShapeSegment(result);
@@ -490,7 +563,8 @@ auto BasicShapeShape::blend(const ShapeSegment& fromSegment, const ShapeSegment&
             result.setOffset(WebCore::blend(fromSegment.offset(), toSmoothSegment.offset(), context));
             if (fromSegment.intermediatePoint()) {
                 ASSERT(toSmoothSegment.intermediatePoint().has_value());
-                result.setIntermediatePoint(WebCore::blend(fromSegment.intermediatePoint().value(), toSmoothSegment.intermediatePoint().value(), context));
+                auto blendedPoint = blendedControlPoint(fromSegment.intermediatePoint().value(), toSmoothSegment.intermediatePoint().value());
+                result.setIntermediatePoint(WTFMove(blendedPoint));
             }
 
             return ShapeSegment(result);
@@ -620,6 +694,14 @@ void BasicShapeShape::dump(TextStream& stream) const
     stream << segments();
 }
 
+TextStream& operator<<(TextStream& stream, const ControlPoint& controlPoint)
+{
+    stream << controlPoint.offset;
+    if (controlPoint.anchoring)
+        stream << ' ' << controlPoint.anchoring;
+    return stream;
+}
+
 TextStream& operator<<(TextStream& stream, const BasicShapeShape::ShapeSegment& segment)
 {
     WTF::switchOn(segment,
@@ -636,7 +718,7 @@ TextStream& operator<<(TextStream& stream, const BasicShapeShape::ShapeSegment& 
             stream << "vline" << (segment.affinity() == CoordinateAffinity::Relative ? " by "_s : " to "_s) << segment.length();
         },
         [&](const ShapeCurveSegment& segment) {
-            stream << "curve" << (segment.affinity() == CoordinateAffinity::Relative ? " by "_s : " to "_s) << segment.offset() << " using " << segment.controlPoint1();
+            stream << "curve" << (segment.affinity() == CoordinateAffinity::Relative ? " by "_s : " to "_s) << segment.offset() << " with " << segment.controlPoint1();
             if (segment.controlPoint2())
                 stream << " " << segment.controlPoint2().value();
         },

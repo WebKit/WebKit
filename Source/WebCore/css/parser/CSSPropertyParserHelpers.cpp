@@ -1277,8 +1277,11 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args, Opt
     return CSSPathValue::create(WTFMove(byteStream), rule);
 }
 
-static RefPtr<CSSValuePair> consumeCoordinatePair(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSValue> consumeShapeToCoordinates(CSSParserTokenRange& range, const CSSParserContext& context, CoordinateAffinity affinity)
 {
+    if (affinity == CoordinateAffinity::Absolute)
+        return consumePosition(range, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
+
     auto xDimension = consumeLengthPercentage(range, context);
     if (!xDimension)
         return nullptr;
@@ -1290,6 +1293,55 @@ static RefPtr<CSSValuePair> consumeCoordinatePair(CSSParserTokenRange& range, co
     return CSSValuePair::createNoncoalescing(xDimension.releaseNonNull(), yDimension.releaseNonNull());
 }
 
+static std::optional<ControlPointValue> consumeShapeRelativeControlPoint(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto anchoringFromToken = [](CSSValueID token) -> std::optional<ControlPointAnchoring> {
+        switch (token) {
+        case CSSValueStart: return ControlPointAnchoring::FromStart;
+        case CSSValueEnd: return ControlPointAnchoring::FromEnd;
+        case CSSValueOrigin: return ControlPointAnchoring::FromOrigin;
+        default:
+            break;
+        }
+        return std::nullopt;
+    };
+
+    // Look for "from start" etc.
+    auto consumeAnchoring = [&]() -> std::optional<ControlPointAnchoring> {
+        if (range.peek().type() != IdentToken)
+            return std::nullopt;
+
+        auto maybeFromToken = range.peek().id();
+        if (maybeFromToken != CSSValueFrom)
+            return std::nullopt;
+
+        if (!consumeIdent(range))
+            return std::nullopt;
+
+        if (range.peek().type() != IdentToken)
+            return std::nullopt;
+
+        auto anchoring = anchoringFromToken(range.peek().id());
+        if (anchoring)
+            consumeIdent(range);
+
+        return anchoring;
+    };
+
+    auto xDimension = consumeLengthPercentage(range, context);
+    if (!xDimension)
+        return std::nullopt;
+
+    auto yDimension = consumeLengthPercentage(range, context);
+    if (!yDimension)
+        return std::nullopt;
+
+    auto anchoringValue = consumeAnchoring();
+
+    auto coordinates = CSSValuePair::createNoncoalescing(xDimension.releaseNonNull(), yDimension.releaseNonNull());
+    return ControlPointValue { WTFMove(coordinates), anchoringValue };
+}
+
 static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption>)
 {
     if (range.peek().type() != IdentToken)
@@ -1299,7 +1351,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (range.peek().type() != IdentToken)
             return std::nullopt;
 
-        CSSValueID token = range.peek().id();
+        auto token = range.peek().id();
         if (token != CSSValueBy && token != CSSValueTo)
             return std::nullopt;
 
@@ -1307,6 +1359,22 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
             return std::nullopt;
 
         return token == CSSValueBy ? CoordinateAffinity::Relative : CoordinateAffinity::Absolute;
+    };
+
+    auto consumeControlPoint = [&](CoordinateAffinity affinity) -> std::optional<ControlPointValue> {
+        auto controlPoint = consumeShapeRelativeControlPoint(range, context);
+        if (controlPoint)
+            return controlPoint;
+
+        // Absolute control points allow <position>
+        if (affinity != CoordinateAffinity::Absolute)
+            return std::nullopt;
+
+        auto position = consumePosition(range, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
+        if (!position)
+            return std::nullopt;
+
+        return ControlPointValue { position.releaseNonNull(), { } };
     };
 
     auto atEndOfCommand = [&] () {
@@ -1321,7 +1389,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto toCoordinates = consumeCoordinatePair(range, context);
+        auto toCoordinates = consumeShapeToCoordinates(range, context, *affinityValue);
         if (!toCoordinates)
             return nullptr;
 
@@ -1333,7 +1401,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto toCoordinates = consumeCoordinatePair(range, context);
+        auto toCoordinates = consumeShapeToCoordinates(range, context, *affinityValue);
         if (!toCoordinates)
             return nullptr;
 
@@ -1361,22 +1429,26 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto toCoordinates = consumeCoordinatePair(range, context);
+        auto toCoordinates = consumeShapeToCoordinates(range, context, *affinityValue);
         if (!toCoordinates)
             return nullptr;
 
-        if (!consumeIdent<CSSValueUsing>(range))
+        if (!consumeIdent<CSSValueWith>(range))
             return nullptr;
 
-        auto controlPoint1 = consumeCoordinatePair(range, context);
+        auto controlPoint1 = consumeControlPoint(*affinityValue);
         if (!controlPoint1)
             return nullptr;
 
-        auto controlPoint2 = consumeCoordinatePair(range, context);
-        if (controlPoint2)
-            return CSSShapeSegmentValue::createCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint1.releaseNonNull(), controlPoint2.releaseNonNull());
+        if (consumeSlashIncludingWhitespace(range)) {
+            auto controlPoint2 = consumeControlPoint(*affinityValue);
+            if (controlPoint2)
+                return CSSShapeSegmentValue::createCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(*controlPoint1), WTFMove(*controlPoint2));
 
-        return CSSShapeSegmentValue::createQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint1.releaseNonNull());
+            return nullptr;
+        }
+
+        return CSSShapeSegmentValue::createQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(*controlPoint1));
     }
     case CSSValueSmooth: {
         // <smooth-command> = smooth <by-to> <coordinate-pair> [using <coordinate-pair>]?
@@ -1384,16 +1456,16 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto toCoordinates = consumeCoordinatePair(range, context);
+        auto toCoordinates = consumeShapeToCoordinates(range, context, *affinityValue);
         if (!toCoordinates)
             return nullptr;
 
-        if (consumeIdent<CSSValueUsing>(range)) {
-            auto controlPoint = consumeCoordinatePair(range, context);
+        if (consumeIdent<CSSValueWith>(range)) {
+            auto controlPoint = consumeControlPoint(*affinityValue);
             if (!controlPoint)
                 return nullptr;
 
-            return CSSShapeSegmentValue::createSmoothCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), controlPoint.releaseNonNull());
+            return CSSShapeSegmentValue::createSmoothCubicCurve(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(*controlPoint));
         }
 
         return CSSShapeSegmentValue::createSmoothQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull());
@@ -1404,7 +1476,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         if (!affinityValue)
             return nullptr;
 
-        auto toCoordinates = consumeCoordinatePair(range, context);
+        auto toCoordinates = consumeShapeToCoordinates(range, context, *affinityValue);
         if (!toCoordinates)
             return nullptr;
 
@@ -1480,7 +1552,7 @@ static RefPtr<CSSShapeValue> consumeBasicShapeShape(CSSParserTokenRange& range, 
     if (!consumeIdent<CSSValueFrom>(range))
         return nullptr;
 
-    auto fromCoordinates = consumeCoordinatePair(range, context);
+    auto fromCoordinates = consumePosition(range, context, UnitlessQuirk::Forbid, PositionSyntax::Position);
     if (!fromCoordinates)
         return nullptr;
 
