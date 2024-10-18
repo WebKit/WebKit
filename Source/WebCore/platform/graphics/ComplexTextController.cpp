@@ -323,10 +323,10 @@ void ComplexTextController::collectComplexTextRuns()
     unsigned currentIndex = 0;
     unsigned indexOfFontTransition = 0;
 
-    const Font* font = nullptr;
+    RefPtr<const Font> font;
     RefPtr<const Font> nextFont;
-    const Font* synthesizedFont = nullptr;
-    const Font* smallSynthesizedFont = nullptr;
+    RefPtr<const Font> synthesizedFont;
+    RefPtr<const Font> smallSynthesizedFont;
 
     CachedTextBreakIterator graphemeClusterIterator(m_run.text(), { }, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
@@ -394,11 +394,11 @@ void ComplexTextController::collectComplexTextRuns()
                 unsigned itemStart = indexOfFontTransition;
                 if (synthesizedFont) {
                     if (isSmallCaps)
-                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
+                        collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
                     else
-                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
+                        collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
                 } else
-                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font);
+                    collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, font.get());
                 if (nextFont != font) {
                     synthesizedFont = nullptr;
                     smallSynthesizedFont = nullptr;
@@ -415,9 +415,9 @@ void ComplexTextController::collectComplexTextRuns()
         unsigned itemStart = indexOfFontTransition;
         if (synthesizedFont) {
             if (nextIsSmallCaps)
-                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont);
+                collectComplexTextRunsForCharacters(m_smallCapsBuffer.subspan(itemStart, itemLength), itemStart, smallSynthesizedFont.get());
             else
-                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
+                collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont.get());
         } else
             collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont.get());
     }
