@@ -363,9 +363,21 @@ void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& p
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
+bool WebAnimation::isTimeValid(const std::optional<CSSNumberishTime>& time) const
+{
+    // https://drafts.csswg.org/web-animations-2/#validating-a-css-numberish-time
+    if (time && !time->isValid())
+        return false;
+    if (m_timeline && m_timeline->isProgressBased() && time && time->time())
+        return false;
+    if ((!m_timeline || m_timeline->isMonotonic()) && time && time->percentage())
+        return false;
+    return true;
+}
+
 ExceptionOr<void> WebAnimation::setBindingsStartTime(const std::optional<CSSNumberishTime>& startTime)
 {
-    if (startTime && !startTime->isValid())
+    if (!isTimeValid(startTime))
         return Exception { ExceptionCode::TypeError };
     setStartTime(startTime);
     return { };
@@ -428,7 +440,7 @@ void WebAnimation::setStartTime(std::optional<CSSNumberishTime> newStartTime)
 
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(const std::optional<CSSNumberishTime>& currentTime)
 {
-    if (currentTime && !currentTime->isValid())
+    if (!isTimeValid(currentTime))
         return Exception { ExceptionCode::TypeError };
     return setCurrentTime(currentTime);
 }

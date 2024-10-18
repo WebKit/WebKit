@@ -1,12 +1,12 @@
 
 Harness Error (TIMEOUT), message = null
 
-TIMEOUT Setting animation current time to null throws TypeError. Test timed out
-NOTRUN Setting the current time to an absolute time value throws exception
-NOTRUN Set animation current time to a valid value without playing.
-NOTRUN Set animation current time to a valid value while playing.
-NOTRUN Set animation current time to a value beyond effect end.
-NOTRUN Set animation current time to a negative value.
+PASS Setting animation current time to null throws TypeError.
+PASS Setting the current time to an absolute time value throws exception
+PASS Set animation current time to a valid value without playing.
+PASS Set animation current time to a valid value while playing.
+PASS Set animation current time to a value beyond effect end.
+TIMEOUT Set animation current time to a negative value. Test timed out
 NOTRUN Setting current time while play pending overrides the current time
 NOTRUN Setting animation.currentTime then restarting the animation should reset the current time.
 NOTRUN Set Animation current time then scroll.

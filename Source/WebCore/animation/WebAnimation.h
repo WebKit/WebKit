@@ -210,6 +210,7 @@ private:
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
     void autoAlignStartTime();
+    bool isTimeValid(const std::optional<CSSNumberishTime>&) const;
 
     // ActiveDOMObject.
     void suspend(ReasonForSuspension) final;
