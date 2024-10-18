@@ -75,7 +75,7 @@ MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
 {
 }
 
-MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client, RefCountedSerialFunctionDispatcher& dispatcher)
+MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client, GuaranteedSerialFunctionDispatcher& dispatcher)
     : m_readyState(MediaSourceReadyState::Closed)
     , m_dispatcher(dispatcher)
     , m_client(client)

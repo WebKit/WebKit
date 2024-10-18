@@ -119,6 +119,7 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_sharedResourceCache = gpuProcessConnection.sharedResourceCache();
     });
 }
+
 template<typename T, typename U, typename V, typename W>
 auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
 {
@@ -160,6 +161,18 @@ auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, 
         return IPC::Error::Unspecified;
     }
     return IPC::Error::NoError;
+}
+
+void RemoteRenderingBackendProxy::dispatch(Function<void()>&& function)
+{
+    if (RefPtr dispatcher = m_dispatcher.get())
+        dispatcher->dispatch(WTFMove(function));
+}
+
+bool RemoteRenderingBackendProxy::isCurrent() const
+{
+    RefPtr dispatcher = m_dispatcher.get();
+    return dispatcher && dispatcher->isCurrent();
 }
 
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)

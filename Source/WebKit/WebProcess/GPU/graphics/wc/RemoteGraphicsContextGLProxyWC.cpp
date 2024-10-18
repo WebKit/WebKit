@@ -70,8 +70,8 @@ public:
     void prepareForDisplay() final;
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
 private:
-    RemoteGraphicsContextGLProxyWC(const WebCore::GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
-        : RemoteGraphicsContextGLProxy(attributes, dispatcher)
+    explicit RemoteGraphicsContextGLProxyWC(const WebCore::GraphicsContextGLAttributes& attributes)
+        : RemoteGraphicsContextGLProxy(attributes)
         , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>()))
     {
     }
@@ -96,9 +96,9 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const WebCore::GraphicsContextGLAttributes& attributes)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyWC(attributes, dispatcher));
+    return adoptRef(*new RemoteGraphicsContextGLProxyWC(attributes));
 }
 
 }

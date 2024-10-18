@@ -88,14 +88,16 @@ class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProx
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLProxyGBM);
 public:
-    RemoteGraphicsContextGLProxyGBM(const GraphicsContextGLAttributes& attributes, WTF::SerialFunctionDispatcher& dispatcher)
-        : RemoteGraphicsContextGLProxy(attributes, dispatcher)
-        , m_layerContentsDisplayDelegate(RemoteGraphicsLayerContentsDisplayDelegateGBM::create(!attributes.alpha))
-    {
-    }
     virtual ~RemoteGraphicsContextGLProxyGBM() = default;
 
 private:
+    friend class RemoteGraphicsContextGLProxy;
+    explicit RemoteGraphicsContextGLProxyGBM(const GraphicsContextGLAttributes& attributes)
+        : RemoteGraphicsContextGLProxy(attributes)
+        , m_layerContentsDisplayDelegate(RemoteGraphicsLayerContentsDisplayDelegateGBM::create(!attributes.alpha))
+    {
+    }
+
     // WebCore::GraphicsContextGL
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.copyRef(); }
     void prepareForDisplay() final;
@@ -121,9 +123,9 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
         m_layerContentsDisplayDelegate->setDisplayBuffer(bufferID, WTFMove(fenceFD));
 }
 
-Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher& dispatcher)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const GraphicsContextGLAttributes& attributes)
 {
-    return adoptRef(*new RemoteGraphicsContextGLProxyGBM(attributes, dispatcher));
+    return adoptRef(*new RemoteGraphicsContextGLProxyGBM(attributes));
 }
 
 } // namespace WebKit

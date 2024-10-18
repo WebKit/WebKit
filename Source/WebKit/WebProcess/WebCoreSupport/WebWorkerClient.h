@@ -70,7 +70,12 @@ public:
 
 protected:
     WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID);
-    SerialFunctionDispatcher& m_dispatcher;
+
+    // m_dispatcher should stay alive as long as WebWorkerClient is alive.
+    // FIXME: We should use the equivalent of a WeakRef for m_dispatcher.
+    SerialFunctionDispatcher& dispatcher() const { return *m_dispatcher.get(); }
+
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     const WebCore::PlatformDisplayID m_displayID;
 };
 

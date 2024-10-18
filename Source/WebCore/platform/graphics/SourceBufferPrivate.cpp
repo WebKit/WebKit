@@ -64,7 +64,7 @@ SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent)
 {
 }
 
-SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent, RefCountedSerialFunctionDispatcher& dispatcher)
+SourceBufferPrivate::SourceBufferPrivate(MediaSourcePrivate& parent, GuaranteedSerialFunctionDispatcher& dispatcher)
     : m_mediaSource(&parent)
     , m_dispatcher(dispatcher)
 {

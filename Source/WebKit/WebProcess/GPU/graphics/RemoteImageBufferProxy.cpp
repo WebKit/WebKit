@@ -77,8 +77,7 @@ RemoteImageBufferProxy::~RemoteImageBufferProxy()
 
 void RemoteImageBufferProxy::assertDispatcherIsCurrent() const
 {
-    if (m_remoteRenderingBackendProxy)
-        assertIsCurrent(m_remoteRenderingBackendProxy->dispatcher());
+    ASSERT(!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isCurrent());
 }
 
 template<typename T>

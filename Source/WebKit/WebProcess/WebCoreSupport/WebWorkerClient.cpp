@@ -70,15 +70,15 @@ private:
 
 UniqueRef<WorkerClient> GPUProcessWebWorkerClient::createNestedWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(this->dispatcher());
     return UniqueRef<WorkerClient> { *new GPUProcessWebWorkerClient { dispatcher, m_displayID } };
 }
 
 RemoteRenderingBackendProxy& GPUProcessWebWorkerClient::ensureRenderingBackend() const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     if (!m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create(m_dispatcher);
+        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create(dispatcher());
     return *m_remoteRenderingBackendProxy;
 }
 
@@ -93,7 +93,7 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::sinkIntoImageBuffer(std::unique_p
 
 RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, OptionSet<ImageBufferOptions> options) const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return ensureRenderingBackend().createImageBuffer(size, purpose, resolutionScale, colorSpace, pixelFormat, options);
     return nullptr;
@@ -101,17 +101,17 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize
 
 RefPtr<GraphicsContextGL> GPUProcessWebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(attributes, ensureRenderingBackend(), m_dispatcher);
+        return RemoteGraphicsContextGLProxy::create(attributes, ensureRenderingBackend(), *m_dispatcher.get());
     return WebWorkerClient::createGraphicsContextGL(attributes);
 }
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 RefPtr<WebCore::WebGPU::GPU> GPUProcessWebWorkerClient::createGPUForWebGPU() const
 {
-    assertIsCurrent(m_dispatcher);
-    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ensureRenderingBackend(), m_dispatcher);
+    assertIsCurrent(dispatcher());
+    return RemoteGPUProxy::create(WebGPU::DowncastConvertToBackingContext::create(), ensureRenderingBackend(), dispatcher());
 }
 #endif
 
@@ -139,32 +139,32 @@ WebWorkerClient::~WebWorkerClient() = default;
 
 UniqueRef<WorkerClient> WebWorkerClient::createNestedWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(this->dispatcher());
     return UniqueRef<WorkerClient> { *new WebWorkerClient { dispatcher, m_displayID } };
 }
 
 PlatformDisplayID WebWorkerClient::displayID() const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     return m_displayID;
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     return SerializedImageBuffer::sinkIntoImageBuffer(WTFMove(imageBuffer));
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, OptionSet<ImageBufferOptions> options) const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     return nullptr;
 }
 
 #if ENABLE(WEBGL)
 RefPtr<GraphicsContextGL> WebWorkerClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(dispatcher());
     return WebCore::createWebProcessGraphicsContextGL(attributes);
 }
 #endif

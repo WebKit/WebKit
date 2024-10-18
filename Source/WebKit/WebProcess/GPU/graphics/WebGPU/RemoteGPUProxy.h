@@ -140,14 +140,14 @@ private:
     void disconnectGpuProcessIfNeeded();
 
     // SerialFunctionDispatcher
-    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
+    void dispatch(Function<void()>&&) final;
+    bool isCurrent() const final;
 
     RefPtr<IPC::StreamClientConnection> protectedStreamConnection() const { return m_streamConnection; }
     Ref<WebGPU::ConvertToBackingContext> protectedConvertToBackingContext() const;
 
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    SerialFunctionDispatcher& m_dispatcher;
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
     WebGPUIdentifier m_backing { WebGPUIdentifier::generate() };

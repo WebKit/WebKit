@@ -879,15 +879,13 @@ void ScriptExecutionContext::deref()
     }
 }
 
+// ScriptExecutionContextDispatcher is not guaranteeing dispatching on its own for workers.
+// Together with ScriptExecutionContext::enqueueTaskWhenSettled, it meets NativePromise dispatcher contract.
+// FIXME: We should investigate how to guarantee task dispatching to workers.
 class ScriptExecutionContextDispatcher final
-    : public ThreadSafeRefCounted<ScriptExecutionContextDispatcher>
-    , public RefCountedSerialFunctionDispatcher {
+    : public GuaranteedSerialFunctionDispatcher {
 public:
     static Ref<ScriptExecutionContextDispatcher> create(ScriptExecutionContext& context) { return adoptRef(*new ScriptExecutionContextDispatcher(context)); }
-
-    // RefCountedSerialFunctionDispatcher
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
 
 private:
     explicit ScriptExecutionContextDispatcher(ScriptExecutionContext& context)
@@ -896,7 +894,7 @@ private:
     {
     }
 
-    // RefCountedSerialFunctionDispatcher
+    // GuaranteedSerialFunctionDispatcher
     void dispatch(Function<void()>&& callback) final
     {
         if (m_threadId == 1) {
@@ -911,7 +909,7 @@ private:
     const uint32_t m_threadId { 1 };
 };
 
-RefCountedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatcher()
+GuaranteedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatcher()
 {
     if (!m_nativePromiseDispatcher)
         m_nativePromiseDispatcher = ScriptExecutionContextDispatcher::create(*this);

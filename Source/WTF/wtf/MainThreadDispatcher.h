@@ -30,11 +30,10 @@
 
 namespace WTF {
 
-class MainThreadDispatcher final : public ThreadSafeRefCounted<MainThreadDispatcher>, public RefCountedSerialFunctionDispatcher {
+class MainThreadDispatcher final : public GuaranteedSerialFunctionDispatcher {
 public:
     WTF_EXPORT_PRIVATE static MainThreadDispatcher& singleton();
-    void ref() const final;
-    void deref() const final;
+
 private:
     MainThreadDispatcher() = default;
     bool isCurrent() const final;

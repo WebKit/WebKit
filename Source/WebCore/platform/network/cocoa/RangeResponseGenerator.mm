@@ -63,7 +63,7 @@ struct RangeResponseGeneratorDataTaskData : public CanMakeWeakPtr<RangeResponseG
 
 struct RangeResponseGenerator::Data {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    // The RangeResponseGenerator is used with a RefCountedSerialFunctionDispatcher which can do thread hoping over time.
+    // The RangeResponseGenerator is used with a GuaranteedSerialFunctionDispatcher which can do thread hoping over time.
     // The ResourceResponse contains WTF::Strings which must first be copied via isolatedCopy().
     Data(const ResourceResponse& response, PlatformMediaResource& resource)
         : originalResponse(ResourceResponse::fromCrossThreadData(response.crossThreadData()))
@@ -88,7 +88,7 @@ struct RangeResponseGenerator::Data {
     RefPtr<PlatformMediaResource> resource;
 };
 
-RangeResponseGenerator::RangeResponseGenerator(RefCountedSerialFunctionDispatcher& targetDispatcher)
+RangeResponseGenerator::RangeResponseGenerator(GuaranteedSerialFunctionDispatcher& targetDispatcher)
     : m_targetDispatcher(targetDispatcher)
 {
 }

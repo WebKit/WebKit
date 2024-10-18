@@ -161,7 +161,7 @@ public:
 
     RefPtr<IPC::StreamClientConnection> connection();
 
-    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+    bool isCurrent() const final;
     Ref<WorkQueue> workQueue() { return m_queue; }
 
     void didBecomeUnresponsive();
@@ -197,12 +197,11 @@ private:
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>, bool didMarkAllLayerAsVolatile);
 
     // SerialFunctionDispatcher
-    void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
-    bool isCurrent() const final { return m_dispatcher.isCurrent(); }
+    void dispatch(Function<void()>&&) final;
 
     RefPtr<IPC::StreamClientConnection> protectedConnection() const { return m_connection; }
 
-    SerialFunctionDispatcher& m_dispatcher;
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
     RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;

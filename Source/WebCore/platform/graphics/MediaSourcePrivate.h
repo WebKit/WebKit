@@ -127,14 +127,14 @@ public:
 #endif
 
 protected:
-    MediaSourcePrivate(MediaSourcePrivateClient&, RefCountedSerialFunctionDispatcher&);
+    MediaSourcePrivate(MediaSourcePrivateClient&, GuaranteedSerialFunctionDispatcher&);
     void ensureOnDispatcher(Function<void()>&&) const;
 
     Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
     Vector<SourceBufferPrivate*> m_activeSourceBuffers;
     std::atomic<bool> m_isEnded { false }; // Set on MediaSource's dispatcher.
     std::atomic<MediaSourceReadyState> m_readyState; // Set on MediaSource's dispatcher.
-    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
+    const Ref<GuaranteedSerialFunctionDispatcher> m_dispatcher; // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate is running on.
 
 private:
     mutable Lock m_lock;

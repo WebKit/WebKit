@@ -52,14 +52,14 @@ class WebCoreAVFResourceLoader : public ThreadSafeRefCounted<WebCoreAVFResourceL
     WTF_MAKE_TZONE_ALLOCATED(WebCoreAVFResourceLoader);
     WTF_MAKE_NONCOPYABLE(WebCoreAVFResourceLoader);
 public:
-    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
+    static Ref<WebCoreAVFResourceLoader> create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
     virtual ~WebCoreAVFResourceLoader();
 
     void startLoading();
     void stopLoading();
 
 private:
-    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, RefCountedSerialFunctionDispatcher&);
+    WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest*, GuaranteedSerialFunctionDispatcher&);
 
     friend class CachedResourceMediaLoader;
     friend class DataURLResourceMediaLoader;
@@ -83,7 +83,7 @@ private:
     int64_t m_requestedOffset { 0 };
     int64_t m_currentOffset { 0 };
 
-    Ref<RefCountedSerialFunctionDispatcher> m_targetDispatcher;
+    Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
 }
