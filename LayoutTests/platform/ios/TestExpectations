@@ -7502,3 +7502,6 @@ webkit.org/b/281238 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 
 # Platform-specific test enabled on macOS and iOS separately.
 webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-ios.html [ Pass ]
+
+# webkit.org/b/281765 PROGRESSION (285251@main): [ macOS iOS ] imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html is a constant failure. 
+imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html [ Skip ]
