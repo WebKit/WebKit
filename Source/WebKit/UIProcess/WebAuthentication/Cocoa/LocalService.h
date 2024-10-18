@@ -50,7 +50,7 @@ private:
     void startDiscoveryInternal() final;
     // Overrided by MockLocalService.
     virtual bool platformStartDiscovery() const;
-    virtual UniqueRef<LocalConnection> createLocalConnection() const;
+    virtual Ref<LocalConnection> createLocalConnection() const;
 };
 
 } // namespace WebKit

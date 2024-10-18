@@ -33,6 +33,7 @@
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/ExceptionData.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
@@ -43,6 +44,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MockLocalConnection);
+
+Ref<MockLocalConnection> MockLocalConnection::create(const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockLocalConnection(configuration));
+}
 
 MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguration& configuration)
     : m_configuration(configuration)

@@ -59,6 +59,11 @@ static inline String bundleName()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalConnection);
 
+Ref<LocalConnection> LocalConnection::create()
+{
+    return adoptRef(*new LocalConnection);
+}
+
 LocalConnection::~LocalConnection()
 {
     // Dismiss any showing LocalAuthentication dialogs.

@@ -35,6 +35,7 @@
 #import <WebCore/ExceptionData.h>
 #import <wtf/Ref.h>
 #import <wtf/RunLoop.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
@@ -43,6 +44,13 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VirtualLocalConnection);
+
+Ref<VirtualLocalConnection> VirtualLocalConnection::create(const VirtualAuthenticatorConfiguration& configuration)
+{
+    return adoptRef(*new VirtualLocalConnection(configuration));
+}
 
 VirtualLocalConnection::VirtualLocalConnection(const VirtualAuthenticatorConfiguration& configuration)
     : m_configuration(configuration)
@@ -53,13 +61,14 @@ void VirtualLocalConnection::verifyUser(const String&, ClientDataType, SecAccess
 {
     // Mock async operations.
     RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
-        if (!weakThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback(UserVerification::No, adoptNS([allocLAContextInstance() init]).get());
             return;
         }
-        ASSERT(weakThis->m_configuration.transport == AuthenticatorTransport::Internal);
+        ASSERT(protectedThis->m_configuration.transport == AuthenticatorTransport::Internal);
 
-        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
+        UserVerification userVerification = protectedThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
 
         callback(userVerification, adoptNS([allocLAContextInstance() init]).get());
     });
@@ -69,13 +78,14 @@ void VirtualLocalConnection::verifyUser(SecAccessControlRef, LAContext *, Comple
 {
     // Mock async operations.
     RunLoop::main().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
-        if (!weakThis) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback(UserVerification::No);
             return;
         }
-        ASSERT(weakThis->m_configuration.transport == AuthenticatorTransport::Internal);
+        ASSERT(protectedThis->m_configuration.transport == AuthenticatorTransport::Internal);
 
-        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
+        UserVerification userVerification = protectedThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
 
         callback(userVerification);
     });

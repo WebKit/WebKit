@@ -91,9 +91,9 @@ bool LocalService::platformStartDiscovery() const
     return LocalService::isAvailable();
 }
 
-UniqueRef<LocalConnection> LocalService::createLocalConnection() const
+Ref<LocalConnection> LocalService::createLocalConnection() const
 {
-    return makeUniqueRef<LocalConnection>();
+    return LocalConnection::create();
 }
 
 } // namespace WebKit

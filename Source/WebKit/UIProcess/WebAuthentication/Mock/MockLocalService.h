@@ -40,7 +40,7 @@ private:
     MockLocalService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     bool platformStartDiscovery() const final;
-    UniqueRef<LocalConnection> createLocalConnection() const final;
+    Ref<LocalConnection> createLocalConnection() const final;
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
 };

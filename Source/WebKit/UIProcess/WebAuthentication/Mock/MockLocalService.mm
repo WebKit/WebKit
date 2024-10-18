@@ -57,9 +57,9 @@ bool MockLocalService::platformStartDiscovery() const
     return !!m_configuration.local;
 }
 
-UniqueRef<LocalConnection> MockLocalService::createLocalConnection() const
+Ref<LocalConnection> MockLocalService::createLocalConnection() const
 {
-    return makeUniqueRef<MockLocalConnection>(m_configuration);
+    return MockLocalConnection::create(m_configuration);
 }
 
 } // namespace WebKit

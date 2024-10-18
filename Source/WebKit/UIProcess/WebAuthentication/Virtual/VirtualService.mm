@@ -84,7 +84,7 @@ void VirtualService::startDiscoveryInternal()
             observer()->authenticatorAdded(CtapAuthenticator::create(CtapHidDriver::create(VirtualHidConnection::create(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
             break;
         case WebCore::AuthenticatorTransport::Internal:
-            observer()->authenticatorAdded(LocalAuthenticator::create(makeUniqueRef<VirtualLocalConnection>(config)));
+            observer()->authenticatorAdded(LocalAuthenticator::create(VirtualLocalConnection::create(config)));
             break;
         default:
             UNIMPLEMENTED();

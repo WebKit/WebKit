@@ -34,10 +34,13 @@
 namespace WebKit {
 
 class MockLocalConnection final : public LocalConnection {
+    WTF_MAKE_TZONE_ALLOCATED(MockLocalConnection);
 public:
-    explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
+    static Ref<MockLocalConnection> create(const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
+    explicit MockLocalConnection(const WebCore::MockWebAuthenticationConfiguration&);
+
     RetainPtr<NSArray> getExistingCredentials(const String& rpId) final;
     void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement,  UserVerificationCallback&&) final;
     void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&) final;

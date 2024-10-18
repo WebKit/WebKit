@@ -174,14 +174,14 @@ void LocalAuthenticator::clearAllCredentials()
         LOG_ERROR(makeString("Couldn't clear all credential: "_s, status).utf8().data());
 }
 
-LocalAuthenticator::LocalAuthenticator(UniqueRef<LocalConnection>&& connection)
+LocalAuthenticator::LocalAuthenticator(Ref<LocalConnection>&& connection)
     : m_connection(WTFMove(connection))
 {
 }
 
 std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> LocalAuthenticator::getExistingCredentials(const String& rpId)
 {
-    RetainPtr sortedAttributesArray = m_connection->getExistingCredentials(rpId);
+    RetainPtr sortedAttributesArray = protectedConnection()->getExistingCredentials(rpId);
     Vector<Ref<AuthenticatorAssertionResponse>> result;
     result.reserveInitialCapacity([sortedAttributesArray count]);
     for (NSDictionary *attributes in sortedAttributesArray.get()) {
@@ -273,10 +273,8 @@ void LocalAuthenticator::makeCredential()
     if (RefPtr observer = this->observer()) {
         auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
-                return;
-
-            weakThis->continueMakeCredentialAfterReceivingLAContext(context);
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->continueMakeCredentialAfterReceivingLAContext(context);
         };
         observer->requestLAContextForUserVerification(WTFMove(callback));
     }
@@ -301,12 +299,10 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
     SecAccessControlRef accessControlRef = accessControl.get();
     auto callback = [accessControl = WTFMove(accessControl), context = retainPtr(context), weakThis = WeakPtr { *this }] (LocalConnection::UserVerification verification) {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-
-        weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context.get());
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context.get());
     };
-    m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
+    protectedConnection()->verifyUser(accessControlRef, context, WTFMove(callback));
 }
 
 std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtension(const WebCore::PublicKeyCredentialCreationOptions& options, WebCore::AuthenticationExtensionsClientOutputs& extensionOutputs)
@@ -474,7 +470,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
     // Step 7.
     // The above-to-create private key will be inserted into keychain while using SEP.
-    auto privateKey = m_connection->createCredentialPrivateKey(context, accessControlRef, secAttrLabel, secAttrApplicationTag.get());
+    auto privateKey = protectedConnection()->createCredentialPrivateKey(context, accessControlRef, secAttrLabel, secAttrApplicationTag.get());
     if (!privateKey) {
         receiveException({ ExceptionCode::UnknownError, "Couldn't create private key."_s });
         return;
@@ -633,20 +629,21 @@ void LocalAuthenticator::getAssertion()
     }
 
     // Step 6-7. User consent is implicitly acquired by selecting responses.
-    m_connection->filterResponses(assertionResponses);
+    protectedConnection()->filterResponses(assertionResponses);
 
     if (RefPtr observer = this->observer()) {
-        auto callback = [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
+        auto callback = [weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
             RELEASE_ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
-            auto result = m_existingCredentials.findIf([expectedResponse = response] (auto& response) {
+            auto result = protectedThis->m_existingCredentials.findIf([expectedResponse = response] (auto& response) {
                 return response.ptr() == expectedResponse;
             });
             if (result == notFound)
                 return;
-            continueGetAssertionAfterResponseSelected(m_existingCredentials[result].copyRef());
+            protectedThis->continueGetAssertionAfterResponseSelected(protectedThis->m_existingCredentials[result].copyRef());
         };
         observer->selectAssertionResponse(WTFMove(assertionResponses), WebAuthenticationSource::Local, WTFMove(callback));
     }
@@ -659,18 +656,13 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
     auto accessControlRef = response->accessControl();
     LAContext *context = response->laContext();
-    auto callback = [
-        weakThis = WeakPtr { *this },
-        response = WTFMove(response)
-    ] (LocalConnection::UserVerification verification) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, response = WTFMove(response)] (LocalConnection::UserVerification verification) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
-            return;
-
-        weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->laContext());
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->laContext());
     };
 
-    m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
+    protectedConnection()->verifyUser(accessControlRef, context, WTFMove(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)
