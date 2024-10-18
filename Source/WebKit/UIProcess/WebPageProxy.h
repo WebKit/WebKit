@@ -392,6 +392,7 @@ class ShareableBitmapHandle;
 class ShareableResourceHandle;
 class Site;
 struct TextAnimationData;
+enum class ImageDecodingError : uint8_t;
 enum class ExceptionCode : uint8_t;
 }
 
@@ -850,6 +851,9 @@ public:
     void navigateToPDFLinkWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
 
     void loadAndDecodeImage(WebCore::ResourceRequest&&, std::optional<WebCore::FloatSize>, size_t, CompletionHandler<void(std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>>&&)>&&);
+#if PLATFORM(COCOA)
+    void getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(Expected<std::pair<String, Vector<WebCore::IntSize>>, WebCore::ImageDecodingError>&&)>&&);
+#endif
 
     void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 

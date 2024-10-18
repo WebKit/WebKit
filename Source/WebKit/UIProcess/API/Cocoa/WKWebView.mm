@@ -145,6 +145,7 @@
 #import <WebCore/DOMException.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/ExceptionCode.h>
+#import <WebCore/ImageUtilities.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
@@ -3264,6 +3265,27 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
             completionHandler(adoptNS([[UIImage alloc] initWithCGImage:bitmap->makeCGImageCopy().get()]).get(), nil);
 #endif
         });
+    });
+}
+
+- (void)_getInformationFromImageData:(NSData *)imageData completionHandler:(void (^)(NSString * typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error))completionHandler
+{
+    _page->getInformationFromImageData(makeVector(imageData), [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result) {
+            NSError *error = [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::descriptionString(result.error()) }];
+            return completionHandler(nil, nil, error);
+        }
+
+        auto [typeIdentifier, sizes] = result.value();
+        RetainPtr availableSizes = createNSArray(sizes, [](auto size) {
+#if PLATFORM(MAC)
+            return [NSValue valueWithSize:size];
+#else
+            CGSize cgSize = size;
+            return [NSValue valueWithCGSize:cgSize];
+#endif
+        });
+        return completionHandler(typeIdentifier, availableSizes.autorelease(), nil);
     });
 }
 

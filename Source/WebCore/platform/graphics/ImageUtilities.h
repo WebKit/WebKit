@@ -44,5 +44,13 @@ WEBCORE_EXPORT Vector<String> findImagesForTranscoding(const Vector<String>& pat
 // happens while transcoding, a null string will be added to the returned list.
 WEBCORE_EXPORT Vector<String> transcodeImages(const Vector<String>& paths, const String& destinationUTI, const String& destinationExtension);
 
+enum class ImageDecodingError : uint8_t {
+    Internal,
+    BadData,
+    UnsupportedType
+};
+WEBCORE_EXPORT String descriptionString(ImageDecodingError);
+WEBCORE_EXPORT Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t>);
+
 } // namespace WebCore
 

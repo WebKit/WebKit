@@ -125,4 +125,43 @@ Vector<String> transcodeImages(const Vector<String>& paths, const String& destin
     });
 }
 
+String descriptionString(ImageDecodingError error)
+{
+    switch (error) {
+    case ImageDecodingError::Internal:
+        return "Internal error"_s;
+    case ImageDecodingError::BadData:
+        return "Bad data"_s;
+    case ImageDecodingError::UnsupportedType:
+        return "Unsupported image type"_s;
+    }
+
+    return "Unkown error"_s;
+}
+
+Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t> data)
+{
+    Ref buffer = FragmentedSharedBuffer::create(data);
+    Ref imageDecoder = ImageDecoderCG::create(buffer.get(), AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    imageDecoder->setData(buffer.get(), true);
+    if (imageDecoder->encodedDataStatus() == EncodedDataStatus::Error)
+        return makeUnexpected(ImageDecodingError::BadData);
+
+    auto uti = imageDecoder->uti();
+    if (!isSupportedImageType(uti))
+        return makeUnexpected(ImageDecodingError::UnsupportedType);
+
+    size_t frameCount = imageDecoder->frameCount();
+    // Do not support animated image.
+    if (imageDecoder->repetitionCount() != RepetitionCountNone && frameCount > 1)
+        return makeUnexpected(ImageDecodingError::UnsupportedType);
+
+    Vector<IntSize> sizes;
+    sizes.reserveInitialCapacity(frameCount);
+    for (size_t index = 0; index < frameCount; ++index)
+        sizes.append(imageDecoder->frameSizeAtIndex(index));
+
+    return std::make_pair(WTFMove(uti), WTFMove(sizes));
+}
+
 } // namespace WebCore

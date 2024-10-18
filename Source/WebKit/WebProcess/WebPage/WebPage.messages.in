@@ -829,6 +829,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     StopObservingNowPlayingMetadata()
 
     LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint, size_t maximumBytesFromNetwork) -> (std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>> result)
+#if PLATFORM(COCOA)
+    GetInformationFromImageData(Vector<uint8_t> imageData) -> (Expected<std::pair<String, Vector<WebCore::IntSize>>, WebCore::ImageDecodingError> result)
+#endif
 
     FrameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier frameID, String frameName)
 

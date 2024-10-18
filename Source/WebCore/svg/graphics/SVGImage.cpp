@@ -31,6 +31,7 @@
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
 #include "CommonVM.h"
+#include "DOMParser.h"
 #include "DocumentLoader.h"
 #include "DocumentSVG.h"
 #include "EditorClient.h"
@@ -526,6 +527,18 @@ bool isInSVGImage(const Element* element)
         return false;
 
     return page->chrome().client().isSVGImageChromeClient();
+}
+
+bool SVGImage::isDataDecodable(const Settings& settings, std::span<const uint8_t> data)
+{
+    auto document = Document::create(settings, aboutBlankURL());
+    auto domParser = DOMParser::create(document.get());
+    auto parseResult = domParser->parseFromString(String::fromUTF8(data), imageSVGContentTypeAtom());
+    if (parseResult.hasException())
+        return false;
+
+    Ref result = parseResult.returnValue();
+    return result->hasSVGRootNode();
 }
 
 }

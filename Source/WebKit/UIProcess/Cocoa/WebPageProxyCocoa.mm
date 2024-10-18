@@ -1486,6 +1486,13 @@ WTF::MachSendRight WebPageProxy::createMachSendRightForRemoteLayerServer()
 }
 #endif
 
+void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, CompletionHandler<void(Expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+{
+    ensureRunningProcess().sendWithAsyncReply(Messages::WebPage::GetInformationFromImageData(WTFMove(data)), [preventProcessShutdownScope = protectedLegacyMainFrameProcess()->shutdownPreventingScope(), completionHandler = WTFMove(completionHandler)] (auto result) mutable {
+        completionHandler(WTFMove(result));
+    }, webPageIDInMainFrameProcess());
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

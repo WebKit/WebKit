@@ -27,9 +27,12 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/Expected.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/Base64.h>
 
 namespace TestWebKitAPI {
 
@@ -151,6 +154,57 @@ TEST(WebKit, LoadAndDecodeImage)
         EXPECT_NULL(image);
         EXPECT_EQ(error.code, 103);
         EXPECT_WK_STREQ(error.domain, "WebKitErrorDomain");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(WebKit, GetInformationFromImageData)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    done = false;
+    RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    [webView _getInformationFromImageData:pngData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypePNG.identifier]);
+        EXPECT_EQ(1u, availableSizes.count);
+        NSValue *size = [availableSizes firstObject];
+        EXPECT_EQ(215, [size sizeValue].width);
+        EXPECT_EQ(174, [size sizeValue].height);
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    RetainPtr gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"]];
+    [webView _getInformationFromImageData:gifData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypeGIF.identifier]);
+        EXPECT_EQ(1u, availableSizes.count);
+        for (NSValue *size in availableSizes) {
+            EXPECT_EQ(52, [size sizeValue].width);
+            EXPECT_EQ(64, [size sizeValue].height);
+        }
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    RetainPtr svgData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"]];
+    [webView _getInformationFromImageData:svgData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypeSVG.identifier]);
+        EXPECT_EQ(0u, availableSizes.count);
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView _getInformationFromImageData:pdfData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        EXPECT_NULL(typeIdentifier);
+        EXPECT_EQ(0u, availableSizes.count);
         done = true;
     }];
     Util::run(&done);

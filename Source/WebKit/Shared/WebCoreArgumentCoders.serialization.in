@@ -8489,6 +8489,15 @@ class WebCore::PermissionsPolicy {
 using WebCore::PermissionsPolicy::InheritedPolicy = HashSet<WebCore::PermissionsPolicy::Feature, IntHash<WebCore::PermissionsPolicy::Feature>, WTF::StrongEnumHashTraits<WebCore::PermissionsPolicy::Feature>>;
 using WebCore::OwnerPermissionsPolicyData::PolicyDirective = UncheckedKeyHashMap<WebCore::PermissionsPolicy::Feature, WebCore::Allowlist, IntHash<WebCore::PermissionsPolicy::Feature>, WTF::StrongEnumHashTraits<WebCore::PermissionsPolicy::Feature>>;
 
+#if PLATFORM(COCOA)
+header: <WebCore/ImageUtilities.h>
+[CustomHeader] enum class WebCore::ImageDecodingError : uint8_t {
+    Internal,
+    BadData,
+    UnsupportedType
+};
+#endif
+
 header: <WebCore/ImageBufferResourceLimits.h>
 struct WebCore::ImageBufferResourceLimits {
     size_t acceleratedImageBufferForCanvasCount;

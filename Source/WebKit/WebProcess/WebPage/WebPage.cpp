@@ -348,7 +348,9 @@
 #include "VideoPresentationManager.h"
 #include "WKStringCF.h"
 #include "WebRemoteObjectRegistry.h"
+#include <WebCore/ImageUtilities.h>
 #include <WebCore/LegacyWebArchive.h>
+#include <WebCore/SVGImage.h>
 #include <WebCore/TextPlaceholderElement.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
@@ -7979,6 +7981,19 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
         });
     });
 }
+
+#if PLATFORM(COCOA)
+void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, CompletionHandler<void(Expected<std::pair<String, Vector<IntSize>>, WebCore::ImageDecodingError>&&)>&& completionHandler)
+{
+    if (m_isClosed)
+        return completionHandler(makeUnexpected(ImageDecodingError::Internal));
+
+    if (SVGImage::isDataDecodable(m_page->settings(), data.span()))
+        return completionHandler(std::make_pair(String { "public.svg-image"_s }, Vector<IntSize> { }));
+
+    completionHandler(utiAndAvailableSizesFromImageData(data.span()));
+}
+#endif
 
 #if PLATFORM(MAC)
 void WebPage::flushPendingThemeColorChange()
