@@ -2869,7 +2869,7 @@ bool AccessibilityObject::hasHighlighting() const
 
 SRGBA<uint8_t> AccessibilityObject::colorValue() const
 {
-    return Color::transparentBlack;
+    return Color::black;
 }
 
 #if !PLATFORM(MAC)

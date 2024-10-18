@@ -2559,11 +2559,11 @@ DateComponentsType AccessibilityObject::dateTimeComponentsType() const
 SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 {
     if (!isColorWell())
-        return Color::transparentBlack;
+        return Color::black;
 
     RefPtr input = dynamicDowncast<HTMLInputElement>(node());
     if (!input)
-        return Color::transparentBlack;
+        return Color::black;
 
     return input->valueAsColor().toColorTypeLossy<SRGBA<uint8_t>>();
 }

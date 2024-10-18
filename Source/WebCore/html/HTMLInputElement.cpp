@@ -1851,7 +1851,7 @@ Color HTMLInputElement::valueAsColor() const
     if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
         return colorInputType->valueAsColor();
 #endif
-    return Color::transparentBlack;
+    return Color::black;
 }
 
 void HTMLInputElement::selectColor(StringView color)
