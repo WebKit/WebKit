@@ -2930,13 +2930,13 @@ void MediaPlayerPrivateAVFoundationObjC::keyAdded()
         m_keyURIToRequestMap.remove(keyId);
 }
 
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem, LegacyCDMSessionClient& client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
-    auto session = makeUnique<CDMSessionAVFoundationObjC>(this, client);
-    m_session = *session;
-    return WTFMove(session);
+    Ref session = CDMSessionAVFoundationObjC::create(this, client);
+    m_session = session.ptr();
+    return session;
 }
 
 #endif

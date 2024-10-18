@@ -62,9 +62,9 @@ bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType)
     return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient& client)
 {
-    return makeUnique<CDMSessionClearKey>(client);
+    return LegacyCDMSessionClearKey::create(client);
 }
 
 }

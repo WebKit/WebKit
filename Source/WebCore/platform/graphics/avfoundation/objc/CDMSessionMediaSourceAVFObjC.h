@@ -38,22 +38,12 @@ OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 
 namespace WebCore {
-class CDMSessionMediaSourceAVFObjC;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMSessionMediaSourceAVFObjC> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CDMPrivateMediaSourceAVFObjC;
 
 class CDMSessionMediaSourceAVFObjC : public LegacyCDMSession, public SourceBufferPrivateAVFObjCErrorClient, public CanMakeWeakPtr<CDMSessionMediaSourceAVFObjC> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionMediaSourceAVFObjC);
 public:
-    CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     virtual ~CDMSessionMediaSourceAVFObjC();
 
     virtual void addParser(AVStreamDataParser*) = 0;
@@ -79,6 +69,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void invalidateCDM() { m_cdm = nullptr; }
 
 protected:
+    CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     String storagePath() const;
 
 #if !RELEASE_LOG_DISABLED

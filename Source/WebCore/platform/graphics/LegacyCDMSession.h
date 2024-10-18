@@ -28,6 +28,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <JavaScriptCore/Forward.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -76,7 +77,7 @@ enum LegacyCDMSessionType {
     CDMSessionTypeRemote,
 };
 
-class WEBCORE_EXPORT LegacyCDMSession {
+class WEBCORE_EXPORT LegacyCDMSession : public AbstractRefCounted {
 public:
     virtual ~LegacyCDMSession() = default;
 

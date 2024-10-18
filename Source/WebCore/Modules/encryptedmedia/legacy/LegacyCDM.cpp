@@ -131,9 +131,9 @@ bool LegacyCDM::supportsMIMEType(const String& mimeType) const
     return m_private->supportsMIMEType(mimeType);
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
 {
-    auto session = m_private->createSession(client);
+    RefPtr session = m_private->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

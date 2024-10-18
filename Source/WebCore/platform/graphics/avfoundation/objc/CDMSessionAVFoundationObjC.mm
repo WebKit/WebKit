@@ -49,6 +49,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionAVFoundationObjC);
 
+Ref<CDMSessionAVFoundationObjC> CDMSessionAVFoundationObjC::create(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient& client)
+{
+    return adoptRef(*new CDMSessionAVFoundationObjC(parent, client));
+}
+
 CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient& client)
     : m_parent(*parent)
     , m_client(client)

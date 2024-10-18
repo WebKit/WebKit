@@ -116,6 +116,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionAVContentKeySession);
 
 constexpr Seconds kDidProvideContentKeyRequestTimeout { 5_s };
 
+Ref<CDMSessionAVContentKeySession> CDMSessionAVContentKeySession::create(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
+{
+    return adoptRef(*new CDMSessionAVContentKeySession(WTFMove(protocolVersions), cdmVersion, cdm, client));
+}
+
 CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
     , m_contentKeySessionDelegate(adoptNS([[WebCDMSessionAVContentKeySessionDelegate alloc] initWithParent:this]))

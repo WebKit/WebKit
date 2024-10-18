@@ -32,15 +32,6 @@
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class RemoteLegacyCDMSession;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDMSession> : std::true_type { };
-}
-
 namespace WebCore {
 class SharedBuffer;
 }
@@ -49,12 +40,13 @@ namespace WebKit {
 
 class RemoteLegacyCDMFactory;
 
-class RemoteLegacyCDMSession final
-    : public WebCore::LegacyCDMSession
-    , public IPC::MessageReceiver {
+class RemoteLegacyCDMSession final : public WebCore::LegacyCDMSession, public IPC::MessageReceiver, public RefCounted<RemoteLegacyCDMSession> {
 public:
-    static std::unique_ptr<RemoteLegacyCDMSession> create(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
+    static Ref<RemoteLegacyCDMSession> create(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
     ~RemoteLegacyCDMSession();
+
+    void ref() const final { RefCounted<RemoteLegacyCDMSession>::ref(); }
+    void deref() const final { RefCounted<RemoteLegacyCDMSession>::deref(); }
 
     // MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

@@ -45,11 +45,15 @@ namespace WebCore {
 
 class CDMPrivateMediaSourceAVFObjC;
 
-class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC {
+class CDMSessionAVContentKeySession final : public CDMSessionMediaSourceAVFObjC, public RefCounted<CDMSessionAVContentKeySession> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);
 public:
-    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVContentKeySession> create(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+
     virtual ~CDMSessionAVContentKeySession();
+
+    void ref() const final { RefCounted<CDMSessionAVContentKeySession>::ref(); }
+    void deref() const final { RefCounted<CDMSessionAVContentKeySession>::deref(); }
 
     static bool isAvailable();
 
@@ -69,6 +73,7 @@ public:
     void didProvideContentKeyRequest(AVContentKeyRequest *);
 
 protected:
+    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
     bool hasContentKeySession() const { return m_contentKeySession; }

@@ -40,10 +40,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LegacyMockCDM);
 
-class MockCDMSession : public LegacyCDMSession {
+class MockCDMSession final : public LegacyCDMSession, public RefCounted<MockCDMSession> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(MockCDMSession);
 public:
-    MockCDMSession(LegacyCDMSessionClient&);
+    static Ref<MockCDMSession> create(LegacyCDMSessionClient&);
+
+    void ref() const final { RefCounted<MockCDMSession>::ref(); }
+    void deref() const final { RefCounted<MockCDMSession>::deref(); }
+
     virtual ~MockCDMSession() = default;
 
     const String& sessionId() const override { return m_sessionId; }
@@ -53,6 +57,8 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override { return nullptr; }
 
 protected:
+    explicit MockCDMSession(LegacyCDMSessionClient&);
+
     WeakPtr<LegacyCDMSessionClient> m_client;
     String m_sessionId;
 };
@@ -75,9 +81,9 @@ bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
     return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient& client)
 {
-    return makeUnique<MockCDMSession>(client);
+    return MockCDMSession::create(client);
 }
 
 static Uint8Array* initDataPrefix()
@@ -108,6 +114,11 @@ static String generateSessionId()
 {
     static int monotonicallyIncreasingSessionId = 0;
     return String::number(monotonicallyIncreasingSessionId++);
+}
+
+Ref<MockCDMSession> MockCDMSession::create(LegacyCDMSessionClient& client)
+{
+    return adoptRef(*new MockCDMSession(client));
 }
 
 MockCDMSession::MockCDMSession(LegacyCDMSessionClient& client)
