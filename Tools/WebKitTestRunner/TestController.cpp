@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1505,7 +1505,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     if (length >= 7 && strstr(pathOrURL, "file://")) {
         auto url = adoptWK(WKURLCreateWithUTF8CString(pathOrURL));
         auto path = testPath(url.get());
-        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
+        if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(std::span { path }))) {
             printf("Failed: File for URL ‘%s’ was not found or is inaccessible\n", pathOrURL);
             return 0;
         }
@@ -1540,7 +1540,7 @@ WKURLRef TestController::createTestURL(const char* pathOrURL)
     auto cPath = buffer.get();
     auto url = adoptWK(WKURLCreateWithUTF8CString(cPath));
     auto path = testPath(url.get());
-    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String({ path.c_str(), path.length() }))) {
+    if (!m_usingServerMode && !WTF::FileSystemImpl::fileExists(String(std::span { path }))) {
         printf("Failed: File ‘%s’ was not found or is inaccessible\n", pathOrURL);
         return 0;
     }

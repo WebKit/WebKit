@@ -174,7 +174,7 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const unsigned maxGapLength = 10;
+    constexpr unsigned maxGapLength = 10;
     space = unwrapBoxedPrimitive(globalObject, space);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -191,7 +191,7 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
         char spaces[maxGapLength];
         for (size_t i = 0; i < count; ++i)
             spaces[i] = ' ';
-        return String({ spaces, count });
+        return String(std::span { spaces }.first(count));
     }
 
     // If the space value is a string, use it as the gap string, otherwise use no gap string.

@@ -762,11 +762,11 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
 template<typename T, typename U, std::size_t Extent>
-std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
+constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
 {
     if constexpr (Extent == std::dynamic_extent) {
         if constexpr (sizeof(U) < sizeof(T) || sizeof(U) % sizeof(T))
-            RELEASE_ASSERT_WITH_MESSAGE(!(span.size_bytes() % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
+            RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!(span.size_bytes() % sizeof(T))); // Refuse to change size in bytes from source.
     } else
         static_assert(!((sizeof(U) * Extent) % sizeof(T)), "spanReinterpretCast will not change size in bytes from source");
 
@@ -827,7 +827,7 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
 // Use this when we can't edit the imported API and it doesn't offer
 // begin() / end() or a span accessor.
 template<typename T, std::size_t Extent = std::dynamic_extent>
-inline auto unsafeForgeSpan(T* ptr, size_t size)
+inline constexpr auto unsafeForgeSpan(T* ptr, size_t size)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return std::span<T, Extent> { ptr, size };

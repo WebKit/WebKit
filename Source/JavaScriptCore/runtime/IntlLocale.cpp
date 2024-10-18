@@ -598,7 +598,7 @@ JSArray* IntlLocale::calendars(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(calendars.get(), &length, &status)) && U_SUCCESS(status)) {
-        String calendar({ pointer, static_cast<size_t>(length) });
+        String calendar(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
         if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
             elements.append(WTFMove(mapped.value()));
         else
@@ -636,7 +636,7 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
     const char* pointer;
     int32_t length = 0;
     while ((pointer = uenum_next(enumeration.get(), &length, &status)) && U_SUCCESS(status)) {
-        String collation({ pointer, static_cast<size_t>(length) });
+        String collation(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
         // 1.1.3 step 4, The values "standard" and "search" must be excluded from list.
         if (collation == "standard"_s || collation == "search"_s)
             continue;
