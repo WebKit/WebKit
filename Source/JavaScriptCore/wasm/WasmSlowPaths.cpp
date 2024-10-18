@@ -115,7 +115,7 @@ static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::LLIntCallee* cal
 
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
-        dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
+        dataLogLnIf(Options::verboseOSR(), "\tJIT threshold not reached. Adjusted: ", tierUpCounter);
         return nullptr;
     }
 
@@ -129,12 +129,11 @@ static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::LLIntCallee* cal
     };
 
     if (auto* replacement = getReplacement()) {
-        dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
+        dataLogLnIf(Options::verboseOSR(), "\tCode was already compiled.");
         // FIXME: This should probably be some optimizeNow() for calls or checkIfOptimizationThresholdReached() should have a different threshold for calls.
         tierUpCounter.optimizeSoon();
         return replacement;
     }
-
 
     bool compile = false;
     {
@@ -157,6 +156,7 @@ static inline Wasm::JITCallee* jitCompileAndSetHeuristics(Wasm::LLIntCallee* cal
         if (Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex)) {
             auto plan = Wasm::BBQPlan::create(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), Ref(*instance->calleeGroup()), Wasm::Plan::dontFinalize());
             Wasm::ensureWorklist().enqueue(plan.get());
+            dataLogLnIf(Options::verboseOSR(), "\tStarted BBQ compilation.");
             if (UNLIKELY(!Options::useConcurrentJIT() || !Options::useWasmLLInt()))
                 plan->waitForCompletion();
             else
@@ -176,7 +176,7 @@ static inline Expected<Wasm::JITCallee*, Wasm::Plan::Error> jitCompileSIMDFuncti
     {
         Locker locker { calleeGroup.m_lock };
         if (auto* replacement = calleeGroup.replacement(locker, callee->index()))  {
-            dataLogLnIf(Options::verboseOSR(), "    SIMD code was already compiled.");
+            dataLogLnIf(Options::verboseOSR(), "\tSIMD code was already compiled.");
             return replacement;
         }
     }
@@ -257,10 +257,10 @@ WASM_SLOW_PATH_DECL(loop_osr)
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
-    dataLogLnIf(Options::verboseOSR(), *callee, ": Entered loop_osr with tierUpCounter = ", callee->tierUpCounter());
+    dataLogLnIf(Options::verboseOSR(), *callee, ": Entered loop_osr with tierUpCounter = ", tierUpCounter);
 
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
-        dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
+        dataLogLnIf(Options::verboseOSR(), "\tJIT threshold not reached. Adjusted: ", tierUpCounter);
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
@@ -272,10 +272,9 @@ WASM_SLOW_PATH_DECL(loop_osr)
 
     auto* bbqCallee = static_cast<Wasm::BBQCallee*>(jitCompileAndSetHeuristics(callee, instance, OSRFor::Loop));
     if (!bbqCallee) {
-        dataLogLnIf(Options::verboseOSR(), "No BBQCallee bailing from loop OSR");
+        dataLogLnIf(Options::verboseOSR(), "\tNo BBQCallee yet, bailing from loop OSR");
         WASM_RETURN_TWO(nullptr, nullptr);
     }
-
     ASSERT(bbqCallee->compilationMode() == Wasm::CompilationMode::BBQMode);
 
     size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
@@ -286,13 +285,13 @@ WASM_SLOW_PATH_DECL(loop_osr)
     uintptr_t stackExtent = stackPointer - bbqCallee->stackCheckSize();
     uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
     if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
-        dataLogLnIf(Options::verboseOSR(), "Skipping BBQ loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+        dataLogLnIf(Options::verboseOSR(), "\tSkipping BBQ loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
     uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
     if (!buffer) {
-        dataLogLnIf(Options::verboseOSR(), "Skipping BBQ loop tier up due to lack of scratch buffer");
+        dataLogLnIf(Options::verboseOSR(), "\tSkipping BBQ loop tier up due to lack of scratch buffer");
         WASM_RETURN_TWO(nullptr, nullptr);
     }
 
@@ -304,7 +303,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     auto sharedLoopEntrypoint = bbqCallee->sharedLoopEntrypoint();
     RELEASE_ASSERT(sharedLoopEntrypoint);
 
-    dataLogLnIf(Options::verboseOSR(), "Entering BBQ in loop tier up now.");
+    dataLogLnIf(Options::verboseOSR(), "\tEntering BBQ in loop tier up now.");
     WASM_RETURN_TWO(buffer, sharedLoopEntrypoint->taggedPtr());
 }
 

@@ -76,7 +76,7 @@ public:
 
     void optimizeAfterWarmUp(FunctionCodeIndex functionIndex)
     {
-        dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing after warm-up.");
+        dataLogLnIf(Options::verboseOSR(), "\t[", functionIndex, "] OMG-optimizing after warm-up.");
         setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
     }
 

@@ -651,8 +651,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
 {
     if (!replacement && !tierUp.checkIfOptimizationThresholdReached()) {
-        dataLogLnIf(Options::verboseOSR(), "delayOMGCompile counter = ", tierUp, " for ", functionIndex);
-        dataLogLnIf(Options::verboseOSR(), "Choosing not to OMG-optimize ", functionIndex, " yet.");
+        dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile counter = ", tierUp, " for ", functionIndex);
+        dataLogLnIf(Options::verboseOSR(), "\tChoosing not to OMG-optimize ", functionIndex, " yet.");
         return false;
     }
     return true;
@@ -683,7 +683,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
     }
 
     if (compile) {
-        dataLogLnIf(Options::verboseOSR(), "triggerOMGReplacement for ", functionIndex);
+        dataLogLnIf(Options::verboseOSR(), "\ttriggerOMGReplacement for ", functionIndex);
         // We need to compile the code.
         Ref<Plan> plan = adoptRef(*new OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, hasExceptionHandlers, calleeGroup.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
@@ -788,7 +788,7 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
     if (!buffer)
         return returnWithoutOSREntry();
 
-    dataLogLnIf(Options::verboseOSR(), osrEntryData.functionIndex(), ":OMG OSR entry: got entry callee ", RawPointer(&osrEntryCallee));
+    dataLogLnIf(Options::verboseOSR(), callee, ": OMG OSR entry: functionCodeIndex=", osrEntryData.functionIndex(), " got entry callee ", RawPointer(&osrEntryCallee));
 
     // 1. Place required values in scratch buffer.
     loadValuesIntoBuffer(context, osrEntryData.values(), buffer, callee.savedFPWidth());
@@ -872,7 +872,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFram
         Locker locker { calleeGroup.m_lock };
         replacement = calleeGroup.omgCallee(locker, functionIndex);
     }
-    dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(replacement));
+    dataLogLnIf(Options::verboseOSR(), callee, ": Consider OMGPlan for functionCodeIndex=", functionIndex, " with executeCounter = ", tierUp, " ", RawPointer(replacement));
 
     if (shouldTriggerOMGCompile(tierUp, replacement, functionIndex))
         triggerOMGReplacementCompile(tierUp, replacement, instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
@@ -881,7 +881,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFram
     if (replacement) {
         // No OSR entry points. Just defer indefinitely.
         if (tierUp.osrEntryTriggers().isEmpty()) {
-            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile replacement in place, delaying indefinitely for ", functionIndex);
+            dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile replacement in place, delaying indefinitely for ", functionIndex);
             tierUp.dontOptimizeAnytimeSoon(functionIndex);
             return;
         }
@@ -889,7 +889,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFram
         // Found one OSR entry point. Since we do not have a way to jettison Wasm::Callee right now, this means that tierUp function is now meaningless.
         // Not call it as much as possible.
         if (callee.osrEntryCallee()) {
-            dataLogLnIf(Options::verboseOSR(), "delayOMGCompile trigger in place, delaying indefinitely for ", functionIndex);
+            dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile trigger in place, delaying indefinitely for ", functionIndex);
             tierUp.dontOptimizeAnytimeSoon(functionIndex);
             return;
         }
@@ -921,7 +921,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         uintptr_t stackExtent = stackPointer - callee->stackCheckSize();
         uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
         if (UNLIKELY(stackExtent >= stackPointer || stackExtent <= stackLimit)) {
-            dataLogLnIf(Options::verboseOSR(), "Skipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
+            dataLogLnIf(Options::verboseOSR(), "\tSkipping OMG loop tier up due to stack check; ", RawHex(stackPointer), " -> ", RawHex(stackExtent), " is past soft limit ", RawHex(stackLimit));
             return false;
         }
         return true;
@@ -941,7 +941,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
         Locker locker { calleeGroup.m_lock };
         replacement = calleeGroup.omgCallee(locker, functionIndex);
     }
-    dataLogLnIf(Options::verboseOSR(), "Consider OSREntryPlan for [", functionIndex, "] loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(replacement));
+    dataLogLnIf(Options::verboseOSR(), callee, ": Consider OSREntryPlan for functionCodeIndex=", osrEntryData.functionIndex(),  " loopIndex#", loopIndex, " with executeCounter = ", tierUp, " ", RawPointer(replacement));
 
     if (!Options::useWasmOSR()) {
         if (shouldTriggerOMGCompile(tierUp, replacement, functionIndex))
@@ -997,7 +997,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
     }
 
     if (compilationStatus == TierUpCount::CompilationStatus::StartCompilation) {
-        dataLogLnIf(Options::verboseOSR(), "delayOMGCompile still compiling for ", functionIndex);
+        dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile still compiling for ", functionIndex);
         tierUp.setOptimizationThresholdBasedOnCompilationResult(functionIndex, CompilationDeferred);
         return returnWithoutOSREntry();
     }
@@ -1063,7 +1063,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
 
                 // This is where we ask the outer to loop to immediately compile itself if program
                 // control reaches it.
-                dataLogLnIf(Options::verboseOSR(), "Inner-loop loopIndex#", loopIndex, " in ", functionIndex, " setting parent loop loopIndex#", currentLoopIndex, "'s trigger and backing off.");
+                dataLogLnIf(Options::verboseOSR(), "\tInner-loop loopIndex#", loopIndex, " in ", functionIndex, " setting parent loop loopIndex#", currentLoopIndex, "'s trigger and backing off.");
                 tierUp.osrEntryTriggers()[currentLoopIndex] = TierUpCount::TriggerReason::StartCompilation;
                 return true;
             }
@@ -1090,7 +1090,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
     }
 
     if (startOSREntryCompilation) {
-        dataLogLnIf(Options::verboseOSR(), "triggerOMGOSR for ", functionIndex);
+        dataLogLnIf(Options::verboseOSR(), "\ttriggerOMGOSR for ", functionIndex);
         Ref<Plan> plan = adoptRef(*new OSREntryPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, callee.hasExceptionHandlers(), loopIndex, calleeGroup.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
