@@ -102,6 +102,9 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             continue;
 
         auto& texture = fromAPI(attachment.view);
+        if (texture.isDestroyed())
+            m_parentEncoder->makeSubmitInvalid();
+
         texture.setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         m_rasterSampleCount = texture.sampleCount();
