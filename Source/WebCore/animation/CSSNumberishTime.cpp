@@ -131,6 +131,13 @@ CSSNumberishTime CSSNumberishTime::matchingZero() const
     return { m_type, 0 };
 }
 
+CSSNumberishTime CSSNumberishTime::matchingEpsilon() const
+{
+    if (m_type == Type::Percentage)
+        return CSSNumberishTime::fromPercentage(0.000001);
+    return { WebCore::timeEpsilon };
+}
+
 bool CSSNumberishTime::approximatelyEqualTo(const CSSNumberishTime& other) const
 {
     ASSERT(m_type == other.m_type);

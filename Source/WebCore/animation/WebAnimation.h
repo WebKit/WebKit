@@ -209,7 +209,6 @@ private:
     double effectivePlaybackRate() const;
     void applyPendingPlaybackRate();
     void setEffectiveFrameRate(std::optional<FramesPerSecond>);
-    CSSNumberishTime timeEpsilon() const;
     void autoAlignStartTime();
 
     // ActiveDOMObject.

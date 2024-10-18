@@ -49,6 +49,7 @@ public:
     bool isZero() const;
 
     CSSNumberishTime matchingZero() const;
+    CSSNumberishTime matchingEpsilon() const;
 
     bool approximatelyEqualTo(const CSSNumberishTime&) const;
     bool approximatelyLessThan(const CSSNumberishTime&) const;

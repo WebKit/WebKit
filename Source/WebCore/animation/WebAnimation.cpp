@@ -700,13 +700,6 @@ void WebAnimation::setEffectiveFrameRate(std::optional<FramesPerSecond> effectiv
     // that it may schedule an update if our update cadence is now longer (or shorter).
 }
 
-CSSNumberishTime WebAnimation::timeEpsilon() const
-{
-    if (m_timeline && m_timeline->isProgressBased())
-        return CSSNumberishTime::fromPercentage(0.000001);
-    return { WebCore::timeEpsilon };
-}
-
 auto WebAnimation::playState() const -> PlayState
 {
     // 3.5.19 Play states
@@ -732,7 +725,7 @@ auto WebAnimation::playState() const -> PlayState
     // animation's effective playback rate > 0 and current time ≥ target effect end; or
     // animation's effective playback rate < 0 and current time ≤ 0,
     // → finished
-    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + timeEpsilon()) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - timeEpsilon()) <= zeroTime())))
+    if (animationCurrentTime && ((effectivePlaybackRate() > 0 && (*animationCurrentTime + animationCurrentTime->matchingEpsilon()) >= effectEndTime()) || (effectivePlaybackRate() < 0 && (*animationCurrentTime - animationCurrentTime->matchingEpsilon()) <= zeroTime())))
         return PlayState::Finished;
 
     // Otherwise → running
@@ -741,7 +734,7 @@ auto WebAnimation::playState() const -> PlayState
 
 CSSNumberishTime WebAnimation::zeroTime() const
 {
-    if (m_timeline && m_timeline->isProgressBased())
+    if ((m_timeline && m_timeline->isProgressBased()) || (m_startTime && m_startTime->percentage()) || (m_holdTime && m_holdTime->percentage()))
         return CSSNumberishTime::fromPercentage(0);
     return { 0_s };
 }
@@ -1128,7 +1121,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     auto enableSeek = autoRewind == AutoRewind::Yes && !hasFiniteTimeline;
 
     // 6. Perform the steps corresponding to the first matching condition from the following, if any::
-    if ((playbackRate > 0 && enableSeek) && (!previousCurrentTime || *previousCurrentTime < 0_s || (*previousCurrentTime + timeEpsilon()) >= endTime)) {
+    if ((playbackRate > 0 && enableSeek) && (!previousCurrentTime || *previousCurrentTime < 0_s || (*previousCurrentTime + previousCurrentTime->matchingEpsilon()) >= endTime)) {
         // If animation’s effective playback rate > 0, enable seek is true and either animation’s:
         //     - previous current time is unresolved, or
         //     - previous current time < zero, or
