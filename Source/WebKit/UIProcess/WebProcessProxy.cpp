@@ -1522,11 +1522,6 @@ void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(PageIdentifier pageID,
     action.setConsumed();
 }
 
-bool WebProcessProxy::isResponsive() const
-{
-    return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
-}
-
 void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, UserGestureTokenIdentifier identifier)
 {
     auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);

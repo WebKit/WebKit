@@ -64,7 +64,7 @@ public:
     Ref<API::Navigation> createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<API::SubstituteData>&&, RefPtr<WebBackForwardListItem>&& currentItem);
 
     bool hasNavigation(WebCore::NavigationIdentifier navigationID) const { return m_navigations.contains(navigationID); }
-    API::Navigation* navigation(WebCore::NavigationIdentifier);
+    API::Navigation* navigation(WebCore::NavigationIdentifier navigationID) { return m_navigations.get(navigationID); }
     RefPtr<API::Navigation> takeNavigation(WebCore::NavigationIdentifier);
     void didDestroyNavigation(WebCore::ProcessIdentifier, WebCore::NavigationIdentifier);
     void clearAllNavigations();

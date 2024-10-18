@@ -171,6 +171,11 @@ WebProcessPool& PageConfiguration::processPool() const
     return m_data.processPool.get();
 }
 
+Ref<WebKit::WebProcessPool> PageConfiguration::protectedProcessPool() const
+{
+    return m_data.processPool.get();
+}
+
 void PageConfiguration::setProcessPool(RefPtr<WebProcessPool>&& processPool)
 {
     m_data.processPool = WTFMove(processPool);

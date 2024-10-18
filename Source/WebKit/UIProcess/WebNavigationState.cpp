@@ -90,11 +90,6 @@ Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(W
     return navigation;
 }
 
-API::Navigation* WebNavigationState::navigation(WebCore::NavigationIdentifier navigationID)
-{
-    return m_navigations.get(navigationID);
-}
-
 RefPtr<API::Navigation> WebNavigationState::takeNavigation(WebCore::NavigationIdentifier navigationID)
 {
     ASSERT(m_navigations.contains(navigationID));

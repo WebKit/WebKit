@@ -158,7 +158,7 @@ public:
 
     const WebCore::CertificateInfo& certificateInfo() const { return m_committedState.certificateInfo; }
 
-    const URL& resourceDirectoryURL() const;
+    const URL& resourceDirectoryURL() const { return m_committedState.resourceDirectoryURL; }
 
     const String& pendingAPIRequestURL() const;
     const PendingAPIRequest& pendingAPIRequest() const;

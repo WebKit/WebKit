@@ -205,6 +205,8 @@ struct PrivateClickMeasurementAndMetadata {
 };
 
 struct SpeechSynthesisData {
+    Ref<WebCore::PlatformSpeechSynthesizer> protectedSynthesizer() const { return synthesizer; }
+
     Ref<WebCore::PlatformSpeechSynthesizer> synthesizer;
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
     CompletionHandler<void()> speakingStartedCompletionHandler;

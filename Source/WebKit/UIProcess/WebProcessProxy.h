@@ -272,7 +272,7 @@ public:
 
     void consumeIfNotVerifiablyFromUIProcess(WebCore::PageIdentifier, API::UserInitiatedAction&, std::optional<WTF::UUID>);
 
-    bool isResponsive() const;
+    bool isResponsive() const { return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive(); }
 
     VisibleWebPageToken visiblePageToken() const;
 

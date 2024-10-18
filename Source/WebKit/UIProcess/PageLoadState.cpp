@@ -285,11 +285,6 @@ auto PageLoadState::pendingAPIRequest() const -> const PendingAPIRequest&
     return m_committedState.pendingAPIRequest;
 }
 
-const URL& PageLoadState::resourceDirectoryURL() const
-{
-    return m_committedState.resourceDirectoryURL;
-}
-
 void PageLoadState::setPendingAPIRequest(const Transaction::Token& token, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);

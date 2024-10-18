@@ -640,7 +640,7 @@ public:
     bool shouldEnableLockdownMode() const;
 
     bool hasSameGPUAndNetworkProcessPreferencesAs(const API::PageConfiguration&) const;
-    bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy& page) const { return hasSameGPUAndNetworkProcessPreferencesAs(Ref { page }->configuration()); }
+    bool hasSameGPUAndNetworkProcessPreferencesAs(const WebPageProxy&) const;
 
     void processIsNoLongerAssociatedWithPage(WebProcessProxy&);
 
@@ -1686,6 +1686,7 @@ public:
 #endif
 
     const PageLoadState& pageLoadState() const;
+    Ref<const PageLoadState> protectedPageLoadState() const;
     PageLoadState& pageLoadState();
     Ref<PageLoadState> protectedPageLoadState();
 
