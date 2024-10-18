@@ -82,6 +82,7 @@ static auto *tabsContentScriptManifest = @{
     @"content_scripts": @[ @{
         @"js": @[ @"content.js" ],
         @"matches": @[ @"*://localhost/*" ],
+        @"all_frames": @YES,
     } ],
 };
 
@@ -146,6 +147,9 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, { format: 'jpeg', quality: 'high' }), /'quality' is expected to be a number, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.captureVisibleTab(undefined, { format: 'jpeg', quality: 200 }), /'quality' value is invalid, because it must specify a value between 0 and 100/i)",
 
+        @"browser.test.assertThrows(() => browser.tabs.sendMessage(1, 'message', { frameId: 0, documentId: 'some-document-id' }), /cannot specify both 'frameId' and 'documentId'/i);",
+        @"browser.test.assertThrows(() => browser.tabs.connect(1, { frameId: 0, documentId: 'some-document-id' }), /cannot specify both 'frameId' and 'documentId'/i);",
+
         @"await browser.test.assertRejects(browser.tabs.captureVisibleTab(9999), /window not found/i)",
         @"await browser.test.assertRejects(browser.tabs.captureVisibleTab(), /'activeTab' permission or granted host permissions for the current website are required/i)",
 
@@ -176,7 +180,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.executeScript({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
         @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
         @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
-        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: -1 }), /'-1' is not a frame identifier./i)",
 
         @"browser.test.assertThrows(() => browser.tabs.insertCSS(), /a required argument is missing./i)",
 
@@ -190,7 +194,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
         @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: -1 }), /'-1' is not a frame identifier./i)",
 
         @"browser.test.assertThrows(() => browser.tabs.insertCSS({ code: 'body { color: red }', cssOrigin: 'bad' }), /'cssOrigin' value is invalid, because it must specify either 'author' or 'user'/i);",
 
@@ -205,7 +209,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.removeCSS({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
         @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
 
-        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', frameId: -1 }), /'-1' is not a frame identifier./i)",
 
         @"browser.test.notifyPass()"
     ]);
@@ -1893,6 +1897,123 @@ TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSubframe)
     [manager run];
 }
 
+TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSpecificFrame)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, " "_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const frameId = sender?.frameId",
+        @"  browser.test.assertTrue(frameId !== 0, 'frameId should not be 0 for an iframe')",
+
+        @"  const response = await browser.tabs.sendMessage(sender.tab.id, 'Hello, iframe!', { frameId })",
+        @"  browser.test.assertEq(response, 'Message received', 'Should receive response from content script')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  browser.runtime.onMessage.addListener(() => {",
+        @"    browser.test.notifyFail('Main frame should not receive message intended for iframe')",
+        @"  })",
+        @"} else {",
+        @"  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"    browser.test.assertEq(message, 'Hello, iframe!', 'Message should be received in the iframe')",
+        @"    sendResponse('Message received')",
+        @"  })",
+
+        @"  browser.runtime.sendMessage('Begin Test')",
+        @"}"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, SendMessageFromBackgroundToSpecificDocument)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, " "_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const documentId = sender?.documentId",
+        @"  browser.test.assertEq(typeof documentId, 'string', 'sender.documentId should be a string')",
+        @"  browser.test.assertEq(documentId.length, 36, 'sender.documentId.length should be 36')",
+
+        @"  const response = await browser.tabs.sendMessage(sender.tab.id, 'Hello, iframe!', { documentId })",
+        @"  browser.test.assertEq(response, 'Message received', 'Should receive response from content script')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  browser.runtime.onMessage.addListener(() => {",
+        @"    browser.test.notifyFail('Main frame should not receive message intended for iframe')",
+        @"  })",
+        @"} else {",
+        @"  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"    browser.test.assertEq(message, 'Hello, iframe!', 'Background script message should be received')",
+        @"    sendResponse('Message received')",
+        @"  })",
+
+        @"  browser.runtime.sendMessage('Begin Test')",
+        @"}"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPITabs, Connect)
 {
     TestWebKitAPI::HTTPServer server({
@@ -1953,6 +2074,137 @@ TEST(WKWebExtensionAPITabs, Connect)
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, ConnectToSpecificFrame)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, " "_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const frameId = sender?.frameId",
+        @"  browser.test.assertTrue(frameId !== 0, 'frameId should not be 0 for an iframe')",
+
+        @"  const port = browser.tabs.connect(sender.tab.id, { frameId })",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Message received', 'Should receive response from content script')",
+        @"    browser.test.notifyPass()",
+        @"  })",
+
+        @"  port.postMessage('Hello, iframe!')",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  browser.runtime.onConnect.addListener(() => {",
+        @"    browser.test.notifyFail('Main frame should not receive connection intended for iframe')",
+        @"  })",
+        @"} else {",
+        @"  browser.runtime.onConnect.addListener((port) => {",
+        @"    port.onMessage.addListener((message) => {",
+        @"      browser.test.assertEq(message, 'Hello, iframe!', 'Background script message should be received')",
+        @"      port.postMessage('Message received')",
+        @"    })",
+        @"  })",
+
+        @"  browser.runtime.sendMessage('Begin Test')",
+        @"}"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, ConnectToSpecificDocument)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, " "_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Begin Test', 'Message content should match')",
+
+        @"  const documentId = sender?.documentId",
+        @"  browser.test.assertEq(typeof documentId, 'string', 'sender.documentId should be a string')",
+        @"  browser.test.assertEq(documentId.length, 36, 'sender.documentId.length should be 36')",
+
+        @"  const port = browser.tabs.connect(sender.tab.id, { documentId })",
+        @"  browser.test.assertEq(typeof port, 'object', 'Port should be an object')",
+
+        @"  port.onMessage.addListener((response) => {",
+        @"    browser.test.assertEq(response, 'Message received', 'Should receive response from content script')",
+        @"    browser.test.notifyPass()",
+        @"  })",
+
+        @"  port.postMessage('Hello, iframe!')",
+        @"})",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  browser.runtime.onConnect.addListener(() => {",
+        @"    browser.test.notifyFail('Main frame should not receive connection intended for iframe')",
+        @"  })",
+        @"} else {",
+        @"  browser.runtime.onConnect.addListener((port) => {",
+        @"    port.onMessage.addListener((message) => {",
+        @"      browser.test.assertEq(message, 'Hello, iframe!', 'Background script message should be received')",
+        @"      port.postMessage('Message received')",
+        @"    })",
+        @"  })",
+
+        @"  browser.runtime.sendMessage('Begin Test')",
+        @"}"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"content.js": contentScript,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:@"*" host:@"localhost" path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPITabs, ConnectToSubframe)

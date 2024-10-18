@@ -42,6 +42,7 @@
 #import "WebExtensionControllerProxy.h"
 #import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionMessageSenderParameters.h"
+#import "WebExtensionMessageTargetParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <WebCore/SecurityOrigin.h>
@@ -588,7 +589,29 @@ NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
     return [result copy];
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+static bool matches(WebFrame& frame, const std::optional<WebExtensionMessageTargetParameters>& targetParameters)
+{
+    if (!targetParameters)
+        return true;
+
+    // Skip all frames / documents that don't match the target parameters.
+    auto& frameIdentifier = targetParameters.value().frameIdentifier;
+    if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
+        return false;
+
+    if (auto& documentIdentifier = targetParameters.value().documentIdentifier) {
+        auto frameDocumentIdentifier = toDocumentIdentifier(frame);
+        if (!frameDocumentIdentifier)
+            return false;
+
+        if (documentIdentifier != frameDocumentIdentifier)
+            return false;
+    }
+
+    return true;
+}
+
+void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
     if (!hasDOMWrapperWorld(contentWorldType)) {
         // A null reply to the completionHandler means no listeners replied.
@@ -623,12 +646,12 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
 
     bool anyListenerHandledMessage = false;
     enumerateFramesAndNamespaceObjects([&, callbackAggregatorWrapper = RetainPtr { callbackAggregatorWrapper }](WebFrame& frame, WebExtensionAPINamespace& namespaceObject) {
-        // Skip all frames that don't match if a target frame identifier is specified.
-        if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
-            return;
-
         // Don't send the message to any listeners in the sender's page.
         if (senderParameters.pageProxyIdentifier == frame.page()->webPageProxyIdentifier())
+            return;
+
+        // Skip all frames that don't match the target parameters.
+        if (!matches(frame, targetParameters))
             return;
 
         WebExtensionAPIEvent::ListenerVector listeners;
@@ -672,19 +695,18 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
         callbackAggregator.get()(nil, IsDefaultReply::Yes);
 }
 
-void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        ASSERT(!frameIdentifier);
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, std::nullopt, senderParameters, WTFMove(completionHandler));
+        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, WTFMove(completionHandler));
         return;
 
     case WebExtensionContentWorldType::ContentScript:
-        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, frameIdentifier, senderParameters, WTFMove(completionHandler));
+        internalDispatchRuntimeMessageEvent(contentWorldType, messageJSON, targetParameters, senderParameters, WTFMove(completionHandler));
         return;
 
     case WebExtensionContentWorldType::Native:
@@ -694,7 +716,7 @@ void WebExtensionContextProxy::dispatchRuntimeMessageEvent(WebExtensionContentWo
     }
 }
 
-void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
+void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
     if (!hasDOMWrapperWorld(contentWorldType)) {
         completionHandler({ });
@@ -705,13 +727,13 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
     auto sourceContentWorldType = senderParameters.contentWorldType;
 
     enumerateFramesAndNamespaceObjects([&](auto& frame, auto& namespaceObject) {
-        // Skip all frames that don't match if a target frame identifier is specified.
-        if (frameIdentifier && !matchesFrame(frameIdentifier.value(), frame))
-            return;
-
         // Don't send the event to any listeners in the sender's page.
         auto webPageProxyIdentifier = frame.page()->webPageProxyIdentifier();
         if (senderParameters.pageProxyIdentifier == webPageProxyIdentifier)
+            return;
+
+        // Skip all frames that don't match the target parameters.
+        if (!matches(frame, targetParameters))
             return;
 
         WebExtensionAPIEvent::ListenerVector listeners;
@@ -735,19 +757,18 @@ void WebExtensionContextProxy::internalDispatchRuntimeConnectEvent(WebExtensionC
     completionHandler(WTFMove(firedEventCounts));
 }
 
-void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
+void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWorldType contentWorldType, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(HashCountedSet<WebPageProxyIdentifier>&&)>&& completionHandler)
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     case WebExtensionContentWorldType::Inspector:
 #endif
-        ASSERT(!frameIdentifier);
-        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, std::nullopt, senderParameters, WTFMove(completionHandler));
+        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, WTFMove(completionHandler));
         return;
 
     case WebExtensionContentWorldType::ContentScript:
-        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, frameIdentifier, senderParameters, WTFMove(completionHandler));
+        internalDispatchRuntimeConnectEvent(contentWorldType, channelIdentifier, name, targetParameters, senderParameters, WTFMove(completionHandler));
         return;
 
     case WebExtensionContentWorldType::Native:

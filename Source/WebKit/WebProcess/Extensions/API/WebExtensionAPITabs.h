@@ -39,6 +39,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIPort;
+struct WebExtensionMessageTargetParameters;
 struct WebExtensionScriptInjectionParameters;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
@@ -98,8 +99,8 @@ private:
     static bool parseTabDuplicateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseCaptureVisibleTabOptions(NSDictionary *, WebExtensionTab::ImageFormat&, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString);
-    static bool parseSendMessageOptions(NSDictionary *, std::optional<WebExtensionFrameIdentifier>&, NSString *sourceKey, NSString **outExceptionString);
-    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, std::optional<WebExtensionFrameIdentifier>&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseSendMessageOptions(NSDictionary *, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, WebExtensionMessageTargetParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseScriptOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onActivated;

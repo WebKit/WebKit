@@ -611,6 +611,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/DrawingAreaInfo.serialization.in \
 	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
+	Shared/Extensions/WebExtensionActionClickBehavior.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionCommandParameters.serialization.in \
 	Shared/Extensions/WebExtensionContentWorldType.serialization.in \
@@ -624,8 +625,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in \
 	Shared/Extensions/WebExtensionMenuItem.serialization.in \
 	Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in \
+	Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in \
 	Shared/Extensions/WebExtensionSidebarParameters.serialization.in \
-	Shared/Extensions/WebExtensionActionClickBehavior.serialization.in \
 	Shared/Extensions/WebExtensionStorage.serialization.in \
 	Shared/Extensions/WebExtensionTab.serialization.in \
 	Shared/Extensions/WebExtensionWindow.serialization.in \

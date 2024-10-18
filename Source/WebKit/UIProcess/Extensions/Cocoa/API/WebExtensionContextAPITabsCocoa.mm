@@ -40,6 +40,7 @@
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMessageSenderParameters.h"
+#import "WebExtensionMessageTargetParameters.h"
 #import "WebExtensionScriptInjectionParameters.h"
 #import "WebExtensionTabIdentifier.h"
 #import "WebExtensionUtilities.h"
@@ -452,7 +453,7 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
     tab->toggleReaderMode(WTFMove(completionHandler));
 }
 
-void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<String, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.sendMessage()";
 
@@ -473,12 +474,12 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     ASSERT(processes.size() == 1);
     auto process = processes.takeAny();
 
-    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, frameIdentifier, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](String&& replyJSON) mutable {
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(targetContentWorldType, messageJSON, targetParameters, senderParameters), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](String&& replyJSON) mutable {
         completionHandler(WTFMove(replyJSON));
     }, identifier());
 }
 
-void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebExtensionFrameIdentifier> frameIdentifier, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
     static NSString * const apiName = @"tabs.connect()";
 
@@ -501,9 +502,9 @@ void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, W
     }
 
     ASSERT(processes.size() == 1);
-    auto process = processes.takeAny();
+    RefPtr process = processes.takeAny();
 
-    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, frameIdentifier, senderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+    process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, targetParameters, senderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
         // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
         addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTFMove(addedPortCounts));
 

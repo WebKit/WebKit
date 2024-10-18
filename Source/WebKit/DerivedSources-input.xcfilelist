@@ -281,6 +281,7 @@ $(PROJECT_DIR)/Shared/DragControllerAction.serialization.in
 $(PROJECT_DIR)/Shared/DrawingAreaInfo.serialization.in
 $(PROJECT_DIR)/Shared/EditingRange.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionAlarmParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionCommandParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionContentWorldType.serialization.in
@@ -294,8 +295,8 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionFrameParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMatchedRuleParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionSidebarParameters.serialization.in
-$(PROJECT_DIR)/Shared/Extensions/WebExtensionActionClickBehavior.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
