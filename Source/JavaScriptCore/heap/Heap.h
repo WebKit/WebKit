@@ -300,7 +300,8 @@ public:
     friend class DFG::SpeculativeJIT;
     static JSC::Heap* heap(const JSValue); // 0 for immediate values
     static JSC::Heap* heap(const HeapCell*);
-
+    uintptr_t m_documentAddress = 0;
+    bool m_isCollectionSynchronous = false;
     // This constant determines how many blocks we iterate between checks of our 
     // deadline when calling Heap::isPagedOut. Decreasing it will cause us to detect 
     // overstepping our deadline more quickly, while increasing it will cause 

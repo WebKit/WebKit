@@ -2134,6 +2134,7 @@ namespace JSC {
 
 static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_HOST_FUNCTION(functionCrash);
 static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
+static JSC_DECLARE_HOST_FUNCTION(functionRecordDocumentPointer);
 static JSC_DECLARE_HOST_FUNCTION(functionExit);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
@@ -2327,6 +2328,19 @@ JSC_DEFINE_HOST_FUNCTION(functionBreakpoint, (JSGlobalObject* globalObject, Call
 
     return encodedJSUndefined();
 }
+
+// Records the document pointer on the stack
+JSC_DEFINE_HOST_FUNCTION(functionRecordDocumentPointer, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    auto& vm = globalObject->vm();
+    uintptr_t documentAddress = bitwise_cast<uintptr_t>(callFrame->argument(0).getObject());
+    vm.setAddressOfDocument(documentAddress);
+    vm.heap.m_documentAddress = documentAddress;
+    WTFLogAlways("Document pointer is recorded at %ld", documentAddress);
+    return encodedJSUndefined();
+}
+
 
 // Executes exitProcess(EXIT_SUCCESS).
 // Usage: $vm.exit()
@@ -4233,6 +4247,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "abort"_s, functionCrash, 0);
     addFunction(vm, "crash"_s, functionCrash, 0);
     addFunction(vm, "breakpoint"_s, functionBreakpoint, 0);
+    addFunction(vm, "recordDocumentPointer"_s, functionRecordDocumentPointer, 1);
     addFunction(vm, "exit"_s, functionExit, 0);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);

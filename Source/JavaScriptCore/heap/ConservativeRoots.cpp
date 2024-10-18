@@ -99,6 +99,12 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
 {
     ASSERT(m_heap.worldIsStopped());
     pointer = removeArrayPtrTag(pointer);
+    if (m_heap.m_documentAddress == removeCodePtrTag<uintptr_t>(pointer) && m_heap.m_isCollectionSynchronous && m_heap.m_documentAddress != 0) {
+        WTFLogAlways("DOCUMENT POINTER IS ON STACK. Address is %ld", (uintptr_t)pointer);
+    }
+    else if (m_heap.m_documentAddress != removeCodePtrTag<uintptr_t>(pointer) && m_heap.m_isCollectionSynchronous && m_heap.m_documentAddress != 0){
+        WTFLogAlways("document pointer not found yet for vm with document address %ld", m_heap.m_documentAddress);
+    }
     markHook.mark(pointer);
 
     auto markFoundGCPointer = [&] (void* p, HeapCell::Kind cellKind) {

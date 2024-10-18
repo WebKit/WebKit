@@ -313,6 +313,8 @@ public:
 
     Watchdog* watchdog() { return m_watchdog.getIfExists(); }
     Watchdog& ensureWatchdog() { return m_watchdog.get(*this); }
+    const uintptr_t& getAddressOfDocument() const { return m_addressOfDocument; };
+    void setAddressOfDocument (uintptr_t address) {m_addressOfDocument = address; };
 
     HeapProfiler* heapProfiler() { return m_heapProfiler.getIfExists(); }
     HeapProfiler& ensureHeapProfiler() { return m_heapProfiler.get(*this); }
@@ -424,6 +426,7 @@ private:
     Exception* m_exception { nullptr };
     Exception* m_terminationException { nullptr };
     Exception* m_lastException { nullptr };
+    uintptr_t m_addressOfDocument;
 public:
     // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
     // topEntryFrame.
