@@ -26,9 +26,20 @@
 #include "config.h"
 #include "SessionHost.h"
 
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Observer.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebDriver {
+
+#if ENABLE(WEBDRIVER_BIDI)
+static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObservers()
+{
+    static NeverDestroyed<WeakHashSet<SessionHost::BrowserTerminatedObserver>> observers;
+    return observers;
+}
+#endif
 
 void SessionHost::inspectorDisconnected()
 {
@@ -37,6 +48,11 @@ void SessionHost::inspectorDisconnected()
         auto responseHandler = m_commandRequests.take(messageID);
         responseHandler({ nullptr, true });
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    for (auto& observer : browserTerminatedObservers())
+        observer(m_sessionID);
+#endif
 }
 
 long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Object>&& parameters, Function<void (CommandResponse&&)>&& responseHandler)
@@ -92,6 +108,14 @@ void SessionHost::dispatchMessage(const String& message)
 bool SessionHost::isRemoteBrowser() const
 {
     return false;
+}
+#endif
+
+#if ENABLE(WEBDRIVER_BIDI)
+void SessionHost::addBrowserTerminatedObserver(const BrowserTerminatedObserver& observer)
+{
+    ASSERT(!browserTerminatedObservers().contains(observer));
+    browserTerminatedObservers().add(observer);
 }
 #endif
 

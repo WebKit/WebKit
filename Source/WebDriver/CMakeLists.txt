@@ -15,6 +15,10 @@ set(WebDriver_SOURCES
     WebDriverService.cpp
 )
 
+if (ENABLE_WEBDRIVER_BIDI)
+    list(APPEND WebDriver_SOURCES WebSocketServer.cpp)
+endif ()
+
 set(WebDriver_FRAMEWORKS
     WTF
 )

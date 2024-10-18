@@ -28,6 +28,8 @@
 #include "Capabilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Observer.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
@@ -55,6 +57,11 @@ public:
     {
     }
     ~SessionHost();
+
+#if ENABLE(WEBDRIVER_BIDI)
+    using BrowserTerminatedObserver = WTF::Observer<void(const String&)>;
+    void addBrowserTerminatedObserver(const BrowserTerminatedObserver&);
+#endif
 
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }
     bool isConnected() const;

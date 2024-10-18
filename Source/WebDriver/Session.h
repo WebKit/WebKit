@@ -27,13 +27,20 @@
 
 #include "Actions.h"
 #include "Capabilities.h"
+#include "SessionHost.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(WEBDRIVER_BIDI)
+#include "WebSocketServer.h"
+#endif
 
 namespace WebDriver {
 
@@ -47,10 +54,20 @@ public:
         return adoptRef(*new Session(WTFMove(host)));
     }
     ~Session();
+#if ENABLE(WEBDRIVER_BIDI)
+    static Ref<Session> create(std::unique_ptr<SessionHost>&& host, WeakPtr<WebSocketServer> bidiServer)
+    {
+        return adoptRef(*new Session(WTFMove(host), WTFMove(bidiServer)));
+    }
+#endif
 
     const String& id() const;
     const Capabilities& capabilities() const;
     bool isConnected() const;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool hasBiDiEnabled() const { return m_hasBiDiEnabled; };
+    void setHasBiDiEnabled(bool flag) { m_hasBiDiEnabled = flag; }
+#endif
     double scriptTimeout() const { return m_scriptTimeout; }
     double pageLoadTimeout() const { return m_pageLoadTimeout; }
     double implicitWaitTimeout() const { return m_implicitWaitTimeout; }
@@ -135,6 +152,9 @@ public:
 
 private:
     Session(std::unique_ptr<SessionHost>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    Session(std::unique_ptr<SessionHost>&&, WeakPtr<WebSocketServer>&&);
+#endif
 
     void switchToTopLevelBrowsingContext(const String&);
     void switchToBrowsingContext(const String&, Function<void(CommandResult&&)>&&);
@@ -236,6 +256,11 @@ private:
     std::optional<String> m_currentParentBrowsingContext;
     UncheckedKeyHashMap<String, InputSource> m_activeInputSources;
     UncheckedKeyHashMap<String, InputSourceState> m_inputStateTable;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool m_hasBiDiEnabled { false };
+
+    WeakPtr<WebSocketServer> m_bidiServer;
+#endif
 };
 
 } // WebDriver
