@@ -711,18 +711,13 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
 }
 
 #if ENABLE(QUICKLOOK_FULLSCREEN)
-bool ImageDecoderCG::isPanoramic() const
+bool ImageDecoderCG::isMaybePanoramic() const
 {
     auto imageSize = FloatSize(frameSizeAtIndex(0));
     auto aspectRatio = imageSize.aspectRatio();
 
     constexpr float panoramicImageAspectRatioThreshold = 2.0;
-    if (aspectRatio <= panoramicImageAspectRatioThreshold)
-        return false;
-
-    constexpr float panoramicImageMinDimension = 800;
-    constexpr float panoramicImageMaxDimension = 30000;
-    return imageSize.minDimension() > panoramicImageMinDimension && imageSize.maxDimension() < panoramicImageMaxDimension;
+    return aspectRatio > panoramicImageAspectRatioThreshold;
 }
 
 bool ImageDecoderCG::isSpatial() const
@@ -736,7 +731,7 @@ bool ImageDecoderCG::isSpatial() const
 
 bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
 {
-    return isPanoramic() || isSpatial();
+    return isMaybePanoramic() || isSpatial();
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
