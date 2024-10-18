@@ -8152,3 +8152,7 @@ imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/global-mutable-prototy
 # Below tests give `Error fetching /interfaces/webidl.idl` in test output
 imported/w3c/web-platform-tests/WebIDL/idlharness.any.html [ Skip ]
 imported/w3c/web-platform-tests/WebIDL/idlharness.any.worker.html [ Skip ]
+
+# Platform-specific tests enabled on macOS and iOS separately.
+webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html [ Skip ]
+webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-ios.html [ Skip ]

@@ -1,0 +1,3 @@
+
+PASS The current time of a scroll timeline remains at 0% while rubber-banding.
+

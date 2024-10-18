@@ -7500,3 +7500,5 @@ webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphena
 
 webkit.org/b/281238 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 
+# Platform-specific test enabled on macOS and iOS separately.
+webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-ios.html [ Pass ]

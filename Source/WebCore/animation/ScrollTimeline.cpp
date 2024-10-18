@@ -204,6 +204,11 @@ ScrollTimeline::Data ScrollTimeline::computeTimelineData(const TimelineRange& ra
     float maxScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
     float scrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
 
+    // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
+    // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
+    if (maxScrollOffset > 0)
+        scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
+
     return { scrollOffset, floatValueForOffset(range.start.offset, maxScrollOffset), maxScrollOffset - floatValueForOffset(range.end.offset, maxScrollOffset) };
 }
 

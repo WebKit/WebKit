@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+body {
+    height: 2000px;
+}
+
+</style>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+promise_test(async () => {
+    const unconstrained = true;
+
+    window.scrollTo(0, 0);
+    await UIHelper.renderingUpdate();
+
+    const scrollTimeline = new ScrollTimeline({ source: document.documentElement });
+    assert_equals(scrollTimeline.currentTime.toString(), "0%");
+
+    await UIHelper.scrollTo(0, -100, unconstrained);
+    await UIHelper.renderingUpdate();
+
+    assert_equals(scrollTimeline.currentTime.toString(), "0%");
+
+    await UIHelper.scrollTo(0, 2100, unconstrained);
+    await UIHelper.renderingUpdate();
+
+    assert_equals(scrollTimeline.currentTime.toString(), "100%");
+}, "The current time of a scroll timeline remains within the 0% to 100% range.");
+
+</script>
+</body>

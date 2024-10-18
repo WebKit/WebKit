@@ -1,0 +1,87 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+body {
+    height: 2000px;
+}
+
+</style>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+const scrollToRubberBand = async () => {
+    const events = [
+        {
+            type : "wheel",
+            viewX : 100,
+            viewY : 100,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -100,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -50,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : 50,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : 100,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : 100,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : 100,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : 100,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events }, { waitForCompletion: false });
+    await UIHelper.waitForCondition(() => window.scrollY != 0);
+};
+
+promise_test(async () => {
+    window.scrollTo(0, 0);
+    await UIHelper.renderingUpdate();
+
+    const scrollTimeline = new ScrollTimeline({ source: document.documentElement });
+    assert_equals(scrollTimeline.currentTime.toString(), "0%");
+
+    await scrollToRubberBand();
+    await UIHelper.renderingUpdate();
+
+    assert_equals(scrollTimeline.currentTime.toString(), "0%");
+}, "The current time of a scroll timeline remains at 0% while rubber-banding.");
+
+</script>
+</body>
