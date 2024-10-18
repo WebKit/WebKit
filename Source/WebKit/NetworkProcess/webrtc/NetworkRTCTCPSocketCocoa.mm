@@ -37,6 +37,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakObjCPtr.h>
+#include <wtf/cocoa/SpanCocoa.h>
 
 ALLOW_COMMA_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -45,8 +46,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_COMMA_END
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -75,10 +74,10 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     auto nwConnectionReference = nwConnection.get();
     nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), buffer = WTFMove(buffer)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
         if (content) {
-            dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
-                buffer.append(std::span { static_cast<const uint8_t*>(data), size });
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
+                buffer.append(data);
                 return true;
-            }).get());
+            });
             buffer = processData(WTFMove(buffer));
         }
         if (isComplete && context && nw_content_context_get_is_final(context))
@@ -294,7 +293,5 @@ void NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC) && PLATFORM(COCOA)

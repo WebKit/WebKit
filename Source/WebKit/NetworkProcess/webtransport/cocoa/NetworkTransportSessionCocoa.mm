@@ -34,8 +34,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 
@@ -54,9 +54,9 @@ NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& 
         // FIXME: Not only is this an unnecessary string copy, but it's also something that should probably be in WTF or FragmentedSharedBuffer.
         auto vectorFromData = [](dispatch_data_t content) {
             ASSERT(content);
-            __block Vector<uint8_t> request;
-            dispatch_data_apply(content, ^bool(dispatch_data_t, size_t, const void* buffer, size_t size) {
-                request.append(std::span { static_cast<const uint8_t*>(buffer), size });
+            Vector<uint8_t> request;
+            dispatch_data_apply_span(content, [&](std::span<const uint8_t> data) {
+                request.append(data);
                 return true;
             });
             return request;
@@ -216,5 +216,3 @@ void NetworkTransportSession::createOutgoingUnidirectionalStream(CompletionHandl
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

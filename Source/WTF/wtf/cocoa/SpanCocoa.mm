@@ -23,45 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "SpanCocoa.h"
 
-#import <dispatch/dispatch.h>
-#import <span>
+#import <wtf/BlockPtr.h>
+#import <wtf/Function.h>
+#import <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-#ifdef __OBJC__
-inline std::span<const uint8_t> span(NSData *data)
+bool dispatch_data_apply_span(dispatch_data_t data, const Function<bool(std::span<const uint8_t>)>& applier)
 {
-    if (!data)
-        return { };
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    return { static_cast<const uint8_t*>(data.bytes), data.length };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    return dispatch_data_apply(data, makeBlockPtr([&applier](dispatch_data_t, size_t, const void* data, size_t size) {
+        return applier(unsafeForgeSpan(static_cast<const uint8_t*>(data), size));
+    }).get());
 }
-
-inline RetainPtr<NSData> toNSData(std::span<const uint8_t> span)
-{
-    return adoptNS([[NSData alloc] initWithBytes:span.data() length:span.size()]);
-}
-#endif // #ifdef __OBJC__
-
-template<typename> class Function;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-WTF_EXPORT_PRIVATE bool dispatch_data_apply_span(dispatch_data_t, const Function<bool(std::span<const uint8_t>)>& applier);
-#ifdef __cplusplus
-} // extern "C
-#endif
 
 } // namespace WTF
-
-using WTF::dispatch_data_apply_span;
-
-#ifdef __OBJC__
-using WTF::span;
-using WTF::toNSData;
-#endif

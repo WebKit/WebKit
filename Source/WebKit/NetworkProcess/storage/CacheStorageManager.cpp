@@ -36,8 +36,6 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 static constexpr auto cachesListFileName = "cacheslist"_s;
@@ -72,7 +70,7 @@ static std::optional<Vector<std::pair<String, String>>> readCachesList(const Str
     if (!cachesList)
         return std::nullopt;
 
-    WTF::Persistence::Decoder decoder({ cachesList->data(), cachesList->size() });
+    WTF::Persistence::Decoder decoder(*cachesList);
     std::optional<uint64_t> count;
     decoder >> count;
     if (!count)
@@ -559,5 +557,3 @@ Ref<CacheStorageRegistry> CacheStorageManager::protectedRegistry()
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

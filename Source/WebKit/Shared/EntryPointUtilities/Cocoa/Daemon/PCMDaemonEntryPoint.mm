@@ -69,9 +69,7 @@ static void connectionEventHandler(xpc_object_t request)
     }
 
     auto messageType { static_cast<PCM::MessageType>(xpc_dictionary_get_uint64(request, PCM::protocolMessageTypeKey)) };
-    size_t dataSize { 0 };
-    const void* data = xpc_dictionary_get_data(request, PCM::protocolEncodedMessageKey, &dataSize);
-    std::span encodedMessage { static_cast<const uint8_t*>(data), dataSize };
+    auto encodedMessage = xpc_dictionary_get_data_span(request, PCM::protocolEncodedMessageKey);
     decodeMessageAndSendToManager(Daemon::Connection::create(xpc_dictionary_get_remote_connection(request)), messageType, encodedMessage, replySender(messageType, request));
 }
 

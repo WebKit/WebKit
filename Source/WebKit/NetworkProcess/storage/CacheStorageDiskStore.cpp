@@ -38,8 +38,6 @@
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 static constexpr auto saltFileName = "salt"_s;
@@ -525,12 +523,12 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
             auto recordBlobData = recordBlobDatas[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
-                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), std::span(recordBlobData.data(), recordBlobData.size())) == -1) {
+                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), recordBlobData) == -1) {
                     result = false;
                     continue;
                 }
             }
-            if (FileSystem::overwriteEntireFile(recordFile, std::span(recordData.data(), recordData.size())) == -1)
+            if (FileSystem::overwriteEntireFile(recordFile, recordData) == -1)
                 result = false;
         }
 
@@ -541,5 +539,3 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

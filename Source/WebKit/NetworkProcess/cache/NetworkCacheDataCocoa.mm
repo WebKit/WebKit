@@ -30,8 +30,7 @@
 #import <dispatch/dispatch.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import <wtf/cocoa/SpanCocoa.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -58,7 +57,7 @@ std::span<const uint8_t> Data::span() const
         const void* data = nullptr;
         size_t size = 0;
         m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
-        m_data = { static_cast<const uint8_t*>(data), size };
+        m_data = unsafeForgeSpan(static_cast<const uint8_t*>(data), size);
     }
     return m_data;
 }
@@ -79,9 +78,7 @@ bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 {
     if (!size())
         return false;
-    return dispatch_data_apply(m_dispatchData.get(), [&applier](dispatch_data_t, size_t, const void* data, size_t size) {
-        return applier({ static_cast<const uint8_t*>(data), size });
-    });
+    return dispatch_data_apply_span(m_dispatchData.get(), applier);
 }
 
 Data Data::subrange(size_t offset, size_t size) const
@@ -120,5 +117,3 @@ RefPtr<WebCore::SharedMemory> Data::tryCreateSharedMemory() const
 
 }
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

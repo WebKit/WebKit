@@ -301,15 +301,14 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
     }
 
-    size_t dataSize { 0 };
-    auto* data = static_cast<const uint8_t*>(xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize));
-    if (!data) {
+    auto data = xpc_dictionary_get_data_span(request, protocolEncodedMessageKey);
+    if (!data.data()) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - No encoded message data in xpc message");
         tryCloseRequestConnection(request);
         return;
     }
 
-    auto decoder = IPC::Decoder::create({ data, dataSize }, { });
+    auto decoder = IPC::Decoder::create(data, { });
     if (!decoder) {
         RELEASE_LOG_ERROR(Push, "WebPushDaemon::connectionEventHandler - Failed to create decoder for xpc message");
         tryCloseRequestConnection(request);

@@ -26,6 +26,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdIntExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <string.h>
 #include <type_traits>
 
@@ -142,6 +143,9 @@ public:
     const WordType* storage() const { return bits.data(); }
 
     constexpr size_t storageLengthInBytes() { return sizeof(bits); }
+
+    std::span<uint8_t> storageBytes() { return unsafeForgeSpan(reinterpret_cast<uint8_t*>(storage()), storageLengthInBytes()); }
+    std::span<const uint8_t> storageBytes() const { return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(storage()), storageLengthInBytes()); }
 
 private:
     void cleanseLastWord();

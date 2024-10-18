@@ -36,8 +36,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit::PCM {
 
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
@@ -128,7 +126,7 @@ std::span<const ASCIILiteral> Database::sortedTables()
         "AttributedPrivateClickMeasurement"_s
     };
 
-    return { sortedTables.data(), sortedTables.size() };
+    return sortedTables;
 }
 
 void Database::interruptAllDatabases()
@@ -735,5 +733,3 @@ void Database::addDestinationTokenColumnsIfNecessary()
 }
 
 } // namespace WebKit::PCM
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
