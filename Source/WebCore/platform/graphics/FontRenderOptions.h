@@ -80,6 +80,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void disableHintingForTesting();
+    bool isHintingDisabledForTesting() const { return m_isHintingDisabledForTesting; }
 
 private:
     FontRenderOptions();
