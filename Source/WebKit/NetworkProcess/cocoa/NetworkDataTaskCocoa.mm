@@ -505,8 +505,8 @@ void NetworkDataTaskCocoa::setPendingDownloadLocation(const WTF::String& filenam
 
     ASSERT(!m_sandboxExtension);
     m_sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
-    if (m_sandboxExtension)
-        m_sandboxExtension->consume();
+    if (RefPtr extention = m_sandboxExtension)
+        extention->consume();
 
     m_task.get()._pathToDownloadTaskFile = m_pendingDownloadLocation;
 
