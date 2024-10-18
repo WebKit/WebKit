@@ -1,5 +1,5 @@
 
 PASS Should use the first fallback position at the initial scroll offsets
 FAIL Should use the second fallback position after scrolling viewport down assert_equals: Anchored element should be at the bottom of anchor expected 199 but got 100
-PASS Should use the third fallback position after scrolling the vrl scroller left
+FAIL Should use the third fallback position after scrolling the vrl scroller left assert_equals: Anchored element should be at the left of anchor expected 710 but got 810
 

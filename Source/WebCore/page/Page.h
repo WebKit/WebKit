@@ -281,6 +281,7 @@ enum class RenderingUpdateStep : uint32_t {
 #endif
     RestoreScrollPositionAndViewState = 1 << 24,
     AdjustVisibility                  = 1 << 25,
+    SnapshottedScrollOffsets          = 1 << 26,
 
 };
 

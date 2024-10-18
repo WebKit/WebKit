@@ -1598,12 +1598,18 @@ void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, cons
 {
     auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(style), renderer());
     renderer().applyTransform(transform, style, referenceBoxRect, options);
+
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
+    // "The positioned element is additionally visually shifted by its snapshotted scroll offset, as if by an additional translate() transform."
+    if (m_snapshottedScrollOffsetForAnchorPositioning)
+        transform.translate(m_snapshottedScrollOffsetForAnchorPositioning->width(), m_snapshottedScrollOffsetForAnchorPositioning->height());
+
     makeMatrixRenderable(transform, canRender3DTransforms());
 }
 
 void RenderLayer::updateTransform()
 {
-    bool hasTransform = renderer().isTransformed();
+    bool hasTransform = renderer().isTransformed() || m_snapshottedScrollOffsetForAnchorPositioning;
     bool had3DTransform = has3DTransform();
 
     std::unique_ptr<TransformationMatrix> oldTransform;
@@ -4439,6 +4445,25 @@ bool RenderLayer::ancestorLayerIsDOMParent(const RenderLayer* ancestor) const
 bool RenderLayer::participatesInPreserve3D() const
 {
     return ancestorLayerIsDOMParent(parent()) && parent()->preserves3D() && (transform() || renderer().style().backfaceVisibility() == BackfaceVisibility::Hidden || preserves3D());
+}
+
+void RenderLayer::setSnapshottedScrollOffsetForAnchorPositioning(LayoutSize offset)
+{
+    if (m_snapshottedScrollOffsetForAnchorPositioning == offset)
+        return;
+
+    // FIXME: Scroll offset should be adjusted in the scrolling tree so layers stay exactly in sync.
+    m_snapshottedScrollOffsetForAnchorPositioning = offset;
+    updateTransform();
+}
+
+void RenderLayer::clearSnapshottedScrollOffsetForAnchorPositioning()
+{
+    if (!m_snapshottedScrollOffsetForAnchorPositioning)
+        return;
+
+    m_snapshottedScrollOffsetForAnchorPositioning = { };
+    updateTransform();
 }
 
 // hitTestLocation and hitTestRect are relative to rootLayer.

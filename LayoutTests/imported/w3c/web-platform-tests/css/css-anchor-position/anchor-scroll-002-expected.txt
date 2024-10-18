@@ -1,5 +1,5 @@
 
 PASS target1 should scroll with anchor1
-FAIL target2 should scroll with anchor2 assert_equals: expected 155 but got 175
-FAIL target3 should scroll with anchor3 assert_equals: expected 270 but got 300
+PASS target2 should scroll with anchor2
+PASS target3 should scroll with anchor3
 

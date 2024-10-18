@@ -787,6 +787,10 @@ public:
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
     bool participatesInPreserve3D() const;
 
+    std::optional<LayoutSize> snapshottedScrollOffsetForAnchorPositioning() const { return m_snapshottedScrollOffsetForAnchorPositioning; };
+    void setSnapshottedScrollOffsetForAnchorPositioning(LayoutSize);
+    void clearSnapshottedScrollOffsetForAnchorPositioning();
+
     bool hasFixedContainingBlockAncestor() const { return m_hasFixedContainingBlockAncestor; }
 
     inline bool hasFilter() const;
@@ -1384,7 +1388,9 @@ private:
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
 
     std::unique_ptr<TransformationMatrix> m_transform;
-    
+
+    std::optional<LayoutSize> m_snapshottedScrollOffsetForAnchorPositioning;
+
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
 

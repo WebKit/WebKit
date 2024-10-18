@@ -1,0 +1,5 @@
+
+PASS Changing to a non-matching anchor-name should restore the box to its normal position.
+PASS Changing to a non-matching position-anchor should restore the box to its normal position.
+PASS Removing the scroller should restore the box to its normal position.
+

@@ -4,5 +4,5 @@ before anchor after target
 
 PASS Initial position of the targets
 FAIL #target1 should scroll with #anchor1 assert_equals: expected 120 but got 140
-FAIL #target2 should scroll with #anchor2 assert_equals: expected 100 but got 140
+PASS #target2 should scroll with #anchor2
 

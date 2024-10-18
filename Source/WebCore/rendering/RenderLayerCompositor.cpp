@@ -3113,7 +3113,8 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForModel(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
-        || requiresCompositingForOverflowScrolling(*renderer.layer(), queryData)) {
+        || requiresCompositingForOverflowScrolling(*renderer.layer(), queryData)
+        || requiresCompositingForAnchorPositioning(*renderer.layer())) {
         queryData.intrinsic = true;
         return true;
     }
@@ -3193,6 +3194,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForOverflowScrolling(layer, queryData)
+        || requiresCompositingForAnchorPositioning(layer)
         || needsContentsCompositingLayer(layer)
         || renderer.isTransparent()
         || renderer.hasMask()
@@ -3263,6 +3265,9 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
 
     if (requiresCompositingForOverflowScrolling(*renderer.layer(), queryData))
         reasons.add(CompositingReason::OverflowScrolling);
+
+    if (requiresCompositingForAnchorPositioning(*renderer.layer()))
+        reasons.add(CompositingReason::AnchorPositioning);
 
     switch (renderer.layer()->indirectCompositingReason()) {
     case IndirectCompositingReason::None:
@@ -3356,6 +3361,7 @@ static ASCIILiteral compositingReasonToString(CompositingReason reason)
     case CompositingReason::Root: return "root"_s;
     case CompositingReason::Model: return "model"_s;
     case CompositingReason::BackdropRoot: return "backdrop root"_s;
+    case CompositingReason::AnchorPositioning: return "anchor positioning"_s;
     }
     return ""_s;
 }
@@ -3942,6 +3948,11 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
 
     const_cast<RenderLayer&>(layer).computeHasCompositedScrollableOverflow(LayoutUpToDate::Yes);
     return layer.hasCompositedScrollableOverflow();
+}
+
+bool RenderLayerCompositor::requiresCompositingForAnchorPositioning(const RenderLayer& layer) const
+{
+    return !!layer.snapshottedScrollOffsetForAnchorPositioning();
 }
 
 IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const

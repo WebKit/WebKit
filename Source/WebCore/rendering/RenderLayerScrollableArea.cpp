@@ -47,6 +47,7 @@
 #include "config.h"
 #include "RenderLayerScrollableArea.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "Chrome.h"
 #include "DebugPageOverlays.h"
 #include "Editor.h"
@@ -363,6 +364,8 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
+        Style::AnchorPositionEvaluator::updateSnapshottedScrollOffsets(m_layer.renderer().document());
+
         // If we're in the middle of layout, we'll just update layers once layout has finished.
         view.frameView().updateLayerPositionsAfterOverflowScroll(m_layer);
 

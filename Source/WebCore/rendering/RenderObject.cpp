@@ -1604,6 +1604,8 @@ bool RenderObject::shouldUseTransformFromContainer(const RenderObject* container
 {
     if (isTransformed())
         return true;
+    if (hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->snapshottedScrollOffsetForAnchorPositioning())
+        return true;
     if (containerObject && containerObject->style().hasPerspective())
         return containerObject == parent();
     return false;

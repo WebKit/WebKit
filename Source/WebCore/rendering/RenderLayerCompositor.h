@@ -85,6 +85,7 @@ enum class CompositingReason {
     IsolatesCompositedBlendingDescendants  = 1 << 26,
     Model                                  = 1 << 27,
     BackdropRoot                           = 1 << 28,
+    AnchorPositioning                      = 1 << 29,
 };
 
 enum class ScrollCoordinationRole {
@@ -525,6 +526,7 @@ private:
     bool requiresCompositingForScrollableFrame(RequiresCompositingData&) const;
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
+    bool requiresCompositingForAnchorPositioning(const RenderLayer&) const;
     IndirectCompositingReason computeIndirectCompositingReason(const RenderLayer&, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const;
 
     static ScrollPositioningBehavior layerScrollBehahaviorRelativeToCompositedAncestor(const RenderLayer&, const RenderLayer& compositedAncestor);

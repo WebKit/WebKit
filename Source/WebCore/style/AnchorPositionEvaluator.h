@@ -70,6 +70,8 @@ public:
     static std::optional<double> evaluate(const BuilderState&, AtomString elementName, Side);
 
     static void updateAnchorPositioningStatesAfterInterleavedLayout(const Document&);
+    static void cleanupAnchorPositionedState(Element&);
+    static void updateSnapshottedScrollOffsets(Document&);
 
 private:
     static AnchorElements findAnchorsForAnchorPositionedElement(const Element&, const HashSet<AtomString>& anchorNames, const AnchorsForAnchorName&);

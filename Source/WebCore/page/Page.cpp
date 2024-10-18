@@ -23,6 +23,7 @@
 #include "ActivityStateChangeObserver.h"
 #include "AdvancedPrivacyProtections.h"
 #include "AlternativeTextClient.h"
+#include "AnchorPositionEvaluator.h"
 #include "AnimationFrameRate.h"
 #include "AnimationTimelinesController.h"
 #include "AppHighlightStorage.h"
@@ -2023,6 +2024,10 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::UpdateValidationMessagePositions, [] (Document& document) {
         document.adjustValidationMessagePositions();
+    });
+
+    runProcessingStep(RenderingUpdateStep::SnapshottedScrollOffsets, [&] (Document& document) {
+        Style::AnchorPositionEvaluator::updateSnapshottedScrollOffsets(document);
     });
 
     for (auto& document : initialDocuments) {
@@ -4556,6 +4561,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #endif
     case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"; break;
     case RenderingUpdateStep::AdjustVisibility: ts << "AdjustVisibility"; break;
+    case RenderingUpdateStep::SnapshottedScrollOffsets: ts << "SnapshottedScrollOffsets"; break;
     }
     return ts;
 }

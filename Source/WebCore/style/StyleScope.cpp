@@ -47,6 +47,7 @@
 #include "Logging.h"
 #include "ProcessingInstruction.h"
 #include "RenderBoxInlines.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "RuleSet.h"
 #include "SVGElementTypeHelpers.h"
@@ -1034,8 +1035,12 @@ Element* hostForScopeOrdinal(const Element& element, ScopeOrdinal scopeOrdinal)
 
 void Scope::clearAnchorPositioningState()
 {
-    for (auto keyAndValue : m_anchorPositionedStates)
+    for (auto keyAndValue : m_anchorPositionedStates) {
+        CheckedRef element = keyAndValue.key;
+        if (auto* renderer = dynamicDowncast<RenderBox>(element->renderer()); renderer && renderer->layer())
+            renderer->layer()->clearSnapshottedScrollOffsetForAnchorPositioning();
         keyAndValue.key.invalidateStyle();
+    }
 
     m_anchorPositionedStates.clear();
 }

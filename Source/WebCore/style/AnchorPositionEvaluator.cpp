@@ -36,6 +36,7 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
@@ -215,11 +216,32 @@ static LayoutSize offsetFromAncestorContainer(const RenderElement& descendantCon
         if (!nextContainer)
             break;
         LayoutSize currentOffset = currentContainer->offsetFromContainer(*nextContainer, referencePoint);
+
+        // https://drafts.csswg.org/css-anchor-position-1/#scroll
+        // "anchor() is defined to assume all the scroll containers between the anchor element and
+        // the positioned element’s containing block are at their initial scroll position,"
+        if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(*nextContainer))
+            offset += toLayoutSize(boxContainer->scrollPosition());
+
         offset += currentOffset;
         referencePoint.move(currentOffset);
         currentContainer = WTFMove(nextContainer);
     } while (currentContainer != &ancestorContainer);
 
+    return offset;
+}
+
+static LayoutSize scrollOffsetFromAncestorContainer(const RenderElement& descendant, const RenderElement& ancestorContainer)
+{
+    ASSERT(descendant.isDescendantOf(&ancestorContainer));
+
+    auto offset = LayoutSize { };
+    for (auto* ancestor = descendant.container(); ancestor; ancestor = ancestor->container()) {
+        if (auto* box = dynamicDowncast<RenderBox>(ancestor))
+            offset -= toLayoutSize(box->scrollPosition());
+        if (ancestor == &ancestorContainer)
+            break;
+    }
     return offset;
 }
 
@@ -589,6 +611,57 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
         }
         if (state.stage == AnchorPositionResolutionStage::Resolved)
             state.stage = AnchorPositionResolutionStage::Positioned;
+    }
+}
+
+void AnchorPositionEvaluator::updateSnapshottedScrollOffsets(Document& document)
+{
+    // https://drafts.csswg.org/css-anchor-position-1/#scroll
+
+    auto& states = document.styleScope().anchorPositionedStates();
+    for (auto elementAndState : states) {
+        CheckedRef anchorPositionedElement = elementAndState.key;
+        if (!anchorPositionedElement->renderer())
+            continue;
+
+        CheckedPtr anchorPositionedRenderer = dynamicDowncast<RenderBox>(anchorPositionedElement->renderer());
+        if (!anchorPositionedRenderer || !anchorPositionedRenderer->layer())
+            continue;
+
+        auto needsScrollAdjustment = [&] {
+            // FIXME: This is incomplete.
+            if (anchorPositionedRenderer->style().positionAnchor().isNull())
+                return false;
+
+            if (elementAndState.value->anchorElements.size() != 1)
+                return false;
+
+            return true;
+        }();
+
+        if (!needsScrollAdjustment)
+            continue;
+
+        auto anchorElement = *elementAndState.value->anchorElements.values().begin();
+        if (!anchorElement->renderer())
+            continue;
+
+        CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
+
+        auto scrollOffset = scrollOffsetFromAncestorContainer(*anchorElement->renderer(), *containingBlock);
+
+        if (scrollOffset.isZero() && !anchorPositionedRenderer->layer()->snapshottedScrollOffsetForAnchorPositioning())
+            continue;
+
+        anchorPositionedRenderer->layer()->setSnapshottedScrollOffsetForAnchorPositioning(scrollOffset);
+    }
+}
+
+void AnchorPositionEvaluator::cleanupAnchorPositionedState(Element& element)
+{
+    if (element.document().styleScope().anchorPositionedStates().remove(element)) {
+        if (auto* renderer = dynamicDowncast<RenderBox>(element.renderer()); renderer && renderer->layer())
+            renderer->layer()->clearSnapshottedScrollOffsetForAnchorPositioning();
     }
 }
 
