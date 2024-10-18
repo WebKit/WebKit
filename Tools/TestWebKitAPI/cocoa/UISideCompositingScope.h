@@ -35,11 +35,13 @@
 
 namespace TestWebKitAPI {
 
-class EnableUISideCompositingScope {
+enum class UISideCompositingState : bool { Disabled, Enabled };
+
+class UISideCompositingScope {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    EnableUISideCompositingScope();
-    ~EnableUISideCompositingScope();
+    UISideCompositingScope(UISideCompositingState);
+    ~UISideCompositingScope();
 
 private:
     Method m_originalMethod;

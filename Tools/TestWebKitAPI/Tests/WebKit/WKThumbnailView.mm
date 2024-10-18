@@ -28,12 +28,12 @@
 #if PLATFORM(MAC)
 
 #import "CGImagePixelReader.h"
-#import "EnableUISideCompositingScope.h"
 #import "JavaScriptTest.h"
 #import "OffscreenWindow.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestWKWebView.h"
+#import "UISideCompositingScope.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
@@ -350,7 +350,7 @@ void checkThumbnailViewSnapshotConsistency(TestWKWebView *webView)
 
 TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
 {
-    EnableUISideCompositingScope enableUISideCompositing;
+    UISideCompositingScope scope { UISideCompositingState::Enabled };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"fixed-nav-bar"];
@@ -361,7 +361,7 @@ TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositing)
 
 TEST(WebKit, WKThumbnailViewLayerReparentingWithUISideCompositingAndTopContentInset)
 {
-    EnableUISideCompositingScope enableUISideCompositing;
+    UISideCompositingScope scope { UISideCompositingState::Enabled };
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView _setAutomaticallyAdjustsContentInsets:NO];

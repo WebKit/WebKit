@@ -3739,8 +3739,8 @@
 		F4A715A72950C8D900B4D0D6 /* AdvancedPrivacyProtections.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AdvancedPrivacyProtections.mm; sourceTree = "<group>"; };
 		F4A74B9129DDD9F100CB5288 /* CGImagePixelReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CGImagePixelReader.h; path = cocoa/CGImagePixelReader.h; sourceTree = "<group>"; };
 		F4A74B9229DDD9F100CB5288 /* CGImagePixelReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CGImagePixelReader.cpp; path = cocoa/CGImagePixelReader.cpp; sourceTree = "<group>"; };
-		F4A74B9D29DDE1AC00CB5288 /* EnableUISideCompositingScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EnableUISideCompositingScope.h; path = cocoa/EnableUISideCompositingScope.h; sourceTree = "<group>"; };
-		F4A74BA829DDE8C000CB5288 /* EnableUISideCompositingScope.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = EnableUISideCompositingScope.mm; path = cocoa/EnableUISideCompositingScope.mm; sourceTree = "<group>"; };
+		F4A74B9D29DDE1AC00CB5288 /* UISideCompositingScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UISideCompositingScope.h; path = cocoa/UISideCompositingScope.h; sourceTree = "<group>"; };
+		F4A74BA829DDE8C000CB5288 /* UISideCompositingScope.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = UISideCompositingScope.mm; path = cocoa/UISideCompositingScope.mm; sourceTree = "<group>"; };
 		F4A7CE772662D6E800228685 /* TouchEventTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TouchEventTests.mm; sourceTree = "<group>"; };
 		F4A7CE792662D83E00228685 /* active-touch-events.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "active-touch-events.html"; sourceTree = "<group>"; };
 		F4A9202E1FEE34C800F59590 /* apple-data-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "apple-data-url.html"; sourceTree = "<group>"; };
@@ -4035,8 +4035,6 @@
 				3302A64D2A11B4410093FA2A /* DragAndDropSimulator.mm */,
 				F44D06481F3962E3001A0E29 /* EditingTestHarness.h */,
 				F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */,
-				F4A74B9D29DDE1AC00CB5288 /* EnableUISideCompositingScope.h */,
-				F4A74BA829DDE8C000CB5288 /* EnableUISideCompositingScope.mm */,
 				5C7C24FB237C972300599C91 /* HTTPServer.h */,
 				5C7C24FA237C972300599C91 /* HTTPServer.mm */,
 				F42F081727449FFD007E0D90 /* ImageAnalysisTestingUtilities.h */,
@@ -4076,6 +4074,8 @@
 				2EFF06D21D8AEDBB0004BB30 /* TestWKWebView.h */,
 				2EFF06D31D8AEDBB0004BB30 /* TestWKWebView.mm */,
 				2EFF06D31D8AEDBB0004BB31 /* TestWKWebViewConfiguration.mm */,
+				F4A74B9D29DDE1AC00CB5288 /* UISideCompositingScope.h */,
+				F4A74BA829DDE8C000CB5288 /* UISideCompositingScope.mm */,
 				41733D7A25DE96DA00A136E5 /* UserMediaCaptureUIDelegate.h */,
 				41733D7B25DE96DA00A136E5 /* UserMediaCaptureUIDelegate.mm */,
 				7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */,

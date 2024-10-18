@@ -25,10 +25,10 @@
 
 #import "config.h"
 
-#import "EnableUISideCompositingScope.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UISideCompositingScope.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -227,7 +227,7 @@ TEST(GPUProcess, GPUProcessForDOMRenderingCarriesOverFromRelatedPage)
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2GPUProcessForDOMRendering"] boolValue])
         return;
 
-    EnableUISideCompositingScope enableUISideCompositing;
+    UISideCompositingScope scope { UISideCompositingState::Enabled };
 
     RetainPtr<WKWebViewConfiguration> configuration;
     RetainPtr<TestWKWebView> originalWebView;

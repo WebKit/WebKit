@@ -24,14 +24,16 @@
  */
 
 #include "config.h"
-#include "EnableUISideCompositingScope.h"
+#include "UISideCompositingScope.h"
+
+static bool uiSideCompositingEnabled { true };
 
 @implementation NSUserDefaults (TestSupport)
 
 - (id)swizzled_objectForKey:(NSString *)key
 {
     if ([key isEqualToString:@"WebKit2UseRemoteLayerTreeDrawingArea"])
-        return @(YES);
+        return @(static_cast<BOOL>(uiSideCompositingEnabled));
     return [self swizzled_objectForKey:key];
 }
 
@@ -39,17 +41,18 @@
 
 namespace TestWebKitAPI {
 
-EnableUISideCompositingScope::EnableUISideCompositingScope()
+UISideCompositingScope::UISideCompositingScope(UISideCompositingState uiSideCompositingState)
     : m_originalMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(objectForKey:)))
     , m_swizzledMethod(class_getInstanceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:)))
 {
+    uiSideCompositingEnabled = uiSideCompositingState == UISideCompositingState::Enabled;
     m_originalImplementation = method_getImplementation(m_originalMethod);
     m_swizzledImplementation = method_getImplementation(m_swizzledMethod);
     class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_originalImplementation, method_getTypeEncoding(m_originalMethod));
     class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_swizzledMethod));
 }
 
-EnableUISideCompositingScope::~EnableUISideCompositingScope()
+UISideCompositingScope::~UISideCompositingScope()
 {
     class_replaceMethod(NSUserDefaults.class, @selector(swizzled_objectForKey:), m_swizzledImplementation, method_getTypeEncoding(m_originalMethod));
     class_replaceMethod(NSUserDefaults.class, @selector(objectForKey:), m_originalImplementation, method_getTypeEncoding(m_swizzledMethod));

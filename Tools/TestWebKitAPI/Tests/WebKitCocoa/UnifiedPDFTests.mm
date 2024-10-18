@@ -32,13 +32,45 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UISideCompositingScope.h"
 #import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/ColorSerialization.h>
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
+
+@interface ObserveWebContentCrashNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation ObserveWebContentCrashNavigationDelegate {
+    bool _webProcessCrashed;
+    bool _navigationFinished;
+}
+
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    _webProcessCrashed = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    _navigationFinished = true;
+}
+
+- (bool)webProcessCrashed
+{
+    return _webProcessCrashed;
+}
+
+- (bool)navigationFinished
+{
+    return _navigationFinished;
+}
+
+@end
 
 namespace TestWebKitAPI {
 
@@ -189,6 +221,23 @@ UNIFIED_PDF_TEST(PasswordFormShouldDismissAfterNavigation)
     auto colorsAfter = sampleColorsInWebView(webView.get(), 2);
 
     EXPECT_EQ(colorsBefore, colorsAfter);
+}
+
+UNIFIED_PDF_TEST(WebProcessShouldNotCrashWithUISideCompositingDisabled)
+{
+    UISideCompositingScope scope { UISideCompositingState::Disabled };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+    RetainPtr delegate = adoptNS([[ObserveWebContentCrashNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView loadRequest:request.get()];
+
+    Util::waitFor([delegate] {
+        return [delegate webProcessCrashed] || [delegate navigationFinished];
+    });
+    EXPECT_FALSE([delegate webProcessCrashed]);
 }
 
 } // namespace TestWebKitAPI
