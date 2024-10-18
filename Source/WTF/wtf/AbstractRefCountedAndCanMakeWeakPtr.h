@@ -32,10 +32,18 @@ namespace WTF {
 
 template<typename T>
 class AbstractRefCountedAndCanMakeWeakPtr : public AbstractRefCounted, public CanMakeWeakPtr<T> {
+public:
+    // FIXME: Remove this workaround for false negatives in clang static analyezr.
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 template<typename T>
 class AbstractRefCountedAndCanMakeSingleThreadWeakPtr : public AbstractRefCounted, public CanMakeSingleThreadWeakPtr<T> {
+public:
+    // FIXME: Remove this workaround for false negatives in clang static analyezr.
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 };
 
 } // namespace WTF
