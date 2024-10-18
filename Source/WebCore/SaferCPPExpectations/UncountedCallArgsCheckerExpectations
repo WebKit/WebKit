@@ -771,7 +771,6 @@ bindings/js/JSDOMConvertCallbacks.h
 bindings/js/JSDOMConvertDate.cpp
 bindings/js/JSDOMConvertEnumeration.h
 bindings/js/JSDOMConvertEventListener.h
-bindings/js/JSDOMConvertIndexedDB.h
 bindings/js/JSDOMConvertInterface.h
 bindings/js/JSDOMConvertScheduledAction.h
 bindings/js/JSDOMConvertStrings.h
@@ -1641,7 +1640,6 @@ platform/graphics/ca/cocoa/PlatformCALayerContentsDelayedReleaser.mm
 platform/graphics/cg/GraphicsContextCG.cpp
 platform/graphics/cg/GraphicsContextGLCG.cpp
 platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
-platform/graphics/cg/ImageBufferUtilitiesCG.cpp
 platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/ShareableBitmapCG.mm
 platform/graphics/cocoa/CMUtilities.mm

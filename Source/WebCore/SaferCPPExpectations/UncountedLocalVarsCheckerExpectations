@@ -898,7 +898,6 @@ html/canvas/EXTDisjointTimerQueryWebGL2.cpp
 html/canvas/EXTPolygonOffsetClamp.cpp
 html/canvas/GPUBasedCanvasRenderingContext.cpp
 html/canvas/GPUCanvasContextCocoa.mm
-html/canvas/ImageBitmapRenderingContext.cpp
 html/canvas/OESDrawBuffersIndexed.cpp
 html/canvas/OESVertexArrayObject.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp

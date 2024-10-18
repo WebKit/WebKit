@@ -1,7 +1,6 @@
 AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
-GPUProcess/graphics/RemoteDisplayListRecorder.h
 GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
@@ -73,9 +72,7 @@ NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 Platform/IPC/ArgumentCoders.h
-Platform/IPC/Encoder.h
 Platform/IPC/SharedBufferReference.cpp
-Platform/IPC/StreamConnectionEncoder.h
 Platform/IPC/StreamServerConnection.h
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebPrivacyHelpers.mm
