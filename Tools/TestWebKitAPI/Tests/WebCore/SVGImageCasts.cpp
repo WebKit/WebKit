@@ -25,9 +25,14 @@
 
 #include "config.h"
 
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageObserver.h>
+#include <WebCore/PixelBuffer.h>
+#include <WebCore/PlatformStrategies.h>
 #include <WebCore/SVGImage.h>
 #include <WebCore/SVGImageForContainer.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/URL.h>
 
 namespace TestWebKitAPI {
@@ -83,7 +88,7 @@ private:
 TEST(SVGImageCasts, SVGImageForContainerIsNotSVGImage)
 {
     auto imageObserver = TestImageObserver::create();
-    auto svgImage = SVGImage::create(imageObserver);
+    auto svgImage = SVGImage::create(imageObserver.ptr());
     Image& svgImageBase = svgImage.get();
     EXPECT_TRUE(is<SVGImage>(svgImageBase));
     EXPECT_FALSE(is<SVGImageForContainer>(svgImageBase));
@@ -91,6 +96,37 @@ TEST(SVGImageCasts, SVGImageForContainerIsNotSVGImage)
     Image& svgImageForContainerBase = svgImageForContainer.get();
     EXPECT_FALSE(is<SVGImage>(svgImageForContainerBase));
     EXPECT_TRUE(is<SVGImageForContainer>(svgImageForContainerBase));
+}
+
+TEST(SVGImageCasts, SVGImageDataToNativeImage)
+{
+    auto size = IntSize { 300, 150 };
+    auto rect = IntRect { IntPoint::zero(), size };
+
+    auto svgImage = SVGImage::create();
+    const auto simpleText = "<svg xmlns='http://www.w3.org/2000/svg'><rect width='200' height='100' x='50' y='25' rx='20' ry='20' fill='rgb(0, 255, 0)' /></svg>"_span;
+    auto buffer = FragmentedSharedBuffer::create(simpleText);
+
+    PlatformStrategies platformStrategies;
+    setPlatformStrategies(&platformStrategies);
+    svgImage->setData(WTFMove(buffer), true);
+    EXPECT_EQ(svgImage->size(), size);
+
+    auto nativeImage = svgImage->nativeImage();
+    ASSERT_NE(nativeImage, nullptr);
+    EXPECT_EQ(nativeImage->size(), size);
+
+    auto imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
+    ASSERT_NE(imageBuffer, nullptr);
+
+    imageBuffer->context().drawNativeImage(*nativeImage, rect, rect);
+
+    auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, { rect.center(), { 1, 1 } });
+    ASSERT_NE(pixelBuffer, nullptr);
+
+    auto pixel = Color { SRGBA<uint8_t> { pixelBuffer->item(0), pixelBuffer->item(1), pixelBuffer->item(2), pixelBuffer->item(3) } };
+    EXPECT_EQ(pixel, Color::green);
 }
 
 }

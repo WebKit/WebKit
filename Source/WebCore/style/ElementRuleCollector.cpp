@@ -42,6 +42,7 @@
 #include "ElementTextDirection.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
+#include "Page.h"
 #include "SVGElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "SelectorCompiler.h"
@@ -499,11 +500,12 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
 #if ENABLE(CSS_SELECTOR_JIT)
     auto& compiledSelector = ruleData.compiledSelector();
+    bool canUseCompiledSelector = Page::nonUtilityPageCount();
 
-    if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
+    if (canUseCompiledSelector && compiledSelector.status == SelectorCompilationStatus::NotCompiled)
         SelectorCompiler::compileSelector(compiledSelector, ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
 
-    if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
+    if (canUseCompiledSelector && compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
         compiledSelector.wasUsed();
 
 #if !ASSERT_MSG_DISABLED
@@ -533,7 +535,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
-    if (compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
+    if (canUseCompiledSelector && compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
         compiledSelector.wasUsed();
         selectorMatches = SelectorCompiler::ruleCollectorSelectorCheckerWithCheckingContext(compiledSelector, &element(), &context, &specificity);
     } else

@@ -68,8 +68,8 @@
 
 namespace WebCore {
 
-SVGImage::SVGImage(ImageObserver& observer)
-    : Image(&observer)
+SVGImage::SVGImage(ImageObserver* observer)
+    : Image(observer)
     , m_startAnimationTimer(*this, &SVGImage::startAnimationTimerFired)
 {
 }
@@ -187,7 +187,6 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
         return ImageDrawResult::DidNothing;
 
     RefPtr observer = imageObserver();
-    ASSERT(observer);
 
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     setImageObserver(nullptr);

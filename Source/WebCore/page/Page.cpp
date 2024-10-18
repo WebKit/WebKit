@@ -536,7 +536,8 @@ CheckedRef<BackForwardController> Page::checkedBackForward()
 
 void Page::firstTimeInitialization()
 {
-    platformStrategies()->loaderStrategy()->addOnlineStateChangeListener(&networkStateChanged);
+    if (auto loaderStrategy = platformStrategies()->loaderStrategy())
+        loaderStrategy->addOnlineStateChangeListener(&networkStateChanged);
 
     FontCache::registerFontCacheInvalidationCallback([] {
         updateStyleForAllPagesAfterGlobalChangeInEnvironment();
