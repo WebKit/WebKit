@@ -3312,7 +3312,7 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     std::unique_ptr<DigitalCredentialsCoordinatorProxy> m_digitalCredentialsMessenger;
-    std::unique_ptr<WebAuthenticatorCoordinatorProxy> m_webAuthnCredentialsMessenger;
+    RefPtr<WebAuthenticatorCoordinatorProxy> m_webAuthnCredentialsMessenger;
 #endif
 
 #if ENABLE(DATA_DETECTION)

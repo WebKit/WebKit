@@ -1511,7 +1511,7 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if ENABLE(WEB_AUTHN)
     ASSERT(!m_webAuthnCredentialsMessenger);
-    m_webAuthnCredentialsMessenger = makeUnique<WebAuthenticatorCoordinatorProxy>(*this);
+    m_webAuthnCredentialsMessenger = WebAuthenticatorCoordinatorProxy::create(*this);
 
     ASSERT(!m_digitalCredentialsMessenger);
     m_digitalCredentialsMessenger = makeUnique<DigitalCredentialsCoordinatorProxy>(*this);
@@ -3031,10 +3031,10 @@ void WebPageProxy::dispatchActivityStateChange()
     }
 
 #if ENABLE(WEB_AUTHN) && HAVE(WEB_AUTHN_AS_MODERN)
-    if ((changed & ActivityState::WindowIsActive) && m_webAuthnCredentialsMessenger) {
+    if (RefPtr webAuthnCredentialsMessenger = m_webAuthnCredentialsMessenger; (changed & ActivityState::WindowIsActive) && webAuthnCredentialsMessenger) {
         RefPtr pageClient = this->pageClient();
         if (pageClient && pageClient->isViewWindowActive())
-            m_webAuthnCredentialsMessenger->makeActiveConditionalAssertion();
+            webAuthnCredentialsMessenger->makeActiveConditionalAssertion();
     }
 #endif
 
