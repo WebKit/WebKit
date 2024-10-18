@@ -31,6 +31,10 @@
 #include "DocumentTimeline.h"
 #include "JSDOMBinding.h"
 #include "JSDocumentTimeline.h"
+#include "JSScrollTimeline.h"
+#include "JSViewTimeline.h"
+#include "ScrollTimeline.h"
+#include "ViewTimeline.h"
 
 using namespace JSC;
 
@@ -40,6 +44,11 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<A
 {
     if (value->isDocumentTimeline())
         return createWrapper<DocumentTimeline>(globalObject, WTFMove(value));
+    if (value->isViewTimeline())
+        return createWrapper<ViewTimeline>(globalObject, WTFMove(value));
+    if (value->isScrollTimeline())
+        return createWrapper<ScrollTimeline>(globalObject, WTFMove(value));
+    ASSERT_NOT_REACHED();
     return createWrapper<AnimationTimeline>(globalObject, WTFMove(value));
 }
 
