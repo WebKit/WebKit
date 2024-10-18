@@ -49,6 +49,16 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 {
 }
 
+void UserMediaPermissionRequestManager::ref() const
+{
+    m_page->ref();
+}
+
+void UserMediaPermissionRequestManager::deref() const
+{
+    m_page->deref();
+}
+
 Ref<WebPage> UserMediaPermissionRequestManager::protectedPage() const
 {
     return m_page.get();

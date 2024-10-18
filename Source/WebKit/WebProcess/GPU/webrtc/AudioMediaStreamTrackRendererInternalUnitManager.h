@@ -33,15 +33,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class AudioMediaStreamTrackRendererInternalUnitManagerProxy;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AudioMediaStreamTrackRendererInternalUnitManagerProxy> : std::true_type { };
-}
-
 namespace IPC {
 class Semaphore;
 }
