@@ -700,7 +700,7 @@ TEST(WritingTools, ProofreadingWithImage)
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p>AAAA BBBB</p><img src='sunset-in-cupertino-200px.png'></img><p>CCCC DDDD</p></body>"]);
     [webView focusDocumentBodyAndSelectAll];
 
-    // FIXME: Figure out which one of these newline positions is correct, and fix the discrepency;
+    // FIXME: Figure out which one of these newline positions is correct, and fix the discrepancy;
     // this is just a consequence of testing equality using `_contentsAsAttributedString`.
     NSString *originalText = @"AAAA BBBB\n\n<replacement char>\nCCCC DDDD";
     NSString *proofreadText = @"XXXX BBBB\n<replacement char>\nZZZZ DDDD\n";
@@ -727,6 +727,47 @@ TEST(WritingTools, ProofreadingWithImage)
     }];
 
     TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, ProofreadingWithLinks)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable>foo <a href='https://webkit.org/downloads'>bar</a> baz</body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    __block RetainPtr<NSAttributedString> attributedText;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+        attributedText = contexts.firstObject.attributedText;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+
+    struct StringAndURL {
+        NSString *string { nil };
+        NSURL *url { nil };
+    };
+
+    auto whitespaceSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
+    __block Vector<StringAndURL, 3> substringsAndURLs;
+    [attributedText enumerateAttributesInRange:NSMakeRange(0, [attributedText length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        substringsAndURLs.append({
+            [[[attributedText string] substringWithRange:range] stringByTrimmingCharactersInSet:whitespaceSet],
+            dynamic_objc_cast<NSURL>(attributes[NSLinkAttributeName])
+        });
+    }];
+
+    EXPECT_WK_STREQ("foo", substringsAndURLs[0].string);
+    EXPECT_NULL(substringsAndURLs[0].url);
+
+    EXPECT_WK_STREQ("bar", substringsAndURLs[1].string);
+    EXPECT_WK_STREQ("https://webkit.org/downloads", substringsAndURLs[1].url.absoluteString);
+
+    EXPECT_WK_STREQ("baz", substringsAndURLs[2].string);
+    EXPECT_NULL(substringsAndURLs[2].url);
 }
 
 TEST(WritingTools, ProofreadingWithAttemptedEditing)

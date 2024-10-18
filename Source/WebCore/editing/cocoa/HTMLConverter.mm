@@ -2465,18 +2465,45 @@ static bool hasAncestorQualifyingForWritingToolsPreservation(Element* ancestor, 
     if (!ancestor)
         return false;
 
-    if (!cache.contains(*ancestor)) {
+    auto entry = cache.find(*ancestor);
+    if (entry == cache.end()) {
         auto result = elementQualifiesForWritingToolsPreservation(ancestor) || hasAncestorQualifyingForWritingToolsPreservation(ancestor->parentElement(), cache);
 
         cache.set(*ancestor, result);
         return result;
     }
 
-    return cache.get(*ancestor);
+    return entry->value;
 }
-#endif
+#endif // ENABLE(WRITING_TOOLS)
 
-static void updateAttributesForStyle(const Node* node, const RenderStyle& style, OptionSet<IncludedElement> includedElements, ElementCache<bool>& elementQualifiesForWritingToolsPreservationCache, NSMutableDictionary<NSAttributedStringKey, id> *attributes)
+static RefPtr<Element> enclosingLinkElement(const Node& node, ElementCache<RefPtr<Element>>& cache)
+{
+    Vector<Ref<Element>> ancestors;
+    RefPtr<Element> result;
+    for (RefPtr ancestor = node.parentElementInComposedTree(); ancestor; ancestor = ancestor->parentElementInComposedTree()) {
+        if (ancestor->isLink()) {
+            result = ancestor.get();
+            break;
+        }
+
+        auto entry = cache.find(*ancestor);
+        if (entry != cache.end()) {
+            result = entry->value;
+            break;
+        }
+
+        ancestors.append(*ancestor);
+    }
+
+    for (auto& ancestor : ancestors)
+        cache.add(ancestor.get(), result);
+
+    return result;
+}
+
+static void updateAttributes(const Node* node, const RenderStyle& style, OptionSet<IncludedElement> includedElements,
+    ElementCache<bool>& elementQualifiesForWritingToolsPreservationCache, ElementCache<RefPtr<Element>>& enclosingLinkCache, NSMutableDictionary<NSAttributedStringKey, id> *attributes)
 {
 #if ENABLE(WRITING_TOOLS)
     if (includedElements.contains(IncludedElement::PreservedContent)) {
@@ -2559,6 +2586,20 @@ static void updateAttributesForStyle(const Node* node, const RenderStyle& style,
         [attributes setObject:cocoaColor(backgroundColor).get() forKey:NSBackgroundColorAttributeName];
     else
         [attributes removeObjectForKey:NSBackgroundColorAttributeName];
+
+    auto linkURL = [&] -> URL {
+        RefPtr enclosingLink = enclosingLinkElement(*node, enclosingLinkCache);
+        if (!enclosingLink)
+            return { };
+
+        return enclosingLink->absoluteLinkURL();
+    }();
+
+    if (linkURL.isEmpty())
+        [attributes removeObjectForKey:NSLinkAttributeName];
+    else
+        [attributes setObject:(NSURL *)linkURL forKey:NSLinkAttributeName];
+
 }
 
 namespace WebCore {
@@ -2572,21 +2613,22 @@ AttributedString attributedString(const SimpleRange& range, IgnoreUserSelectNone
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 AttributedString editingAttributedString(const SimpleRange& range, OptionSet<IncludedElement> includedElements)
 {
+    ElementCache<RefPtr<Element>> enclosingLinkCache;
     ElementCache<bool> elementQualifiesForWritingToolsPreservationCache;
 
-    auto string = adoptNS([[NSMutableAttributedString alloc] init]);
-    auto attrs = adoptNS([[NSMutableDictionary alloc] init]);
+    RetainPtr string = adoptNS([[NSMutableAttributedString alloc] init]);
+    RetainPtr attributes = adoptNS([[NSMutableDictionary alloc] init]);
     NSUInteger stringLength = 0;
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
-        auto node = it.node();
+        RefPtr node = it.node();
 
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node); imageElement && includedElements.contains(IncludedElement::Images)) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(node.get()); imageElement && includedElements.contains(IncludedElement::Images)) {
             RetainPtr attachmentAttributedString = attributedStringWithAttachmentForElement(*imageElement);
             [string appendAttributedString:attachmentAttributedString.get()];
             stringLength += [attachmentAttributedString length];
         }
 
-        if (RefPtr attachmentElement = dynamicDowncast<HTMLAttachmentElement>(node); attachmentElement && includedElements.contains(IncludedElement::Attachments)) {
+        if (RefPtr attachmentElement = dynamicDowncast<HTMLAttachmentElement>(node.get()); attachmentElement && includedElements.contains(IncludedElement::Attachments)) {
             RetainPtr attachmentAttributedString = attributedStringWithAttachmentForElement(*attachmentElement);
             [string appendAttributedString:attachmentAttributedString.get()];
             stringLength += [attachmentAttributedString length];
@@ -2603,7 +2645,7 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
         auto renderer = node->renderer();
 
         if (renderer)
-            updateAttributesForStyle(node, renderer->style(), includedElements, elementQualifiesForWritingToolsPreservationCache, attrs.get());
+            updateAttributes(node.get(), renderer->style(), includedElements, elementQualifiesForWritingToolsPreservationCache, enclosingLinkCache, attributes.get());
         else if (!includedElements.contains(IncludedElement::NonRenderedContent))
             continue;
 
@@ -2614,7 +2656,7 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
             text = makeStringByReplacingAll(it.text(), noBreakSpace, ' ');
 
         [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:text.get()];
-        [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];
+        [string setAttributes:attributes.get() range:NSMakeRange(stringLength, currentTextLength)];
         stringLength += currentTextLength;
     }
 
