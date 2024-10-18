@@ -34,11 +34,12 @@
 
 namespace WebCore {
 
-class CDMSessionClearKey final : public LegacyCDMSession {
+class LegacyCDMSessionClearKey final : public LegacyCDMSession {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionClearKey);
 public:
-    CDMSessionClearKey(LegacyCDMSessionClient&);
-    virtual ~CDMSessionClearKey();
+    static Ref<LegacyCDMSessionClearKey> create(LegacyCDMSessionClient&);
+
+    virtual ~LegacyCDMSessionClearKey();
 
     // CDMSessionPrivate
     LegacyCDMSessionType type() override { return CDMSessionTypeClearKey; }
@@ -49,6 +50,8 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
 private:
+    explicit LegacyCDMSessionClearKey(LegacyCDMSessionClient&);
+
     WeakPtr<LegacyCDMSessionClient> m_client;
     RefPtr<Uint8Array> m_initData;
     MemoryCompactRobinHoodHashMap<String, Vector<uint8_t>> m_cachedKeys;

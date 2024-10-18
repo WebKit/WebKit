@@ -43,15 +43,20 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionClearKey);
 
-CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient& client)
+Ref<LegacyCDMSessionClearKey> LegacyCDMSessionClearKey::create(LegacyCDMSessionClient& client)
+{
+    return adoptRef(*new LegacyCDMSessionClearKey(client));
+}
+
+LegacyCDMSessionClearKey::LegacyCDMSessionClearKey(LegacyCDMSessionClient& client)
     : m_client(client)
     , m_sessionId(createVersion4UUIDString())
 {
 }
 
-CDMSessionClearKey::~CDMSessionClearKey() = default;
+LegacyCDMSessionClearKey::~LegacyCDMSessionClearKey() = default;
 
-RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
+RefPtr<Uint8Array> LegacyCDMSessionClearKey::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
     UNUSED_PARAM(destinationURL);
@@ -73,12 +78,12 @@ RefPtr<Uint8Array> CDMSessionClearKey::generateKeyRequest(const String& mimeType
     return initData;
 }
 
-void CDMSessionClearKey::releaseKeys()
+void LegacyCDMSessionClearKey::releaseKeys()
 {
     m_cachedKeys.clear();
 }
 
-bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
+bool LegacyCDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(nextMessage);
     UNUSED_PARAM(systemCode);
@@ -169,7 +174,7 @@ bool CDMSessionClearKey::update(JSC::Uint8Array* rawKeysData, RefPtr<JSC::Uint8A
     return false;
 }
 
-RefPtr<JSC::ArrayBuffer> CDMSessionClearKey::cachedKeyForKeyID(const String& keyId) const
+RefPtr<JSC::ArrayBuffer> LegacyCDMSessionClearKey::cachedKeyForKeyID(const String& keyId) const
 {
     if (!m_cachedKeys.contains(keyId))
         return nullptr;

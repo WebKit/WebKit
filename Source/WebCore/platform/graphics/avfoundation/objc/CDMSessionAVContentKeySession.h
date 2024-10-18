@@ -48,7 +48,8 @@ class CDMPrivateMediaSourceAVFObjC;
 class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);
 public:
-    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVContentKeySession> create(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+
     virtual ~CDMSessionAVContentKeySession();
 
     static bool isAvailable();
@@ -69,6 +70,7 @@ public:
     void didProvideContentKeyRequest(AVContentKeyRequest *);
 
 protected:
+    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
     RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
     bool hasContentKeySession() const { return m_contentKeySession; }

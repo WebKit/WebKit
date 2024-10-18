@@ -48,7 +48,7 @@ public:
     virtual ~LegacyMockCDM() = default;
 
     bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
+    RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
 protected:
     LegacyCDM* m_cdm;

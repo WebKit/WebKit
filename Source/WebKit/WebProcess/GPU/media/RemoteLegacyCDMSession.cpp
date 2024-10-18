@@ -65,11 +65,11 @@ static RefPtr<SharedBuffer> convertToSharedBuffer(T array)
     return SharedBuffer::create(array->span());
 }
 
-std::unique_ptr<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
+Ref<RemoteLegacyCDMSession> RemoteLegacyCDMSession::create(WeakPtr<RemoteLegacyCDMFactory> factory, RemoteLegacyCDMSessionIdentifier&& identifier, LegacyCDMSessionClient& client)
 {
-    auto session = std::unique_ptr<RemoteLegacyCDMSession>(new RemoteLegacyCDMSession(WTFMove(factory), WTFMove(identifier), client));
+    Ref session = adoptRef(*new RemoteLegacyCDMSession(WTFMove(factory), WTFMove(identifier), client));
     if (session->m_factory)
-        session->m_factory->addSession(identifier, *session);
+        session->m_factory->addSession(identifier, session);
     return session;
 }
 

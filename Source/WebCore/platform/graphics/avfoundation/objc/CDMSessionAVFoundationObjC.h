@@ -52,7 +52,8 @@ class MediaPlayerPrivateAVFoundationObjC;
 class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public CanMakeWeakPtr<CDMSessionAVFoundationObjC> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationObjC);
 public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVFoundationObjC> create(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+
     virtual ~CDMSessionAVFoundationObjC();
 
     LegacyCDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
@@ -65,6 +66,8 @@ public:
     void playerDidReceiveError(NSError *);
 
 private:
+    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }

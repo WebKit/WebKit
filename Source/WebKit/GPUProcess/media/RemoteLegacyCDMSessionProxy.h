@@ -98,7 +98,7 @@ private:
 #endif
 
     RemoteLegacyCDMSessionIdentifier m_identifier;
-    std::unique_ptr<WebCore::LegacyCDMSession> m_session;
+    RefPtr<WebCore::LegacyCDMSession> m_session;
     WeakPtr<RemoteMediaPlayerProxy> m_player;
 };
 

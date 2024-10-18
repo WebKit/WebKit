@@ -60,7 +60,7 @@ bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType)
     return supported;
 }
 
-std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
+RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
 {
     if (!m_factory)
         return nullptr;
