@@ -76,19 +76,17 @@ if (window.accessibilityController) {
     text = accessibilityController.accessibleElementById("text5");
     textMarkerRange = text.textMarkerRangeForElement(text);
     startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-
-    // FIXME: Add in verifySentences() to match the original test once next/previous sentence
-    // are implemented.
+    verifySentences(text, startMarker, 5);
 
     debug(output);
     
-    function advanceAndVerify(currentMarker, offset, obj) {
+    function advanceAndVerify(currentMarker, offset, axElement) {
         var previousMarker = currentMarker;
         for (var i = 0; i < offset; i++) {
             previousMarker = currentMarker;
-            currentMarker = obj.nextTextMarker(previousMarker);
+            currentMarker = axElement.nextTextMarker(previousMarker);
         }
-        verifySentenceRangeForTextMarker(previousMarker, currentMarker, obj);
+        verifySentenceRangeForTextMarker(previousMarker, currentMarker, axElement);
         output += "\n";
         return currentMarker;
     }
@@ -98,19 +96,44 @@ if (window.accessibilityController) {
         return str;
     }
     
-    function verifySentenceRangeForTextMarker(preMarker, textMarker, obj) {
-        var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
-        var currentCharacter = replaceAttachmentInString(obj.stringForTextMarkerRange(markerRange));
+    function verifySentenceRangeForTextMarker(preMarker, textMarker, axElement) {
+        var markerRange = axElement.textMarkerRangeForMarkers(preMarker, textMarker);
+        var currentCharacter = replaceAttachmentInString(axElement.stringForTextMarkerRange(markerRange));
         output += `Current character is: ${currentCharacter}\n`;
         
-        var range = obj.sentenceTextMarkerRangeForTextMarker(textMarker);
-        var sentence = replaceAttachmentInString(obj.stringForTextMarkerRange(range));
+        var range = axElement.sentenceTextMarkerRangeForTextMarker(textMarker);
+        var sentence = replaceAttachmentInString(axElement.stringForTextMarkerRange(range));
         output += `Current sentence is: ${sentence}\n`;
         
-        // FIXME: Add "Pre sentence start to next sentence end" to match original test once 
-        // previousSentenceStartTextMarkerForTextMarker and nextSentenceEndTextMarkerForTextMarker
-        // are implemented off the main thread.
+        var preStart = axElement.previousSentenceStartTextMarkerForTextMarker(textMarker);
+        var nextEnd = axElement.nextSentenceEndTextMarkerForTextMarker(textMarker);
+        var preAndNextSentenceRange = axElement.textMarkerRangeForMarkers(preStart, nextEnd);
+        var preAndNextSentence = replaceAttachmentInString(axElement.stringForTextMarkerRange(preAndNextSentenceRange));
+        output += `Pre sentence start to next sentence end: ${preAndNextSentence}\n`;
     }
+
+    function verifySentences(axElement, startMarker, sentenceCount) {
+        var current = startMarker;
+        var i = 0;
+        while(i < sentenceCount) {
+            current = axElement.nextSentenceEndTextMarkerForTextMarker(current);
+            var currRange = axElement.sentenceTextMarkerRangeForTextMarker(current);
+            var currSentence = axElement.stringForTextMarkerRange(currRange);
+            output += `Sentence: ${currSentence}\n`;
+            i++;
+        }
+
+        // Backwards.
+        i = 0;
+        while(i < sentenceCount) {
+            current = axElement.previousSentenceStartTextMarkerForTextMarker(current);
+            var next = axElement.nextTextMarker(current);
+            var currRange = axElement.sentenceTextMarkerRangeForTextMarker(next);
+            var currSentence = axElement.stringForTextMarkerRange(currRange);
+            output += `Sentence: ${currSentence}\n`;
+            i++;
+        }
+    }  
 }
 </script>
 

@@ -3133,6 +3133,20 @@ enum class TextUnit {
 
 - (AXTextMarkerRef)textMarkerForTextMarker:(AXTextMarkerRef)textMarkerRef atUnit:(TextUnit)textUnit
 {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (AXObjectCache::useAXThreadTextApis()) {
+        AXTextMarker inputMarker { textMarkerRef };
+        switch (textUnit) {
+        case TextUnit::NextSentenceEnd:
+            return inputMarker.nextSentenceEnd().platformData().autorelease();
+        case TextUnit::PreviousSentenceStart:
+            return inputMarker.previousSentenceStart().platformData().autorelease();
+        default:
+            // TODO: Not implemented!
+            break;
+        }
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
     return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRef>([textMarkerRef = retainPtr(textMarkerRef), &textUnit, protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRef> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject)
