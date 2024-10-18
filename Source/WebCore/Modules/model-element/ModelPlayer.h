@@ -44,6 +44,7 @@ namespace WebCore {
 
 class Color;
 class Model;
+class SharedBuffer;
 class TransformationMatrix;
 
 class WEBCORE_EXPORT ModelPlayer : public RefCounted<ModelPlayer> {
