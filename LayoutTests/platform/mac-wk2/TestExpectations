@@ -1900,3 +1900,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-
 
 webkit.org/b/281531 [ Sequoia+ ] accessibility/mac/basic-embed-pdf-accessibility.html [ Timeout ]
 webkit.org/b/281531 [ Sequoia+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
+
+# webkit.org/b/277908 NEW TEST (284866@main): [ macOS iOS ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html is a flaky failure.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html [ Pass Failure ]
