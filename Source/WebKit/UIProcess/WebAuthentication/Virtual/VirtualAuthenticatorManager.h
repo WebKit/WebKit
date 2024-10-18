@@ -30,16 +30,6 @@
 #include "AuthenticatorManager.h"
 #include "VirtualAuthenticatorConfiguration.h"
 #include "VirtualCredential.h"
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class VirtualAuthenticatorManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::VirtualAuthenticatorManager> : std::true_type { };
-}
 
 namespace WebKit {
 struct VirtualCredential;
