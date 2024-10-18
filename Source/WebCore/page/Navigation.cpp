@@ -430,6 +430,13 @@ Navigation::Result Navigation::performTraversal(const String& key, Navigation::O
     if (!window()->protectedDocument()->isFullyActive() || window()->document()->unloadCounter())
         return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
+    auto entry = findEntryByKey(key);
+    if (!entry)
+        createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::AbortError, "Navigation aborted"_s);
+
+    if (!frame()->isMainFrame() && !window()->protectedDocument()->canNavigate(&frame()->page()->mainFrame()))
+        return createErrorResult(WTFMove(committed), WTFMove(finished), ExceptionCode::SecurityError, "Invalid state"_s);
+
     RefPtr current = currentEntry();
     if (current->key() == key) {
         committed->resolve<IDLInterface<NavigationHistoryEntry>>(*current.get());

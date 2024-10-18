@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://localhost:8800/navigation-api/navigation-methods/sandboxing-back-parent.html#end' from frame with URL 'http://localhost:8800/navigation-api/navigation-methods/resources/navigation-back.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
 
 
-FAIL A sandboxed iframe cannot navigate its parent via its own navigation object by using back() assert_unreached: committed must not fulfill Reached unreachable code
+
+PASS A sandboxed iframe cannot navigate its parent via its own navigation object by using back()
 
