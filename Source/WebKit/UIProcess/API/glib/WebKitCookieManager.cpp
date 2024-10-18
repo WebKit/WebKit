@@ -100,9 +100,7 @@ struct _WebKitCookieManagerPrivate {
     RefPtr<CookieStoreObserver> m_observer;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT, GObject)
 

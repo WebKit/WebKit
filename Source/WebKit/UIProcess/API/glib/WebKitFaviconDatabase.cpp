@@ -40,8 +40,6 @@
 #include <WebCore/RefPtrCairo.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -67,7 +65,7 @@ enum {
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 struct _WebKitFaviconDatabasePrivate {
     RefPtr<IconDatabase> iconDatabase;
@@ -183,11 +181,13 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
         return;
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (g_str_has_prefix(pageURI, "about:")) {
         g_task_report_new_error(database, callback, userData, 0,
             WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURI);
         return;
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(database, cancellable, callback, userData));
     WebKitFaviconDatabasePrivate* priv = database->priv;
@@ -321,5 +321,3 @@ void webkit_favicon_database_clear(WebKitFaviconDatabase* database)
 
     database->priv->iconDatabase->clear([] { });
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -57,8 +57,6 @@
 
 #define FEATURE_DEFAULT(featureName) ((DEFAULT_VALUE_FOR_ ## featureName) ? TRUE : FALSE)
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
@@ -194,7 +192,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 static void webKitSettingsDispose(GObject* object)
 {
@@ -1717,7 +1715,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         nullptr, // A null string forces the default value.
         readWriteConstructParamFlags);
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -4301,6 +4299,8 @@ WebKitFeatureList* webkit_settings_get_development_features(void)
  */
 gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile* keyFile, const gchar* groupName, GError** error)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
     g_return_val_if_fail(keyFile, FALSE);
     g_return_val_if_fail(groupName, FALSE);
@@ -4398,6 +4398,8 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
 
     g_object_setv(G_OBJECT(settings), propertyNames->len, const_cast<const char**>(reinterpret_cast<char**>(propertyNames->pdata)), reinterpret_cast<GValue*>(values->data));
     return TRUE;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -4447,5 +4449,3 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
     UNUSED_PARAM(udpPortsRange);
 #endif
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,9 +33,7 @@ enum {
     N_PROPERTIES,
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 using namespace WebKit;
 using namespace WebCore;
@@ -121,7 +119,7 @@ static void webkit_uri_scheme_response_class_init(WebKitURISchemeResponseClass* 
             -1, INT64_MAX, -1,
             static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 // Private getters

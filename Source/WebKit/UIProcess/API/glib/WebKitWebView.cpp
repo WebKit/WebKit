@@ -118,8 +118,6 @@
 #include "WebKitJavascriptResultPrivate.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -243,7 +241,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 class PageLoadStateObserver final : public RefCounted<PageLoadStateObserver>, public PageLoadState::Observer {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PageLoadStateObserver);
@@ -422,7 +420,7 @@ struct _WebKitWebViewPrivate {
     bool isWebProcessResponsive;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 #if PLATFORM(GTK)
 WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
@@ -1696,7 +1694,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr,
         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitWebView::load-changed:
@@ -5491,8 +5489,10 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         for (auto str = allowList; *str; ++str)
             allowListVector.append(String::fromUTF8(*str));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
@@ -5738,5 +5738,3 @@ webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
 
     return webView->priv->defaultContentSecurityPolicy.data();
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

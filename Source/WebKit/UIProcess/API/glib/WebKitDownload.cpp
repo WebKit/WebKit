@@ -36,8 +36,6 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -72,7 +70,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitDownloadPrivate {
     ~_WebKitDownloadPrivate()
@@ -101,7 +99,7 @@ struct _WebKitDownloadPrivate {
     bool allowOverwrite;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT, GObject)
 
@@ -233,7 +231,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
             FALSE,
             WEBKIT_PARAM_READWRITE);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitDownload::received-data:
@@ -727,5 +725,3 @@ void webkit_download_set_allow_overwrite(WebKitDownload* download, gboolean allo
     download->priv->allowOverwrite = allowed;
     g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_ALLOW_OVERWRITE]);
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

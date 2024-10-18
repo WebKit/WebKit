@@ -29,8 +29,6 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace WebCore;
 
 /**
@@ -108,7 +106,7 @@ enum {
     N_PROPERTIES,
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWindowPropertiesPrivate {
 #if PLATFORM(GTK)
@@ -305,7 +303,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
             FALSE,
             paramFlags);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 WebKitWindowProperties* webkitWindowPropertiesCreate()
@@ -534,5 +532,3 @@ gboolean webkit_window_properties_get_fullscreen(WebKitWindowProperties* windowP
 
     return windowProperties->priv->fullscreen;
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -54,9 +54,7 @@ enum {
     N_PROPERTIES,
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 enum {
     PREEDIT_STARTED,
@@ -144,9 +142,7 @@ struct _WebKitInputMethodContextPrivate {
     WebKitInputHints hints;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WebKitInputMethodContext, webkit_input_method_context, G_TYPE_OBJECT)
 
@@ -254,7 +250,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
             WEBKIT_INPUT_HINT_NONE,
             WEBKIT_PARAM_READWRITE);
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitInputMethodContext::preedit-started:
@@ -551,10 +547,7 @@ void webkit_input_method_context_set_input_purpose(WebKitInputMethodContext* con
         return;
 
     context->priv->purpose = purpose;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_PURPOSE]);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -591,8 +584,5 @@ void webkit_input_method_context_set_input_hints(WebKitInputMethodContext* conte
         return;
 
     context->priv->hints = hints;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_HINTS]);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }

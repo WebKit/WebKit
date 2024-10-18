@@ -58,9 +58,7 @@ struct _WebKitNotificationPrivate {
     guint64 id;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitNotification, webkit_notification, G_TYPE_OBJECT, GObject)
 
@@ -287,10 +285,7 @@ const gchar* webkit_notification_get_tag(WebKitNotification* notification)
 void webkit_notification_close(WebKitNotification* notification)
 {
     g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(notification, signals[CLOSED], 0);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
@@ -307,8 +302,5 @@ void webkit_notification_close(WebKitNotification* notification)
 void webkit_notification_clicked(WebKitNotification* notification)
 {
     g_return_if_fail(WEBKIT_IS_NOTIFICATION(notification));
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(notification, signals[CLICKED], 0);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }

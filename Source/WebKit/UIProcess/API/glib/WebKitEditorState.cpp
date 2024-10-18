@@ -52,9 +52,7 @@ enum {
     N_PROPERTIES,
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitEditorStatePrivate {
     WebPageProxy* page;
@@ -66,9 +64,7 @@ struct _WebKitEditorStatePrivate {
     unsigned isRedoAvailable : 1;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitEditorState, webkit_editor_state, G_TYPE_OBJECT, GObject)
 
@@ -106,7 +102,7 @@ static void webkit_editor_state_class_init(WebKitEditorStateClass* editorStateCl
             0, G_MAXUINT, 0,
             WEBKIT_PARAM_READABLE);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitEditorState::changed:
@@ -132,10 +128,7 @@ static void webkitEditorStateSetTypingAttributes(WebKitEditorState* editorState,
         return;
 
     editorState->priv->typingAttributes = typingAttributes;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_object_notify_by_pspec(G_OBJECT(editorState), sObjProperties[PROP_TYPING_ATTRIBUTES]);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 WebKitEditorState* webkitEditorStateCreate(WebPageProxy& page)

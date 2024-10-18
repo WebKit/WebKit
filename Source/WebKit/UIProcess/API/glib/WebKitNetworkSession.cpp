@@ -65,9 +65,7 @@ enum {
     N_PROPERTIES
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 enum {
     DOWNLOAD_STARTED,
@@ -75,9 +73,7 @@ enum {
     LAST_SIGNAL
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 struct _WebKitNetworkSessionPrivate {
     _WebKitNetworkSessionPrivate()
@@ -201,7 +197,7 @@ static void webkit_network_session_class_init(WebKitNetworkSessionClass* session
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitNetworkSession::download-started:
@@ -224,9 +220,7 @@ static void webkit_network_session_class_init(WebKitNetworkSessionClass* session
 
 void webkitNetworkSessionDownloadStarted(WebKitNetworkSession* session, WebKitDownload* download)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(session, signals[DOWNLOAD_STARTED], 0, download);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static gpointer createDefaultNetworkSession(gpointer)

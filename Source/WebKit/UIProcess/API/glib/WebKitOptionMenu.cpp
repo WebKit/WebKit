@@ -61,9 +61,7 @@ enum {
     LAST_SIGNAL
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitOptionMenu, webkit_option_menu, G_TYPE_OBJECT, GObject)
 
@@ -211,9 +209,7 @@ void webkit_option_menu_close(WebKitOptionMenu* menu)
 {
     g_return_if_fail(WEBKIT_IS_OPTION_MENU(menu));
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_signal_emit(menu, signals[CLOSE], 0, nullptr);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 #if PLATFORM(GTK)

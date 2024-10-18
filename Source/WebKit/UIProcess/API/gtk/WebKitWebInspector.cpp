@@ -77,9 +77,7 @@ enum {
     N_PROPERTIES,
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWebInspectorPrivate {
     ~_WebKitWebInspectorPrivate()
@@ -95,9 +93,7 @@ struct _WebKitWebInspectorPrivate {
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT, GObject)
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 static void webkitWebInspectorGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -161,7 +157,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
             FALSE,
             WEBKIT_PARAM_READABLE);
 
-    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
     /**
      * WebKitWebInspector::open-window:
@@ -295,8 +291,6 @@ public:
     }
 
 private:
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
     bool openWindow(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
@@ -358,8 +352,6 @@ private:
         m_inspector->priv->canAttach = available;
         g_object_notify_by_pspec(G_OBJECT(m_inspector), sObjProperties[PROP_CAN_ATTACH]);
     }
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     WebKitWebInspector* m_inspector;
 };
