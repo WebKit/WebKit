@@ -228,6 +228,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL allowMediaContentTypesRequiringHardwareSupportAsFallback;
 @property (nonatomic) BOOL mediaCapabilitiesEnabled;
 @property (nonatomic) BOOL sourceBufferChangeTypeEnabled;
+@property (nonatomic) BOOL siteSpecificQuirksModeEnabled;
 @property (nonatomic) NSString *mediaContentTypesRequiringHardwareSupport;
 @property (nonatomic, retain) NSArray<NSString *> *additionalSupportedImageTypes; // additionalSupportedImageTypes is an array of image UTIs.
 

@@ -227,6 +227,7 @@
 #define WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey @"WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallback"
 #define WebKitMediaCapabilitiesEnabledPreferenceKey @"WebKitMediaCapabilitiesEnabled"
 #define WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey @"WebKitDebugInAppBrowserPrivacyEnabled"
+#define WebKitSiteSpecificQuirksModeEnabledPreferenceKey @"WebKitNeedsSiteSpecificQuirks"
 
 
 // These are all now generated via GeneratePreferences.rb

@@ -335,6 +335,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences.largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
     preferences.animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
     preferences.colorFilterEnabled = settings.appleColorFilterEnabled;
+    preferences.siteSpecificQuirksModeEnabled = settings.siteSpecificQuirksModeEnabled;
     preferences.punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
     preferences.mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 

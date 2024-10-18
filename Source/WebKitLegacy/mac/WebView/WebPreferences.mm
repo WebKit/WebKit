@@ -2715,6 +2715,17 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
 }
 
+- (BOOL)siteSpecificQuirksModeEnabled
+{
+    return [self _boolValueForKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+- (void)setSiteSpecificQuirksModeEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
+}
+
+
 @end
 
 @implementation WebPreferences (WebInternal)
