@@ -130,13 +130,13 @@ GPUProcessConnection::~GPUProcessConnection()
 
 void GPUProcessConnection::didBecomeUnresponsive()
 {
-    auto& webProcess = WebProcess::singleton();
+    Ref webProcess = WebProcess::singleton();
     // The function call might have been posted asynchronously from other thread.
     // Guard against notifying a problem for a GPUProcessConnection that has already been
     // switched away.
-    if (webProcess.existingGPUProcessConnection() != this)
+    if (webProcess->existingGPUProcessConnection() != this)
         return;
-    webProcess.gpuProcessConnectionDidBecomeUnresponsive();
+    webProcess->gpuProcessConnectionDidBecomeUnresponsive();
 }
 
 #if HAVE(AUDIT_TOKEN)
@@ -165,12 +165,12 @@ void GPUProcessConnection::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessConnection::didClose", this);
     auto protector = Ref { *this };
-    auto& webProcess = WebProcess::singleton();
-    ASSERT(webProcess.existingGPUProcessConnection() == this);
-    webProcess.gpuProcessConnectionClosed();
+    Ref webProcess = WebProcess::singleton();
+    ASSERT(webProcess->existingGPUProcessConnection() == this);
+    webProcess->gpuProcessConnectionClosed();
 
 #if ENABLE(ROUTING_ARBITRATION)
-    if (auto* arbitrator = WebProcess::singleton().audioSessionRoutingArbitrator())
+    if (auto* arbitrator = webProcess->audioSessionRoutingArbitrator())
         arbitrator->leaveRoutingAbritration();
 #endif
 
@@ -255,7 +255,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, decoder);
+        WebProcess::singleton().protectedCDMFactory()->didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif

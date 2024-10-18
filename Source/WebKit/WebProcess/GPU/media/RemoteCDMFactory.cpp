@@ -42,11 +42,22 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCDMFactory);
 
-RemoteCDMFactory::RemoteCDMFactory(WebProcess&)
+RemoteCDMFactory::RemoteCDMFactory(WebProcess& webProcess)
+    : m_webProcess(webProcess)
 {
 }
 
 RemoteCDMFactory::~RemoteCDMFactory() = default;
+
+void RemoteCDMFactory::ref() const
+{
+    return m_webProcess->ref();
+}
+
+void RemoteCDMFactory::deref() const
+{
+    return m_webProcess->deref();
+}
 
 void RemoteCDMFactory::registerFactory(Vector<CDMFactory*>& factories)
 {

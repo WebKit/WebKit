@@ -71,6 +71,8 @@ private:
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) final;
     void storeRecordOfKeyUsage(const String& sessionId) final;
 
+    RefPtr<RemoteCDMFactory> protectedFactory() const;
+
     WeakPtr<RemoteCDMFactory> m_factory;
     RemoteCDMInstanceSessionIdentifier m_identifier;
     WeakPtr<WebCore::CDMInstanceSessionClient> m_client;

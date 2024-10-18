@@ -198,6 +198,17 @@ public:
         m_supplements.add(T::supplementName(), makeUniqueWithoutRefCountedCheck<T>(*this));
     }
 
+    template <typename T>
+    void addSupplementWithoutRefCountedCheck()
+    {
+        m_supplements.add(T::supplementName(), makeUniqueWithoutRefCountedCheck<T>(*this));
+    }
+
+    // ref() & deref() do nothing since WebProcess is a singleton object.
+    // This is for objects owned by the WebProcess to forward their refcounting to their owner.
+    void ref() const { }
+    void deref() const { }
+
     WebPage* webPage(WebCore::PageIdentifier) const;
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
     void removeWebPage(WebCore::PageIdentifier);
@@ -274,6 +285,7 @@ public:
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();
+    Ref<RemoteCDMFactory> protectedCDMFactory();
 #endif
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)

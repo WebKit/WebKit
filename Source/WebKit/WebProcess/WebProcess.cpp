@@ -328,7 +328,7 @@ WebProcess::WebProcess()
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
-    addSupplement<RemoteCDMFactory>();
+    addSupplementWithoutRefCountedCheck<RemoteCDMFactory>();
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -2245,7 +2245,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     auto& cdmFactories = CDMFactory::registeredFactories();
     cdmFactories.clear();
     if (useGPUProcessForMedia)
-        cdmFactory().registerFactory(cdmFactories);
+        protectedCDMFactory()->registerFactory(cdmFactories);
     else
         CDMFactory::platformRegisterFactories(cdmFactories);
 #endif
@@ -2364,6 +2364,11 @@ RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory()
 RemoteCDMFactory& WebProcess::cdmFactory()
 {
     return *supplement<RemoteCDMFactory>();
+}
+
+Ref<RemoteCDMFactory> WebProcess::protectedCDMFactory()
+{
+    return cdmFactory();
 }
 #endif
 

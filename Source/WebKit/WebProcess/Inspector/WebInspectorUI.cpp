@@ -207,19 +207,19 @@ bool WebInspectorUI::supportsDockSide(DockSide dockSide)
 
 void WebInspectorUI::requestSetDockSide(DockSide dockSide)
 {
-    auto& webProcess = WebProcess::singleton();
+    Ref webProcess = WebProcess::singleton();
     switch (dockSide) {
     case DockSide::Undocked:
-        webProcess.parentProcessConnection()->send(Messages::WebInspectorUIProxy::Detach(), *m_inspectedPageIdentifier);
+        webProcess->protectedParentProcessConnection()->send(Messages::WebInspectorUIProxy::Detach(), *m_inspectedPageIdentifier);
         break;
     case DockSide::Right:
-        webProcess.parentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachRight(), *m_inspectedPageIdentifier);
+        webProcess->protectedParentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachRight(), *m_inspectedPageIdentifier);
         break;
     case DockSide::Left:
-        webProcess.parentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachLeft(), *m_inspectedPageIdentifier);
+        webProcess->protectedParentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachLeft(), *m_inspectedPageIdentifier);
         break;
     case DockSide::Bottom:
-        webProcess.parentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachBottom(), *m_inspectedPageIdentifier);
+        webProcess->protectedParentProcessConnection()->send(Messages::WebInspectorUIProxy::AttachBottom(), *m_inspectedPageIdentifier);
         break;
     }
 }
