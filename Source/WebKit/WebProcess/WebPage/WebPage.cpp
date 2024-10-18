@@ -677,6 +677,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (shouldBlockMobileAsset)
         sandbox_enable_state_flag("BlockMobileAssetInWebContentSandbox", *auditToken);
 #if PLATFORM(MAC)
+    auto shouldBlockFontService = parameters.store.getBoolValueForKey(WebPreferencesKey::blockFontServiceInWebContentSandboxKey());
+    if (shouldBlockFontService)
+        sandbox_enable_state_flag("BlockFontServiceInWebContentSandbox", *auditToken);
     auto shouldBlockIconServices = parameters.store.getBoolValueForKey(WebPreferencesKey::blockIconServicesInWebContentSandboxKey());
     if (shouldBlockIconServices)
         sandbox_enable_state_flag("BlockIconServicesInWebContentSandbox", *auditToken);

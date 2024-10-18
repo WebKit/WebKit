@@ -887,6 +887,19 @@ BlobRegistryTopOriginPartitioningEnabled:
     WebCore:
       default: true
 
+BlockFontServiceInWebContentSandbox:
+  type: bool
+  status: internal
+  category: networking
+  humanReadableName: "Block Font service in the WebContent sandbox"
+  humanReadableDescription: "Block Font service in the WebContent sandbox"
+  webcoreBinding: none
+  condition: HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 BlockIOKitInWebContentSandbox:
   type: bool
   status: internal
