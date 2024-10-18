@@ -87,12 +87,20 @@ void CryptoAlgorithmX25519::deriveBits(const CryptoAlgorithmParameters& paramete
         return;
     }
 
+    // Return an empty string doesn't make much sense, but truncating either at all.
+    // https://github.com/WICG/webcrypto-secure-curves/pull/29
+    if (length && !(*length)) {
+        // Avoid executing the key-derivation, since we are going to return an empty string.
+        callback({ });
+        return;
+    }
+
     auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, std::optional<size_t> length) mutable {
         if (!derivedKey) {
             exceptionCallback(ExceptionCode::OperationError);
             return;
         }
-        if (!length || !(*length)) {
+        if (!length) {
             callback(WTFMove(*derivedKey));
             return;
         }
