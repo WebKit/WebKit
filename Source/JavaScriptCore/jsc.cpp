@@ -2305,7 +2305,13 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* glob
     ASSERT(wasmToJSFrame.callerFrame()->callee().isNativeCallee());
     CallerFunctor wasmFrame;
     StackVisitor::visit(wasmToJSFrame.callerFrame(), vm, wasmFrame);
+    if (!wasmFrame.callerFrame()->callee().isNativeCallee()) {
+        // This can happen if FTL directly calls wasm which tail calls this function, which fuzzers can produce, just bail out.
+        ASSERT(wasmFrame.callerFrame()->codeBlock()->jitType() == JITType::FTLJIT);
+        return throwVMError(globalObject, scope, "caller isn't a wasm function"_s);
+    }
     ASSERT(wasmFrame.callerFrame()->callee().isNativeCallee());
+    ASSERT(wasmFrame.callerFrame()->callee().asNativeCallee()->category() == NativeCallee::Category::Wasm);
 #if ENABLE(WEBASSEMBLY)
     auto mode = static_cast<Wasm::Callee*>(wasmFrame.callerFrame()->callee().asNativeCallee())->compilationMode();
     return JSValue::encode(jsBoolean(isAnyBBQ(mode) || isAnyOMG(mode)));
