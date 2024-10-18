@@ -823,15 +823,6 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
     memset(destination.data(), byte, destination.size_bytes());
 }
 
-// Preferred helper function for converting an imported C++ API into a span.
-template<typename T>
-inline auto makeSpan(const T& source)
-{
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    return std::span { source.begin(), source.end() };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-}
-
 // Less preferred helper function for converting an imported API into a span.
 // Use this when we can't edit the imported API and it doesn't offer
 // begin() / end() or a span accessor.
@@ -1042,7 +1033,6 @@ using WTF::is8ByteAligned;
 using WTF::isCompilationThread;
 using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
-using WTF::makeSpan;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::makeUniqueWithoutRefCountedCheck;

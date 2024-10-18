@@ -211,7 +211,7 @@ static UncheckedKeyHashMap<String, RTCNetwork> gatherNetworkMap()
 
         auto name = span(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
-        auto networkKey = makeString(StringView { name }, "-"_s, prefixLength, "-"_s, StringView { makeSpan(prefixString) });
+        auto networkKey = makeString(name, "-"_s, prefixLength, "-"_s, std::span { prefixString });
 
         networkMap.ensure(networkKey, [&] {
             return RTCNetwork { name, networkKey.utf8().span(), address->second, prefixLength, interfaceAdapterType(iterator->ifa_name), 0, 0, true, false, scopeID, { } };
