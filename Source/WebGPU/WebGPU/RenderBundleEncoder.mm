@@ -588,6 +588,11 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
         return false;
     }
 
+    if (checkedSum<uint32_t>(firstVertex, vertexCount).hasOverflowed()) {
+        makeInvalid(@"Overflow in vertex count + firstVertex");
+        return false;
+    }
+
     auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
         Checked<uint64_t, WTF::RecordOverflow> strideCount = 0;
