@@ -34,13 +34,11 @@
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {
-class CtapHidDriver;
 class CtapHidDriverWorker;
 }
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriver> : std::true_type { };
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::CtapHidDriverWorker> : std::true_type { };
 }
 
@@ -95,12 +93,14 @@ public:
         Busy
     };
 
-    explicit CtapHidDriver(Ref<HidConnection>&&);
+    static Ref<CtapHidDriver> create(Ref<HidConnection>&&);
 
     void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
     void cancel() final;
 
 private:
+    explicit CtapHidDriver(Ref<HidConnection>&&);
+
     void continueAfterChannelAllocated(std::optional<fido::FidoHidMessage>&&);
     void continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&&);
     void returnResponse(Vector<uint8_t>&&);

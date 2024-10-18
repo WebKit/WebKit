@@ -81,7 +81,7 @@ void VirtualService::startDiscoveryInternal()
         case WebCore::AuthenticatorTransport::Nfc:
         case WebCore::AuthenticatorTransport::Ble:
         case WebCore::AuthenticatorTransport::Usb:
-            observer()->authenticatorAdded(CtapAuthenticator::create(WTF::makeUnique<CtapHidDriver>(VirtualHidConnection::create(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
+            observer()->authenticatorAdded(CtapAuthenticator::create(CtapHidDriver::create(VirtualHidConnection::create(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
             break;
         case WebCore::AuthenticatorTransport::Internal:
             observer()->authenticatorAdded(LocalAuthenticator::create(makeUniqueRef<VirtualLocalConnection>(config)));

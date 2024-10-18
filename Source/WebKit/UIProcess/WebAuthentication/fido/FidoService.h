@@ -42,13 +42,13 @@ public:
 
 protected:
     explicit FidoService(AuthenticatorTransportServiceObserver&);
-    void getInfo(std::unique_ptr<CtapDriver>&&);
+    void getInfo(Ref<CtapDriver>&&);
 
 private:
     void continueAfterGetInfo(WeakPtr<CtapDriver>&&, Vector<uint8_t>&& info);
 
     // Keeping drivers alive when they are getting info from devices.
-    HashSet<std::unique_ptr<CtapDriver>> m_drivers;
+    HashSet<Ref<CtapDriver>> m_drivers;
 };
 
 } // namespace WebKit

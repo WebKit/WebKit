@@ -40,13 +40,13 @@ class CtapDriver;
 
 class U2fAuthenticator final : public FidoAuthenticator {
 public:
-    static Ref<U2fAuthenticator> create(std::unique_ptr<CtapDriver>&& driver)
+    static Ref<U2fAuthenticator> create(Ref<CtapDriver>&& driver)
     {
         return adoptRef(*new U2fAuthenticator(WTFMove(driver)));
     }
 
 private:
-    explicit U2fAuthenticator(std::unique_ptr<CtapDriver>&&);
+    explicit U2fAuthenticator(Ref<CtapDriver>&&);
 
     void makeCredential() final;
     void checkExcludeList(size_t index);

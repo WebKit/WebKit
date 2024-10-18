@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
+FidoAuthenticator::FidoAuthenticator(Ref<CtapDriver>&& driver)
     : m_driver(WTFMove(driver))
 {
     ASSERT(m_driver);
@@ -41,8 +41,8 @@ FidoAuthenticator::FidoAuthenticator(std::unique_ptr<CtapDriver>&& driver)
 
 FidoAuthenticator::~FidoAuthenticator()
 {
-    if (m_driver)
-        m_driver->cancel();
+    if (RefPtr driver = m_driver)
+        driver->cancel();
 }
 
 CtapDriver& FidoAuthenticator::driver() const
@@ -51,10 +51,10 @@ CtapDriver& FidoAuthenticator::driver() const
     return *m_driver;
 }
 
-std::unique_ptr<CtapDriver> FidoAuthenticator::releaseDriver()
+Ref<CtapDriver> FidoAuthenticator::releaseDriver()
 {
     ASSERT(m_driver);
-    return WTFMove(m_driver);
+    return m_driver.releaseNonNull();
 }
 
 String FidoAuthenticator::transportForDebugging() const

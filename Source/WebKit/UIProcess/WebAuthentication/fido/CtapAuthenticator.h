@@ -47,13 +47,13 @@ class CtapDriver;
 
 class CtapAuthenticator final : public FidoAuthenticator {
 public:
-    static Ref<CtapAuthenticator> create(std::unique_ptr<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
+    static Ref<CtapAuthenticator> create(Ref<CtapDriver>&& driver, fido::AuthenticatorGetInfoResponse&& info)
     {
         return adoptRef(*new CtapAuthenticator(WTFMove(driver), WTFMove(info)));
     }
 
 private:
-    explicit CtapAuthenticator(std::unique_ptr<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
+    explicit CtapAuthenticator(Ref<CtapDriver>&&, fido::AuthenticatorGetInfoResponse&&);
 
     void makeCredential() final;
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&);

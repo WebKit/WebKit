@@ -49,7 +49,7 @@ namespace {
 const unsigned retryTimeOutValueMs = 200;
 }
 
-U2fAuthenticator::U2fAuthenticator(std::unique_ptr<CtapDriver>&& driver)
+U2fAuthenticator::U2fAuthenticator(Ref<CtapDriver>&& driver)
     : FidoAuthenticator(WTFMove(driver))
     , m_retryTimer(RunLoop::main(), this, &U2fAuthenticator::retryLastCommand)
 {

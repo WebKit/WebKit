@@ -36,6 +36,11 @@ namespace WebKit {
 using namespace apdu;
 using namespace fido;
 
+Ref<CtapCcidDriver> CtapCcidDriver::create(Ref<CcidConnection>&& connection, WebCore::AuthenticatorTransport transport)
+{
+    return adoptRef(*new CtapCcidDriver(WTFMove(connection), transport));
+}
+
 CtapCcidDriver::CtapCcidDriver(Ref<CcidConnection>&& connection, WebCore::AuthenticatorTransport transport)
     : CtapDriver(transport)
     , m_connection(WTFMove(connection))

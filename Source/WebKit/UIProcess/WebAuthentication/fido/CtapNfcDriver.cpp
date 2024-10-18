@@ -36,6 +36,11 @@ namespace WebKit {
 using namespace apdu;
 using namespace fido;
 
+Ref<CtapNfcDriver> CtapNfcDriver::create(Ref<NfcConnection>&& connection)
+{
+    return adoptRef(*new CtapNfcDriver(WTFMove(connection)));
+}
+
 CtapNfcDriver::CtapNfcDriver(Ref<NfcConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Nfc)
     , m_connection(WTFMove(connection))

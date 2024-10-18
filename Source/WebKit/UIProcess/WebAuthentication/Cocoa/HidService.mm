@@ -99,7 +99,7 @@ Ref<HidConnection> HidService::createHidConnection(IOHIDDeviceRef device) const
 void HidService::deviceAdded(IOHIDDeviceRef device)
 {
 #if HAVE(SECURITY_KEY_API)
-    getInfo(WTF::makeUnique<CtapHidDriver>(createHidConnection(device)));
+    getInfo(CtapHidDriver::create(createHidConnection(device)));
 #endif
 }
 

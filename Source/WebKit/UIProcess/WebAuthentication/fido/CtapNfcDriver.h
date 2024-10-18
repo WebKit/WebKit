@@ -35,13 +35,15 @@ namespace WebKit {
 
 // The following implements the CTAP NFC protocol:
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc
-class CtapNfcDriver : public CtapDriver {
+class CtapNfcDriver final : public CtapDriver {
 public:
-    explicit CtapNfcDriver(Ref<NfcConnection>&&);
+    static Ref<CtapNfcDriver> create(Ref<NfcConnection>&&);
 
     void transact(Vector<uint8_t>&& data, ResponseCallback&&) final;
 
 private:
+    explicit CtapNfcDriver(Ref<NfcConnection>&&);
+
     void respondAsync(ResponseCallback&&, Vector<uint8_t>&& response) const;
 
     Ref<NfcConnection> m_connection;

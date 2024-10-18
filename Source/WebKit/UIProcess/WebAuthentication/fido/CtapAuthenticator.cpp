@@ -104,7 +104,7 @@ bool isPinError(const CtapDeviceResponseCode& error)
 
 } // namespace
 
-CtapAuthenticator::CtapAuthenticator(std::unique_ptr<CtapDriver>&& driver, AuthenticatorGetInfoResponse&& info)
+CtapAuthenticator::CtapAuthenticator(Ref<CtapDriver>&& driver, AuthenticatorGetInfoResponse&& info)
     : FidoAuthenticator(WTFMove(driver))
     , m_info(WTFMove(info))
 {

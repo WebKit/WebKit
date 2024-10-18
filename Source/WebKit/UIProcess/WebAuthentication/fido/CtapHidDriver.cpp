@@ -163,6 +163,11 @@ void CtapHidDriverWorker::cancel(fido::FidoHidMessage&& requestMessage)
     connection->sendSync(requestMessage.popNextPacket());
 }
 
+Ref<CtapHidDriver> CtapHidDriver::create(Ref<HidConnection>&& connection)
+{
+    return adoptRef(*new CtapHidDriver(WTFMove(connection)));
+}
+
 CtapHidDriver::CtapHidDriver(Ref<HidConnection>&& connection)
     : CtapDriver(WebCore::AuthenticatorTransport::Usb)
     , m_worker(makeUniqueRef<CtapHidDriverWorker>(WTFMove(connection)))
