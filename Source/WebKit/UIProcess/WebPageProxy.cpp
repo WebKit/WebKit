@@ -4713,8 +4713,10 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
         }
 
         RefPtr pageClientProtector = pageClient();
-        RefPtr provisionalPage = m_provisionalPage;
-        Ref processNavigatingFrom = preferences().siteIsolationEnabled() && frame->isMainFrame() && provisionalPage ? provisionalPage->process() : frame->process();
+        Ref processNavigatingFrom = [&] {
+            RefPtr provisionalPage = m_provisionalPage;
+            return Ref { preferences().siteIsolationEnabled() && frame->isMainFrame() && provisionalPage ? provisionalPage->process() : frame->process() };
+        }();
 
         const bool navigationChangesFrameProcess = processNavigatingTo->coreProcessIdentifier() != processNavigatingFrom->coreProcessIdentifier();
         const bool loadContinuingInNonInitiatingProcess = processInitiatingNavigation->coreProcessIdentifier() != processNavigatingTo->coreProcessIdentifier();
@@ -4857,7 +4859,7 @@ void WebPageProxy::receivedNavigationResponsePolicyDecision(WebCore::PolicyActio
 void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, const String& mimeType, bool frameHasCustomContentProvider, FrameLoadType frameLoadType, const CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, HasInsecureContent hasInsecureContent, MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
     ASSERT(m_provisionalPage);
-    RefPtr provisionalPage = m_provisionalPage;
+    RefPtr provisionalPage = std::exchange(m_provisionalPage, nullptr);
     WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i", provisionalPage->process().processID());
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
@@ -4893,7 +4895,7 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         send(Messages::WebPage::Close());
 
     const auto oldWebPageID = m_webPageID;
-    swapToProvisionalPage(m_provisionalPage.releaseNonNull());
+    swapToProvisionalPage(provisionalPage.releaseNonNull());
 
     didCommitLoadForFrame(connection, frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 

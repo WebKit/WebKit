@@ -7,10 +7,10 @@ Current target is 0.
 PASS: Should receive TargetAdded event for target 1.
 PASS: Target 1 should be provisional.
 PASS: Target 1 should be paused on start.
+PASS: Should receive TargetRemoved event for target 1
 PASS: Should receive TargetAdded event for target 2.
 PASS: Target 2 should be provisional.
 PASS: Target 2 should be paused on start.
-PASS: Should receive TargetRemoved event for target 1
 PASS: Should receive TargetRemoved event for target 0
 PASS: Should receive DidCommitProvisionalTarget event 0 => 2.
 PASS: Should have seen 3 different targets.
