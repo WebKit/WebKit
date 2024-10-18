@@ -28,7 +28,10 @@ public func clearBuffer(
 ) {
     commandEncoder.clearBuffer(buffer: buffer, offset: offset, size: &size)
 }
-
+public func resolveQuerySet(commandEncoder: WebGPU.CommandEncoder, querySet: WebGPU.QuerySet, firstQuery: UInt32, queryCount:UInt32, destination: WebGPU.Buffer, destinationOffset: UInt64)
+{
+    commandEncoder.resolveQuerySet(querySet, firstQuery: firstQuery, queryCount: queryCount, destination: destination, destinationOffset: destinationOffset)
+}
 extension WebGPU.CommandEncoder {
     public func clearBuffer(buffer: WebGPU.Buffer, offset: UInt64, size: inout UInt64) {
         guard self.prepareTheEncoderState() else {
@@ -50,6 +53,7 @@ extension WebGPU.CommandEncoder {
             self.makeInvalid("GPUCommandEncoder.clearBuffer validation failed")
             return
         }
+        // FIXME: rdar://138042799 need to pass in the default argument.
         buffer.setCommandEncoder(self, false)
         buffer.indirectBufferInvalidated()
         guard let offsetInt = Int(exactly: offset), let sizeInt = Int(exactly: size) else {
@@ -63,5 +67,63 @@ extension WebGPU.CommandEncoder {
             return
         }
         blitCommandEncoder.fill(buffer: buffer.buffer(), range: range, value: 0)
+    }
+
+    public func resolveQuerySet(_ querySet: WebGPU.QuerySet, firstQuery: UInt32, queryCount: UInt32, destination: WebGPU.Buffer, destinationOffset:UInt64)
+    {
+        guard self.prepareTheEncoderState() else {
+            self.generateInvalidEncoderStateError()
+            return
+        }
+        guard self.validateResolveQuerySet(querySet: querySet, firstQuery: firstQuery, queryCount: queryCount, destination: destination, destinationOffset: destinationOffset) else {
+            self.makeInvalid("GPUCommandEncoder.resolveQuerySet validation failed")
+            return
+        }
+        querySet.setCommandEncoder(self)
+        // FIXME: rdar://138042799 need to pass in the default argument.
+        destination.setCommandEncoder(self, false)
+        destination.indirectBufferInvalidated();
+        guard !(querySet.isDestroyed() || destination.isDestroyed() || queryCount == 0) else {
+            return
+        }
+        guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
+            return
+        }
+        if querySet.type().rawValue == WGPUQueryType_Occlusion.rawValue {
+            guard let sourceOffset = Int(exactly: 8 * firstQuery), let destinationOffsetChecked = Int(exactly: destinationOffset), let size = Int(exactly: 8 * queryCount) else {
+                return
+            }
+            blitCommandEncoder.copy(from: querySet.visibilityBuffer(), sourceOffset: sourceOffset, to: destination.buffer(), destinationOffset: destinationOffsetChecked, size: size)
+        }
+    }
+    public func validateResolveQuerySet(querySet: WebGPU.QuerySet, firstQuery: UInt32, queryCount: UInt32, destination: WebGPU.Buffer, destinationOffset: UInt64) -> Bool
+    {
+        guard (destinationOffset % 256) == 0 else {
+            return false
+        }
+        guard querySet.isDestroyed() || querySet.isValid() else {
+            return false
+        }
+        guard destination.isDestroyed() || destination.isValid() else {
+            return false
+        }
+        guard (destination.usage() & WGPUBufferUsage_QueryResolve.rawValue) != 0 else {
+            return false
+        }
+        guard firstQuery < querySet.count() else {
+            return false
+        }
+        let countEnd: UInt32 = firstQuery
+        var (additionResult, didOverflow) = countEnd.addingReportingOverflow(queryCount)
+        guard !didOverflow && additionResult <= querySet.count() else {
+            return false
+        }
+        let countTimes8PlusOffset = destinationOffset
+        let additionResult64: UInt64
+        (additionResult64, didOverflow) = countTimes8PlusOffset.addingReportingOverflow(8 * UInt64(queryCount))
+        guard !didOverflow && destination.initialSize() >= additionResult64 else {
+            return false
+        }
+        return true
     }
 }

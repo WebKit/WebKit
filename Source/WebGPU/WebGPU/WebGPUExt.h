@@ -169,6 +169,7 @@ WGPU_EXPORT void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device) WGPU_
 #include "CommandEncoder.h"
 #include "CommandsMixin.h"
 #include "Device.h"
+#include "QuerySet.h"
 #include "Queue.h"
 #endif
 
