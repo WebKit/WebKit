@@ -120,7 +120,7 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
     return ResolvedEmojiPolicy::NoPreference;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(!stringView.isEmpty());
     auto codePoints = stringView.codePoints();

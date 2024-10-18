@@ -98,7 +98,7 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, c
     return false;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto normalizedString = normalizedNFC(stringView);
 

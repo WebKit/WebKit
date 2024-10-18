@@ -1688,7 +1688,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 
 #if !PLATFORM(COCOA) && !USE(HARFBUZZ)
 // FIXME: Unify this with the macOS and iOS implementation.
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(stringView.length() > 0);
     char32_t baseCharacter = *stringView.codePoints().begin();
@@ -1876,7 +1876,7 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
 
     if (dontSynthesizeSmallCaps)
         return false;
-    if (!nextFont || nextFont == Font::systemFallback())
+    if (!nextFont || nextFont->isSystemFontFallbackPlaceholder())
         return false;
     if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
         return false;

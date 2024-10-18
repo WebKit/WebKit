@@ -324,7 +324,7 @@ void ComplexTextController::collectComplexTextRuns()
     unsigned indexOfFontTransition = 0;
 
     const Font* font = nullptr;
-    const Font* nextFont = nullptr;
+    RefPtr<const Font> nextFont;
     const Font* synthesizedFont = nullptr;
     const Font* smallSynthesizedFont = nullptr;
 
@@ -342,7 +342,7 @@ void ComplexTextController::collectComplexTextRuns()
     bool nextIsSmallCaps = false;
 
     auto capitalizedBase = capitalized(baseCharacter);
-    if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+    if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
         char32_t characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
@@ -354,7 +354,7 @@ void ComplexTextController::collectComplexTextRuns()
     }
 
     while (currentIndex < m_end) {
-        font = nextFont;
+        font = nextFont.get();
         isSmallCaps = nextIsSmallCaps;
         auto previousIndex = currentIndex;
 
@@ -379,7 +379,7 @@ void ComplexTextController::collectComplexTextRuns()
         nextFont = m_font.fontForCombiningCharacterSequence(baseOfString.subspan(previousIndex, currentIndex - previousIndex));
 
         capitalizedBase = capitalized(baseCharacter);
-        if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
+        if (!synthesizedFont && shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont.get(), baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
             // Rather than synthesize each character individually, we should synthesize the entire "run" if any character requires synthesis.
             synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
             smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
@@ -419,7 +419,7 @@ void ComplexTextController::collectComplexTextRuns()
             else
                 collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, synthesizedFont);
         } else
-            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont);
+            collectComplexTextRunsForCharacters(baseOfString.subspan(itemStart, itemLength), itemStart, nextFont.get());
     }
 
     if (!m_run.ltr())

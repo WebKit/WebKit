@@ -168,7 +168,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 
     char32_t baseCharacter = 0;
     RetainPtr<CFDictionaryRef> stringAttributes;
-    if (font == Font::systemFallback()) {
+    if (font->isSystemFontFallbackPlaceholder()) {
         // FIXME: This code path does not support small caps.
         isSystemFallback = true;
 

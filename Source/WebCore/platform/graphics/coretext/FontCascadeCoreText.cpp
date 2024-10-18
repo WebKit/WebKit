@@ -400,7 +400,7 @@ bool FontCascade::primaryFontIsSystemFont() const
     return isSystemFont(fontData.getCTFont());
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
+RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     auto codePoints = stringView.codePoints();
     auto codePointsIterator = codePoints.begin();
@@ -458,7 +458,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
         return baseCharacterGlyphData.font.get();
 
-    return Font::systemFallback();
+    return Font::createSystemFallbackFontPlaceholder();
 }
 
 ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)

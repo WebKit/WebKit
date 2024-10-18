@@ -201,7 +201,7 @@ public:
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
 
-    const Font* fontForCombiningCharacterSequence(StringView) const;
+    RefPtr<const Font> fontForCombiningCharacterSequence(StringView) const;
 
     static bool isCJKIdeograph(char32_t);
     static bool isCJKIdeographOrSymbol(char32_t);

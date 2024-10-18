@@ -107,8 +107,8 @@ public:
 
     WEBCORE_EXPORT ~Font();
 
-    static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
-
+    static Ref<Font> createSystemFallbackFontPlaceholder() { return adoptRef(*new Font(IsSystemFallbackFontPlaceholder::Yes)); }
+    bool isSystemFontFallbackPlaceholder() const { return m_isSystemFontFallbackPlaceholder; }
     const FontPlatformData& platformData() const { return m_platformData; }
 #if ENABLE(MATHML)
     const OpenTypeMathData* mathData() const;
@@ -169,6 +169,12 @@ public:
         Incorporate,
         Exclude
     };
+
+    enum class IsSystemFallbackFontPlaceholder : bool {
+        No,
+        Yes
+    };
+
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
 
     Path pathForGlyph(Glyph) const;
@@ -244,6 +250,7 @@ public:
 
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<RenderingResourceIdentifier>);
+    Font(IsSystemFallbackFontPlaceholder);
 
     void platformInit();
     void platformGlyphInit();
@@ -377,6 +384,8 @@ private:
     unsigned m_isUsedInSystemFallbackFontCache : 1;
     
     unsigned m_allowsAntialiasing : 1;
+
+    unsigned m_isSystemFontFallbackPlaceholder : 1 { false };
 
 #if PLATFORM(IOS_FAMILY)
     unsigned m_shouldNotBeUsedForArabic : 1;

@@ -103,6 +103,13 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
 #endif
 }
 
+Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
+    : m_isSystemFontFallbackPlaceholder(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes)
+{
+    // This ctor is to be used only for representing a system font fallback placeholder (createSystemFallbackFontPlaceholder)
+    ASSERT(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes);
+}
+
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
 void Font::initCharWidths()
 {
