@@ -21,6 +21,6 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-curr->  (file test):contentfiltering/allow-after-add-data.html  **nav target**
+curr->  (file test):contentfiltering/allow-after-add-data.html
             (file test):contentfiltering/resources/pass.html (in frame "<!--frame1-->")
 ===============================================

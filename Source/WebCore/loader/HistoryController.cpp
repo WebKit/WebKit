@@ -338,7 +338,7 @@ void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type, Sh
     // as opposed to happening for some/one of the page commits that might happen soon
     CheckedRef backForward = page->backForward();
     RefPtr currentItem = backForward->currentItem(m_frame->frameID());
-    backForward->setCurrentItem(targetItem);
+    backForward->setProvisionalItem(targetItem);
 
     // First set the provisional item of any frames that are not actually navigating.
     // This must be done before trying to navigate the desired frame, because some
@@ -790,9 +790,6 @@ Ref<HistoryItem> HistoryController::createItemTree(HistoryItemClient& client, Lo
         for (RefPtr child = m_frame->tree().firstLocalDescendant(); child; child = child->tree().nextLocalSibling())
             item->addChildItem(child->checkedHistory()->createItemTree(client, targetFrame, clipAtTarget));
     }
-    // FIXME: Eliminate the isTargetItem flag in favor of itemSequenceNumber.
-    if (m_frame.ptr() == &targetFrame)
-        item->setIsTargetItem(true);
     return item;
 }
 
@@ -901,18 +898,12 @@ void HistoryController::updateCurrentItem()
         return;
 
     if (currentItem->url() != documentLoader->url()) {
-        // We ended up on a completely different URL this time, so the HistoryItem
-        // needs to be re-initialized.  Preserve the isTargetItem flag as it is a
-        // property of how this HistoryItem was originally created and is not
-        // dependent on the document.
-        bool isTargetItem = currentItem->isTargetItem();
         auto uuidIdentifier = currentItem->uuidIdentifier();
         bool sameOrigin = SecurityOrigin::create(currentItem->url())->isSameOriginAs(SecurityOrigin::create(documentLoader->url()));
         currentItem->reset();
         initializeItem(*currentItem, documentLoader);
         if (sameOrigin)
             currentItem->setUUIDIdentifier(uuidIdentifier);
-        currentItem->setIsTargetItem(isTargetItem);
     } else {
         // Even if the final URL didn't change, the form data may have changed.
         currentItem->setFormInfoFromRequest(documentLoader->request());

@@ -152,6 +152,16 @@ void BackForwardController::setCurrentItem(HistoryItem& item)
     protectedClient()->goToItem(item);
 }
 
+void BackForwardController::setProvisionalItem(const HistoryItem& item)
+{
+    protectedClient()->goToProvisionalItem(item);
+}
+
+void BackForwardController::clearProvisionalItem(const HistoryItem& item)
+{
+    protectedClient()->clearProvisionalItem(item);
+}
+
 bool BackForwardController::containsItem(const HistoryItem& item) const
 {
     return protectedClient()->containsItem(item);

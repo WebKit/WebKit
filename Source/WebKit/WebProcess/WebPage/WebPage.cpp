@@ -2539,9 +2539,6 @@ static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem
     if (target.length())
         stringBuilder.append(" (in frame \""_s, target, "\")"_s);
 
-    if (item.isTargetItem())
-        stringBuilder.append("  **nav target**"_s);
-
     stringBuilder.append('\n');
 
     auto children = item.children();

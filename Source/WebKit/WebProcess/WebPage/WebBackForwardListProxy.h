@@ -54,7 +54,9 @@ private:
     void setChildItem(WebCore::BackForwardItemIdentifier, Ref<WebCore::HistoryItem>&&) final;
 
     void goToItem(WebCore::HistoryItem&) override;
-        
+    void goToProvisionalItem(const WebCore::HistoryItem&) final;
+    void clearProvisionalItem(const WebCore::HistoryItem&) final;
+
     RefPtr<WebCore::HistoryItem> itemAtIndex(int, WebCore::FrameIdentifier) override;
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;

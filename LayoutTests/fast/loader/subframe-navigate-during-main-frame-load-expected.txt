@@ -4,7 +4,7 @@ The iframe navigation should *not* result in a second back-history item being cr
 
 
 ============== Back Forward List ==============
-        (file test):fast/loader/subframe-navigate-during-main-frame-load.html  **nav target**
-curr->  (file test):fast/loader/resources/subframe-navigate-during-main-frame-load2.html  **nav target**
+        (file test):fast/loader/subframe-navigate-during-main-frame-load.html
+curr->  (file test):fast/loader/resources/subframe-navigate-during-main-frame-load2.html
             data:text/html,<body onload="testRunner.notifyDone();"></body> (in frame "subframe")
 ===============================================

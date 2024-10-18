@@ -3947,7 +3947,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isEmpty());
 
     Ref frame = m_frame.get();
-    bool isTargetItem = frame->checkedHistory()->provisionalItem() ? frame->checkedHistory()->provisionalItem()->isTargetItem() : false;
 
     bool urlIsDisallowed = allowNavigationToInvalidURL == AllowNavigationToInvalidURL::No && !request.url().isValid();
     bool canContinue = navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && shouldClose() && !urlIsDisallowed;
@@ -3985,14 +3984,9 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if (navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
             checkLoadComplete();
 
-        // If the navigation request came from the back/forward menu, and we punt on it, we have the 
-        // problem that we have optimistically moved the b/f cursor already, so move it back. For sanity,
-        // we only do this when punting a navigation for the target frame or top-level frame.  
-        if ((isTargetItem || frame->isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
-            if (RefPtr page = frame->page()) {
-                if (RefPtr resetItem = frame->mainFrame().history().currentItem())
-                    page->checkedBackForward()->setCurrentItem(*resetItem);
-            }
+        if (RefPtr provisionalItem = frame->checkedHistory()->provisionalItem(); provisionalItem && isBackForwardLoadType(policyChecker().loadType())) {
+            if (RefPtr page = frame->page())
+                page->checkedBackForward()->clearProvisionalItem(*provisionalItem);
         }
         return;
     }

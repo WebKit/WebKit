@@ -1381,8 +1381,6 @@ static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
     NSString *target = [item target];
     if (target && [target length] > 0)
         printf(" (in frame \"%s\")", [target UTF8String]);
-    if ([item isTargetItem])
-        printf("  **nav target**");
     putchar('\n');
     NSArray *kids = [item children];
     if (kids) {

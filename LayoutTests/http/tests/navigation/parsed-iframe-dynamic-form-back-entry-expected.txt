@@ -2,6 +2,6 @@ This test sees if starting with an empty iframe in the markup, dynamically addin
 
 
 ============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/parsed-iframe-dynamic-form-back-entry.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/parsed-iframe-dynamic-form-back-entry.html
             http://127.0.0.1:8000/navigation/resources/notify-done.html (in frame "testFrame")
 ===============================================

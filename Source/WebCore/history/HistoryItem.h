@@ -105,7 +105,6 @@ public:
     WEBCORE_EXPORT const String& referrer() const;
     WEBCORE_EXPORT const AtomString& target() const;
     std::optional<FrameIdentifier> frameID() const { return m_frameID; }
-    WEBCORE_EXPORT bool isTargetItem() const;
     
     WEBCORE_EXPORT FormData* formData();
     WEBCORE_EXPORT String formContentType() const;
@@ -136,7 +135,6 @@ public:
     WEBCORE_EXPORT void setTarget(const AtomString&);
     void setFrameID(std::optional<FrameIdentifier> frameID) { m_frameID = frameID; }
     WEBCORE_EXPORT void setTitle(const String&);
-    WEBCORE_EXPORT void setIsTargetItem(bool);
     
     WEBCORE_EXPORT void setStateObject(RefPtr<SerializedScriptValue>&&);
     SerializedScriptValue* stateObject() const { return m_stateObject.get(); }
@@ -248,7 +246,6 @@ private:
     Vector<Ref<HistoryItem>> m_children;
     
     bool m_lastVisitWasFailure { false };
-    bool m_isTargetItem { false };
     bool m_wasRestoredFromSession { false };
     bool m_wasCreatedByJSWithoutUserInteraction { false };
     bool m_shouldRestoreScrollPosition { true };

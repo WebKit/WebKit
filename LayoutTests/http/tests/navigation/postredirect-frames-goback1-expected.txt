@@ -15,7 +15,7 @@ Frame: 'target-frame'
 Target of redirect after POST request.
 
 ============== Back Forward List ==============
-curr->  http://127.0.0.1:8000/navigation/postredirect-frames-goback1.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/postredirect-frames-goback1.html
             http://127.0.0.1:8000/navigation/resources/top-go-back.html (in frame "target-frame")
-        http://127.0.0.1:8000/navigation/resources/go-back.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/go-back.html
 ===============================================

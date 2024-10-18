@@ -9,6 +9,6 @@ If this test passes there should be two PASS messages in the output.
 
 
 ============== Back Forward List ==============
-        http://127.0.0.1:8000/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation.html  **nav target**
-curr->  http://127.0.0.1:8000/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-site.html  **nav target**
+        http://127.0.0.1:8000/security/contentSecurityPolicy/upgrade-insecure-requests/proper-uir-on-navigation.html
+curr->  http://127.0.0.1:8000/security/contentSecurityPolicy/upgrade-insecure-requests/resources/insecure-site.html
 ===============================================

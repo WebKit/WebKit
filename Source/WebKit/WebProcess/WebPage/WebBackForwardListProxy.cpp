@@ -112,6 +112,23 @@ void WebBackForwardListProxy::goToItem(HistoryItem& item)
     m_cachedBackForwardListCounts = backForwardListCounts;
 }
 
+void WebBackForwardListProxy::goToProvisionalItem(const HistoryItem& item)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    auto sendResult = page->sendSync(Messages::WebPageProxy::BackForwardGoToProvisionalItem(item.identifier()));
+    auto [backForwardListCounts] = sendResult.takeReplyOr(WebBackForwardListCounts { });
+    m_cachedBackForwardListCounts = backForwardListCounts;
+}
+
+void WebBackForwardListProxy::clearProvisionalItem(const HistoryItem& item)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::BackForwardClearProvisionalItem(item.identifier()));
+}
+
 RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex, FrameIdentifier frameID)
 {
     if (!m_page)

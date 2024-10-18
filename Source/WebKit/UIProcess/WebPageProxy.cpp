@@ -9297,6 +9297,29 @@ void WebPageProxy::backForwardGoToItemShared(const BackForwardItemIdentifier& it
     completionHandler(backForwardList->counts());
 }
 
+void WebPageProxy::backForwardGoToProvisionalItem(IPC::Connection& connection, BackForwardItemIdentifier itemID, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+{
+    Ref backForwardList = m_backForwardList;
+    MESSAGE_CHECK_COMPLETION_BASE(!WebKit::isInspectorPage(*this), connection, completionHandler(backForwardList->counts()));
+
+    if (m_provisionalPage)
+        return completionHandler(backForwardList->counts());
+
+    RefPtr item = backForwardList->itemForID(itemID);
+    if (!item)
+        return completionHandler(backForwardList->counts());
+
+    backForwardList->goToProvisionalItem(*item);
+    completionHandler(backForwardList->counts());
+}
+
+void WebPageProxy::backForwardClearProvisionalItem(IPC::Connection& connection, BackForwardItemIdentifier itemID)
+{
+    MESSAGE_CHECK_BASE(!WebKit::isInspectorPage(*this), connection);
+    if (RefPtr frameItem = WebBackForwardListFrameItem::itemForID(itemID))
+        protectedBackForwardList()->clearProvisionalItem(*frameItem);
+}
+
 void WebPageProxy::backForwardItemAtIndex(int32_t index, FrameIdentifier frameID, CompletionHandler<void(std::optional<BackForwardItemIdentifier>&&)>&& completionHandler)
 {
     // FIXME: This should verify that the web process requesting the item hosts the specified frame.

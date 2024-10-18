@@ -21,9 +21,9 @@ Frame: 'iframe1'
 iframe1
 
 ============== Back Forward List ==============
-        (file test):fast/history/same-document-iframes-changing-fragment.html  **nav target**
+        (file test):fast/history/same-document-iframes-changing-fragment.html
             data:text/plain,iframe1 (in frame "iframe1")
             data:text/plain,iframe2 (in frame "iframe2")
-curr->  (file test):fast/history/same-document-iframes-changing-fragment.html#newState  **nav target**
+curr->  (file test):fast/history/same-document-iframes-changing-fragment.html#newState
             data:text/plain,iframe1 (in frame "iframe1")
 ===============================================

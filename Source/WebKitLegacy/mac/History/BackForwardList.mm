@@ -36,6 +36,7 @@ static const unsigned NoCurrentItemIndex = UINT_MAX;
 BackForwardList::BackForwardList(WebView *webView)
     : m_webView(webView)
     , m_current(NoCurrentItemIndex)
+    , m_provisional(NoCurrentItemIndex)
     , m_capacity(DefaultCapacity)
     , m_closed(true)
     , m_enabled(true)
@@ -104,6 +105,18 @@ void BackForwardList::goToItem(HistoryItem& item)
 
     if (index < m_entries.size())
         m_current = index;
+}
+
+void BackForwardList::goToProvisionalItem(const HistoryItem& item)
+{
+    m_provisional = m_current;
+    goToItem(const_cast<HistoryItem&>(item));
+}
+
+void BackForwardList::clearProvisionalItem(const HistoryItem&)
+{
+    if (m_provisional != NoCurrentItemIndex)
+        m_current = std::exchange(m_provisional, NoCurrentItemIndex);
 }
 
 RefPtr<HistoryItem> BackForwardList::backItem()

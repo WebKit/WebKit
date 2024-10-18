@@ -2,6 +2,6 @@ main frame - has 1 onunload handler(s)
 history.length = 1
 
 ============== Back Forward List ==============
-curr->  (file test):fast/loader/frame-src-change-not-added-to-history.html  **nav target**
+curr->  (file test):fast/loader/frame-src-change-not-added-to-history.html
             data:,hello (in frame "<!--frame1-->")
 ===============================================

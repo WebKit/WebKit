@@ -6,12 +6,12 @@ Frame: '<!--frame1-->'
 1
 
 ============== Back Forward List ==============
-        (file test):fast/loader/frame-src-change-added-to-history.html  **nav target**
+        (file test):fast/loader/frame-src-change-added-to-history.html
             data:,4 (in frame "<!--frame1-->")
         (file test):fast/loader/frame-src-change-added-to-history.html
-            data:,3 (in frame "<!--frame1-->")  **nav target**
+            data:,3 (in frame "<!--frame1-->")
         (file test):fast/loader/frame-src-change-added-to-history.html
-            data:,2 (in frame "<!--frame1-->")  **nav target**
+            data:,2 (in frame "<!--frame1-->")
 curr->  (file test):fast/loader/frame-src-change-added-to-history.html
-            data:,1 (in frame "<!--frame1-->")  **nav target**
+            data:,1 (in frame "<!--frame1-->")
 ===============================================

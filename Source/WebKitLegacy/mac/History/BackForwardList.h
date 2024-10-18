@@ -50,7 +50,9 @@ public:
     void goBack();
     void goForward();
     void goToItem(WebCore::HistoryItem&) override;
-        
+    void goToProvisionalItem(const WebCore::HistoryItem&) final;
+    void clearProvisionalItem(const WebCore::HistoryItem&) final;
+
     RefPtr<WebCore::HistoryItem> backItem();
     RefPtr<WebCore::HistoryItem> currentItem();
     RefPtr<WebCore::HistoryItem> forwardItem();
@@ -85,6 +87,7 @@ private:
     Vector<Ref<WebCore::HistoryItem>> m_entries;
     HistoryItemHashSet m_entryHash;
     unsigned m_current;
+    unsigned m_provisional;
     unsigned m_capacity;
     bool m_closed;
     bool m_enabled;
