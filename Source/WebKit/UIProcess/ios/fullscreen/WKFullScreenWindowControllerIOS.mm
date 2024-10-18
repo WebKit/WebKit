@@ -1181,7 +1181,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
 #if PLATFORM(VISION)
             if (WebKit::useSpatialFullScreenTransition()) {
-                CompletionHandler<void()> completionHandler = []() { };
+                CompletionHandler<void()> completionHandler = [protectedSelf = RetainPtr { self }]() {
+                    // We may have lost key status during the transition into fullscreen
+                    [protectedSelf->_window makeKeyAndVisible];
+                };
                 [self _performSpatialFullScreenTransition:YES completionHandler:WTFMove(completionHandler)];
             }
 #endif
