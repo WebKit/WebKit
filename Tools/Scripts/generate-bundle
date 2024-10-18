@@ -259,39 +259,43 @@ class BundleCreator(object):
         variables = dict()
         mydir = self._bundler.VAR_MYDIR
         lib_dir = os.path.join(self._bundler.destination_dir(), 'lib')
-        syslib_dir = os.path.join(self._bundler.destination_dir(), 'sys/lib')
+        sys_lib_dir = os.path.join(self._bundler.destination_dir(), 'sys/lib')
         bin_dir = os.path.join(self._bundler.destination_dir(), 'bin')
-        share_dir = os.path.join(self._bundler.destination_dir(), 'sys/share')
+        share_dir = os.path.join(self._bundler.destination_dir(), 'share')
+        sys_share_dir = os.path.join(self._bundler.destination_dir(), 'sys/share')
 
-        if os.path.isdir(os.path.join(syslib_dir, 'gio')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'gio')):
             gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
             variables[gio_var] = '${%s}/sys/lib/gio' % mydir
-        if os.path.isdir(os.path.join(syslib_dir, 'gst')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'gst')):
             gst_var = 'GST_PLUGIN_SYSTEM_PATH_1_0' if self._syslibs == 'bundle-all' else 'GST_PLUGIN_PATH_1_0'
             variables[gst_var] = '${%s}/sys/lib/gst' % mydir
             variables['GST_REGISTRY_1_0'] = '${%s}/sys/lib/gst/gstreamer-1.0.registry' % mydir
             if os.path.isfile(os.path.join(bin_dir, 'gst-plugin-scanner')):
                 variables['GST_PLUGIN_SCANNER'] = '${%s}/bin/gst-plugin-scanner' % mydir
             # pipewire plugins may be needed by gstreamer-pipewire
-            if os.path.isdir(os.path.join(syslib_dir, 'pipewire', 'spa')):
+            if os.path.isdir(os.path.join(sys_lib_dir, 'pipewire', 'spa')):
                 variables['SPA_PLUGIN_DIR'] = '${%s}/sys/lib/pipewire/spa' % mydir
-            if os.path.isdir(os.path.join(syslib_dir, 'pipewire', 'modules')):
+            if os.path.isdir(os.path.join(sys_lib_dir, 'pipewire', 'modules')):
                 variables['PIPEWIRE_MODULE_DIR'] = '${%s}/sys/lib/pipewire/modules' % mydir
-        if os.path.isdir(os.path.join(syslib_dir, 'dri')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'dri')):
             variables['LIBGL_DRIVERS_PATH'] = '${%s}/sys/lib/dri' % mydir
-        if os.path.isdir(os.path.join(syslib_dir, 'glvnd/egl_vendor.d')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'glvnd/egl_vendor.d')):
             variables['__EGL_VENDOR_LIBRARY_DIRS'] = '${%s}/sys/lib/glvnd/egl_vendor.d' % mydir
-        if os.path.isdir(os.path.join(share_dir)):
+        if os.path.isdir(os.path.join(sys_share_dir)):
             assert(self._syslibs == 'bundle-all')
             variables['XDG_DATA_HOME'] = '${%s}/sys/share' % mydir
             variables['XDG_DATA_DIRS'] = '${%s}/sys/share' % mydir
-        if os.path.isdir(os.path.join(share_dir, 'fonts')):
+        if os.path.isdir(os.path.join(sys_share_dir, 'fonts')):
             variables['FONTCONFIG_PATH'] = '${%s}/sys/share/fonts/config' % mydir
-        if os.path.isdir(os.path.join(syslib_dir, 'gtk')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'gtk')):
             variables['GTK_PATH'] = '${%s}/sys/lib/gtk' % mydir
         if binary_to_wrap != 'jsc':
             variables['WEBKIT_EXEC_PATH'] = '${%s}/bin' % mydir
             variables['WEBKIT_INJECTED_BUNDLE_PATH'] = '${%s}/lib' % mydir
+            if os.path.isfile(os.path.join(share_dir, 'inspector.gresource')):
+                variables['WEBKIT_INSPECTOR_RESOURCES_PATH'] = '${%s}/share' % mydir
+
         if self._syslibs == 'bundle-all':
             # with bundle-all we can't execute system bwrap, we can only execute our own binaries.
             variables['WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS'] = '1'
@@ -696,7 +700,8 @@ class BundleCreator(object):
             objects_to_copy.extend(self._get_webkit_binaries())
             objects_to_copy.append(self._get_webkit_lib('InjectedBundle'))
             if self._platform == 'wpe':
-                objects_to_copy.append(self._get_webkit_lib('InspectorResources'))
+                webinspector_gresource = os.path.join(self._buildpath, 'WebInspectorUI', 'DerivedSources', 'inspector.gresource')
+                self._bundler.copy(webinspector_gresource, subdir='share')
             # Bundle extra system related libraries
             gio_modules = self._get_gio_modules()
             objects_to_copy.extend(gio_modules)
@@ -791,14 +796,11 @@ class BundleCreator(object):
         if needs_to_create_wpe_backend_symlink:
             self._ensure_wpe_backend_symlink()
 
-        if self._platform == 'wpe':
-            self._bundler.copy(os.path.join(self._buildpath, 'WebInspectorUI', 'DerivedSources', 'inspector.gresource'))
-
         # Now copy data files to share dir (only needed when bunding all for MiniBrowser).
         # We assume that the system uses standard paths at /usr/share and /etc for this resources
         # Every path should be checked and if some one is not found, then it will raise an error.
         if bundle_binary == 'MiniBrowser' and self._syslibs == 'bundle-all':
-            target_share_dir = os.path.join(self._tmpdir, 'sys/share')
+            target_sys_share_dir = os.path.join(self._tmpdir, 'sys/share')
             # Copy glvnd EGL json files
             _log.info('Copy EGL config files')
             egl_icd_configdir_dest = os.path.join(self._tmpdir, 'sys/lib/glvnd/egl_vendor.d')
@@ -807,7 +809,7 @@ class BundleCreator(object):
                 shutil.copy(egl_icd_mesa_config_file, egl_icd_configdir_dest)
             # Copy glib-2 compiled schemas
             _log.info('Copy Glib compiled schemas')
-            schemas_target_dir = os.path.join(target_share_dir, 'glib-2.0/schemas')
+            schemas_target_dir = os.path.join(target_sys_share_dir, 'glib-2.0/schemas')
             os.makedirs(schemas_target_dir)
             compiled_schemas_file = '/usr/share/glib-2.0/schemas/gschemas.compiled'
             if not os.path.isfile(compiled_schemas_file):
@@ -815,7 +817,7 @@ class BundleCreator(object):
             shutil.copy(compiled_schemas_file, schemas_target_dir)
             _log.info('Copy shared mime info cache')
             # Same for shared-mime-info cache
-            mime_target_dir = os.path.join(target_share_dir, 'mime')
+            mime_target_dir = os.path.join(target_sys_share_dir, 'mime')
             os.makedirs(mime_target_dir)
             mime_cache = '/usr/share/mime/mime.cache'
             if not os.path.isfile(mime_cache):
@@ -823,8 +825,8 @@ class BundleCreator(object):
             shutil.copy(mime_cache, mime_target_dir)
             _log.info('Generate fontconfig config')
             # Fontconfig fonts and config
-            target_font_config_dir = os.path.join(target_share_dir, 'fonts/config')
-            target_font_data_dir = os.path.join(target_share_dir, 'fonts/fonts')
+            target_font_config_dir = os.path.join(target_sys_share_dir, 'fonts/config')
+            target_font_data_dir = os.path.join(target_sys_share_dir, 'fonts/fonts')
             os.makedirs(target_font_config_dir)
             # We keep assuming standard locations for this files on the target system
             system_font_config_dir = '/etc/fonts/conf.d'
@@ -848,7 +850,7 @@ class BundleCreator(object):
             system_xkb_data = '/usr/share/X11/xkb'
             if not (os.path.isdir(system_xkb_data)):
                 raise NotImplementedError("Can't find the XKB data files at the standard location in this system")
-            target_xkb_data = os.path.join(target_share_dir, 'xkb')
+            target_xkb_data = os.path.join(target_sys_share_dir, 'xkb')
             shutil.copytree(system_xkb_data, target_xkb_data)
             # Flatpak configures gnutls to use the p11-kit trust store and then uses p11-kit to access the host SSL certificates.
             # - It starts a p11 kit server on the hosts and bind-mounting a socket that later is used from inside the sandbox via p11-kit-client.so
@@ -863,12 +865,12 @@ class BundleCreator(object):
             # To debug this is useful to export P11_KIT_DEBUG=all
             # This approach also allows this bundle script go generate a working bundle when gnutls is not configured to use p11-kit.
             _log.info('Generate TLS CA certificates file')
-            certs_target_dir = os.path.join(target_share_dir, 'certs')
+            certs_target_dir = os.path.join(target_sys_share_dir, 'certs')
             os.makedirs(certs_target_dir)
             self._generate_tls_cafile(certs_target_dir)
             if self._platform == 'gtk':
                 _log.info('Copy basic GTK icons.')
-                icons_target_dir = os.path.join(target_share_dir, 'icons')
+                icons_target_dir = os.path.join(target_sys_share_dir, 'icons')
                 os.makedirs(icons_target_dir)
                 gtk_icon_basedir = '/run/host/share/icons' if flatpakutils.is_sandboxed() else '/usr/share/icons'
                 gtk_target_icon_dir = os.path.join(icons_target_dir, 'hicolor')

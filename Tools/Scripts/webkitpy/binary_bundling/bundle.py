@@ -234,8 +234,14 @@ class BinaryBundler():
     def set_use_sys_lib_directory(self, should_use_sys_lib_directory):
         self._should_use_sys_lib_directory = should_use_sys_lib_directory
 
-    def copy(self, orig_file):
-        shutil.copy(orig_file, self._destination_dir)
+    def copy(self, orig_file, subdir=None):
+        destination_dir = self._destination_dir
+        if subdir is not None:
+            assert(not os.path.isabs(subdir))
+            destination_dir = os.path.join(destination_dir, subdir)
+        if not os.path.isdir(destination_dir):
+            os.makedirs(destination_dir)
+        shutil.copy(orig_file, destination_dir)
 
     def copy_and_maybe_strip_patchelf(self, orig_file, type='bin', strip=True, patchelf_removerpath=True, patchelf_nodefaultlib=False, patchelf_setinterpreter_relativepath=None, object_final_destination_dir=None):
         """ This does the following:
@@ -310,7 +316,7 @@ class BinaryBundler():
                 # to use a relative path inside lib/ (which is were we copied it previously)
                 new_interpreter_relpath = os.path.join('lib', os.path.basename(patchelf_setinterpreter_relativepath))
                 if not os.path.isfile(new_interpreter_relpath):
-                    raise ValueError('Unable to find interpreter %s at directory %s' % (new_interpreter, self.destination_dir()))
+                    raise ValueError('Unable to find interpreter %s at directory %s' % (new_interpreter_relpath, self.destination_dir()))
                 patchelf_arguments.extend(['--set-interpreter', new_interpreter_relpath])
                 self._has_patched_interpreter_relpath = True
         if patchelf_arguments:
@@ -326,17 +332,17 @@ class BinaryBundler():
     def destination_dir(self):
         return self._destination_dir
 
-    def is_xkb_bundled(self, syslib_dir, share_dir):
+    def is_xkb_bundled(self, sys_lib_dir, sys_share_dir):
         xkb_bundled = False
-        if not os.path.isdir(syslib_dir):
+        if not os.path.isdir(sys_lib_dir):
             return False
-        for entry in os.listdir(syslib_dir):
+        for entry in os.listdir(sys_lib_dir):
             if entry.startswith('libxkbcommon.so'):
                 xkb_bundled = True
                 break
         if xkb_bundled:
             # FIXME: the xkb directory is only copied when --syslibs=bundle-all but not with --syslibs=generate-script and we may be including libxkbcommon.so in that case (jhbuild for example)
-            if os.path.isdir(os.path.join(share_dir, 'xkb')):
+            if os.path.isdir(os.path.join(sys_share_dir, 'xkb')):
                 return True
         return False
 
@@ -347,9 +353,8 @@ class BinaryBundler():
         _log.info('Generate wrapper script %s' % binary_to_wrap)
         script_file = os.path.join(self._destination_dir, binary_to_wrap)
         lib_dir = os.path.join(self._destination_dir, 'lib')
-        syslib_dir = os.path.join(self._destination_dir, 'sys/lib')
-        bin_dir = os.path.join(self._destination_dir, 'bin')
-        share_dir = os.path.join(self._destination_dir, 'sys/share')
+        sys_lib_dir = os.path.join(self._destination_dir, 'sys/lib')
+        sys_share_dir = os.path.join(self._destination_dir, 'sys/share')
 
         with open(script_file, 'w') as script_handle:
             script_handle.write('#!/bin/sh\n')
@@ -373,7 +378,7 @@ class BinaryBundler():
                 script_handle.write('eval "set -- $(args_update_relpaths_to_abs "$@")"\n')
                 script_handle.write('cd "${MYDIR}"\n')
 
-            if os.path.isfile(os.path.join(share_dir, 'certs/bundle-ca-certificates.pem')):
+            if os.path.isfile(os.path.join(sys_share_dir, 'certs/bundle-ca-certificates.pem')):
                 script_handle.write('# Try to use the system CA file if possible, otherwise use the bundled one\n')
                 script_handle.write('for WEBKIT_TLS_CAFILE_PEM in /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem "${MYDIR}/sys/share/certs/bundle-ca-certificates.pem"; do\n')
                 script_handle.write('    [ -f "${WEBKIT_TLS_CAFILE_PEM}" ] && grep -q "BEGIN CERTIFICATE" "${WEBKIT_TLS_CAFILE_PEM}" && export WEBKIT_TLS_CAFILE_PEM="${WEBKIT_TLS_CAFILE_PEM}" && break\n')
@@ -382,15 +387,15 @@ class BinaryBundler():
             for var, value in extra_environment_variables.items():
                 script_handle.write('export %s="%s"\n' % (var, value))
 
-            if self.is_xkb_bundled(syslib_dir, share_dir):
+            if self.is_xkb_bundled(sys_lib_dir, sys_share_dir):
                 script_handle.write('[ -d /usr/share/X11/xkb ] || export XKB_CONFIG_ROOT="${%s}/sys/share/xkb"\n' % self.VAR_MYDIR)
 
             ld_library_path = '${%s}/lib' % self.VAR_MYDIR
-            if os.path.isdir(syslib_dir):
+            if os.path.isdir(sys_lib_dir):
                 ld_library_path += ':${%s}/sys/lib' % self.VAR_MYDIR
 
             # Update cache of gdk-pixbuf loaders if needed (first run or when the absolute paths on disk have changed).
-            if os.path.isdir(os.path.join(syslib_dir, 'gdk-pixbuf/loaders')):
+            if os.path.isdir(os.path.join(sys_lib_dir, 'gdk-pixbuf/loaders')):
                 script_handle.write('export GDK_PIXBUF_MODULEDIR="${%s}/sys/lib/gdk-pixbuf/loaders"\n' % self.VAR_MYDIR)
                 script_handle.write('export GDK_PIXBUF_MODULE_FILE="${%s}/sys/lib/gdk-pixbuf/loaders.cache"\n' % self.VAR_MYDIR)
                 script_handle.write('grep -sq "\\"${GDK_PIXBUF_MODULEDIR}/" "${GDK_PIXBUF_MODULE_FILE}" || LD_LIBRARY_PATH="%s" "${%s}/bin/gdk-pixbuf-query-loaders" --update-cache\n' % (ld_library_path, self.VAR_MYDIR))
@@ -420,9 +425,8 @@ class BinaryBundler():
         _log.info('Generate and build static C wrapper %s' % binary_to_wrap)
         wrapper_program = os.path.join(self._destination_dir, binary_to_wrap)
         lib_dir = os.path.join(self._destination_dir, 'lib')
-        syslib_dir = os.path.join(self._destination_dir, 'sys/lib')
-        bin_dir = os.path.join(self._destination_dir, 'bin')
-        share_dir = os.path.join(self._destination_dir, 'sys/share')
+        sys_lib_dir = os.path.join(self._destination_dir, 'sys/lib')
+        sys_share_dir = os.path.join(self._destination_dir, 'sys/share')
 
         wrapper_source = wrapper_program + ".c"
 
@@ -439,15 +443,15 @@ class BinaryBundler():
             # double check we are not passing unexpected shell vars on the value
             assert("$" not in value)
 
-        should_set_ca_file_value = 1 if os.path.isfile(os.path.join(share_dir, 'certs/bundle-ca-certificates.pem')) else 0
-        should_xkb_bundle_value = 1 if self.is_xkb_bundled(syslib_dir, share_dir) else 0
+        should_set_ca_file_value = 1 if os.path.isfile(os.path.join(sys_share_dir, 'certs/bundle-ca-certificates.pem')) else 0
+        should_xkb_bundle_value = 1 if self.is_xkb_bundled(sys_lib_dir, sys_share_dir) else 0
         should_update_gdx_pixbuf_cache_value = 0
-        if os.path.isdir(os.path.join(syslib_dir, 'gdk-pixbuf/loaders')):
+        if os.path.isdir(os.path.join(sys_lib_dir, 'gdk-pixbuf/loaders')):
             should_update_gdx_pixbuf_cache_value = 1
             export_env_variables += '    set_env_with_mydir("GDK_PIXBUF_MODULEDIR", "sys/lib/gdk-pixbuf/loaders", mydir);\n'
             export_env_variables += '    set_env_with_mydir("GDK_PIXBUF_MODULE_FILE", "sys/lib/gdk-pixbuf/loaders.cache", mydir);\n'
         set_ld_path_value = 'snprintf(ldpath, sizeof(ldpath), "%s/lib", mydir);'
-        if os.path.isdir(syslib_dir):
+        if os.path.isdir(sys_lib_dir):
             set_ld_path_value = 'snprintf(ldpath, sizeof(ldpath), "%s/lib:%s/sys/lib", mydir, mydir);'
         with open(wrapper_source, 'w') as wrapper_source_handle:
             wrapper_source_handle.write(WRAPPER_CSOURCE_TEMPLATE % {
