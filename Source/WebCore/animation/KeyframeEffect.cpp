@@ -1213,6 +1213,15 @@ void KeyframeEffect::animationTimelineDidChange(const AnimationTimeline* timelin
 {
     AnimationEffect::animationTimelineDidChange(timeline);
 
+    m_isAssociatedWithProgressBasedTimeline = [&] {
+        if (RefPtr animation = this->animation()) {
+            if (RefPtr timeline = animation->timeline())
+                return timeline->isProgressBased();
+        }
+        return false;
+    }();
+    updateAcceleratedAnimationIfNecessary();
+
     auto target = targetStyleable();
     if (!target)
         return;
@@ -1664,6 +1673,9 @@ const TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t in
 bool KeyframeEffect::canBeAccelerated() const
 {
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
+        return false;
+
+    if (m_isAssociatedWithProgressBasedTimeline)
         return false;
 
     if (m_hasAcceleratedPropertyOverriddenByCascadeProperty)

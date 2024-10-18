@@ -323,6 +323,7 @@ private:
     bool m_hasAcceleratedPropertyOverriddenByCascadeProperty { false };
     bool m_hasReferenceFilter { false };
     bool m_animatesSizeAndSizeDependentTransform { false };
+    bool m_isAssociatedWithProgressBasedTimeline { false };
 };
 
 } // namespace WebCore

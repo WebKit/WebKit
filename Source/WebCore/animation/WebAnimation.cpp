@@ -256,12 +256,12 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     auto previousCurrentTime = currentTime();
 
     // 5. Set previous progress based in the first condition that applies:
-    auto endTime = effectEndTime();
     auto previousProgress = [&]() -> std::optional<double> {
         // If previous current time is unresolved: Set previous progress to unresolved.
         if (!previousCurrentTime)
             return std::nullopt;
         // If end time is zero: Set previous progress to zero.
+        auto endTime = effectEndTime();
         if (endTime.isZero())
             return 0.0;
         // Otherwise: Set previous progress = previous current time / end time
@@ -315,11 +315,11 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         if (previousPlayState == PlayState::Finished || previousPlayState == PlayState::Running)
             m_timeToRunPendingPlayTask = TimeToRunPendingTask::WhenReady;
         else if (previousPlayState == PlayState::Paused && previousProgress)
-            m_holdTime = endTime * *previousProgress;
+            m_holdTime = effectEndTime() * *previousProgress;
     } else if (fromFiniteTimeline && previousProgress) {
         // If from finite timeline and previous progress is resolved,
         // Run the procedure to set the current time to previous progress * end time.
-        setCurrentTime(endTime * *previousProgress);
+        setCurrentTime(effectEndTime() * *previousProgress);
     }
 
     // 10. If the start time of animation is resolved, make animation’s hold time unresolved.

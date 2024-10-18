@@ -7468,7 +7468,6 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animation
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.html [ ImageOnlyFailure ]
 
 # webkit.org/b/281481 [scroll-animations] some WPT tests are crashing
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ Skip ]
 
 # webkit.org/b/281482 [scroll-animations] some WPT reftests can't find their reference
