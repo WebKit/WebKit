@@ -3105,7 +3105,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
                         m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                     break;
                 case TypeKind::V128:
-                    if (slot.isGPR())
+                    if (slot.isFPR())
                         m_jit.loadVector(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asFPR());
                     else
                         m_jit.transferVector(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());

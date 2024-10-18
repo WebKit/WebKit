@@ -56,6 +56,7 @@ enum class CatchKind {
     CatchAll = 0x02,
     CatchAllRef = 0x03,
 };
+OVERLOAD_RELATIONAL_OPERATORS_FOR_ENUM_CLASS_WITH_INTEGRALS(CatchKind);
 
 template<typename EnclosingStack, typename NewStack>
 void splitStack(BlockSignature signature, EnclosingStack& enclosingStack, NewStack& newStack)
@@ -3407,31 +3408,18 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfCatches), "can't allocate try_table target"_s);
 
-        String errorMessage;
-
-        targets.appendUsingFunctor(numberOfCatches, [&](size_t i) -> CatchHandler {
+        for (size_t i = 0; i < numberOfCatches; ++i) {
             // catch = (opcode), (tag?), (label)
             uint8_t catchOpcode = 0;
             uint32_t exceptionTag = std::numeric_limits<uint32_t>::max();
             uint32_t exceptionLabel;
             const TypeDefinition* signature = nullptr;
 
-            if (!parseUInt8(catchOpcode)) {
-                if (errorMessage.isNull())
-                    errorMessage = WTF::makeString("can't read opcode of try_table catch at index "_s, i);
-                return { };
-            }
-            if (catchOpcode > 0x03) {
-                if (errorMessage.isNull())
-                    errorMessage = WTF::makeString("invalid opcode of try_table catch at index "_s, i, ",  opcode "_s, catchOpcode, " is invalid"_s);
-                return { };
-            }
-            if (catchOpcode < 2) {
-                if (!parseExceptionIndex(exceptionTag)) {
-                    if (errorMessage.isNull())
-                        errorMessage = WTF::makeString("can't read tag of try_table catch at index "_s, i);
-                    return { };
-                }
+            WASM_PARSER_FAIL_IF(!parseUInt8(catchOpcode), "can't read opcode of try_table catch at index "_s, i);
+            WASM_PARSER_FAIL_IF(catchOpcode > CatchKind::CatchAllRef, "invalid opcode of try_table catch at index "_s, i, ",  opcode "_s, catchOpcode, " is invalid"_s);
+
+            if (catchOpcode < CatchKind::CatchAll) {
+                WASM_PARSER_FAIL_IF(!parseExceptionIndex(exceptionTag), "can't read tag of try_table catch at index "_s, i);
                 TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionTag);
                 const TypeDefinition& exceptionSignature = TypeInformation::get(typeIndex).expand();
                 signature = &exceptionSignature;
@@ -3439,33 +3427,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                     Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
                     if (argumentType.isV128()) {
                         m_context.notifyFunctionUsesSIMD();
-                        if (!Context::tierSupportsSIMD) {
-                            if (errorMessage.isNull())
-                                errorMessage = WTF::makeString("tier does not support SIMD, but exception uses a V128 parameter"_s);
-                        }
+                        if constexpr (!Context::tierSupportsSIMD)
+                            WASM_TRY_ADD_TO_CONTEXT(addCrash());
                     }
                 }
             }
-            if (!parseVarUInt32(exceptionLabel)) {
-                if (errorMessage.isNull())
-                    errorMessage = WTF::makeString("can't read label of try_table catch at index "_s, i);
-                return { };
-            }
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionLabel), "can't read label of try_table catch at index "_s, i);
 
-            if (exceptionLabel >= m_controlStack.size()) {
-                errorMessage = WTF::makeString("try_table's catch target "_s, exceptionLabel, " exceeds control stack size "_s, m_controlStack.size());
-                return { };
-            }
+            WASM_PARSER_FAIL_IF(exceptionLabel >= m_controlStack.size(), "try_table's catch target "_s, exceptionLabel, " exceeds control stack size "_s, m_controlStack.size());
+
             // Type checking
-            return {
+            targets.append({
                 static_cast<CatchKind>(catchOpcode),
                 exceptionTag,
                 signature,
                 &m_controlStack[m_controlStack.size() - 1 - exceptionLabel].controlData
-            };
-        });
-
-        WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
+            });
+        }
 
         ControlType control;
         Stack newStack;
