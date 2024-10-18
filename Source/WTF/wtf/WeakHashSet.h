@@ -115,7 +115,7 @@ public:
         auto iterator = begin();
         if (iterator == end())
             return nullptr;
-        return m_set.take(iterator.m_position)->template get<T>();
+        return static_cast<T*>(m_set.take(iterator.m_position)->template get<T>());
     }
 
     template <typename U>

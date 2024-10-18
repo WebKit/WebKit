@@ -63,6 +63,10 @@ public:
     bool hasValidOpeningAppLinkActivity() const;
 #endif
 
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    void updateWebProcessSuspensionDelay();
+#endif
+
 private:
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
@@ -70,7 +74,7 @@ private:
     std::variant<WeakRef<WebPageProxy>, WeakRef<RemotePageProxy>> m_page;
 
     RefPtr<ProcessThrottlerActivity> m_isVisibleActivity;
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
 #endif
     RefPtr<ProcessThrottlerActivity> m_isAudibleActivity;

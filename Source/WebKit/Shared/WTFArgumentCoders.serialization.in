@@ -220,6 +220,13 @@ header: <wtf/MemoryPressureHandler.h>
     Seconds pollInterval;
 }
 
+header: <wtf/MemoryPressureHandler.h>
+enum class WTF::SystemMemoryPressureStatus : uint8_t {
+    Normal,
+    Warning,
+    Critical,
+}
+
 header: <variant>
 [AdditionalEncoder=StreamConnectionEncoder, Nested] struct std::monostate {
 }

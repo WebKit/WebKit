@@ -603,6 +603,16 @@ public:
     void observeScriptTelemetryUpdatesIfNeeded();
 #endif
 
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    void memoryPressureStatusChangedForProcess(WebProcessProxy&, SystemMemoryPressureStatus);
+    void checkMemoryPressureStatus();
+
+    static Seconds defaultWebProcessSuspensionDelay();
+    Seconds webProcessSuspensionDelay() const;
+    void updateWebProcessSuspensionDelay();
+    void updateWebProcessSuspensionDelayWithPacing(WeakHashSet<WebProcessProxy>&&);
+#endif
+
 private:
     enum class NeedsGlobalStaticInitialization : bool { No, Yes };
     void platformInitialize(NeedsGlobalStaticInitialization);
@@ -939,6 +949,11 @@ private:
 #endif
 
     bool m_webProcessStateUpdatesForPageClientEnabled { false };
+
+#if PLATFORM(MAC)
+    ApproximateTime m_lastCriticalMemoryPressureStatusTime;
+    RunLoop::Timer m_checkMemoryPressureStatusTimer;
+#endif
 };
 
 template<typename T>

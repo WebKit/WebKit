@@ -33,13 +33,20 @@
 
 namespace WebKit {
 
-#if PLATFORM(MAC)
-static Seconds webProcessSuspensionDelay(WebPageProxy* page)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+static Seconds webProcessSuspensionDelay(const WebPageProxy* page)
 {
     if (!page)
-        return API::PageConfiguration::defaultWebProcessSuspensionDelay;
-    return page->configuration().webProcessSuspensionDelay();
+        return WebProcessPool::defaultWebProcessSuspensionDelay();
+
+    RefPtr processPool = page->protectedLegacyMainFrameProcess()->processPoolIfExists();
+    if (!processPool)
+        return WebProcessPool::defaultWebProcessSuspensionDelay();
+
+    return processPool->webProcessSuspensionDelay();
 }
+
 #endif
 
 WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
@@ -170,6 +177,20 @@ bool WebProcessActivityState::hasValidOpeningAppLinkActivity() const
 {
     return m_openingAppLinkActivity && m_openingAppLinkActivity->isValid();
 }
+#endif
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+void WebProcessActivityState::updateWebProcessSuspensionDelay()
+{
+    Seconds timeout = std::visit(WTF::makeVisitor([&](const WeakRef<WebPageProxy>& page) {
+        return webProcessSuspensionDelay(page.ptr());
+    }, [&] (const WeakRef<RemotePageProxy>& page) {
+        return webProcessSuspensionDelay(page->protectedPage().get());
+    }), m_page);
+    m_wasRecentlyVisibleActivity->setTimeout(timeout);
+}
+
 #endif
 
 WebProcessProxy& WebProcessActivityState::process() const

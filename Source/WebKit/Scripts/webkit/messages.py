@@ -833,6 +833,7 @@ def headers_for_type(type):
         'PlatformXR::VisibilityState': ['<WebCore/PlatformXR.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
         'String': ['<wtf/text/WTFString.h>'],
+        'SystemMemoryPressureStatus': ['<wtf/MemoryPressureHandler.h>'],
         'URL': ['<wtf/URLHash.h>'],
         'WTF::UUID': ['<wtf/UUID.h>'],
         'WallTime': ['<wtf/WallTime.h>'],

@@ -1557,20 +1557,6 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 #endif // PLATFORM(VISION)
 
-#if PLATFORM(MAC)
-
-- (NSTimeInterval)_webProcessSuspensionDelay
-{
-    return _pageConfiguration->webProcessSuspensionDelay().seconds();
-}
-
-- (void)_setWebProcessSuspensionDelay:(NSTimeInterval)delay
-{
-    _pageConfiguration->setWebProcessSuspensionDelay(Seconds(delay));
-}
-
-#endif
-
 @end
 
 @implementation WKWebViewConfiguration (WKDeprecated)

@@ -126,7 +126,9 @@ public:
 
     bool isSimulatingMemoryWarning() const { return m_isSimulatingMemoryWarning; }
     bool isSimulatingMemoryPressure() const { return m_isSimulatingMemoryPressure; }
+
     void setMemoryPressureStatus(SystemMemoryPressureStatus);
+    SystemMemoryPressureStatus memoryPressureStatus() const { return m_memoryPressureStatus; }
 
     WTF_EXPORT_PRIVATE MemoryUsagePolicy currentMemoryUsagePolicy();
 
@@ -277,4 +279,5 @@ private:
 using WTF::Critical;
 using WTF::MemoryPressureHandler;
 using WTF::Synchronous;
+using WTF::SystemMemoryPressureStatus;
 using WTF::WebsamProcessState;

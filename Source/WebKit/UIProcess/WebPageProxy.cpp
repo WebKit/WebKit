@@ -686,6 +686,18 @@ bool WebPageProxy::hasValidOpeningAppLinkActivity() const
 }
 #endif
 
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+void WebPageProxy::updateWebProcessSuspensionDelay()
+{
+    m_mainFrameProcessActivityState->updateWebProcessSuspensionDelay();
+    protectedBrowsingContextGroup()->forEachRemotePage(*this, [](auto& remotePageProxy) {
+        remotePageProxy.processActivityState().updateWebProcessSuspensionDelay();
+    });
+}
+
+#endif
+
 WebPageProxy::Internals::Internals(WebPageProxy& page)
     : page(page)
     , audibleActivityTimer(RunLoop::main(), &page, &WebPageProxy::clearAudibleActivity)
@@ -10577,14 +10589,6 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminate: (pid %d), reason=%" PUBLIC_LOG_STRING, legacyMainFrameProcessID(), processTerminationReasonToString(reason).characters());
 
     ASSERT(m_hasRunningProcess);
-
-#if PLATFORM(IOS_FAMILY)
-    if (m_legacyMainFrameProcess->isUnderMemoryPressure()) {
-        auto domain = WebCore::PublicSuffixStore::singleton().topPrivatelyControlledDomain(URL({ }, currentURL()).host());
-        if (!domain.isEmpty())
-            logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
-    }
-#endif
 
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(protectedLegacyMainFrameProcess().ptr());

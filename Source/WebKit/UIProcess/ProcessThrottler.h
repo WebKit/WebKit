@@ -92,9 +92,10 @@ class ProcessThrottlerTimedActivity {
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
 public:
-    explicit ProcessThrottlerTimedActivity(Seconds timeout, RefPtr<Activity>&& = nullptr);
+    explicit ProcessThrottlerTimedActivity(Seconds, RefPtr<Activity>&& = nullptr);
     ProcessThrottlerTimedActivity& operator=(RefPtr<Activity>&&);
     const RefPtr<Activity> activity() const { return m_activity; }
+    void setTimeout(Seconds);
 
 private:
     void activityTimedOut();

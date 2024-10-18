@@ -2051,6 +2051,26 @@ void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const Stri
     }
 }
 
+void WebProcessProxy::memoryPressureStatusChanged(SystemMemoryPressureStatus status)
+{
+    m_memoryPressureStatus = status;
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    if (RefPtr pool = m_processPool.get())
+        pool->memoryPressureStatusChangedForProcess(*this, status);
+#endif
+}
+
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+
+void WebProcessProxy::updateWebProcessSuspensionDelay()
+{
+    for (Ref page : pages())
+        page->updateWebProcessSuspensionDelay();
+}
+
+#endif
+
 void WebProcessProxy::didExceedActiveMemoryLimit()
 {
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didExceedActiveMemoryLimit: Terminating WebProcess because it has exceeded the active memory limit");
@@ -2908,7 +2928,8 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
     appendIf(process.isInProcessCache(), "in-process-cache"_s);
     appendIf(process.isRunningServiceWorkers(), "has-service-worker"_s);
     appendIf(process.isRunningSharedWorkers(), "has-shared-worker"_s);
-    appendIf(process.isUnderMemoryPressure(), "under-memory-pressure"_s);
+    appendIf(process.memoryPressureStatus() == SystemMemoryPressureStatus::Warning, "warning-memory-pressure"_s);
+    appendIf(process.memoryPressureStatus() == SystemMemoryPressureStatus::Critical, "critical-memory-pressure"_s);
     ts << ", " << process.protectedThrottler().get();
 
 #if PLATFORM(COCOA)

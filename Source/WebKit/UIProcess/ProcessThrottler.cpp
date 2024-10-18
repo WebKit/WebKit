@@ -546,7 +546,7 @@ auto ProcessThrottlerTimedActivity::operator=(RefPtr<ProcessThrottlerTimedActivi
 
 void ProcessThrottlerTimedActivity::activityTimedOut()
 {
-    RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut:", this);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut: %" PUBLIC_LOG_STRING " (timeout: %.f sec)", this, m_activity ? m_activity->name().characters() : "null", m_timeout.seconds());
     // Use std::exchange to make sure that m_activity is in a good state when the underlying
     // ProcessThrottlerActivity gets destroyed. This is important as destroying the activity runs code
     // that may use / modify m_activity.
@@ -559,6 +559,19 @@ void ProcessThrottlerTimedActivity::updateTimer()
         m_timer.stop();
     else
         m_timer.startOneShot(m_timeout);
+}
+
+void ProcessThrottlerTimedActivity::setTimeout(Seconds timeout)
+{
+    if (timeout < 0_s || m_timeout == timeout)
+        return;
+
+    m_timeout = timeout;
+
+    if (m_timer.isActive()) {
+        Seconds secondsUntilFire = std::max(m_timer.secondsUntilFire(), 0_s);
+        m_timer.startOneShot(timeout > secondsUntilFire ? timeout - secondsUntilFire : 0_s);
+    }
 }
 
 #define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler ? m_throttler->m_process->processID() : 0, m_throttler.get(), ##__VA_ARGS__)
