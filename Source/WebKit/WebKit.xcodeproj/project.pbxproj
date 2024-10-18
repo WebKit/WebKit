@@ -2383,6 +2383,7 @@
 		CEC8F9CB1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC8F9CA1FDF5870002635E7 /* WKWebProcessPlugInNodeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */; };
+		D243D71F2CC1764C006D5E35 /* ColorControlSupportsAlpha.h in Headers */ = {isa = PBXBuildFile; fileRef = D243D71E2CC1764B006D5E35 /* ColorControlSupportsAlpha.h */; };
 		D246E13C2C61292700B41DE2 /* HTTPSBrowsingWarning.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D246E13B2C61292700B41DE2 /* HTTPSBrowsingWarning.xcassets */; };
 		D2E2FE6E29C8C30D00023E6B /* NetworkTaskCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
@@ -7947,6 +7948,7 @@
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		D22128312B224B8400DC4861 /* DidFilterKnownLinkDecoration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DidFilterKnownLinkDecoration.h; path = Classifier/DidFilterKnownLinkDecoration.h; sourceTree = "<group>"; };
+		D243D71E2CC1764B006D5E35 /* ColorControlSupportsAlpha.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorControlSupportsAlpha.h; sourceTree = "<group>"; };
 		D246E13B2C61292700B41DE2 /* HTTPSBrowsingWarning.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = HTTPSBrowsingWarning.xcassets; sourceTree = "<group>"; };
 		D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTaskCocoa.h; sourceTree = "<group>"; };
 		D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = NetworkTaskCocoa.mm; sourceTree = "<group>"; };
@@ -9150,6 +9152,7 @@
 				2D9BECF32B3092CE00D0AE99 /* CacheModel.serialization.in */,
 				9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */,
 				86BAAFD729A3D29B0013F9A9 /* CallbackID.serialization.in */,
+				D243D71E2CC1764B006D5E35 /* ColorControlSupportsAlpha.h */,
 				CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */,
 				5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */,
 				5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */,
@@ -13734,8 +13737,6 @@
 		B6114A8A293AE03600380B1B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				67AD7CB32CBB361D00B9B22B /* WebExtensionPermission.cpp */,
-				67AD7CB22CBB361C00B9B22B /* WebExtensionPermission.h */,
 				B6217BB0299C39F000498BF8 /* _WKWebExtensionLocalization.h */,
 				B6217BB1299C3AE300498BF8 /* _WKWebExtensionLocalization.mm */,
 				B6D75B1C2B1FD0BE00BC932E /* _WKWebExtensionRegisteredScriptsSQLiteStore.h */,
@@ -13785,6 +13786,8 @@
 				1C6BE7A22B0A94E500D01D93 /* WebExtensionMenuItemType.h */,
 				1C4EBD712ABA47610005868F /* WebExtensionMessageSenderParameters.h */,
 				1C4EBD732ABA481B0005868F /* WebExtensionMessageSenderParameters.serialization.in */,
+				67AD7CB32CBB361D00B9B22B /* WebExtensionPermission.cpp */,
+				67AD7CB22CBB361C00B9B22B /* WebExtensionPermission.h */,
 				1C9A15C72ABDEEB4002CC12A /* WebExtensionPortChannelIdentifier.h */,
 				B69E1A672AFF5F0B000FB98E /* WebExtensionRegisteredScriptParameters.h */,
 				B6D031082AC1F631006C8E0B /* WebExtensionScriptInjectionParameters.h */,
@@ -16384,6 +16387,7 @@
 				4482734724528F6000A95493 /* CocoaImage.h in Headers */,
 				F468770B2C6402650068A20C /* CocoaWindow.h in Headers */,
 				CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */,
+				D243D71F2CC1764C006D5E35 /* ColorControlSupportsAlpha.h in Headers */,
 				F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */,
 				37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,

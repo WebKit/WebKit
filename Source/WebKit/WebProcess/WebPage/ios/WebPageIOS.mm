@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3838,6 +3838,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         else if (element->isColorControl()) {
             information.elementType = InputType::Color;
             information.colorValue = element->valueAsColor();
+            information.supportsAlpha = element->alpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
 #if ENABLE(DATALIST_ELEMENT)
             information.suggestedColors = element->suggestedColors();
 #endif

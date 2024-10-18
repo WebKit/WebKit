@@ -66,7 +66,7 @@ public:
     virtual ~HTMLInputElement();
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    bool alpha();
+    WEBCORE_EXPORT bool alpha();
 #endif
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);

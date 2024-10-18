@@ -3596,6 +3596,7 @@ InputTypeColorEnhancementsEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeDateEnabled:
   type: bool
