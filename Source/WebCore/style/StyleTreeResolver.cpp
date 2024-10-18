@@ -666,12 +666,6 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         if (oldStyle && (oldStyle->hasTransitions() || resolvedStyle.style->hasTransitions()))
             styleable.updateCSSTransitions(*oldStyle, *resolvedStyle.style, newStyleOriginatedAnimations);
 
-        // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
-        // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
-        // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
-        if ((oldStyle && oldStyle->hasAnimations()) || resolvedStyle.style->hasAnimations())
-            styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext, newStyleOriginatedAnimations, isInDisplayNoneTree);
-
         if ((oldStyle && oldStyle->scrollTimelines().size()) || resolvedStyle.style->scrollTimelines().size()
             || (oldStyle && oldStyle->scrollTimelineNames().size()) || resolvedStyle.style->scrollTimelineNames().size()) {
             styleable.updateCSSScrollTimelines(oldStyle, *resolvedStyle.style);
@@ -681,6 +675,12 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             || (oldStyle && oldStyle->viewTimelineNames().size()) || resolvedStyle.style->viewTimelineNames().size()) {
             styleable.updateCSSViewTimelines(oldStyle, *resolvedStyle.style);
         }
+
+        // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
+        // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
+        // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
+        if ((oldStyle && oldStyle->hasAnimations()) || resolvedStyle.style->hasAnimations())
+            styleable.updateCSSAnimations(oldStyle, *resolvedStyle.style, resolutionContext, newStyleOriginatedAnimations, isInDisplayNoneTree);
     };
 
     auto applyAnimations = [&]() -> std::pair<std::unique_ptr<RenderStyle>, OptionSet<AnimationImpact>> {

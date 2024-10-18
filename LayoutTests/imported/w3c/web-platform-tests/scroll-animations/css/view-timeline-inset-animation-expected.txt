@@ -1,5 +1,5 @@
 
-FAIL view-timeline-inset with one value assert_equals: expected "-1" but got "0"
+FAIL view-timeline-inset with one value assert_equals: expected "0" but got "-1"
 FAIL view-timeline-inset with two values assert_equals: expected "0" but got "-1"
 FAIL view-timeline-inset with em values assert_equals: expected "0" but got "-1"
 FAIL view-timeline-inset with percentage values assert_equals: expected "0" but got "-1"

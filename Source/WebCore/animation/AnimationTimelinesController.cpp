@@ -336,27 +336,54 @@ ScrollTimeline* AnimationTimelinesController::scrollTimelineForName(const AtomSt
 
 void AnimationTimelinesController::registerNamedViewTimeline(const AtomString& name, Element& subject, ScrollAxis axis, ViewTimelineInsets&& insets)
 {
-    auto it = m_nameToViewTimelineMap.find(name);
-    if (it != m_nameToViewTimelineMap.end()) {
-        auto& existingViewTimeline = it->value;
-        existingViewTimeline->setSubject(&subject);
+    auto& timelines = m_nameToViewTimelinesMap.ensure(name, [] {
+        return Vector<Ref<ViewTimeline>> { };
+    }).iterator->value;
+
+    auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
+        return timeline->subject() == &subject;
+    });
+
+    if (existingTimelineIndex != notFound) {
+        auto& existingViewTimeline = timelines[existingTimelineIndex];
         existingViewTimeline->setAxis(axis);
         existingViewTimeline->setInsets(WTFMove(insets));
     } else {
         auto newViewTimeline = ViewTimeline::create(name, axis, WTFMove(insets));
         newViewTimeline->setSubject(&subject);
-        m_nameToViewTimelineMap.set(name, WTFMove(newViewTimeline));
+        timelines.append(WTFMove(newViewTimeline));
     }
 }
 
-void AnimationTimelinesController::unregisterNamedViewTimeline(const AtomString& name)
+void AnimationTimelinesController::unregisterNamedViewTimelineForSubject(const AtomString& name, const Element& subject)
 {
-    m_nameToViewTimelineMap.remove(name);
+    auto it = m_nameToViewTimelinesMap.find(name);
+    if (it == m_nameToViewTimelinesMap.end())
+        return;
+
+    auto& timelines = it->value;
+    timelines.removeFirstMatching([&](auto& timeline) {
+        return timeline->subject() == &subject;
+    });
+
+    if (timelines.isEmpty())
+        m_nameToViewTimelinesMap.remove(it);
 }
 
-ViewTimeline* AnimationTimelinesController::viewTimelineForName(const AtomString& name) const
+ViewTimeline* AnimationTimelinesController::viewTimelineForNameAndSubject(const AtomString& name, const Element& subject) const
 {
-    return m_nameToViewTimelineMap.get(name);
+    auto it = m_nameToViewTimelinesMap.find(name);
+    if (it == m_nameToViewTimelinesMap.end())
+        return nullptr;
+
+    auto& timelines = it->value;
+    auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
+        return timeline->subject() == &subject;
+    });
+
+    if (existingTimelineIndex != notFound)
+        return timelines[existingTimelineIndex].ptr();
+    return nullptr;
 }
 
 } // namespace WebCore

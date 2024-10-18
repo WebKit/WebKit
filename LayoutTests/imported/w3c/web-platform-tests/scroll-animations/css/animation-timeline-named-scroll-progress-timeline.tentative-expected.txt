@@ -1,5 +1,5 @@
 
-FAIL scroll-timeline-name is referenceable in animation-timeline on the declaring element itself assert_equals: expected "100px" but got "50px"
+PASS scroll-timeline-name is referenceable in animation-timeline on the declaring element itself
 PASS scroll-timeline-name is referenceable in animation-timeline on that element's descendants
 FAIL scroll-timeline-name is not referenceable in animation-timeline on that element's siblings assert_equals: Animation with unknown timeline name holds current time at zero expected "50px" but got "100px"
 PASS scroll-timeline-name on an element which is not a scroll-container

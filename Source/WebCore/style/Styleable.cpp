@@ -943,7 +943,7 @@ void Styleable::updateCSSViewTimelines(const RenderStyle* currentStyle, const Re
 
         for (auto& previousTimelineName : currentStyle->viewTimelineNames()) {
             if (!currentTimelineNames.contains(previousTimelineName))
-                timelinesController->unregisterNamedViewTimeline(previousTimelineName);
+                timelinesController->unregisterNamedViewTimelineForSubject(previousTimelineName, element);
         }
     };
 

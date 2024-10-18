@@ -118,6 +118,7 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
 
     // FIXME: deal with overridden "timeline" property as well.
     ASSERT(owningElement());
+    Ref target = owningElement()->element;
     Ref document = owningElement()->element.document();
     WTF::switchOn(animation.timeline(),
         [&] (Animation::TimelineKeyword keyword) {
@@ -127,7 +128,7 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
             CheckedRef timelinesController = document->ensureTimelinesController();
             if (RefPtr scrollTimeline = timelinesController->scrollTimelineForName(name))
                 setTimeline(WTFMove(scrollTimeline));
-            else if (RefPtr viewTimeline = timelinesController->viewTimelineForName(name))
+            else if (RefPtr viewTimeline = timelinesController->viewTimelineForNameAndSubject(name, target))
                 setTimeline(WTFMove(viewTimeline));
         }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
             setTimeline(RefPtr { anonymousTimeline.ptr() });
