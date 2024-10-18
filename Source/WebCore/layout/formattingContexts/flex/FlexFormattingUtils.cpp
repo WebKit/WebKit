@@ -42,8 +42,10 @@ FlexFormattingUtils::FlexFormattingUtils(const FlexFormattingContext& flexFormat
 bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer)
 {
     ASSERT(flexContainer.isFlexBox());
-    auto flexDirection = flexContainer.style().flexDirection();
-    return flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+    auto& flexContainerStyle = flexContainer.style();
+    auto isHorizontalWritingMode = flexContainerStyle.isHorizontalWritingMode();
+    auto flexDirection = flexContainerStyle.flexDirection();
+    return (isHorizontalWritingMode && (flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse)) || (!isHorizontalWritingMode && (flexDirection == FlexDirection::Column || flexDirection == FlexDirection::ColumnReverse));
 }
 
 bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)

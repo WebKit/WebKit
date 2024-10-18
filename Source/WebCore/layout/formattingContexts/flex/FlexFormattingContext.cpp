@@ -213,7 +213,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 {
     auto& flexBoxStyle = root().style();
     auto flexDirection = flexBoxStyle.flexDirection();
-    auto isMainAxisParallelWithInlineAxis = FlexFormattingUtils::isMainAxisParallelWithInlineAxis(root());
+    auto isRowDirection = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto flexContainerContentBoxPosition = LayoutPoint { constraints.mainAxis().startPosition, constraints.crossAxis().startPosition };
     auto flexContentLogicalHeightForWarpReverse = [&]() -> std::optional<LayoutUnit> {
         if (flexBoxStyle.flexWrap() != FlexWrap::Reverse)
@@ -274,8 +274,8 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
         flexItemGeometry.setTopLeft({ borderBoxLeft, borderBoxTop });
 
-        auto contentBoxWidth = isMainAxisParallelWithInlineAxis ? logicalRect.width() : logicalRect.height();
-        auto contentBoxHeight = isMainAxisParallelWithInlineAxis ? logicalRect.height() : logicalRect.width();
+        auto contentBoxWidth = isRowDirection ? logicalRect.width() : logicalRect.height();
+        auto contentBoxHeight = isRowDirection ? logicalRect.height() : logicalRect.width();
         if (!logicalFlexItem.isContentBoxBased()) {
             contentBoxWidth -= flexItemGeometry.horizontalBorderAndPadding();
             contentBoxHeight -= flexItemGeometry.verticalBorderAndPadding();
