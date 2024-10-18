@@ -199,6 +199,53 @@ void WebFullScreenManager::clearElement()
     m_element = nullptr;
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+FullScreenMediaDetails WebFullScreenManager::getImageMediaDetails(CheckedPtr<RenderImage> renderImage, IsUpdating updating)
+{
+    if (!renderImage)
+        return { };
+
+    auto* cachedImage = renderImage->cachedImage();
+    if (!cachedImage || cachedImage->errorOccurred())
+        return { };
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return { };
+    if (!(image->shouldUseQuickLookForFullscreen() || updating == IsUpdating::Yes))
+        return { };
+
+    auto* buffer = cachedImage->resourceBuffer();
+    if (!buffer)
+        return { };
+
+    auto imageSize = image->size();
+
+    auto mimeType = image->mimeType();
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
+    if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return { };
+
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+    if (!sharedMemoryBuffer)
+        return { };
+
+    auto imageResourceHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+
+    m_willUseQuickLookForFullscreen = true;
+
+    return {
+        FullScreenMediaDetails::Type::Image,
+        imageSize,
+        mimeType,
+        imageResourceHandle
+    };
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     ASSERT(element);
@@ -220,52 +267,8 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
 #endif
 
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
-    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer());
-    if (renderImage) {
-        auto getImageMediaDetails = [&]() -> FullScreenMediaDetails {
-            if (!renderImage)
-                return { };
-
-            auto* cachedImage = renderImage->cachedImage();
-            if (!cachedImage || cachedImage->errorOccurred())
-                return { };
-
-            RefPtr image = cachedImage->image();
-            if (!image || !image->shouldUseQuickLookForFullscreen())
-                return { };
-
-            auto* buffer = cachedImage->resourceBuffer();
-            if (!buffer)
-                return { };
-
-            auto imageSize = image->size();
-
-            auto mimeType = image->mimeType();
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                mimeType = MIMETypeRegistry::mimeTypeForExtension(image->filenameExtension());
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                mimeType = MIMETypeRegistry::mimeTypeForPath(cachedImage->url().string());
-            if (!MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-                return { };
-
-            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-            if (!sharedMemoryBuffer)
-                return { };
-
-            auto imageResourceHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
-
-            m_willUseQuickLookForFullscreen = true;
-
-            return {
-                FullScreenMediaDetails::Type::Image,
-                imageSize,
-                mimeType,
-                imageResourceHandle
-            };
-        };
-
-        mediaDetails = getImageMediaDetails();
-    }
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))
+        mediaDetails = getImageMediaDetails(renderImage, IsUpdating::No);
 
     if (m_willUseQuickLookForFullscreen)
         m_page->freezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
@@ -305,6 +308,18 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element, 
     }
 #endif
 }
+
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebFullScreenManager::updateImageSource(WebCore::Element& element)
+{
+    FullScreenMediaDetails mediaDetails;
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer());
+    if (renderImage && m_willUseQuickLookForFullscreen) {
+        mediaDetails = getImageMediaDetails(renderImage, IsUpdating::Yes);
+        m_page->send(Messages::WebFullScreenManagerProxy::UpdateImageSource(WTFMove(mediaDetails)));
+    }
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {

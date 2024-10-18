@@ -25,6 +25,9 @@
 messages -> WebFullScreenManagerProxy NotRefCounted {
     SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Synchronous
     EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails)
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    UpdateImageSource(struct WebKit::FullScreenMediaDetails mediaDetails)
+#endif
     ExitFullScreen()
     BeganEnterFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)
     BeganExitFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)

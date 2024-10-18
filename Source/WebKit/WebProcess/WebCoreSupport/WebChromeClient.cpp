@@ -1334,6 +1334,13 @@ void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaEleme
 #endif
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebChromeClient::updateImageSource(Element& element)
+{
+    protectedPage()->fullScreenManager()->updateImageSource(element);
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
 void WebChromeClient::exitFullScreenForElement(Element* element)
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)

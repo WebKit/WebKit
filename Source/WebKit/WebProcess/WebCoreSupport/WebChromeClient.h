@@ -330,8 +330,11 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard) final;
     void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard) final;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    void updateImageSource(WebCore::Element&) final;
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
     void exitFullScreenForElement(WebCore::Element*) final;
-#endif
+#endif // ENABLE(FULLSCREEN_API)
 
 #if PLATFORM(COCOA)
     void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) final;

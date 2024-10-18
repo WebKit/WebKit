@@ -785,6 +785,13 @@ void PageClientImpl::enterFullScreen(FloatSize mediaDimensions)
     [[webView() fullScreenWindowController] enterFullScreen:mediaDimensions];
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void PageClientImpl::updateImageSource()
+{
+    [[webView() fullScreenWindowController] updateImageSource];
+}
+#endif
+
 void PageClientImpl::exitFullScreen()
 {
     [[webView() fullScreenWindowController] exitFullScreen];

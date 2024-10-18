@@ -241,6 +241,19 @@ void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFro
 #endif
 }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+void WebFullScreenManagerProxy::updateImageSource(FullScreenMediaDetails&& mediaDetails)
+{
+    if (mediaDetails.imageHandle) {
+        if (auto sharedMemoryBuffer = SharedMemory::map(WTFMove(*mediaDetails.imageHandle), WebCore::SharedMemory::Protection::ReadOnly))
+            m_imageBuffer = sharedMemoryBuffer->createSharedBuffer(sharedMemoryBuffer->size());
+    }
+    m_imageMIMEType = mediaDetails.mimeType;
+
+    m_client->updateImageSource();
+}
+#endif // ENABLE(QUICKLOOK_FULLSCREEN)
+
 void WebFullScreenManagerProxy::exitFullScreen()
 {
 #if ENABLE(QUICKLOOK_FULLSCREEN)

@@ -26,6 +26,8 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -470,6 +472,10 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     if (hasPendingDecodePromises())
         decode();
     loadEventSender().dispatchEventSoon(*this, eventNames().loadEvent);
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    if (RefPtr page = element().document().protectedPage())
+        page->chrome().client().updateImageSource(protectedElement().get());
+#endif
 }
 
 RenderImageResource* ImageLoader::renderImageResource()
