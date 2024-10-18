@@ -100,6 +100,11 @@ protected:
     Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    WebCore::FloatSize m_oldSize;
+    double m_scaleFactor { 1 };
+    double m_minEffectiveWidth { 0 };
+#endif
 #if ENABLE(VIDEO)
     RefPtr<WebCore::HTMLVideoElement> m_pipStandbyElement;
 #endif

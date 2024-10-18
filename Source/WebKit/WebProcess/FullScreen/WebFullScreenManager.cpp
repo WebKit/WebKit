@@ -367,6 +367,16 @@ void WebFullScreenManager::didEnterFullScreen()
         return;
     }
 
+#if ENABLE(QUICKLOOK_FULLSCREEN)
+    static constexpr auto maxViewportSize = FloatSize { 10000, 10000 };
+    if (m_willUseQuickLookForFullscreen) {
+        m_oldSize = m_page->viewportConfiguration().viewLayoutSize();
+        m_scaleFactor = m_page->viewportConfiguration().layoutSizeScaleFactor();
+        m_minEffectiveWidth = m_page->viewportConfiguration().minimumEffectiveDeviceWidth();
+        m_page->setViewportConfigurationViewLayoutSize(maxViewportSize, m_scaleFactor, m_minEffectiveWidth);
+    }
+#endif
+
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
     setPIPStandbyElement(dynamicDowncast<WebCore::HTMLVideoElement>(currentPlaybackControlsElement));
@@ -448,8 +458,10 @@ static Vector<Ref<Element>> collectFullscreenElementsFromElement(Element* elemen
 void WebFullScreenManager::didExitFullScreen()
 {
 #if PLATFORM(VISION) && ENABLE(QUICKLOOK_FULLSCREEN)
-    if (std::exchange(m_willUseQuickLookForFullscreen, false))
+    if (std::exchange(m_willUseQuickLookForFullscreen, false)) {
+        m_page->setViewportConfigurationViewLayoutSize(m_oldSize, m_scaleFactor, m_minEffectiveWidth);
         m_page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::OutOfProcessFullscreen);
+    }
 #endif
 
     m_page->isInFullscreenChanged(WebPage::IsInFullscreenMode::No);
