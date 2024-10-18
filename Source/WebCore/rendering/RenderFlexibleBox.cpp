@@ -2679,7 +2679,7 @@ bool RenderFlexibleBox::layoutUsingFlexFormattingContext()
         return false;
 
     auto flexLayout = LayoutIntegration::FlexLayout { *this };
-    flexLayout.updateFormattingContexGeometries(containingBlock() ? containingBlock()->availableLogicalWidth() : LayoutUnit());
+    flexLayout.updateFormattingContexGeometries();
 
     flexLayout.layout();
     setLogicalHeight(std::max(logicalHeight(), borderAndPaddingLogicalHeight() + flexLayout.contentBoxLogicalHeight()));
