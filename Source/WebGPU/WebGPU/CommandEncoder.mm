@@ -1195,8 +1195,8 @@ void CommandEncoder::clearTextureIfNeeded(const WGPUImageCopyTexture& destinatio
 
 bool CommandEncoder::waitForCommandBufferCompletion()
 {
-    if (m_cachedCommandBuffer)
-        return m_cachedCommandBuffer.get()->waitForCompletion();
+    if (RefPtr cachedCommandBuffer = m_cachedCommandBuffer.get())
+        return cachedCommandBuffer->waitForCompletion();
 
     return true;
 }
