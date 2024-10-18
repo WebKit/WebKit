@@ -445,9 +445,8 @@
     (global-name "com.apple.lsd.mapdb")) 
 
 ;; <rdar://problem/12413942>
-(with-filter (require-not (state-flag "BlockMobileGestaltInWebContentSandbox"))
-    (allow file-read*
-       (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist")))
+(allow file-read*
+   (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
 
 (allow iokit-get-properties
        (iokit-property "IORegistryEntryPropertyKeys"))
