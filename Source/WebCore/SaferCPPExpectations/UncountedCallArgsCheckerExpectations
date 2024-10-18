@@ -383,7 +383,6 @@ JSValidityState.cpp
 JSVideoConfiguration.cpp
 JSVideoTrack.cpp
 JSVideoTrackList.cpp
-JSViewTimeline.cpp
 JSViewTransition.cpp
 JSVisualViewport.cpp
 JSWakeLockSentinel.cpp

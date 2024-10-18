@@ -59,8 +59,9 @@ public:
     const ViewTimelineInsets& insets() const { return m_insets; }
     void setInsets(ViewTimelineInsets&& insets) { m_insets = WTFMove(insets); }
 
-    const CSSNumericValue& startOffset();
-    const CSSNumericValue& endOffset();
+    Ref<CSSNumericValue> startOffset();
+    Ref<CSSNumericValue> endOffset();
+
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
     AnimationTimelinesController* controller() const override;
 
@@ -79,8 +80,6 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
     ViewTimelineInsets m_insets;
-    Ref<CSSNumericValue> m_startOffset;
-    Ref<CSSNumericValue> m_endOffset;
 };
 
 } // namespace WebCore

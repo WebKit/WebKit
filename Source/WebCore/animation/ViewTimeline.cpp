@@ -132,8 +132,6 @@ static ViewTimelineInsets insetsFromOptions(const std::variant<String, Vector<st
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
 {
     if (m_subject) {
         auto document = m_subject->protectedDocument();
@@ -145,8 +143,6 @@ ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
 ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
     : ScrollTimeline(name, axis)
     , m_insets(WTFMove(insets))
-    , m_startOffset(CSSNumericFactory::px(0))
-    , m_endOffset(CSSNumericFactory::px(0))
 {
 }
 
@@ -317,18 +313,16 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     return { currentScrollOffset, rangeStart + ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart), rangeEnd - ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart) };
 }
 
-const CSSNumericValue& ViewTimeline::startOffset()
+Ref<CSSNumericValue> ViewTimeline::startOffset()
 {
     auto data = computeTimelineData();
-    m_startOffset = CSSNumericFactory::px(data.rangeStart);
-    return m_startOffset;
+    return CSSNumericFactory::px(data.rangeStart);
 }
 
-const CSSNumericValue& ViewTimeline::endOffset()
+Ref<CSSNumericValue> ViewTimeline::endOffset()
 {
     auto data = computeTimelineData();
-    m_endOffset = CSSNumericFactory::px(data.rangeEnd);
-    return m_endOffset;
+    return CSSNumericFactory::px(data.rangeEnd);
 }
 
 } // namespace WebCore
