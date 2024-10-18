@@ -1122,6 +1122,9 @@
       "status" : "committer"
    },
    {
+      "aliases" : [
+         "Blaze Jayne Burg"
+      ],
       "emails" : [
          "bburg@apple.com",
          "burg@cs.washington.edu"
