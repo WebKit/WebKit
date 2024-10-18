@@ -77,13 +77,12 @@ void CcidConnection::detectContactless()
 {
     transact(Vector(std::span { kGetUidCommand }), [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         // Only contactless smart cards have uid, check for longer length than apdu status
-        if (response.size() > 2) {
-            if (weakThis)
-                weakThis->m_contactless = true;
-        }
+        if (response.size() > 2)
+            protectedThis->m_contactless = true;
     });
 }
 
@@ -91,21 +90,23 @@ void CcidConnection::trySelectFidoApplet()
 {
     transact(Vector(std::span { kCtapNfcAppletSelectionCommand }), [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
         ASSERT(RunLoop::isMain());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) })
             || equalSpans(response.span(), std::span { kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap) })) {
-            if (weakThis && weakThis->m_service)
-                weakThis->m_service->didConnectTag();
+            if (RefPtr service = protectedThis->m_service.get())
+                service->didConnectTag();
             return;
         }
-        weakThis->transact(Vector(std::span { kCtapNfcAppletSelectionCommand, sizeof(kCtapNfcAppletSelectionCommand) }), [weakThis = WTFMove(weakThis)] (Vector<uint8_t>&& response) mutable {
+        protectedThis->transact(Vector(std::span { kCtapNfcAppletSelectionCommand, sizeof(kCtapNfcAppletSelectionCommand) }), [weakThis = WTFMove(weakThis)] (Vector<uint8_t>&& response) mutable {
             ASSERT(RunLoop::isMain());
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             if (equalSpans(response.span(), std::span { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) })) {
-                if (weakThis && weakThis->m_service)
-                    weakThis->m_service->didConnectTag();
+                if (RefPtr service = protectedThis->m_service.get())
+                    service->didConnectTag();
             }
         });
     });

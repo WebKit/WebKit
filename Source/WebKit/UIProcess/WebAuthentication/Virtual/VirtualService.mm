@@ -36,6 +36,7 @@
 #import "VirtualLocalConnection.h"
 #import <WebCore/FidoConstants.h>
 #import <WebCore/WebAuthenticationConstants.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/text/WTFString.h>
 
@@ -43,14 +44,21 @@ namespace WebKit {
 using namespace fido;
 using namespace WebCore;
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VirtualService);
+
+Ref<VirtualService> VirtualService::create(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& configuration)
+{
+    return adoptRef(*new VirtualService(observer, configuration));
+}
+
 VirtualService::VirtualService(AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
     : AuthenticatorTransportService(observer), m_authenticators(authenticators)
 {
 }
 
-UniqueRef<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+Ref<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
 {
-    return makeUniqueRef<VirtualService>(observer, authenticators);
+    return VirtualService::create(observer, authenticators);
 }
 
 static AuthenticatorGetInfoResponse authenticatorInfoForConfig(const VirtualAuthenticatorConfiguration& config)

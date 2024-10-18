@@ -60,12 +60,17 @@
 
 - (void)transmitRequest:(NSData *)request reply:(void(^)(NSData * response, NSError * error))reply
 {
-    reply(m_service->nextReply().get(), nil);
+    reply(Ref { *m_service }->nextReply().get(), nil);
 }
 
 @end
 
 namespace WebKit {
+
+Ref<MockCcidService> MockCcidService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockCcidService(observer, configuration));
+}
 
 MockCcidService::MockCcidService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : CcidService(observer)

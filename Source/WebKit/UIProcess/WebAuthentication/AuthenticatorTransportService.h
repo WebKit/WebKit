@@ -29,20 +29,10 @@
 
 #include "WebAuthenticationFlags.h"
 #include <WebCore/AuthenticatorTransport.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class AuthenticatorTransportService;
-class AuthenticatorTransportServiceObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorTransportService> : std::true_type { };
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::AuthenticatorTransportServiceObserver> : std::true_type { };
-}
 
 namespace WebCore {
 struct MockWebAuthenticationConfiguration;
@@ -52,20 +42,23 @@ namespace WebKit {
 
 class Authenticator;
 
-class AuthenticatorTransportServiceObserver : public CanMakeWeakPtr<AuthenticatorTransportServiceObserver> {
+class AuthenticatorTransportServiceObserver : public AbstractRefCountedAndCanMakeWeakPtr<AuthenticatorTransportServiceObserver> {
 public:
     virtual ~AuthenticatorTransportServiceObserver() = default;
 
     virtual void authenticatorAdded(Ref<Authenticator>&&) = 0;
     virtual void serviceStatusUpdated(WebAuthenticationStatus) = 0;
+
+protected:
+    AuthenticatorTransportServiceObserver() = default;
 };
 
-class AuthenticatorTransportService : public CanMakeWeakPtr<AuthenticatorTransportService> {
+class AuthenticatorTransportService : public AbstractRefCountedAndCanMakeWeakPtr<AuthenticatorTransportService> {
     WTF_MAKE_TZONE_ALLOCATED(AuthenticatorTransportService);
     WTF_MAKE_NONCOPYABLE(AuthenticatorTransportService);
 public:
-    static UniqueRef<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&);
-    static UniqueRef<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
+    static Ref<AuthenticatorTransportService> create(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&);
+    static Ref<AuthenticatorTransportService> createMock(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
     virtual ~AuthenticatorTransportService() = default;
 

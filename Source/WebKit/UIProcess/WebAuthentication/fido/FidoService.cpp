@@ -36,10 +36,13 @@
 #include <WebCore/FidoConstants.h>
 #include <WebCore/FidoHidMessage.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 
 
 namespace WebKit {
 using namespace fido;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FidoService);
 
 FidoService::FidoService(AuthenticatorTransportServiceObserver& observer)
     : AuthenticatorTransportService(observer)

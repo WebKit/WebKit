@@ -64,7 +64,7 @@ protected:
 private:
     VirtualAuthenticatorManager();
 
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
+    Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const final;
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
 

@@ -411,7 +411,7 @@ void AuthenticatorManager::cancelRequest()
     m_requestTimeOutTimer.stop();
 }
 
-UniqueRef<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
+Ref<AuthenticatorTransportService> AuthenticatorManager::createService(AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
     return AuthenticatorTransportService::create(transport, observer);
 }
@@ -430,7 +430,7 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
     ASSERT(RunLoop::isMain());
     ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
     m_services = WTF::map(transports, [this](auto& transport) {
-        auto service = createService(transport, *this);
+        Ref service = createService(transport, *this);
         service->startDiscovery();
         return service;
     });

@@ -40,6 +40,11 @@
 
 namespace WebKit {
 
+Ref<MockLocalService> MockLocalService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockLocalService(observer, configuration));
+}
+
 MockLocalService::MockLocalService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : LocalService(observer)
     , m_configuration(configuration)

@@ -50,6 +50,11 @@ static void deviceRemovedCallback(void* context, IOReturn, void*, IOHIDDeviceRef
 }
 #endif // HAVE(SECURITY_KEY_API)
 
+Ref<HidService> HidService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new HidService(observer));
+}
+
 HidService::HidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
 {

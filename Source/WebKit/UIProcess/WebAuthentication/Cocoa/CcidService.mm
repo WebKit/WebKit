@@ -55,6 +55,11 @@
 
 namespace WebKit {
 
+Ref<CcidService> CcidService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new CcidService(observer));
+}
+
 CcidService::CcidService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &CcidService::platformStartDiscovery)

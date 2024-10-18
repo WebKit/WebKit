@@ -34,9 +34,11 @@ namespace WebKit {
 
 class MockHidService final : public HidService {
 public:
-    MockHidService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
+    static Ref<MockHidService> create(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
 
 private:
+    MockHidService(AuthenticatorTransportServiceObserver&, const WebCore::MockWebAuthenticationConfiguration&);
+
     void platformStartDiscovery() final;
     Ref<HidConnection> createHidConnection(IOHIDDeviceRef) const final;
 

@@ -105,7 +105,8 @@ void NfcConnection::stop() const
 
 void NfcConnection::didDetectTags(NSArray *tags)
 {
-    if (!m_service || !tags.count)
+    RefPtr service = m_service.get();
+    if (!service || !tags.count)
         return;
 
     // A physical NFC tag could have multiple interfaces.
@@ -114,7 +115,7 @@ void NfcConnection::didDetectTags(NSArray *tags)
     for (NFTag *tag : tags) {
         if ([tagID isEqualToData:tag.tagID])
             continue;
-        m_service->didDetectMultipleTags();
+        service->didDetectMultipleTags();
         restartPolling();
         return;
     }
@@ -130,7 +131,7 @@ void NfcConnection::didDetectTags(NSArray *tags)
             continue;
         }
 
-        m_service->didConnectTag();
+        service->didConnectTag();
         return;
     }
     restartPolling();

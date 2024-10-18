@@ -33,21 +33,12 @@
 OBJC_CLASS NFReaderSession;
 
 namespace WebKit {
-class NfcService;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::NfcService> : std::true_type { };
-}
-
-namespace WebKit {
 
 class NfcConnection;
 
 class NfcService : public FidoService {
 public:
-    explicit NfcService(AuthenticatorTransportServiceObserver&);
+    static Ref<NfcService> create(AuthenticatorTransportServiceObserver&);
     ~NfcService();
 
     static bool isAvailable();
@@ -56,8 +47,10 @@ public:
     void didConnectTag();
     void didDetectMultipleTags() const;
 
-#if HAVE(NEAR_FIELD)
 protected:
+    explicit NfcService(AuthenticatorTransportServiceObserver&);
+
+#if HAVE(NEAR_FIELD)
     void setConnection(Ref<NfcConnection>&&); // For MockNfcConnection
 #endif
 

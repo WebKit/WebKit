@@ -73,7 +73,7 @@ Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(c
     return matching;
 }
 
-UniqueRef<AuthenticatorTransportService> VirtualAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
+Ref<AuthenticatorTransportService> VirtualAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportServiceObserver& observer) const
 {
     Vector<std::pair<String, VirtualAuthenticatorConfiguration>> configs;
     for (auto& id : m_virtualAuthenticators.keys()) {

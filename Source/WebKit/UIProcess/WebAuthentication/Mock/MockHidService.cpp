@@ -33,6 +33,11 @@
 
 namespace WebKit {
 
+Ref<MockHidService> MockHidService::create(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
+{
+    return adoptRef(*new MockHidService(observer, configuration));
+}
+
 MockHidService::MockHidService(AuthenticatorTransportServiceObserver& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : HidService(observer)
     , m_configuration(configuration)

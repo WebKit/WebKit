@@ -109,7 +109,7 @@ private:
     void cancelRequest() final;
 
     // Overriden by MockAuthenticatorManager.
-    virtual UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const;
+    virtual Ref<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportServiceObserver&) const;
     // Overriden to return every exception for tests to confirm.
     virtual void respondReceivedInternal(Respond&&) { }
     virtual void filterTransports(TransportSet&) const;
@@ -127,7 +127,7 @@ private:
     RunLoop::Timer m_requestTimeOutTimer;
     RefPtr<AuthenticatorPresenterCoordinator> m_presenter;
 
-    Vector<UniqueRef<AuthenticatorTransportService>> m_services;
+    Vector<Ref<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
 
     Mode m_mode { Mode::Compatible };

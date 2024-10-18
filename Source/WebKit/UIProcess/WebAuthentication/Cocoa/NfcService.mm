@@ -39,15 +39,18 @@
 
 namespace WebKit {
 
+Ref<NfcService> NfcService::create(AuthenticatorTransportServiceObserver& observer)
+{
+    return adoptRef(*new NfcService(observer));
+}
+
 NfcService::NfcService(AuthenticatorTransportServiceObserver& observer)
     : FidoService(observer)
     , m_restartTimer(RunLoop::main(), this, &NfcService::platformStartDiscovery)
 {
 }
 
-NfcService::~NfcService()
-{
-}
+NfcService::~NfcService() = default;
 
 bool NfcService::isAvailable()
 {
