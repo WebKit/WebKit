@@ -105,8 +105,10 @@ Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheEngine.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
+Modules/compression/CompressionStream.cpp
 Modules/compression/CompressionStreamEncoder.cpp
 Modules/compression/DecompressionStreamDecoder.cpp
+Modules/compression/ZStream.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp

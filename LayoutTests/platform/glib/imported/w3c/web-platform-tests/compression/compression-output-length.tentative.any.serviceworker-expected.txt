@@ -1,0 +1,6 @@
+
+FAIL the length of brotli data should be shorter than that of the original data promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+PASS the length of deflated data should be shorter than that of the original data
+PASS the length of gzipped data should be shorter than that of the original data
+PASS the length of deflated (with -raw) data should be shorter than that of the original data
+

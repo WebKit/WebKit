@@ -25,15 +25,14 @@
 #pragma once
 
 #include "BufferSource.h"
-#if PLATFORM(COCOA)
-#include <compression.h>
-#endif
-#include <cstring>
+#include "CompressionStream.h"
 #include "ExceptionOr.h"
 #include "Formats.h"
 #include "SharedBuffer.h"
+#include "ZStream.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/Forward.h>
+#include <cstring>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <zlib.h>
@@ -42,37 +41,32 @@ namespace WebCore {
 
 class DecompressionStreamDecoder : public RefCounted<DecompressionStreamDecoder> {
 public:
-    static Ref<DecompressionStreamDecoder> create(unsigned char format)
-    { 
+    static ExceptionOr<Ref<DecompressionStreamDecoder>> create(unsigned char formatChar)
+    {
+        auto format = static_cast<Formats::CompressionFormat>(formatChar);
+#if !PLATFORM(COCOA)
+        if (format == Formats::CompressionFormat::Brotli)
+            return Exception { ExceptionCode::NotSupportedError, "Unsupported algorithm"_s };
+#endif
         return adoptRef(*new DecompressionStreamDecoder(format));
     }
 
     ExceptionOr<RefPtr<Uint8Array>> decode(const BufferSource&&);
     ExceptionOr<RefPtr<Uint8Array>> flush();
 
-    ~DecompressionStreamDecoder()
-    {
-        if (m_initialized) {
-            if (m_usingAppleCompressionFramework) {
-#if PLATFORM(COCOA)
-                compression_stream_destroy(&m_stream);
-#endif
-            } else
-                deflateEnd(&m_zstream);
-        }
-    }
-
 private:
     bool didInflateFinish(int) const;
     bool didInflateContainExtraBytes(int) const;
 
+    ExceptionOr<Ref<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
     ExceptionOr<Ref<JSC::ArrayBuffer>> decompressZlib(std::span<const uint8_t>);
-    ExceptionOr<bool> initialize();
+#if PLATFORM(COCOA)
+    ExceptionOr<Ref<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
+#endif
 
-    explicit DecompressionStreamDecoder(unsigned char format)
-        : m_format(static_cast<Formats::CompressionFormat>(format))
+    explicit DecompressionStreamDecoder(Formats::CompressionFormat format)
+        : m_format(format)
     {
-        std::memset(&m_zstream, 0, sizeof(m_zstream));
     }
 
     // When given an encoded input, it is difficult to guess the output size.
@@ -82,21 +76,12 @@ private:
     // unnecessarily large allocations upfront.
     const size_t startingAllocationSize = 16384; // 16KB
     const size_t maxAllocationSize = 1073741824; // 1GB
-    
-    bool m_initialized { false };
+
     bool m_didFinish { false };
-    z_stream m_zstream;
+    const Formats::CompressionFormat m_format;
 
-    bool m_usingAppleCompressionFramework { false };
-
-    inline ExceptionOr<Ref<JSC::ArrayBuffer>> decompress(std::span<const uint8_t>);
-
-#if PLATFORM(COCOA)
-    compression_stream m_stream;
-    ExceptionOr<Ref<JSC::ArrayBuffer>> decompressAppleCompressionFramework(std::span<const uint8_t>);
-    ExceptionOr<bool> initializeAppleCompressionFramework();
-#endif
-
-    Formats::CompressionFormat m_format;
+    // TODO: convert to using variant
+    CompressionStream m_compressionStream;
+    ZStream m_zstream;
 };
 } // namespace WebCore

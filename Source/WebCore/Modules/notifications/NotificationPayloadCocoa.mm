@@ -29,7 +29,6 @@
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 static NSString * const WebNotificationDefaultActionKey = @"WebNotificationDefaultActionKey";
-static NSString * const WebNotificationTitleKey = @"WebNotificationTitleKey";
 static NSString * const WebNotificationAppBadgeKey = @"WebNotificationAppBadgeKey";
 static NSString * const WebNotificationOptionsKey = @"WebNotificationOptionsKey";
 static NSString * const WebNotificationMutableKey = @"WebNotificationMutableKey";

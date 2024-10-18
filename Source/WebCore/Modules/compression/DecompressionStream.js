@@ -27,12 +27,12 @@ function initializeDecompressionStream(format)
 {
     "use strict";
 
-    const errorMessage = "DecompressionStream requires a single argument with the value 'deflate', 'deflate-raw', or 'gzip'.";
+    const errorMessage = "DecompressionStream requires a single argument with the value 'brotli', 'deflate', 'deflate-raw', or 'gzip'.";
 
     if (arguments.length < 1)
         @throwTypeError(errorMessage);
 
-    const algorithms = ['gzip', 'deflate', 'deflate-raw'];
+    const algorithms = ['brotli', 'gzip', 'deflate', 'deflate-raw'];
     const lowercaseFormat = @toString(arguments[0]).toLowerCase();
     const findAlgorithm = (element) => element === lowercaseFormat;
 
