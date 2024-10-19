@@ -30,19 +30,10 @@
 #include "LibWebRTCDnsResolverFactory.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Identified.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebKit {
-class LibWebRTCResolver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::LibWebRTCResolver> : std::true_type { };
-}
 
 namespace IPC {
 class Connection;
@@ -51,8 +42,9 @@ class Connection;
 namespace WebKit {
 class LibWebRTCSocketFactory;
 
-class LibWebRTCResolver final : public LibWebRTCDnsResolverFactory::Resolver, private webrtc::AsyncDnsResolverResult, public CanMakeWeakPtr<LibWebRTCResolver>, public Identified<LibWebRTCResolverIdentifier> {
+class LibWebRTCResolver final : public LibWebRTCDnsResolverFactory::Resolver, private webrtc::AsyncDnsResolverResult, public CanMakeCheckedPtr<LibWebRTCResolver>, public Identified<LibWebRTCResolverIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCResolver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LibWebRTCResolver);
 public:
     LibWebRTCResolver() = default;
     ~LibWebRTCResolver();
