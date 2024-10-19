@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 
@@ -54,5 +52,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

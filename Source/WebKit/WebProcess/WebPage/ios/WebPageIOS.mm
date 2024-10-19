@@ -2948,15 +2948,11 @@ static inline bool isAssistableElement(Element& element)
         return true;
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element)) {
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
-#if ENABLE(INPUT_TYPE_COLOR)
-        if (inputElement->isColorControl())
-            return true;
-#endif
 #if ENABLE(INPUT_TYPE_WEEK_PICKER)
         if (inputElement->isWeekField())
             return true;
 #endif
-        return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField();
+        return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField() || inputElement->isColorControl();
     }
     if (is<HTMLIFrameElement>(element))
         return false;
@@ -3834,7 +3830,6 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
                     information.elementType = InputType::Search;
             }
         }
-#if ENABLE(INPUT_TYPE_COLOR)
         else if (element->isColorControl()) {
             information.elementType = InputType::Color;
             information.colorValue = element->valueAsColor();
@@ -3843,7 +3838,6 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             information.suggestedColors = element->suggestedColors();
 #endif
         }
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
         information.isFocusingWithDataListDropdown = element->isFocusingWithDataListDropdown();

@@ -206,9 +206,7 @@ struct WebHitTestResultData;
 class NativeWebTouchEvent;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
 class WebColorPicker;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 class WebDataListSuggestionsDropdown;
@@ -447,9 +445,7 @@ public:
     virtual void didDismissContextMenu() { }
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) = 0;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual RefPtr<WebDataListSuggestionsDropdown> createDataListSuggestionsDropdown(WebPageProxy&) = 0;

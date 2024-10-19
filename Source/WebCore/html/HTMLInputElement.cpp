@@ -899,7 +899,6 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 #endif
         }
         break;
-#if ENABLE(INPUT_TYPE_COLOR)
     case AttributeNames::alphaAttr:
     case AttributeNames::colorspaceAttr:
         if (isColorControl() && document().settings().inputTypeColorEnhancementsEnabled()) {
@@ -907,7 +906,6 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             updateValidity();
         }
         break;
-#endif
     default:
         break;
     }
@@ -1575,7 +1573,6 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
         cache->autofillTypeChanged(*this);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 bool HTMLInputElement::alpha()
 {
     return document().settings().inputTypeColorEnhancementsEnabled() && hasAttributeWithoutSynchronization(alphaAttr);
@@ -1597,7 +1594,6 @@ void HTMLInputElement::setColorSpace(const AtomString& value)
     ASSERT(document().settings().inputTypeColorEnhancementsEnabled());
     setAttributeWithoutSynchronization(colorspaceAttr, value);
 }
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 FileList* HTMLInputElement::files()
 {
@@ -1716,23 +1712,19 @@ void HTMLInputElement::resumeFromDocumentSuspension()
 {
     ASSERT(needsSuspensionCallback());
 
-#if ENABLE(INPUT_TYPE_COLOR)
     // <input type=color> uses prepareForDocumentSuspension to detach the color picker UI,
     // so it should not be reset when being loaded from page cache.
     if (isColorControl())
         return;
-#endif // ENABLE(INPUT_TYPE_COLOR)
     document().postTask([inputElement = Ref { *this }] (ScriptExecutionContext&) {
         inputElement->reset();
     });
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 void HTMLInputElement::prepareForDocumentSuspension()
 {
     m_inputType->detach();
 }
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 void HTMLInputElement::willChangeForm()
 {
@@ -1847,29 +1839,21 @@ void HTMLInputElement::requiredStateChanged()
 
 Color HTMLInputElement::valueAsColor() const
 {
-#if ENABLE(INPUT_TYPE_COLOR)
     if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
         return colorInputType->valueAsColor();
-#endif
     return Color::black;
 }
 
 void HTMLInputElement::selectColor(StringView color)
 {
-#if ENABLE(INPUT_TYPE_COLOR)
     if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
         colorInputType->selectColor(color);
-#else
-    UNUSED_PARAM(color);
-#endif
 }
 
 Vector<Color> HTMLInputElement::suggestedColors() const
 {
-#if ENABLE(INPUT_TYPE_COLOR)
     if (auto* colorInputType = dynamicDowncast<ColorInputType>(*m_inputType))
         return colorInputType->suggestedColors();
-#endif
     return { };
 }
 
@@ -1968,12 +1952,10 @@ bool HTMLInputElement::isRangeControl() const
     return m_inputType->isRangeControl();
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 bool HTMLInputElement::isColorControl() const
 {
     return m_inputType->isColorControl();
 }
-#endif
 
 bool HTMLInputElement::isText() const
 {

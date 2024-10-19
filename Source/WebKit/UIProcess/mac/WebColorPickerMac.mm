@@ -32,8 +32,6 @@
 #import "config.h"
 #import "WebColorPickerMac.h"
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #if USE(APPKIT)
 
 #import <WebCore/Color.h>
@@ -310,5 +308,3 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 @end
 
 #endif // USE(APPKIT)
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

@@ -3581,16 +3581,15 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
 
 InputTypeColorEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "Color Inputs"
   humanReadableDescription: "Enable input elements of type color"
-  condition: ENABLE(INPUT_TYPE_COLOR)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(WATCHOS)": false
-      default: true
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) || PLATFORM(GTK)": true
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
@@ -3599,7 +3598,6 @@ InputTypeColorEnhancementsEnabled:
   type: bool
   status: stable
   category: html
-  condition: ENABLE(INPUT_TYPE_COLOR)
   humanReadableName: "HTML alpha and colorspace attribute support for color inputs"
   humanReadableDescription: "Enable HTML alpha and colorspace attribute support for input elements of type color"
   defaultValue:

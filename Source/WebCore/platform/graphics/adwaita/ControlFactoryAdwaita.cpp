@@ -75,12 +75,10 @@ std::unique_ptr<PlatformControl> ControlFactoryAdwaita::createPlatformButton(But
     return makeUnique<ButtonControlAdwaita>(part, *this);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<PlatformControl> ControlFactoryAdwaita::createPlatformColorWell(ColorWellPart& part)
 {
     return makeUnique<ButtonControlAdwaita>(part, *this);
 }
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 std::unique_ptr<PlatformControl> ControlFactoryAdwaita::createPlatformImageControlsButton(ImageControlsButtonPart&)

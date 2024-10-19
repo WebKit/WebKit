@@ -25,6 +25,7 @@
 #include "AppHighlight.h"
 #include "BarcodeDetectorInterface.h"
 #include "ChromeClient.h"
+#include "ColorChooser.h"
 #include "ContactInfo.h"
 #include "ContactsRequestData.h"
 #include "Document.h"
@@ -60,10 +61,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(INPUT_TYPE_COLOR)
-#include "ColorChooser.h"
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "DataListSuggestionPicker.h"
@@ -441,8 +438,6 @@ void Chrome::disableSuddenTermination()
     m_client->disableSuddenTermination();
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -454,8 +449,6 @@ std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& cli
     return m_client->createColorChooser(client, initialColor);
 #endif
 }
-
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 

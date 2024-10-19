@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
+#if PLATFORM(MAC)
 
 #import "ButtonControlMac.h"
 #import <wtf/TZoneMalloc.h>
@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
+#endif // PLATFORM(MAC)

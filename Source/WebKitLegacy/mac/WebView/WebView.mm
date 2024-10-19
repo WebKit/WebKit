@@ -712,10 +712,8 @@ WebDragSourceAction kit(std::optional<WebCore::DragSourceAction> action)
     case WebCore::DragSourceAction::Attachment:
         break;
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebCore::DragSourceAction::Color:
         break;
-#endif
 #if ENABLE(MODEL_ELEMENT)
     case WebCore::DragSourceAction::Model:
         break;

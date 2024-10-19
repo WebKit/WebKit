@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebColorPicker.h"
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 namespace WebKit {
 
 WebColorPicker::WebColorPicker(Client* client)
@@ -59,5 +57,3 @@ void WebColorPicker::showColorPicker(const WebCore::Color&)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

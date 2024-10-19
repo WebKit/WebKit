@@ -240,10 +240,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustCheckboxStyle(style, element);
     case StyleAppearance::Radio:
         return adjustRadioStyle(style, element);
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return adjustColorWellStyle(style, element);
-#endif
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
     case StyleAppearance::DefaultButton:
@@ -332,10 +330,8 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
         }
 
-#if ENABLE(INPUT_TYPE_COLOR)
         if (input->isColorControl())
             return StyleAppearance::ColorWell;
-#endif
 
         if (input->isRangeControl())
             return style.isHorizontalWritingMode() ? StyleAppearance::SliderHorizontal : StyleAppearance::SliderVertical;
@@ -585,10 +581,9 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::TextField:
         return TextFieldPart::create();
 
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return ColorWellPart::create();
-#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
         return ImageControlsButtonPart::create();
@@ -808,10 +803,8 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Radio:
         return paintRadio(box, paintInfo, devicePixelSnappedRect);
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return paintColorWell(box, paintInfo, integralSnappedRect);
-#endif
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
     case StyleAppearance::DefaultButton:
@@ -894,9 +887,7 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case StyleAppearance::Radio:
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::Menulist:
@@ -946,11 +937,9 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case StyleAppearance::SquareButton:
         paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-#endif
     case StyleAppearance::Menulist:
         paintMenuListDecorations(box, paintInfo, integralSnappedRect);
         break;
@@ -1109,9 +1098,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     switch (style.usedAppearance()) {
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::Listbox:
@@ -1254,9 +1241,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
-#if ENABLE(INPUT_TYPE_COLOR)
             || appearance == StyleAppearance::ColorWell
-#endif
             || appearance == StyleAppearance::DefaultButton
             || appearance == StyleAppearance::SquareButton
             || appearance == StyleAppearance::PushButton;
@@ -1342,12 +1327,10 @@ void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element* element) c
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
-#endif
 
 void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
@@ -1385,14 +1368,10 @@ String RenderTheme::attachmentStyleSheet() const
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 String RenderTheme::colorInputStyleSheet() const
 {
     return "input[type=\"color\"] { appearance: auto; inline-size: 44px; block-size: 23px; box-sizing: border-box; outline: none; } "_s;
 }
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #if ENABLE(DATALIST_ELEMENT)
 

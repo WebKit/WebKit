@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include <WebCore/ColorChooser.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
@@ -69,5 +67,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

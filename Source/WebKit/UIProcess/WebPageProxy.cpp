@@ -8906,8 +8906,6 @@ void WebPageProxy::restartXRSessionActivityOnProcessResumeIfNeeded()
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions)
 {
     MESSAGE_CHECK(m_legacyMainFrameProcess, supportsAlpha == ColorControlSupportsAlpha::No || m_preferences->inputTypeColorEnhancementsEnabled());
@@ -8957,8 +8955,6 @@ void WebPageProxy::Internals::didEndColorPicker()
 
     protectedPage->send(Messages::WebPage::DidEndColorPicker());
 }
-
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 
@@ -13482,9 +13478,7 @@ void WebPageProxy::closeOverlayedViews()
     endDataListSuggestions();
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     endColorPicker();
-#endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     endDateTimePicker();

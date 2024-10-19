@@ -109,9 +109,7 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     String dataListStyleSheet() const;
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     virtual String colorInputStyleSheet() const;
-#endif
 
     virtual LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect& paintRect) const { return paintRect; }
 
@@ -298,11 +296,9 @@ protected:
     virtual void adjustButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
-#if ENABLE(INPUT_TYPE_COLOR)
     virtual void adjustColorWellStyle(RenderStyle&, const Element*) const;
     virtual bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
-#endif
 
     virtual void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const;
 

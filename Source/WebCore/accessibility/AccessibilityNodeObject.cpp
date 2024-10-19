@@ -526,10 +526,8 @@ AccessibilityRole AccessibilityNodeObject::roleFromInputElement(const HTMLInputE
         return AccessibilityRole::DateTime;
     if (input.isFileUpload())
         return AccessibilityRole::Button;
-#if ENABLE(INPUT_TYPE_COLOR)
     if (input.isColorControl())
         return AccessibilityRole::ColorWell;
-#endif
     if (input.isInputTypeHidden())
         return AccessibilityRole::Ignored;
     if (input.isRangeControl())

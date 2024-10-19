@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebColorChooser.h"
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include "ColorControlSupportsAlpha.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -101,5 +99,3 @@ void WebColorChooser::endChooser()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
