@@ -1,9 +1,9 @@
 
 PASS Finishing an animation with a zero playback rate throws
 PASS Finishing an animation seeks to the end time
-FAIL Finishing an animation with a current time past the effect end jumps back to the end promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Finishing an animation with a current time past the effect end jumps back to the end
 PASS Finishing a reversed animation jumps to zero time
-FAIL Finishing a reversed animation with a current time less than zero makes it jump back to zero promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Finishing a reversed animation with a current time less than zero makes it jump back to zero
 PASS Finishing an animation while play-pending resolves the pending task immediately
 PASS Finishing an animation attached to inactive timeline while play-pending doesn't resolves the pending task
 PASS Finishing an animation resolves the finished promise synchronously

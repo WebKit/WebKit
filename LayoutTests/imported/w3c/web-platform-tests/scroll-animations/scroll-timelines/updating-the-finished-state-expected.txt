@@ -1,12 +1,12 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Updating the finished state when seeking past end promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Updating the finished state when seeking past end
 PASS Updating the finished state when playing exactly to end
-FAIL Updating the finished state when seeking exactly to end promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Updating the finished state when playing in reverse past zero promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Updating the finished state when seeking a reversed animation past zero promise_test: Unhandled rejection with value: object "TypeError: Type error"
-TIMEOUT Updating the finished state when playing  a reversed animation exactly to zero Test timed out
+PASS Updating the finished state when seeking exactly to end
+PASS Updating the finished state when playing in reverse past zero
+TIMEOUT Updating the finished state when seeking a reversed animation past zero Test timed out
+NOTRUN Updating the finished state when playing  a reversed animation exactly to zero
 NOTRUN Updating the finished state when seeking a reversed animation exactly to zero
 NOTRUN Updating the finished state when seeking before end
 NOTRUN Updating the finished state when seeking a reversed animation before end

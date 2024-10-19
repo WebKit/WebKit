@@ -1,0 +1,14 @@
+Reservation Details
+Name:
+
+Date:
+
+Time:
+
+Number of guests:
+
+Contact info:
+
+
+FAIL Fieldset is a valid source for a view timeline assert_equals: expected 5 but got 0
+

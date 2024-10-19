@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/block-view-timeline-nested-subject.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/change-animation-range-updates-play-state.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/contain-alignment.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/duration.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/fieldset-source.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/get-keyframes-with-timeline-offset.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-subject.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-view-timeline-current-time.tentative.html

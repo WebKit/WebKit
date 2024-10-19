@@ -1,7 +1,7 @@
 
 PASS Pausing clears the start time
 PASS A pending ready promise should be resolved and not replaced when the animation is paused
-FAIL A pause-pending animation maintains the current time when applying a pending playback rate promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS A pause-pending animation maintains the current time when applying a pending playback rate
 PASS The animation's current time remains fixed after pausing
 PASS Pausing a canceled animation sets the current time
 PASS Pause pending task doesn't run when the timeline is inactive.

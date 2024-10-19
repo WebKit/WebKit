@@ -38,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/duration.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/effect-updateTiming.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/finish-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/idlharness.window.js

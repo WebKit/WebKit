@@ -40,7 +40,4 @@ PASS Property animation-timeline value 'view(y 1px auto)'
 PASS Property animation-timeline value 'view(1px y)'
 PASS Property animation-timeline value 'view(y auto)'
 PASS Property animation-timeline value 'view(y auto auto)'
-PASS Property animation-timeline value 'view(10% 10px)'
-PASS Property animation-timeline value 'view(auto calc(1% + 1px))'
-PASS Property animation-timeline value 'view(2em calc(1% + 1em))'
 

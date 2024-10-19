@@ -1,13 +1,13 @@
 
-FAIL Setting current time while reverse-pending preserves currentTime promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Reversing an animation inverts the playback rate promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Reversing an animation resets a sticky start time. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Setting current time while reverse-pending preserves currentTime
+PASS Reversing an animation inverts the playback rate
+FAIL Reversing an animation resets a sticky start time. assert_approx_equals: values do not match for "undefined" expected 100 +/- 0.125 but got 40
 PASS Reversing an animation does not cause it to leave the pending state
 PASS Reversing an animation does not cause it to resolve the ready promise
 PASS Reversing an animation with a negative playback rate should cause the animation to play in a forward direction
-FAIL Reversing when when playbackRate == 0 should preserve the playback rate promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Reversing when when playbackRate == 0 should preserve the playback rate assert_approx_equals: values do not match for "Anchors to range start boundary when playback rate is zero" expected 0 +/- 0.125 but got 50
 FAIL Reversing an idle animation aligns startTime with the rangeEnd boundary assert_approx_equals: values do not match for "animation.startTime should be at its effect end" expected 100 +/- 0.125 but got -100
 PASS Reversing an animation without an active timeline throws an InvalidStateError
-FAIL Reversing an animation plays a pausing animation promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Reversing an animation plays a pausing animation
 PASS Reversing should use the negative pending playback rate
 
