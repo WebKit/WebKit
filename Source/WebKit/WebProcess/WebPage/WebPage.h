@@ -881,6 +881,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     MediaKeySystemPermissionRequestManager& mediaKeySystemPermissionRequestManager() { return m_mediaKeySystemPermissionRequestManager; }
+    Ref<MediaKeySystemPermissionRequestManager> protectedMediaKeySystemPermissionRequestManager();
 #endif
 
     void copyLinkWithHighlight();

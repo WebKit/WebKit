@@ -47,6 +47,9 @@ public:
     explicit MediaKeySystemPermissionRequestManager(WebPage&);
     ~MediaKeySystemPermissionRequestManager() = default;
 
+    void ref() const final;
+    void deref() const final;
+
     void startMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
     void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&);
     void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier);

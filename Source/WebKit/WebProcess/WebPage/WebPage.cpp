@@ -5943,14 +5943,19 @@ void WebPage::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool is
 #endif // ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
+Ref<MediaKeySystemPermissionRequestManager> WebPage::protectedMediaKeySystemPermissionRequestManager()
+{
+    return m_mediaKeySystemPermissionRequestManager.get();
+}
+
 void WebPage::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier mediaKeySystemID)
 {
-    m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasGranted(mediaKeySystemID);
+    protectedMediaKeySystemPermissionRequestManager()->mediaKeySystemWasGranted(mediaKeySystemID);
 }
 
 void WebPage::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier mediaKeySystemID, String&& message)
 {
-    m_mediaKeySystemPermissionRequestManager->mediaKeySystemWasDenied(mediaKeySystemID, WTFMove(message));
+    protectedMediaKeySystemPermissionRequestManager()->mediaKeySystemWasDenied(mediaKeySystemID, WTFMove(message));
 }
 #endif
 

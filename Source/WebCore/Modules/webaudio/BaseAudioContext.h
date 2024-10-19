@@ -147,8 +147,8 @@ public:
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
 
     // ActiveDOMObject.
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void ref() const override { ThreadSafeRefCounted::ref(); }
+    void deref() const override { ThreadSafeRefCounted::deref(); }
 
     // Called at the start of each render quantum.
     void handlePreRenderTasks(const AudioIOPosition& outputPosition);

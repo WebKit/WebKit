@@ -55,6 +55,9 @@ public:
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::ref(); }
+
     WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);

@@ -143,6 +143,16 @@ void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySys
     request->deny(WTFMove(message));
 }
 
+void MediaKeySystemPermissionRequestManager::ref() const
+{
+    m_page->ref();
+}
+
+void MediaKeySystemPermissionRequestManager::deref() const
+{
+    m_page->deref();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ENCRYPTED_MEDIA)

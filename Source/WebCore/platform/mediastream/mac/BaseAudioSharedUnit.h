@@ -53,6 +53,9 @@ class BaseAudioSharedUnit : public RefCounted<BaseAudioSharedUnit>, public Realt
 public:
     virtual ~BaseAudioSharedUnit();
 
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
     void startProducingData();
     void stopProducingData();
     void reconfigure();

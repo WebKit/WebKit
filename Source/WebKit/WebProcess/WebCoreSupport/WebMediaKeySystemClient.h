@@ -46,6 +46,8 @@ private:
     void requestMediaKeySystem(WebCore::MediaKeySystemRequest&) final;
     void cancelMediaKeySystemRequest(WebCore::MediaKeySystemRequest&) final;
 
+    Ref<WebPage> protectedPage() const;
+
     WeakRef<WebPage> m_page;
 };
 

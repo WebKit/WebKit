@@ -25,22 +25,13 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-class MediaCanStartListener;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::MediaCanStartListener> : std::true_type { };
-}
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
 class Document;
 
-class MediaCanStartListener : public CanMakeWeakPtr<MediaCanStartListener> {
+class MediaCanStartListener : public AbstractRefCountedAndCanMakeWeakPtr<MediaCanStartListener> {
 public:
     virtual void mediaCanStart(Document&) = 0;
 protected:

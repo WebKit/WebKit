@@ -35,15 +35,6 @@
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
-class UserMediaPermissionRequestManager;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::UserMediaPermissionRequestManager> : std::true_type { };
-}
-
-namespace WebKit {
 
 class WebPage;
 
@@ -59,8 +50,8 @@ public:
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager() = default;
 
-    void ref() const;
-    void deref() const;
+    void ref() const final;
+    void deref() const final;
 
     void startUserMediaRequest(WebCore::UserMediaRequest&);
     void cancelUserMediaRequest(WebCore::UserMediaRequest&);

@@ -37,6 +37,7 @@
 #include "ExceptionOr.h"
 #include "MediaStreamRequest.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
@@ -48,15 +49,6 @@
 #endif
 
 namespace WebCore {
-class RealtimeMediaSourceCenterObserver;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::RealtimeMediaSourceCenterObserver> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CaptureDevice;
 class CaptureDeviceManager;
@@ -65,7 +57,7 @@ class TrackSourceInfo;
 
 struct MediaConstraints;
 
-class WEBCORE_EXPORT RealtimeMediaSourceCenterObserver : public CanMakeWeakPtr<RealtimeMediaSourceCenterObserver> {
+class WEBCORE_EXPORT RealtimeMediaSourceCenterObserver : public AbstractRefCountedAndCanMakeWeakPtr<RealtimeMediaSourceCenterObserver> {
 public:
     virtual ~RealtimeMediaSourceCenterObserver();
 

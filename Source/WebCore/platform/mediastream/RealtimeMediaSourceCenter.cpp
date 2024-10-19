@@ -202,16 +202,16 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 void RealtimeMediaSourceCenter::captureDeviceWillBeRemoved(const String& persistentId)
 {
     Ref protectedThis { *this };
-    m_observers.forEach([&](auto& observer) {
-        observer.deviceWillBeRemoved(persistentId);
+    m_observers.forEach([&](Ref<RealtimeMediaSourceCenterObserver> observer) {
+        observer->deviceWillBeRemoved(persistentId);
     });
 }
 
 void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
 {
     Ref protectedThis { *this };
-    m_observers.forEach([](auto& observer) {
-        observer.devicesChanged();
+    m_observers.forEach([](Ref<RealtimeMediaSourceCenterObserver> observer) {
+        observer->devicesChanged();
     });
 }
 

@@ -8247,10 +8247,10 @@ MediaCanStartListener* Document::takeAnyMediaCanStartListener()
     if (m_mediaCanStartListeners.isEmptyIgnoringNullReferences())
         return nullptr;
 
-    MediaCanStartListener* listener = m_mediaCanStartListeners.begin().get();
+    RefPtr listener = m_mediaCanStartListeners.begin().get();
     m_mediaCanStartListeners.remove(*listener);
 
-    return listener;
+    return listener.get();
 }
 
 void Document::addDisplayChangedObserver(const DisplayChangedObserver& observer)
