@@ -61,6 +61,10 @@
 #include "RenderVideo.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 #if ASSERT_ENABLED
 // ImageLoader objects are allocated as members of other objects, so generic pointer check would always fail.
 namespace WTF {
@@ -475,6 +479,11 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     if (RefPtr page = element().document().protectedPage())
         page->chrome().client().updateImageSource(protectedElement().get());
+#endif
+
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        SpatialImageControls::updateSpatialImageControls(*imageElement);
 #endif
 }
 

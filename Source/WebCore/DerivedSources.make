@@ -2110,6 +2110,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/html/shadow/attachmentElementShadow.css \
     $(WebCore)/html/shadow/imageOverlay.css \
     $(WebCore)/html/shadow/meterElementShadow.css \
+    $(WebCore)/html/shadow/spatialImageControls.css \
     ModernMediaControls.css \
     $(POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS) \
 #

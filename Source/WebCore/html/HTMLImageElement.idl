@@ -34,6 +34,9 @@
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
     [CEReactions=NotNeeded, Reflect] attribute boolean isMap;
+#if defined(ENABLE_SPATIAL_IMAGE_CONTROLS) && ENABLE_SPATIAL_IMAGE_CONTROLS
+    [CEReactions=NotNeeded, EnabledBySetting=SpatialImageControlsEnabled, Reflect] attribute boolean controls;
+#endif
     [CEReactions=NotNeeded] attribute unsigned long width;
     [CEReactions=NotNeeded] attribute unsigned long height;
     readonly attribute unsigned long naturalHeight;

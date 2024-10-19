@@ -83,6 +83,10 @@
 #include "Settings.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderImage);
@@ -162,6 +166,10 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Optio
 #if ENABLE(SERVICE_CONTROLS)
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
         m_hasShadowControls = image->isImageMenuEnabled();
+#endif
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    if (RefPtr image = dynamicDowncast<HTMLElement>(element))
+        m_hasShadowControls = SpatialImageControls::hasSpatialImageControls(*image);
 #endif
 }
 

@@ -1792,6 +1792,7 @@ $(PROJECT_DIR)/html/shadow/attachmentElementShadow.css
 $(PROJECT_DIR)/html/shadow/imageOverlay.css
 $(PROJECT_DIR)/html/shadow/mac/imageControlsMac.css
 $(PROJECT_DIR)/html/shadow/meterElementShadow.css
+$(PROJECT_DIR)/html/shadow/spatialImageControls.css
 $(PROJECT_DIR)/html/track/AudioTrack.idl
 $(PROJECT_DIR)/html/track/AudioTrackConfiguration.idl
 $(PROJECT_DIR)/html/track/AudioTrackList.idl

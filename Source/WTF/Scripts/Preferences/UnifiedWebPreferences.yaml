@@ -6944,6 +6944,21 @@ SourceBufferChangeTypeEnabled:
       "USE(GSTREAMER)": false
       default: true
 
+SpatialImageControlsEnabled:
+  type: bool
+  status: testable
+  category: media
+  condition: ENABLE(SPATIAL_IMAGE_CONTROLS)
+  humanReadableName: "Spatial image controls API"
+  humanReadableDescription: "Spatial image controls API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SpatialNavigationEnabled:
   type: bool
   status: embedder

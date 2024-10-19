@@ -70,6 +70,10 @@
 #include "ImageControlsMac.h"
 #endif
 
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+#include "SpatialImageControls.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLImageElement);
@@ -430,6 +434,11 @@ void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomStr
         m_hadNameBeforeAttributeChanged = willHaveName;
         break;
     }
+#if ENABLE(SPATIAL_IMAGE_CONTROLS)
+    case AttributeNames::controlsAttr:
+        SpatialImageControls::updateSpatialImageControls(*this);
+        break;
+#endif
     default:
         break;
     }

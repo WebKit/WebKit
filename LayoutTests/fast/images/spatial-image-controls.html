@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialImageControlsEnabled=true ] -->
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    img {
+        width: 200px;
+        height: 200px;
+    }
+    div {
+        width: 200px;
+        position: relative;
+    }
+</style>
+<body>
+    <div>
+        <img controls src="resources/spatial.heic">
+    </div>
+    <div>
+        <template shadowrootmode="open">
+            <img style="width: 200px; height: 200px" controls src="resources/spatial.heic">
+        </template>
+    </div>
+    <img controls src="resources/green.jpg">
+            
+    <script>
+        async function main(){
+            const images = document.querySelectorAll('img');
+            const promises = [];
+
+            images.forEach(image => {
+              promises.push(new Promise(resolve => {
+                image.onload = resolve;
+                image.onerror = resolve;
+              }));
+            });
+            
+            await Promise.all(promises);
+    
+            images.forEach(image => {
+                await UIHelper.renderingUpdate();
+            })
+            testRunner.notifyDone();
+        }
+        
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            main();
+        }
+    </script>
+</body>
