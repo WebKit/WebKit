@@ -1055,8 +1055,25 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarkers()
         });
     }
 
-    for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
-        paintPlatformDocumentMarker(markedText);
+    auto transparentContentMarkedTexts = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::TransparentContent, m_renderer, m_selectableRange);
+
+    // Ensure the transparent content marked texts go first in the vector, so that they take precedence over
+    // the other marked texts when being subdivided so that they do not get painted.
+    Vector<MarkedText> allMarkedTexts;
+    allMarkedTexts.appendVector(transparentContentMarkedTexts);
+    allMarkedTexts.appendVector(markedTexts);
+
+    for (auto& markedText : MarkedText::subdivide(allMarkedTexts, MarkedText::OverlapStrategy::Frontmost)) {
+        switch (markedText.type) {
+        case MarkedText::Type::DraggedContent:
+        case MarkedText::Type::TransparentContent:
+            continue;
+
+        default:
+            paintPlatformDocumentMarker(markedText);
+            break;
+        }
+    }
 }
 
 FloatRect LegacyTextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox& textBox)

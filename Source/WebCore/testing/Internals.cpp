@@ -2798,6 +2798,22 @@ bool Internals::hasMarkerFor(DocumentMarker::Type type, int from, int length)
     return document->editor().selectionStartHasMarkerFor(type, from, length);
 }
 
+ExceptionOr<void> Internals::setMarkerFor(const String& markerTypeString, int from, int length, const String& data)
+{
+    DocumentMarker::Type markerType;
+    if (!markerTypeFrom(markerTypeString, markerType))
+        return Exception { ExceptionCode::SyntaxError };
+
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return { };
+
+    updateEditorUINowIfScheduled();
+
+    document->editor().selectionStartSetMarkerForTesting(markerType, from, length, data);
+    return { };
+}
+
 bool Internals::hasSpellingMarker(int from, int length)
 {
     return hasMarkerFor(DocumentMarker::Type::Spelling, from, length);

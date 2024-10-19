@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <style>
+            .editing {
+                border: 2px solid red;
+                padding: 12px;
+                font-size: 24px;
+            }
+        </style>
+        <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+        <script>
+            function editingTest() {
+                document.getElementById("root").focus();
+                document.execCommand("InsertText", false, "I have a issue.");
+
+                internals.setMarkerFor("spelling", 2, 4, "AAAA");
+                internals.setMarkerFor("transparentcontent", 4, 8, "");
+
+                finishJSTest();
+            }
+        </script>
+        <title>Editing Test</title>
+    </head>
+    <body>
+        <div contenteditable id="root" class="editing"></div>
+        <script>
+            jsTestIsAsync = true;
+
+            if (window.internals) {
+                internals.settings.setUnifiedTextCheckerEnabled(true);
+                internals.settings.setAsynchronousSpellCheckingEnabled(true);
+            }
+
+            editingTest();
+        </script>
+
+    </body>
+</html>

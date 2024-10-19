@@ -471,6 +471,8 @@ public:
 
     bool isSpellcheckDisabledExceptTextReplacement(const HTMLInputElement&) const;
 
+    ExceptionOr<void> setMarkerFor(const String& markerTypeString, int from, int length, const String&);
+
     void handleAcceptedCandidate(const String& candidate, unsigned location, unsigned length);
     void changeSelectionListType();
     void changeBackToReplacedString(const String& replacedString);

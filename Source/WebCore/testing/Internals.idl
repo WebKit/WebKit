@@ -685,7 +685,10 @@ enum RenderingMode {
     undefined setAutomaticTextReplacementEnabled(boolean enabled);
     undefined setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
+    undefined setMarkerFor(DOMString markerTypeString, long from, long length, DOMString data);
+
     undefined handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
+
     undefined changeSelectionListType();
     undefined changeBackToReplacedString(DOMString replacedString);
 
