@@ -2808,7 +2808,8 @@ PDFPageCoverage UnifiedPDFPlugin::pageCoverageForSelection(PDFSelection *selecti
             continue;
 
         // FIXME: <https://webkit.org/b/276981> This needs per-row adjustment via the presentation controller.
-        pageCoverage.append({ *pageIndex, FloatRect { [selection boundsForPage:page] } });
+        auto selectionBounds = FloatRect { [selection boundsForPage:page] };
+        pageCoverage.append(PerPageInfo { *pageIndex, selectionBounds, selectionBounds });
         if (firstPageOnly == FirstPageOnly::Yes)
             break;
     }
@@ -3126,8 +3127,8 @@ Vector<FloatRect> UnifiedPDFPlugin::rectsForTextMatch(const WebFoundTextRange::P
         if (!pageIndex)
             continue;
 
-        auto perPageInfo = PerPageInfo { *pageIndex, [selection boundsForPage:page] };
-        findMatchRects.append(WTFMove(perPageInfo));
+        auto selectionBounds = FloatRect { [selection boundsForPage:page] };
+        findMatchRects.append(PerPageInfo { *pageIndex, selectionBounds, selectionBounds });
     }
 
     return visibleRectsForFindMatchRects(findMatchRects);
