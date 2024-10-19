@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-
 #if ENABLE(WEBM_FORMAT_READER)
 bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
 #endif
@@ -144,12 +142,16 @@ bool PlatformMediaSessionManager::has(PlatformMediaSession::MediaType type) cons
 
 bool PlatformMediaSessionManager::activeAudioSessionRequired() const
 {
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     if (anyOfSessions([] (auto& session) { return session.activeAudioSessionRequired(); }))
         return true;
 
     return WTF::anyOf(m_audioCaptureSources, [](auto& source) {
         return source.isCapturingAudio();
     });
+#else
+    return false;
+#endif
 }
 
 bool PlatformMediaSessionManager::hasActiveAudioSession() const
@@ -199,9 +201,11 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_currentInterruption = type;
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     forEachSession([type] (auto& session) {
         session.beginInterruption(type);
     });
+#endif
     scheduleUpdateSessionState();
 }
 
@@ -210,17 +214,21 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_currentInterruption = { };
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     forEachSession([flags] (auto& session) {
         session.endInterruption(flags);
     });
+#endif
 }
 
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     m_sessions.append(session);
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     if (m_currentInterruption)
         session.beginInterruption(*m_currentInterruption);
+#endif
 
 #if !RELEASE_LOG_DISABLED
     m_logger->addLogger(session.logger());
@@ -273,6 +281,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
 {
     setCurrentSession(session);
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     auto sessionType = session.mediaType();
     auto restrictions = this->restrictions(sessionType);
     if (session.state() == PlatformMediaSession::State::Interrupted && restrictions & InterruptedPlaybackNotPermitted) {
@@ -299,6 +308,9 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     }
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning true");
     return true;
+#else
+    return false;
+#endif
 }
     
 void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying)
@@ -834,15 +846,6 @@ bool PlatformMediaSessionManager::swVPDecodersAlwaysEnabled()
     return m_swVPDecodersAlwaysEnabled;
 }
 #endif // ENABLE(VP9)
-
-#else // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-
-void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
-{
-
-}
-
-#endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 bool PlatformMediaSessionManager::mediaCapabilityGrantsEnabled()
