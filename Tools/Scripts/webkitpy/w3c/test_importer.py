@@ -128,7 +128,7 @@ To import a web-platform-tests test suite named xyz, use:
 To import a web-platform-tests suite from a local copy of web platform tests:
    1. Your local WPT copy must be in a directory called "web-platform-tests".
    2. If the local copy is at, for example, "~/dev/web-platform-tests/", use:
-      import-w3c-tests web-platform-tests/xyz --src-dir ~/dev/ --clean-dest-dir"""
+      import-w3c-tests web-platform-tests/xyz --src-dir ~/dev/"""
     parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
@@ -154,8 +154,8 @@ To import a web-platform-tests suite from a local copy of web platform tests:
     parser.add_argument('--import-all', action='store_true', default=False,
                         help='Ignore the import-expectations.json file. All tests will be imported. This option only applies when tests are downloaded from W3C repository')
 
-    parser.add_argument('--clean-dest-dir', action='store_true', dest='clean_destination_directory', default=False,
-                        help='Clean destination directory. All files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
+    parser.add_argument('--no-clean-dest-dir', action='store_false', dest='clean_destination_directory', default=True,
+                        help='Do not clean the destination directory. By default all files in the destination directory will be deleted except for WebKit specific files (test expectations, .gitignore...) before new tests import. Dangling test expectations (expectation file that is no longer related to a test) are removed after tests import.')
 
     parser.add_argument('test_paths', metavar='web-platform-tests/test_path', nargs='*',
                         help='directories to import')
