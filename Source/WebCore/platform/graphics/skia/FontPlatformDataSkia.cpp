@@ -46,15 +46,24 @@ FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, boo
     m_font = SkFont(typeface, m_size);
     m_font.setEmbolden(m_syntheticBold);
     m_font.setSkewX(m_syntheticOblique ? -SK_Scalar1 / 4 : 0);
+
+    bool useSubpixelPositioning = FontRenderOptions::singleton().useSubpixelPositioning();
+
     m_font.setEdging(FontRenderOptions::singleton().antialias());
     if (m_font.getEdging() == SkFont::Edging::kAlias) {
         // Force full hinting when antialiasing is disabled like Cairo does.
         m_font.setHinting(SkFontHinting::kFull);
+    } else if (useSubpixelPositioning) {
+        // Disable hinting when subpixel positioning is enabled.
+        m_font.setHinting(SkFontHinting::kNone);
     } else
         m_font.setHinting(FontRenderOptions::singleton().hinting());
 
     // Force subpixel positioning when not running tests and full hinting was not requested.
-    m_font.setSubpixel(!FontRenderOptions::singleton().isHintingDisabledForTesting() && m_font.getHinting() != SkFontHinting::kFull);
+    bool forceSubpixel = !FontRenderOptions::singleton().isHintingDisabledForTesting() && m_font.getHinting() != SkFontHinting::kFull;
+    m_font.setSubpixel(forceSubpixel || useSubpixelPositioning);
+
+    m_font.setLinearMetrics(useSubpixelPositioning);
 
     m_hbFont = SkiaHarfBuzzFont::getOrCreate(*m_font.getTypeface());
 
