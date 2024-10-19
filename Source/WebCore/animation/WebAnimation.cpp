@@ -911,7 +911,7 @@ ExceptionOr<void> WebAnimation::finish()
     // An animation can be advanced to the natural end of its current playback direction by using the procedure to finish an animation for animation defined below:
     //
     // 1. If animation's effective playback rate is zero, or if animation's effective playback rate > 0 and target effect end is infinity, throw an InvalidStateError and abort these steps.
-    if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime() == Seconds::infinity()))
+    if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime().isInfinity()))
         return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Apply any pending playback rate to animation.
@@ -1790,7 +1790,7 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
     // 2. If time is infinity, return an unresolved time value.
     // 3. If animation's playback rate is zero, return an unresolved time value.
     // 4. If animation's start time is unresolved, return an unresolved time value.
-    if (!m_playbackRate || !m_startTime || animationTime == Seconds::infinity())
+    if (!m_playbackRate || !m_startTime || animationTime.isInfinity())
         return std::nullopt;
     // 5. Return the result of calculating: time × (1 / playback rate) + start time (where playback rate and start time are the playback rate and start time of animation, respectively).
     return animationTime * (1 / m_playbackRate) + *m_startTime;
