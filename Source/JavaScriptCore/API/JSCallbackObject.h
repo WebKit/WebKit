@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCallbackObject_h
-#define JSCallbackObject_h
+#pragma once
 
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
@@ -253,5 +252,3 @@ void JSCallbackObject<Parent>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 // include the actual template class implementation
 #include "JSCallbackObjectFunctions.h"
-
-#endif // JSCallbackObject_h

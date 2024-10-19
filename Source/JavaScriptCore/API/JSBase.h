@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSBase_h
-#define JSBase_h
+#pragma once
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -181,5 +180,3 @@ JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 #define JSC_NULLABLE
 #define JSC_NONNULL
 #endif
-
-#endif /* JSBase_h */

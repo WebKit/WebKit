@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStringRefBSTR_h
-#define JSStringRefBSTR_h
+#pragma once
 
 #include "JSBase.h"
 
@@ -58,5 +57,3 @@ JS_EXPORT BSTR JSStringCopyBSTR(const JSStringRef string);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSStringRefBSTR_h */

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStringRef_h
-#define JSStringRef_h
+#pragma once
 
 #include <JavaScriptCore/JSValueRef.h>
 
@@ -144,5 +143,3 @@ JS_EXPORT bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSStringRef_h */

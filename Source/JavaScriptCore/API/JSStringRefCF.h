@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSStringRefCF_h
-#define JSStringRefCF_h
+#pragma once
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <JavaScriptCore/JSBase.h>
@@ -56,5 +55,3 @@ JS_EXPORT CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef str
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSStringRefCF_h */

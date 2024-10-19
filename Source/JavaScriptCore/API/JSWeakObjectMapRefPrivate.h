@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWeakObjectMapRefPrivate_h
-#define JSWeakObjectMapRefPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -88,5 +87,3 @@ JS_EXPORT void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, v
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSWeakObjectMapPrivate_h

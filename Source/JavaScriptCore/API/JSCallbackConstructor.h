@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCallbackConstructor_h
-#define JSCallbackConstructor_h
+#pragma once
 
 #include "JSObject.h"
 #include "JSObjectRef.h"
@@ -82,5 +81,3 @@ private:
 #undef JSCALLBACK_CONSTRUCTOR_METHOD
 
 } // namespace JSC
-
-#endif // JSCallbackConstructor_h

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSMarkingConstraintPrivate_h
-#define JSMarkingConstraintPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <stdbool.h>
@@ -49,6 +48,3 @@ JS_EXPORT void JSContextGroupAddMarkingConstraint(JSContextGroupRef, JSMarkingCo
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSMarkingConstraintPrivate_h
-

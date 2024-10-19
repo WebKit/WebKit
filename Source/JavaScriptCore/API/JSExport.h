@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSExport_h
-#define JSExport_h
+#pragma once
 
 #include <JavaScriptCore/JavaScriptCore.h>
 
@@ -147,5 +146,3 @@
     @optional Selector __JS_EXPORT_AS__##PropertyName:(id)argument; @required Selector
 
 #endif
-
-#endif /* JSExport_h */

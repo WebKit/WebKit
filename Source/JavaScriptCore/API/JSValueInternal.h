@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSValueInternal_h
-#define JSValueInternal_h
+#pragma once
 
 #import <JavaScriptCore/JSValuePrivate.h>
 
@@ -61,5 +60,3 @@ NSInvocation *valueToTypeInvocationFor(const char* encodedType);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSValueInternal_h

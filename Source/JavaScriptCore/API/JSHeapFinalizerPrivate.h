@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSHeapFinalizerPrivate_h
-#define JSHeapFinalizerPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSBase.h>
 #include <stdbool.h>
@@ -41,6 +40,3 @@ JS_EXPORT void JSContextGroupRemoveHeapFinalizer(JSContextGroupRef, JSHeapFinali
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSHeapFinalizerPrivate_h
-

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSScriptRefPrivate_h
-#define JSScriptRefPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
@@ -95,5 +94,3 @@ JS_EXPORT JSValueRef JSScriptEvaluate(JSContextRef ctx, JSScriptRef script, JSVa
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSScriptRefPrivate_h */

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextRefInternal_h
-#define JSContextRefInternal_h
+#pragma once
 
 #include "JSContextRefPrivate.h"
 
@@ -56,5 +55,3 @@ JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLo
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSContextRefInternal_h

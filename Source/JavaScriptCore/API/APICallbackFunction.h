@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef APICallbackFunction_h
-#define APICallbackFunction_h
+#pragma once
 
 #include "APICast.h"
 #include "Error.h"
@@ -126,5 +125,3 @@ EncodedJSValue APICallbackFunction::constructImpl(JSGlobalObject* globalObject, 
 }
 
 } // namespace JSC
-
-#endif // APICallbackFunction_h

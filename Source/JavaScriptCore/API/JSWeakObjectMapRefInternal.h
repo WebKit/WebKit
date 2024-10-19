@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWeakObjectMapRefInternal_h
-#define JSWeakObjectMapRefInternal_h
+#pragma once
 
 #include "WeakGCMap.h"
 #include <wtf/RefCounted.h>
@@ -69,5 +68,3 @@ private:
 };
 
 #undef OPAQUE_JSWEAK_OBJECT_MAP_METHOD
-
-#endif // JSWeakObjectMapInternal_h

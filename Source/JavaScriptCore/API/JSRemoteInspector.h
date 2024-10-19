@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSRemoteInspector_h
-#define JSRemoteInspector_h
+#pragma once
 
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
@@ -56,5 +55,3 @@ JS_EXPORT void JSRemoteInspectorSetInspectionFollowsInternalPolicies(bool) JSC_A
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSRemoteInspector_h */

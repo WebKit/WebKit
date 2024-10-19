@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JavaScriptCore_h
-#define JavaScriptCore_h
+#pragma once
 
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/JSStringRefCF.h>
@@ -34,5 +33,3 @@
 #include <JavaScriptCore/JSManagedValue.h>
 #include <JavaScriptCore/JSVirtualMachine.h>
 #include <JavaScriptCore/JSExport.h>
-
-#endif /* JavaScriptCore_h */
