@@ -28,12 +28,19 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "CSSStyleImageValue.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsVideoDecoderSupport.h"
+#include "OffscreenCanvas.h"
+#include "SVGImageElement.h"
 #include "ScriptExecutionContext.h"
 #include "WebCodecsEncodedVideoChunk.h"
 #include "WebCodecsErrorCallback.h"
