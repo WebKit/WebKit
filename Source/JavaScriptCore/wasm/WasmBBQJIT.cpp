@@ -755,9 +755,10 @@ bool BBQJIT::canTierUpToOMG() const
     if (!Options::useBBQTierUpChecks())
         return false;
 
-    if (m_function.data.size() > Options::maximumOMGCandidateCost())
+    if (m_function.data.size() > Options::maximumOMGCandidateCost()) {
+        dataLogLnIf(Options::verboseOSR(), m_callee, ": Too large to tier-up to OMG: size = ", m_function.data.size());
         return false;
-
+    }
     return true;
 }
 
