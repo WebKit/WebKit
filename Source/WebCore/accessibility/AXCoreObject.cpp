@@ -298,7 +298,12 @@ AXCoreObject::AXValue AXCoreObject::value()
 
     if (isColorWell()) {
         auto color = convertColor<SRGBA<float>>(colorValue()).resolved();
-        return makeString("rgb "_s, String::numberToStringFixedPrecision(color.red, 6, TrailingZerosPolicy::Keep), ' ', String::numberToStringFixedPrecision(color.green, 6, TrailingZerosPolicy::Keep), ' ', String::numberToStringFixedPrecision(color.blue, 6, TrailingZerosPolicy::Keep), ' ', color.alpha == 1.0f ? "1"_s : String::numberToStringFixedPrecision(color.alpha, 6, TrailingZerosPolicy::Keep));
+        auto channel = [](float number) {
+            return FormattedNumber::fixedPrecision(number, 6, TrailingZerosPolicy::Keep);
+        };
+        return color.alpha == 1
+            ? makeString("rgb "_s, channel(color.red), ' ', channel(color.green), ' ', channel(color.blue), " 1"_s)
+            : makeString("rgb "_s, channel(color.red), ' ', channel(color.green), ' ', channel(color.blue), ' ', channel(color.alpha));
     }
 
     return stringValue();
