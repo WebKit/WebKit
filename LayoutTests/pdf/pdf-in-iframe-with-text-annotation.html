@@ -1,0 +1,28 @@
+<html><!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<head>
+<script src="../resources/ui-helper.js"></script>
+<meta name="fuzzy" content="maxDifference=0-15;totalPixels=0-50" />
+</head>
+<body>
+<iframe style="height: 50%"; src="annotations/text-annotation.pdf"></iframe>
+</body>
+<script>
+    window.addEventListener('load', async () => {
+        if (!window.internals || !window.testRunner)
+            return;
+        testRunner.waitUntilDone();
+
+        let pluginDocument = document.querySelector("iframe").contentWindow.document;
+        let pluginElement = pluginDocument.querySelector("embed");
+        window.internals.registerPDFTest(async () => {
+            await UIHelper.zoomToScale(2.0);
+            await UIHelper.waitForPDFFadeIn();
+
+            window.internals.setPDFTextAnnotationValueForTesting(pluginElement, 0, 0, "greetings!");
+            await UIHelper.renderingUpdate();
+
+            testRunner.notifyDone();
+        }, pluginElement);
+    });
+</script>
+</html>

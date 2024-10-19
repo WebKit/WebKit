@@ -869,7 +869,7 @@ void AsyncPDFRenderer::invalidateTilesForPaintingRect(float pageScaleFactor, con
     });
 }
 
-void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float pageScaleFactor, const FloatRect& paintingRect, std::optional<PDFLayoutRow> layoutRow)
+void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, const FloatRect& paintingRect, std::optional<PDFLayoutRow> layoutRow)
 {
     // FIXME: If our platform does not support partial updates (supportsPartialRepaint() is false) then this should behave
     // identically to invalidateTilesForPaintingRect().
@@ -897,7 +897,7 @@ void AsyncPDFRenderer::pdfContentChangedInRect(const GraphicsLayer* layer, float
     if (!pdfDocument)
         return;
 
-    auto toTileTransform = paintingToTileTransform(pageScaleFactor);
+    auto toTileTransform = paintingToTileTransform(tiledBacking->tilingScaleFactor());
     auto paintingRectInTileCoordinates = toTileTransform.mapRect(paintingRect);
 
     for (auto& keyValuePair : m_rendereredTiles) {

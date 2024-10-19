@@ -1,0 +1,25 @@
+<html><!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<head>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<iframe style="height: 50%"; src="annotations/text-annotation-filled.pdf"></iframe>
+</body>
+<script>
+    window.addEventListener('load', async () => {
+        if (!window.internals || !window.testRunner)
+            return;
+
+        let pluginDocument = document.querySelector("iframe").contentWindow.document;
+        let pluginElement = pluginDocument.querySelector("embed");
+        testRunner.waitUntilDone();
+        window.internals.registerPDFTest(async () => {
+            await UIHelper.zoomToScale(2.0);
+            await UIHelper.waitForPDFFadeIn();
+            await UIHelper.renderingUpdate();
+
+            testRunner.notifyDone();
+        }, pluginElement);
+    });
+</script>
+</html>

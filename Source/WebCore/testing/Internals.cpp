@@ -7627,6 +7627,19 @@ Vector<Internals::PDFAnnotationRect> Internals::pdfAnnotationRectsForTesting(Ele
     return annotationRects;
 }
 
+void Internals::setPDFTextAnnotationValueForTesting(Element& element, unsigned pageIndex, unsigned annotationIndex, const String& value)
+{
+    RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
+        return;
+
+    RefPtr pluginView = pluginElement->pluginWidget();
+    if (!pluginView)
+        return;
+
+    pluginView->setPDFTextAnnotationValueForTesting(pageIndex, annotationIndex, value);
+}
+
 void Internals::registerPDFTest(Ref<VoidCallback>&& callback, Element& element)
 {
     RefPtr pluginElement = dynamicDowncast<HTMLPlugInElement>(element);

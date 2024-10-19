@@ -229,6 +229,7 @@ private:
     void setPDFDisplayModeForTesting(const String&) final;
     Vector<WebCore::FloatRect> pdfAnnotationRectsForTesting() const override;
     void unlockPDFDocumentForTesting(const String& password) final;
+    void setPDFTextAnnotationValueForTesting(unsigned pageIndex, unsigned annotationIndex, const String& value) final;
     void registerPDFTestCallback(RefPtr<WebCore::VoidCallback> &&) final;
 };
 
