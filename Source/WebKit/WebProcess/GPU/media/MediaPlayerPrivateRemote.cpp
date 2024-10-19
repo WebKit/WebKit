@@ -1420,7 +1420,7 @@ void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
     if (!cdm)
         return;
 
-    auto remoteCDM = WebProcess::singleton().legacyCDMFactory().findCDM(cdm->cdmPrivate());
+    auto remoteCDM = WebProcess::singleton().protectedLegacyCDMFactory()->findCDM(cdm->cdmPrivate());
     if (!remoteCDM)
         return;
 

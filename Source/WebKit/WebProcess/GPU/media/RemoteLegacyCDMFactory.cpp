@@ -44,7 +44,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLegacyCDMFactory);
 
-RemoteLegacyCDMFactory::RemoteLegacyCDMFactory(WebProcess&)
+RemoteLegacyCDMFactory::RemoteLegacyCDMFactory(WebProcess& webProcess)
+    : m_webProcess(webProcess)
 {
 }
 
@@ -143,6 +144,16 @@ RemoteLegacyCDM* RemoteLegacyCDMFactory::findCDM(CDMPrivateInterface* privateInt
             return cdm.get();
     }
     return nullptr;
+}
+
+void RemoteLegacyCDMFactory::ref() const
+{
+    m_webProcess->ref();
+}
+
+void RemoteLegacyCDMFactory::deref() const
+{
+    m_webProcess->ref();
 }
 
 }

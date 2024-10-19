@@ -282,6 +282,7 @@ public:
 #endif
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactory& legacyCDMFactory();
+    Ref<RemoteLegacyCDMFactory> protectedLegacyCDMFactory();
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();

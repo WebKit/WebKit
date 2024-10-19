@@ -52,17 +52,19 @@ RemoteLegacyCDM::~RemoteLegacyCDM() = default;
 
 bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType)
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return false;
 
-    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
     auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
 
 std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
 {
-    if (!m_factory)
+    RefPtr factory = m_factory.get();
+    if (!factory)
         return nullptr;
 
     String storageDirectory = client.mediaKeysStorageDirectory();
@@ -72,17 +74,17 @@ std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCor
     logIdentifier = reinterpret_cast<uint64_t>(client.logIdentifier());
 #endif
 
-    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), m_identifier);
+    auto sendResult = factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), m_identifier);
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    return RemoteLegacyCDMSession::create(m_factory, WTFMove(*identifier), client);
+    return RemoteLegacyCDMSession::create(factory, WTFMove(*identifier), client);
 }
 
 void RemoteLegacyCDM::setPlayerId(std::optional<MediaPlayerIdentifier> identifier)
 {
-    if (m_factory)
-        m_factory->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
+    if (RefPtr factory = m_factory.get())
+        factory->gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMProxy::SetPlayerId(identifier), m_identifier);
 }
 
 }
