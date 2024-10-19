@@ -257,6 +257,7 @@ fast/events/only-valid-drop-targets-receive-file-drop.html [ Skip ]
 fast/events/remove-target-with-shadow-in-drag.html [ Skip ]
 fast/events/selectstart-by-drag.html [ Skip ]
 fast/events/setDragImage-in-document-element-crash.html [ Skip ]
+fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Skip ]
 fast/events/standalone-image-drag-to-editable.html [ Skip ]
 fast/forms/drag-into-textarea.html [ Skip ]
 fast/forms/drag-out-of-textarea.html [ Skip ]
@@ -1024,6 +1025,10 @@ webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Sk
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html [ Pass ]
+
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Failure ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Compositing
@@ -1184,6 +1189,9 @@ css3/blending/blend-mode-clip-accelerated-blending-double.html [ Skip ] # ImageO
 css3/blending/blend-mode-clip-accelerated-blending-with-siblings.html [ Skip ] # ImageOnlyFailure
 css3/blending/blend-mode-clip-accelerated-transformed-blending.html [ Skip ] # ImageOnlyFailure
 css3/blending/blend-mode-clip-rect-accelerated-blending.html [ Skip ] # ImageOnlyFailure
+
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-composited-scrolling-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-001.html [ Pass ]
 
 
 #//////////////////////////////////////////////////////////////////////////////////////////
