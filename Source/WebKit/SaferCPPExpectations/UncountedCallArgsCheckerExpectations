@@ -549,8 +549,6 @@ WebProcess/WebPage/ViewUpdateDispatcher.cpp
 WebProcess/WebPage/VisitedLinkTableController.cpp
 WebProcess/WebPage/WebBackForwardListProxy.cpp
 WebProcess/WebPage/WebContextMenu.cpp
-WebProcess/WebPage/WebCookieCache.cpp
-WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebDisplayRefreshMonitor.cpp
 WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp

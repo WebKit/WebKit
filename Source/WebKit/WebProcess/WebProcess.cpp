@@ -2426,6 +2426,11 @@ Ref<RemoteMediaPlayerManager> WebProcess::protectedRemoteMediaPlayerManager()
 }
 #endif
 
+Ref<WebCookieJar> WebProcess::protectedCookieJar()
+{
+    return m_cookieJar;
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

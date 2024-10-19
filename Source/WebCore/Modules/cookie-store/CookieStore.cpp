@@ -110,7 +110,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
         return;
     }
 
-    downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy()->postTaskToLoader(WTFMove(task));
+    downcast<WorkerGlobalScope>(*context).protectedThread()->workerLoaderProxy()->postTaskToLoader(WTFMove(task));
 }
 
 void CookieStore::MainThreadBridge::ensureOnContextThread(Function<void(CookieStore&)>&& task)
@@ -165,7 +165,7 @@ void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&
             return;
         }
 
-        auto& cookieJar = page->cookieJar();
+        Ref cookieJar = page->cookieJar();
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (std::optional<Vector<Cookie>>&& cookies) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), cookies = crossThreadCopy(WTFMove(cookies))](CookieStore& cookieStore) mutable {
                 if (!cookies)
@@ -175,7 +175,7 @@ void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&
             });
         };
 
-        cookieJar.getCookiesAsync(document, url, options, WTFMove(resultHandler));
+        cookieJar->getCookiesAsync(document, url, options, WTFMove(resultHandler));
     };
 
     ensureOnMainThread(WTFMove(getAllCookies));
@@ -195,7 +195,7 @@ void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, U
             return;
         }
 
-        auto& cookieJar = page->cookieJar();
+        Ref cookieJar = page->cookieJar();
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (bool setSuccessfully) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), setSuccessfully](CookieStore& cookieStore) mutable {
                 if (!setSuccessfully)
@@ -206,7 +206,7 @@ void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, U
         };
 
         document->invalidateDOMCookieCache();
-        cookieJar.setCookieAsync(document, url, cookie, WTFMove(resultHandler));
+        cookieJar->setCookieAsync(document, url, cookie, WTFMove(resultHandler));
     };
 
     ensureOnMainThread(WTFMove(setCookie));
@@ -227,7 +227,7 @@ CookieStore::CookieStore(ScriptExecutionContext* context)
 
 CookieStore::~CookieStore()
 {
-    m_mainThreadBridge->detach();
+    protectedMainThreadBridge()->detach();
 }
 
 static bool containsInvalidCharacters(const String& string)
@@ -583,7 +583,7 @@ void CookieStore::stop()
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     auto host = document->url().host().toString();
-    page->cookieJar().removeChangeListener(host, *this);
+    page->protectedCookieJar()->removeChangeListener(host, *this);
 #endif
     m_hasChangeEventListener = false;
 }

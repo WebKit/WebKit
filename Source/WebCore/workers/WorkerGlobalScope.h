@@ -113,6 +113,7 @@ public:
     void updateServiceWorkerClientData() final;
 
     WorkerThread& thread() const;
+    Ref<WorkerThread> protectedThread() const;
 
     using ScriptExecutionContext::hasPendingActivity;
 

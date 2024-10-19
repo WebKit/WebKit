@@ -472,7 +472,6 @@ Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cache/RetrieveRecordsOptions.h
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
-Modules/cookie-store/CookieStore.cpp
 Modules/credentialmanagement/CredentialsContainer.cpp
 Modules/encryptedmedia/CDM.cpp
 Modules/encryptedmedia/MediaKeySession.cpp

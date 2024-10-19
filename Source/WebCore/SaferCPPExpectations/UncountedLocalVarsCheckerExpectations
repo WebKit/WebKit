@@ -404,7 +404,6 @@ Modules/async-clipboard/Clipboard.cpp
 Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-Modules/cookie-store/CookieStore.cpp
 Modules/encryptedmedia/CDM.cpp
 Modules/encryptedmedia/MediaKeySystemRequest.cpp
 Modules/fetch/FetchBody.cpp

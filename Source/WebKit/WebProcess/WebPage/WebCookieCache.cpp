@@ -72,9 +72,9 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         auto host = url.host().toString();
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
         if (!hasCacheForHost)
-            WebProcess::singleton().cookieJar().addChangeListener(host, *this);
+            WebProcess::singleton().protectedCookieJar()->addChangeListener(host, *this);
 #endif
-        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
         if (!sendResult.succeeded())
             return { };
 
@@ -135,7 +135,7 @@ void WebCookieCache::clear()
 {
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     for (auto& host : m_hostsWithInMemoryStorage)
-        WebProcess::singleton().cookieJar().removeChangeListener(host, *this);
+        WebProcess::singleton().protectedCookieJar()->removeChangeListener(host, *this);
 #endif
     m_hostsWithInMemoryStorage.clear();
     m_inMemoryStorageSession = nullptr;
@@ -149,7 +149,7 @@ void WebCookieCache::clearForHost(const String& host)
 
     inMemoryStorageSession().deleteCookiesForHostnames(Vector<String> { removedHost }, [] { });
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    WebProcess::singleton().cookieJar().removeChangeListener(removedHost, *this);
+    WebProcess::singleton().protectedCookieJar()->removeChangeListener(removedHost, *this);
 #endif
 }
 

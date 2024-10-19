@@ -366,6 +366,7 @@ public:
 #endif
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
+    Ref<WebCookieJar> protectedCookieJar();
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

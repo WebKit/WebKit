@@ -139,7 +139,6 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 WebProcess/WebPage/ViewUpdateDispatcher.cpp
-WebProcess/WebPage/WebCookieJar.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebPage.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp

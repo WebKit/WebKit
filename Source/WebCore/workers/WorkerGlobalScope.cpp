@@ -618,6 +618,11 @@ WorkerThread& WorkerGlobalScope::thread() const
     return *static_cast<WorkerThread*>(workerOrWorkletThread());
 }
 
+Ref<WorkerThread> WorkerGlobalScope::protectedThread() const
+{
+    return thread();
+}
+
 void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
 {
     ASSERT(isContextThread());
