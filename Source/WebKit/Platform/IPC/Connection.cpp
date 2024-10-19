@@ -97,7 +97,7 @@ struct Connection::WaitForMessageState {
 class Connection::SyncMessageState {
 public:
     static std::unique_ptr<SyncMessageState, SyncMessageStateRelease> get(SerialFunctionDispatcher&);
-    SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+    RefPtr<SerialFunctionDispatcher> dispatcher() { return m_dispatcher.get(); }
 
     void wakeUpClientRunLoop()
     {
@@ -134,6 +134,7 @@ private:
     {
     }
     static Lock syncMessageStateMapLock;
+    // FIXME: Don't use raw pointers.
     static UncheckedKeyHashMap<SerialFunctionDispatcher*, SyncMessageState*>& syncMessageStateMap() WTF_REQUIRES_LOCK(syncMessageStateMapLock)
     {
         static NeverDestroyed<UncheckedKeyHashMap<SerialFunctionDispatcher*, SyncMessageState*>> map;
@@ -161,7 +162,7 @@ private:
     Deque<ConnectionAndIncomingMessage> m_messagesBeingDispatched; // Only used on the main thread.
     Deque<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply WTF_GUARDED_BY_LOCK(m_lock);
 
-    SerialFunctionDispatcher& m_dispatcher;
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_dispatcher;
     unsigned m_clients WTF_GUARDED_BY_LOCK(syncMessageStateMapLock) { 0 };
     friend struct Connection::SyncMessageStateRelease;
 };
@@ -186,14 +187,15 @@ void Connection::SyncMessageStateRelease::operator()(SyncMessageState* instance)
         --instance->m_clients;
         if (instance->m_clients)
             return;
-        Connection::SyncMessageState::syncMessageStateMap().remove(&instance->m_dispatcher);
+        if (RefPtr dispatcher = instance->dispatcher())
+            Connection::SyncMessageState::syncMessageStateMap().remove(dispatcher.get());
     }
     delete instance;
 }
 
 void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connection, MessageReceiveQueue& receiveQueue, const ReceiverMatcher& receiverMatcher)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(*m_dispatcher.get());
     auto enqueueMatchingMessagesInContainer = [&](Deque<ConnectionAndIncomingMessage>& connectionAndMessages) {
         Deque<ConnectionAndIncomingMessage> rest;
         for (auto& connectionAndMessage : connectionAndMessages) {
@@ -236,7 +238,9 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     }
 
     if (shouldDispatch) {
-        m_dispatcher.dispatch([protectedConnection = Ref { connection }]() mutable {
+        RefPtr dispatcher = m_dispatcher.get();
+        RELEASE_ASSERT(dispatcher);
+        dispatcher->dispatch([protectedConnection = Ref { connection }]() mutable {
             protectedConnection->dispatchSyncStateMessages();
         });
     }
@@ -248,7 +252,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
 
 void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(*m_dispatcher.get());
     {
         Locker locker { m_lock };
         if (m_messagesBeingDispatched.isEmpty())
@@ -269,7 +273,7 @@ void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, u
 
 void Connection::SyncMessageState::dispatchMessagesUntil(MessageIdentifier lastMessageToDispatch)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(*m_dispatcher.get());
     {
         Locker locker { m_lock };
         if (!m_messagesToDispatchWhileWaitingForSyncReply.containsIf([&](auto& message) { return message.identifier == lastMessageToDispatch; }))
@@ -296,7 +300,7 @@ std::optional<MessageIdentifier> Connection::SyncMessageState::identifierOfLastM
 
 void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
 {
-    assertIsCurrent(m_dispatcher);
+    assertIsCurrent(*m_dispatcher.get());
     {
         Locker locker { m_lock };
         ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(&connection));
@@ -1474,15 +1478,17 @@ SerialFunctionDispatcher& Connection::dispatcher()
     // and must have the incoming message lock held if not being
     // called from the SerialFunctionDispatcher.
     RELEASE_ASSERT(m_syncState);
+    RefPtr dispatcher = m_syncState->dispatcher();
+    RELEASE_ASSERT(dispatcher);
 #if !ENABLE(UNFAIR_LOCK)
     if (!m_incomingMessagesLock.isLocked())
-        assertIsCurrent(m_syncState->dispatcher());
+        assertIsCurrent(*dispatcher);
 #endif
 
     // Our syncState is specific to the SerialFunctionDispatcher we have been
     // bound to during open(), so we can retrieve the SerialFunctionDispatcher
     // from it (rather than storing another pointer on this class).
-    return m_syncState->dispatcher();
+    return *dispatcher; // FIXME: This is unsafe. This function should return RefPtr instead.
 }
 
 void Connection::dispatchOneIncomingMessage()
