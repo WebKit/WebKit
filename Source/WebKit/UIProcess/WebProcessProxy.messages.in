@@ -52,7 +52,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
     StopResponsivenessTimer()
     DidReceiveBackgroundResponsivenessPing()
 
-    MemoryPressureStatusChanged(enum:uint8_t SystemMemoryPressureStatus status)
+    MemoryPressureStatusChanged(SystemMemoryPressureStatus status)
 
     DidCollectPrewarmInformation(WebCore::RegistrableDomain domain, struct WebCore::PrewarmInformation prewarmInformation)
 

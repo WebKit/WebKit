@@ -449,6 +449,7 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::SessionMode',
         'PlatformXR::VisibilityState',
         'String',
+        'SystemMemoryPressureStatus',
         'WebCore::BackForwardItemIdentifier',
         'WebCore::ControlStyle',
         'WebCore::DOMCacheIdentifier',
