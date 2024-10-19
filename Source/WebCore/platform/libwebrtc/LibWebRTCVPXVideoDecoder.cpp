@@ -57,7 +57,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoDecoder);
 
-static WorkQueue& vpxDecoderQueueSingleton()
+static WorkQueue& vpxDecoderQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("VPx VideoDecoder Queue"_s));
     return queue.get();
@@ -107,14 +107,14 @@ LibWebRTCVPXVideoDecoder::~LibWebRTCVPXVideoDecoder()
 
 Ref<VideoDecoder::DecodePromise> LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame)
 {
-    return invokeAsync(vpxDecoderQueueSingleton(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
+    return invokeAsync(vpxDecoderQueue(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
         return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
     });
 }
 
 Ref<GenericPromise> LibWebRTCVPXVideoDecoder::flush()
 {
-    return invokeAsync(vpxDecoderQueueSingleton(), [] {
+    return invokeAsync(vpxDecoderQueue(), [] {
         return GenericPromise::createAndResolve();
     });
 }

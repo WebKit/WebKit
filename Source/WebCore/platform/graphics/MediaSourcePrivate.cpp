@@ -280,12 +280,11 @@ void MediaSourcePrivate::setCDMSession(LegacyCDMSession* session)
 
 void MediaSourcePrivate::ensureOnDispatcher(Function<void()>&& function) const
 {
-    Ref dispatcher = m_dispatcher;
-    if (dispatcher->isCurrent()) {
+    if (m_dispatcher->isCurrent()) {
         function();
         return;
     }
-    dispatcher->dispatch(WTFMove(function));
+    m_dispatcher->dispatch(WTFMove(function));
 }
 
 MediaTime MediaSourcePrivate::currentTime() const

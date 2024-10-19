@@ -109,8 +109,8 @@ RemoteGraphicsContextGLProxy::~RemoteGraphicsContextGLProxy()
 
 void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection>&& streamConnection, RenderingBackendIdentifier renderingBackend, IPC::StreamServerConnection::Handle&& serverHandle, SerialFunctionDispatcher& dispatcher)
 {
-    m_streamConnection = streamConnection.ptr();
-    streamConnection->open(*this, dispatcher);
+    m_streamConnection = WTFMove(streamConnection);
+    m_streamConnection->open(*this, dispatcher);
     callOnMainRunLoopAndWait([&]() {
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection.createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTFMove(serverHandle));
