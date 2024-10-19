@@ -436,6 +436,10 @@
 #include "ModelProcessConnection.h"
 #endif
 
+#if USE(SKIA)
+#include <WebCore/FontRenderOptions.h>
+#endif
+
 #if USE(CG)
 // FIXME: Move the CG-specific PDF painting code out of WebPage.cpp.
 #include <WebCore/GraphicsContextCG.h>
@@ -863,6 +867,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // We need to set the device scale factor before creating the drawing area
     // to ensure it's created with the right size.
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
+
+#if USE(SKIA)
+    FontRenderOptions::singleton().setUseSubpixelPositioning(parameters.deviceScaleFactor >= 2.);
+#endif
 
     RefPtr drawingArea = m_drawingArea;
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -2745,6 +2753,10 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
         pluginView.setDeviceScaleFactor(scaleFactor);
 
     updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
+#endif
+
+#if USE(SKIA)
+    FontRenderOptions::singleton().setUseSubpixelPositioning(scaleFactor >= 2.);
 #endif
 
     if (findController().isShowingOverlay()) {
