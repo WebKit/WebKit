@@ -1945,6 +1945,11 @@ WebProcessProxy& WebPageProxy::ensureRunningProcess()
     return m_legacyMainFrameProcess;
 }
 
+Ref<WebProcessProxy> WebPageProxy::ensureProtectedRunningProcess()
+{
+    return ensureRunningProcess();
+}
+
 RefPtr<API::Navigation> WebPageProxy::loadRequest(WebCore::ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, IsPerformingHTTPFallback isPerformingHTTPFallback, std::unique_ptr<NavigationActionData>&& lastNavigationAction, API::Object* userData)
 {
     if (m_isClosed)

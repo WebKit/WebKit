@@ -1596,6 +1596,7 @@ public:
 #endif
 
     WebProcessProxy& ensureRunningProcess();
+    Ref<WebProcessProxy> ensureProtectedRunningProcess();
     WebProcessProxy& legacyMainFrameProcess() const { return m_legacyMainFrameProcess; }
     WebProcessProxy& siteIsolatedProcess() const { return m_legacyMainFrameProcess; }
     Ref<WebProcessProxy> protectedLegacyMainFrameProcess() const;
