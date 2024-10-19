@@ -114,6 +114,7 @@ JSEXTDisjointTimerQueryWebGL2.cpp
 JSElement.cpp
 JSElementInternals.cpp
 JSEventSource.cpp
+JSEventTarget.cpp
 JSFetchEvent.cpp
 JSFetchRequest.cpp
 JSFetchRequestInit.cpp
@@ -227,6 +228,7 @@ JSMediaStreamAudioDestinationNode.cpp
 JSMediaStreamAudioSourceNode.cpp
 JSMediaStreamTrack.cpp
 JSMessageChannel.cpp
+JSMessageEvent.cpp
 JSMessagePort.cpp
 JSMouseEvent.cpp
 JSMutationEvent.cpp
@@ -458,6 +460,7 @@ Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp
 Modules/applepay/ApplePaySession.cpp
+Modules/applepay/ApplePaySetup.cpp
 Modules/applepay/PaymentCoordinator.cpp
 Modules/applepay/PaymentSession.cpp
 Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp

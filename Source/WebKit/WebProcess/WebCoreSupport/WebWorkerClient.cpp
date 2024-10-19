@@ -70,7 +70,7 @@ private:
 
 UniqueRef<WorkerClient> GPUProcessWebWorkerClient::createNestedWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
-    assertIsCurrent(dispatcher);
+    assertIsCurrent(*this->dispatcher());
     return UniqueRef<WorkerClient> { *new GPUProcessWebWorkerClient { dispatcher, m_displayID } };
 }
 
