@@ -78,13 +78,12 @@ protected:
     virtual void syncPropertiesWithBackingAnimation();
     virtual Ref<StyleOriginatedAnimationEvent> createEvent(const AtomString& eventType, std::optional<Seconds> scheduledTime, double elapsedTime, const std::optional<Style::PseudoElementIdentifier>&) = 0;
 
-    enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
-    ShouldFireEvents shouldFireDOMEvents() const;
-    void invalidateDOMEvents(ShouldFireEvents, CSSNumberishTime elapsedTime = 0_s);
-
 private:
     void disassociateFromOwningElement();
     AnimationEffectPhase phaseWithoutEffect() const;
+    enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
+    ShouldFireEvents shouldFireDOMEvents() const;
+    void invalidateDOMEvents(ShouldFireEvents, CSSNumberishTime elapsedTime = 0_s);
     void enqueueDOMEvent(const AtomString&, CSSNumberishTime elapsedTime, CSSNumberishTime scheduledEffectTime);
 
     CSSNumberishTime effectTimeAtStart() const;
