@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +49,7 @@ public:
     virtual void didChooseColor(const Color&) = 0;
     virtual void didEndChooser() = 0;
     virtual IntRect elementRectRelativeToRootView() const = 0;
+    virtual bool supportsAlpha() const = 0;
     virtual Vector<Color> suggestedColors() const = 0;
 };
 

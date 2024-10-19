@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
+#include "ColorControlSupportsAlpha.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -42,7 +44,8 @@ WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, cons
     , m_page(page)
 {
     m_page->setActiveColorChooser(this);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, client->elementRectRelativeToRootView(), client->suggestedColors()), m_page->identifier());
+    auto supportsAlpha = m_colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(initialColor, m_colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, m_colorChooserClient->suggestedColors()), m_page->identifier());
 }
 
 WebColorChooser::~WebColorChooser()
@@ -74,7 +77,8 @@ void WebColorChooser::reattachColorChooser(const Color& color)
     m_page->setActiveColorChooser(this);
 
     ASSERT(m_colorChooserClient);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView(), m_colorChooserClient->suggestedColors()), m_page->identifier());
+    auto supportsAlpha = m_colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, m_colorChooserClient->suggestedColors()), m_page->identifier());
 }
 
 void WebColorChooser::setSelectedColor(const Color& color)

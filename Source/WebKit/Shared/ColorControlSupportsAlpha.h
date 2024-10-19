@@ -25,4 +25,8 @@
 
 #pragma once
 
+namespace WebKit {
+
 enum class ColorControlSupportsAlpha : bool { Yes, No };
+
+}

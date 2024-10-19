@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
@@ -45,6 +45,7 @@ class DrawingAreaProxy;
 class WebPageNamespace;
 class WebView;
 
+enum class ColorControlSupportsAlpha : bool;
 enum class UndoOrRedo : bool;
 
 class PageClientImpl : public PageClient
@@ -96,7 +97,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&) override;
+    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) override;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

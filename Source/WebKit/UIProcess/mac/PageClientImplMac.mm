@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -524,9 +524,9 @@ void PageClientImpl::didDismissContextMenu()
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(INPUT_TYPE_COLOR)
-RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, Vector<WebCore::Color>&& suggestions)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions)
 {
-    return WebColorPickerMac::create(&page->colorPickerClient(), initialColor, rect, WTFMove(suggestions), m_view);
+    return WebColorPickerMac::create(&page->colorPickerClient(), initialColor, rect, supportsAlpha, WTFMove(suggestions), m_view);
 }
 #endif
 

@@ -86,7 +86,7 @@ messages -> WebPageProxy {
     DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    [EnabledBy=InputTypeColorEnabled] ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);
+    [EnabledBy=InputTypeColorEnabled] ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, enum:bool WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color> suggestions);
     [EnabledBy=InputTypeColorEnabled] SetColorPickerColor(WebCore::Color color);
     [EnabledBy=InputTypeColorEnabled] EndColorPicker();
 #endif

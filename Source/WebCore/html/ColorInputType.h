@@ -49,7 +49,8 @@ public:
         return adoptRef(*new ColorInputType(element));
     }
 
-    Vector<Color> suggestedColors() const;
+    bool supportsAlpha() const final;
+    Vector<Color> suggestedColors() const final;
     Color valueAsColor() const;
     void selectColor(StringView);
 

@@ -89,7 +89,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)updateColorPickerState
 {
     [_colorPickerViewController setSelectedColor:cocoaColor(_view.focusedElementInformation.colorValue).get()];
-    [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == ColorControlSupportsAlpha::Yes && _view.page->preferences().inputTypeColorEnhancementsEnabled()];
+    [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && _view.page->preferences().inputTypeColorEnhancementsEnabled()];
 #if ENABLE(DATALIST_ELEMENT)
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];

@@ -3838,7 +3838,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         else if (element->isColorControl()) {
             information.elementType = InputType::Color;
             information.colorValue = element->valueAsColor();
-            information.supportsAlpha = element->alpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
+            information.supportsAlpha = element->alpha() ? WebKit::ColorControlSupportsAlpha::Yes : WebKit::ColorControlSupportsAlpha::No;
 #if ENABLE(DATALIST_ELEMENT)
             information.suggestedColors = element->suggestedColors();
 #endif

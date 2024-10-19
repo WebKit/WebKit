@@ -365,6 +365,12 @@ IntRect ColorInputType::elementRectRelativeToRootView() const
     return element()->document().view()->contentsToRootView(element()->renderer()->absoluteBoundingBoxRect());
 }
 
+bool ColorInputType::supportsAlpha() const
+{
+    ASSERT(element());
+    return element()->alpha();
+}
+
 Vector<Color> ColorInputType::suggestedColors() const
 {
     Vector<Color> suggestions;
