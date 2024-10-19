@@ -148,6 +148,9 @@
             },
             "/webkit/WebKitWebContext/uri-scheme": {
                 "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/279204"}}
+            },
+            "/webkit/WebKitWebContext/no-web-process-leak": {
+                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/281137"}}
             }
         }
     },
@@ -167,12 +170,6 @@
             },
             "/webkit/WebKitWebView/notification": {
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/265886"}}
-            },
-            "/webkit/WebKitWebView/save": {
-                "expected": {
-                        "gtk": {"status": ["CRASH", "FAIL"], "bug": "webkit.org/b/269585"},
-                        "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/271327"}
-                }
             },
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
@@ -374,6 +371,9 @@
         "subtests": {
             "/webkit/WebKitPolicyClient/autoplay-policy": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"}}
+            },
+            "/webkit/WebKitPolicyClient/new-window-policy": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
             }
         }
     },
@@ -381,6 +381,12 @@
         "subtests": {
             "/webkit/Downloads/remote-file-error": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/Downloads/policy-decision-download-cancel": {
+                "expected": {"wpe": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/281811"}}
+            },
+            "/webkit/Downloads/local-file-error": {
+                "expected": {"wpe": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/281813"}}
             }
         }
     },
@@ -403,9 +409,6 @@
         "subtests": {
             "/webkit/WebKitWebProcessExtension/page-id": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"}}
-            },
-            "/webkit/WebKitWebProcessExtension/user-messages": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/274584"}}
             }
         }
     },
