@@ -221,7 +221,7 @@ header: <wtf/MemoryPressureHandler.h>
 }
 
 header: <wtf/MemoryPressureHandler.h>
-enum class WTF::SystemMemoryPressureStatus : uint8_t {
+[CustomHeader] enum class WTF::SystemMemoryPressureStatus : uint8_t {
     Normal,
     Warning,
     Critical,
