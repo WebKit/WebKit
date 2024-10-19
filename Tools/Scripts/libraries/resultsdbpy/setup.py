@@ -33,6 +33,7 @@ setup(
     version='3.1.9',
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: Flask',

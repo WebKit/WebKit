@@ -47,7 +47,7 @@ except ImportError:
         "See https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitcorepy"
     )
 
-version = Version(0, 7, 0)
+version = Version(0, 7, 1)
 
 AutoInstall.register(Package('blinker', Version(1, 8, 2)))
 AutoInstall.register(Package('click', Version(8, 1, 7)))
