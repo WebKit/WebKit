@@ -3,7 +3,8 @@
         "subtests": {
             "/webkit/Authentication/authentication-success": {
                 "expected": {
-                        "gtk@Release": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/233509"}
+                    "gtk@Release": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/233509"},
+                    "wpe": {"status": ["PASS", "TIMEOUT", "FAIL"], "bug": "webkit.org/b/281822"}
                 }
             }
         }
