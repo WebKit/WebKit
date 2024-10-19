@@ -634,6 +634,7 @@ bindings/js/JSLocationCustom.cpp
 bindings/js/JSMediaListCustom.h
 bindings/js/JSMessagePortCustom.cpp
 bindings/js/JSMicrotaskCallback.h
+bindings/js/JSNavigateEventCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSObservableArray.cpp
@@ -782,6 +783,7 @@ dom/ScriptedAnimationController.cpp
 dom/SelectorQuery.cpp
 dom/ShadowRoot.cpp
 dom/SimpleRange.cpp
+dom/SimulatedClick.cpp
 dom/SlotAssignment.cpp
 dom/SpaceSplitString.cpp
 dom/StaticRange.cpp
@@ -982,6 +984,7 @@ loader/DocumentLoader.cpp
 loader/FrameLoader.cpp
 loader/HistoryController.cpp
 loader/MixedContentChecker.cpp
+loader/NavigationAction.cpp
 loader/NavigationScheduler.cpp
 loader/ThreadableLoader.cpp
 loader/WorkerThreadableLoader.cpp

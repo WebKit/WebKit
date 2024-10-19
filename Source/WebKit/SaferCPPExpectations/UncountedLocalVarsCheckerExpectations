@@ -1,16 +1,24 @@
+NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
+NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
 NetworkProcess/NetworkSession.cpp
 NetworkProcess/PingLoad.h
+NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
+NetworkProcess/cache/NetworkCache.cpp
 NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp
 NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
+NetworkProcess/storage/NetworkStorageManager.cpp
+NetworkProcess/storage/OriginStorageManager.cpp
 Platform/IPC/MessageSenderInlines.h
+Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Shared/API/APIArray.cpp
 Shared/API/APIObject.h
 Shared/API/c/cg/WKImageCG.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
+Shared/WebBackForwardListFrameItem.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebHitTestResultData.cpp
@@ -41,6 +49,7 @@ UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Gamepad/UIGamepadProvider.cpp
 UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp
 UIProcess/Notifications/WebNotificationManagerProxy.cpp
+UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
 UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
@@ -144,3 +153,4 @@ WebProcess/WebSleepDisablerClient.cpp
 WebProcess/WebStorage/StorageAreaMap.cpp
 WebProcess/cocoa/TextTrackRepresentationCocoa.mm
 WebProcess/cocoa/WebProcessCocoa.mm
+webpushd/PushService.mm

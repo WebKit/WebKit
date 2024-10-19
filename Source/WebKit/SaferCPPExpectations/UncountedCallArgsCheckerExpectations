@@ -42,10 +42,13 @@ NetworkProcess/Downloads/PendingDownload.cpp
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm
 NetworkProcess/NetworkCORSPreflightChecker.cpp
+NetworkProcess/NetworkConnectionToWebProcess.cpp
 NetworkProcess/NetworkDataTask.cpp
 NetworkProcess/NetworkDataTaskBlob.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
+NetworkProcess/NetworkProcess.cpp
+NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/NetworkSession.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
@@ -71,6 +74,7 @@ NetworkProcess/storage/BackgroundFetchStoreManager.cpp
 NetworkProcess/storage/CacheStorageCache.cpp
 NetworkProcess/storage/CacheStorageDiskStore.cpp
 NetworkProcess/storage/IDBStorageRegistry.cpp
+NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
@@ -109,6 +113,8 @@ Shared/API/c/mac/WKWebArchiveRef.cpp
 Shared/API/c/mac/WKWebArchiveResource.cpp
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
+Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm
+Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/Cocoa/APIObject.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
@@ -274,6 +280,7 @@ UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionTabCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionURLSchemeHandlerCocoa.mm
 UIProcess/Extensions/WebExtensionAlarm.cpp
@@ -326,6 +333,7 @@ UIProcess/WebAuthentication/fido/CtapCcidDriver.cpp
 UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
 UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp
 UIProcess/WebAuthentication/fido/FidoService.cpp
+UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp
 UIProcess/WebBackForwardList.cpp
 UIProcess/WebContextMenuProxy.cpp
 UIProcess/WebEditCommandProxy.cpp
@@ -359,6 +367,7 @@ UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebDateTimePickerMac.mm
 UIProcess/mac/WebViewImpl.mm
+WebProcess/ApplePay/WebPaymentCoordinator.cpp
 WebProcess/Automation/WebAutomationDOMWindowObserver.cpp
 WebProcess/Automation/WebAutomationSessionProxy.cpp
 WebProcess/Cache/WebCacheStorageConnection.cpp
@@ -575,6 +584,8 @@ WebProcess/cocoa/TextTrackRepresentationCocoa.mm
 WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoPresentationManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
+webpushd/ApplePushServiceConnection.mm
+webpushd/PushService.h
 webpushd/PushService.mm
 webpushd/PushServiceConnection.mm
 webpushd/WebPushDaemon.mm

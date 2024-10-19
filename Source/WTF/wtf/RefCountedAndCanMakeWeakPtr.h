@@ -32,7 +32,9 @@ namespace WTF {
 
 template<typename T>
 class RefCountedAndCanMakeWeakPtr : public CanMakeWeakPtr<T>, public RefCounted<T> {
-
+public:
+    void ref() const { RefCounted<T>::ref(); }
+    void deref() const { RefCounted<T>::deref(); }
 };
 
 } // namespace WTF
