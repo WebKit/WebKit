@@ -212,8 +212,8 @@ private:
     bool isEmbedDomain(const String&) const;
     bool isYoutubeEmbedDomain() const;
 
-#if ENABLE(TOUCH_EVENTS)
     bool isAmazon() const;
+#if ENABLE(TOUCH_EVENTS)
     bool isGoogleMaps() const;
 #endif
 

@@ -395,11 +395,12 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 #endif
 }
 
-#if ENABLE(TOUCH_EVENTS)
 bool Quirks::isAmazon() const
 {
     return PublicSuffixStore::singleton().topPrivatelyControlledDomain(m_document->topDocument().url().host()).startsWith("amazon."_s);
 }
+
+#if ENABLE(TOUCH_EVENTS)
 
 bool Quirks::isGoogleMaps() const
 {
@@ -647,7 +648,7 @@ bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
         return false;
 
     if (!m_needsPrimeVideoUserSelectNoneQuirk)
-        m_needsPrimeVideoUserSelectNoneQuirk = m_document->url().host() == "www.amazon.com"_s;
+        m_needsPrimeVideoUserSelectNoneQuirk = isAmazon();
 
     return *m_needsPrimeVideoUserSelectNoneQuirk;
 #else
