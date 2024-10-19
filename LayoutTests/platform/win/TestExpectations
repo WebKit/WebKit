@@ -1382,7 +1382,6 @@ fast/forms/color/color-setrangetext.html [ Skip ] # Failure
 fast/forms/color/input-appearance-color.html [ Skip ] # Failure
 fast/forms/color/input-color-onchange-event.html [ Skip ] # Failure
 fast/forms/color/input-color-readonly.html [ Skip ] # Failure
-fast/forms/color/input-value-sanitization-color.html [ Skip ] # Failure
 fast/forms/control-clip-overflow.html [ Skip ] # Failure
 fast/forms/control-clip.html [ Skip ] # Failure
 fast/forms/control-restrict-line-height.html [ Skip ] # Failure

@@ -3597,7 +3597,7 @@ InputTypeColorEnabled:
 
 InputTypeColorEnhancementsEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: html
   condition: ENABLE(INPUT_TYPE_COLOR)
   humanReadableName: "HTML alpha and colorspace attribute support for color inputs"
@@ -3606,8 +3606,10 @@ InputTypeColorEnhancementsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
       default: false
   sharedPreferenceForWebProcess: true
 
