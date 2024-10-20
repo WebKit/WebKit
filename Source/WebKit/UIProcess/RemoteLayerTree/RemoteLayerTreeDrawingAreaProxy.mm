@@ -321,7 +321,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
 
         if (m_remoteLayerTreeHost->updateLayerTree(connection, layerTreeTransaction)) {
             if (!m_replyForUnhidingContent)
-                webPageProxy->setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
+                webPageProxy->setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->protectedRootNode().get());
             else
                 m_remoteLayerTreeHost->detachRootLayer();
         }

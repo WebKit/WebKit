@@ -32,6 +32,7 @@
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -43,29 +44,20 @@ OBJC_CLASS UIView;
 #endif
 
 namespace WebKit {
-class RemoteLayerTreeNode;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLayerTreeNode> : std::true_type { };
-}
-
-namespace WebKit {
 
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;
 
-class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
+class RemoteLayerTreeNode final : public RefCountedAndCanMakeWeakPtr<RemoteLayerTreeNode> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeNode);
 public:
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
 #endif
     ~RemoteLayerTreeNode();
 
-    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
+    static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
@@ -155,6 +147,11 @@ public:
     void setBackdropRootIsOpaque(bool backdropRootIsOpaque) { m_backdropRootIsOpaque = backdropRootIsOpaque; }
 
 private:
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+#if PLATFORM(IOS_FAMILY)
+    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+#endif
+
     void initializeLayer();
 
     WebCore::PlatformLayerIdentifier m_layerID;

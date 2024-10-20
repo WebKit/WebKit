@@ -54,6 +54,7 @@ public:
 
     RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     RemoteLayerTreeNode* rootNode() const { return m_rootNode.get(); }
+    RefPtr<RemoteLayerTreeNode> protectedRootNode() const { return m_rootNode.get(); }
 
     CALayer *layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
     CALayer *rootLayer() const;
@@ -104,7 +105,7 @@ public:
 
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
-    std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    RefPtr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     bool updateBannerLayers(const RemoteLayerTreeTransaction&);
 
@@ -114,7 +115,7 @@ private:
 
     WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
-    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
+    UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteLayerTreeNode>> m_nodes;
     UncheckedKeyHashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;
     UncheckedKeyHashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostedLayers;
     UncheckedKeyHashMap<WebCore::ProcessIdentifier, HashSet<WebCore::PlatformLayerIdentifier>> m_hostedLayersInProcess;

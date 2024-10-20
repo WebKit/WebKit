@@ -374,9 +374,7 @@ CALayer *RemoteLayerTreeHost::layerForID(std::optional<WebCore::PlatformLayerIde
 
 CALayer *RemoteLayerTreeHost::rootLayer() const
 {
-    if (!m_rootNode)
-        return nil;
-    return m_rootNode->layer();
+    return m_rootNode ? m_rootNode->layer() : nil;
 }
 
 void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
@@ -399,14 +397,14 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
             hostedNode->addToHostingNode(*node);
     }
 
-    m_nodes.add(*properties.layerID, WTFMove(node));
+    m_nodes.add(*properties.layerID, node.releaseNonNull());
 }
 
 #if !PLATFORM(IOS_FAMILY)
-std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithLayer = [&] (RetainPtr<CALayer>&& layer) {
-        return makeUnique<RemoteLayerTreeNode>(*properties.layerID, properties.hostIdentifier(), WTFMove(layer));
+        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTFMove(layer));
     };
 
     switch (properties.type) {
@@ -461,10 +459,8 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 void RemoteLayerTreeHost::detachRootLayer()
 {
-    if (!m_rootNode)
-        return;
-    m_rootNode->detachFromParent();
-    m_rootNode = nullptr;
+    if (RefPtr rootNode = std::exchange(m_rootNode, nullptr).get())
+        rootNode->detachFromParent();
 }
 
 static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)
