@@ -41,7 +41,7 @@ public:
 private:
     void adjustTextBoxTrimStatusBeforeLayout(const RenderBlockFlow* lastFormattedLineRoot);
     void adjustTextBoxTrimStatusAfterLayout();
-    void handlePropagatedTextBoxTrimBeforeLayout();
+    void handleTextBoxTrimNoneBeforeLayout();
 
     CheckedPtr<const RenderBlockFlow> m_blockContainer;
     std::optional<RenderLayoutState::TextBoxTrim> m_previousTextBoxTrimStatus { };
