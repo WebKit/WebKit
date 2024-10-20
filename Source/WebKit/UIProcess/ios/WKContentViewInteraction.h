@@ -263,6 +263,7 @@ struct WKSelectionDrawingInfo {
     WebCore::Color caretColor;
     Vector<WebCore::SelectionGeometry> selectionGeometries;
     WebCore::IntRect selectionClipRect;
+    std::optional<WebCore::PlatformLayerIdentifier> enclosingLayerID;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WKSelectionDrawingInfo&);

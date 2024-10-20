@@ -396,12 +396,14 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     type = SelectionType::Range;
     if (!editorState.postLayoutData)
         return;
+
     auto& postLayoutData = *editorState.postLayoutData;
     auto& visualData = *editorState.visualData;
     caretRect = visualData.caretRectAtEnd;
     caretColor = postLayoutData.caretColor;
     selectionGeometries = visualData.selectionGeometries;
     selectionClipRect = visualData.selectionClipRect;
+    enclosingLayerID = visualData.enclosingLayerID;
 }
 
 inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
@@ -437,6 +439,9 @@ inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
     if (a.type != WKSelectionDrawingInfo::SelectionType::None && a.selectionClipRect != b.selectionClipRect)
         return false;
 
+    if (a.enclosingLayerID != b.enclosingLayerID)
+        return false;
+
     return true;
 }
 
@@ -459,6 +464,7 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
     stream.dumpProperty("caret color", info.caretColor);
     stream.dumpProperty("selection geometries", info.selectionGeometries);
     stream.dumpProperty("selection clip rect", info.selectionClipRect);
+    stream.dumpProperty("layer", info.enclosingLayerID);
     return stream;
 }
 
