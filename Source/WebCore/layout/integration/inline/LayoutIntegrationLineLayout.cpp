@@ -432,16 +432,6 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     return textBoxTrimForIFC;
 }
 
-static inline TextEdge textBoxEdge(const RenderBlockFlow& rootRenderer)
-{
-    auto* layoutState = rootRenderer.view().frameView().layoutContext().layoutState();
-    if (!layoutState)
-        return { };
-    if (auto textBoxTrim = layoutState->textBoxTrim())
-        return textBoxTrim->propagatedTextBoxEdge;
-    return { };
-}
-
 static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
@@ -509,7 +499,7 @@ std::optional<LayoutRect> LineLayout::layout()
         m_blockFormattingState.placedFloats(),
         lineClamp(flow()),
         textBoxTrim(flow()),
-        textBoxEdge(flow()),
+        flow().style().textBoxEdge(),
         intrusiveInitialLetterBottom(),
         lineGrid(flow())
     };

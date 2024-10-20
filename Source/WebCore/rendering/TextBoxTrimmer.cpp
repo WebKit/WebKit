@@ -147,7 +147,7 @@ void TextBoxTrimmer::adjustTextBoxTrimStatusBeforeLayout(const RenderBlockFlow* 
     if (!lastFormattedLineRoot && m_previousTextBoxTrimStatus)
         lastFormattedLineRoot =  m_previousTextBoxTrimStatus->lastFormattedLineRoot.get();
 
-    layoutState.setTextBoxTrim(RenderLayoutState::TextBoxTrim { shouldTrimFirstFormattedLineStart, m_blockContainer->style().textBoxEdge(), lastFormattedLineRoot });
+    layoutState.setTextBoxTrim(RenderLayoutState::TextBoxTrim { shouldTrimFirstFormattedLineStart, lastFormattedLineRoot });
 }
 
 void TextBoxTrimmer::adjustTextBoxTrimStatusAfterLayout()

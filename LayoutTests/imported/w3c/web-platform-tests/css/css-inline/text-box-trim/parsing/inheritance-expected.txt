@@ -1,6 +1,6 @@
 
 PASS Property text-box-edge has initial value auto
-PASS Property text-box-edge does not inherit
+PASS Property text-box-edge inherits
 PASS Property text-box-trim has initial value none
 PASS Property text-box-trim does not inherit
 

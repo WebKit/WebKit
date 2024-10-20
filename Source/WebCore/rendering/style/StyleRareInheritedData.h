@@ -96,6 +96,7 @@ public:
 
     TextUnderlineOffset textUnderlineOffset;
 
+    TextEdge textBoxEdge;
     TextEdge lineFitEdge;
     
     Length wordSpacing;
