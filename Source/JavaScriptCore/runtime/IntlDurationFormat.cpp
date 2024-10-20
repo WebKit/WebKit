@@ -326,6 +326,63 @@ static DurationSignType getDurationSign(ISO8601::Duration duration)
     return DurationSignType::Zero;
 }
 
+static String int128ToString(Int128 value)
+{
+    Vector<LChar> resultString;
+    bool isNegative = value < 0;
+    if (isNegative)
+        value = -value;
+
+    while (value) {
+        Int128 digit = value % 10;
+        resultString.append(static_cast<char>('0' + digit));
+        value /= 10;
+    }
+
+    if (isNegative)
+        resultString.append('-');
+
+    std::reverse(resultString.begin(), resultString.end());
+
+    return StringImpl::adopt(WTFMove(resultString));
+}
+
+static String buildDecimalFormat(TemporalUnit unit, Int128 ns)
+{
+    ASSERT(unit == TemporalUnit::Second || unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond);
+
+    int flactionalDigits = 0;
+    Int128 exponent = 0;
+    if (unit == TemporalUnit::Second) {
+        flactionalDigits = 9;
+        exponent = Int128(1000000000);
+    } else if (unit == TemporalUnit::Millisecond) {
+        flactionalDigits = 6;
+        exponent = Int128(1000000);
+    } else {
+        ASSERT(unit == TemporalUnit::Microsecond);
+        flactionalDigits = 3;
+        exponent = Int128(1000);
+    }
+
+    Int128 integerPart = ns / exponent;
+    ASSERT(ns % exponent >= std::numeric_limits<int64_t>::min() && ns % exponent <= std::numeric_limits<int64_t>::max());
+    int64_t fractionalPart = std::abs(static_cast<int64_t>(ns % exponent));
+
+    StringBuilder builder;
+
+    builder.append(int128ToString(integerPart));
+    builder.append("."_s);
+
+    String fractionalString = String::number(fractionalPart);
+    int zeroLength = flactionalDigits - fractionalString.length();
+    for (int i = 0; i < zeroLength; ++i)
+        builder.append("0"_s);
+    builder.append(fractionalString);
+
+    return builder.toString();
+}
+
 static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration)
 {
     // https://tc39.es/proposal-intl-duration-format/#sec-partitiondurationformatpattern
@@ -342,6 +399,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
         TemporalUnit unit = static_cast<TemporalUnit>(index);
         auto unitData = durationFormat->units()[index];
         double value = duration[unit];
+        std::optional<Int128> totalNanosecondsValue;
 
         StringBuilder skeletonBuilder;
 
@@ -362,13 +420,15 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             }
             if (nextStyle == IntlDurationFormat::UnitStyle::Numeric) {
                 if (unit == TemporalUnit::Second)
-                    value = duration[TemporalUnit::Nanosecond] / 1e9 + duration[TemporalUnit::Microsecond] / 1e6 + duration[TemporalUnit::Millisecond] / 1e3 + duration[TemporalUnit::Second];
+                    totalNanosecondsValue = duration.totalNanoseconds<TemporalUnit::Second>();
                 else if (unit == TemporalUnit::Millisecond)
-                    value = duration[TemporalUnit::Nanosecond] / 1e6 + duration[TemporalUnit::Microsecond] / 1e3 + duration[TemporalUnit::Millisecond];
+                    totalNanosecondsValue = duration.totalNanoseconds<TemporalUnit::Millisecond>();
                 else {
                     ASSERT(unit == TemporalUnit::Microsecond);
-                    value = duration[TemporalUnit::Nanosecond] / 1e3 + duration[TemporalUnit::Microsecond];
+                    totalNanosecondsValue = duration.totalNanoseconds<TemporalUnit::Microsecond>();
                 }
+                ASSERT(totalNanosecondsValue);
+
                 // https://github.com/unicode-org/icu/blob/master/docs/userguide/format_parse/numbers/skeletons.md#fraction-precision
                 skeletonBuilder.append(" ."_s);
 
@@ -456,6 +516,39 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 return formattedNumber;
             };
 
+            auto formatIntl128AsDecimal = [&](const String& skeleton) -> std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> {
+                ASSERT(totalNanosecondsValue);
+                ASSERT(unit == TemporalUnit::Second || unit == TemporalUnit::Millisecond || unit == TemporalUnit::Microsecond);
+
+                auto scope = DECLARE_THROW_SCOPE(vm);
+
+                dataLogLnIf(IntlDurationFormatInternal::verbose, skeleton);
+                StringView skeletonView(skeleton);
+                auto upconverted = skeletonView.upconvertedCharacters();
+
+                UErrorCode status = U_ZERO_ERROR;
+                auto numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), durationFormat->dataLocaleWithExtensions().data(), &status));
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "Failed to initialize NumberFormat"_s);
+                    return { };
+                }
+
+                auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
+                    return { };
+                }
+
+                auto strSpan = buildDecimalFormat(unit, totalNanosecondsValue.value()).impl()->span8();
+                unumf_formatDecimal(numberFormatter.get(), reinterpret_cast<const char*>(strSpan.data()), strSpan.size(), formattedNumber.get(), &status);
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
+                    return { };
+                }
+
+                return formattedNumber;
+            };
+
             switch (style) {
             // 3.l.i. If style is "2-digit" or "numeric", then
             case IntlDurationFormat::UnitStyle::TwoDigit:
@@ -475,7 +568,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 bool needsSeparator = (unit == TemporalUnit::Hour && needsFormatMinutes) || (unit == TemporalUnit::Minute && needsFormatSeconds);
 
                 if (needsFormat) {
-                    auto formattedNumber = formatDouble(skeletonBuilder.toString());
+                    auto formattedNumber = totalNanosecondsValue ? formatIntl128AsDecimal(skeletonBuilder.toString()) : formatDouble(skeletonBuilder.toString());
                     RETURN_IF_EXCEPTION(scope, { });
 
                     auto formatted = formatToString(formattedNumber.get());
@@ -507,7 +600,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     skeletonBuilder.append(" unit-width-narrow"_s);
                 }
 
-                auto formattedNumber = formatDouble(skeletonBuilder.toString());
+                auto formattedNumber = totalNanosecondsValue ? formatIntl128AsDecimal(skeletonBuilder.toString()) : formatDouble(skeletonBuilder.toString());
                 RETURN_IF_EXCEPTION(scope, { });
 
                 auto formatted = formatToString(formattedNumber.get());
