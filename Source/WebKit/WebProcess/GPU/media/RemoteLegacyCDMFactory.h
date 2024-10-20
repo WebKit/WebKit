@@ -82,7 +82,7 @@ public:
 private:
     bool supportsKeySystem(const String&);
     bool supportsKeySystemAndMimeType(const String&, const String&);
-    std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM*);
+    std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM&);
 
     WeakRef<WebProcess> m_webProcess;
     UncheckedKeyHashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;

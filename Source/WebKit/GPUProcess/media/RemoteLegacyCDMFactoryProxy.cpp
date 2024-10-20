@@ -72,13 +72,13 @@ void RemoteLegacyCDMFactoryProxy::clear()
 
 void RemoteLegacyCDMFactoryProxy::createCDM(const String& keySystem, std::optional<MediaPlayerIdentifier>&& playerId, CompletionHandler<void(std::optional<RemoteLegacyCDMIdentifier>&&)>&& completion)
 {
-    auto privateCDM = LegacyCDM::create(keySystem);
+    RefPtr privateCDM = LegacyCDM::create(keySystem);
     if (!privateCDM) {
         completion(std::nullopt);
         return;
     }
 
-    auto proxy = RemoteLegacyCDMProxy::create(*this, playerId, WTFMove(privateCDM));
+    auto proxy = RemoteLegacyCDMProxy::create(*this, playerId, privateCDM.releaseNonNull());
     auto identifier = RemoteLegacyCDMIdentifier::generate();
     addProxy(identifier, WTFMove(proxy));
     completion(WTFMove(identifier));

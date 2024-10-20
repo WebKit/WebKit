@@ -52,11 +52,11 @@ struct LegacyCDMFactory {
 
 static void platformRegisterFactories(Vector<LegacyCDMFactory>& factories)
 {
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<LegacyCDMPrivateClearKey>(cdm); }, LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<LegacyCDMPrivateClearKey>(cdm); }, LegacyCDMPrivateClearKey::supportsKeySystem, LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType });
     // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaPlayer>(cdm); }, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<CDMPrivateMediaPlayer>(cdm); }, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType });
 #if HAVE(AVCONTENTKEYSESSION) && ENABLE(MEDIA_SOURCE)
-    factories.append({ [](LegacyCDM* cdm) { return makeUnique<CDMPrivateMediaSourceAVFObjC>(cdm); }, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType });
+    factories.append({ [](LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<CDMPrivateMediaSourceAVFObjC>(cdm); }, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType });
 #endif
 }
 
@@ -109,31 +109,35 @@ bool LegacyCDM::keySystemSupportsMimeType(const String& keySystem, const String&
     return false;
 }
 
-std::unique_ptr<LegacyCDM> LegacyCDM::create(const String& keySystem)
+RefPtr<LegacyCDM> LegacyCDM::create(const String& keySystem)
 {
     if (!supportsKeySystem(keySystem))
         return nullptr;
 
-    return makeUnique<LegacyCDM>(keySystem);
+    return adoptRef(*new LegacyCDM(keySystem));
 }
 
 LegacyCDM::LegacyCDM(const String& keySystem)
     : m_keySystem(keySystem)
-    , m_client(nullptr)
+    , m_private(CDMFactoryForKeySystem(keySystem)->constructor(*this))
 {
-    m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }
 
 LegacyCDM::~LegacyCDM() = default;
 
 bool LegacyCDM::supportsMIMEType(const String& mimeType) const
 {
-    return m_private->supportsMIMEType(mimeType);
+    return protectedCDMPrivate()->supportsMIMEType(mimeType);
+}
+
+RefPtr<CDMPrivateInterface> LegacyCDM::protectedCDMPrivate() const
+{
+    return cdmPrivate();
 }
 
 std::unique_ptr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
 {
-    auto session = m_private->createSession(client);
+    auto session = protectedCDMPrivate()->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

@@ -30,15 +30,16 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class LegacyCDM;
 
-class CDMPrivateMediaPlayer : public CDMPrivateInterface {
+class CDMPrivateMediaPlayer final : public CDMPrivateInterface {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateMediaPlayer);
 public:
-    explicit CDMPrivateMediaPlayer(LegacyCDM* cdm)
+    explicit CDMPrivateMediaPlayer(LegacyCDM& cdm)
         : m_cdm(cdm)
     { }
 
@@ -47,13 +48,16 @@ public:
 
     virtual ~CDMPrivateMediaPlayer() = default;
 
-    bool supportsMIMEType(const String& mimeType) override;
+    bool supportsMIMEType(const String& mimeType) const override;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
-    LegacyCDM* cdm() const { return m_cdm; }
+    LegacyCDM& cdm() const { return m_cdm; }
 
-protected:
-    LegacyCDM* m_cdm;
+    void ref() const final;
+    void deref() const final;
+
+private:
+    WeakRef<LegacyCDM> m_cdm;
 };
 
 } // namespace WebCore

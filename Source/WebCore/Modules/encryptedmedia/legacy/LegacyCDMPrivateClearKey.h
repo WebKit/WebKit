@@ -29,29 +29,32 @@
 
 #include "LegacyCDMPrivate.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class LegacyCDM;
 
-class LegacyCDMPrivateClearKey : public CDMPrivateInterface {
+class LegacyCDMPrivateClearKey final : public CDMPrivateInterface {
     WTF_MAKE_TZONE_ALLOCATED(LegacyCDMPrivateClearKey);
 public:
-    explicit LegacyCDMPrivateClearKey(LegacyCDM* cdm)
+    explicit LegacyCDMPrivateClearKey(LegacyCDM& cdm)
         : m_cdm(cdm)
     {
     }
-
     virtual ~LegacyCDMPrivateClearKey() = default;
 
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    bool supportsMIMEType(const String& mimeType) override;
+    bool supportsMIMEType(const String& mimeType) const override;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
-protected:
-    LegacyCDM* m_cdm;
+    void ref() const final;
+    void deref() const final;
+
+private:
+    WeakRef<LegacyCDM> m_cdm;
 };
 
 } // namespace WebCore

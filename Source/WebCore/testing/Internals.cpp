@@ -4353,7 +4353,7 @@ void Internals::enableSizeToContentAutoSizeMode(bool enabled, int width, int hei
 
 void Internals::initializeMockCDM()
 {
-    LegacyCDM::registerCDMFactory([] (LegacyCDM* cdm) { return makeUnique<LegacyMockCDM>(cdm); },
+    LegacyCDM::registerCDMFactory([] (LegacyCDM& cdm) { return makeUniqueWithoutRefCountedCheck<LegacyMockCDM>(cdm); },
         LegacyMockCDM::supportsKeySystem, LegacyMockCDM::supportsKeySystemAndMimeType);
 }
 

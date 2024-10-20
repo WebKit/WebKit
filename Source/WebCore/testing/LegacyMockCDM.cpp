@@ -70,7 +70,7 @@ bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const 
     return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
 
-bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
+bool LegacyMockCDM::supportsMIMEType(const String& mimeType) const
 {
     return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
@@ -78,6 +78,16 @@ bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
 std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient& client)
 {
     return makeUnique<MockCDMSession>(client);
+}
+
+void LegacyMockCDM::ref() const
+{
+    m_cdm->ref();
+}
+
+void LegacyMockCDM::deref() const
+{
+    m_cdm->deref();
 }
 
 static Uint8Array* initDataPrefix()

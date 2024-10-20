@@ -1420,11 +1420,8 @@ void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
     if (!cdm)
         return;
 
-    auto remoteCDM = WebProcess::singleton().protectedLegacyCDMFactory()->findCDM(cdm->cdmPrivate());
-    if (!remoteCDM)
-        return;
-
-    remoteCDM->setPlayerId(m_id);
+    if (RefPtr remoteCDM = WebProcess::singleton().protectedLegacyCDMFactory()->findCDM(cdm->cdmPrivate()))
+        remoteCDM->setPlayerId(m_id);
 }
 
 void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession* session)

@@ -51,20 +51,28 @@ RemoteLegacyCDMFactory::RemoteLegacyCDMFactory(WebProcess& webProcess)
 
 RemoteLegacyCDMFactory::~RemoteLegacyCDMFactory() = default;
 
+void RemoteLegacyCDMFactory::ref() const
+{
+    m_webProcess->ref();
+}
+
+void RemoteLegacyCDMFactory::deref() const
+{
+    m_webProcess->deref();
+}
+
 void RemoteLegacyCDMFactory::registerFactory()
 {
     LegacyCDM::clearFactories();
     LegacyCDM::registerCDMFactory(
-        [weakThis = WeakPtr { *this }] (LegacyCDM* privateCDM) -> std::unique_ptr<WebCore::CDMPrivateInterface> {
-            if (weakThis)
-                return weakThis->createCDM(privateCDM);
-            return nullptr;
+        [protectedThis = Ref { *this }] (LegacyCDM& privateCDM) -> std::unique_ptr<WebCore::CDMPrivateInterface> {
+            return protectedThis->createCDM(privateCDM);
         },
-        [weakThis = WeakPtr { *this }] (const String& keySystem) {
-            return weakThis ? weakThis->supportsKeySystem(keySystem) : false;
+        [protectedThis = Ref { *this }] (const String& keySystem) {
+            return protectedThis->supportsKeySystem(keySystem);
         },
-        [weakThis = WeakPtr { *this }] (const String& keySystem, const String& mimeType) {
-            return weakThis ? weakThis->supportsKeySystemAndMimeType(keySystem, mimeType) : false;
+        [protectedThis = Ref { *this }] (const String& keySystem, const String& mimeType) {
+            return protectedThis->supportsKeySystemAndMimeType(keySystem, mimeType);
         }
     );
 }
@@ -104,24 +112,19 @@ bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(const String& keySyste
     return supported;
 }
 
-std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::LegacyCDM* cdm)
+std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::LegacyCDM& cdm)
 {
-    if (!cdm) {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
     std::optional<MediaPlayerIdentifier> playerId;
-    if (auto player = cdm->mediaPlayer())
+    if (auto player = cdm.mediaPlayer())
         playerId = gpuProcessConnection().mediaPlayerManager().findRemotePlayerId(player->playerPrivate());
 
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm.keySystem(), WTFMove(playerId)), { });
     auto [identifier] = sendResult.takeReplyOr(std::nullopt);
     if (!identifier)
         return nullptr;
-    auto remoteCDM = RemoteLegacyCDM::create(*this, *identifier);
+    auto remoteCDM = makeUniqueRef<RemoteLegacyCDM>(*this, *identifier);
     m_cdms.set(*identifier, remoteCDM.get());
-    return remoteCDM;
+    return remoteCDM.moveToUniquePtr();
 }
 
 void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identifier, RemoteLegacyCDMSession& session)
@@ -144,16 +147,6 @@ RemoteLegacyCDM* RemoteLegacyCDMFactory::findCDM(CDMPrivateInterface* privateInt
             return cdm.get();
     }
     return nullptr;
-}
-
-void RemoteLegacyCDMFactory::ref() const
-{
-    m_webProcess->ref();
-}
-
-void RemoteLegacyCDMFactory::deref() const
-{
-    m_webProcess->ref();
 }
 
 }

@@ -112,7 +112,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
-bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
+bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType) const
 {
     // FIXME: Why is this checking case since the check in supportsKeySystemAndMimeType is ignoring case?
     if (mimeType == "keyrelease"_s)
@@ -143,6 +143,16 @@ void CDMPrivateMediaSourceAVFObjC::invalidateSession(CDMSessionMediaSourceAVFObj
 {
     ASSERT(m_sessions.contains(session));
     m_sessions.removeAll(session);
+}
+
+void CDMPrivateMediaSourceAVFObjC::ref() const
+{
+    m_cdm->ref();
+}
+
+void CDMPrivateMediaSourceAVFObjC::deref() const
+{
+    m_cdm->deref();
 }
 
 }

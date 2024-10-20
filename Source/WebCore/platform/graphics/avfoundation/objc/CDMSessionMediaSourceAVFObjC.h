@@ -87,7 +87,7 @@ protected:
     WTFLogChannel& logChannel() const;
 #endif
 
-    CDMPrivateMediaSourceAVFObjC* m_cdm;
+    WeakPtr<CDMPrivateMediaSourceAVFObjC> m_cdm;
     WeakPtr<LegacyCDMSessionClient> m_client;
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     RefPtr<Uint8Array> m_certificate;

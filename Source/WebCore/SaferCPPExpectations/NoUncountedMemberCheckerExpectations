@@ -1,7 +1,6 @@
 CommandLineAPIModuleSourceBuiltins.h
 Modules/WebGPU/GPUPresentationContextDescriptor.h
 Modules/encryptedmedia/MediaKeyStatusMap.h
-Modules/encryptedmedia/legacy/WebKitMediaKeySession.h
 Modules/fetch/FetchBodyOwner.h
 Modules/mediasource/SourceBuffer.h
 Modules/mediastream/RTCPeerConnection.h

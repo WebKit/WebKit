@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CDMSessionMediaSourceAVFObjC);
 
 CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
-    : m_cdm(&cdm)
+    : m_cdm(cdm)
     , m_client(client)
 #if !RELEASE_LOG_DISABLED
     , m_logger(client.logger())
@@ -51,8 +51,8 @@ CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(CDMPrivateMediaSource
 
 CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
 {
-    if (m_cdm)
-        m_cdm->invalidateSession(this);
+    if (RefPtr cdm = m_cdm.get())
+        cdm->invalidateSession(this);
 
     for (auto& sourceBuffer : m_sourceBuffers)
         sourceBuffer->unregisterForErrorNotifications(this);

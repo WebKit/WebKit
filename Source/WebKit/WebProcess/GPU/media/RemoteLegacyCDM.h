@@ -32,15 +32,6 @@
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class RemoteLegacyCDM;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebKit::RemoteLegacyCDM> : std::true_type { };
-}
-
 namespace WebCore {
 class Settings;
 }
@@ -54,18 +45,22 @@ class RemoteLegacyCDMSession;
 class RemoteLegacyCDM final
     : public WebCore::CDMPrivateInterface
     , public CanMakeWeakPtr<RemoteLegacyCDM> {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteLegacyCDM);
 public:
-    static std::unique_ptr<RemoteLegacyCDM> create(WeakPtr<RemoteLegacyCDMFactory>&&, RemoteLegacyCDMIdentifier);
+    RemoteLegacyCDM(RemoteLegacyCDMFactory&, RemoteLegacyCDMIdentifier);
     virtual ~RemoteLegacyCDM();
 
-    bool supportsMIMEType(const String&) final;
+    bool supportsMIMEType(const String&) const final;
     std::unique_ptr<WebCore::LegacyCDMSession> createSession(WebCore::LegacyCDMSessionClient&) final;
     void setPlayerId(std::optional<WebCore::MediaPlayerIdentifier>);
 
-private:
-    RemoteLegacyCDM(WeakPtr<RemoteLegacyCDMFactory>&&, RemoteLegacyCDMIdentifier&&);
+    void ref() const final;
+    void deref() const final;
 
-    WeakPtr<RemoteLegacyCDMFactory> m_factory;
+private:
+    Ref<RemoteLegacyCDMFactory> protectedFactory() const;
+
+    WeakRef<RemoteLegacyCDMFactory> m_factory;
     RemoteLegacyCDMIdentifier m_identifier;
 };
 

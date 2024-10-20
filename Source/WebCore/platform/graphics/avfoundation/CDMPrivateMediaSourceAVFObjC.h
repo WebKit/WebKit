@@ -31,16 +31,17 @@
 #include "LegacyCDMPrivate.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class LegacyCDM;
 class CDMSessionMediaSourceAVFObjC;
 
-class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
+class CDMPrivateMediaSourceAVFObjC final : public CDMPrivateInterface, public CanMakeWeakPtr<CDMPrivateMediaSourceAVFObjC> {
     WTF_MAKE_TZONE_ALLOCATED(CDMPrivateMediaSourceAVFObjC);
 public:
-    explicit CDMPrivateMediaSourceAVFObjC(LegacyCDM* cdm)
+    explicit CDMPrivateMediaSourceAVFObjC(LegacyCDM& cdm)
         : m_cdm(cdm)
     { }
     virtual ~CDMPrivateMediaSourceAVFObjC();
@@ -48,20 +49,24 @@ public:
     static bool supportsKeySystem(const String&);
     static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-    bool supportsMIMEType(const String& mimeType) override;
+    bool supportsMIMEType(const String& mimeType) const override;
     std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) override;
 
-    LegacyCDM* cdm() const { return m_cdm; }
+    LegacyCDM& cdm() const { return m_cdm.get(); }
 
     void invalidateSession(CDMSessionMediaSourceAVFObjC*);
-protected:
+
+    void ref() const final;
+    void deref() const final;
+
+private:
     struct KeySystemParameters {
         int version;
         Vector<int> protocols;
     };
     static std::optional<KeySystemParameters> parseKeySystem(const String& keySystem);
     
-    LegacyCDM* m_cdm;
+    WeakRef<LegacyCDM> m_cdm;
     Vector<CDMSessionMediaSourceAVFObjC*> m_sessions;
 };
 
