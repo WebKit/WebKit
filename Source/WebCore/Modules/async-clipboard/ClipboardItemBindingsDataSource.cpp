@@ -346,7 +346,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::invokeCompletionH
 void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::didResolveToBlob(ScriptExecutionContext& context, Ref<Blob>&& blob)
 {
     ASSERT(!m_blobLoader);
-    m_blobLoader = makeUnique<FileReaderLoader>(readTypeForMIMEType(m_type), this);
+    m_blobLoader = FileReaderLoader::create(readTypeForMIMEType(m_type), this);
     m_blobLoader->start(&context, WTFMove(blob));
 }
 

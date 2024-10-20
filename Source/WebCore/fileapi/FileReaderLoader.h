@@ -52,7 +52,7 @@ class ScriptExecutionContext;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-class FileReaderLoader final : public ThreadableLoaderClient {
+class FileReaderLoader final : public RefCounted<FileReaderLoader>, public ThreadableLoaderClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FileReaderLoader);
 public:
@@ -65,8 +65,7 @@ public:
         ReadAsBinaryChunks
     };
 
-    // If client is given, do the loading asynchronously. Otherwise, load synchronously.
-    WEBCORE_EXPORT FileReaderLoader(ReadType, FileReaderLoaderClient*);
+    WEBCORE_EXPORT static Ref<FileReaderLoader> create(ReadType, FileReaderLoaderClient*);
     ~FileReaderLoader();
 
     WEBCORE_EXPORT void start(ScriptExecutionContext*, Blob&);
@@ -93,6 +92,8 @@ public:
     bool isCompleted() const;
 
 private:
+    // If client is given, do the loading asynchronously. Otherwise, load synchronously.
+    FileReaderLoader(ReadType, FileReaderLoaderClient*);
     void terminate();
     void cleanup();
     void failed(ExceptionCode);

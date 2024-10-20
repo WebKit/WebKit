@@ -63,7 +63,7 @@ private:
     void didFail(ExceptionCode errorCode) final;
     void complete();
 
-    std::unique_ptr<FileReaderLoader> m_loader;
+    RefPtr<FileReaderLoader> m_loader;
     CompleteCallback m_completeCallback;
 };
 
@@ -88,14 +88,14 @@ inline void BlobLoader::cancel()
 inline void BlobLoader::start(Blob& blob, ScriptExecutionContext* context, FileReaderLoader::ReadType readType)
 {
     ASSERT(!m_loader);
-    m_loader = makeUnique<FileReaderLoader>(readType, this);
+    m_loader = FileReaderLoader::create(readType, this);
     m_loader->start(context, blob);
 }
 
 inline void BlobLoader::start(const URL& blobURL, ScriptExecutionContext* context, FileReaderLoader::ReadType readType)
 {
     ASSERT(!m_loader);
-    m_loader = makeUnique<FileReaderLoader>(readType, this);
+    m_loader = FileReaderLoader::create(readType, this);
     m_loader->start(context, blobURL);
 }
 

@@ -210,7 +210,7 @@ private:
     OutgoingFrameQueueStatus m_outgoingFrameQueueStatus { OutgoingFrameQueueOpen };
 
     // FIXME: Load two or more Blobs simultaneously for better performance.
-    std::unique_ptr<FileReaderLoader> m_blobLoader;
+    RefPtr<FileReaderLoader> m_blobLoader;
     BlobLoaderStatus m_blobLoaderStatus { BlobLoaderNotStarted };
 
     WebSocketDeflateFramer m_deflateFramer;

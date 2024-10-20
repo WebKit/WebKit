@@ -106,7 +106,7 @@ private:
     RefPtr<Blob> m_blob;
     FileReaderLoader::ReadType m_readType { FileReaderLoader::ReadAsBinaryString };
     String m_encoding;
-    std::unique_ptr<FileReaderLoader> m_loader;
+    RefPtr<FileReaderLoader> m_loader;
     RefPtr<DOMException> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
     HashMap<uint64_t, Function<void()>> m_pendingTasks;

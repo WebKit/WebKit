@@ -58,6 +58,13 @@ namespace WebCore {
 
 const int defaultBufferLength = 32768;
 
+
+Ref<FileReaderLoader> FileReaderLoader::create(ReadType readType, FileReaderLoaderClient* client)
+{
+    return adoptRef(*new FileReaderLoader(readType, client));
+}
+
+
 FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* client)
     : m_readType(readType)
     , m_client(client)

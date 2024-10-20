@@ -789,7 +789,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 ref(); // Will be derefed after didFinishLoading() or didFail().
                 ASSERT(!m_blobLoader);
                 ASSERT(frame->blobData);
-                m_blobLoader = makeUnique<FileReaderLoader>(FileReaderLoader::ReadAsArrayBuffer, this);
+                m_blobLoader = FileReaderLoader::create(FileReaderLoader::ReadAsArrayBuffer, this);
                 m_blobLoaderStatus = BlobLoaderStarted;
                 m_blobLoader->start(m_document.get(), *frame->blobData);
                 m_outgoingFrameQueue.prepend(WTFMove(frame));

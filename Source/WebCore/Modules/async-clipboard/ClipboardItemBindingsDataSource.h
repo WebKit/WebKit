@@ -90,7 +90,7 @@ private:
 
         String m_type;
         BufferOrString m_data;
-        std::unique_ptr<FileReaderLoader> m_blobLoader;
+        RefPtr<FileReaderLoader> m_blobLoader;
         CompletionHandler<void()> m_completionHandler;
         WeakPtr<Clipboard, WeakPtrImplWithEventTargetData> m_writingDestination;
     };

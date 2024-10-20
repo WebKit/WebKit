@@ -324,7 +324,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
     class BlobStreamSource : public FileReaderLoaderClient, public RefCountedReadableStreamSource {
     public:
         BlobStreamSource(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
-            : m_loader(makeUniqueRef<FileReaderLoader>(FileReaderLoader::ReadType::ReadAsBinaryChunks, this))
+            : m_loader(FileReaderLoader::create(FileReaderLoader::ReadType::ReadAsBinaryChunks, this))
         {
             m_loader->start(&scriptExecutionContext, blob);
         }
@@ -419,7 +419,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream()
             return didSucceed;
         }
 
-        UniqueRef<FileReaderLoader> m_loader;
+        Ref<FileReaderLoader> m_loader;
         Deque<Ref<FragmentedSharedBuffer>> m_queue;
         std::optional<Exception> m_exception;
         enum class StreamState : uint8_t { NotStarted, Started, Waiting };
