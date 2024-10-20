@@ -978,7 +978,7 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
     case DescendantsToResolve::All:
         return ResolutionType::Full;
     case DescendantsToResolve::ChildrenWithExplicitInherit:
-        if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
+        if (!existingStyle || existingStyle->hasExplicitlyInheritedProperties())
             return ResolutionType::Full;
         return { };
     };
