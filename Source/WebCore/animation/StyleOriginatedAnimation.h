@@ -52,8 +52,8 @@ public:
     void setBackingAnimation(const Animation&);
     void cancelFromStyle(WebAnimation::Silently = WebAnimation::Silently::No);
 
-    std::optional<CSSNumberishTime> bindingsStartTime() const final;
-    std::optional<CSSNumberishTime> bindingsCurrentTime() const final;
+    std::optional<WebAnimationTime> bindingsStartTime() const final;
+    std::optional<WebAnimationTime> bindingsCurrentTime() const final;
     WebAnimation::PlayState bindingsPlayState() const final;
     WebAnimation::ReplaceState bindingsReplaceState() const final;
     bool bindingsPending() const final;
@@ -83,12 +83,12 @@ private:
     AnimationEffectPhase phaseWithoutEffect() const;
     enum class ShouldFireEvents : uint8_t { No, YesForCSSAnimation, YesForCSSTransition };
     ShouldFireEvents shouldFireDOMEvents() const;
-    void invalidateDOMEvents(ShouldFireEvents, CSSNumberishTime elapsedTime = 0_s);
-    void enqueueDOMEvent(const AtomString&, CSSNumberishTime elapsedTime, CSSNumberishTime scheduledEffectTime);
+    void invalidateDOMEvents(ShouldFireEvents, WebAnimationTime elapsedTime = 0_s);
+    void enqueueDOMEvent(const AtomString&, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime);
 
-    CSSNumberishTime effectTimeAtStart() const;
-    CSSNumberishTime effectTimeAtIteration(double) const;
-    CSSNumberishTime effectTimeAtEnd() const;
+    WebAnimationTime effectTimeAtStart() const;
+    WebAnimationTime effectTimeAtIteration(double) const;
+    WebAnimationTime effectTimeAtEnd() const;
 
     bool m_wasPending { false };
     AnimationEffectPhase m_previousPhase { AnimationEffectPhase::Idle };

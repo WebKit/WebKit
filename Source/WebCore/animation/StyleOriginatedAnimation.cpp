@@ -131,13 +131,13 @@ void StyleOriginatedAnimation::syncPropertiesWithBackingAnimation()
 {
 }
 
-std::optional<CSSNumberishTime> StyleOriginatedAnimation::bindingsStartTime() const
+std::optional<WebAnimationTime> StyleOriginatedAnimation::bindingsStartTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsStartTime();
 }
 
-std::optional<CSSNumberishTime> StyleOriginatedAnimation::bindingsCurrentTime() const
+std::optional<WebAnimationTime> StyleOriginatedAnimation::bindingsCurrentTime() const
 {
     flushPendingStyleChanges();
     return WebAnimation::bindingsCurrentTime();
@@ -203,7 +203,7 @@ void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeli
 
 void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
 {
-    CSSNumberishTime cancelationTime = 0_s;
+    WebAnimationTime cancelationTime = 0_s;
 
     auto shouldFireEvents = shouldFireDOMEvents();
     if (shouldFireEvents != ShouldFireEvents::No) {
@@ -237,14 +237,14 @@ AnimationEffectPhase StyleOriginatedAnimation::phaseWithoutEffect() const
     return *animationCurrentTime < 0_s ? AnimationEffectPhase::Before : AnimationEffectPhase::After;
 }
 
-CSSNumberishTime StyleOriginatedAnimation::effectTimeAtStart() const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtStart() const
 {
     if (auto* effect = this->effect())
         return effect->delay();
     return 0_s;
 }
 
-CSSNumberishTime StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtIteration(double iteration) const
 {
     if (auto* effect = this->effect()) {
         auto iterationDuration = effect->iterationDuration();
@@ -257,7 +257,7 @@ CSSNumberishTime StyleOriginatedAnimation::effectTimeAtIteration(double iteratio
     return 0_s;
 }
 
-CSSNumberishTime StyleOriginatedAnimation::effectTimeAtEnd() const
+WebAnimationTime StyleOriginatedAnimation::effectTimeAtEnd() const
 {
     if (auto* effect = this->effect())
         return effect->endTime();
@@ -281,7 +281,7 @@ auto StyleOriginatedAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
     return ShouldFireEvents::No;
 }
 
-void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, CSSNumberishTime elapsedTime)
+void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, WebAnimationTime elapsedTime)
 {
     if (!m_owningElement)
         return;
@@ -292,8 +292,8 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
 
     double iteration = 0;
     AnimationEffectPhase currentPhase;
-    CSSNumberishTime intervalStart;
-    CSSNumberishTime intervalEnd;
+    WebAnimationTime intervalStart;
+    WebAnimationTime intervalEnd;
 
     auto* animationEffect = effect();
     if (animationEffect) {
@@ -393,7 +393,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
     m_previousIteration = iteration;
 }
 
-void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, CSSNumberishTime elapsedTime, CSSNumberishTime scheduledEffectTime)
+void StyleOriginatedAnimation::enqueueDOMEvent(const AtomString& eventType, WebAnimationTime elapsedTime, WebAnimationTime scheduledEffectTime)
 {
     if (!m_owningElement)
         return;

@@ -79,7 +79,7 @@ Ref<ScrollTimeline> ScrollTimeline::createFromCSSValue(const CSSScrollValue& css
 // the duration has a fixed upper bound. In this case, the timeline is a
 // progress-based timeline, and its timeline duration is 100%.
 ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
-    : AnimationTimeline(CSSNumberishTime::fromPercentage(100))
+    : AnimationTimeline(WebAnimationTime::fromPercentage(100))
     , m_source(WTFMove(options.source))
     , m_axis(options.axis)
 {
@@ -212,7 +212,7 @@ ScrollTimeline::Data ScrollTimeline::computeTimelineData(const TimelineRange& ra
     return { scrollOffset, floatValueForOffset(range.start.offset, maxScrollOffset), maxScrollOffset - floatValueForOffset(range.end.offset, maxScrollOffset) };
 }
 
-std::optional<CSSNumberishTime> ScrollTimeline::currentTime()
+std::optional<WebAnimationTime> ScrollTimeline::currentTime()
 {
     // https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-progress
     // Progress (the current time) for a scroll progress timeline is calculated as:
@@ -223,7 +223,7 @@ std::optional<CSSNumberishTime> ScrollTimeline::currentTime()
         return std::nullopt;
     auto distance = data.scrollOffset - data.rangeStart;
     auto progress = distance / range;
-    return CSSNumberishTime::fromPercentage(progress * 100);
+    return WebAnimationTime::fromPercentage(progress * 100);
 }
 
 } // namespace WebCore

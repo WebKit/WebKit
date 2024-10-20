@@ -35,7 +35,7 @@ namespace WebCore {
 class AnimationPlaybackEvent final : public AnimationEventBase {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AnimationPlaybackEvent);
 public:
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<CSSNumberishTime> scheduledTime, std::optional<CSSNumberishTime> timelineTime, std::optional<CSSNumberishTime> currentTime)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, WebAnimation* animation, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, animation, scheduledTime, timelineTime, currentTime));
     }
@@ -49,15 +49,15 @@ public:
 
     bool isAnimationPlaybackEvent() const final { return true; }
 
-    std::optional<CSSNumberishTime> timelineTime() const { return m_timelineTime; }
-    std::optional<CSSNumberishTime> currentTime() const { return m_currentTime; }
+    std::optional<WebAnimationTime> timelineTime() const { return m_timelineTime; }
+    std::optional<WebAnimationTime> currentTime() const { return m_currentTime; }
 
 private:
-    AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<CSSNumberishTime> scheduledTime, std::optional<CSSNumberishTime> timelineTime, std::optional<CSSNumberishTime> currentTime);
+    AnimationPlaybackEvent(const AtomString&, WebAnimation*, std::optional<WebAnimationTime> scheduledTime, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> currentTime);
     AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
 
-    std::optional<CSSNumberishTime> m_timelineTime;
-    std::optional<CSSNumberishTime> m_currentTime;
+    std::optional<WebAnimationTime> m_timelineTime;
+    std::optional<WebAnimationTime> m_currentTime;
 };
 
 }

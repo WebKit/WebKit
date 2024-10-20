@@ -212,7 +212,7 @@ static Ref<Inspector::Protocol::Animation::Effect> buildObjectForEffect(Animatio
     effectPayload->setIterationCount(effect.iterations() == std::numeric_limits<double>::infinity() ? -1 : effect.iterations());
     effectPayload->setIterationStart(effect.iterationStart());
 
-    // FIXME: convert this to CSSNumberishTime.
+    // FIXME: convert this to WebAnimationTime.
     if (auto durationTime = effect.iterationDuration().time()) {
         if (auto iterationDuration = protocolValueForSeconds(*durationTime))
             effectPayload->setIterationDuration(iterationDuration.value());

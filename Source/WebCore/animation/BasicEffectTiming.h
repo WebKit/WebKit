@@ -26,17 +26,17 @@
 #pragma once
 
 #include "AnimationEffectPhase.h"
-#include "CSSNumberishTime.h"
+#include "WebAnimationTime.h"
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
 
 struct BasicEffectTiming {
-    std::optional<CSSNumberishTime> localTime;
-    std::optional<CSSNumberishTime> activeTime;
-    CSSNumberishTime endTime;
-    CSSNumberishTime activeDuration;
+    std::optional<WebAnimationTime> localTime;
+    std::optional<WebAnimationTime> activeTime;
+    WebAnimationTime endTime;
+    WebAnimationTime activeDuration;
     AnimationEffectPhase phase;
 };
 

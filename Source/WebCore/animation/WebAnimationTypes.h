@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "CSSNumberishTime.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "EventTarget.h"
 #include "TimelineRangeOffset.h"
+#include "WebAnimationTime.h"
 #include <wtf/BitSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>

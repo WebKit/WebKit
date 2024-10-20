@@ -708,7 +708,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/AnimationFrameRatePreset.h
     animation/AnimationTimeline.h
     animation/AnimationTimelinesController.h
-    animation/CSSNumberishTime.h
     animation/CSSPropertyBlendingClient.h
     animation/CustomAnimationOptions.h
     animation/CompositeOperation.h
@@ -729,6 +728,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/TimelineScope.h
     animation/ViewTimeline.h
     animation/ViewTimelineOptions.h
+    animation/WebAnimationTime.h
     animation/WebAnimationTypes.h
 
     bindings/IDLTypes.h

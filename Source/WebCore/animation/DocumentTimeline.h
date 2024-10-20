@@ -58,7 +58,7 @@ public:
 
     Document* document() const { return m_document.get(); }
 
-    std::optional<CSSNumberishTime> currentTime() override;
+    std::optional<WebAnimationTime> currentTime() override;
     ExceptionOr<Ref<WebAnimation>> animate(Ref<CustomEffectCallback>&&, std::optional<std::variant<double, CustomAnimationOptions>>&&);
 
     void animationTimingDidChange(WebAnimation&) override;

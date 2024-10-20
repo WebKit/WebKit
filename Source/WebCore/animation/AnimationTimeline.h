@@ -52,8 +52,8 @@ public:
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
-    virtual std::optional<CSSNumberishTime> currentTime() { return m_currentTime; }
-    virtual std::optional<CSSNumberishTime> duration() const { return m_duration; }
+    virtual std::optional<WebAnimationTime> currentTime() { return m_currentTime; }
+    virtual std::optional<WebAnimationTime> duration() const { return m_duration; }
 
     virtual void detachFromDocument();
 
@@ -67,15 +67,15 @@ public:
     virtual AnimationTimelinesController* controller() const { return nullptr; }
 
 protected:
-    AnimationTimeline(std::optional<CSSNumberishTime> = std::nullopt);
+    AnimationTimeline(std::optional<WebAnimationTime> = std::nullopt);
 
     AnimationCollection m_animations;
 
 private:
     void updateGlobalPosition(WebAnimation&);
 
-    std::optional<CSSNumberishTime> m_currentTime;
-    std::optional<CSSNumberishTime> m_duration;
+    std::optional<WebAnimationTime> m_currentTime;
+    std::optional<WebAnimationTime> m_duration;
 };
 
 } // namespace WebCore

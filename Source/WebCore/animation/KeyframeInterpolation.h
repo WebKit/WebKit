@@ -69,7 +69,7 @@ public:
     using AccumulationCallback = Function<void(const Keyframe&)>;
     using InterpolationCallback = Function<void(double intervalProgress, double currentIteration, IterationCompositeOperation)>;
     using RequiresBlendingForAccumulativeIterationCallback = Function<bool()>;
-    void interpolateKeyframes(Property, const KeyframeInterval&, double iterationProgress, double currentIteration, const CSSNumberishTime& iterationDuration, TimingFunction::Before, const CompositionCallback&, const AccumulationCallback&, const InterpolationCallback&, const RequiresBlendingForAccumulativeIterationCallback&) const;
+    void interpolateKeyframes(Property, const KeyframeInterval&, double iterationProgress, double currentIteration, const WebAnimationTime& iterationDuration, TimingFunction::Before, const CompositionCallback&, const AccumulationCallback&, const InterpolationCallback&, const RequiresBlendingForAccumulativeIterationCallback&) const;
 
     virtual ~KeyframeInterpolation() = default;
 };

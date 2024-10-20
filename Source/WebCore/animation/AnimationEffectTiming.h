@@ -54,16 +54,16 @@ struct AnimationEffectTiming {
     double iterations { 1 };
     Seconds delay { 0_s };
     Seconds endDelay { 0_s };
-    CSSNumberishTime iterationDuration { 0_s };
-    CSSNumberishTime intrinsicIterationDuration { 0_s };
-    CSSNumberishTime activeDuration { 0_s };
-    CSSNumberishTime endTime { 0_s };
+    WebAnimationTime iterationDuration { 0_s };
+    WebAnimationTime intrinsicIterationDuration { 0_s };
+    WebAnimationTime activeDuration { 0_s };
+    WebAnimationTime endTime { 0_s };
 
     struct ResolutionData {
-        std::optional<CSSNumberishTime> timelineTime;
-        std::optional<CSSNumberishTime> timelineDuration;
-        std::optional<CSSNumberishTime> startTime;
-        std::optional<CSSNumberishTime> localTime;
+        std::optional<WebAnimationTime> timelineTime;
+        std::optional<WebAnimationTime> timelineDuration;
+        std::optional<WebAnimationTime> startTime;
+        std::optional<WebAnimationTime> localTime;
         double playbackRate { 0 };
     };
 

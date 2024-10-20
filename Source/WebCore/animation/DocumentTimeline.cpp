@@ -125,7 +125,7 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
-std::optional<CSSNumberishTime> DocumentTimeline::currentTime()
+std::optional<WebAnimationTime> DocumentTimeline::currentTime()
 {
     if (auto* controller = this->controller()) {
         if (auto currentTime = controller->currentTime())

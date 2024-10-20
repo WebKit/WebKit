@@ -56,9 +56,9 @@ public:
     virtual bool isKeyframeEffect() const { return false; }
 
     EffectTiming getBindingsTiming() const;
-    BasicEffectTiming getBasicTiming(std::optional<CSSNumberishTime> = std::nullopt) const;
+    BasicEffectTiming getBasicTiming(std::optional<WebAnimationTime> = std::nullopt) const;
     ComputedEffectTiming getBindingsComputedTiming() const;
-    ComputedEffectTiming getComputedTiming(std::optional<CSSNumberishTime> = std::nullopt) const;
+    ComputedEffectTiming getComputedTiming(std::optional<WebAnimationTime> = std::nullopt) const;
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -89,7 +89,7 @@ public:
     double iterations() const { return m_timing.iterations; }
     ExceptionOr<void> setIterations(double);
 
-    CSSNumberishTime iterationDuration() const { return m_timing.iterationDuration; }
+    WebAnimationTime iterationDuration() const { return m_timing.iterationDuration; }
     void setIterationDuration(const Seconds&);
 
     PlaybackDirection direction() const { return m_timing.direction; }
@@ -98,8 +98,8 @@ public:
     TimingFunction* timingFunction() const { return m_timing.timingFunction.get(); }
     void setTimingFunction(const RefPtr<TimingFunction>&);
 
-    CSSNumberishTime activeDuration() const { return m_timing.activeDuration; }
-    CSSNumberishTime endTime() const { return m_timing.endTime; }
+    WebAnimationTime activeDuration() const { return m_timing.activeDuration; }
+    WebAnimationTime endTime() const { return m_timing.endTime; }
 
     void updateStaticTimingProperties();
 
@@ -114,7 +114,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    AnimationEffectTiming::ResolutionData resolutionData(std::optional<CSSNumberishTime>) const;
+    AnimationEffectTiming::ResolutionData resolutionData(std::optional<WebAnimationTime>) const;
     void normalizeSpecifiedTiming(std::variant<double, String>);
 
     AnimationEffectTiming m_timing;

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CSSNumberishTime.h"
+#include "WebAnimationTime.h"
 
 #include "CSSNumericFactory.h"
 #include "CSSUnitValue.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CSSNumberishTime::CSSNumberishTime(std::optional<Seconds> time, std::optional<double> percentage)
+WebAnimationTime::WebAnimationTime(std::optional<Seconds> time, std::optional<double> percentage)
 {
     ASSERT(time || percentage);
     ASSERT(!!time != !!percentage);
@@ -45,19 +45,19 @@ CSSNumberishTime::CSSNumberishTime(std::optional<Seconds> time, std::optional<do
     }
 }
 
-CSSNumberishTime::CSSNumberishTime(const Seconds& value)
+WebAnimationTime::WebAnimationTime(const Seconds& value)
     : m_type(Type::Time)
     , m_value(value.seconds())
 {
 }
 
-CSSNumberishTime::CSSNumberishTime(Type type, double value)
+WebAnimationTime::WebAnimationTime(Type type, double value)
     : m_type(type)
     , m_value(value)
 {
 }
 
-CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
+WebAnimationTime::WebAnimationTime(const CSSNumberish& value)
 {
     if (auto* doubleValue = std::get_if<double>(&value)) {
         m_type = Type::Time;
@@ -84,58 +84,58 @@ CSSNumberishTime::CSSNumberishTime(const CSSNumberish& value)
     }
 }
 
-CSSNumberishTime CSSNumberishTime::fromMilliseconds(double milliseconds)
+WebAnimationTime WebAnimationTime::fromMilliseconds(double milliseconds)
 {
     return { Type::Time, milliseconds / 1000 };
 }
 
-CSSNumberishTime CSSNumberishTime::fromPercentage(double percentage)
+WebAnimationTime WebAnimationTime::fromPercentage(double percentage)
 {
     return { Type::Percentage, percentage };
 }
 
-std::optional<Seconds> CSSNumberishTime::time() const
+std::optional<Seconds> WebAnimationTime::time() const
 {
     if (m_type == Type::Time)
         return Seconds { m_value };
     return std::nullopt;
 }
 
-std::optional<double> CSSNumberishTime::percentage() const
+std::optional<double> WebAnimationTime::percentage() const
 {
     if (m_type == Type::Percentage)
         return m_value;
     return std::nullopt;
 }
 
-bool CSSNumberishTime::isValid() const
+bool WebAnimationTime::isValid() const
 {
     return m_type != Type::Unknown;
 }
 
-bool CSSNumberishTime::isInfinity() const
+bool WebAnimationTime::isInfinity() const
 {
     return std::isinf(m_value);
 }
 
-bool CSSNumberishTime::isZero() const
+bool WebAnimationTime::isZero() const
 {
     return !m_value;
 }
 
-CSSNumberishTime CSSNumberishTime::matchingZero() const
+WebAnimationTime WebAnimationTime::matchingZero() const
 {
     return { m_type, 0 };
 }
 
-CSSNumberishTime CSSNumberishTime::matchingEpsilon() const
+WebAnimationTime WebAnimationTime::matchingEpsilon() const
 {
     if (m_type == Type::Percentage)
-        return CSSNumberishTime::fromPercentage(0.000001);
+        return WebAnimationTime::fromPercentage(0.000001);
     return { WebCore::timeEpsilon };
 }
 
-bool CSSNumberishTime::approximatelyEqualTo(const CSSNumberishTime& other) const
+bool WebAnimationTime::approximatelyEqualTo(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     if (m_type == Type::Time)
@@ -143,7 +143,7 @@ bool CSSNumberishTime::approximatelyEqualTo(const CSSNumberishTime& other) const
     return m_value == other.m_value;
 }
 
-bool CSSNumberishTime::approximatelyLessThan(const CSSNumberishTime& other) const
+bool WebAnimationTime::approximatelyLessThan(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     if (m_type == Type::Time)
@@ -151,7 +151,7 @@ bool CSSNumberishTime::approximatelyLessThan(const CSSNumberishTime& other) cons
     return m_value < other.m_value;
 }
 
-bool CSSNumberishTime::approximatelyGreaterThan(const CSSNumberishTime& other) const
+bool WebAnimationTime::approximatelyGreaterThan(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     if (m_type == Type::Time)
@@ -159,125 +159,125 @@ bool CSSNumberishTime::approximatelyGreaterThan(const CSSNumberishTime& other) c
     return m_value > other.m_value;
 }
 
-CSSNumberishTime CSSNumberishTime::operator+(const CSSNumberishTime& other) const
+WebAnimationTime WebAnimationTime::operator+(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return { m_type, m_value + other.m_value };
 }
 
-CSSNumberishTime CSSNumberishTime::operator-(const CSSNumberishTime& other) const
+WebAnimationTime WebAnimationTime::operator-(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return { m_type, m_value - other.m_value };
 }
 
-double CSSNumberishTime::operator/(const CSSNumberishTime& other) const
+double WebAnimationTime::operator/(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value / other.m_value;
 }
 
-CSSNumberishTime& CSSNumberishTime::operator+=(const CSSNumberishTime& other)
+WebAnimationTime& WebAnimationTime::operator+=(const WebAnimationTime& other)
 {
     ASSERT(m_type == other.m_type);
     m_value += other.m_value;
     return *this;
 }
 
-CSSNumberishTime& CSSNumberishTime::operator-=(const CSSNumberishTime& other)
+WebAnimationTime& WebAnimationTime::operator-=(const WebAnimationTime& other)
 {
     ASSERT(m_type == other.m_type);
     m_value -= other.m_value;
     return *this;
 }
 
-bool CSSNumberishTime::operator<(const CSSNumberishTime& other) const
+bool WebAnimationTime::operator<(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value < other.m_value;
 }
 
-bool CSSNumberishTime::operator<=(const CSSNumberishTime& other) const
+bool WebAnimationTime::operator<=(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value <= other.m_value;
 }
 
-bool CSSNumberishTime::operator>(const CSSNumberishTime& other) const
+bool WebAnimationTime::operator>(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value > other.m_value;
 }
 
-bool CSSNumberishTime::operator>=(const CSSNumberishTime& other) const
+bool WebAnimationTime::operator>=(const WebAnimationTime& other) const
 {
     ASSERT(m_type == other.m_type);
     return m_value >= other.m_value;
 }
 
-bool CSSNumberishTime::operator==(const CSSNumberishTime& other) const
+bool WebAnimationTime::operator==(const WebAnimationTime& other) const
 {
     return m_type == other.m_type && m_value == other.m_value;
 }
 
-CSSNumberishTime CSSNumberishTime::operator+(const Seconds& other) const
+WebAnimationTime WebAnimationTime::operator+(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return { m_type, m_value + other.seconds() };
 }
 
-CSSNumberishTime CSSNumberishTime::operator-(const Seconds& other) const
+WebAnimationTime WebAnimationTime::operator-(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return { m_type, m_value - other.seconds() };
 }
 
-bool CSSNumberishTime::operator<(const Seconds& other) const
+bool WebAnimationTime::operator<(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value < other.seconds();
 }
 
-bool CSSNumberishTime::operator<=(const Seconds& other) const
+bool WebAnimationTime::operator<=(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value <= other.seconds();
 }
 
-bool CSSNumberishTime::operator>(const Seconds& other) const
+bool WebAnimationTime::operator>(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value > other.seconds();
 }
 
-bool CSSNumberishTime::operator>=(const Seconds& other) const
+bool WebAnimationTime::operator>=(const Seconds& other) const
 {
     ASSERT(m_type == Type::Time);
     return m_value >= other.seconds();
 }
 
-bool CSSNumberishTime::operator==(const Seconds& other) const
+bool WebAnimationTime::operator==(const Seconds& other) const
 {
     return m_type == Type::Time && m_value == other.seconds();
 }
 
-CSSNumberishTime CSSNumberishTime::operator*(double scalar) const
+WebAnimationTime WebAnimationTime::operator*(double scalar) const
 {
     return { m_type, m_value * scalar };
 }
 
-CSSNumberishTime CSSNumberishTime::operator/(double scalar) const
+WebAnimationTime WebAnimationTime::operator/(double scalar) const
 {
     return { m_type, m_value / scalar };
 }
 
-CSSNumberishTime::operator Seconds() const
+WebAnimationTime::operator Seconds() const
 {
     ASSERT(m_type == Type::Time);
     return Seconds(m_value);
 }
 
-CSSNumberishTime::operator CSSNumberish() const
+WebAnimationTime::operator CSSNumberish() const
 {
     if (m_type == Type::Time)
         return secondsToWebAnimationsAPITime(*this);
@@ -285,7 +285,7 @@ CSSNumberishTime::operator CSSNumberish() const
     return CSSNumericFactory::percent(m_value);
 }
 
-void CSSNumberishTime::dump(TextStream& ts) const
+void WebAnimationTime::dump(TextStream& ts) const
 {
     if (m_type == Type::Time) {
         ts << m_value * 1000;
@@ -296,7 +296,7 @@ void CSSNumberishTime::dump(TextStream& ts) const
     return;
 }
 
-TextStream& operator<<(TextStream& ts, const CSSNumberishTime& value)
+TextStream& operator<<(TextStream& ts, const WebAnimationTime& value)
 {
     value.dump(ts);
     return ts;

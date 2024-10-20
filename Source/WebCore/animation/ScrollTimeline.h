@@ -63,7 +63,7 @@ public:
     AnimationTimelinesController* controller() const override;
     static ScrollableArea* scrollableAreaForSourceRenderer(RenderElement*, Ref<Document>);
 
-    std::optional<CSSNumberishTime> currentTime() override;
+    std::optional<WebAnimationTime> currentTime() override;
 
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-AnimationTimeline::AnimationTimeline(std::optional<CSSNumberishTime> duration)
+AnimationTimeline::AnimationTimeline(std::optional<WebAnimationTime> duration)
     : m_duration(duration)
 {
 }

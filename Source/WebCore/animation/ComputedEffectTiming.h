@@ -35,12 +35,12 @@ namespace WebCore {
 
 struct ComputedEffectTiming : EffectTiming {
     AnimationEffectPhase phase { AnimationEffectPhase::Idle };
-    std::optional<CSSNumberishTime> localTime;
+    std::optional<WebAnimationTime> localTime;
     MarkableDouble simpleIterationProgress;
     MarkableDouble progress;
     MarkableDouble currentIteration;
-    CSSNumberishTime endTime;
-    CSSNumberishTime activeDuration;
+    WebAnimationTime endTime;
+    WebAnimationTime activeDuration;
     TimingFunction::Before before { TimingFunction::Before::No };
 };
 
