@@ -51,8 +51,7 @@ static JSObjectRef CallAsConstructor(JSContextRef ctx, JSObjectRef constructor, 
 
 static void ConstructorFinalize(JSObjectRef object)
 {
-    NSMutableDictionary *privateProperties = (__bridge NSMutableDictionary *)(JSObjectGetPrivate(object));
-    CFBridgingRelease((__bridge CFTypeRef)(privateProperties));
+    CFBridgingRelease(JSObjectGetPrivate(object));
     JSObjectSetPrivate(object, NULL);
 }
 

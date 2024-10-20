@@ -125,7 +125,6 @@ static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 - (void)dealloc
 {
     JSContextGroupRelease(m_group);
-    [super dealloc];
 }
 
 static id getInternalObjcObject(id object)
@@ -312,7 +311,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 @end
 
-static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root, bool lockAcquired)
+void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, id root, bool lockAcquired /* = false */)
 {
     @autoreleasepool {
         JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:toRef(&vm)];
@@ -320,18 +319,17 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visit
             return;
         NSMapTable *externalObjectGraph = [virtualMachine externalObjectGraph];
         Lock& externalDataMutex = [virtualMachine externalDataMutex];
-        Vector<void*> stack;
+        Vector<id> stack;
         stack.append(root);
-        while (!stack.isEmpty()) {
-            void* nextRoot = stack.last();
-            stack.removeLast();
-            if (!visitor.addOpaqueRoot(nextRoot))
+        do {
+            id nextRoot = stack.takeLast();
+            if (!visitor.addOpaqueRoot((__bridge void *)nextRoot))
                 continue;
 
             auto appendOwnedObjects = [&] {
-                NSMapTable *ownedObjects = [externalObjectGraph objectForKey:(__bridge id)nextRoot];
+                NSMapTable *ownedObjects = [externalObjectGraph objectForKey:nextRoot];
                 for (id ownedObject in ownedObjects)
-                    stack.append((__bridge void*)ownedObject);
+                    stack.append(ownedObject);
             };
 
             if (lockAcquired)
@@ -340,14 +338,8 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visit
                 Locker locker { externalDataMutex };
                 appendOwnedObjects();
             }
-        }
+        } while (!stack.isEmpty());
     }
-}
-
-void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root)
-{
-    bool lockAcquired = false;
-    scanExternalObjectGraph(vm, visitor, root, lockAcquired);
 }
 
 void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
@@ -362,9 +354,8 @@ void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
         NSMapTable *externalRememberedSet = [virtualMachine externalRememberedSet];
         for (id key in externalRememberedSet) {
             NSMapTable *ownedObjects = [externalObjectGraph objectForKey:key];
-            bool lockAcquired = true;
             for (id ownedObject in ownedObjects)
-                scanExternalObjectGraph(vm, visitor, (__bridge void*)ownedObject, lockAcquired);
+                scanExternalObjectGraph(vm, visitor, ownedObject, true); // Aquired lock
         }
         [externalRememberedSet removeAllObjects];
     }

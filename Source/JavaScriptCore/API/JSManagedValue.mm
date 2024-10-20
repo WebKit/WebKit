@@ -73,7 +73,8 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
 - (instancetype)init
 {
-    return [self initWithValue:nil];
+    self = [super init];
+    return self;
 }
 
 - (instancetype)initWithValue:(JSValue *)value
@@ -119,7 +120,6 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
     }
 
     [self disconnectValue];
-    [super dealloc];
 }
 
 - (void)didAddOwner:(id)owner
