@@ -552,7 +552,6 @@ animation/KeyframeInterpolation.cpp
 animation/StyleOriginatedAnimation.cpp
 animation/StyleOriginatedAnimationEvent.cpp
 animation/WebAnimation.cpp
-animation/WebAnimationTime.cpp
 animation/WebAnimationUtilities.cpp
 bindings/js/CommonVM.cpp
 bindings/js/DOMWrapperWorld.cpp
