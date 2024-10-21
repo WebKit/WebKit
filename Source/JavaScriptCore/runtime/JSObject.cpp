@@ -2066,7 +2066,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 
     // Default realm global objects should have mutable prototypes despite having
     // a Proxy globalThis.
-    ASSERT(this->isGlobalObject() || JSValue(this).toThis(globalObject, ECMAMode::sloppy()) == this);
+    ASSERT(isGlobalObject() || !inherits<JSScope>());
 
     if (this->getPrototypeDirect() == prototype)
         return true;

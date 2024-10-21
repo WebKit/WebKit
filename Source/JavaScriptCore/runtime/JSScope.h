@@ -79,8 +79,6 @@ public:
     ScopeChainIterator end();
     JSScope* next();
 
-    JSObject* globalThis();
-
     SymbolTable* symbolTable();
 
 protected:

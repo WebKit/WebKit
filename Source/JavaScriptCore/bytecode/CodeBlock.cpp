@@ -482,7 +482,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTryGetById)
         LINK(OpGetByIdDirect)
         LINK(OpGetByValWithThis)
-        LINK(OpToThis)
 
         LINK(OpGetById)
         LINK(OpGetLength)
@@ -530,6 +529,13 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpConstructVarargs, callLinkInfo)
         LINK(OpSuperConstructVarargs, callLinkInfo)
         LINK(OpCallIgnoreResult, callLinkInfo)
+
+        case op_to_this: {
+            INITIALIZE_METADATA(OpToThis);
+            metadata.m_seenValuesStatus = SeenValuesStatus::None;
+            metadata.m_seenStructureID = StructureID();
+            break;
+        }
 
         case op_new_array_with_species: {
             INITIALIZE_METADATA(OpNewArrayWithSpecies)
@@ -1489,14 +1495,14 @@ void CodeBlock::finalizeLLIntInlineCaches()
         });
 
         m_metadata->forEach<OpToThis>([&] (auto& metadata) {
-            if (!metadata.m_cachedStructureID || vm.heap.isMarked(metadata.m_cachedStructureID.decode()))
+            if (!metadata.m_seenStructureID || vm.heap.isMarked(metadata.m_seenStructureID.decode()))
                 return;
             if (Options::verboseOSR()) {
-                Structure* structure = metadata.m_cachedStructureID.decode();
+                Structure* structure = metadata.m_seenStructureID.decode();
                 dataLogF("Clearing LLInt to_this with structure %p.\n", structure);
             }
-            metadata.m_cachedStructureID = StructureID();
-            metadata.m_toThisStatus = merge(metadata.m_toThisStatus, ToThisClearedByGC);
+            metadata.m_seenValuesStatus = SeenValuesStatus::Other;
+            metadata.m_seenStructureID = StructureID();
         });
 
         auto clearCachedCalleeIfNecessary = [&](auto& metadata, ASCIILiteral name) {

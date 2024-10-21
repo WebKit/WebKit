@@ -137,7 +137,7 @@ JSValue JSInjectedScriptHost::internalConstructorName(JSGlobalObject* globalObje
         return jsUndefined();
 
     VM& vm = globalObject->vm();
-    JSObject* object = jsCast<JSObject*>(callFrame->uncheckedArgument(0).toThis(globalObject, ECMAMode::sloppy()));
+    JSObject* object = callFrame->uncheckedArgument(0).toSloppyModeThis(globalObject);
     return jsString(vm, JSObject::calculatedClassName(object));
 }
 

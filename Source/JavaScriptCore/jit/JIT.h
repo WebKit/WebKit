@@ -204,6 +204,9 @@ namespace JSC {
         }
 
         template <typename Bytecode>
+        MacroAssembler::Address addressOfMetadata(const Bytecode&, size_t offset);
+
+        template <typename Bytecode>
         void loadPtrFromMetadata(const Bytecode&, size_t offset, GPRReg);
 
         template <typename Bytecode>

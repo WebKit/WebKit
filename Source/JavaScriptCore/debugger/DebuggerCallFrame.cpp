@@ -197,10 +197,9 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
     if (!thisValue)
         return jsUndefined();
 
-    ECMAMode ecmaMode = ECMAMode::sloppy();
     if (codeBlock && codeBlock->ownerExecutable()->isInStrictContext())
-        ecmaMode = ECMAMode::strict();
-    return thisValue.toThis(m_validMachineFrame->lexicalGlobalObject(vm), ecmaMode);
+        return thisValue;
+    return thisValue.toSloppyModeThis(m_validMachineFrame->lexicalGlobalObject(vm));
 }
 
 // Evaluate some JavaScript code in the scope of this frame.

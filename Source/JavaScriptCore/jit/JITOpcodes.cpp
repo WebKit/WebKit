@@ -295,13 +295,12 @@ void JIT::emit_op_is_cell_with_type(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpIsCellWithType>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister value = bytecode.m_operand;
-    int type = bytecode.m_type;
 
     emitGetVirtualRegister(value, jsRegT32);
 
     move(TrustedImm32(0), regT0);
     Jump isNotCell = branchIfNotCell(jsRegT32);
-    compare8(Equal, Address(jsRegT32.payloadGPR(), JSCell::typeInfoTypeOffset()), TrustedImm32(type), regT0);
+    isCellWithType(jsRegT32.payloadGPR(), JSTypeRange { bytecode.m_firstType, bytecode.m_lastType }, regT0);
     isNotCell.link(this);
 
     boxBoolean(regT0, jsRegT10);
@@ -1551,20 +1550,6 @@ void JIT::emit_op_get_scope(const JSInstruction* currentInstruction)
     emitGetScope(bytecode.m_dst);
 }
 
-void JIT::emit_op_to_this(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpToThis>();
-    VirtualRegister srcDst = bytecode.m_srcDst;
-
-    emitGetVirtualRegister(srcDst, jsRegT10);
-
-    emitJumpSlowCaseIfNotJSCell(jsRegT10, srcDst);
-
-    addSlowCase(branchIfNotType(jsRegT10.payloadGPR(), FinalObjectType));
-    load32FromMetadata(bytecode, OpToThis::Metadata::offsetOfCachedStructureID(), regT2);
-    addSlowCase(branch32(NotEqual, Address(jsRegT10.payloadGPR(), JSCell::structureIDOffset()), regT2));
-}
-
 void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCreateThis>();
@@ -1598,6 +1583,41 @@ void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
     addSlowCase(slowCases);
     boxCell(resultReg, jsRegT10);
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
+}
+
+void JIT::emit_op_to_this(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToThis>();
+    emitGetVirtualRegister(bytecode.m_srcDst, jsRegT10);
+
+    JumpList done;
+    if (bytecode.m_ecmaMode.isStrict()) {
+        done.append(branchIfNotCell(jsRegT10));
+        done.append(branchIfNotObject(jsRegT10.payloadGPR()));
+    } else {
+        Jump isCell = branchIfCell(jsRegT10);
+        addSlowCase(branchIfNotOther(jsRegT10, regT3));
+
+        loadGlobalObject(regT3);
+        loadPtr(Address(regT3, JSGlobalObject::offsetOfGlobalThis()), jsRegT10.payloadGPR());
+        boxCell(jsRegT10.payloadGPR(), jsRegT10);
+        store8ToMetadata(TrustedImm32(static_cast<uint8_t>(SeenValuesStatus::Other)), bytecode, OpToThis::Metadata::offsetOfSeenValuesStatus());
+        emitPutVirtualRegister(bytecode.m_srcDst, jsRegT10);
+        done.append(jump());
+
+        isCell.link(this);
+        addSlowCase(branchIfNotObject(jsRegT10.payloadGPR()));
+    }
+
+    if (!Options::useLLInt())
+        addSlowCase(branch8(Equal, addressOfMetadata(bytecode, OpToThis::Metadata::offsetOfSeenValuesStatus()), TrustedImm32(static_cast<uint8_t>(SeenValuesStatus::None))));
+
+    load32FromMetadata(bytecode, OpToThis::Metadata::offsetOfSeenStructureID(), regT2);
+    done.append(branch32(Equal, Address(jsRegT10.payloadGPR(), JSCell::structureIDOffset()), regT2));
+    store8ToMetadata(TrustedImm32(static_cast<uint8_t>(SeenValuesStatus::Other)), bytecode, OpToThis::Metadata::offsetOfSeenValuesStatus());
+
+    done.link(this);
+    emitValueProfilingSite(bytecode, jsRegT10);
 }
 
 void JIT::emit_op_check_tdz(const JSInstruction* currentInstruction)
