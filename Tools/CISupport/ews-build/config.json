@@ -124,16 +124,16 @@
     { "name": "ews167", "platform": "*" },
     { "name": "ews168", "platform": "*" },
     { "name": "ews170", "platform": "tvos-simulator-18" },
-    { "name": "ews171", "platform": "mac-sonoma" },
-    { "name": "ews172", "platform": "mac-sonoma" },
-    { "name": "ews173", "platform": "mac-sonoma" },
-    { "name": "ews174", "platform": "mac-sonoma" },
-    { "name": "ews175", "platform": "mac-sonoma" },
-    { "name": "ews176", "platform": "mac-sonoma" },
-    { "name": "ews177", "platform": "mac-sonoma" },
-    { "name": "ews178", "platform": "mac-sonoma" },
-    { "name": "ews179", "platform": "mac-sonoma" },
-    { "name": "ews180", "platform": "mac-sonoma" },
+    { "name": "ews171", "platform": "mac-sequoia" },
+    { "name": "ews172", "platform": "mac-sequoia" },
+    { "name": "ews173", "platform": "mac-sequoia" },
+    { "name": "ews174", "platform": "mac-sequoia" },
+    { "name": "ews175", "platform": "mac-sequoia" },
+    { "name": "ews176", "platform": "mac-sequoia" },
+    { "name": "ews177", "platform": "mac-sequoia" },
+    { "name": "ews178", "platform": "mac-sequoia" },
+    { "name": "ews179", "platform": "mac-sequoia" },
+    { "name": "ews180", "platform": "mac-sequoia" },
     { "name": "ews181", "platform": "mac-ventura" },
     { "name": "ews182", "platform": "mac-ventura" },
     { "name": "ews183", "platform": "*" },
@@ -247,17 +247,17 @@
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
     {
-      "name": "macOS-Sonoma-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
-      "factory": "macOSBuildOnlyFactory", "platform": "mac-sonoma",
+      "name": "macOS-Sequoia-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
+      "factory": "macOSBuildOnlyFactory", "platform": "mac-sequoia",
       "configuration": "debug", "architectures": ["arm64"],
-      "triggers": ["macos-sonoma-debug-wk2-tests-ews"],
+      "triggers": ["macos-sequoia-debug-wk2-tests-ews"],
       "workernames": ["ews171", "ews172", "ews173", "ews174"]
     },
     {
-      "name": "macOS-Sonoma-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
-      "factory": "macOSWK2Factory", "platform": "mac-sonoma",
+      "name": "macOS-Sequoia-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
+      "factory": "macOSWK2Factory", "platform": "mac-sequoia",
       "configuration": "debug",
-      "triggered_by": ["macos-sonoma-debug-build-ews"],
+      "triggered_by": ["macos-sequoia-debug-build-ews"],
       "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
@@ -482,7 +482,7 @@
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
-            "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
+            "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
             "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
@@ -497,7 +497,7 @@
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
-            "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
+            "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
             "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
@@ -536,12 +536,12 @@
       "builderNames": ["macOS-Release-WK2-Stress-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-sonoma-debug-build-ews",
-      "builderNames": ["macOS-Sonoma-Debug-Build-EWS"]
+      "type": "Triggerable", "name": "macos-sequoia-debug-build-ews",
+      "builderNames": ["macOS-Sequoia-Debug-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "macos-sonoma-debug-wk2-tests-ews",
-      "builderNames": ["macOS-Sonoma-Debug-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "macos-sequoia-debug-wk2-tests-ews",
+      "builderNames": ["macOS-Sequoia-Debug-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "ios-17-sim-build-ews",

@@ -171,7 +171,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'trigger-crash-log-submission',
             'set-build-summary'
         ],
-        'macOS-Sonoma-Debug-Build-EWS': [
+        'macOS-Sequoia-Debug-Build-EWS': [
             'configure-build',
             'check-change-relevance',
             'validate-change',
@@ -187,7 +187,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'macOS-Sonoma-Debug-WK2-Tests-EWS': [
+        'macOS-Sequoia-Debug-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
