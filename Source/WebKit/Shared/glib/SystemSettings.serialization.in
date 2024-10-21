@@ -30,6 +30,7 @@ headers: <WebCore/SystemSettings.h>
     std::optional<String> xftHintStyle;
     std::optional<String> xftRGBA;
     std::optional<int> xftDPI;
+    std::optional<bool> followFontSystemSettings;
     std::optional<bool> cursorBlink;
     std::optional<int> cursorBlinkTime;
     std::optional<bool> primaryButtonWarpsSlider;

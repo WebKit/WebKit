@@ -78,6 +78,11 @@ int SystemSettingsManagerProxy::xftDPI() const
     return -1;
 }
 
+bool SystemSettingsManagerProxy::followFontSystemSettings() const
+{
+    return false;
+}
+
 bool SystemSettingsManagerProxy::cursorBlink() const
 {
     return true;
@@ -112,7 +117,7 @@ void SystemSettingsManagerProxy::initialize()
 
 void SystemSettingsManagerProxy::settingsDidChange()
 {
-    auto& oldState = SystemSettings::singleton().settingsState();
+    const auto& oldState = SystemSettings::singleton().settingsState();
     SystemSettings::State changedState;
 
     auto themeName = this->themeName();
@@ -146,6 +151,10 @@ void SystemSettingsManagerProxy::settingsDidChange()
     auto xftRGBA = this->xftRGBA();
     if (oldState.xftRGBA != xftRGBA)
         changedState.xftRGBA = xftRGBA;
+
+    auto followFontSystemSettings = this->followFontSystemSettings();
+    if (oldState.followFontSystemSettings != followFontSystemSettings)
+        changedState.followFontSystemSettings = followFontSystemSettings;
 
     auto cursorBlink = this->cursorBlink();
     if (oldState.cursorBlink != cursorBlink)

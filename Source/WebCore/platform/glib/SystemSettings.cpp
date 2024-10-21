@@ -64,6 +64,9 @@ void SystemSettings::updateSettings(const SystemSettings::State& state)
     if (state.xftDPI)
         m_state.xftDPI = state.xftDPI;
 
+    if (state.followFontSystemSettings)
+        m_state.followFontSystemSettings = state.followFontSystemSettings;
+
     if (state.cursorBlink)
         m_state.cursorBlink = state.cursorBlink;
 

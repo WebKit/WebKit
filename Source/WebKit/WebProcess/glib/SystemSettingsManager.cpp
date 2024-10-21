@@ -63,10 +63,13 @@ SystemSettingsManager::SystemSettingsManager(WebProcess& process)
             fontRenderOptions.setAntialias(systemSettings.antialiasMode());
         }
 
+        if (state.followFontSystemSettings)
+            fontRenderOptions.setFollowSystemSettings(systemSettings.followFontSystemSettings());
+
         if (state.overlayScrolling || state.themeName)
             ScrollbarTheme::theme().themeChanged();
 
-        if (themeDidChange || antialiasSettingsDidChange || hintingSettingsDidChange)
+        if (themeDidChange || antialiasSettingsDidChange || hintingSettingsDidChange || state.followFontSystemSettings)
             Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     }, this);
 }

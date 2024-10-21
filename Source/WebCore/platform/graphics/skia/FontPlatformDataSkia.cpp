@@ -63,7 +63,7 @@ FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, boo
     bool forceSubpixel = !FontRenderOptions::singleton().isHintingDisabledForTesting() && m_font.getHinting() != SkFontHinting::kFull;
     m_font.setSubpixel(forceSubpixel || useSubpixelPositioning);
 
-    m_font.setLinearMetrics(useSubpixelPositioning);
+    m_font.setLinearMetrics(m_font.getHinting() == SkFontHinting::kNone && m_font.isSubpixel());
 
     m_hbFont = SkiaHarfBuzzFont::getOrCreate(*m_font.getTypeface());
 

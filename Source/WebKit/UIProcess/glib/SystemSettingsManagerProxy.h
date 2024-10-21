@@ -59,6 +59,7 @@ private:
     String xftHintStyle() const;
     String xftRGBA() const;
     int xftDPI() const;
+    bool followFontSystemSettings() const;
     bool cursorBlink() const;
     int cursorBlinkTime() const;
     bool primaryButtonWarpsSlider() const;

@@ -110,6 +110,21 @@ int SystemSettingsManagerProxy::xftDPI() const
     return dpiSetting;
 }
 
+bool SystemSettingsManagerProxy::followFontSystemSettings() const
+{
+#if USE(GTK4)
+#if GTK_CHECK_VERSION(4, 16, 0)
+    GtkFontRendering fontRendering;
+    g_object_get(m_settings, "gtk-font-rendering", &fontRendering, nullptr);
+    return fontRendering == GTK_FONT_RENDERING_MANUAL;
+#else
+    return false;
+#endif
+#endif
+
+    return true;
+}
+
 bool SystemSettingsManagerProxy::cursorBlink() const
 {
     gboolean cursorBlinkSetting;
@@ -159,6 +174,9 @@ SystemSettingsManagerProxy::SystemSettingsManagerProxy()
     g_signal_connect_swapped(m_settings, "notify::gtk-xft-hinting", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-xft-hintstyle", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-xft-rgba", G_CALLBACK(settingsChangedCallback), this);
+#if GTK_CHECK_VERSION(4, 16, 0)
+    g_signal_connect_swapped(m_settings, "notify::gtk-font-rendering", G_CALLBACK(settingsChangedCallback), this);
+#endif
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink-time", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);

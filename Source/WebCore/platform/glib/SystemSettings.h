@@ -44,6 +44,7 @@ struct SystemSettingsState {
     std::optional<String> xftHintStyle;
     std::optional<String> xftRGBA;
     std::optional<int> xftDPI;
+    std::optional<bool> followFontSystemSettings;
     std::optional<bool> cursorBlink;
     std::optional<int> cursorBlinkTime;
     std::optional<bool> primaryButtonWarpsSlider;
@@ -72,6 +73,7 @@ public:
     std::optional<bool> cursorBlink() const { return m_state.cursorBlink; }
     std::optional<int> cursorBlinkTime() const { return m_state.cursorBlinkTime; }
     std::optional<int> xftDPI() const { return m_state.xftDPI; }
+    std::optional<bool> followFontSystemSettings() const { return m_state.followFontSystemSettings; }
     std::optional<bool> overlayScrolling() const { return m_state.overlayScrolling; }
     std::optional<bool> primaryButtonWarpsSlider() const { return m_state.primaryButtonWarpsSlider; }
     std::optional<bool> enableAnimations() const { return m_state.enableAnimations; }

@@ -39,6 +39,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
+#if PLATFORM(GTK) && !USE(GTK4)
+static constexpr bool s_followSystemSettingsDefault = true;
+#else
+static constexpr bool s_followSystemSettingsDefault = false;
+#endif
+
 namespace WebCore {
 
 class FontRenderOptions {
@@ -70,15 +76,16 @@ public:
     void setHinting(std::optional<Hinting>);
     void setAntialias(std::optional<Antialias>);
     void setSubpixelOrder(std::optional<SubpixelOrder>);
+    void setFollowSystemSettings(std::optional<bool> followSystemSettings) { m_followSystemSettings = followSystemSettings.value_or(s_followSystemSettingsDefault); }
 
 #if USE(CAIRO)
     const cairo_font_options_t* fontOptions() const { return m_fontOptions.get(); }
 #elif USE(SKIA)
-    SkFontHinting hinting() const { return m_hinting; }
-    SkFont::Edging antialias() const { return m_antialias; }
-    SkPixelGeometry subpixelOrder() const { return m_subpixelOrder; }
+    SkFontHinting hinting() const;
+    SkFont::Edging antialias() const;
+    SkPixelGeometry subpixelOrder() const;
     void setUseSubpixelPositioning(bool enable) { m_useSubpixelPositioning = enable; }
-    bool useSubpixelPositioning() const { return m_useSubpixelPositioning; }
+    bool useSubpixelPositioning() const;
 #endif
 
     WEBCORE_EXPORT void disableHintingForTesting();
@@ -96,6 +103,7 @@ private:
     SkPixelGeometry m_subpixelOrder { kUnknown_SkPixelGeometry };
     bool m_useSubpixelPositioning { false };
 #endif
+    bool m_followSystemSettings { s_followSystemSettingsDefault };
     bool m_isHintingDisabledForTesting { false };
 };
 
