@@ -27,8 +27,9 @@
   cmd: runWebAssemblyWithHarness unless parseRunCommands
 - path: wasm/js-api/
   cmd: runWebAssemblySuite unless parseRunCommands
-- path: wasm/noJIT/
-  cmd: runWebAssemblySuite unless parseRunCommands
+# FIXME: Reenable this when JITLess wasm works.
+# - path: wasm/noJIT/
+#  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/function-tests
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/references

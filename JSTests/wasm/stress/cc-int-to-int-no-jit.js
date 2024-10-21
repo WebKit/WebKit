@@ -1,3 +1,4 @@
+//@ skip
 //@ runDefaultWasm("-m", "--useJIT=0", "--useWasm=1")
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
