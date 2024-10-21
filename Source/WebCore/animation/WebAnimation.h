@@ -82,6 +82,9 @@ public:
     virtual void setBindingsEffect(RefPtr<AnimationEffect>&&);
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
+
+    virtual AnimationTimeline* bindingsTimeline() const { return timeline(); }
+    virtual void setBindingsTimeline(RefPtr<AnimationTimeline>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 

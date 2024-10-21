@@ -116,24 +116,25 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
             keyframeEffect->setComposite(animation.compositeOperation());
     }
 
-    // FIXME: deal with overridden "timeline" property as well.
-    ASSERT(owningElement());
-    Ref target = owningElement()->element;
-    Ref document = owningElement()->element.document();
-    WTF::switchOn(animation.timeline(),
-        [&] (Animation::TimelineKeyword keyword) {
-            setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
-        }, [&] (const AtomString& name) {
-            // FIXME: we should account for timeline-scope here.
-            CheckedRef timelinesController = document->ensureTimelinesController();
-            if (RefPtr scrollTimeline = timelinesController->scrollTimelineForName(name))
-                setTimeline(WTFMove(scrollTimeline));
-            else if (RefPtr viewTimeline = timelinesController->viewTimelineForNameAndSubject(name, target))
-                setTimeline(WTFMove(viewTimeline));
-        }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
-            setTimeline(RefPtr { anonymousTimeline.ptr() });
-        }
-    );
+    if (!m_overriddenProperties.contains(Property::Timeline)) {
+        ASSERT(owningElement());
+        Ref target = owningElement()->element;
+        Ref document = owningElement()->element.document();
+        WTF::switchOn(animation.timeline(),
+            [&] (Animation::TimelineKeyword keyword) {
+                setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
+            }, [&] (const AtomString& name) {
+                // FIXME: we should account for timeline-scope here.
+                CheckedRef timelinesController = document->ensureTimelinesController();
+                if (RefPtr scrollTimeline = timelinesController->scrollTimelineForName(name))
+                    setTimeline(WTFMove(scrollTimeline));
+                else if (RefPtr viewTimeline = timelinesController->viewTimelineForNameAndSubject(name, target))
+                    setTimeline(WTFMove(viewTimeline));
+            }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
+                setTimeline(RefPtr { anonymousTimeline.ptr() });
+            }
+        );
+    }
 
     animationEffect->updateStaticTimingProperties();
     effectTimingDidChange();
@@ -147,6 +148,18 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
     }
 
     unsuspendEffectInvalidation();
+}
+
+AnimationTimeline* CSSAnimation::bindingsTimeline() const
+{
+    flushPendingStyleChanges();
+    return StyleOriginatedAnimation::bindingsTimeline();
+}
+
+void CSSAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
+{
+    m_overriddenProperties.add(Property::Timeline);
+    StyleOriginatedAnimation::setBindingsTimeline(WTFMove(timeline));
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPlay()

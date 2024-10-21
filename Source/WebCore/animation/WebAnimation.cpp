@@ -238,6 +238,11 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
     InspectorInstrumentation::didSetWebAnimationEffect(*this);
 }
 
+void WebAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
+{
+    setTimeline(WTFMove(timeline));
+}
+
 void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
     // 3.4.1. Setting the timeline of an animation
