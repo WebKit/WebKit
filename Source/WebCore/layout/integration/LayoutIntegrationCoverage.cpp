@@ -53,7 +53,7 @@ enum class AvoidanceReason : uint32_t {
     FeatureIsDisabled                   = 1U << 0,
     FlexBoxHasNonFixedHeightInMainAxis  = 1U << 1,
     FlexBoxNeedsBaseline                = 1U << 2,
-    FlexBoxIsVertical                   = 1U << 3,
+    // Unused                           = 1U << 3,
     FlexBoxIsRTL                        = 1U << 4,
     // Unused                           = 1U << 5,
     // Unused                           = 1U << 6,
@@ -116,9 +116,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     auto& flexBoxStyle = flexBox.style();
     if (flexBoxStyle.display() == DisplayType::InlineFlex)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxNeedsBaseline, reasons, includeReasons);
-
-    if (!flexBoxStyle.isHorizontalWritingMode())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxIsVertical, reasons, includeReasons);
 
     if (!flexBoxStyle.isLeftToRightDirection())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxIsRTL, reasons, includeReasons);
@@ -217,9 +214,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexBoxNeedsBaseline:
         stream << "inline flex box needs baseline";
-        break;
-    case AvoidanceReason::FlexBoxIsVertical:
-        stream << "flex box has vertical writing mode";
         break;
     case AvoidanceReason::FlexBoxIsRTL:
         stream << "flex box is has right to left inline direction";

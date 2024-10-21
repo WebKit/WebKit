@@ -128,8 +128,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                         return flexItemGeometry.marginBefore();
                     return { };
                 };
-                mainAxis.marginStart = marginStart();
-                mainAxis.marginEnd = marginEnd();
+                auto shouldFlipMargins = isMainAxisParallelWithInlineAxis && root().style().blockFlowDirection() == FlowDirection::LeftToRight;
+                mainAxis.marginStart = !shouldFlipMargins ? marginStart() : marginEnd();
+                mainAxis.marginEnd = !shouldFlipMargins ? marginEnd() : marginStart();
                 mainAxis.borderAndPadding = isMainAxisParallelWithInlineAxis ? flexItemGeometry.horizontalBorderAndPadding() : flexItemGeometry.verticalBorderAndPadding();
             };
             setMainAxisValues();
@@ -169,8 +170,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                         return !style.marginStart().isAuto() ? std::make_optional(flexItemGeometry.marginStart()) : std::nullopt;
                     return { };
                 };
-                crossAxis.marginStart = marginStart();
-                crossAxis.marginEnd = marginEnd();
+                auto shouldFlipMargins = !isMainAxisParallelWithInlineAxis && root().style().blockFlowDirection() == FlowDirection::LeftToRight;
+                crossAxis.marginStart = !shouldFlipMargins ? marginStart() : marginEnd();
+                crossAxis.marginEnd = !shouldFlipMargins ? marginEnd() : marginStart();
 
                 crossAxis.hasSizeAuto = isMainAxisParallelWithInlineAxis ? style.height().isAuto() : style.width().isAuto();
                 crossAxis.borderAndPadding = isMainAxisParallelWithInlineAxis ? flexItemGeometry.verticalBorderAndPadding() : flexItemGeometry.horizontalBorderAndPadding();
@@ -220,8 +222,9 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         if (auto size = constraints.mainAxis().availableSize)
             return *size;
         // Let's use content size when available size is inf.
-        auto& last = logicalRects.last();
-        return last.right() + last.marginRight();
+        auto& lastFlexItem = logicalFlexItemList.last();
+        auto& lastRect = logicalRects.last();
+        return lastRect.right() + lastRect.marginRight() + (lastFlexItem.isContentBoxBased() ? geometryForFlexItem(lastFlexItem.layoutBox()).horizontalBorderAndPadding() : 0_lu);
     }();
     auto flexContainerCrossAxisSize = [&] {
         if (auto crossAxisSize = constraints.crossAxis().availableSize)

@@ -138,25 +138,24 @@ void FlexLayout::layout()
     auto relayoutFlexItems = [&] {
         // Flex items need to be laid out now with their final size (and through setOverridingLogicalWidth/Height)
         // Note that they may re-size themselves.
-        auto isHorizontalWritingMode = flexBox().style().isHorizontalWritingMode();
+        auto flexContainerIsHorizontal = flexBox().style().isHorizontalWritingMode();
         for (auto& layoutBox : formattingContextBoxes(flexBox())) {
             auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
+            auto isOrthogonal = flexContainerIsHorizontal != renderer.style().isHorizontalWritingMode();
             auto borderBox = Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(layoutBox));
-            auto borderBoxWidth = isHorizontalWritingMode ? borderBox.width() : borderBox.height();
-            auto borderBoxHeight = isHorizontalWritingMode ? borderBox.height() : borderBox.width();
 
             renderer.setWidth(LayoutUnit { });
             renderer.setHeight(LayoutUnit { });
-            // FIXME: This may need a visual vs. logical flip.
-            renderer.setOverridingLogicalWidth(borderBoxWidth);
-            renderer.setOverridingLogicalHeight(borderBoxHeight);
+            // logical here means width and height constraints for the _content_ of the flex items not the flex items' own dimension inside the flex container.
+            renderer.setOverridingLogicalWidth(isOrthogonal ? borderBox.height() : borderBox.width());
+            renderer.setOverridingLogicalHeight(isOrthogonal ? borderBox.width() : borderBox.height());
 
             renderer.setChildNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
             renderer.clearOverridingContentSize();
 
-            renderer.setWidth(borderBoxWidth);
-            renderer.setHeight(borderBoxHeight);
+            renderer.setWidth(flexContainerIsHorizontal ? borderBox.width() : borderBox.height());
+            renderer.setHeight(flexContainerIsHorizontal ? borderBox.height() : borderBox.width());
         }
     };
     relayoutFlexItems();
@@ -164,14 +163,14 @@ void FlexLayout::layout()
 
 void FlexLayout::updateRenderers()
 {
-    auto isHorizontalWritingMode = flexBox().style().isHorizontalWritingMode();
+    auto flexContainerIsHorizontal = flexBox().style().isHorizontalWritingMode();
     for (auto& layoutBox : formattingContextBoxes(flexBox())) {
         auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
         auto& flexItemGeometry = layoutState().geometryForBox(layoutBox);
         auto borderBox = Layout::BoxGeometry::borderBoxRect(flexItemGeometry);
-        renderer.setLocation(isHorizontalWritingMode ? borderBox.topLeft() : borderBox.topLeft().transposedPoint());
-        renderer.setWidth(isHorizontalWritingMode ? borderBox.width() : borderBox.height());
-        renderer.setHeight(isHorizontalWritingMode ? borderBox.height() : borderBox.width());
+        renderer.setLocation(flexContainerIsHorizontal ? borderBox.topLeft() : borderBox.topLeft().transposedPoint());
+        renderer.setWidth(flexContainerIsHorizontal ? borderBox.width() : borderBox.height());
+        renderer.setHeight(flexContainerIsHorizontal ? borderBox.height() : borderBox.width());
 
         renderer.setMarginStart(flexItemGeometry.marginStart());
         renderer.setMarginEnd(flexItemGeometry.marginEnd());
