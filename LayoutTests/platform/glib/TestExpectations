@@ -2878,6 +2878,7 @@ webkit.org/b/269680 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-seeking.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-sorted-before-dispatch.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime-move-within-document.html [ Skip ]
 
 # PiP / presentation-mode is not supported yet
 webkit.org/b/202756 media/airplay-wirelessvideoplaybackdisabled.html [ Skip ]
