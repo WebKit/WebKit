@@ -7,7 +7,7 @@
 import OSLog
 import WebKit
 import WebKitSwift
-@_implementationOnly import UIKit_Private
+internal import UIKit_Private
 @_spi(TextEffects) import UIKit
 
 @objc public enum WKTextAnimationType: Int {
