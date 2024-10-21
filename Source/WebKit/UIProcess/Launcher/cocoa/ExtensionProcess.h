@@ -57,6 +57,7 @@ public:
 #if USE(LEGACY_EXTENSIONKIT_SPI)
     ExtensionProcess(_SEExtensionProcess *);
 #endif
+    ~ExtensionProcess();
 
     void invalidate() const;
     OSObjectPtr<xpc_connection_t> makeLibXPCConnection() const;
@@ -65,6 +66,7 @@ public:
 
 private:
     ExtensionProcessVariant m_process;
+    bool m_didInvalidate { false };
 };
 
 } // namespace WebKit
