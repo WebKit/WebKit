@@ -250,7 +250,8 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     if (timeline == oldTimeline)
         return;
 
-    // 3. Let previous play state be animation’s play state (skipped)
+    // 3. Let previous play state be animation’s play state.
+    auto previousPlayState = playState();
 
     // 4. Let previous current time be the animation’s current time.
     auto previousCurrentTime = currentTime();
@@ -308,14 +309,15 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
         // 4. Set hold time to unresolved.
         m_holdTime = std::nullopt;
 
-        // 5. If previous play state is "finished" or "running"
-        // 6. If previous play state is "paused" and previous progress is resolved:
-        // Set hold time to previous progress * end time.
-        auto previousPlayState = playState();
-        if (previousPlayState == PlayState::Finished || previousPlayState == PlayState::Running)
+        if (previousPlayState == PlayState::Finished || previousPlayState == PlayState::Running) {
+            // 5. If previous play state is "finished" or "running":
+            //    Schedule a pending play task.
             m_timeToRunPendingPlayTask = TimeToRunPendingTask::WhenReady;
-        else if (previousPlayState == PlayState::Paused && previousProgress)
+        } else if (previousPlayState == PlayState::Paused && previousProgress) {
+            // 6. If previous play state is "paused" and previous progress is resolved:
+            //    Set hold time to previous progress * end time.
             m_holdTime = effectEndTime() * *previousProgress;
+        }
     } else if (fromFiniteTimeline && previousProgress) {
         // If from finite timeline and previous progress is resolved,
         // Run the procedure to set the current time to previous progress * end time.
