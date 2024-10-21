@@ -43,7 +43,7 @@ public:
     static UncheckedKeyHashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>& allItems();
 
     FrameState& frameState() const { return m_frameState; }
-    void setFrameState(Ref<FrameState>&& frameState) { m_frameState = WTFMove(frameState); }
+    void setFrameState(Ref<FrameState>&&);
 
     std::optional<WebCore::FrameIdentifier> frameID() const;
     WebCore::BackForwardItemIdentifier identifier() const;
@@ -55,10 +55,14 @@ public:
     WebBackForwardListItem* backForwardListItem() const;
     RefPtr<WebBackForwardListItem> protectedBackForwardListItem() const;
 
-    void addChild(Ref<FrameState>&&);
+    void setChild(Ref<FrameState>&&);
+
+    void setWasRestoredFromSession();
 
 private:
     WebBackForwardListFrameItem(WebBackForwardListItem*, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
+
+    void updateChildFrameState(Ref<FrameState>&&);
 
     WeakPtr<WebBackForwardListItem> m_backForwardListItem;
     Ref<FrameState> m_frameState;

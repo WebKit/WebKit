@@ -22,7 +22,7 @@
 
 [RValue] struct WebKit::GoToBackForwardItemParameters {
     WebCore::NavigationIdentifier navigationID;
-    WebCore::BackForwardItemIdentifier backForwardItemID;
+    Ref<WebKit::FrameState> frameState;
     WebCore::FrameLoadType backForwardType;
     WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad;
     std::optional<WebKit::WebsitePoliciesData> websitePolicies;

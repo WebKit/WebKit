@@ -1994,11 +1994,7 @@ void WebProcess::setBackForwardCacheCapacity(unsigned capacity)
 
 void WebProcess::clearCachedPage(BackForwardItemIdentifier backForwardItemID, CompletionHandler<void()>&& completionHandler)
 {
-    HistoryItem* item = WebBackForwardListProxy::itemForID(backForwardItemID);
-    if (!item)
-        return completionHandler();
-
-    BackForwardCache::singleton().remove(*item);
+    BackForwardCache::singleton().remove(backForwardItemID);
     completionHandler();
 }
 

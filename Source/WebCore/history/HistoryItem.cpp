@@ -65,10 +65,7 @@ HistoryItem::HistoryItem(Client& client, const String& urlString, const String& 
 {
 }
 
-HistoryItem::~HistoryItem()
-{
-    ASSERT(!BackForwardCache::singleton().isInBackForwardCache(m_identifier));
-}
+HistoryItem::~HistoryItem() = default;
 
 HistoryItem::HistoryItem(const HistoryItem& item)
     : RefCounted<HistoryItem>()
@@ -264,6 +261,7 @@ void HistoryItem::setPageScaleFactor(float scaleFactor)
 void HistoryItem::setDocumentState(const Vector<AtomString>& state)
 {
     m_documentState = state;
+    notifyChanged();
 }
 
 const Vector<AtomString>& HistoryItem::documentState() const
@@ -353,6 +351,7 @@ const Vector<Ref<HistoryItem>>& HistoryItem::children() const
 void HistoryItem::clearChildren()
 {
     m_children.clear();
+    notifyChanged();
 }
 
 // We do same-document navigation if going to a different item and if either of the following is true:
@@ -361,7 +360,7 @@ void HistoryItem::clearChildren()
 bool HistoryItem::shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const
 {
     // The following logic must be kept in sync with WebKit::WebBackForwardListItem::itemIsInSameDocument().
-    if (this == &otherItem)
+    if (m_identifier == otherItem.identifier())
         return false;
 
     if (stateObject() || otherItem.stateObject())

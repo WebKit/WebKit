@@ -63,9 +63,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     String userAgent;
 
-    bool itemStatesWereRestoredByAPIRequest;
-    Vector<Ref<WebKit::FrameState>> itemStates;
-
     WebKit::VisitedLinkTableIdentifier visitedLinkTableID;
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;

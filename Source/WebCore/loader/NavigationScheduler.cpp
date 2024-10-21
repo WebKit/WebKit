@@ -299,7 +299,7 @@ public:
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (page->checkedBackForward()->currentItem() == m_historyItem.ptr()) {
+        if (page->checkedBackForward()->currentItem() && page->checkedBackForward()->currentItem()->identifier() == m_historyItem->identifier()) {
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
@@ -352,7 +352,7 @@ public:
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (page->backForward().currentItem() == historyItem.ptr()) {
+        if (page->backForward().currentItem() && page->backForward().currentItem()->identifier() == historyItem->identifier()) {
             if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
                 localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;

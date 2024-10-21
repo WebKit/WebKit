@@ -256,7 +256,7 @@ void HistoryController::restoreDocumentState()
     RefPtr currentItem = m_currentItem;
     if (!currentItem)
         return;
-    if (frame->loader().requestedHistoryItem() != currentItem.get())
+    if (!frame->loader().requestedHistoryItem() || (frame->loader().requestedHistoryItem()->identifier() != currentItem->identifier()))
         return;
     RefPtr documentLoader = frame->loader().documentLoader();
     if (documentLoader->isClientRedirect())
@@ -855,7 +855,7 @@ bool HistoryController::itemsAreClones(HistoryItem& item1, HistoryItem* item2) c
     // new document and should not consider them clones.
     // (See http://webkit.org/b/35532 for details.)
     return item2
-        && &item1 != item2
+        && item1.identifier() != item2->identifier()
         && item1.itemSequenceNumber() == item2->itemSequenceNumber();
 }
 
@@ -968,6 +968,7 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
     currentItem->setStateObject(WTFMove(stateObject));
     currentItem->setFormData(nullptr);
     currentItem->setFormContentType(String());
+    currentItem->notifyChanged();
 
     RefPtr frame = dynamicDowncast<LocalFrame>(m_frame.ptr());
     if (!frame)

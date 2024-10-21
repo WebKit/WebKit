@@ -543,7 +543,7 @@ void Page::firstTimeInitialization()
     });
 }
 
-void Page::clearPreviousItemFromAllPages(HistoryItem* item)
+void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
 {
     for (auto& page : allPages()) {
         RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
@@ -551,7 +551,7 @@ void Page::clearPreviousItemFromAllPages(HistoryItem* item)
             return;
 
         CheckedRef controller = localMainFrame->history();
-        if (item == controller->previousItem()) {
+        if (controller->previousItem() && controller->previousItem()->identifier() == itemID) {
             controller->clearPreviousItem();
             return;
         }

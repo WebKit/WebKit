@@ -494,20 +494,19 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
     LOG(BackForward, "(Back/Forward) WebBackForwardList %p restored from state (has %zu entries)", this, m_entries.size());
 }
 
-Vector<Ref<FrameState>> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
+void WebBackForwardList::setItemsAsRestoredFromSession()
 {
-    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<Ref<FrameState>> {
-        if (functor(entry))
-            return entry->rootFrameState();
-        return std::nullopt;
+    setItemsAsRestoredFromSessionIf([](WebBackForwardListItem&) {
+        return true;
     });
 }
 
-Vector<Ref<FrameState>> WebBackForwardList::itemStates() const
+void WebBackForwardList::setItemsAsRestoredFromSessionIf(Function<bool(WebBackForwardListItem&)>&& functor)
 {
-    return filteredItemStates([](WebBackForwardListItem&) {
-        return true;
-    });
+    for (auto& entry : m_entries) {
+        if (functor(entry))
+            entry->setWasRestoredFromSession();
+    }
 }
 
 void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListItem)

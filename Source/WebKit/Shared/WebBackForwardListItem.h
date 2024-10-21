@@ -97,9 +97,12 @@ public:
     WebBackForwardListItem* childItemForProcessID(WebCore::ProcessIdentifier) const;
 
     WebBackForwardListFrameItem& rootFrameItem() { return m_rootFrameItem.get(); }
+    Ref<WebBackForwardListFrameItem> protectedRootFrameItem();
 
     void setIsRemoteFrameNavigation(bool isRemoteFrameNavigation) { m_isRemoteFrameNavigation = isRemoteFrameNavigation; }
     bool isRemoteFrameNavigation() const { return m_isRemoteFrameNavigation; }
+
+    void setWasRestoredFromSession();
 
 #if !LOG_DISABLED
     String loggingString();

@@ -2320,7 +2320,7 @@ void FrameLoader::commitProvisionalLoad()
         document->checkedEditor()->confirmOrCancelCompositionAndNotifyClient();
     }
 
-    if (!frame->tree().parent() && frame->history().currentItem() && frame->history().currentItem() != frame->history().provisionalItem()) {
+    if (!frame->tree().parent() && frame->history().currentItem() && (!frame->history().provisionalItem() || frame->history().currentItem()->identifier() != frame->history().provisionalItem()->identifier())) {
         // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
         // We are doing this here because we know for sure that a new page is about to be loaded.
         BackForwardCache::singleton().addIfCacheable(*frame->history().protectedCurrentItem(), frame->protectedPage().get());

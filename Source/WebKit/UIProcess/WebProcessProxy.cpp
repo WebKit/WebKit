@@ -58,6 +58,7 @@
 #include "UserData.h"
 #include "WebAutomationSession.h"
 #include "WebBackForwardCache.h"
+#include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebFrameProxy.h"
@@ -628,7 +629,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
         if (!pageID)
             return false;
         auto destinationID = decoder->destinationID();
-        auto backForwardItemID = parameters->backForwardItemID;
+        auto frameState = parameters->frameState;
         auto completionHandler = [weakThis = WeakPtr { *this }, parameters = WTFMove(parameters), destinationID] (std::optional<SandboxExtension::Handle> sandboxExtension) mutable {
             if (!weakThis)
                 return;
@@ -637,7 +638,7 @@ bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
             weakThis->send(Messages::WebPage::GoToBackForwardItem(WTFMove(*parameters)), destinationID);
         };
         if (RefPtr page = WebProcessProxy::webPage(*pageID)) {
-            if (RefPtr item = WebBackForwardListItem::itemForID(backForwardItemID))
+            if (RefPtr item = WebBackForwardListItem::itemForID(*frameState->identifier))
                 page->maybeInitializeSandboxExtensionHandle(static_cast<WebProcessProxy&>(*this), URL { item->url() }, item->resourceDirectoryURL(), true, WTFMove(completionHandler));
         } else
             completionHandler(std::nullopt);
@@ -1099,20 +1100,24 @@ bool WebProcessProxy::isAllowedToUpdateBackForwardItem(WebBackForwardListItem& i
     return false;
 }
 
-void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& mainFrameState)
+void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& frameState)
 {
-    RefPtr item = mainFrameState->identifier ? WebBackForwardListItem::itemForID(*mainFrameState->identifier) : nullptr;
+    RefPtr frameItem = frameState->identifier ? WebBackForwardListFrameItem::itemForID(*frameState->identifier) : nullptr;
+    if (!frameItem)
+        return;
+
+    RefPtr item = frameItem->backForwardListItem();
     if (!item || !isAllowedToUpdateBackForwardItem(*item))
         return;
 
-    if (!!item->backForwardCacheEntry() != mainFrameState->hasCachedPage) {
-        if (mainFrameState->hasCachedPage)
+    if (!!item->backForwardCacheEntry() != frameState->hasCachedPage) {
+        if (frameState->hasCachedPage)
             protectedProcessPool()->checkedBackForwardCache()->addEntry(*item, coreProcessIdentifier());
         else if (!item->suspendedPage())
             protectedProcessPool()->checkedBackForwardCache()->removeEntry(*item);
     }
 
-    item->setRootFrameState(WTFMove(mainFrameState));
+    frameItem->setFrameState(WTFMove(frameState));
 }
 
 void WebProcessProxy::getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)

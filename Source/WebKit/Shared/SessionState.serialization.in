@@ -61,6 +61,8 @@ header: "SessionState.h"
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
     RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
     bool wasCreatedByJSWithoutUserInteraction;
+    bool wasRestoredFromSession;
+    std::optional<WebCore::PolicyContainer> policyContainer;
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatRect exposedContentRect;

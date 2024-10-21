@@ -39,11 +39,7 @@ class WebBackForwardListProxy : public WebCore::BackForwardClient {
 public: 
     static Ref<WebBackForwardListProxy> create(WebPage& page) { return adoptRef(*new WebBackForwardListProxy(page)); }
 
-    static WebCore::HistoryItem* itemForID(const WebCore::BackForwardItemIdentifier&);
     static void removeItem(const WebCore::BackForwardItemIdentifier&);
-
-    enum class OverwriteExistingItem : bool { No, Yes };
-    void addItemFromUIProcess(const WebCore::BackForwardItemIdentifier&, Ref<WebCore::HistoryItem>&&, WebCore::PageIdentifier, OverwriteExistingItem);
 
     void clear();
 

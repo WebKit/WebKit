@@ -615,18 +615,23 @@ CachedPage* BackForwardCache::get(HistoryItem& item, Page* page)
     });
 }
 
-void BackForwardCache::remove(HistoryItem& item)
+void BackForwardCache::remove(BackForwardItemIdentifier itemID)
 {
     // Safely ignore attempts to remove items not in the cache.
-    auto it = m_cachedPageMap.find(item.identifier());
+    auto it = m_cachedPageMap.find(itemID);
     if (it == m_cachedPageMap.end() || std::holds_alternative<PruningReason>(it->value))
         return;
 
-    m_items.remove(item.identifier());
+    m_items.remove(itemID);
     m_cachedPageMap.remove(it);
-    item.notifyChanged();
 
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", item.identifier().toString().utf8().data(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", itemID.toString().utf8().data(), pageCount(), maxSize());
+}
+
+void BackForwardCache::remove(HistoryItem& item)
+{
+    remove(item.identifier());
+    item.notifyChanged();
 }
 
 void BackForwardCache::prune(PruningReason pruningReason)
