@@ -37,7 +37,7 @@ using namespace JSC;
 
 bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    JSDeprecatedCSSOMValue* jsCSSValue = jsCast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
+    JSDeprecatedCSSOMValue* jsCSSValue = uncheckedDowncast<JSDeprecatedCSSOMValue>(handle.slot()->asCell());
     if (!jsCSSValue->hasCustomProperties())
         return false;
 

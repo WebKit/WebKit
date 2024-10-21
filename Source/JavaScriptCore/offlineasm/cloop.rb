@@ -1178,7 +1178,7 @@ class Instruction
         when "cloopCallNative"
             $asm.putc "cloopStack.setCurrentStackPointer(sp.vp());"
             $asm.putc "nativeFunc = #{operands[0].clValue(:nativeFunc)};"
-            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(jsCast<JSGlobalObject*>(t0.cell()), t1.callFrame()));"
+            $asm.putc "functionReturnValue = JSValue::decode(nativeFunc(uncheckedDowncast<JSGlobalObject>(t0.cell()), t1.callFrame()));"
             $asm.putc "#if USE(JSVALUE32_64)"
             $asm.putc "    t1 = functionReturnValue.tag();"
             $asm.putc "    t0 = functionReturnValue.payload();"

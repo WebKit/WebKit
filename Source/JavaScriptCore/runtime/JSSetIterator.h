@@ -84,7 +84,7 @@ public:
         if (storage == vm.orderedHashTableSentinel())
             return { };
 
-        JSSet::Storage& storageRef = *jsCast<JSSet::Storage*>(storage);
+        JSSet::Storage& storageRef = *uncheckedDowncast<JSSet::Storage>(storage);
         auto result = JSSet::Helper::transitAndNext(vm, storageRef, entry());
         if (!result.storage) {
             setStorage(vm, vm.orderedHashTableSentinel());
@@ -125,12 +125,12 @@ public:
         JSSet::Helper::Entry entry = this->entry() - 1;
         JSCell* storage = this->storage();
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSSet::Storage& storageRef = *jsCast<JSSet::Storage*>(storage);
+        JSSet::Storage& storageRef = *uncheckedDowncast<JSSet::Storage>(storage);
         return JSSet::Helper::getKey(storageRef, entry);
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
-    JSObject* iteratedObject() const { return jsCast<JSObject*>(internalField(Field::IteratedObject).get()); }
+    JSObject* iteratedObject() const { return uncheckedDowncast<JSObject>(internalField(Field::IteratedObject).get()); }
     JSCell* storage() const { return internalField(Field::Storage).get().asCell(); }
     JSSet::Helper::Entry entry() const { return JSSet::Helper::toNumber(internalField(Field::Entry).get()); }
 

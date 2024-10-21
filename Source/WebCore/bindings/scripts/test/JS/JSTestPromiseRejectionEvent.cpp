@@ -171,7 +171,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventDO
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestPromiseRejectionEventDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestPromiseRejectionEventDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -258,14 +258,14 @@ JSObject* JSTestPromiseRejectionEvent::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestPromiseRejectionEvent::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestPromiseRejectionEventDOMConstructor, DOMConstructorID::TestPromiseRejectionEvent>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestPromiseRejectionEventDOMConstructor, DOMConstructorID::TestPromiseRejectionEvent>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestPromiseRejectionEventConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestPromiseRejectionEventPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestPromiseRejectionEventPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestPromiseRejectionEvent::getConstructor(vm, prototype->globalObject()));
@@ -309,7 +309,7 @@ JSC::GCClient::IsoSubspace* JSTestPromiseRejectionEvent::subspaceForImpl(JSC::VM
 
 void JSTestPromiseRejectionEvent::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestPromiseRejectionEvent*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestPromiseRejectionEvent>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

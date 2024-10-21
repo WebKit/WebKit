@@ -1064,7 +1064,7 @@ String WebFrame::counterValue(JSObjectRef element)
     if (!toJS(element)->inherits<JSElement>())
         return String();
 
-    Ref coreElement = jsCast<JSElement*>(toJS(element))->wrapped();
+    Ref coreElement = uncheckedDowncast<JSElement>(toJS(element))->wrapped();
     return counterValueForElement(coreElement.ptr());
 }
 

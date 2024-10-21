@@ -77,7 +77,7 @@ ScopedArguments* ScopedArguments::createByCopying(JSGlobalObject* globalObject, 
     return createByCopyingFrom(
         globalObject->vm(), globalObject->scopedArgumentsStructure(),
         callFrame->registers() + CallFrame::argumentOffset(0), callFrame->argumentCount(),
-        jsCast<JSFunction*>(callFrame->jsCallee()), table, scope);
+        uncheckedDowncast<JSFunction>(callFrame->jsCallee()), table, scope);
 }
 
 ScopedArguments* ScopedArguments::createByCopyingFrom(VM& vm, Structure* structure, Register* argumentsStart, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)

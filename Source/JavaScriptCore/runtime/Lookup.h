@@ -521,7 +521,7 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
     if (value.attributes() & PropertyAttribute::ClassStructure) {
         LazyClassStructure* lazyStructure = bitwise_cast<LazyClassStructure*>(
             bitwise_cast<char*>(&thisObj) + value.lazyClassStructureOffset());
-        JSObject* constructor = lazyStructure->constructor(jsCast<JSGlobalObject*>(&thisObj));
+        JSObject* constructor = lazyStructure->constructor(uncheckedDowncast<JSGlobalObject>(&thisObj));
         thisObj.putDirect(vm, propertyName, constructor, attributesForStructure(value.attributes()));
         return;
     }

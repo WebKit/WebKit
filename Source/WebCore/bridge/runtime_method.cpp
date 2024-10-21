@@ -63,7 +63,7 @@ JSC_DEFINE_CUSTOM_GETTER(methodLengthGetter, (JSGlobalObject* exec, EncodedJSVal
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
 
-    RuntimeMethod* thisObject = jsDynamicCast<RuntimeMethod*>(JSValue::decode(thisValue));
+    RuntimeMethod* thisObject = dynamicDowncast<RuntimeMethod>(JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(exec, scope);
     return JSValue::encode(jsNumber(thisObject->method()->numParameters()));
@@ -72,7 +72,7 @@ JSC_DEFINE_CUSTOM_GETTER(methodLengthGetter, (JSGlobalObject* exec, EncodedJSVal
 bool RuntimeMethod::getOwnPropertySlot(JSObject* object, JSGlobalObject* exec, PropertyName propertyName, PropertySlot &slot)
 {
     Ref vm = exec->vm();
-    RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(object);
+    RuntimeMethod* thisObject = uncheckedDowncast<RuntimeMethod>(object);
     if (propertyName == vm->propertyNames->length) {
         slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, methodLengthGetter);
         return true;
@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallF
     } else {
         // Calling a runtime object of a plugin element?
         if (thisValue.inherits<JSHTMLElement>())
-            instance = pluginInstance(jsCast<JSHTMLElement*>(asObject(thisValue))->wrapped());
+            instance = pluginInstance(uncheckedDowncast<JSHTMLElement>(asObject(thisValue))->wrapped());
         if (!instance)
             return throwVMTypeError(globalObject, scope);
     }

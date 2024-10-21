@@ -260,7 +260,7 @@ public:
         return m_keyCount;
     }
 
-    void takeSnapshot(MarkedArgumentBuffer&, unsigned limit = 0);
+    void takeSnapshot(MarkedArgumentBuffer&, unsigned limit = 0) const;
 
     static constexpr ptrdiff_t offsetOfBuffer()
     {
@@ -309,7 +309,7 @@ private:
 
     enum class IterationState { Continue, Stop };
     template<typename Functor>
-    void forEach(Functor functor)
+    void forEach(Functor functor) const
     {
         auto* buffer = this->buffer();
         for (uint32_t index = 0; index < m_capacity; ++index) {
@@ -410,7 +410,7 @@ private:
     }
 
     template<typename Appender>
-    void takeSnapshotInternal(unsigned limit, Appender);
+    void takeSnapshotInternal(unsigned limit, Appender) const;
 
     MallocPtr<WeakMapBufferType> m_buffer;
     uint32_t m_capacity { 0 };

@@ -125,7 +125,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimeConstructorFuncFrom, (JSGlobalObje
     JSValue itemValue = callFrame->argument(0);
 
     if (itemValue.inherits<TemporalPlainDateTime>())
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainDate(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime())));
+        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), uncheckedDowncast<TemporalPlainDateTime>(itemValue)->plainDate(), uncheckedDowncast<TemporalPlainDateTime>(itemValue)->plainTime())));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::from(globalObject, itemValue, overflow)));
 }

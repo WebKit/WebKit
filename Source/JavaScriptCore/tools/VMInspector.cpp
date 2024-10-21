@@ -438,7 +438,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
 
     // Dumping from low memory to high memory.
     JSCell* owner = callFrame->codeOwnerCell();
-    CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(owner);
+    CodeBlock* codeBlock = dynamicDowncast<CodeBlock>(owner);
     unsigned numCalleeLocals = codeBlock ? codeBlock->numCalleeLocals() : 0;
     unsigned numVars = codeBlock ? codeBlock->numVars() : 0;
     bool isWasm = false;

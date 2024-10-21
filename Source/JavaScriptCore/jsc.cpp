@@ -570,7 +570,7 @@ public:
         VM& vm = globalObject->vm();
         PropertyNameArray ownPropertyNames(vm, propertyNames.propertyNameMode(), propertyNames.privateSymbolMode());
         Base::getOwnPropertyNames(object, globalObject, ownPropertyNames, mode);
-        auto* thisObject = jsCast<GlobalObject*>(object);
+        auto* thisObject = uncheckedDowncast<GlobalObject>(object);
         auto& filter = thisObject->ensurePropertyFilter();
         for (auto& propertyName : ownPropertyNames) {
             if (!filter.contains(propertyName.impl()))
@@ -968,7 +968,7 @@ JSC_DEFINE_CUSTOM_SETTER(testCustomAccessorSetter, (JSGlobalObject* lexicalGloba
     RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
     JSCell* thisCell = JSValue::decode(thisValue).asCell();
     RELEASE_ASSERT(thisCell->type() == GlobalProxyType);
-    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(jsCast<JSGlobalProxy*>(thisCell)->target());
+    GlobalObject* thisObject = dynamicDowncast<GlobalObject>(uncheckedDowncast<JSGlobalProxy>(thisCell)->target());
     RELEASE_ASSERT(thisObject);
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter"_s);
 }
@@ -977,7 +977,7 @@ JSC_DEFINE_CUSTOM_SETTER(testCustomValueSetter, (JSGlobalObject* lexicalGlobalOb
 {
     RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
     JSCell* thisCell = JSValue::decode(thisValue).asCell();
-    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(thisCell);
+    GlobalObject* thisObject = dynamicDowncast<GlobalObject>(thisCell);
     RELEASE_ASSERT(thisObject);
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter"_s);
 }
@@ -1459,7 +1459,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     moduleKey = moduleURL.fileSystemPath();
 
     RefPtr<ScriptFetchParameters> attributes;
-    if (auto* value = jsDynamicCast<JSScriptFetchParameters*>(attributesValue))
+    if (auto* value = dynamicDowncast<JSScriptFetchParameters>(attributesValue))
         attributes = &value->parameters();
 
     Vector<uint8_t> buffer;
@@ -1696,7 +1696,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDescribeArray, (JSGlobalObject* globalObject, C
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
     VM& vm = globalObject->vm();
-    JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
+    JSObject* object = dynamicDowncast<JSObject>(callFrame->argument(0));
     if (!object)
         return JSValue::encode(jsNontrivialString(vm, "<not object>"_s));
     return JSValue::encode(jsNontrivialString(vm, toString("<Butterfly: ", RawPointer(object->butterfly()), "; public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
@@ -2048,13 +2048,13 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
         data = asString(dataValue)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
     } else if (dataValue.inherits<JSArrayBuffer>()) {
-        auto* arrayBuffer = jsCast<JSArrayBuffer*>(dataValue);
+        auto* arrayBuffer = uncheckedDowncast<JSArrayBuffer>(dataValue);
         if (arrayBuffer->impl()->isDetached())
             data = emptyString();
         else
             data = std::span(static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength());
     } else if (dataValue.inherits<JSArrayBufferView>()) {
-        auto* view = jsCast<JSArrayBufferView*>(dataValue);
+        auto* view = uncheckedDowncast<JSArrayBufferView>(dataValue);
         if (view->isDetached())
             data = emptyString();
         else
@@ -2235,7 +2235,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadline, (JSGlobalObject* globalObject, CallFr
     int c;
     FILE* descriptor = stdin;
 
-    if (auto* file = jsDynamicCast<JSFileDescriptor*>(callFrame->argument(0)))
+    if (auto* file = dynamicDowncast<JSFileDescriptor>(callFrame->argument(0)))
         descriptor = file->descriptor();
 
     while ((c = getc(descriptor)) != EOF) {
@@ -2439,8 +2439,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"_s));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     while (global.inherits<JSGlobalProxy>())
-        global = jsCast<JSGlobalProxy*>(global)->target();
-    GlobalObject* realm = jsDynamicCast<GlobalObject*>(global);
+        global = uncheckedDowncast<JSGlobalProxy>(global)->target();
+    GlobalObject* realm = dynamicDowncast<GlobalObject>(global);
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
 
@@ -2640,7 +2640,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     int32_t index = callFrame->argument(1).toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(callFrame->argument(0));
+    JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(callFrame->argument(0));
     if (jsBuffer && jsBuffer->isShared()) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
@@ -2654,7 +2654,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     }
 
 #if ENABLE(WEBASSEMBLY)
-    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(callFrame->argument(0));
+    JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(callFrame->argument(0));
     if (memory && memory->memory().sharingMode() == MemorySharingMode::Shared) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
@@ -2799,7 +2799,7 @@ JSC_DEFINE_HOST_FUNCTION(functionTransferArrayBuffer, (JSGlobalObject* globalObj
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
     
-    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(callFrame->argument(0));
+    JSArrayBuffer* buffer = dynamicDowncast<JSArrayBuffer>(callFrame->argument(0));
     if (!buffer)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected an array buffer"_s)));
     
@@ -2912,7 +2912,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // FIXME: This means we can't pass any internal function but I don't think that's common for testing.
-    auto callback = jsDynamicCast<JSFunction*>(callFrame->argument(0));
+    auto callback = dynamicDowncast<JSFunction>(callFrame->argument(0));
     if (!callback)
         return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
 
@@ -2946,7 +2946,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryLiveCount, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(callFrame->argument(0));
+    auto* finalizationRegistry = dynamicDowncast<JSFinalizationRegistry>(callFrame->argument(0));
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
@@ -2959,7 +2959,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryDeadCount, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(callFrame->argument(0));
+    auto* finalizationRegistry = dynamicDowncast<JSFinalizationRegistry>(callFrame->argument(0));
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
@@ -3012,7 +3012,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBigInt32, (JSGlobalObject* globalObject, 
     if (bigIntValue.isBigInt32())
         return JSValue::encode(bigIntValue);
     ASSERT(bigIntValue.isHeapBigInt());
-    JSBigInt* bigInt = jsCast<JSBigInt*>(bigIntValue);
+    JSBigInt* bigInt = uncheckedDowncast<JSBigInt>(bigIntValue);
     if (!bigInt->length())
         return JSValue::encode(jsBigInt32(0));
     if (bigInt->length() == 1) {
@@ -3174,7 +3174,7 @@ JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
-        if (JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(i)))
+        if (JSObject* object = dynamicDowncast<JSObject>(callFrame->argument(i)))
             object->ensureArrayStorage(vm);
     }
     return JSValue::encode(jsUndefined());
@@ -3248,9 +3248,9 @@ JSC_DEFINE_HOST_FUNCTION(functionWebAssemblyMemoryMode, (JSGlobalObject* globalO
     };
 
     if (JSObject* object = callFrame->argument(0).getObject()) {
-        if (auto* memory = jsDynamicCast<JSWebAssemblyMemory*>(object))
+        if (auto* memory = dynamicDowncast<JSWebAssemblyMemory>(object))
             return JSValue::encode(jsString(vm, createString(memory->memory().mode())));
-        if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(object))
+        if (auto* instance = dynamicDowncast<JSWebAssemblyInstance>(object))
             return JSValue::encode(jsString(vm, createString(instance->memoryMode())));
     }
 
@@ -3647,7 +3647,7 @@ static bool checkUncaughtException(VM& vm, GlobalObject* globalObject, JSValue e
         return false;
     }
 
-    bool isInstanceOfExpectedException = jsCast<JSObject*>(exceptionClass)->hasInstance(globalObject, exception);
+    bool isInstanceOfExpectedException = uncheckedDowncast<JSObject>(exceptionClass)->hasInstance(globalObject, exception);
     if (scope.exception()) {
         printf("Expected uncaught exception with name '%s' but given exception class fails performing hasInstance\n", expectedExceptionName.utf8().data());
         return false;
@@ -3674,7 +3674,7 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
         JSCell* valueCell = value.asCell();
         vm.ensureTerminationException();
         Exception* terminationException = vm.terminationException();
-        Exception* exception = jsDynamicCast<Exception*>(valueCell);
+        Exception* exception = dynamicDowncast<Exception>(valueCell);
         if (exception)
             return vm.isTerminationException(exception);
         JSCell* terminationError = terminationException->value().asCell();
@@ -3701,7 +3701,7 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
 
 void GlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
 {
-    auto* global = jsCast<GlobalObject*>(globalObject);
+    auto* global = uncheckedDowncast<GlobalObject>(globalObject);
     dumpException(global, exception->value());
     bool hideNoReturn = true;
     if (hideNoReturn)
@@ -3770,12 +3770,12 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             }
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](JSGlobalObject* globalObject, CallFrame* callFrame) {
-                checkException(jsCast<GlobalObject*>(globalObject), isLastFile, false, callFrame->argument(0), options, success);
+                checkException(uncheckedDowncast<GlobalObject>(globalObject), isLastFile, false, callFrame->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 
             JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&success, &options, isLastFile](JSGlobalObject* globalObject, CallFrame* callFrame) {
-                checkException(jsCast<GlobalObject*>(globalObject), isLastFile, true, callFrame->argument(0), options, success);
+                checkException(uncheckedDowncast<GlobalObject>(globalObject), isLastFile, true, callFrame->argument(0), options, success);
                 return JSValue::encode(jsUndefined());
             });
 

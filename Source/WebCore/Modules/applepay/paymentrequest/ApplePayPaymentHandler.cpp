@@ -994,7 +994,7 @@ template<typename T>
 static JSC::Strong<JSC::JSObject> toJSDictionary(JSC::JSGlobalObject& lexicalGlobalObject, const T& value)
 {
     JSC::JSLockHolder lock { &lexicalGlobalObject };
-    return { lexicalGlobalObject.vm(), asObject(toJS<IDLDictionary<T>>(lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), value)) };
+    return { lexicalGlobalObject.vm(), asObject(toJS<IDLDictionary<T>>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), value)) };
 }
 
 void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)

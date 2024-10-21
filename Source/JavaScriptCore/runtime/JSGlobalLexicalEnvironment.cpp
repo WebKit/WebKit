@@ -39,13 +39,13 @@ void JSGlobalLexicalEnvironment::destroy(JSCell* cell)
 
 bool JSGlobalLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject*, PropertyName propertyName, PropertySlot& slot)
 {
-    JSGlobalLexicalEnvironment* thisObject = jsCast<JSGlobalLexicalEnvironment*>(object);
+    JSGlobalLexicalEnvironment* thisObject = uncheckedDowncast<JSGlobalLexicalEnvironment>(object);
     return symbolTableGet(thisObject, propertyName, slot);
 }
 
 bool JSGlobalLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSGlobalLexicalEnvironment* thisObject = jsCast<JSGlobalLexicalEnvironment*>(cell);
+    JSGlobalLexicalEnvironment* thisObject = uncheckedDowncast<JSGlobalLexicalEnvironment>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     bool alwaysThrowWhenAssigningToConstProperty = true;
     bool ignoreConstAssignmentError = slot.isInitialization();

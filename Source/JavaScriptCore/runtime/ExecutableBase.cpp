@@ -48,12 +48,12 @@ void ExecutableBase::dump(PrintStream& out) const
 
     switch (type()) {
     case NativeExecutableType: {
-        NativeExecutable* native = jsCast<NativeExecutable*>(realThis);
+        NativeExecutable* native = uncheckedDowncast<NativeExecutable>(realThis);
         out.print("NativeExecutable:"_s, RawPointer(native->function().taggedPtr()), "/"_s, RawPointer(native->constructor().taggedPtr()));
         return;
     }
     case EvalExecutableType: {
-        EvalExecutable* eval = jsCast<EvalExecutable*>(realThis);
+        EvalExecutable* eval = uncheckedDowncast<EvalExecutable>(realThis);
         if (CodeBlock* codeBlock = eval->codeBlock())
             out.print(*codeBlock);
         else
@@ -61,7 +61,7 @@ void ExecutableBase::dump(PrintStream& out) const
         return;
     }
     case ProgramExecutableType: {
-        ProgramExecutable* eval = jsCast<ProgramExecutable*>(realThis);
+        ProgramExecutable* eval = uncheckedDowncast<ProgramExecutable>(realThis);
         if (CodeBlock* codeBlock = eval->codeBlock())
             out.print(*codeBlock);
         else
@@ -69,7 +69,7 @@ void ExecutableBase::dump(PrintStream& out) const
         return;
     }
     case ModuleProgramExecutableType: {
-        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(realThis);
+        ModuleProgramExecutable* executable = uncheckedDowncast<ModuleProgramExecutable>(realThis);
         if (CodeBlock* codeBlock = executable->codeBlock())
             out.print(*codeBlock);
         else
@@ -77,7 +77,7 @@ void ExecutableBase::dump(PrintStream& out) const
         return;
     }
     case FunctionExecutableType: {
-        FunctionExecutable* function = jsCast<FunctionExecutable*>(realThis);
+        FunctionExecutable* function = uncheckedDowncast<FunctionExecutable>(realThis);
         if (!function->eitherCodeBlock())
             out.print("FunctionExecutable w/o CodeBlock"_s);
         else {
@@ -97,9 +97,9 @@ void ExecutableBase::dump(PrintStream& out) const
 CodeBlockHash ExecutableBase::hashFor(CodeSpecializationKind kind) const
 {
     if (type() == NativeExecutableType)
-        return jsCast<const NativeExecutable*>(this)->hashFor(kind);
+        return uncheckedDowncast<const NativeExecutable>(this)->hashFor(kind);
     
-    return jsCast<const ScriptExecutable*>(this)->hashFor(kind);
+    return uncheckedDowncast<const ScriptExecutable>(this)->hashFor(kind);
 }
 
 } // namespace JSC

@@ -65,7 +65,7 @@ void JSDOMMicrotask::run(JSGlobalObject* globalObject)
 
 
     auto* lexicalGlobalObject = job->globalObject();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
         return;
 

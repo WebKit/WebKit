@@ -127,7 +127,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, { });
 
     URL base;
-    if (JSString* referrerString = jsDynamicCast<JSString*>(referrer)) {
+    if (JSString* referrerString = dynamicDowncast<JSString>(referrer)) {
         String value = referrerString->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         // It can be invalid URL because dynamic-import will be resolved with caller's source origin (this becomes referrer), and it can be non valid URL.

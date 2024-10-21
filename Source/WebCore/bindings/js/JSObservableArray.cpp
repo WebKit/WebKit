@@ -83,7 +83,7 @@ JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObservableArray* thisObject = jsDynamicCast<JSObservableArray*>(JSValue::decode(thisValue));
+    JSObservableArray* thisObject = dynamicDowncast<JSObservableArray>(JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
     return JSValue::encode(jsNumber(thisObject->length()));
@@ -92,7 +92,7 @@ JSC_DEFINE_CUSTOM_GETTER(arrayLengthGetter, (JSGlobalObject* lexicalGlobalObject
 void JSObservableArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = lexicalGlobalObject->vm();
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
+    JSObservableArray* thisObject = uncheckedDowncast<JSObservableArray>(object);
     unsigned length = thisObject->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(vm, i));
@@ -106,7 +106,7 @@ void JSObservableArray::getOwnPropertyNames(JSObject* object, JSGlobalObject* le
 bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = lexicalGlobalObject->vm();
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
+    JSObservableArray* thisObject = uncheckedDowncast<JSObservableArray>(object);
     if (propertyName == vm.propertyNames->length) {
         slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum, arrayLengthGetter);
         return true;
@@ -124,7 +124,7 @@ bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
 
 bool JSObservableArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexicalGlobalObject, unsigned index, PropertySlot& slot)
 {
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
+    JSObservableArray* thisObject = uncheckedDowncast<JSObservableArray>(object);
     if (index < thisObject->length()) {
         slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index));
@@ -139,7 +139,7 @@ bool JSObservableArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
     if (propertyName == vm.propertyNames->length)
         return observableArraySetLength(thisObject, lexicalGlobalObject, scope, value);
 
@@ -152,7 +152,7 @@ bool JSObservableArray::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
 // https://webidl.spec.whatwg.org/#observable-array-exotic-object-set-the-indexed-value
 bool JSObservableArray::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool)
 {
-    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
     auto& concreteArray = thisObject->getConcreteArray();
     if (index > concreteArray.length())
         return false;
@@ -171,14 +171,14 @@ bool JSObservableArray::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlob
     if (auto index = parseIndex(propertyName))
         return deletePropertyByIndex(cell, lexicalGlobalObject, *index);
 
-    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
     RELEASE_AND_RETURN(scope, JSObject::deleteProperty(thisObject, lexicalGlobalObject, propertyName, slot));
 }
 
 // https://webidl.spec.whatwg.org/#es-observable-array-deleteProperty
 bool JSObservableArray::deletePropertyByIndex(JSCell* cell, JSGlobalObject*, unsigned index)
 {
-    auto* thisObject = jsCast<JSObservableArray*>(cell);
+    auto* thisObject = uncheckedDowncast<JSObservableArray>(cell);
     auto& concreteArray = thisObject->getConcreteArray();
     if (!concreteArray.length() || index != concreteArray.length() - 1)
         return false;
@@ -192,7 +192,7 @@ bool JSObservableArray::defineOwnProperty(JSObject* object, JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
+    JSObservableArray* thisObject = uncheckedDowncast<JSObservableArray>(object);
     if (propertyName == vm.propertyNames->length) {
         if (descriptor.isAccessorDescriptor())
             return typeError(globalObject, scope, throwException, "Not allowed to change access mechanism for 'length' property"_s);

@@ -184,7 +184,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
     
     JSC::JSLockHolder lock(globalObject);
     
-    auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(result.value());
+    auto* castedPromise = dynamicDowncast<JSC::JSPromise>(result.value());
     if (!castedPromise) {
         // Simple case: result is NOT a promise, just return the JSValue.
         optionalResultHandler(result);

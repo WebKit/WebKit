@@ -74,8 +74,8 @@ template<typename IDLKeyType, typename IDLValueType>
 void DOMMapAdapter::set(typename IDLKeyType::ParameterType key, typename IDLValueType::ParameterType value)
 {
     JSC::JSLockHolder locker(&m_lexicalGlobalObject);
-    auto jsKey = toJS<IDLKeyType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLKeyType::ParameterType>(key));
-    auto jsValue = toJS<IDLValueType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLValueType::ParameterType>(value));
+    auto jsKey = toJS<IDLKeyType>(m_lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&m_lexicalGlobalObject), std::forward<typename IDLKeyType::ParameterType>(key));
+    auto jsValue = toJS<IDLValueType>(m_lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&m_lexicalGlobalObject), std::forward<typename IDLValueType::ParameterType>(value));
     setToBackingMap(m_lexicalGlobalObject, m_backingMap, jsKey, jsValue);
 }
 
@@ -123,7 +123,7 @@ template<typename WrapperClass> JSC::JSValue forwardClearToMapLike(JSC::JSGlobal
 template<typename WrapperClass, typename Callback> JSC::JSValue forwardForEachToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, Callback&&)
 {
     getAndInitializeBackingMap(lexicalGlobalObject, mapLike);
-    return forwardForEachCallToBackingMap(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), callFrame, mapLike);
+    return forwardForEachCallToBackingMap(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), callFrame, mapLike);
 }
 
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardGetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)

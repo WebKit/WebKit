@@ -205,8 +205,8 @@ public:
     {
         JSValue* value = slot(storage, aliveEntryCountIndex());
         if (value->isCell()) {
-            ASSERT(jsDynamicCast<Storage*>(*value));
-            return jsCast<Storage*>(*value);
+            ASSERT(dynamicDowncast<Storage>(*value));
+            return uncheckedDowncast<Storage>(*value);
         }
         return nullptr;
     }

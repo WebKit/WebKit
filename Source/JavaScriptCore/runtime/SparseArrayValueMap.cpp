@@ -154,7 +154,7 @@ void SparseArrayEntry::get(JSObject* thisObject, PropertySlot& slot) const
         return;
     }
 
-    slot.setGetterSlot(thisObject, m_attributes, jsCast<GetterSetter*>(value));
+    slot.setGetterSlot(thisObject, m_attributes, uncheckedDowncast<GetterSetter>(value));
 }
 
 void SparseArrayEntry::get(PropertyDescriptor& descriptor) const
@@ -196,7 +196,7 @@ bool SparseArrayEntry::put(JSGlobalObject* globalObject, JSValue thisValue, Spar
         return true;
     }
 
-    RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(Base::get())->callSetter(globalObject, thisValue, value, shouldThrow));
+    RELEASE_AND_RETURN(scope, uncheckedDowncast<GetterSetter>(Base::get())->callSetter(globalObject, thisValue, value, shouldThrow));
 }
 
 JSValue SparseArrayEntry::getNonSparseMode() const
@@ -213,7 +213,7 @@ JSValue SparseArrayEntry::get() const
 template<typename Visitor>
 void SparseArrayValueMap::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    SparseArrayValueMap* thisObject = jsCast<SparseArrayValueMap*>(cell);
+    SparseArrayValueMap* thisObject = uncheckedDowncast<SparseArrayValueMap>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
     {

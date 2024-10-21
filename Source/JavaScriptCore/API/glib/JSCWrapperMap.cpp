@@ -126,11 +126,11 @@ gpointer WrapperMap::wrappedObject(JSGlobalContextRef jsContext, JSObjectRef jsO
     JSLockHolder locker(toJS(jsContext));
     auto* object = toJS(jsObject);
     if (object->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>()) {
-        if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperObject*>(object)->wrappedObject())
+        if (auto* wrapper = uncheckedDowncast<JSC::JSAPIWrapperObject>(object)->wrappedObject())
             return static_cast<JSC::JSCGLibWrapperObject*>(wrapper)->object();
     }
     if (object->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperGlobalObject>>()) {
-        if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperGlobalObject*>(object)->wrappedObject())
+        if (auto* wrapper = uncheckedDowncast<JSC::JSAPIWrapperGlobalObject>(object)->wrappedObject())
             return wrapper->object();
     }
     return nullptr;

@@ -2751,7 +2751,7 @@ String Internals::parserMetaData(JSC::JSValue code)
         StackVisitor::visit(callFrame, vm, iter);
         executable = iter.codeBlock()->ownerExecutable();
     } else if (code.isCallable())
-        executable = JSC::jsCast<JSFunction*>(code.toObject(globalObject))->jsExecutable();
+        executable = uncheckedDowncast<JSFunction>(code.toObject(globalObject))->jsExecutable();
     else
         return String();
 

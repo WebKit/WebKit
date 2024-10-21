@@ -215,7 +215,7 @@ void WaiterListManager::notifyWaiterImpl(const AbstractLocker& listLocker, Ref<W
 
     if (waiter->isAsync()) {
         waiter->scheduleWorkAndClear(listLocker, [resolveResult](DeferredWorkTimer::Ticket ticket) {
-            JSPromise* promise = jsCast<JSPromise*>(ticket->target());
+            JSPromise* promise = uncheckedDowncast<JSPromise>(ticket->target());
             JSGlobalObject* globalObject = promise->globalObject();
             ASSERT(ticket->globalObject() == globalObject);
             VM& vm = promise->vm();
@@ -390,7 +390,7 @@ void Waiter::dump(PrintStream& out) const
     out.print(", ticket=", RawPointer(ticket.get()));
     if (ticket && !ticket->isCancelled()) {
         out.print(", m_ticket->globalObject=", RawPointer(ticket->globalObject()));
-        out.print(", m_ticket->target=", RawPointer(jsCast<JSObject*>(ticket->dependencies().last().get())));
+        out.print(", m_ticket->target=", RawPointer(uncheckedDowncast<JSObject>(ticket->dependencies().last().get())));
         out.print(", m_ticket->scriptExecutionOwner=", RawPointer(ticket->scriptExecutionOwner()));
     }
 

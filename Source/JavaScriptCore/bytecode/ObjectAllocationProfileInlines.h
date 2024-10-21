@@ -159,7 +159,7 @@ ALWAYS_INLINE unsigned ObjectAllocationProfileBase<Derived>::possibleDefaultProp
         JSValue value = prototype->getDirect(vm, propertyNameVector[i]);
 
         // Functions are common, and are usually class-level objects that are not overridden.
-        if (jsDynamicCast<JSFunction*>(value))
+        if (dynamicDowncast<JSFunction>(value))
             continue;
 
         ++count;

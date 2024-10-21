@@ -60,7 +60,7 @@ void CallVariant::filter(JSValue value)
         return;
     }
     
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(value)) {
+    if (JSFunction* function = dynamicDowncast<JSFunction>(value)) {
         if (function->executable() == executable())
             *this = CallVariant(function);
         else

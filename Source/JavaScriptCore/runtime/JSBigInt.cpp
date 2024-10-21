@@ -71,7 +71,7 @@ JSBigInt::JSBigInt(VM& vm, Structure* structure, Digit* data, unsigned length)
 template<typename Visitor>
 void JSBigInt::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSBigInt*>(cell);
+    auto* thisObject = uncheckedDowncast<JSBigInt>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     if (auto* data = thisObject->m_data.getUnsafe())
@@ -2463,7 +2463,7 @@ JSBigInt* JSBigInt::allocateFor(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm
 
 size_t JSBigInt::estimatedSize(JSCell* cell, VM& vm)
 {
-    return Base::estimatedSize(cell, vm) + jsCast<JSBigInt*>(cell)->m_length * sizeof(Digit);
+    return Base::estimatedSize(cell, vm) + uncheckedDowncast<JSBigInt>(cell)->m_length * sizeof(Digit);
 }
 
 double JSBigInt::toNumber(JSGlobalObject* globalObject) const

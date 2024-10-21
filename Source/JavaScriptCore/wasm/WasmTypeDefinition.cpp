@@ -1094,9 +1094,9 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             // Casts to these types cannot fail as any value can be an externref/hostref.
             return true;
         case TypeKind::Funcref:
-            return !!jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+            return !!dynamicDowncast<WebAssemblyFunctionBase>(refValue);
         case TypeKind::Eqref:
-            return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+            return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || dynamicDowncast<JSWebAssemblyArray>(refValue) || dynamicDowncast<JSWebAssemblyStruct>(refValue);
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -1104,9 +1104,9 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
         case TypeKind::I31ref:
             return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
         case TypeKind::Arrayref:
-            return jsDynamicCast<JSWebAssemblyArray*>(refValue);
+            return dynamicDowncast<JSWebAssemblyArray>(refValue);
         case TypeKind::Structref:
-            return jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+            return dynamicDowncast<JSWebAssemblyStruct>(refValue);
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1114,7 +1114,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
         auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
         if (signature.is<FunctionSignature>()) {
-            WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+            WebAssemblyFunctionBase* funcRef = dynamicDowncast<WebAssemblyFunctionBase>(refValue);
             if (!funcRef)
                 return false;
             auto funcRTT = funcRef->rtt();
@@ -1123,7 +1123,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             return funcRTT->isSubRTT(*signatureRTT);
         }
         if (signature.is<ArrayType>()) {
-            JSWebAssemblyArray* arrayRef = jsDynamicCast<JSWebAssemblyArray*>(refValue);
+            JSWebAssemblyArray* arrayRef = dynamicDowncast<JSWebAssemblyArray>(refValue);
             if (!arrayRef)
                 return false;
             auto arrayRTT = arrayRef->rtt();
@@ -1132,7 +1132,7 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             return arrayRTT->isSubRTT(*signatureRTT);
         }
         ASSERT(signature.is<StructType>());
-        JSWebAssemblyStruct* structRef = jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+        JSWebAssemblyStruct* structRef = dynamicDowncast<JSWebAssemblyStruct>(refValue);
         if (!structRef)
             return false;
         auto structRTT = structRef->rtt();

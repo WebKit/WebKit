@@ -173,14 +173,14 @@ JSObject* JSTestDefaultToJSONInherit::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSTestDefaultToJSONInherit::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONInheritDOMConstructor, DOMConstructorID::TestDefaultToJSONInherit>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONInheritDOMConstructor, DOMConstructorID::TestDefaultToJSONInherit>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONInheritConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestDefaultToJSONInheritPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestDefaultToJSONInheritPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestDefaultToJSONInherit::getConstructor(vm, prototype->globalObject()));
@@ -231,7 +231,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritPrototypeFunction_toJSONB
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"_s), longAttributeValue);
     }
-    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
+    if (downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(castedThis->globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         auto enabledBySettingsAttributeValue = toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"_s), enabledBySettingsAttributeValue);
@@ -301,7 +301,7 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSONInherit::subspaceForImpl(JSC::VM&
 
 void JSTestDefaultToJSONInherit::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestDefaultToJSONInherit*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestDefaultToJSONInherit>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

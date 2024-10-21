@@ -287,7 +287,7 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
     }
 
     if (cell->isObject()) {
-        AUDIT_VERIFY(jsDynamicCast<JSObject*>(cell),
+        AUDIT_VERIFY(dynamicDowncast<JSObject>(cell),
             "cell %p cell.type %d", cell, cell->type());
     }
 

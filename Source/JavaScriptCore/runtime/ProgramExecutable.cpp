@@ -284,7 +284,7 @@ auto ProgramExecutable::ensureTemplateObjectMap(VM&) -> TemplateObjectMap&
 template<typename Visitor>
 void ProgramExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
+    ProgramExecutable* thisObject = uncheckedDowncast<ProgramExecutable>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {

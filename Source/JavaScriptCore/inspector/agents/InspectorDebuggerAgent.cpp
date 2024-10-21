@@ -671,7 +671,7 @@ static String functionName(JSC::FunctionExecutable& functionExecutable)
 
 static String functionName(JSC::CodeBlock& codeBlock)
 {
-    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(codeBlock.ownerExecutable()))
+    if (auto* functionExecutable = dynamicDowncast<JSC::FunctionExecutable>(codeBlock.ownerExecutable()))
         return functionName(*functionExecutable);
 
     return nullString();
@@ -685,8 +685,8 @@ static String functionName(JSC::CallFrame* callFrame)
     if (auto* codeBlock = callFrame->codeBlock())
         return functionName(*codeBlock);
 
-    if (auto* jsFunction = JSC::jsDynamicCast<JSC::JSFunction*>(callFrame->jsCallee())) {
-        if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(jsFunction->executable()))
+    if (auto* jsFunction = dynamicDowncast<JSC::JSFunction>(callFrame->jsCallee())) {
+        if (auto* nativeExecutable = dynamicDowncast<JSC::NativeExecutable>(jsFunction->executable()))
             return functionName(*nativeExecutable);
     }
 
@@ -806,7 +806,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
             JSC::HeapIterationScope iterationScope(m_debugger.vm().heap);
             m_debugger.vm().heap.objectSpace().forEachLiveCell(iterationScope, [&] (JSC::HeapCell* cell, JSC::HeapCell::Kind kind) {
                 if (isJSCellKind(kind)) {
-                    if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(static_cast<JSC::JSCell*>(cell))) {
+                    if (auto* nativeExecutable = dynamicDowncast<JSC::NativeExecutable>(static_cast<JSC::JSCell*>(cell))) {
                         if (auto existingIndex = existingReplacedThunks.find(nativeExecutable); existingIndex != notFound)
                             ++existingReplacedThunks[existingIndex]->matchCount;
                         else

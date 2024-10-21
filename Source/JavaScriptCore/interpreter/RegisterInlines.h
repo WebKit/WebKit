@@ -83,7 +83,7 @@ ALWAYS_INLINE Register& Register::operator=(EncodedJSValue encodedJSValue)
 
 ALWAYS_INLINE JSScope* Register::scope() const
 {
-    return jsCast<JSScope*>(unboxedCell());
+    return uncheckedDowncast<JSScope>(unboxedCell());
 }
 
 } // namespace JSC

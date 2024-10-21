@@ -47,7 +47,7 @@ void JSImmutableButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         return;
     }
 
-    Butterfly* butterfly = jsCast<JSImmutableButterfly*>(cell)->toButterfly();
+    Butterfly* butterfly = uncheckedDowncast<JSImmutableButterfly>(cell)->toButterfly();
     visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
 }
 

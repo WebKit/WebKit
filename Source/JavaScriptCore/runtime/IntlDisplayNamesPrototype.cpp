@@ -79,7 +79,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncOf, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* displayNames = jsDynamicCast<IntlDisplayNames*>(callFrame->thisValue());
+    auto* displayNames = dynamicDowncast<IntlDisplayNames>(callFrame->thisValue());
     if (UNLIKELY(!displayNames))
         return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.of called on value that's not a DisplayNames"_s);
 
@@ -92,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncResolvedOptions, (JSGlobal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* displayNames = jsDynamicCast<IntlDisplayNames*>(callFrame->thisValue());
+    auto* displayNames = dynamicDowncast<IntlDisplayNames>(callFrame->thisValue());
     if (UNLIKELY(!displayNames))
         return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.resolvedOptions called on value that's not a DisplayNames"_s);
 

@@ -55,7 +55,7 @@ void WebTransportSendStreamSink::write(WebCore::ScriptExecutionContext& context,
     if (!context.globalObject())
         return promise.reject(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
 
-    auto& globalObject = *JSC::jsCast<WebCore::JSDOMGlobalObject*>(context.globalObject());
+    auto& globalObject = *uncheckedDowncast<WebCore::JSDOMGlobalObject>(context.globalObject());
     auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
     auto bufferSource = convert<WebCore::IDLUnion<WebCore::IDLArrayBuffer, WebCore::IDLArrayBufferView>>(globalObject, value);

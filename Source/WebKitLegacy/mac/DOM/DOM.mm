@@ -509,7 +509,7 @@ id <DOMEventTarget> kit(EventTarget* target)
     JSObject* object = toJS(jsWrapper);
     if (!object->inherits<JSNode>())
         return nil;
-    return kit(&jsCast<JSNode*>(object)->wrapped());
+    return kit(&uncheckedDowncast<JSNode>(object)->wrapped());
 }
 
 - (void)getPreviewSnapshotImage:(CGImageRef*)cgImage andRects:(NSArray **)rects

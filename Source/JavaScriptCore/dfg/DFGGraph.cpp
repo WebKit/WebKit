@@ -279,7 +279,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
                 if (ExecutableBase* executable = variant.executable()) {
                     if (executable->isHostFunction())
                         out.print(comma, "<host function>"_s);
-                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable))
+                    else if (FunctionExecutable* functionExecutable = dynamicDowncast<FunctionExecutable>(executable))
                         out.print(comma, FunctionExecutableDump(functionExecutable));
                     else
                         out.print(comma, "<non-function executable>"_s);
@@ -1433,7 +1433,7 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
     if (!base)
         return JSValue();
     
-    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(base);
+    JSLexicalEnvironment* activation = dynamicDowncast<JSLexicalEnvironment>(base);
     if (!activation)
         return JSValue();
     
@@ -1483,7 +1483,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
         return nullptr;
     if (!value)
         return nullptr;
-    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value);
+    JSArrayBufferView* view = dynamicDowncast<JSArrayBufferView>(value);
     if (!view)
         return nullptr;
     if (!view->length())
@@ -1565,7 +1565,7 @@ FrozenValue* Graph::freeze(JSValue value)
     // point to other CodeBlocks. We don't want to have them be
     // part of the weak pointer set. For example, an optimized CodeBlock
     // having a weak pointer to itself will cause it to get collected.
-    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(value));
+    RELEASE_ASSERT(!dynamicDowncast<CodeBlock>(value));
     
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
@@ -1864,9 +1864,9 @@ bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* reg
 
     // We only care about functions and getters at this point. If you want to access other properties
     // you'll have to add code for those types.
-    JSFunction* function = jsDynamicCast<JSFunction*>(value);
+    JSFunction* function = dynamicDowncast<JSFunction>(value);
     if (!function) {
-        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(value);
+        GetterSetter* getterSetter = dynamicDowncast<GetterSetter>(value);
 
         if (!getterSetter)
             return false;
@@ -1888,7 +1888,7 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
     ObjectPropertyCondition equivalenceCondition = conditions.slotBaseCondition();
     RELEASE_ASSERT(equivalenceCondition.hasRequiredValue());
-    JSFunction* function = jsDynamicCast<JSFunction*>(equivalenceCondition.condition().requiredValue());
+    JSFunction* function = dynamicDowncast<JSFunction>(equivalenceCondition.condition().requiredValue());
     if (!function)
         return false;
 

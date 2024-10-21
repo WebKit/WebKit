@@ -197,7 +197,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->prototype, JSTestConditionalIncludes::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
     reifyStaticProperties(vm, JSTestConditionalIncludes::info(), JSTestConditionalIncludesConstructorTableValues, *this);
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         auto propertyName = Identifier::fromString(vm, "MIXIN_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
@@ -205,7 +205,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         auto propertyName = Identifier::fromString(vm, "MIXIN_REFLECTED_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
@@ -213,7 +213,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         auto propertyName = Identifier::fromString(vm, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
@@ -313,7 +313,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestConditionalIncludes::info(), JSTestConditionalIncludesPrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -322,7 +322,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinComplexOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -331,7 +331,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinCustomOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -340,7 +340,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -349,7 +349,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!(downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled && downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled)) {
+    if (!(downcast<Document>(uncheckedDowncast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled && downcast<Document>(jsCast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled)) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinSettingsConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -358,7 +358,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinResultFieldOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -367,7 +367,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "partialMixinOperationFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -376,7 +376,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinReadOnlyAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -385,7 +385,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -394,7 +394,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinCustomAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -403,7 +403,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinNodeAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -412,7 +412,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "partialMixinAttributeFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -421,7 +421,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "MIXIN_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -430,7 +430,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "MIXIN_REFLECTED_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -439,7 +439,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
     }
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -475,7 +475,7 @@ JSObject* JSTestConditionalIncludes::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestConditionalIncludes::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionalIncludesDOMConstructor, DOMConstructorID::TestConditionalIncludes>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionalIncludesDOMConstructor, DOMConstructorID::TestConditionalIncludes>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestConditionalIncludes::destroy(JSC::JSCell* cell)
@@ -488,7 +488,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor, (JSGlobalObject* 
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestConditionalIncludesPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestConditionalIncludesPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestConditionalIncludes::getConstructor(vm, prototype->globalObject()));
@@ -675,7 +675,7 @@ static inline JSC::EncodedJSValue jsTestConditionalIncludesPrototypeFunction_mix
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -798,7 +798,7 @@ JSC::GCClient::IsoSubspace* JSTestConditionalIncludes::subspaceForImpl(JSC::VM& 
 
 void JSTestConditionalIncludes::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestConditionalIncludes*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestConditionalIncludes>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -859,7 +859,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestConditionalIncludes* JSTestConditionalIncludes::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestConditionalIncludes*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestConditionalIncludes>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

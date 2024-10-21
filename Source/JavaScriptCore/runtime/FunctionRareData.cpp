@@ -54,7 +54,7 @@ Structure* FunctionRareData::createStructure(VM& vm, JSGlobalObject* globalObjec
 template<typename Visitor>
 void FunctionRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    FunctionRareData* rareData = jsCast<FunctionRareData*>(cell);
+    FunctionRareData* rareData = uncheckedDowncast<FunctionRareData>(cell);
     ASSERT_GC_OBJECT_INHERITS(cell, info());
     Base::visitChildren(cell, visitor);
 

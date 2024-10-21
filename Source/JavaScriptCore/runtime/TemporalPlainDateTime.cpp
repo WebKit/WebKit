@@ -63,7 +63,7 @@ void TemporalPlainDateTime::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* globalObject = jsCast<TemporalPlainDateTime*>(init.owner)->globalObject();
+            auto* globalObject = init.owner->globalObject();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });
@@ -74,7 +74,7 @@ void TemporalPlainDateTime::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainDateTime*>(cell);
+    auto* thisObject = uncheckedDowncast<TemporalPlainDateTime>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -118,16 +118,16 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainDateTime>())
-            return jsCast<TemporalPlainDateTime*>(itemValue);
+            return uncheckedDowncast<TemporalPlainDateTime>(itemValue);
 
         if (itemValue.inherits<TemporalPlainDate>())
-            return TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), jsCast<TemporalPlainDate*>(itemValue)->plainDate(), { });
+            return TemporalPlainDateTime::create(vm, globalObject->plainDateTimeStructure(), uncheckedDowncast<TemporalPlainDate>(itemValue)->plainDate(), { });
 
         JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
 
         // FIXME: Implement after fleshing out Temporal.Calendar.
-        if (!calendar->inherits<TemporalCalendar>() || !jsCast<TemporalCalendar*>(calendar)->isISO8601()) {
+        if (!calendar->inherits<TemporalCalendar>() || !uncheckedDowncast<TemporalCalendar>(calendar)->isISO8601()) {
             throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
             return { };
         }

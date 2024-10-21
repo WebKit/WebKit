@@ -63,7 +63,7 @@ IntlCollator::IntlCollator(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlCollator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    IntlCollator* thisObject = jsCast<IntlCollator*>(cell);
+    IntlCollator* thisObject = uncheckedDowncast<IntlCollator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

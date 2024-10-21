@@ -51,7 +51,7 @@ ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(Script
     if (!context.globalObject())
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(context.globalObject());
     JSC::JSLockHolder lock(globalObject.vm());
     auto readableSource = SimpleReadableStreamSource::create();
     auto readable = ReadableStream::create(globalObject, readableSource.copyRef());
@@ -93,7 +93,7 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
         if (!context || !context->globalObject())
             return Exception { ExceptionCode::InvalidStateError };
 
-        auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
+        auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(context->globalObject());
         auto writableOrException = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = Ref { *this }](auto& context, auto value) -> ExceptionOr<void> {
             if (!transformer->m_backend)
                 return Exception { ExceptionCode::InvalidStateError };
@@ -161,7 +161,7 @@ void RTCRtpScriptTransformer::enqueueFrame(ScriptExecutionContext& context, Ref<
     if (!m_backend)
         return;
 
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(context.globalObject());
     if (!globalObject)
         return;
 

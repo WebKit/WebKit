@@ -61,7 +61,7 @@ IntlRelativeTimeFormat::IntlRelativeTimeFormat(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlRelativeTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<IntlRelativeTimeFormat*>(cell);
+    auto* thisObject = uncheckedDowncast<IntlRelativeTimeFormat>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

@@ -42,8 +42,8 @@ inline Structure* ExecutableBase::createStructure(VM& vm, JSGlobalObject* global
 inline Intrinsic ExecutableBase::intrinsic() const
 {
     if (isHostFunction())
-        return jsCast<const NativeExecutable*>(this)->intrinsic();
-    return jsCast<const ScriptExecutable*>(this)->intrinsic();
+        return uncheckedDowncast<const NativeExecutable>(this)->intrinsic();
+    return uncheckedDowncast<const ScriptExecutable>(this)->intrinsic();
 }
 
 inline Intrinsic ExecutableBase::intrinsicFor(CodeSpecializationKind kind) const
@@ -56,16 +56,16 @@ inline Intrinsic ExecutableBase::intrinsicFor(CodeSpecializationKind kind) const
 inline ImplementationVisibility ExecutableBase::implementationVisibility() const
 {
     if (isFunctionExecutable())
-        return jsCast<const FunctionExecutable*>(this)->implementationVisibility();
+        return uncheckedDowncast<const FunctionExecutable>(this)->implementationVisibility();
     if (isHostFunction())
-        return jsCast<const NativeExecutable*>(this)->implementationVisibility();
+        return uncheckedDowncast<const NativeExecutable>(this)->implementationVisibility();
     return ImplementationVisibility::Public;
 }
 
 inline InlineAttribute ExecutableBase::inlineAttribute() const
 {
     if (isFunctionExecutable())
-        return jsCast<const FunctionExecutable*>(this)->inlineAttribute();
+        return uncheckedDowncast<const FunctionExecutable>(this)->inlineAttribute();
     return InlineAttribute::None;
 }
 
@@ -73,14 +73,14 @@ inline bool ExecutableBase::hasJITCodeForCall() const
 {
     if (isHostFunction())
         return true;
-    return jsCast<const ScriptExecutable*>(this)->hasJITCodeForCall();
+    return uncheckedDowncast<const ScriptExecutable>(this)->hasJITCodeForCall();
 }
 
 inline bool ExecutableBase::hasJITCodeForConstruct() const
 {
     if (isHostFunction())
         return true;
-    return jsCast<const ScriptExecutable*>(this)->hasJITCodeForConstruct();
+    return uncheckedDowncast<const ScriptExecutable>(this)->hasJITCodeForConstruct();
 }
 
 } // namespace JSC

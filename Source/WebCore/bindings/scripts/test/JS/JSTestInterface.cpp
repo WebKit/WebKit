@@ -270,7 +270,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceDOMConstructor
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestInterfaceDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestInterfaceDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -470,7 +470,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfacePrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
+    if (!downcast<Document>(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mixinSettingsConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -507,7 +507,7 @@ JSObject* JSTestInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceDOMConstructor, DOMConstructorID::TestInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceDOMConstructor, DOMConstructorID::TestInterface>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestInterface::destroy(JSC::JSCell* cell)
@@ -520,7 +520,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceConstructor, (JSGlobalObject* lexicalGlo
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestInterfacePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestInterfacePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestInterface::getConstructor(vm, prototype->globalObject()));
@@ -909,7 +909,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_mixinComplexO
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -1048,7 +1048,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunction_supplementalM
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
@@ -1207,7 +1207,7 @@ JSC::GCClient::IsoSubspace* JSTestInterface::subspaceForImpl(JSC::VM& vm)
 
 void JSTestInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestInterface*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestInterface>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -1216,7 +1216,7 @@ void JSTestInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
+    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestInterface = uncheckedDowncast<JSTestInterface>(handle.slot()->asCell());
     auto& wrapped = jsTestInterface->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (UNLIKELY(reason))
@@ -1274,7 +1274,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestInterface* JSTestInterface::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestInterface*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestInterface>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

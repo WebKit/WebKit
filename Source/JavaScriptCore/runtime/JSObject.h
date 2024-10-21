@@ -1069,7 +1069,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(jsDynamicCast<JSObject*>(this));
+        ASSERT(inherits<JSObject>());
         ASSERT(structure()->hasPolyProto() || getPrototypeDirect().isNull() || Heap::heap(this) == Heap::heap(getPrototypeDirect()));
         ASSERT(structure()->isObject());
         ASSERT(classInfo());
@@ -1438,7 +1438,7 @@ inline JSObject* asObject(JSCell* cell)
 {
     ASSERT(cell);
     ASSERT(cell->isObject());
-    return jsCast<JSObject*>(cell);
+    return uncheckedDowncast<JSObject>(cell);
 }
 
 inline JSObject* asObject(JSValue value)
@@ -1519,7 +1519,7 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
             return true;
         case CustomGetterSetterType:
             ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
-            fillCustomGetterPropertySlot(slot, jsCast<CustomGetterSetter*>(cell), attributes, structure);
+            fillCustomGetterPropertySlot(slot, uncheckedDowncast<CustomGetterSetter>(cell), attributes, structure);
             return true;
         default:
             break;
@@ -1534,7 +1534,7 @@ ALWAYS_INLINE void JSObject::fillCustomGetterPropertySlot(PropertySlot& slot, Cu
 {
     ASSERT(attributes & PropertyAttribute::CustomAccessorOrValue);
     if (customGetterSetter->inherits<DOMAttributeGetterSetter>()) {
-        auto* domAttribute = jsCast<DOMAttributeGetterSetter*>(customGetterSetter);
+        auto* domAttribute = uncheckedDowncast<DOMAttributeGetterSetter>(customGetterSetter);
         if (structure->isUncacheableDictionary())
             slot.setCustom(this, attributes, domAttribute->getter(), domAttribute->setter(), domAttribute->domAttribute());
         else
@@ -1650,7 +1650,7 @@ inline T JSObject::getAs(JSGlobalObject* globalObject, PropertyNameType property
     if (vm.exceptionForInspection())
         return nullptr;
 #endif
-    return jsCast<T>(value);
+    return uncheckedDowncast<std::remove_pointer_t<T>>(value);
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)

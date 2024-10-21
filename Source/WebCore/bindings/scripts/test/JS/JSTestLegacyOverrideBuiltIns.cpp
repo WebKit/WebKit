@@ -154,7 +154,7 @@ JSObject* JSTestLegacyOverrideBuiltIns::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestLegacyOverrideBuiltIns::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyOverrideBuiltInsDOMConstructor, DOMConstructorID::TestLegacyOverrideBuiltIns>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyOverrideBuiltInsDOMConstructor, DOMConstructorID::TestLegacyOverrideBuiltIns>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestLegacyOverrideBuiltIns::destroy(JSC::JSCell* cell)
@@ -166,7 +166,7 @@ void JSTestLegacyOverrideBuiltIns::destroy(JSC::JSCell* cell)
 bool JSTestLegacyOverrideBuiltIns::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLInterface<Node>;
@@ -193,7 +193,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, J
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLInterface<Node>;
@@ -212,7 +212,7 @@ bool JSTestLegacyOverrideBuiltIns::getOwnPropertySlotByIndex(JSObject* object, J
 void JSTestLegacyOverrideBuiltIns::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -221,14 +221,14 @@ void JSTestLegacyOverrideBuiltIns::getOwnPropertyNames(JSObject* object, JSGloba
 
 bool JSTestLegacyOverrideBuiltIns::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -252,12 +252,12 @@ bool JSTestLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexi
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -271,7 +271,7 @@ bool JSTestLegacyOverrideBuiltIns::putByIndex(JSCell* cell, JSGlobalObject* lexi
 
 bool JSTestLegacyOverrideBuiltIns::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -288,11 +288,11 @@ bool JSTestLegacyOverrideBuiltIns::defineOwnProperty(JSObject* object, JSGlobalO
 
 bool JSTestLegacyOverrideBuiltIns::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
@@ -308,11 +308,11 @@ bool JSTestLegacyOverrideBuiltIns::deleteProperty(JSCell* cell, JSGlobalObject* 
 bool JSTestLegacyOverrideBuiltIns::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
@@ -331,7 +331,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyOverrideBuiltInsConstructor, (JSGlobalObjec
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestLegacyOverrideBuiltInsPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestLegacyOverrideBuiltInsPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestLegacyOverrideBuiltIns::getConstructor(vm, prototype->globalObject()));
@@ -370,7 +370,7 @@ JSC::GCClient::IsoSubspace* JSTestLegacyOverrideBuiltIns::subspaceForImpl(JSC::V
 
 void JSTestLegacyOverrideBuiltIns::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestLegacyOverrideBuiltIns*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyOverrideBuiltIns>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -431,7 +431,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestLegacyOverrideBuiltIns* JSTestLegacyOverrideBuiltIns::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyOverrideBuiltIns*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestLegacyOverrideBuiltIns>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

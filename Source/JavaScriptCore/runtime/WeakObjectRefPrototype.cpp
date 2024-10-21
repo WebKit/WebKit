@@ -56,7 +56,7 @@ ALWAYS_INLINE static JSWeakObjectRef* getWeakRef(JSGlobalObject* globalObject, J
         return nullptr;
     }
 
-    auto* ref = jsDynamicCast<JSWeakObjectRef*>(asObject(value));
+    auto* ref = dynamicDowncast<JSWeakObjectRef>(asObject(value));
     if (LIKELY(ref))
         return ref;
 

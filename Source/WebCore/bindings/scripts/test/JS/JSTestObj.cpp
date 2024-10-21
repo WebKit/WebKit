@@ -2236,7 +2236,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjDOMConstructor::cons
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestObjDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestObjDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -2669,14 +2669,14 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "calculateSecretResult"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "getSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -2684,7 +2684,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
 #if ENABLE(TEST_FEATURE)
-    if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled())) {
+    if (!(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "testFeatureGetSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -2706,7 +2706,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->allowsMediaDevices())) {
+    if (!(uncheckedDowncast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->allowsMediaDevices())) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "mediaDevices"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -2772,7 +2772,7 @@ JSObject* JSTestObj::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestObjDOMConstructor, DOMConstructorID::TestObj>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestObjDOMConstructor, DOMConstructorID::TestObj>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestObj::destroy(JSC::JSCell* cell)
@@ -2785,7 +2785,7 @@ bool JSTestObj::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObj
 {
     UNUSED_PARAM(ignoreNamedProperties);
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestObj*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (auto index = parseIndex(propertyName)) {
         if (auto item = thisObject->wrapped().nullableStringSpecialMethod(index.value()); LIKELY(!!item)) {
@@ -2808,7 +2808,7 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexi
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestObj*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (LIKELY(index <= MAX_ARRAY_INDEX)) {
         if (auto item = thisObject->wrapped().nullableStringSpecialMethod(index); LIKELY(!!item)) {
@@ -2824,7 +2824,7 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lexi
 void JSTestObj::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestObj*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
         propertyNames.add(Identifier::from(vm, i));
@@ -2833,14 +2833,14 @@ void JSTestObj::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlo
 
 bool JSTestObj::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestObj*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -2867,12 +2867,12 @@ bool JSTestObj::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, un
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestObj*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -2886,7 +2886,7 @@ bool JSTestObj::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, un
 
 bool JSTestObj::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestObj*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -2901,11 +2901,11 @@ bool JSTestObj::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGloba
 
 bool JSTestObj::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestObj*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestObj>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
@@ -2918,11 +2918,11 @@ bool JSTestObj::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject
 bool JSTestObj::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestObj*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestObj>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
@@ -2934,7 +2934,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructor, (JSGlobalObject* lexicalGlobalObj
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestObjPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestObj::getConstructor(vm, prototype->globalObject()));
@@ -3037,11 +3037,11 @@ static inline JSValue jsTestObjConstructor_testStaticReadonlyObjGetter(JSGlobalO
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* context = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return jsUndefined();
     auto& document = downcast<Document>(*context);
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, TestObj::testStaticReadonlyObj(document))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestObj>>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), throwScope, TestObj::testStaticReadonlyObj(document))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructor_testStaticReadonlyObj, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4790,7 +4790,7 @@ static inline JSValue jsTestObj_withCurrentGlobalObjectAttributeGetter(JSGlobalO
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withCurrentGlobalObjectAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withCurrentGlobalObjectAttribute(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withCurrentGlobalObjectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4808,7 +4808,7 @@ static inline bool setJSTestObj_withCurrentGlobalObjectAttributeSetter(JSGlobalO
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithCurrentGlobalObjectAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), nativeValueConversionResult.releaseReturnValue());
+        return impl.setWithCurrentGlobalObjectAttribute(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -4823,7 +4823,7 @@ static inline JSValue jsTestObj_withCallWithAndSetterCallWithAttributeGetter(JSG
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withCallWithAndSetterCallWithAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.withCallWithAndSetterCallWithAttribute(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_withCallWithAndSetterCallWithAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4841,7 +4841,7 @@ static inline bool setJSTestObj_withCallWithAndSetterCallWithAttributeSetter(JSG
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithCallWithAndSetterCallWithAttribute(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), activeDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
+        return impl.setWithCallWithAndSetterCallWithAttribute(*uncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), activeDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -4874,7 +4874,7 @@ static inline bool setJSTestObj_withSetterCallWithAttributeSetter(JSGlobalObject
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setWithSetterCallWithAttribute(incumbentDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
+        return impl.setWithSetterCallWithAttribute(incumbentDOMWindow(*uncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -5982,7 +5982,7 @@ static inline bool setJSTestObj_searchSetter(JSGlobalObject& lexicalGlobalObject
     if (UNLIKELY(nativeValueConversionResult.hasException(throwScope)))
         return false;
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
-        return impl.setSearch(legacyActiveDOMWindowForAccessor(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
+        return impl.setSearch(legacyActiveDOMWindowForAccessor(*uncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)), firstDOMWindow(*jsCast<JSDOMGlobalObject>(&lexicalGlobalObject)), nativeValueConversionResult.releaseReturnValue());
     });
     return true;
 }
@@ -6899,7 +6899,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentGlobalOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCurrentGlobalObjectVoid(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCurrentGlobalObjectVoid(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_withCurrentGlobalObjectVoid, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -6929,7 +6929,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentGlobalOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.withCurrentGlobalObjectObj(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.withCurrentGlobalObjectObj(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_withCurrentGlobalObjectObj, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -6944,7 +6944,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentScriptEx
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCurrentScriptExecutionContext(*context); })));
@@ -6980,10 +6980,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentScriptEx
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCurrentScriptExecutionContextAndGlobalObject(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), *context); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCurrentScriptExecutionContextAndGlobalObject(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), *context); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_withCurrentScriptExecutionContextAndGlobalObject, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -6998,10 +6998,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentScriptEx
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.withCurrentScriptExecutionContextAndGlobalObjectWithSpaces(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), *context))));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestObj>>(*lexicalGlobalObject, *castedThis->globalObject(), throwScope, impl.withCurrentScriptExecutionContextAndGlobalObjectWithSpaces(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), *context))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_withCurrentScriptExecutionContextAndGlobalObjectWithSpaces, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -7016,7 +7016,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCurrentDocument
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
+    auto* context = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext();
     if (UNLIKELY(!context))
         return JSValue::encode(jsUndefined());
     auto& document = downcast<Document>(*context);
@@ -7054,7 +7054,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCallerDocumentA
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    auto* incumbentDocument = incumbentDOMWindow(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), *callFrame).document();
+    auto* incumbentDocument = incumbentDOMWindow(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), *callFrame).document();
     if (!incumbentDocument)
         return JSValue::encode(jsUndefined());
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCallerDocumentArgument(*incumbentDocument); })));
@@ -7072,7 +7072,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_withCallerWindowArg
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCallerWindowArgument(incumbentDOMWindow(*jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), *callFrame)); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.withCallerWindowArgument(incumbentDOMWindow(*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), *callFrame)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_withCallerWindowArgument, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -7959,7 +7959,7 @@ static inline JSC::EncodedJSValue jsTestObjConstructorFunction_staticMethodWithC
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto callbackConversionResult = convert<IDLNullable<IDLCallbackInterface<JSTestCallbackInterface>>>(*lexicalGlobalObject, argument0.value(), *jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "callback"_s, "TestObject"_s, "staticMethodWithCallbackAndOptionalArg"_s); });
+    auto callbackConversionResult = convert<IDLNullable<IDLCallbackInterface<JSTestCallbackInterface>>>(*lexicalGlobalObject, argument0.value(), *uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "callback"_s, "TestObject"_s, "staticMethodWithCallbackAndOptionalArg"_s); });
     if (UNLIKELY(callbackConversionResult.hasException(throwScope)))
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return TestObj::staticMethodWithCallbackAndOptionalArg(callbackConversionResult.releaseReturnValue()); })));
@@ -7979,7 +7979,7 @@ static inline JSC::EncodedJSValue jsTestObjConstructorFunction_staticMethodWithC
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto callbackConversionResult = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument0.value(), *jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "callback"_s, "TestObject"_s, "staticMethodWithCallbackArg"_s); });
+    auto callbackConversionResult = convert<IDLCallbackInterface<JSTestCallbackInterface>>(*lexicalGlobalObject, argument0.value(), *uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentMustBeObjectError(lexicalGlobalObject, scope, 0, "callback"_s, "TestObject"_s, "staticMethodWithCallbackArg"_s); });
     if (UNLIKELY(callbackConversionResult.hasException(throwScope)))
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return TestObj::staticMethodWithCallbackArg(callbackConversionResult.releaseReturnValue()); })));
@@ -9418,7 +9418,7 @@ static inline JSC::EncodedJSValue jsTestObjConstructorFunction_testStaticPromise
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLPromise<IDLUndefined>>(*lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), throwScope, [&]() -> decltype(auto) { return TestObj::testStaticPromiseFunction(WTFMove(promise)); })));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLPromise<IDLUndefined>>(*lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), throwScope, [&]() -> decltype(auto) { return TestObj::testStaticPromiseFunction(WTFMove(promise)); })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestObjConstructorFunction_testStaticPromiseFunction, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
@@ -9942,7 +9942,7 @@ JSC::GCClient::IsoSubspace* JSTestObj::subspaceForImpl(JSC::VM& vm)
 template<typename Visitor>
 void JSTestObj::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSTestObj*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_cachedAttribute1);
@@ -9956,7 +9956,7 @@ DEFINE_VISIT_CHILDREN(JSTestObj);
 
 void JSTestObj::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestObj*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestObj>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -10017,7 +10017,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestObj* JSTestObj::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestObj*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestObj>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

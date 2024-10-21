@@ -162,7 +162,7 @@ JSObject* JSTestReadOnlySetLike::prototype(VM& vm, JSDOMGlobalObject& globalObje
 
 JSValue JSTestReadOnlySetLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReadOnlySetLikeDOMConstructor, DOMConstructorID::TestReadOnlySetLike>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReadOnlySetLikeDOMConstructor, DOMConstructorID::TestReadOnlySetLike>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestReadOnlySetLike::destroy(JSC::JSCell* cell)
@@ -175,7 +175,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlySetLikeConstructor, (JSGlobalObject* lexi
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestReadOnlySetLikePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestReadOnlySetLikePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestReadOnlySetLike::getConstructor(vm, prototype->globalObject()));
@@ -287,7 +287,7 @@ JSC::GCClient::IsoSubspace* JSTestReadOnlySetLike::subspaceForImpl(JSC::VM& vm)
 
 void JSTestReadOnlySetLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestReadOnlySetLike*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestReadOnlySetLike>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -348,7 +348,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestReadOnlySetLike* JSTestReadOnlySetLike::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestReadOnlySetLike*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestReadOnlySetLike>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

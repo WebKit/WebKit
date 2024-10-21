@@ -993,7 +993,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
 
 Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)
 {
-    Exception* exception = jsDynamicCast<Exception*>(thrownValue);
+    Exception* exception = dynamicDowncast<Exception>(thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);
 
@@ -1768,7 +1768,7 @@ void QueuedTask::run()
 {
     if (!m_job.isObject())
         return;
-    JSObject* job = jsCast<JSObject*>(m_job);
+    JSObject* job = uncheckedDowncast<JSObject>(m_job);
     JSGlobalObject* globalObject = job->globalObject();
     runJSMicrotask(globalObject, m_identifier, job, m_arguments[0], m_arguments[1], m_arguments[2], m_arguments[3]);
 }

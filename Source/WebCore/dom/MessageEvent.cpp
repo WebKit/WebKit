@@ -78,7 +78,7 @@ auto MessageEvent::create(JSC::JSGlobalObject& globalObject, Ref<SerializedScrip
 
     auto& eventType = didFail ? eventNames().messageerrorEvent : eventNames().messageEvent;
     Ref event = adoptRef(*new MessageEvent(eventType, MessageEvent::JSValueTag { }, origin, lastEventId, WTFMove(source), WTFMove(ports)));
-    JSC::Strong<JSC::JSObject> strongWrapper(vm, JSC::jsCast<JSC::JSObject*>(toJS(&globalObject, JSC::jsCast<JSDOMGlobalObject*>(&globalObject), event.get())));
+    JSC::Strong<JSC::JSObject> strongWrapper(vm, uncheckedDowncast<JSC::JSObject*>(toJS(&globalObject, JSC::jsCast<JSDOMGlobalObject>(&globalObject), event.get())));
     event->jsData().set(vm, strongWrapper.get(), deserialized);
 
     return MessageEventWithStrongData { event, WTFMove(strongWrapper) };

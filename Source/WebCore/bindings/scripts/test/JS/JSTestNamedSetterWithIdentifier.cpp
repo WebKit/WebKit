@@ -153,7 +153,7 @@ JSObject* JSTestNamedSetterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject& 
 
 JSValue JSTestNamedSetterWithIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterWithIdentifierDOMConstructor, DOMConstructorID::TestNamedSetterWithIdentifier>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterWithIdentifierDOMConstructor, DOMConstructorID::TestNamedSetterWithIdentifier>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestNamedSetterWithIdentifier::destroy(JSC::JSCell* cell)
@@ -165,7 +165,7 @@ void JSTestNamedSetterWithIdentifier::destroy(JSC::JSCell* cell)
 bool JSTestNamedSetterWithIdentifier::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
@@ -192,7 +192,7 @@ bool JSTestNamedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* object
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
@@ -211,7 +211,7 @@ bool JSTestNamedSetterWithIdentifier::getOwnPropertySlotByIndex(JSObject* object
 void JSTestNamedSetterWithIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -220,7 +220,7 @@ void JSTestNamedSetterWithIdentifier::getOwnPropertyNames(JSObject* object, JSGl
 
 bool JSTestNamedSetterWithIdentifier::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
@@ -257,7 +257,7 @@ bool JSTestNamedSetterWithIdentifier::put(JSCell* cell, JSGlobalObject* lexicalG
 
 bool JSTestNamedSetterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -284,7 +284,7 @@ bool JSTestNamedSetterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject* l
 
 bool JSTestNamedSetterWithIdentifier::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -312,11 +312,11 @@ bool JSTestNamedSetterWithIdentifier::defineOwnProperty(JSObject* object, JSGlob
 
 bool JSTestNamedSetterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestNamedSetterWithIdentifier*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedSetterWithIdentifier>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
@@ -332,11 +332,11 @@ bool JSTestNamedSetterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObjec
 bool JSTestNamedSetterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestNamedSetterWithIdentifier*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedSetterWithIdentifier>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
@@ -355,7 +355,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedSetterWithIdentifierConstructor, (JSGlobalOb
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedSetterWithIdentifierPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestNamedSetterWithIdentifierPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedSetterWithIdentifier::getConstructor(vm, prototype->globalObject()));
@@ -398,7 +398,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedSetterWithIdentifier::subspaceForImpl(JSC
 
 void JSTestNamedSetterWithIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNamedSetterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedSetterWithIdentifier>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -459,7 +459,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestNamedSetterWithIdentifier* JSTestNamedSetterWithIdentifier::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedSetterWithIdentifier*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestNamedSetterWithIdentifier>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

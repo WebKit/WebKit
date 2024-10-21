@@ -145,7 +145,7 @@ JSObject* JSTestGenerateAddOpaqueRoot::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestGenerateAddOpaqueRoot::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGenerateAddOpaqueRootDOMConstructor, DOMConstructorID::TestGenerateAddOpaqueRoot>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGenerateAddOpaqueRootDOMConstructor, DOMConstructorID::TestGenerateAddOpaqueRoot>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestGenerateAddOpaqueRoot::destroy(JSC::JSCell* cell)
@@ -158,7 +158,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateAddOpaqueRootConstructor, (JSGlobalObject
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestGenerateAddOpaqueRootPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestGenerateAddOpaqueRootPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestGenerateAddOpaqueRoot::getConstructor(vm, prototype->globalObject()));
@@ -190,7 +190,7 @@ JSC::GCClient::IsoSubspace* JSTestGenerateAddOpaqueRoot::subspaceForImpl(JSC::VM
 template<typename Visitor>
 void JSTestGenerateAddOpaqueRoot::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSTestGenerateAddOpaqueRoot*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestGenerateAddOpaqueRoot>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     addWebCoreOpaqueRoot(visitor, thisObject->wrapped().ownerObjectConcurrently());
@@ -200,7 +200,7 @@ DEFINE_VISIT_CHILDREN(JSTestGenerateAddOpaqueRoot);
 
 void JSTestGenerateAddOpaqueRoot::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestGenerateAddOpaqueRoot*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestGenerateAddOpaqueRoot>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -261,7 +261,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestGenerateAddOpaqueRoot* JSTestGenerateAddOpaqueRoot::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestGenerateAddOpaqueRoot*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestGenerateAddOpaqueRoot>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

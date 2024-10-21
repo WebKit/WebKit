@@ -109,7 +109,7 @@ ALWAYS_INLINE static JSSet* getSet(JSGlobalObject* globalObject, JSValue thisVal
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* set = jsDynamicCast<JSSet*>(thisValue.asCell());
+    auto* set = dynamicDowncast<JSSet>(thisValue.asCell());
     if (LIKELY(set))
         return set;
     throwTypeError(globalObject, scope, "Set operation called on non-Set object"_s);

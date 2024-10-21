@@ -121,7 +121,7 @@ public:
         findResult->value.age = m_age;
         m_age += key.length();
 
-        return jsCast<UnlinkedCodeBlockType*>(findResult->value.cell.get());
+        return uncheckedDowncast<UnlinkedCodeBlockType>(findResult->value.cell.get());
     }
 
     AddResult addCache(const SourceCodeKey& key, const SourceCodeValue& value)

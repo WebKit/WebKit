@@ -159,7 +159,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(jsDynamicCast<JSArray*>(this));
+        ASSERT(inherits<JSArray>());
         ASSERT_WITH_MESSAGE(type() == ArrayType || type() == DerivedArrayType, "Instance inheriting JSArray should have either ArrayType or DerivedArrayType");
     }
 #endif
@@ -381,7 +381,7 @@ JSArray* asArray(JSValue);
 inline JSArray* asArray(JSCell* cell)
 {
     ASSERT(cell->inherits<JSArray>());
-    return jsCast<JSArray*>(cell);
+    return uncheckedDowncast<JSArray>(cell);
 }
 
 inline JSArray* asArray(JSValue value)

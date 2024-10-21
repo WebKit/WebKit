@@ -147,7 +147,7 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* array = jsCast<JSArray*>(object);
+    JSArray* array = uncheckedDowncast<JSArray>(object);
 
     // 2. If P is "length", then
     // https://tc39.es/ecma262/#sec-arraysetlength
@@ -224,7 +224,7 @@ bool JSArray::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, 
 bool JSArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    JSArray* thisObject = jsCast<JSArray*>(object);
+    JSArray* thisObject = uncheckedDowncast<JSArray>(object);
     if (propertyName == vm.propertyNames->length) {
         unsigned attributes = thisObject->isLengthWritable() ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(thisObject, attributes, jsNumber(thisObject->length()));
@@ -240,7 +240,7 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* thisObject = jsCast<JSArray*>(cell);
+    JSArray* thisObject = uncheckedDowncast<JSArray>(cell);
     thisObject->ensureWritable(vm);
 
     if (propertyName == vm.propertyNames->length) {
@@ -270,7 +270,7 @@ bool JSArray::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName prope
 bool JSArray::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    JSArray* thisObject = jsCast<JSArray*>(cell);
+    JSArray* thisObject = uncheckedDowncast<JSArray>(cell);
 
     if (propertyName == vm.propertyNames->length)
         return false;
@@ -804,7 +804,7 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
         // We do not need to have ClonedArgumentsType here since it does not have interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero.
         switch (source->type()) {
         case DirectArgumentsType:
-            return DirectArguments::fastSlice(globalObject, jsCast<DirectArguments*>(source), startIndex, count);
+            return DirectArguments::fastSlice(globalObject, uncheckedDowncast<DirectArguments>(source), startIndex, count);
         default:
             return nullptr;
         }
@@ -1517,7 +1517,7 @@ JSArray* tryCloneArrayFromFast(JSGlobalObject* globalObject, JSValue arrayValue)
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* array = jsCast<JSArray*>(arrayValue);
+    auto* array = uncheckedDowncast<JSArray>(arrayValue);
     if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
         return nullptr;
 

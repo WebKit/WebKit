@@ -168,7 +168,7 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     ASSERT(!!scope.exception() == !object);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto* jsProcessor = JSC::jsDynamicCast<JSAudioWorkletProcessor*>(object);
+    auto* jsProcessor = dynamicDowncast<JSAudioWorkletProcessor>(object);
     if (!jsProcessor)
         return nullptr;
 

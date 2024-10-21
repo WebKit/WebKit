@@ -430,7 +430,7 @@ WASM_SLOW_PATH_DECL(array_get)
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
     Wasm::ExtGCOpType arrayGetKind = static_cast<Wasm::ExtGCOpType>(instruction.m_arrayGetKind);
@@ -460,7 +460,7 @@ WASM_SLOW_PATH_DECL(array_set)
 
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayValue.getObject());
     if (index >= arrayObject->size())
         WASM_THROW(Wasm::ExceptionType::OutOfBoundsArraySet);
 
@@ -509,7 +509,7 @@ WASM_SLOW_PATH_DECL(struct_get)
     Wasm::ExtGCOpType structGetKind = static_cast<Wasm::ExtGCOpType>(instruction.m_structGetKind);
     if (structGetKind == Wasm::ExtGCOpType::StructGetS) {
         EncodedJSValue value = Wasm::structGet(structReference, instruction.m_fieldIndex);
-        JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(structReference).getObject());
+        JSWebAssemblyStruct* structObject = uncheckedDowncast<JSWebAssemblyStruct>(JSValue::decode(structReference).getObject());
         Wasm::StorageType type = structObject->fieldType(instruction.m_fieldIndex).type;
         ASSERT(type.is<Wasm::PackedType>());
         size_t elementSize = type.as<Wasm::PackedType>() == Wasm::PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
@@ -675,10 +675,10 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
         WASM_THROW(Wasm::ExceptionType::NullReference);
 
     ASSERT(targetReference.isObject());
-    JSObject* referenceAsObject = jsCast<JSObject*>(targetReference);
+    JSObject* referenceAsObject = uncheckedDowncast<JSObject>(targetReference);
 
     ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
-    auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
+    auto* wasmFunction = uncheckedDowncast<WebAssemblyFunctionBase>(referenceAsObject);
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
     JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
 
@@ -1059,7 +1059,7 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
     };
 
     const auto& handleCatch = [&](const auto& instruction) {
-        JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue);
+        JSWebAssemblyException* wasmException = dynamicDowncast<JSWebAssemblyException>(thrownValue);
         RELEASE_ASSERT(!!wasmException);
         payload = bitwise_cast<void*>(wasmException->payload().span().data());
         callFrame->uncheckedR(instruction.m_exception) = thrownValue;
@@ -1070,7 +1070,7 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
     else if (pc->is<WasmCatchAll>())
         handleCatchAll(pc->as<WasmCatchAll>());
     else if (pc->is<WasmTryTableCatch>()) {
-        payload = bitwise_cast<void*>(jsDynamicCast<JSWebAssemblyException*>(thrownValue)->payload().span().data());
+        payload = bitwise_cast<void*>(dynamicDowncast<JSWebAssemblyException>(thrownValue)->payload().span().data());
         auto instr = pc->as<WasmTryTableCatch>();
         if (instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchRef) || instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchAllRef))
             callFrame->uncheckedR(pc->as<WasmTryTableCatch>().m_exception) = thrownValue;

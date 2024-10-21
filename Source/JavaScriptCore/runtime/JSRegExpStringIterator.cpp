@@ -53,7 +53,7 @@ void JSRegExpStringIterator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSRegExpStringIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSRegExpStringIterator*>(cell);
+    auto* thisObject = uncheckedDowncast<JSRegExpStringIterator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

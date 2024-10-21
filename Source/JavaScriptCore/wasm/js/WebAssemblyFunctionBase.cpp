@@ -48,7 +48,7 @@ WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* execu
 template<typename Visitor>
 void WebAssemblyFunctionBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyFunctionBase* thisObject = jsCast<WebAssemblyFunctionBase*>(cell);
+    WebAssemblyFunctionBase* thisObject = uncheckedDowncast<WebAssemblyFunctionBase>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);

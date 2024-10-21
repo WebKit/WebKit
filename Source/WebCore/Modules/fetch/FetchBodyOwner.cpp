@@ -377,7 +377,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
     }
 
     m_readableStreamSource = adoptRef(*new FetchBodySource(*this));
-    auto streamOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&state), *m_readableStreamSource);
+    auto streamOrException = ReadableStream::create(*uncheckedDowncast<JSDOMGlobalObject>(&state), *m_readableStreamSource);
     if (UNLIKELY(streamOrException.hasException())) {
         m_readableStreamSource = nullptr;
         return streamOrException.releaseException();

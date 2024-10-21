@@ -98,11 +98,11 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
+    JSObject* thisObject = dynamicDowncast<JSObject>(thisValue);
     if (UNLIKELY(!thisObject))
         return nullptr;
 
-    auto* instance = jsDynamicCast<InstanceType*>(thisObject);
+    auto* instance = dynamicDowncast<InstanceType>(thisObject);
     if (LIKELY(instance))
         return instance;
 
@@ -116,7 +116,7 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
 
     JSValue value = thisObject->get(globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsDynamicCast<InstanceType*>(value);
+    return dynamicDowncast<InstanceType>(value);
 }
 
 template<typename ResultType>

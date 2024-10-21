@@ -201,7 +201,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     init.clientId = WTFMove(clientIdentifier);
     init.cancelable = true;
 
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());
+    auto& jsDOMGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(globalScope.globalObject());
     JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
 
     auto* promise = JSC::JSPromise::create(jsDOMGlobalObject.vm(), jsDOMGlobalObject.promiseStructure());

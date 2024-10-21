@@ -111,7 +111,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLe
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestLegacyFactoryFunctionLegacyFactoryFunction*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestLegacyFactoryFunctionLegacyFactoryFunction>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -200,12 +200,12 @@ JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestLegacyFactoryFunction::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor, DOMConstructorID::TestLegacyFactoryFunction>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor, DOMConstructorID::TestLegacyFactoryFunction>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSValue JSTestLegacyFactoryFunction::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction, DOMConstructorID::TestLegacyFactoryFunctionLegacyFactory>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction, DOMConstructorID::TestLegacyFactoryFunctionLegacyFactory>(vm, *uncheckedDowncast<JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
@@ -218,7 +218,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestLegacyFactoryFunctionPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestLegacyFactoryFunctionPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestLegacyFactoryFunction::getConstructor(vm, prototype->globalObject()));
@@ -236,7 +236,7 @@ JSC::GCClient::IsoSubspace* JSTestLegacyFactoryFunction::subspaceForImpl(JSC::VM
 
 void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestLegacyFactoryFunction*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyFactoryFunction>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -245,7 +245,7 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
 
 bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = jsCast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
+    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = uncheckedDowncast<JSTestLegacyFactoryFunction>(handle.slot()->asCell());
     auto& wrapped = jsTestLegacyFactoryFunction->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (UNLIKELY(reason))
@@ -303,7 +303,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestLegacyFactoryFunction* JSTestLegacyFactoryFunction::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyFactoryFunction*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestLegacyFactoryFunction>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

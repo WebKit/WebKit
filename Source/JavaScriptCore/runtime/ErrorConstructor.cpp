@@ -78,7 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(callErrorConstructor, (JSGlobalObject* globalObject, Ca
 bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
+    ErrorConstructor* thisObject = uncheckedDowncast<ErrorConstructor>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit) {
         if (value.isNumber()) {
@@ -96,7 +96,7 @@ bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyN
 bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
+    ErrorConstructor* thisObject = uncheckedDowncast<ErrorConstructor>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit)
         thisObject->globalObject()->setStackTraceLimit(std::nullopt);

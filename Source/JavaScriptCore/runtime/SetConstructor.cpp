@@ -74,7 +74,7 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
         return JSValue::encode(JSSet::create(vm, setStructure));
 
     bool canPerformFastAdd = JSSet::isAddFastAndNonObservable(setStructure);
-    if (auto* iterableSet = jsDynamicCast<JSSet*>(iterable)) {
+    if (auto* iterableSet = dynamicDowncast<JSSet>(iterable)) {
         if (canPerformFastAdd && iterableSet->isIteratorProtocolFastAndNonObservable()) 
             RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(globalObject, vm, setStructure)));
     }
@@ -110,8 +110,8 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
 
 JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetStorage, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
-    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
+    ASSERT(dynamicDowncast<JSSet>(callFrame->argument(0)));
+    JSSet* set = uncheckedDowncast<JSSet>(callFrame->uncheckedArgument(0));
     return JSValue::encode(set->storageOrSentinel(getVM(globalObject)));
 }
 
@@ -124,7 +124,7 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationNext, (JSGlobalObject* global
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(vm.orderedHashTableSentinel());
 
-    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    JSSet::Storage& storage = *uncheckedDowncast<JSSet::Storage>(cell);
     JSSet::Helper::Entry entry = JSSet::Helper::toNumber(callFrame->uncheckedArgument(1));
     return JSValue::encode(JSSet::Helper::nextAndUpdateIterationEntry(vm, storage, entry));
 }
@@ -137,7 +137,7 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntry, (JSGlobalObject* globa
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
 
-    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    JSSet::Storage& storage = *uncheckedDowncast<JSSet::Storage>(cell);
     return JSValue::encode(JSSet::Helper::getIterationEntry(storage));
 }
 
@@ -149,7 +149,7 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetIterationEntryKey, (JSGlobalObject* gl
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     ASSERT_UNUSED(vm, cell != vm.orderedHashTableSentinel());
 
-    JSSet::Storage& storage = *jsCast<JSSet::Storage*>(cell);
+    JSSet::Storage& storage = *uncheckedDowncast<JSSet::Storage>(cell);
     return JSValue::encode(JSSet::Helper::getIterationEntryKey(storage));
 }
 
@@ -158,8 +158,8 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncClone, (JSGlobalObject* globalObject, Cal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
-    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
+    ASSERT(dynamicDowncast<JSSet>(callFrame->argument(0)));
+    JSSet* set = uncheckedDowncast<JSSet>(callFrame->uncheckedArgument(0));
     RELEASE_AND_RETURN(scope, JSValue::encode(set->clone(globalObject, vm, globalObject->setStructure())));
 }
 

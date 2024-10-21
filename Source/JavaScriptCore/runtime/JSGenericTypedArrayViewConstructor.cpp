@@ -38,7 +38,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    JSString* jsString = dynamicDowncast<JSString>(callFrame->argument(0));
     if (UNLIKELY(!jsString))
         return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires a string"_s);
 
@@ -47,14 +47,14 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
 
     JSValue optionsValue = callFrame->argument(1);
     if (!optionsValue.isUndefined()) {
-        JSObject* optionsObject = jsDynamicCast<JSObject*>(optionsValue);
+        JSObject* optionsObject = dynamicDowncast<JSObject>(optionsValue);
         if (UNLIKELY(!optionsValue.isObject()))
             return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that options be an object"_s);
 
         JSValue alphabetValue = optionsObject->get(globalObject, vm.propertyNames->alphabet);
         RETURN_IF_EXCEPTION(scope, { });
         if (!alphabetValue.isUndefined()) {
-            JSString* alphabetString = jsDynamicCast<JSString*>(alphabetValue);
+            JSString* alphabetString = dynamicDowncast<JSString>(alphabetValue);
             if (UNLIKELY(!alphabetString))
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
@@ -69,7 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromBase64, (JSGlobalObject* globa
         JSValue lastChunkHandlingValue = optionsObject->get(globalObject, vm.propertyNames->lastChunkHandling);
         RETURN_IF_EXCEPTION(scope, { });
         if (!lastChunkHandlingValue.isUndefined()) {
-            JSString* lastChunkHandlingString = jsDynamicCast<JSString*>(lastChunkHandlingValue);
+            JSString* lastChunkHandlingString = dynamicDowncast<JSString>(lastChunkHandlingValue);
             if (UNLIKELY(!lastChunkHandlingString))
                 return throwVMTypeError(globalObject, scope, "Uint8Array.fromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
 
@@ -213,7 +213,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayConstructorFromHex, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    JSString* jsString = dynamicDowncast<JSString>(callFrame->argument(0));
     if (UNLIKELY(!jsString))
         return throwVMTypeError(globalObject, scope, "Uint8Array.fromHex requires a string"_s);
     if (UNLIKELY(jsString->length() % 2))

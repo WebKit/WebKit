@@ -3180,7 +3180,7 @@ RefPtr<ShadowRoot> Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGl
         return nullptr;
     if (shadow->mode() == ShadowRootMode::Open)
         return shadow;
-    if (JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world().shadowRootIsAlwaysOpen())
+    if (uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)->world().shadowRootIsAlwaysOpen())
         return shadow;
     return nullptr;
 }
@@ -4760,7 +4760,7 @@ JSC::JSValue Element::requestPointerLock(JSC::JSGlobalObject& lexicalGlobalObjec
         bool optionsEnabled = document().settings().pointerLockOptionsEnabled();
 
         if (optionsEnabled)
-            promise = DeferredPromise::create(*JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
+            promise = DeferredPromise::create(*downcast<JSDOMGlobalObject>(&lexicalGlobalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
 
         page->pointerLockController().requestPointerLock(this, optionsEnabled ? std::optional(WTFMove(options)) : std::nullopt, promise);
     }

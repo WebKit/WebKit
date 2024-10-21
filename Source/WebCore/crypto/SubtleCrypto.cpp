@@ -94,27 +94,27 @@ static ExceptionOr<CryptoAlgorithmIdentifier> toHashIdentifier(JSGlobalObject& s
 
 static bool isRSAESPKCSWebCryptoDeprecated(JSGlobalObject& state)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(&state);
     auto* context = globalObject.scriptExecutionContext();
     return context && context->settingsValues().deprecateRSAESPKCSWebCryptoEnabled;
 }
 static bool isAESCFBWebCryptoDeprecated(JSGlobalObject& state)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(&state);
     auto* context = globalObject.scriptExecutionContext();
     return context && context->settingsValues().deprecateAESCFBWebCryptoEnabled;
 }
 
 static bool isSafeCurvesEnabled(JSGlobalObject& state)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(&state);
     auto* context = globalObject.scriptExecutionContext();
     return context && context->settingsValues().webCryptoSafeCurvesEnabled;
 }
 
 static bool isX25519Enabled(JSGlobalObject& state)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(&state);
     auto* context = globalObject.scriptExecutionContext();
     return context && context->settingsValues().webCryptoX25519Enabled;
 }

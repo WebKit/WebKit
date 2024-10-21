@@ -148,11 +148,11 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
     }
 
     if (itemValue.inherits<TemporalInstant>())
-        return jsCast<TemporalInstant*>(itemValue);
+        return uncheckedDowncast<TemporalInstant>(itemValue);
 
     // FIXME: when Temporal.ZonedDateTime lands
     // if (itemValue.inherits<TemporalZonedDateTime>())
-    //    return TemporalInstant::create(vm, globalObject->instantStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->epochTime());
+    //    return TemporalInstant::create(vm, globalObject->instantStructure(), uncheckedDowncast<TemporalZonedDateTime>(itemValue)->epochTime());
 
     String string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -173,7 +173,7 @@ TemporalInstant* TemporalInstant::from(JSGlobalObject* globalObject, JSValue ite
     VM& vm = globalObject->vm();
 
     if (itemValue.inherits<TemporalInstant>()) {
-        ISO8601::ExactTime exactTime = jsCast<TemporalInstant*>(itemValue)->exactTime();
+        ISO8601::ExactTime exactTime = uncheckedDowncast<TemporalInstant>(itemValue)->exactTime();
         return TemporalInstant::create(vm, globalObject->instantStructure(), exactTime);
     }
 

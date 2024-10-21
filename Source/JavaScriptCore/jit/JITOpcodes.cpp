@@ -1795,7 +1795,7 @@ void JIT::emit_op_new_regexp(const JSInstruction* currentInstruction)
     VirtualRegister regexp = bytecode.m_regexp;
     GPRReg globalGPR = argumentGPR0;
     loadGlobalObject(globalGPR);
-    callOperation(operationNewRegexp, globalGPR, TrustedImmPtr(jsCast<RegExp*>(m_unlinkedCodeBlock->getConstant(regexp))));
+    callOperation(operationNewRegexp, globalGPR, TrustedImmPtr(uncheckedDowncast<RegExp>(m_unlinkedCodeBlock->getConstant(regexp))));
     boxCell(returnValueGPR, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
 }

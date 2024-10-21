@@ -87,7 +87,7 @@ Symbol* asSymbol(JSValue);
 inline Symbol* asSymbol(JSValue value)
 {
     ASSERT(value.asCell()->isSymbol());
-    return jsCast<Symbol*>(value.asCell());
+    return uncheckedDowncast<Symbol>(value.asCell());
 }
 
 } // namespace JSC

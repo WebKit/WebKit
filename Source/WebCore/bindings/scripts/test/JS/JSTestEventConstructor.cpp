@@ -168,7 +168,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestEventConstructorDOMCons
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestEventConstructorDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestEventConstructorDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -260,14 +260,14 @@ JSObject* JSTestEventConstructor::prototype(VM& vm, JSDOMGlobalObject& globalObj
 
 JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventConstructorDOMConstructor, DOMConstructorID::TestEventConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventConstructorDOMConstructor, DOMConstructorID::TestEventConstructor>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestEventConstructorConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestEventConstructorPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestEventConstructorPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestEventConstructor::getConstructor(vm, prototype->globalObject()));
@@ -327,7 +327,7 @@ JSC::GCClient::IsoSubspace* JSTestEventConstructor::subspaceForImpl(JSC::VM& vm)
 
 void JSTestEventConstructor::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestEventConstructor*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestEventConstructor>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

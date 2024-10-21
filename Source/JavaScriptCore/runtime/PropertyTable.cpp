@@ -131,7 +131,7 @@ void PropertyTable::finishCreation(VM& vm)
 template<typename Visitor>
 void PropertyTable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<PropertyTable*>(cell);
+    auto* thisObject = uncheckedDowncast<PropertyTable>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
     visitor.reportExtraMemoryVisited(thisObject->dataSize(thisObject->isCompact()));

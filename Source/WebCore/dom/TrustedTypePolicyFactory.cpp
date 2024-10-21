@@ -84,17 +84,17 @@ ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(Scrip
 
 bool TrustedTypePolicyFactory::isHTML(JSC::JSValue value) const
 {
-    return JSC::jsDynamicCast<JSTrustedHTML*>(value);
+    return dynamicDowncast<JSTrustedHTML>(value);
 }
 
 bool TrustedTypePolicyFactory::isScript(JSC::JSValue value) const
 {
-    return JSC::jsDynamicCast<JSTrustedScript*>(value);
+    return dynamicDowncast<JSTrustedScript>(value);
 }
 
 bool TrustedTypePolicyFactory::isScriptURL(JSC::JSValue value) const
 {
-    return JSC::jsDynamicCast<JSTrustedScriptURL*>(value);
+    return dynamicDowncast<JSTrustedScriptURL>(value);
 }
 
 Ref<TrustedHTML> TrustedTypePolicyFactory::emptyHTML() const

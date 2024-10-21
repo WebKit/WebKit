@@ -557,7 +557,7 @@ void RegExp::printTraceData()
 void RegExp::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     // This function can be called concurrently. So we must not ref m_pattern.
-    auto* regExp = jsCast<const RegExp*>(cell);
+    auto* regExp = uncheckedDowncast<const RegExp>(cell);
     out.print(toCString("/", regExp->pattern().impl(), "/", Yarr::flagsString(regExp->flags()).data()));
 }
 

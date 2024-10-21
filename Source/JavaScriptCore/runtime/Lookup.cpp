@@ -68,7 +68,7 @@ bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTable
     }
 
     if (isAccessor)
-        slot.setCacheableGetterSlot(thisObject, attributes, jsCast<GetterSetter*>(thisObject->getDirect(offset)), offset);
+        slot.setCacheableGetterSlot(thisObject, attributes, uncheckedDowncast<GetterSetter>(thisObject->getDirect(offset)), offset);
     else
         slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
     return true;

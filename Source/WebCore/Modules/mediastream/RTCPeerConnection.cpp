@@ -1022,7 +1022,7 @@ void RTCPeerConnection::generateCertificate(JSC::JSGlobalObject& lexicalGlobalOb
         promise.reject(parameters.releaseException());
         return;
     }
-    auto& document = downcast<Document>(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext());
+    auto& document = downcast<Document>(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)->scriptExecutionContext());
     PeerConnectionBackend::generateCertificate(document, parameters.returnValue(), WTFMove(promise));
 }
 

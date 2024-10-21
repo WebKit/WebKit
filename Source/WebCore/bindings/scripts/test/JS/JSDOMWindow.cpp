@@ -205,22 +205,22 @@ void JSDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 
-    auto* scriptExecutionContext = jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext();
+    auto* scriptExecutionContext = uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext();
 
-    if (((scriptExecutionContext && scriptExecutionContext->isSecureContext()) && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
+    if (((scriptExecutionContext && scriptExecutionContext->isSecureContext()) && TestEnabledForContext::enabledForContext(*uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, builtinNames(vm).TestEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsDOMWindow_TestEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
 JSValue JSDOMWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSDOMWindowDOMConstructor, DOMConstructorID::DOMWindow>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSDOMWindowDOMConstructor, DOMConstructorID::DOMWindow>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSDOMWindowPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSDOMWindowPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSDOMWindow::getConstructor(vm, prototype->globalObject()));
@@ -385,7 +385,7 @@ JSC::GCClient::IsoSubspace* JSDOMWindow::subspaceForImpl(JSC::VM& vm)
 
 void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSDOMWindow*>(cell);
+    auto* thisObject = uncheckedDowncast<JSDOMWindow>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -394,7 +394,7 @@ void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
 DOMWindow* JSDOMWindow::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSDOMWindow*>(value))
+    if (auto* wrapper = dynamicDowncast<JSDOMWindow>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

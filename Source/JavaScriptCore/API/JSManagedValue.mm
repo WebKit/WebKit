@@ -98,9 +98,9 @@ static JSManagedValueHandleOwner& managedValueHandleOwner()
 
     JSC::JSValue jsValue = toJS(globalObject, [value JSValueRef]);
     if (jsValue.isObject())
-        m_weakValue.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), owner, (__bridge void*)self);
+        m_weakValue.setObject(uncheckedDowncast<JSC::JSObject>(jsValue.asCell()), owner, (__bridge void*)self);
     else if (jsValue.isString())
-        m_weakValue.setString(JSC::jsCast<JSC::JSString*>(jsValue.asCell()), owner, (__bridge void*)self);
+        m_weakValue.setString(uncheckedDowncast<JSC::JSString>(jsValue.asCell()), owner, (__bridge void*)self);
     else
         m_weakValue.setPrimitive(jsValue);
     return self;

@@ -46,7 +46,7 @@ JSC_DEFINE_HOST_FUNCTION(callJSHTMLAllCollection, (JSGlobalObject* lexicalGlobal
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* castedThis = jsCast<JSHTMLAllCollection*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSHTMLAllCollection>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto& impl = castedThis->wrapped();
     if (callFrame->argument(0).isUndefined())

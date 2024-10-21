@@ -170,7 +170,7 @@ JSObject* JSTestMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMapLikeDOMConstructor, DOMConstructorID::TestMapLike>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMapLikeDOMConstructor, DOMConstructorID::TestMapLike>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestMapLike::destroy(JSC::JSCell* cell)
@@ -183,7 +183,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestMapLikeConstructor, (JSGlobalObject* lexicalGloba
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestMapLikePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestMapLikePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestMapLike::getConstructor(vm, prototype->globalObject()));
@@ -373,7 +373,7 @@ JSC::GCClient::IsoSubspace* JSTestMapLike::subspaceForImpl(JSC::VM& vm)
 
 void JSTestMapLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestMapLike*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestMapLike>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -434,7 +434,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestMapLike* JSTestMapLike::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestMapLike*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestMapLike>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

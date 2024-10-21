@@ -84,7 +84,7 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
     JSValue result;
 
     if (isSameState) {
-        JSHistory* jsHistory = jsCast<JSHistory*>(toJS(&lexicalGlobalObject, globalObject(), *history).asCell());
+        JSHistory* jsHistory = uncheckedDowncast<JSHistory>(toJS(&lexicalGlobalObject, globalObject(), *history).asCell());
         result = jsHistory->state(lexicalGlobalObject);
     } else
         result = event.serializedState()->deserialize(lexicalGlobalObject, globalObject());

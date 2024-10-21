@@ -73,7 +73,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (timeZoneLike.isObject()) {
-        JSObject* timeZoneLikeObject = jsCast<JSObject*>(timeZoneLike);
+        JSObject* timeZoneLikeObject = uncheckedDowncast<JSObject>(timeZoneLike);
 
         // FIXME: We need to implement code retrieving TimeZone from Temporal Date Like objects. But
         // currently they are not implemented yet.
@@ -85,7 +85,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
 
         timeZoneLike = timeZoneLikeObject->get(globalObject, vm.propertyNames->timeZone);
         if (timeZoneLike.isObject()) {
-            JSObject* timeZoneLikeObject = jsCast<JSObject*>(timeZoneLike);
+            JSObject* timeZoneLikeObject = uncheckedDowncast<JSObject>(timeZoneLike);
             bool hasProperty = timeZoneLikeObject->hasProperty(globalObject, vm.propertyNames->timeZone);
             RETURN_IF_EXCEPTION(scope, { });
             if (!hasProperty)

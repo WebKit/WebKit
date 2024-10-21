@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlo
         return JSValue::encode(jsBoolean(false));
     if (!isTypedView(value.asCell()->type()))
         return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isShared()));
+    return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(value)->isShared()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
@@ -121,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsResizableOrGrowableSharedTyp
         return JSValue::encode(jsBoolean(false));
     if (!isTypedView(value.asCell()->type()))
         return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isResizableOrGrowableShared()));
+    return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(value)->isResizableOrGrowableShared()));
 }
 
 static inline std::optional<JSType> isTypedArrayViewConstructor(JSValue value)
@@ -149,7 +149,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncTypedArrayFromFast, (JSGlobalO
     if (!type)
         return JSValue::encode(jsUndefined());
 
-    if (jsCast<JSObject*>(constructor)->globalObject() != globalObject)
+    if (uncheckedDowncast<JSObject>(constructor)->globalObject() != globalObject)
         return JSValue::encode(jsUndefined());
 
     scope.release();
@@ -160,7 +160,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached, (JSGlobalObject*, 
 {
     JSValue argument = callFrame->uncheckedArgument(0);
     ASSERT(argument.isCell() && isTypedView(argument.asCell()->type()));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(argument)->isDetached()));
+    return JSValue::encode(jsBoolean(uncheckedDowncast<JSArrayBufferView>(argument)->isDetached()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -171,7 +171,7 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncLength, (JSGlobalObject* globa
     if (!argument.isCell() || !isTypedView(argument.asCell()->type()))
         return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
 
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(argument);
+    JSArrayBufferView* thisObject = uncheckedDowncast<JSArrayBufferView>(argument);
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -203,7 +203,7 @@ inline EncodedJSValue createTypedArrayIteratorObject(JSGlobalObject* globalObjec
     if (!callFrame->thisValue().isCell() || !isTypedArrayType(callFrame->thisValue().asCell()->type()))
         return throwVMTypeError(globalObject, scope, "Receiver should be a typed array view"_s);
 
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(callFrame->thisValue());
+    JSArrayBufferView* thisObject = uncheckedDowncast<JSArrayBufferView>(callFrame->thisValue());
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 

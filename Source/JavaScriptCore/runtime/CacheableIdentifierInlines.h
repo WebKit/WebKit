@@ -87,9 +87,9 @@ inline UniquedStringImpl* CacheableIdentifier::uid() const
     if (isUid())
         return bitwise_cast<UniquedStringImpl*>(m_bits & ~s_uidTag);
     if (isSymbolCell())
-        return &jsCast<Symbol*>(cell())->uid();
+        return &uncheckedDowncast<Symbol>(cell())->uid();
     ASSERT(isStringCell());
-    JSString* string = jsCast<JSString*>(cell());
+    JSString* string = uncheckedDowncast<JSString>(cell());
     return bitwise_cast<UniquedStringImpl*>(string->getValueImpl());
 }
 
@@ -99,7 +99,7 @@ inline bool CacheableIdentifier::isCacheableIdentifierCell(JSCell* cell)
         return true;
     if (!cell->isString())
         return false;
-    JSString* string = jsCast<JSString*>(cell);
+    JSString* string = uncheckedDowncast<JSString>(cell);
     if (const StringImpl* impl = string->tryGetValueImpl())
         return impl->isAtom();
     return false;

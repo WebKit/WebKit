@@ -47,7 +47,7 @@ DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<typename Type>, GenericArguments<Ty
 template<typename Type>
 bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, PropertySlot& slot)
 {
-    Type* thisObject = jsCast<Type*>(object);
+    Type* thisObject = uncheckedDowncast<Type>(object);
     VM& vm = globalObject->vm();
     
     if (!thisObject->overrodeThings()) {
@@ -74,7 +74,7 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, JSGlobalObject
 template<typename Type>
 bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned index, PropertySlot& slot)
 {
-    Type* thisObject = jsCast<Type*>(object);
+    Type* thisObject = uncheckedDowncast<Type>(object);
     
     if (!thisObject->isModifiedArgumentDescriptor(index) && thisObject->isMappedArgument(index)) {
         slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), thisObject->getIndexQuickly(index));
@@ -96,7 +96,7 @@ template<typename Type>
 void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& array, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    Type* thisObject = jsCast<Type*>(object);
+    Type* thisObject = uncheckedDowncast<Type>(object);
 
     if (array.includeStringProperties()) {
         for (unsigned i = 0; i < thisObject->internalLength(); ++i) {
@@ -118,7 +118,7 @@ void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, JSGlobalObjec
 template<typename Type>
 bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, JSValue value, PutPropertySlot& slot)
 {
-    Type* thisObject = jsCast<Type*>(cell);
+    Type* thisObject = uncheckedDowncast<Type>(cell);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
@@ -149,7 +149,7 @@ bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, Pro
 template<typename Type>
 bool GenericArguments<Type>::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned index, JSValue value, bool shouldThrow)
 {
-    Type* thisObject = jsCast<Type*>(cell);
+    Type* thisObject = uncheckedDowncast<Type>(cell);
     VM& vm = globalObject->vm();
 
     if (thisObject->isMappedArgument(index)) {
@@ -163,7 +163,7 @@ bool GenericArguments<Type>::putByIndex(JSCell* cell, JSGlobalObject* globalObje
 template<typename Type>
 bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, DeletePropertySlot& slot)
 {
-    Type* thisObject = jsCast<Type*>(cell);
+    Type* thisObject = uncheckedDowncast<Type>(cell);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
@@ -187,7 +187,7 @@ bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Type* thisObject = jsCast<Type*>(cell);
+    Type* thisObject = uncheckedDowncast<Type>(cell);
 
     bool propertyMightBeInJSObjectStorage = thisObject->isModifiedArgumentDescriptor(index) || !thisObject->isMappedArgument(index);
     bool deletedProperty = true;
@@ -214,7 +214,7 @@ bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, JSGlobalObject*
 template<typename Type>
 bool GenericArguments<Type>::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    Type* thisObject = jsCast<Type*>(object);
+    Type* thisObject = uncheckedDowncast<Type>(object);
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     

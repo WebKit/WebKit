@@ -74,7 +74,7 @@ void injectInternalsObject(JSContextRef context)
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSLockHolder lock(vm);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    JSDOMGlobalObject* globalObject = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject);
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     if (is<Document>(*scriptContext)) {
         globalObject->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(lexicalGlobalObject, globalObject, Internals::create(downcast<Document>(*scriptContext))));
@@ -88,7 +88,7 @@ void resetInternalsObject(JSContextRef context)
 {
     JSGlobalObject* lexicalGlobalObject = toJS(context);
     JSLockHolder lock(lexicalGlobalObject);
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    JSDOMGlobalObject* globalObject = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject);
     ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
     Page* page = downcast<Document>(scriptContext)->frame()->page();
     Internals::resetToConsistentState(*page);

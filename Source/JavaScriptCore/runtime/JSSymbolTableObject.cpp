@@ -39,7 +39,7 @@ const ClassInfo JSSymbolTableObject::s_info = { "SymbolTableObject"_s, &Base::s_
 template<typename Visitor>
 void JSSymbolTableObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
+    JSSymbolTableObject* thisObject = uncheckedDowncast<JSSymbolTableObject>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_symbolTable);
@@ -49,7 +49,7 @@ DEFINE_VISIT_CHILDREN(JSSymbolTableObject);
 
 bool JSSymbolTableObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
+    JSSymbolTableObject* thisObject = uncheckedDowncast<JSSymbolTableObject>(cell);
     if (thisObject->symbolTable()->contains(propertyName.uid()))
         return false;
 
@@ -59,7 +59,7 @@ bool JSSymbolTableObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObj
 void JSSymbolTableObject::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(object);
+    JSSymbolTableObject* thisObject = uncheckedDowncast<JSSymbolTableObject>(object);
     SymbolTable* symbolTable = thisObject->symbolTable();
     {
         ConcurrentJSLocker locker(symbolTable->m_lock);

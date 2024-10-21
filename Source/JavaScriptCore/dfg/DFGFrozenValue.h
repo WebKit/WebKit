@@ -75,12 +75,12 @@ public:
         JSValue theValue = value();
         if (!theValue)
             return nullptr;
-        return jsDynamicCast<T>(theValue);
+        return dynamicDowncast<std::remove_pointer_t<T>>(theValue);
     }
     template<typename T>
     T cast()
     {
-        return jsCast<T>(value());
+        return uncheckedDowncast<std::remove_pointer_t<T>>(value());
     }
     
     Structure* structure() const { return m_structure; }

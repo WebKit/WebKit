@@ -151,7 +151,7 @@ JSObject* JSTestJSBuiltinConstructor::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestJSBuiltinConstructorDOMConstructor, DOMConstructorID::TestJSBuiltinConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestJSBuiltinConstructorDOMConstructor, DOMConstructorID::TestJSBuiltinConstructor>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
@@ -164,7 +164,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestJSBuiltinConstructorConstructor, (JSGlobalObject*
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestJSBuiltinConstructorPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(vm, prototype->globalObject()));

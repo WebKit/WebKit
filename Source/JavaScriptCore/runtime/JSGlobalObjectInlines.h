@@ -209,16 +209,16 @@ ALWAYS_INLINE Structure* JSGlobalObject::arrayStructureForIndexingTypeDuringAllo
     RELEASE_AND_RETURN(scope, InternalFunction::createSubclassStructure(globalObject, asObject(newTarget), functionGlobalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)));
 }
 
-inline JSFunction* JSGlobalObject::evalFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::evalFunction)); }
-inline JSFunction* JSGlobalObject::throwTypeErrorFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::throwTypeErrorFunction)); }
-inline JSFunction* JSGlobalObject::iteratorProtocolFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performIteration)); }
-inline JSFunction* JSGlobalObject::newPromiseCapabilityFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::newPromiseCapability)); }
-inline JSFunction* JSGlobalObject::resolvePromiseFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::resolvePromise)); }
-inline JSFunction* JSGlobalObject::rejectPromiseFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::rejectPromise)); }
-inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::defaultPromiseThen)); }
-inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performPromiseThen)); }
-inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
-inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
+inline JSFunction* JSGlobalObject::evalFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::evalFunction)); }
+inline JSFunction* JSGlobalObject::throwTypeErrorFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::throwTypeErrorFunction)); }
+inline JSFunction* JSGlobalObject::iteratorProtocolFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::performIteration)); }
+inline JSFunction* JSGlobalObject::newPromiseCapabilityFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::newPromiseCapability)); }
+inline JSFunction* JSGlobalObject::resolvePromiseFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::resolvePromise)); }
+inline JSFunction* JSGlobalObject::rejectPromiseFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::rejectPromise)); }
+inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::defaultPromiseThen)); }
+inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::performPromiseThen)); }
+inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
+inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return m_performProxyObjectHasFunction.get(); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunctionConcurrently() const { return performProxyObjectHasFunction(); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasByValFunction() const { return m_performProxyObjectHasByValFunction.get(); }

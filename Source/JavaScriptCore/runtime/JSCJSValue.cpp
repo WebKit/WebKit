@@ -298,13 +298,13 @@ void JSValue::dumpInContextAssumingStructure(
             out.print(",length:(", string->length(), ")");
             out.print(": ", impl);
         } else if (structure->classInfoForCells()->isSubClassOf(RegExp::info()))
-            out.print("RegExp: ", *jsCast<RegExp*>(asCell()));
+            out.print("RegExp: ", *uncheckedDowncast<RegExp>(asCell()));
         else if (structure->classInfoForCells()->isSubClassOf(Symbol::info()))
             out.print("Symbol: ", RawPointer(asCell()));
         else if (structure->classInfoForCells()->isSubClassOf(Structure::info()))
-            out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
+            out.print("Structure: ", inContext(*uncheckedDowncast<Structure>(asCell()), context));
         else if (isHeapBigInt())
-            out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", jsCast<JSBigInt*>(asCell())->length(), ", sign=", jsCast<JSBigInt*>(asCell())->sign());
+            out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", uncheckedDowncast<JSBigInt>(asCell())->length(), ", sign=", uncheckedDowncast<JSBigInt>(asCell())->sign());
         else if (structure->classInfoForCells()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
             out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()), "(base=", RawPointer(asObject(asCell())->butterfly()->base(structure)), ")");
@@ -435,9 +435,9 @@ WTF::String JSValue::toWTFStringForConsole(JSGlobalObject* globalObject) const
     RETURN_IF_EXCEPTION(scope, { });
     if (isString())
         return tryMakeString('"', result.data, '"');
-    if (jsDynamicCast<JSArray*>(*this))
+    if (dynamicDowncast<JSArray>(*this))
         return tryMakeString('[', result.data, ']');
-    if (jsDynamicCast<JSBigInt*>(*this))
+    if (dynamicDowncast<JSBigInt>(*this))
         return tryMakeString(result.data, 'n');
     return result;
 }

@@ -206,7 +206,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSBoundFunction's target is JSFunction.
+    auto* targetFunction = uncheckedDowncast<JSFunction>(callee->targetFunction()); // We call this function only when JSBoundFunction's target is JSFunction.
     OPERATION_RETURN(scope, materializeTargetCode(vm, targetFunction));
 }
 
@@ -218,7 +218,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair,
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(isRemoteFunction(callee));
-    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
+    auto* targetFunction = uncheckedDowncast<JSFunction>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
     OPERATION_RETURN(scope, materializeTargetCode(vm, targetFunction));
 }
 
@@ -2657,7 +2657,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject* 
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     constexpr bool isInvalidated = false;
-    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, jsCast<FunctionExecutable*>(functionExecutable))));
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, uncheckedDowncast<FunctionExecutable>(functionExecutable))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
@@ -2667,7 +2667,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoi
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     constexpr bool isInvalidated = true;
-    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, jsCast<FunctionExecutable*>(functionExecutable))));
+    OPERATION_RETURN(scope, newFunctionCommon<JSFunction, isInvalidated>(vm, globalObject, environment, functionExecutable, JSFunction::selectStructureForNewFuncExp(globalObject, uncheckedDowncast<FunctionExecutable>(functionExecutable))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewSloppyFunction, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* environment, JSCell* functionExecutable))
@@ -2803,7 +2803,7 @@ JSC_DEFINE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject* global
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* func = jsCast<JSFunction*>(funcCell);
+    JSFunction* func = uncheckedDowncast<JSFunction>(funcCell);
     JSValue name = JSValue::decode(encodedName);
     func->setFunctionName(globalObject, name);
     OPERATION_RETURN(scope);
@@ -3387,7 +3387,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
     } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
         if (subscript == jsNumber(-1)) {
-            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+            if (auto* array = dynamicDowncast<JSArray>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
                 return jsUndefined();
         }
     }
@@ -3514,7 +3514,7 @@ ALWAYS_INLINE static JSValue getByValWithThis(JSGlobalObject* globalObject, Call
     } else if (subscript.isNumber() && baseValue.isCell() && arrayProfile) {
         arrayProfile->setOutOfBounds();
         if (subscript == jsNumber(-1)) {
-            if (auto* array = jsDynamicCast<JSArray*>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
+            if (auto* array = dynamicDowncast<JSArray>(baseValue.asCell()); LIKELY(array && array->definitelyNegativeOneMiss()))
                 return jsUndefined();
         }
     }
@@ -3842,7 +3842,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (Encod
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         ASSERT(fieldName.isSymbol());
 
-        JSObject* base = jsCast<JSObject*>(baseValue.asCell());
+        JSObject* base = uncheckedDowncast<JSObject>(baseValue.asCell());
 
         PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
         base->getPrivateField(globalObject, fieldName, slot);
@@ -3924,7 +3924,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (E
     JSValue baseValue = JSValue::decode(base);
 
     if (baseValue.isObject()) {
-        JSObject* base = jsCast<JSObject*>(baseValue.asCell());
+        JSObject* base = uncheckedDowncast<JSObject>(baseValue.asCell());
 
         PropertySlot slot(base, PropertySlot::InternalMethodType::GetOwnProperty);
         base->getPrivateField(globalObject, identifier, slot);
@@ -4211,7 +4211,7 @@ JSC_DEFINE_JIT_OPERATION(operationPushWithScope, JSCell*, (JSGlobalObject* globa
     JSObject* object = JSValue::decode(objectValue).toObject(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
 
-    JSScope* currentScope = jsCast<JSScope*>(currentScopeCell);
+    JSScope* currentScope = uncheckedDowncast<JSScope>(currentScopeCell);
 
     OPERATION_RETURN(scope, JSWithScope::create(vm, globalObject, currentScope, object));
 }
@@ -4222,7 +4222,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPushWithScopeObject, JSCell*, (JSGlob
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSScope* currentScope = jsCast<JSScope*>(currentScopeCell);
+    JSScope* currentScope = uncheckedDowncast<JSScope>(currentScopeCell);
     OPERATION_RETURN(scope, JSWithScope::create(vm, globalObject, currentScope, object));
 }
 
@@ -4427,7 +4427,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks: {
         if (resolvedScope->isGlobalObject()) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
+            JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(resolvedScope);
             bool hasProperty = globalObject->hasProperty(globalObject, ident);
             OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (hasProperty) {
@@ -4437,7 +4437,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = uncheckedDowncast<JSGlobalLexicalEnvironment>(resolvedScope);
             ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
             metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
@@ -4462,7 +4462,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*
 
     auto bytecode = pc->as<OpGetFromScope>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* environment = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
+    JSObject* environment = uncheckedDowncast<JSObject>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
     GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).m_getPutInfo;
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
@@ -4505,7 +4505,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObjec
     auto& metadata = bytecode.metadata(codeBlock);
 
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* jsScope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
+    JSObject* jsScope = uncheckedDowncast<JSObject>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
     JSValue value = callFrame->r(bytecode.m_value).jsValue();
     GetPutInfo& getPutInfo = metadata.m_getPutInfo;
 
@@ -4513,7 +4513,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObjec
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
     if (getPutInfo.resolveType() == ResolvedClosureVar) {
-        JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(jsScope);
+        JSLexicalEnvironment* environment = uncheckedDowncast<JSLexicalEnvironment>(jsScope);
         environment->variableAt(ScopeOffset(metadata.m_operand)).set(vm, environment, value);
         if (WatchpointSet* set = metadata.m_watchpointSet)
             set->touch(vm, "Executed op_put_scope<ResolvedClosureVar>");
@@ -4641,7 +4641,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationLookupExceptionHandlerFromCallerFrame
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     ASSERT(callFrame->isPartiallyInitializedFrame());
-    ASSERT(jsCast<ErrorInstance*>(vm.exceptionForInspection()->value().asCell())->isStackOverflowError());
+    ASSERT(uncheckedDowncast<ErrorInstance>(vm.exceptionForInspection()->value().asCell())->isStackOverflowError());
     genericUnwind(vm, callFrame);
     ASSERT(vm.targetMachinePCForThrow);
 }

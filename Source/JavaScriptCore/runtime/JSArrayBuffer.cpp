@@ -77,7 +77,7 @@ ArrayBufferSharingMode JSArrayBuffer::sharingMode() const
 
 size_t JSArrayBuffer::estimatedSize(JSCell* cell, VM& vm)
 {
-    JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(cell);
+    JSArrayBuffer* thisObject = uncheckedDowncast<JSArrayBuffer>(cell);
     size_t bufferEstimatedSize = thisObject->impl()->gcSizeEstimateInBytes();
     return Base::estimatedSize(cell, vm) + bufferEstimatedSize;
 }

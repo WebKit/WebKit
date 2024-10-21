@@ -1376,13 +1376,13 @@ public:
 
         JSCell* cell = v.asCell();
 
-        if (auto* symbolTable = jsDynamicCast<SymbolTable*>(cell)) {
+        if (auto* symbolTable = dynamicDowncast<SymbolTable>(cell)) {
             m_type = EncodedType::SymbolTable;
             this->allocate<CachedSymbolTable>(encoder)->encode(encoder, *symbolTable);
             return;
         }
 
-        if (auto* string = jsDynamicCast<JSString*>(cell)) {
+        if (auto* string = dynamicDowncast<JSString>(cell)) {
             m_type = EncodedType::String;
             // TODO: This seems wrong? What if this fails.
             auto str = string->tryGetValue();
@@ -1390,25 +1390,25 @@ public:
             return;
         }
 
-        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(cell)) {
+        if (auto* immutableButterfly = dynamicDowncast<JSImmutableButterfly>(cell)) {
             m_type = EncodedType::ImmutableButterfly;
             this->allocate<CachedImmutableButterfly>(encoder)->encode(encoder, *immutableButterfly);
             return;
         }
 
-        if (auto* regexp = jsDynamicCast<RegExp*>(cell)) {
+        if (auto* regexp = dynamicDowncast<RegExp>(cell)) {
             m_type = EncodedType::RegExp;
             this->allocate<CachedRegExp>(encoder)->encode(encoder, *regexp);
             return;
         }
 
-        if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(cell)) {
+        if (auto* templateObjectDescriptor = dynamicDowncast<JSTemplateObjectDescriptor>(cell)) {
             m_type = EncodedType::TemplateObjectDescriptor;
             this->allocate<CachedTemplateObjectDescriptor>(encoder)->encode(encoder, *templateObjectDescriptor);
             return;
         }
 
-        if (auto* bigInt = jsDynamicCast<JSBigInt*>(cell)) {
+        if (auto* bigInt = dynamicDowncast<JSBigInt>(cell)) {
             m_type = EncodedType::BigInt;
             this->allocate<CachedBigInt>(encoder)->encode(encoder, *bigInt);
             return;
@@ -2585,7 +2585,7 @@ template<typename UnlinkedCodeBlockType>
 void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
 {
     auto* entry = encoder.template malloc<CacheEntry<UnlinkedCodeBlockType>>(encoder);
-    entry->encode(encoder, { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
+    entry->encode(encoder, { key, uncheckedDowncast<const UnlinkedCodeBlockType>(codeBlock) });
 }
 
 RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)

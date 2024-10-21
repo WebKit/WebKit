@@ -58,7 +58,7 @@ void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
 
 bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral*)
 {
-    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
+    JSC::JSAPIWrapperObject* wrapperObject = uncheckedDowncast<JSC::JSAPIWrapperObject>(handle.get().asCell());
     // We use the JSGlobalObject when processing weak handles to prevent the situation where using
     // the same Objective-C object in multiple global objects keeps all of the global objects alive.
     if (!wrapperObject->wrappedObject())
@@ -128,7 +128,7 @@ void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
 template<typename Visitor>
 void JSAPIWrapperObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
+    JSAPIWrapperObject* thisObject = uncheckedDowncast<JSAPIWrapperObject>(cell);
     Base::visitChildren(cell, visitor);
 
     void* wrappedObject = thisObject->wrappedObject();

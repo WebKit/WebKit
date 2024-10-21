@@ -153,9 +153,9 @@ inline bool JSFunction::hasReifiedName() const
 inline double JSFunction::originalLength(VM& vm)
 {
     if (inherits<JSBoundFunction>())
-        return jsCast<JSBoundFunction*>(this)->length(vm);
+        return uncheckedDowncast<JSBoundFunction>(this)->length(vm);
     if (inherits<JSRemoteFunction>())
-        return jsCast<JSRemoteFunction*>(this)->length(vm);
+        return uncheckedDowncast<JSRemoteFunction>(this)->length(vm);
     ASSERT(!isHostFunction());
     return jsExecutable()->parameterCount();
 }
@@ -177,14 +177,14 @@ inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (this->inherits<JSBoundFunction>()) {
-        JSString* nameMayBeNull = jsCast<JSBoundFunction*>(this)->nameMayBeNull();
+        JSString* nameMayBeNull = uncheckedDowncast<JSBoundFunction>(this)->nameMayBeNull();
         if (nameMayBeNull)
             RELEASE_AND_RETURN(scope, jsString(globalObject, vm.smallStrings.boundPrefixString(), nameMayBeNull));
         return jsEmptyString(vm);
     }
 
     if (this->inherits<JSRemoteFunction>()) {
-        JSString* nameMayBeNull = jsCast<JSRemoteFunction*>(this)->nameMayBeNull();
+        JSString* nameMayBeNull = uncheckedDowncast<JSRemoteFunction>(this)->nameMayBeNull();
         if (nameMayBeNull)
             return nameMayBeNull;
         return jsEmptyString(vm);

@@ -71,12 +71,12 @@ JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunct
     ASSERT(!arguments.hasOverflowed());
     JSValue result = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(result);
+    return uncheckedDowncast<JSInternalPromise>(result);
 }
 
 JSInternalPromise* JSInternalPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
 {
-    return jsCast<JSInternalPromise*>(JSPromise::rejectWithCaughtException(globalObject, scope));
+    return uncheckedDowncast<JSInternalPromise>(JSPromise::rejectWithCaughtException(globalObject, scope));
 }
 
 } // namespace JSC

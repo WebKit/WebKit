@@ -172,7 +172,7 @@ JSObject* JSTestSetLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalOb
 
 JSValue JSTestSetLikeWithOverriddenOperations::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSetLikeWithOverriddenOperationsDOMConstructor, DOMConstructorID::TestSetLikeWithOverriddenOperations>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSetLikeWithOverriddenOperationsDOMConstructor, DOMConstructorID::TestSetLikeWithOverriddenOperations>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestSetLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)
@@ -185,7 +185,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeWithOverriddenOperationsConstructor, (JSGl
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestSetLikeWithOverriddenOperationsPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestSetLikeWithOverriddenOperationsPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestSetLikeWithOverriddenOperations::getConstructor(vm, prototype->globalObject()));
@@ -359,7 +359,7 @@ JSC::GCClient::IsoSubspace* JSTestSetLikeWithOverriddenOperations::subspaceForIm
 
 void JSTestSetLikeWithOverriddenOperations::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestSetLikeWithOverriddenOperations*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestSetLikeWithOverriddenOperations>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -420,7 +420,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestSetLikeWithOverriddenOperations* JSTestSetLikeWithOverriddenOperations::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestSetLikeWithOverriddenOperations*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestSetLikeWithOverriddenOperations>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

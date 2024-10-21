@@ -64,7 +64,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
     auto action = [signal](ScriptExecutionContext& context) mutable {
         signal->setHasActiveTimeoutTimer(false);
 
-        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+        auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(context.globalObject());
         if (!globalObject)
             return;
 

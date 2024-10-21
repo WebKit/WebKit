@@ -153,7 +153,7 @@ JSObject* JSTestNamedDeleterWithIdentifier::prototype(VM& vm, JSDOMGlobalObject&
 
 JSValue JSTestNamedDeleterWithIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedDeleterWithIdentifierDOMConstructor, DOMConstructorID::TestNamedDeleterWithIdentifier>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedDeleterWithIdentifierDOMConstructor, DOMConstructorID::TestNamedDeleterWithIdentifier>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestNamedDeleterWithIdentifier::destroy(JSC::JSCell* cell)
@@ -165,7 +165,7 @@ void JSTestNamedDeleterWithIdentifier::destroy(JSC::JSCell* cell)
 bool JSTestNamedDeleterWithIdentifier::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
@@ -192,7 +192,7 @@ bool JSTestNamedDeleterWithIdentifier::getOwnPropertySlotByIndex(JSObject* objec
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
@@ -211,7 +211,7 @@ bool JSTestNamedDeleterWithIdentifier::getOwnPropertySlotByIndex(JSObject* objec
 void JSTestNamedDeleterWithIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -220,14 +220,14 @@ void JSTestNamedDeleterWithIdentifier::getOwnPropertyNames(JSObject* object, JSG
 
 bool JSTestNamedDeleterWithIdentifier::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -251,12 +251,12 @@ bool JSTestNamedDeleterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject* 
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -270,7 +270,7 @@ bool JSTestNamedDeleterWithIdentifier::putByIndex(JSCell* cell, JSGlobalObject* 
 
 bool JSTestNamedDeleterWithIdentifier::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -293,7 +293,7 @@ bool JSTestNamedDeleterWithIdentifier::defineOwnProperty(JSObject* object, JSGlo
 
 bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(cell);
     auto& impl = thisObject.wrapped();
     if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
@@ -306,7 +306,7 @@ bool JSTestNamedDeleterWithIdentifier::deleteProperty(JSCell* cell, JSGlobalObje
 bool JSTestNamedDeleterWithIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(cell);
     auto& impl = thisObject.wrapped();
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
@@ -322,7 +322,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterWithIdentifierConstructor, (JSGlobalO
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedDeleterWithIdentifierPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestNamedDeleterWithIdentifierPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedDeleterWithIdentifier::getConstructor(vm, prototype->globalObject()));
@@ -361,7 +361,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedDeleterWithIdentifier::subspaceForImpl(JS
 
 void JSTestNamedDeleterWithIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterWithIdentifier*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedDeleterWithIdentifier>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -422,7 +422,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestNamedDeleterWithIdentifier* JSTestNamedDeleterWithIdentifier::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedDeleterWithIdentifier*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestNamedDeleterWithIdentifier>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

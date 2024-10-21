@@ -175,14 +175,14 @@ JSObject* JSWorkerGlobalScope::prototype(VM& vm, JSDOMGlobalObject& globalObject
 
 JSValue JSWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSWorkerGlobalScopeDOMConstructor, DOMConstructorID::WorkerGlobalScope>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSWorkerGlobalScopeDOMConstructor, DOMConstructorID::WorkerGlobalScope>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSWorkerGlobalScopePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
@@ -267,7 +267,7 @@ JSC::GCClient::IsoSubspace* JSWorkerGlobalScope::subspaceForImpl(JSC::VM& vm)
 
 void JSWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSWorkerGlobalScope*>(cell);
+    auto* thisObject = uncheckedDowncast<JSWorkerGlobalScope>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -276,7 +276,7 @@ void JSWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
 WorkerGlobalScope* JSWorkerGlobalScope::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSWorkerGlobalScope*>(value))
+    if (auto* wrapper = dynamicDowncast<JSWorkerGlobalScope>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

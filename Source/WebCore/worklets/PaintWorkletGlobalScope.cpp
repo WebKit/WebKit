@@ -137,7 +137,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         if (paintValue.isUndefined())
             return Exception { ExceptionCode::TypeError, "The class must have a paint method"_s };
 
-        auto paintCallback = convert<IDLCallbackFunction<JSCSSPaintCallback>>(globalObject, paintValue, *jsCast<JSDOMGlobalObject*>(&globalObject));
+        auto paintCallback = convert<IDLCallbackFunction<JSCSSPaintCallback>>(globalObject, paintValue, *uncheckedDowncast<JSDOMGlobalObject>(&globalObject));
         if (UNLIKELY(paintCallback.hasException(scope)))
             return Exception { ExceptionCode::ExistingExceptionError };
 

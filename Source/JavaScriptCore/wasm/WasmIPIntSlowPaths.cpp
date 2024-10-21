@@ -246,7 +246,7 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, I
     if (stackPointer) {
         // We only have a stack pointer if we're doing a catch not a catch_all
         Exception* exception = throwScope.exception();
-        auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
+        auto* wasmException = downcast<const JSWebAssemblyException>(exception->value());
 
         ASSERT(wasmException->payload().size() == wasmException->tag().parameterCount());
         uint64_t size = wasmException->payload().size();

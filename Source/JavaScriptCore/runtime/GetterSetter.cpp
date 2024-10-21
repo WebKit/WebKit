@@ -36,7 +36,7 @@ const ClassInfo GetterSetter::s_info = { "GetterSetter"_s, nullptr, nullptr, nul
 template<typename Visitor>
 void GetterSetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    GetterSetter* thisObject = jsCast<GetterSetter*>(cell);
+    GetterSetter* thisObject = uncheckedDowncast<GetterSetter>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

@@ -138,7 +138,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     
     switch (codeType) {
     case GlobalCode: {
-        ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
+        ProgramExecutable* executable = uncheckedDowncast<ProgramExecutable>(this);
         ProgramCodeBlock* codeBlock = static_cast<ProgramCodeBlock*>(genericCodeBlock);
         
         ASSERT(kind == CodeForCall);
@@ -148,7 +148,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     }
 
     case ModuleCode: {
-        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        ModuleProgramExecutable* executable = uncheckedDowncast<ModuleProgramExecutable>(this);
         ModuleProgramCodeBlock* codeBlock = static_cast<ModuleProgramCodeBlock*>(genericCodeBlock);
 
         ASSERT(kind == CodeForCall);
@@ -158,7 +158,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     }
 
     case EvalCode: {
-        EvalExecutable* executable = jsCast<EvalExecutable*>(this);
+        EvalExecutable* executable = uncheckedDowncast<EvalExecutable>(this);
         EvalCodeBlock* codeBlock = static_cast<EvalCodeBlock*>(genericCodeBlock);
         
         ASSERT(kind == CodeForCall);
@@ -168,7 +168,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     }
         
     case FunctionCode: {
-        FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
+        FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(this);
         FunctionCodeBlock* codeBlock = static_cast<FunctionCodeBlock*>(genericCodeBlock);
         
         oldCodeBlock = executable->replaceCodeBlockWith(vm, kind, codeBlock);
@@ -259,7 +259,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     JSGlobalObject* globalObject = scope->globalObject();
 
     if (classInfo() == EvalExecutable::info()) {
-        EvalExecutable* executable = jsCast<EvalExecutable*>(this);
+        EvalExecutable* executable = uncheckedDowncast<EvalExecutable>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
@@ -272,7 +272,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     }
 
     if (classInfo() == ProgramExecutable::info()) {
-        ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
+        ProgramExecutable* executable = uncheckedDowncast<ProgramExecutable>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
@@ -280,7 +280,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     }
 
     if (classInfo() == ModuleProgramExecutable::info()) {
-        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        ModuleProgramExecutable* executable = uncheckedDowncast<ModuleProgramExecutable>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_codeBlock);
         RELEASE_ASSERT(!function);
@@ -293,7 +293,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
     RELEASE_ASSERT(function);
-    FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
+    FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
     ParserError error;
     OptionSet<CodeGenerationMode> codeGenerationMode = globalObject->defaultCodeGenerationMode();
@@ -328,7 +328,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     VM& vm = this->vm();
     if (classInfo() == EvalExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
-        EvalExecutable* executable = jsCast<EvalExecutable*>(this);
+        EvalExecutable* executable = uncheckedDowncast<EvalExecutable>(this);
         EvalCodeBlock* baseline = static_cast<EvalCodeBlock*>(
             executable->codeBlock()->baselineVersion());
         EvalCodeBlock* result = EvalCodeBlock::create(vm,
@@ -339,7 +339,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     
     if (classInfo() == ProgramExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
-        ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
+        ProgramExecutable* executable = uncheckedDowncast<ProgramExecutable>(this);
         ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
             executable->codeBlock()->baselineVersion());
         ProgramCodeBlock* result = ProgramCodeBlock::create(vm,
@@ -350,7 +350,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
 
     if (classInfo() == ModuleProgramExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
-        ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
+        ModuleProgramExecutable* executable = uncheckedDowncast<ModuleProgramExecutable>(this);
         ModuleProgramCodeBlock* baseline = static_cast<ModuleProgramCodeBlock*>(
             executable->codeBlock()->baselineVersion());
         ModuleProgramCodeBlock* result = ModuleProgramCodeBlock::create(vm,
@@ -360,7 +360,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     }
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
-    FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
+    FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(this);
     FunctionCodeBlock* baseline = static_cast<FunctionCodeBlock*>(
         executable->codeBlockFor(kind)->baselineVersion());
     FunctionCodeBlock* result = FunctionCodeBlock::create(vm,
@@ -427,7 +427,7 @@ ScriptExecutable* ScriptExecutable::topLevelExecutable()
 {
     switch (type()) {
     case FunctionExecutableType:
-        return jsCast<FunctionExecutable*>(this)->topLevelExecutable();
+        return uncheckedDowncast<FunctionExecutable>(this)->topLevelExecutable();
     default:
         return this;
     }
@@ -486,14 +486,14 @@ CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
 std::optional<int> ScriptExecutable::overrideLineNumber(VM&) const
 {
     if (inherits<FunctionExecutable>())
-        return jsCast<const FunctionExecutable*>(this)->overrideLineNumber();
+        return uncheckedDowncast<const FunctionExecutable>(this)->overrideLineNumber();
     return std::nullopt;
 }
 
 unsigned ScriptExecutable::typeProfilingStartOffset() const
 {
     if (inherits<FunctionExecutable>())
-        return jsCast<const FunctionExecutable*>(this)->functionStart();
+        return uncheckedDowncast<const FunctionExecutable>(this)->functionStart();
     if (inherits<EvalExecutable>())
         return UINT_MAX;
     return 0;
@@ -502,7 +502,7 @@ unsigned ScriptExecutable::typeProfilingStartOffset() const
 unsigned ScriptExecutable::typeProfilingEndOffset() const
 {
     if (inherits<FunctionExecutable>())
-        return jsCast<const FunctionExecutable*>(this)->functionEnd();
+        return uncheckedDowncast<const FunctionExecutable>(this)->functionEnd();
     if (inherits<EvalExecutable>())
         return UINT_MAX;
     return source().length() - 1;
@@ -513,10 +513,10 @@ void ScriptExecutable::recordParse(CodeFeatures features, LexicallyScopedFeature
     switch (type()) {
     case FunctionExecutableType:
         // Since UnlinkedFunctionExecutable holds the information to calculate lastLine and endColumn, we do not need to remember them in ScriptExecutable's fields.
-        jsCast<FunctionExecutable*>(this)->recordParse(features, lexicallyScopedFeatures, hasCapturedVariables);
+        uncheckedDowncast<FunctionExecutable>(this)->recordParse(features, lexicallyScopedFeatures, hasCapturedVariables);
         return;
     default:
-        jsCast<GlobalExecutable*>(this)->recordParse(features, lexicallyScopedFeatures, hasCapturedVariables, lastLine, endColumn);
+        uncheckedDowncast<GlobalExecutable>(this)->recordParse(features, lexicallyScopedFeatures, hasCapturedVariables, lastLine, endColumn);
         return;
     }
 }
@@ -525,9 +525,9 @@ int ScriptExecutable::lastLine() const
 {
     switch (type()) {
     case FunctionExecutableType:
-        return jsCast<const FunctionExecutable*>(this)->lastLine();
+        return uncheckedDowncast<const FunctionExecutable>(this)->lastLine();
     default:
-        return jsCast<const GlobalExecutable*>(this)->lastLine();
+        return uncheckedDowncast<const GlobalExecutable>(this)->lastLine();
     }
     return 0;
 }
@@ -536,9 +536,9 @@ unsigned ScriptExecutable::endColumn() const
 {
     switch (type()) {
     case FunctionExecutableType:
-        return jsCast<const FunctionExecutable*>(this)->endColumn();
+        return uncheckedDowncast<const FunctionExecutable>(this)->endColumn();
     default:
-        return jsCast<const GlobalExecutable*>(this)->endColumn();
+        return uncheckedDowncast<const GlobalExecutable>(this)->endColumn();
     }
     return 0;
 }

@@ -72,7 +72,7 @@ IntlPluralRules::IntlPluralRules(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlPluralRules::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    IntlPluralRules* thisObject = jsCast<IntlPluralRules*>(cell);
+    IntlPluralRules* thisObject = uncheckedDowncast<IntlPluralRules>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

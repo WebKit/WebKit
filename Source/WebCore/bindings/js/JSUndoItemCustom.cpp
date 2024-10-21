@@ -45,7 +45,7 @@ bool JSUndoItemOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     if (UNLIKELY(reason))
         *reason = "Document is an opaque root."_s;
 
-    auto* documentForUndoItem = JSC::jsCast<JSUndoItem*>(handle.slot()->asCell())->wrapped().document();
+    auto* documentForUndoItem = uncheckedDowncast<JSUndoItem>(handle.slot()->asCell())->wrapped().document();
     return containsWebCoreOpaqueRoot(visitor, documentForUndoItem);
 }
 

@@ -75,7 +75,7 @@ void JSModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 template<typename Visitor>
 void JSModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
+    JSModuleRecord* thisObject = uncheckedDowncast<JSModuleRecord>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleProgramExecutable);

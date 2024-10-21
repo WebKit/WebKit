@@ -44,7 +44,7 @@ JSNativeStdFunction::JSNativeStdFunction(VM& vm, NativeExecutable* executable, J
 template<typename Visitor>
 void JSNativeStdFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSNativeStdFunction* thisObject = jsCast<JSNativeStdFunction*>(cell);
+    JSNativeStdFunction* thisObject = uncheckedDowncast<JSNativeStdFunction>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
@@ -59,7 +59,7 @@ void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, u
 
 JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(callFrame->jsCallee());
+    JSNativeStdFunction* function = uncheckedDowncast<JSNativeStdFunction>(callFrame->jsCallee());
     ASSERT(function);
     return function->function()(globalObject, callFrame);
 }

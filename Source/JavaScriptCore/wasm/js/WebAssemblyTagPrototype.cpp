@@ -85,7 +85,7 @@ ALWAYS_INLINE static JSWebAssemblyTag* getTag(JSGlobalObject* globalObject, JSVa
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* tag = jsDynamicCast<JSWebAssemblyTag*>(thisValue.asCell());
+    auto* tag = dynamicDowncast<JSWebAssemblyTag>(thisValue.asCell());
     if (LIKELY(tag))
         return tag;
     throwTypeError(globalObject, scope, "WebAssembly.Tag operation called on non-Tag object"_s);

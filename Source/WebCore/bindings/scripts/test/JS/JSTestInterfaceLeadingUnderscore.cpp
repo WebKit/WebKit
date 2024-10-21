@@ -144,7 +144,7 @@ JSObject* JSTestInterfaceLeadingUnderscore::prototype(VM& vm, JSDOMGlobalObject&
 
 JSValue JSTestInterfaceLeadingUnderscore::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreDOMConstructor, DOMConstructorID::TestInterfaceLeadingUnderscore>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreDOMConstructor, DOMConstructorID::TestInterfaceLeadingUnderscore>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)
@@ -157,7 +157,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestInterfaceLeadingUnderscoreConstructor, (JSGlobalO
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestInterfaceLeadingUnderscorePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestInterfaceLeadingUnderscorePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestInterfaceLeadingUnderscore::getConstructor(vm, prototype->globalObject()));
@@ -188,7 +188,7 @@ JSC::GCClient::IsoSubspace* JSTestInterfaceLeadingUnderscore::subspaceForImpl(JS
 
 void JSTestInterfaceLeadingUnderscore::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestInterfaceLeadingUnderscore*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestInterfaceLeadingUnderscore>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -249,7 +249,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestInterfaceLeadingUnderscore* JSTestInterfaceLeadingUnderscore::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestInterfaceLeadingUnderscore*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestInterfaceLeadingUnderscore>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

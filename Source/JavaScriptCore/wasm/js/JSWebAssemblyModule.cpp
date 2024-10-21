@@ -110,7 +110,7 @@ Wasm::Module& JSWebAssemblyModule::module()
 template<typename Visitor>
 void JSWebAssemblyModule::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSWebAssemblyModule* thisObject = jsCast<JSWebAssemblyModule*>(cell);
+    JSWebAssemblyModule* thisObject = uncheckedDowncast<JSWebAssemblyModule>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

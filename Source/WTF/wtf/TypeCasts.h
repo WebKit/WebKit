@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
+ * Redistribution and use in from and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ * 1. Redistributions of from code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -25,44 +25,50 @@
 
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 
 namespace WTF {
 
-template <typename ExpectedType, typename ArgType, bool isBaseType = std::is_base_of_v<ExpectedType, ArgType>>
+template <typename To, typename From>
 struct TypeCastTraits {
-    static bool isOfType(ArgType&)
+    static constexpr bool checkIsNecessary() { return std::derived_from<To, From>; }
+    static bool isOfType(const From&)
     {
+        static_assert(std::derived_from<To, From>, "Invalid type check, expected type unrelated to argument type");
         // If you're hitting this assertion, it is likely because you used
         // is<>() or downcast<>() with a type that doesn't have the needed
         // TypeCastTraits specialization. Please use the following macro
         // to add that specialization:
         // SPECIALIZE_TYPE_TRAITS_BEGIN() / SPECIALIZE_TYPE_TRAITS_END()
-        static_assert(std::is_void_v<ExpectedType>, "Missing TypeCastTraits specialization");
+        static_assert(std::is_void_v<To>, "Missing TypeCastTraits specialization");
         return false;
     }
 };
 
-// Template specialization for the case where ExpectedType is a base of ArgType,
+// Template specialization for the case where To is a base of From,
 // so we can return return true unconditionally.
-template <typename ExpectedType, typename ArgType>
-struct TypeCastTraits<ExpectedType, ArgType, true /* isBaseType */> {
-    static bool isOfType(ArgType&) { return true; }
+template <typename To, std::derived_from<To> From>
+struct TypeCastTraits<To, From> {
+    static constexpr bool checkIsNecessary() { return false; }
+    static bool isOfType(const From&) { return true; }
 };
 
+// TypeCastTraits' specializations assume the types have no keywords on them. This just reduces boilerplate.
+template<typename To, typename From>
+using ToTypeCastTraits = TypeCastTraits<std::remove_const_t<To>, std::remove_const_t<From>>;
+
 // Type checking function, to use before casting with downcast<>().
-template <typename ExpectedType, typename ArgType>
-inline bool is(const ArgType& source)
+template <typename To, typename From>
+inline bool is(const From& from)
 {
-    static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
-    return TypeCastTraits<const ExpectedType, const ArgType>::isOfType(source);
+    return ToTypeCastTraits<To, From>::isOfType(from);
 }
 
-template <typename ExpectedType, typename ArgType>
-inline bool is(ArgType* source)
+template <typename To, typename From>
+inline bool is(From* from)
 {
-    static_assert(std::is_base_of_v<ArgType, ExpectedType>, "Unnecessary type check");
-    return source && TypeCastTraits<const ExpectedType, const ArgType>::isOfType(*source);
+    return from && is<To>(*from);
 }
 
 // Update T's constness to match Reference's.
@@ -70,65 +76,67 @@ template <typename Reference, typename T>
 using match_constness_t =
     typename std::conditional_t<std::is_const_v<Reference>, typename std::add_const_t<T>, typename std::remove_const_t<T>>;
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>& uncheckedDowncast(From& from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_cast<match_constness_t<Source, Target>&>(source);
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    ASSERT_WITH_SECURITY_IMPLICATION(is<To>(from));
+    return static_cast<match_constness_t<From, To>&>(from);
 }
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>* uncheckedDowncast(From* from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
-    return static_cast<match_constness_t<Source, Target>*>(source);
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    ASSERT_WITH_SECURITY_IMPLICATION(!from || is<To>(*from));
+    return static_cast<match_constness_t<From, To>*>(from);
 }
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>& downcast(Source& source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>& downcast(From& from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT(is<Target>(source));
-    return static_cast<match_constness_t<Source, Target>&>(source);
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    RELEASE_ASSERT(is<To>(from));
+    return static_cast<match_constness_t<From, To>&>(from);
 }
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* downcast(Source* source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>* downcast(From* from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    RELEASE_ASSERT(!source || is<Target>(*source));
-    return static_cast<match_constness_t<Source, Target>*>(source);
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    RELEASE_ASSERT(!from || is<To>(*from));
+    return static_cast<match_constness_t<From, To>*>(from);
 }
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* dynamicDowncast(Source& source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>* dynamicDowncast(From& from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    return is<Target>(source) ? &static_cast<match_constness_t<Source, Target>&>(source) : nullptr;
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    return is<To>(from) ? static_cast<match_constness_t<From, To>*>(&from) : nullptr;
 }
 
-template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* dynamicDowncast(Source* source)
+template<typename To, typename From>
+requires (std::derived_from<To, From>)
+inline match_constness_t<From, To>* dynamicDowncast(From* from)
 {
-    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
-    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
-    return is<Target>(source) ? static_cast<match_constness_t<Source, Target>*>(source) : nullptr;
+    static_assert(ToTypeCastTraits<To, From>::checkIsNecessary(), "Unnecessary type check");
+    return is<To>(from) ? static_cast<match_constness_t<From, To>*>(from) : nullptr;
 }
 
 // Add support for type checking / casting using is<>() / downcast<>() helpers for a specific class.
 #define SPECIALIZE_TYPE_TRAITS_BEGIN(ClassName) \
 namespace WTF { \
-template <typename ArgType> \
-class TypeCastTraits<const ClassName, ArgType, false /* isBaseType */> { \
+template <typename From> \
+requires (std::derived_from<ClassName, From>) \
+class TypeCastTraits<ClassName, From> { \
 public: \
-    static bool isOfType(ArgType& source) { return isType(source); } \
+    static constexpr bool checkIsNecessary() { return true; } \
+    static bool isOfType(const From& from) { return isType(from); } \
 private:
 
 #define SPECIALIZE_TYPE_TRAITS_END() \
@@ -137,16 +145,16 @@ private:
 
 // Explicit specialization for C++ standard library types.
 
-template<typename ExpectedType, typename ArgType, typename Deleter>
-inline bool is(std::unique_ptr<ArgType, Deleter>& source)
+template<typename To, typename From, typename Deleter>
+inline bool is(std::unique_ptr<From, Deleter>& from)
 {
-    return is<ExpectedType>(source.get());
+    return is<To>(from.get());
 }
 
-template<typename ExpectedType, typename ArgType, typename Deleter>
-inline bool is(const std::unique_ptr<ArgType, Deleter>& source)
+template<typename To, typename From, typename Deleter>
+inline bool is(const std::unique_ptr<From, Deleter>& from)
 {
-    return is<ExpectedType>(source.get());
+    return is<To>(from.get());
 }
 
 } // namespace WTF

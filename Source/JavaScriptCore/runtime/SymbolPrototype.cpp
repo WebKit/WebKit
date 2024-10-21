@@ -84,7 +84,7 @@ inline Symbol* tryExtractSymbol(JSValue thisValue)
     JSObject* thisObject = asObject(thisValue);
     if (!thisObject->inherits<SymbolObject>())
         return nullptr;
-    return asSymbol(jsCast<SymbolObject*>(thisObject)->internalValue());
+    return asSymbol(uncheckedDowncast<SymbolObject>(thisObject)->internalValue());
 }
 
 JSC_DEFINE_CUSTOM_GETTER(symbolProtoGetterDescription, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

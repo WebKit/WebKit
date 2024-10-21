@@ -92,9 +92,9 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
     JSFunction* callee;
     
     if (inlineCallFrame)
-        callee = jsCast<JSFunction*>(inlineCallFrame->calleeRecovery.recover(targetFrame));
+        callee = uncheckedDowncast<JSFunction>(inlineCallFrame->calleeRecovery.recover(targetFrame));
     else
-        callee = jsCast<JSFunction*>(targetFrame->jsCallee());
+        callee = uncheckedDowncast<JSFunction>(targetFrame->jsCallee());
 
     ClonedArguments* result = nullptr;
 
@@ -189,11 +189,11 @@ Structure* ClonedArguments::createSlowPutStructure(VM& vm, JSGlobalObject* globa
 
 bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, PropertySlot& slot)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(object);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(object);
     VM& vm = globalObject->vm();
 
     if (!thisObject->specialsMaterialized()) {
-        FunctionExecutable* executable = jsCast<FunctionExecutable*>(thisObject->m_callee->executable());
+        FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(thisObject->m_callee->executable());
         bool isStrictMode = executable->isInStrictContext();
 
         if (ident == vm.propertyNames->callee) {
@@ -217,14 +217,14 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
 
 void ClonedArguments::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray&, DontEnumPropertiesMode mode)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(object);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(object);
     if (mode == DontEnumPropertiesMode::Include)
         thisObject->materializeSpecialsIfNecessary(globalObject);
 }
 
 bool ClonedArguments::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, JSValue value, PutPropertySlot& slot)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(cell);
     VM& vm = globalObject->vm();
     
     if (ident == vm.propertyNames->callee
@@ -239,7 +239,7 @@ bool ClonedArguments::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNa
 
 bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName ident, DeletePropertySlot& slot)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(cell);
     VM& vm = globalObject->vm();
     
     if (ident == vm.propertyNames->callee
@@ -251,7 +251,7 @@ bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject,
 
 bool ClonedArguments::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(object);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(object);
     VM& vm = globalObject->vm();
     
     if (ident == vm.propertyNames->callee
@@ -266,7 +266,7 @@ void ClonedArguments::materializeSpecials(JSGlobalObject* globalObject)
     RELEASE_ASSERT(!specialsMaterialized());
     VM& vm = globalObject->vm();
     
-    FunctionExecutable* executable = jsCast<FunctionExecutable*>(m_callee->executable());
+    FunctionExecutable* executable = uncheckedDowncast<FunctionExecutable>(m_callee->executable());
     bool isStrictMode = executable->isInStrictContext();
     
     if (isStrictMode || executable->usesNonSimpleParameterList())
@@ -288,7 +288,7 @@ void ClonedArguments::materializeSpecialsIfNecessary(JSGlobalObject* globalObjec
 template<typename Visitor>
 void ClonedArguments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_callee);

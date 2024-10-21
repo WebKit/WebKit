@@ -56,7 +56,7 @@ Structure* Exception::createStructure(VM& vm, JSGlobalObject* globalObject, JSVa
 template<typename Visitor>
 void Exception::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    Exception* thisObject = jsCast<Exception*>(cell);
+    Exception* thisObject = uncheckedDowncast<Exception>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

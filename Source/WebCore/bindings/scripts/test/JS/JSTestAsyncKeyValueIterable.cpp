@@ -156,7 +156,7 @@ JSObject* JSTestAsyncKeyValueIterable::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestAsyncKeyValueIterable::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestAsyncKeyValueIterableDOMConstructor, DOMConstructorID::TestAsyncKeyValueIterable>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestAsyncKeyValueIterableDOMConstructor, DOMConstructorID::TestAsyncKeyValueIterable>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestAsyncKeyValueIterable::destroy(JSC::JSCell* cell)
@@ -169,7 +169,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncKeyValueIterableConstructor, (JSGlobalObject
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestAsyncKeyValueIterablePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestAsyncKeyValueIterablePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestAsyncKeyValueIterable::getConstructor(vm, prototype->globalObject()));
@@ -276,7 +276,7 @@ JSC::GCClient::IsoSubspace* JSTestAsyncKeyValueIterable::subspaceForImpl(JSC::VM
 
 void JSTestAsyncKeyValueIterable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestAsyncKeyValueIterable*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestAsyncKeyValueIterable>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -337,7 +337,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestAsyncKeyValueIterable* JSTestAsyncKeyValueIterable::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestAsyncKeyValueIterable*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestAsyncKeyValueIterable>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -201,7 +201,7 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     if (!globalObject->inherits<JSDOMWindowBase>())
         return nullString();
 
-    auto* document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().documentIfLocal();
+    auto* document = uncheckedDowncast<const JSDOMWindowBase>(globalObject)->wrapped().documentIfLocal();
     if (!document)
         return nullString();
 

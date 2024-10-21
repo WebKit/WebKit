@@ -156,7 +156,7 @@ void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
 DOMWindow& JSWindowProxy::wrapped() const
 {
     auto* window = this->window();
-    return jsCast<JSDOMWindowBase*>(window)->wrapped();
+    return uncheckedDowncast<JSDOMWindowBase>(window)->wrapped();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, WindowProxy& windowProxy)
@@ -176,7 +176,7 @@ WindowProxy* JSWindowProxy::toWrapped(VM&, JSValue value)
         return nullptr;
     JSObject* object = asObject(value);
     if (object->inherits<JSWindowProxy>())
-        return jsCast<JSWindowProxy*>(object)->windowProxy();
+        return uncheckedDowncast<JSWindowProxy>(object)->windowProxy();
     return nullptr;
 }
 
@@ -199,7 +199,7 @@ struct FrameInfo {
 
 static std::optional<FrameInfo> frameInfo(JSGlobalObject* globalObject)
 {
-    auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(globalObject);
+    auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(globalObject);
     if (!domGlobalObject)
         return std::nullopt;
 
@@ -313,43 +313,43 @@ static void checkCrossTabWindowProxyUsage(JSWindowProxy* proxy, JSGlobalObject* 
 
 bool JSWindowProxy::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(object), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(object), globalObject, propertyName);
     return Base::getOwnPropertySlot(object, globalObject, propertyName, slot);
 }
 
 bool JSWindowProxy::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(object), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(object), globalObject, propertyName);
     return Base::getOwnPropertySlotByIndex(object, globalObject, propertyName, slot);
 }
 
 bool JSWindowProxy::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(cell), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(cell), globalObject, propertyName);
     return Base::put(cell, globalObject, propertyName, value, slot);
 }
 
 bool JSWindowProxy::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(cell), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(cell), globalObject, propertyName);
     return Base::putByIndex(cell, globalObject, propertyName, value, shouldThrow);
 }
 
 bool JSWindowProxy::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(cell), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(cell), globalObject, propertyName);
     return Base::deleteProperty(cell, globalObject, propertyName, slot);
 }
 
 bool JSWindowProxy::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(cell), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(cell), globalObject, propertyName);
     return Base::deletePropertyByIndex(cell, globalObject, propertyName);
 }
 
 bool JSWindowProxy::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    checkCrossTabWindowProxyUsage(jsCast<JSWindowProxy*>(object), globalObject, propertyName);
+    checkCrossTabWindowProxyUsage(uncheckedDowncast<JSWindowProxy>(object), globalObject, propertyName);
     return Base::defineOwnProperty(object, globalObject, propertyName, descriptor, shouldThrow);
 }
 

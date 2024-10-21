@@ -32,7 +32,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWrapperObject);
 template<typename Visitor>
 void JSWrapperObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWrapperObject*>(cell);
+    auto* thisObject = uncheckedDowncast<JSWrapperObject>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

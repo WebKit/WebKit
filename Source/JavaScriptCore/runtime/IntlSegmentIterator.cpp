@@ -61,7 +61,7 @@ IntlSegmentIterator::IntlSegmentIterator(VM& vm, Structure* structure, std::uniq
 template<typename Visitor>
 void IntlSegmentIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<IntlSegmentIterator*>(cell);
+    auto* thisObject = uncheckedDowncast<IntlSegmentIterator>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_string);
 }

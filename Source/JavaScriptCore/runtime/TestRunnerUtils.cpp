@@ -37,11 +37,11 @@ FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue)
     if (!theFunctionValue.isCell())
         return nullptr;
 
-    JSFunction* theFunction = jsDynamicCast<JSFunction*>(theFunctionValue);
+    JSFunction* theFunction = dynamicDowncast<JSFunction>(theFunctionValue);
     if (!theFunction)
         return nullptr;
     
-    FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(
+    FunctionExecutable* executable = dynamicDowncast<FunctionExecutable>(
         theFunction->executable());
     return executable;
 }

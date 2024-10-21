@@ -118,7 +118,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
             auto* callFrame = vm.topJSCallFrame();
             auto* callee = callFrame && !callFrame->isNativeCalleeFrame() ? callFrame->jsCallee() : nullptr;
             ASCIILiteral calleeName = "Array.isArray"_s;
-            auto* function = callee ? jsDynamicCast<JSFunction*>(callee) : nullptr;
+            auto* function = callee ? dynamicDowncast<JSFunction>(callee) : nullptr;
             // If this function is from a different globalObject than the one passed in above,
             // then this test will fail even if function is Object.prototype.toString. The only
             // way this test will be work everytime is if we check against the
@@ -136,7 +136,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
         if (argument->type() != ProxyObjectType)
             return false;
 
-        proxy = jsCast<ProxyObject*>(argument);
+        proxy = uncheckedDowncast<ProxyObject>(argument);
     }
 
     ASSERT_NOT_REACHED();
@@ -151,8 +151,8 @@ bool isArraySlow(JSGlobalObject* globalObject, ProxyObject* argument)
 // https://tc39.github.io/ecma262/#sec-isarray
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(callFrame->argument(0)));
-    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
+    ASSERT_UNUSED(globalObject, is<ProxyObject>(callFrame->argument(0)));
+    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, uncheckedDowncast<ProxyObject>(callFrame->uncheckedArgument(0)))));
 }
 
 } // namespace JSC

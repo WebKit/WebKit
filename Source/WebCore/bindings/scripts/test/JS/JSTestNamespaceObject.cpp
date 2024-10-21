@@ -109,21 +109,21 @@ template<> void JSTestNamespaceObjectDOMConstructor::initializeProperties(VM& vm
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     reifyStaticProperties(vm, JSTestNamespaceObject::info(), JSTestNamespaceObjectConstructorTableValues, *this);
 #if ENABLE(Condition1)
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
         auto propertyName = Identifier::fromString(vm, "namespaceAttributeFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
     }
 #endif
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         auto propertyName = Identifier::fromString(vm, "enabledBySettingNamespaceOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
     }
 #if ENABLE(Condition1)
-    if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
         auto propertyName = Identifier::fromString(vm, "namespaceOperationFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
@@ -141,7 +141,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceObject>::value, "In
 
 JSValue JSTestNamespaceObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamespaceObjectDOMConstructor, DOMConstructorID::TestNamespaceObject>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamespaceObjectDOMConstructor, DOMConstructorID::TestNamespaceObject>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestNamespaceObject::destroy(JSC::JSCell* cell)

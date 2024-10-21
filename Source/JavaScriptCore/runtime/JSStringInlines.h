@@ -377,7 +377,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
         return vm.keyAtomStringCache.make(vm, buffer, createFromNonRope);
     }
 
-    JSRopeString* ropeString = jsCast<JSRopeString*>(string);
+    JSRopeString* ropeString = uncheckedDowncast<JSRopeString>(string);
 
     auto createFromRope = [&](VM& vm, auto& buffer) {
         auto impl = AtomStringImpl::add(buffer);

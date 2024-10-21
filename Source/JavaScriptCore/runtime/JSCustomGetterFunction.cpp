@@ -40,7 +40,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCustomGetterFunction* customGetterFunction = jsCast<JSCustomGetterFunction*>(callFrame->jsCallee());
+    JSCustomGetterFunction* customGetterFunction = uncheckedDowncast<JSCustomGetterFunction>(callFrame->jsCallee());
     JSValue thisValue = callFrame->thisValue();
     auto getter = customGetterFunction->getter();
 

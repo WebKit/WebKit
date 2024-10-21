@@ -198,9 +198,12 @@ WebCoreOpaqueRoot root(HTMLCanvasElement*);
 } // namespace WebCore
 
 namespace WTF {
-template<typename ArgType> class TypeCastTraits<const WebCore::HTMLCanvasElement, ArgType, false /* isBaseType */> {
+template<typename From>
+requires (std::derived_from<From, WebCore::HTMLCanvasElement>)
+class TypeCastTraits<const WebCore::HTMLCanvasElement, From> {
 public:
-    static bool isOfType(ArgType& node) { return checkTagName(node); }
+    static bool isOfType(From& node) { return checkTagName(node); }
+    static WebCore::HTMLCanvasElement& cast(From& node) { return  }
 private:
     static bool checkTagName(const WebCore::CanvasBase& base) { return base.isHTMLCanvasElement(); }
     static bool checkTagName(const WebCore::HTMLElement& element) { return element.hasTagName(WebCore::HTMLNames::canvasTag); }

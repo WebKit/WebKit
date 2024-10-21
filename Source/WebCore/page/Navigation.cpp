@@ -269,8 +269,8 @@ enum EventTargetInterfaceType Navigation::eventTargetInterface() const
 static RefPtr<DOMPromise> createDOMPromise(const DeferredPromise& deferredPromise)
 {
     auto promiseValue = deferredPromise.promise();
-    auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promiseValue);
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsPromise.globalObject());
+    auto& jsPromise = *uncheckedDowncast<JSC::JSPromise>(promiseValue);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(jsPromise.globalObject());
 
     return DOMPromise::create(globalObject, jsPromise);
 }
@@ -696,7 +696,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     auto error = JSC::createError(globalObject, "Navigation aborted"_s);
 
     ErrorInformation errorInformation;
-    if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(error)) {
+    if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(error)) {
         if (auto result = extractErrorInformationFromErrorInstance(globalObject, *errorInstance))
             errorInformation = WTFMove(*result);
     }
@@ -861,7 +861,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
         ASSERT(fromNavigationHistoryEntry);
 
         {
-            auto& domGlobalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
+            auto& domGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(scriptExecutionContext()->globalObject());
             JSC::JSLockHolder locker(domGlobalObject.vm());
             m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry, DeferredPromise::create(domGlobalObject, DeferredPromise::Mode::RetainPromiseOnResolve).releaseNonNull());
         }
@@ -931,7 +931,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             ErrorInformation errorInformation;
             String errorMessage;
-            if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(result)) {
+            if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(result)) {
                 if (auto result = extractErrorInformationFromErrorInstance(protectedScriptExecutionContext()->globalObject(), *errorInstance)) {
                     errorInformation = WTFMove(*result);
                     errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);

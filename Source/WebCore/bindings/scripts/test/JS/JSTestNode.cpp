@@ -120,7 +120,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestNodeDOMConstructor::con
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestNodeDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestNodeDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = TestNode::create();
     if constexpr (IsExceptionOr<decltype(object)>)
@@ -179,14 +179,14 @@ void JSTestNodePrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestNode::info(), JSTestNodePrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "calculateSecretResult"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
-    if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
+    if (!uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "getSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -194,7 +194,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
 #if ENABLE(TEST_FEATURE)
-    if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled())) {
+    if (!(uncheckedDowncast<JSDOMGlobalObject>(globalObject())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "testFeatureGetSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -262,14 +262,14 @@ JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNodeDOMConstructor, DOMConstructorID::TestNode>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNodeDOMConstructor, DOMConstructorID::TestNode>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNodePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestNodePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNode::getConstructor(vm, prototype->globalObject()));
@@ -493,7 +493,7 @@ JSC::GCClient::IsoSubspace* JSTestNode::subspaceForImpl(JSC::VM& vm)
 
 void JSTestNode::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNode*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNode>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

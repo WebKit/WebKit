@@ -80,7 +80,7 @@ static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceConst>::value, "Int
 
 JSValue JSTestNamespaceConst::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamespaceConstDOMConstructor, DOMConstructorID::TestNamespaceConst>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamespaceConstDOMConstructor, DOMConstructorID::TestNamespaceConst>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestNamespaceConst::destroy(JSC::JSCell* cell)

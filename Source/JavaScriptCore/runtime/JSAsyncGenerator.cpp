@@ -62,7 +62,7 @@ void JSAsyncGenerator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSAsyncGenerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSAsyncGenerator*>(cell);
+    auto* thisObject = uncheckedDowncast<JSAsyncGenerator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

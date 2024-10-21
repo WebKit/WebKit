@@ -275,7 +275,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
             // to override normal builtins e.g. "toString" we check if
             // the existing value on the prototype chain is an ObjC
             // callback already.
-            if ([existingMethod isObject] && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(toJS(globalObject, [existingMethod JSValueRef])))
+            if ([existingMethod isObject] && dynamicDowncast<JSC::ObjCCallbackFunction>(toJS(globalObject, [existingMethod JSValueRef])))
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
@@ -678,7 +678,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     ASSERT(!exception);
     JSC::JSLockHolder locker(toJS(context));
     if (toJS(object)->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>())
-        return (__bridge id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
+        return (__bridge id)uncheckedDowncast<JSC::JSAPIWrapperObject>(toJS(object))->wrappedObject();
     if (id target = tryUnwrapConstructor(object))
         return target;
     return nil;

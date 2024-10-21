@@ -173,7 +173,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
 void JSArrayBufferView::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(jsDynamicCast<JSArrayBufferView*>(this));
+    ASSERT_GC_OBJECT_INHERITS(this, info());
     switch (m_mode) {
     case FastTypedArray:
         return;
@@ -193,7 +193,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
     case GrowableSharedDataViewMode:
     case GrowableSharedAutoLengthDataViewMode:
         ASSERT(!butterfly());
-        vm.heap.addReference(this, jsCast<JSDataView*>(this)->possiblySharedBuffer());
+        vm.heap.addReference(this, uncheckedDowncast<JSDataView>(this)->possiblySharedBuffer());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -202,7 +202,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
 template<typename Visitor>
 void JSArrayBufferView::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
+    JSArrayBufferView* thisObject = uncheckedDowncast<JSArrayBufferView>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
 

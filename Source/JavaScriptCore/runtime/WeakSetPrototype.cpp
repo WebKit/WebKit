@@ -62,7 +62,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(JSGlobalObject* globalObject, JSValue
         return nullptr;
     }
 
-    auto* set = jsDynamicCast<JSWeakSet*>(asObject(value));
+    auto* set = dynamicDowncast<JSWeakSet>(asObject(value));
     if (LIKELY(set))
         return set;
 

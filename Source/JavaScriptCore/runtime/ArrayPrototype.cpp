@@ -429,7 +429,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
 
         if (!sawHoles && !genericCase && result && isJSString(result) && isCoW) {
             ASSERT(JSImmutableButterfly::fromButterfly(thisArray->butterfly()) == immutableButterfly);
-            vm.heap.immutableButterflyToStringCache.add(immutableButterfly, jsCast<JSString*>(result));
+            vm.heap.immutableButterflyToStringCache.add(immutableButterfly, uncheckedDowncast<JSString>(result));
         }
 
         return JSValue::encode(result);
@@ -1076,7 +1076,7 @@ static ALWAYS_INLINE std::span<EncodedJSValue> sortStableSort(JSGlobalObject* gl
     ASSERT(callData.type != CallData::Type::None);
 
     if (LIKELY(callData.type == CallData::Type::JS)) {
-        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(comparator), 2);
+        CachedCall cachedCall(globalObject, uncheckedDowncast<JSFunction>(comparator), 2);
         RETURN_IF_EXCEPTION(scope, sorted);
         RELEASE_AND_RETURN(scope, arrayStableSort(vm, compacted, sorted, [&](auto left, auto right) ALWAYS_INLINE_LAMBDA {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1117,7 +1117,7 @@ static ALWAYS_INLINE void sortCommit(JSGlobalObject* globalObject, JSObject* thi
 
     bool appended = false;
     if (LIKELY(isJSArray(thisObject))) {
-        appended = jsCast<JSArray*>(thisObject)->appendMemcpy(globalObject, vm, 0, indexingType, sorted);
+        appended = uncheckedDowncast<JSArray>(thisObject)->appendMemcpy(globalObject, vm, 0, indexingType, sorted);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -1617,7 +1617,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArray* firstArray = jsCast<JSArray*>(callFrame->uncheckedArgument(0));
+    JSArray* firstArray = uncheckedDowncast<JSArray>(callFrame->uncheckedArgument(0));
     
     // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
     // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
@@ -1635,7 +1635,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     if (!isJSArray(second))
         RELEASE_AND_RETURN(scope, JSValue::encode(concatAppendOne(globalObject, vm, firstArray, second)));
 
-    JSArray* secondArray = jsCast<JSArray*>(second);
+    JSArray* secondArray = uncheckedDowncast<JSArray>(second);
     
     Butterfly* firstButterfly = firstArray->butterfly();
     Butterfly* secondButterfly = secondArray->butterfly();
@@ -1710,8 +1710,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncAppendMemcpy, (JSGlobalObject* glo
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSArray* resultArray = jsCast<JSArray*>(callFrame->uncheckedArgument(0));
-    JSArray* otherArray = jsCast<JSArray*>(callFrame->uncheckedArgument(1));
+    JSArray* resultArray = uncheckedDowncast<JSArray>(callFrame->uncheckedArgument(0));
+    JSArray* otherArray = uncheckedDowncast<JSArray>(callFrame->uncheckedArgument(1));
     JSValue startValue = callFrame->uncheckedArgument(2);
     ASSERT(startValue.isUInt32AsAnyInt());
     unsigned startIndex = startValue.asUInt32AsAnyInt();
@@ -1774,7 +1774,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayPrototPrivateFuncArraySpeciesWatchpointIsValid, (J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isValidSpecies = arraySpeciesWatchpointIsValid(vm, jsCast<JSArray*>(callFrame->uncheckedArgument(0)));
+    bool isValidSpecies = arraySpeciesWatchpointIsValid(vm, uncheckedDowncast<JSArray>(callFrame->uncheckedArgument(0)));
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(jsBoolean(isValidSpecies));

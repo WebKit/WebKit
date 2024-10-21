@@ -42,7 +42,7 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_
 static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(v);
+    JSWebAssemblyInstance* result = dynamicDowncast<JSWebAssemblyInstance>(v);
     if (!result) {
         throwException(globalObject, throwScope, 
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Instance"_s));

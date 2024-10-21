@@ -82,7 +82,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormat, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* durationFormat = jsDynamicCast<IntlDurationFormat*>(callFrame->thisValue());
+    auto* durationFormat = dynamicDowncast<IntlDurationFormat>(callFrame->thisValue());
     if (UNLIKELY(!durationFormat))
         return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.format called on value that's not a DurationFormat"_s);
 
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormatToParts, (JSGlobal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* durationFormat = jsDynamicCast<IntlDurationFormat*>(callFrame->thisValue());
+    auto* durationFormat = dynamicDowncast<IntlDurationFormat>(callFrame->thisValue());
     if (UNLIKELY(!durationFormat))
         return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.formatToParts called on value that's not a DurationFormat"_s);
 
@@ -122,7 +122,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncResolvedOptions, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* durationFormat = jsDynamicCast<IntlDurationFormat*>(callFrame->thisValue());
+    auto* durationFormat = dynamicDowncast<IntlDurationFormat>(callFrame->thisValue());
     if (UNLIKELY(!durationFormat))
         return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.resolvedOptions called on value that's not a DurationFormat"_s);
 

@@ -90,7 +90,7 @@ void JSModuleNamespaceObject::destroy(JSCell* cell)
 template<typename Visitor>
 void JSModuleNamespaceObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleRecord);
@@ -180,14 +180,14 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
 
 bool JSModuleNamespaceObject::getOwnPropertySlot(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     return thisObject->getOwnPropertySlotCommon(globalObject, propertyName, slot);
 }
 
 bool JSModuleNamespaceObject::getOwnPropertySlotByIndex(JSObject* cell, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     return thisObject->getOwnPropertySlotCommon(globalObject, Identifier::from(vm, propertyName), slot);
 }
 
@@ -215,7 +215,7 @@ bool JSModuleNamespaceObject::putByIndex(JSCell*, JSGlobalObject* globalObject, 
 bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-delete-p
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     if (propertyName.isSymbol())
         return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 
@@ -225,7 +225,7 @@ bool JSModuleNamespaceObject::deleteProperty(JSCell* cell, JSGlobalObject* globa
 bool JSModuleNamespaceObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
     VM& vm = globalObject->vm();
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     return !thisObject->m_exports.contains(Identifier::from(vm, propertyName).impl());
 }
 
@@ -235,7 +235,7 @@ void JSModuleNamespaceObject::getOwnPropertyNames(JSObject* cell, JSGlobalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-ownpropertykeys
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
     for (const auto& name : thisObject->m_names) {
         if (mode == DontEnumPropertiesMode::Exclude) {
             // Perform [[GetOwnProperty]] to throw ReferenceError if binding is uninitialized.
@@ -258,7 +258,7 @@ bool JSModuleNamespaceObject::defineOwnProperty(JSObject* cell, JSGlobalObject* 
 
     // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
 
-    JSModuleNamespaceObject* thisObject = jsCast<JSModuleNamespaceObject*>(cell);
+    JSModuleNamespaceObject* thisObject = uncheckedDowncast<JSModuleNamespaceObject>(cell);
 
     // 1. If Type(P) is Symbol, return OrdinaryDefineOwnProperty(O, P, Desc).
     if (propertyName.isSymbol())

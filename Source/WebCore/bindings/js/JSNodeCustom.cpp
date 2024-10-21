@@ -69,7 +69,7 @@ using namespace HTMLNames;
 
 bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    auto& node = jsCast<JSNode*>(handle.slot()->asCell())->wrapped();
+    auto& node = uncheckedDowncast<JSNode>(handle.slot()->asCell())->wrapped();
     if (!node.isConnected()) {
         if (GCReachableRefMap::contains(node) || node.isInCustomElementReactionQueue()) {
             if (UNLIKELY(reason))

@@ -158,9 +158,9 @@ void Debugger::attach(JSGlobalObject* globalObject)
         m_vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* heapCell, HeapCell::Kind kind) {
             if (isJSCellKind(kind)) {
                 auto* cell = static_cast<JSCell*>(heapCell);
-                if (auto* function = jsDynamicCast<JSFunction*>(cell)) {
+                if (auto* function = dynamicDowncast<JSFunction>(cell)) {
                     if (function->scope()->globalObject() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
-                        sourceProviders.add(jsCast<FunctionExecutable*>(function->executable())->source().provider());
+                        sourceProviders.add(uncheckedDowncast<FunctionExecutable>(function->executable())->source().provider());
                 }
             }
             return IterationStatus::Continue;
@@ -1149,7 +1149,7 @@ void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSV
     if (m_isPaused)
         return;
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(exception)) {
+    if (JSObject* object = dynamicDowncast<JSObject>(exception)) {
         if (object->isErrorInstance()) {
             ErrorInstance* error = static_cast<ErrorInstance*>(object);
             // FIXME: <https://webkit.org/b/173625> Web Inspector: Should be able to pause and debug a StackOverflow Exception

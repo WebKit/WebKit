@@ -326,7 +326,7 @@ inline EncodedJSValue arrayGet(JSWebAssemblyInstance* instance, uint32_t typeInd
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayRef.getObject());
 
     return arrayObject->get(index);
 }
@@ -344,7 +344,7 @@ inline void arraySet(JSWebAssemblyInstance* instance, uint32_t typeIndex, Encode
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayRef.getObject());
 
     arrayObject->set(index, value);
 }
@@ -353,7 +353,7 @@ inline bool doArrayFill(EncodedJSValue arrayValue, uint32_t offset, std::variant
 {
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayRef.getObject());
 
     CheckedUint32 lastElementIndexChecked = offset;
     lastElementIndexChecked += size;
@@ -392,8 +392,8 @@ inline bool arrayCopy(JSWebAssemblyInstance*, EncodedJSValue dst, uint32_t dstOf
     JSValue srcRef = JSValue::decode(src);
     ASSERT(dstRef.isObject());
     ASSERT(srcRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
-    JSWebAssemblyArray* srcObject = jsCast<JSWebAssemblyArray*>(srcRef.getObject());
+    JSWebAssemblyArray* dstObject = uncheckedDowncast<JSWebAssemblyArray>(dstRef.getObject());
+    JSWebAssemblyArray* srcObject = uncheckedDowncast<JSWebAssemblyArray>(srcRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -421,7 +421,7 @@ inline bool arrayInitElem(JSWebAssemblyInstance* instance, EncodedJSValue dst, u
 {
     JSValue dstRef = JSValue::decode(dst);
     ASSERT(dstRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
+    JSWebAssemblyArray* dstObject = uncheckedDowncast<JSWebAssemblyArray>(dstRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -453,7 +453,7 @@ inline bool arrayInitData(JSWebAssemblyInstance* instance, EncodedJSValue dst, u
 {
     JSValue dstRef = JSValue::decode(dst);
     ASSERT(dstRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
+    JSWebAssemblyArray* dstObject = uncheckedDowncast<JSWebAssemblyArray>(dstRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -513,9 +513,9 @@ inline EncodedJSValue structGet(EncodedJSValue encodedStructReference, uint32_t 
 {
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
-    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    JSObject* structureAsObject = uncheckedDowncast<JSObject>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
-    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    JSWebAssemblyStruct* structPointer = uncheckedDowncast<JSWebAssemblyStruct>(structureAsObject);
     return structPointer->get(fieldIndex);
 }
 
@@ -523,9 +523,9 @@ inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
 {
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
-    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    JSObject* structureAsObject = uncheckedDowncast<JSObject>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
-    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    JSWebAssemblyStruct* structPointer = uncheckedDowncast<JSWebAssemblyStruct>(structureAsObject);
 
     return structPointer->set(fieldIndex, argument);
 }

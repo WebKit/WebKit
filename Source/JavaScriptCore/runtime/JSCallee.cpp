@@ -47,7 +47,7 @@ JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)
 template<typename Visitor>
 void JSCallee::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSCallee* thisObject = jsCast<JSCallee*>(cell);
+    JSCallee* thisObject = uncheckedDowncast<JSCallee>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

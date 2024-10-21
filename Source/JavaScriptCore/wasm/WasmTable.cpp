@@ -328,7 +328,7 @@ void FuncRefTable::set(uint32_t index, JSValue value)
     if (value.isNull())
         clear(index);
     else
-        setFunction(index, jsCast<WebAssemblyFunctionBase*>(value));
+        setFunction(index, uncheckedDowncast<WebAssemblyFunctionBase>(value));
 }
 
 } } // namespace JSC::Table

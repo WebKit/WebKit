@@ -87,7 +87,7 @@ IntlNumberFormat::IntlNumberFormat(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlNumberFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    IntlNumberFormat* thisObject = jsCast<IntlNumberFormat*>(cell);
+    IntlNumberFormat* thisObject = uncheckedDowncast<IntlNumberFormat>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

@@ -2075,13 +2075,13 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     if (!strcmp(globalObjectObj->classInfo()->className, "JSWindowProxy"))
-        anyWorldGlobalObject = JSC::jsDynamicCast<WebCore::JSDOMWindow*>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
+        anyWorldGlobalObject = dynamicDowncast<WebCore::JSDOMWindow>(static_cast<WebCore::JSWindowProxy*>(globalObjectObj)->window());
 
     if (!anyWorldGlobalObject)
         return @"";
 
     // Get the frame frome the global object we've settled on.
-    auto* frame = dynamicDowncast<WebCore::LocalFrame>(JSC::jsCast<WebCore::JSDOMWindow*>(anyWorldGlobalObject)->wrapped().frame());
+    auto* frame = dynamicDowncast<WebCore::LocalFrame>(uncheckedDowncast<WebCore::JSDOMWindow>(anyWorldGlobalObject)->wrapped().frame());
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 

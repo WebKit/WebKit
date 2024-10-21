@@ -32,7 +32,7 @@ template<typename Traits>
 template<typename Visitor>
 void OrderedHashTable<Traits>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    OrderedHashTable<Traits>* thisObject = jsCast<OrderedHashTable<Traits>*>(cell);
+    OrderedHashTable<Traits>* thisObject = uncheckedDowncast<OrderedHashTable<Traits>>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

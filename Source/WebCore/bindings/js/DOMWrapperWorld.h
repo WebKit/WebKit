@@ -97,12 +97,12 @@ bool isWorldCompatible(JSC::JSGlobalObject&, JSC::JSValue);
 
 inline DOMWrapperWorld& currentWorld(JSC::JSGlobalObject& lexicalGlobalObject)
 {
-    return JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->world();
+    return uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject)->world();
 }
 
 inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject& object)
 {
-    return JSC::jsCast<JSDOMGlobalObject*>(object.globalObject())->world();
+    return uncheckedDowncast<JSDOMGlobalObject>(object.globalObject())->world();
 }
 
 inline bool isWorldCompatible(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)

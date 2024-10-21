@@ -164,7 +164,7 @@ JSObject* JSTestReadOnlyMapLike::prototype(VM& vm, JSDOMGlobalObject& globalObje
 
 JSValue JSTestReadOnlyMapLike::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestReadOnlyMapLikeDOMConstructor, DOMConstructorID::TestReadOnlyMapLike>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestReadOnlyMapLikeDOMConstructor, DOMConstructorID::TestReadOnlyMapLike>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestReadOnlyMapLike::destroy(JSC::JSCell* cell)
@@ -177,7 +177,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestReadOnlyMapLikeConstructor, (JSGlobalObject* lexi
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestReadOnlyMapLikePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestReadOnlyMapLikePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestReadOnlyMapLike::getConstructor(vm, prototype->globalObject()));
@@ -309,7 +309,7 @@ JSC::GCClient::IsoSubspace* JSTestReadOnlyMapLike::subspaceForImpl(JSC::VM& vm)
 
 void JSTestReadOnlyMapLike::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestReadOnlyMapLike*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestReadOnlyMapLike>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -370,7 +370,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestReadOnlyMapLike* JSTestReadOnlyMapLike::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestReadOnlyMapLike*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestReadOnlyMapLike>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

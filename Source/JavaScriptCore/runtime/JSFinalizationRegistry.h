@@ -59,7 +59,7 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
-    JSObject* callback() const { return jsCast<JSObject*>(internalField(Field::Callback).get()); }
+    JSObject* callback() const { return uncheckedDowncast<JSObject>(internalField(Field::Callback).get()); }
 
     static JSFinalizationRegistry* create(VM&, Structure*, JSObject* callback);
     static JSFinalizationRegistry* createWithInitialValues(VM&, Structure*);

@@ -43,7 +43,7 @@ bool JSPaintRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
     if (UNLIKELY(reason))
         *reason = "Canvas is opaque root"_s;
 
-    auto* jsPaintRenderingContext = jsCast<JSPaintRenderingContext2D*>(handle.slot()->asCell());
+    auto* jsPaintRenderingContext = uncheckedDowncast<JSPaintRenderingContext2D>(handle.slot()->asCell());
     return containsWebCoreOpaqueRoot(visitor, jsPaintRenderingContext->wrapped().canvas());
 }
 

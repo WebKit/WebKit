@@ -114,7 +114,7 @@ void Subscriber::close(JSC::JSValue reason)
 
     m_active = false;
 
-    m_abortController->abort(*JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()), reason);
+    m_abortController->abort(*uncheckedDowncast<JSDOMGlobalObject>(context->globalObject()), reason);
 
     {
         Locker locker { m_teardownsLock };

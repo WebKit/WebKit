@@ -46,7 +46,7 @@ void StringObject::finishCreation(VM& vm, JSString* string)
 
 bool StringObject::getOwnPropertySlot(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    StringObject* thisObject = jsCast<StringObject*>(cell);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(cell);
     if (thisObject->internalValue()->getStringPropertySlot(globalObject, propertyName, slot))
         return true;
     return JSObject::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
@@ -54,7 +54,7 @@ bool StringObject::getOwnPropertySlot(JSObject* cell, JSGlobalObject* globalObje
     
 bool StringObject::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
-    StringObject* thisObject = jsCast<StringObject*>(object);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(object);
     if (thisObject->internalValue()->getStringPropertySlot(globalObject, propertyName, slot))
         return true;    
     VM& vm = globalObject->vm();
@@ -66,7 +66,7 @@ bool StringObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    StringObject* thisObject = jsCast<StringObject*>(cell);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(cell);
 
     if (propertyName == vm.propertyNames->length)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
@@ -82,7 +82,7 @@ bool StringObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsign
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    StringObject* thisObject = jsCast<StringObject*>(cell);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(cell);
     if (thisObject->internalValue()->canGetIndex(propertyName))
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
     RELEASE_AND_RETURN(scope, JSObject::putByIndex(cell, globalObject, propertyName, value, shouldThrow));
@@ -104,7 +104,7 @@ bool StringObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObj
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    StringObject* thisObject = jsCast<StringObject*>(object);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(object);
 
     if (isStringOwnProperty(globalObject, thisObject, propertyName)) {
         // The current PropertyDescriptor is always
@@ -127,7 +127,7 @@ bool StringObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObj
 bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    StringObject* thisObject = jsCast<StringObject*>(cell);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(cell);
     if (propertyName == vm.propertyNames->length)
         return false;
     std::optional<uint32_t> index = parseIndex(propertyName);
@@ -138,7 +138,7 @@ bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Pr
 
 bool StringObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned i)
 {
-    StringObject* thisObject = jsCast<StringObject*>(cell);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(cell);
     if (thisObject->internalValue()->canGetIndex(i))
         return false;
     return JSObject::deletePropertyByIndex(thisObject, globalObject, i);
@@ -147,7 +147,7 @@ bool StringObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObj
 void StringObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = globalObject->vm();
-    StringObject* thisObject = jsCast<StringObject*>(object);
+    StringObject* thisObject = uncheckedDowncast<StringObject>(object);
     if (propertyNames.includeStringProperties()) {
         int size = thisObject->internalValue()->length();
         for (int i = 0; i < size; ++i)

@@ -134,7 +134,7 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject,
     JSValue result = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    return jsDynamicCast<JSArray*>(result);
+    return dynamicDowncast<JSArray>(result);
 }
 
 JSValue JSModuleLoader::provideFetch(JSGlobalObject* globalObject, JSValue key, const SourceCode& sourceCode)
@@ -174,7 +174,7 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalO
 
     JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(promise);
+    return uncheckedDowncast<JSInternalPromise>(promise);
 }
 
 JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue parameters, JSValue scriptFetcher)
@@ -195,7 +195,7 @@ JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSVa
 
     JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(promise);
+    return uncheckedDowncast<JSInternalPromise>(promise);
 }
 
 JSValue JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue scriptFetcher)
@@ -235,7 +235,7 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
 
     JSValue promise = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsCast<JSInternalPromise*>(promise);
+    return uncheckedDowncast<JSInternalPromise>(promise);
 }
 
 JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
@@ -304,7 +304,7 @@ JSValue JSModuleLoader::evaluate(JSGlobalObject* globalObject, JSValue key, JSVa
 
 JSValue JSModuleLoader::evaluateNonVirtual(JSGlobalObject* globalObject, JSValue, JSValue moduleRecordValue, JSValue, JSValue sentValue, JSValue resumeMode)
 {
-    if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue))
+    if (auto* moduleRecord = dynamicDowncast<AbstractModuleRecord>(moduleRecordValue))
         return moduleRecord->evaluate(globalObject, sentValue, resumeMode);
     return jsUndefined();
 }
@@ -314,7 +314,7 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(JSGlobalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue);
+    auto* moduleRecord = dynamicDowncast<AbstractModuleRecord>(moduleRecordValue);
     if (!moduleRecord) {
         throwTypeError(globalObject, scope);
         return nullptr;
@@ -344,7 +344,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderParseModule, (JSGlobalObject* globalObject,
     dataLogLnIf(Options::dumpModuleLoadingState(), "loader [parsing] ", moduleKey);
 
     JSValue source = callFrame->argument(1);
-    auto* jsSourceCode = jsCast<JSSourceCode*>(source);
+    auto* jsSourceCode = uncheckedDowncast<JSSourceCode>(source);
     SourceCode sourceCode = jsSourceCode->sourceCode();
 
 #if ENABLE(WEBASSEMBLY)
@@ -387,7 +387,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderRequestedModules, (JSGlobalObject* globalOb
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(callFrame->argument(0));
+    auto* moduleRecord = dynamicDowncast<AbstractModuleRecord>(callFrame->argument(0));
     if (!moduleRecord) 
         RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
@@ -405,7 +405,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderRequestedModuleParameters, (JSGlobalObject*
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(callFrame->argument(0));
+    auto* moduleRecord = dynamicDowncast<AbstractModuleRecord>(callFrame->argument(0));
     if (!moduleRecord)
         RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
@@ -426,7 +426,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderModuleDeclarationInstantiation, (JSGlobalOb
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(callFrame->argument(0));
+    auto* moduleRecord = dynamicDowncast<AbstractModuleRecord>(callFrame->argument(0));
     if (!moduleRecord)
         return JSValue::encode(jsUndefined());
 
@@ -445,7 +445,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderResolve, (JSGlobalObject* globalObject, Cal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(callFrame->thisValue());
+    JSModuleLoader* loader = dynamicDowncast<JSModuleLoader>(callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     auto result = loader->resolve(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2));
@@ -460,7 +460,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderFetch, (JSGlobalObject* globalObject, CallF
     // Take the key and fetch the resource actually.
     // For example, JavaScriptCore shell can provide the hook fetching the resource
     // from the local file system.
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(callFrame->thisValue());
+    JSModuleLoader* loader = dynamicDowncast<JSModuleLoader>(callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->fetch(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2)));
@@ -471,7 +471,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderGetModuleNamespaceObject, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* loader = jsDynamicCast<JSModuleLoader*>(callFrame->thisValue());
+    auto* loader = dynamicDowncast<JSModuleLoader>(callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     auto* moduleNamespaceObject = loader->getModuleNamespaceObject(globalObject, callFrame->argument(0));
@@ -486,7 +486,7 @@ JSC_DEFINE_HOST_FUNCTION(moduleLoaderEvaluate, (JSGlobalObject* globalObject, Ca
     // To instrument and retrieve the errors raised from the module execution,
     // we inserted the hook point here.
 
-    JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(callFrame->thisValue());
+    JSModuleLoader* loader = dynamicDowncast<JSModuleLoader>(callFrame->thisValue());
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->evaluate(globalObject, callFrame->argument(0), callFrame->argument(1), callFrame->argument(2), callFrame->argument(3), callFrame->argument(4)));

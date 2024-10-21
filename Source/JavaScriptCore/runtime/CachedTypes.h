@@ -119,7 +119,7 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM&, const SourceCodeKey&, Ref<CachedByte
 template<typename UnlinkedCodeBlockType>
 UnlinkedCodeBlockType* decodeCodeBlock(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
-    return jsCast<UnlinkedCodeBlockType*>(decodeCodeBlockImpl(vm, key, WTFMove(cachedBytecode)));
+    return uncheckedDowncast<UnlinkedCodeBlockType>(decodeCodeBlockImpl(vm, key, WTFMove(cachedBytecode)));
 }
 
 JS_EXPORT_PRIVATE RefPtr<CachedBytecode> encodeFunctionCodeBlock(VM&, const UnlinkedFunctionCodeBlock*, BytecodeCacheError&);

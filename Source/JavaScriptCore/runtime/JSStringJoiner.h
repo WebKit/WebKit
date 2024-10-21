@@ -145,13 +145,13 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
     if (value.isCell()) {
         // FIXME: Support JSBigInt in side-effect-free append.
         // https://bugs.webkit.org/show_bug.cgi?id=211173
-        if (JSString* jsString = jsDynamicCast<JSString*>(value)) {
+        if (JSString* jsString = dynamicDowncast<JSString>(value)) {
             auto view = jsString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
             // Since getting the view didn't OOM, we know that the underlying String exists and isn't
             // a rope. Thus, `tryGetValue` on the owner JSString will succeed. Since jsString could be
             // a substring we make sure to get the owner's String not jsString's.
-            append(jsString, StringViewWithUnderlyingString(view, jsCast<const JSString*>(view.owner)->tryGetValue()));
+            append(jsString, StringViewWithUnderlyingString(view, uncheckedDowncast<const JSString>(view.owner)->tryGetValue()));
             return true;
         }
         return false;
@@ -200,7 +200,7 @@ ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue 
         RETURN_IF_EXCEPTION(scope, void());
         auto view = jsString->view(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
-        RELEASE_AND_RETURN(scope, append(jsString, StringViewWithUnderlyingString(view, jsCast<const JSString*>(view.owner)->tryGetValue())));
+        RELEASE_AND_RETURN(scope, append(jsString, StringViewWithUnderlyingString(view, uncheckedDowncast<const JSString>(view.owner)->tryGetValue())));
     }
 }
 

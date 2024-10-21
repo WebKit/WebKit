@@ -138,14 +138,14 @@ void JSSharedWorkerGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 
 JSValue JSSharedWorkerGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSSharedWorkerGlobalScopeDOMConstructor, DOMConstructorID::SharedWorkerGlobalScope>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSSharedWorkerGlobalScopeDOMConstructor, DOMConstructorID::SharedWorkerGlobalScope>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsSharedWorkerGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSSharedWorkerGlobalScopePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSSharedWorkerGlobalScopePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSSharedWorkerGlobalScope::getConstructor(vm, prototype->globalObject()));
@@ -186,7 +186,7 @@ JSC::GCClient::IsoSubspace* JSSharedWorkerGlobalScope::subspaceForImpl(JSC::VM& 
 
 void JSSharedWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSSharedWorkerGlobalScope*>(cell);
+    auto* thisObject = uncheckedDowncast<JSSharedWorkerGlobalScope>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

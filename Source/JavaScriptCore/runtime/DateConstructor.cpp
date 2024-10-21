@@ -147,7 +147,7 @@ JSObject* constructDate(JSGlobalObject* globalObject, JSValue newTarget, const A
         value = jsCurrentTime();
     else if (numArgs == 1) {
         JSValue arg0 = args.at(0);
-        if (auto* dateInstance = jsDynamicCast<DateInstance*>(arg0))
+        if (auto* dateInstance = dynamicDowncast<DateInstance>(arg0))
             value = dateInstance->internalNumber();
         else {
             JSValue primitive = arg0.toPrimitive(globalObject);

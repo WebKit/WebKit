@@ -281,7 +281,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(globalObject);
+    auto* target = dynamicDowncast<JSDOMWindowBase>(globalObject);
     if (!target)
         return false;
     
@@ -405,7 +405,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    JSObject* object = JSC::jsDynamicCast<JSObject*>([self _imp]);
+    JSObject* object = dynamicDowncast<JSObject>([self _imp]);
     PutPropertySlot slot(object);
     object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, String(key)), convertObjcValueToValue(lexicalGlobalObject, &value, ObjcObjectType, [self _rootObject]), slot);
 
@@ -570,7 +570,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
         if (object->inherits<JSHTMLElement>()) {
             // Plugin elements cache the instance internally.
-            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
+            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(uncheckedDowncast<JSHTMLElement>(object)->wrapped())))
                 return instance->getObject();
         } else if (object->inherits<ObjCRuntimeObject>()) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);

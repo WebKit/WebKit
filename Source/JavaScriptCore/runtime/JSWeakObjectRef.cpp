@@ -42,7 +42,7 @@ void JSWeakObjectRef::finishCreation(VM& vm, JSCell* value)
 template<typename Visitor>
 void JSWeakObjectRef::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWeakObjectRef*>(cell);
+    auto* thisObject = uncheckedDowncast<JSWeakObjectRef>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     // This doesn't need to be atomic because if we are out of date we will get write barriered and revisit ourselves.

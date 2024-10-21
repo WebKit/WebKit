@@ -109,7 +109,7 @@ ALWAYS_INLINE static JSMap* getMap(JSGlobalObject* globalObject, JSValue thisVal
         return nullptr;
     }
 
-    auto* map = jsDynamicCast<JSMap*>(thisValue.asCell());
+    auto* map = dynamicDowncast<JSMap>(thisValue.asCell());
     if (LIKELY(map))
         return map;
     throwTypeError(globalObject, scope, "Map operation called on non-Map object"_s);

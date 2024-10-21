@@ -238,15 +238,15 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
     
     if (JSObject* o = jsValue.getObject()) {
         if (o->inherits<JSGlobalProxy>())
-            o = jsCast<JSGlobalProxy*>(o)->target();
+            o = uncheckedDowncast<JSGlobalProxy>(o)->target();
 
         if (o->inherits<JSCallbackObject<JSGlobalObject>>())
-            return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
+            return uncheckedDowncast<JSCallbackObject<JSGlobalObject>>(o)->inherits(jsClass);
         if (o->inherits<JSCallbackObject<JSNonFinalObject>>())
-            return jsCast<JSCallbackObject<JSNonFinalObject>*>(o)->inherits(jsClass);
+            return uncheckedDowncast<JSCallbackObject<JSNonFinalObject>>(o)->inherits(jsClass);
 #if JSC_OBJC_API_ENABLED
         if (o->inherits<JSCallbackObject<JSAPIWrapperObject>>())
-            return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(o)->inherits(jsClass);
+            return uncheckedDowncast<JSCallbackObject<JSAPIWrapperObject>>(o)->inherits(jsClass);
 #endif
     }
     return false;

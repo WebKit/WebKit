@@ -292,7 +292,7 @@ CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
 {
     CallData callData;
 
-    ObjcFallbackObjectImp* thisObject = jsCast<ObjcFallbackObjectImp*>(cell);
+    ObjcFallbackObjectImp* thisObject = uncheckedDowncast<ObjcFallbackObjectImp>(cell);
     id targetObject = thisObject->_instance->getObject();
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]) {
         callData.type = CallData::Type::Native;
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* 
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(callFrame->thisValue());
+    auto* thisObject = dynamicDowncast<ObjcFallbackObjectImp>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope, "ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
 

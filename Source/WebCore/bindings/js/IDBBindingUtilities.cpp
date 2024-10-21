@@ -83,25 +83,25 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
     }
     if (obj->inherits<JSBlob>() && (keyPathElement == "size"_s || keyPathElement == "type"_s)) {
         if (keyPathElement == "size"_s) {
-            result = jsNumber(jsCast<JSBlob*>(obj)->wrapped().size());
+            result = jsNumber(uncheckedDowncast<JSBlob>(obj)->wrapped().size());
             return true;
         }
         if (keyPathElement == "type"_s) {
-            result = jsString(vm, jsCast<JSBlob*>(obj)->wrapped().type());
+            result = jsString(vm, uncheckedDowncast<JSBlob>(obj)->wrapped().type());
             return true;
         }
     }
     if (obj->inherits<JSFile>()) {
         if (keyPathElement == "name"_s) {
-            result = jsString(vm, jsCast<JSFile*>(obj)->wrapped().name());
+            result = jsString(vm, uncheckedDowncast<JSFile>(obj)->wrapped().name());
             return true;
         }
         if (keyPathElement == "lastModified"_s) {
-            result = jsNumber(jsCast<JSFile*>(obj)->wrapped().lastModified());
+            result = jsNumber(uncheckedDowncast<JSFile>(obj)->wrapped().lastModified());
             return true;
         }
         if (keyPathElement == "lastModifiedDate"_s) {
-            result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->wrapped().lastModified()).value()));
+            result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(uncheckedDowncast<JSFile>(obj)->wrapped().lastModified()).value()));
             return true;
         }
     }
@@ -216,7 +216,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (auto* array = jsDynamicCast<JSArray*>(object)) {
+        if (auto* array = dynamicDowncast<JSArray>(object)) {
             size_t length = array->length();
 
             if (stack.contains(array))
@@ -243,10 +243,10 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
             return IDBKey::createArray(subkeys);
         }
 
-        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(value))
+        if (auto* arrayBuffer = dynamicDowncast<JSArrayBuffer>(value))
             return IDBKey::createBinary(*arrayBuffer);
 
-        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(value))
+        if (auto* arrayBufferView = dynamicDowncast<JSArrayBufferView>(value))
             return IDBKey::createBinary(*arrayBufferView);
     }
     return nullptr;

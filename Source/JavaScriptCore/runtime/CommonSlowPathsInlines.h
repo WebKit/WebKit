@@ -59,7 +59,7 @@ inline void tryCachePutToScopeGlobal(
     case GlobalPropertyWithVarInjectionChecks: {
         // Global Lexical Binding Epoch is changed. Update op_get_from_scope from GlobalProperty to GlobalLexicalVar.
         if (scope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = uncheckedDowncast<JSGlobalLexicalEnvironment>(scope);
             ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
@@ -121,7 +121,7 @@ inline void tryCacheGetFromScopeGlobal(
     case GlobalPropertyWithVarInjectionChecks: {
         // Global Lexical Binding Epoch is changed. Update op_get_from_scope from GlobalProperty to GlobalLexicalVar.
         if (scope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = uncheckedDowncast<JSGlobalLexicalEnvironment>(scope);
             ResolveType newResolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
             SymbolTableEntry entry = globalLexicalEnvironment->symbolTable()->get(ident.impl());
             ASSERT(!entry.isNull());
@@ -155,7 +155,7 @@ inline void tryCacheGetFromScopeGlobal(
 ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
 {
     if (isJSArray(iterable)) {
-        JSArray* array = jsCast<JSArray*>(iterable);
+        JSArray* array = uncheckedDowncast<JSArray>(iterable);
         if (array->isIteratorProtocolFastAndNonObservable()) {
             // JSImmutableButterfly::createFromArray does not consult the prototype chain,
             // so we must be sure that not consulting the prototype chain would
@@ -168,23 +168,23 @@ ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, 
     switch (iterable->type()) {
     case StringType: {
         if (LIKELY(globalObject->isStringPrototypeIteratorProtocolFastAndNonObservable()))
-            return JSImmutableButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
+            return JSImmutableButterfly::createFromString(globalObject, uncheckedDowncast<JSString>(iterable));
         return nullptr;
     }
     case ClonedArgumentsType: {
-        auto* arguments = jsCast<ClonedArguments*>(iterable);
+        auto* arguments = uncheckedDowncast<ClonedArguments>(iterable);
         if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
             return JSImmutableButterfly::createFromClonedArguments(globalObject, arguments);
         return nullptr;
     }
     case DirectArgumentsType: {
-        auto* arguments = jsCast<DirectArguments*>(iterable);
+        auto* arguments = uncheckedDowncast<DirectArguments>(iterable);
         if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
             return JSImmutableButterfly::createFromDirectArguments(globalObject, arguments);
         return nullptr;
     }
     case ScopedArgumentsType: {
-        auto* arguments = jsCast<ScopedArguments*>(iterable);
+        auto* arguments = uncheckedDowncast<ScopedArguments>(iterable);
         if (LIKELY(arguments->isIteratorProtocolFastAndNonObservable()))
             return JSImmutableButterfly::createFromScopedArguments(globalObject, arguments);
         return nullptr;

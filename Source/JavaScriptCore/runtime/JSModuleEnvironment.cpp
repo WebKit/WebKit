@@ -62,7 +62,7 @@ JSModuleEnvironment* JSModuleEnvironment::create(
 template<typename Visitor>
 void JSModuleEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.appendValues(thisObject->variables(), thisObject->symbolTable()->scopeSize());
@@ -75,7 +75,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, JSGlobalObject* glo
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
     RETURN_IF_EXCEPTION(scope, false);
     if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
@@ -95,7 +95,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, JSGlobalObject* glo
 
 void JSModuleEnvironment::getOwnSpecialPropertyNames(JSObject* cell, JSGlobalObject*, PropertyNameArray& propertyNamesArray, DontEnumPropertiesMode)
 {
-    JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
     if (propertyNamesArray.includeStringProperties()) {
         for (const auto& pair : thisObject->moduleRecord()->importEntries()) {
             const AbstractModuleRecord::ImportEntry& importEntry = pair.value;
@@ -110,7 +110,7 @@ bool JSModuleEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Proper
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
     // All imported bindings are immutable.
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
     RETURN_IF_EXCEPTION(scope, false);
@@ -126,7 +126,7 @@ bool JSModuleEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
+    JSModuleEnvironment* thisObject = uncheckedDowncast<JSModuleEnvironment>(cell);
     // All imported bindings are immutable.
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(globalObject, Identifier::fromUid(vm, propertyName.uid()));
     RETURN_IF_EXCEPTION(scope, false);

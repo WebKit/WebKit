@@ -43,7 +43,7 @@ namespace JSC {
 JSObject* createStackOverflowError(JSGlobalObject* globalObject)
 {
     auto* error = createRangeError(globalObject, "Maximum call stack size exceeded."_s);
-    jsCast<ErrorInstance*>(error)->setStackOverflowError();
+    uncheckedDowncast<ErrorInstance>(error)->setStackOverflowError();
     return error;
 }
 

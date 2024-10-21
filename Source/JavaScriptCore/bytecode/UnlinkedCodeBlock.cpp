@@ -95,7 +95,7 @@ void UnlinkedCodeBlock::initializeLoopHintExecutionCounter()
 template<typename Visitor>
 void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
+    UnlinkedCodeBlock* thisObject = uncheckedDowncast<UnlinkedCodeBlock>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     Locker locker { thisObject->cellLock() };
@@ -127,7 +127,7 @@ DEFINE_VISIT_CHILDREN(UnlinkedCodeBlock);
 
 size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {
-    UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
+    UnlinkedCodeBlock* thisObject = uncheckedDowncast<UnlinkedCodeBlock>(cell);
     size_t extraSize = thisObject->metadataSizeInBytes();
     if (thisObject->m_instructions)
         extraSize += thisObject->m_instructions->sizeInBytes();

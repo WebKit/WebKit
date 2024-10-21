@@ -40,7 +40,7 @@ enum class RejectAsHandled : bool { No, Yes };
 
 #define DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, globalObject) do { \
         if (UNLIKELY(scope.exception())) { \
-            handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(globalObject)); \
+            handleUncaughtException(scope, *uncheckedDowncast<JSDOMGlobalObject>(globalObject)); \
             return; \
         } \
     } while (false)
@@ -361,7 +361,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *downcast<JSDOMGlobalObject>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
@@ -380,7 +380,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *downcast<JSDOMGlobalObject>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
@@ -401,7 +401,7 @@ inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalG
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *downcast<JSDOMGlobalObject>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());

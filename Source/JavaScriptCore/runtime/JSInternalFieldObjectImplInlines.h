@@ -33,7 +33,7 @@ template<unsigned passedNumberOfInternalFields>
 template<typename Visitor>
 void JSInternalFieldObjectImpl<passedNumberOfInternalFields>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSInternalFieldObjectImpl*>(cell);
+    auto* thisObject = uncheckedDowncast<JSInternalFieldObjectImpl>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.appendValues(thisObject->m_internalFields, numberOfInternalFields);

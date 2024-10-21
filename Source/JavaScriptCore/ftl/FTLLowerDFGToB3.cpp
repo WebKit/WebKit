@@ -11628,7 +11628,7 @@ IGNORE_CLANG_WARNINGS_END
         bool isConstruct = node->op() == DirectConstruct;
 
         ExecutableBase* executable = node->castOperand<ExecutableBase*>();
-        FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable);
+        FunctionExecutable* functionExecutable = dynamicDowncast<FunctionExecutable>(executable);
 
         unsigned numPassedArgs = node->numChildren() - 1;
         unsigned numAllocatedArgs = numPassedArgs;
@@ -11691,7 +11691,7 @@ IGNORE_CLANG_WARNINGS_END
         Edge calleeEdge = m_graph.child(node, 0);
         JSGlobalObject* calleeScope = nullptr;
         if (JSValue calleeValue = m_state.forNode(calleeEdge).value()) {
-            if (auto* callee = jsDynamicCast<JSFunction*>(calleeValue)) {
+            if (auto* callee = dynamicDowncast<JSFunction>(calleeValue)) {
                 m_graph.freeze(callee);
                 calleeScope = callee->globalObject();
             }
@@ -11699,9 +11699,9 @@ IGNORE_CLANG_WARNINGS_END
         TaggedNativeFunction nativeFunction;
         if (executable->isHostFunction() && executable->intrinsic() == NoIntrinsic) {
             if (isConstruct)
-                nativeFunction = jsCast<NativeExecutable*>(executable)->constructor();
+                nativeFunction = uncheckedDowncast<NativeExecutable>(executable)->constructor();
             else
-                nativeFunction = jsCast<NativeExecutable*>(executable)->function();
+                nativeFunction = uncheckedDowncast<NativeExecutable>(executable)->function();
         }
 
         CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
@@ -16678,7 +16678,7 @@ IGNORE_CLANG_WARNINGS_END
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
     void compileRegExpTestInline()
     {
-        RegExp* regExp = jsCast<RegExp*>(m_node->cellOperand2()->value());
+        RegExp* regExp = uncheckedDowncast<RegExp>(m_node->cellOperand2()->value());
 
         ASSERT(!regExp->globalOrSticky());
 
@@ -16686,7 +16686,7 @@ IGNORE_CLANG_WARNINGS_END
         ASSERT(jitCodeBlock);
         auto inlineCodeStats8Bit = jitCodeBlock->get8BitInlineStats();
 
-        JSGlobalObject* globalObjectConst = jsCast<JSGlobalObject*>(m_node->cellOperand()->value());
+        JSGlobalObject* globalObjectConst = uncheckedDowncast<JSGlobalObject>(m_node->cellOperand()->value());
 
         unsigned alignedFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(inlineCodeStats8Bit.stackSize());
 

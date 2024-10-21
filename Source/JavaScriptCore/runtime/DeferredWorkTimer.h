@@ -115,12 +115,6 @@ private:
     HashSet<Ref<TicketData>> m_pendingTickets;
 };
 
-inline JSObject* DeferredWorkTimer::TicketData::target()
-{
-    ASSERT(!isCancelled());
-    return jsCast<JSObject*>(m_dependencies.last().get());
-}
-
 inline bool DeferredWorkTimer::TicketData::hasValidTarget() const
 {
     return !m_dependencies.isEmpty() && !!m_dependencies.last().get();

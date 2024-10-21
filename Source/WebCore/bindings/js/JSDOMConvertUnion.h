@@ -265,7 +265,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         if (value.isCallable()) {
             //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
             if constexpr (hasCallbackFunctionType)
-                RELEASE_AND_RETURN(scope, (Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject))));
+                RELEASE_AND_RETURN(scope, (Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject))));
             //     2. If types includes object, then return the IDL value that is a reference to the object V.
             //         (FIXME: Add support for object and step 10.2)
         }

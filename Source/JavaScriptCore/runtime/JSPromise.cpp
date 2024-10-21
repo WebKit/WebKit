@@ -71,7 +71,7 @@ void JSPromise::finishCreation(VM& vm)
 template<typename Visitor>
 void JSPromise::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSPromise*>(cell);
+    auto* thisObject = uncheckedDowncast<JSPromise>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
@@ -159,7 +159,7 @@ JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue valu
     auto result = call(globalObject, function, callData, globalObject->promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(result.inherits<JSPromise>());
-    return jsCast<JSPromise*>(result);
+    return uncheckedDowncast<JSPromise>(result);
 }
 
 // Keep in sync with @rejectPromise in JS.

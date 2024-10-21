@@ -92,7 +92,7 @@ void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
 template<typename Visitor>
 void JSWorkletGlobalScopeBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWorkletGlobalScopeBase*>(cell);
+    auto* thisObject = uncheckedDowncast<JSWorkletGlobalScopeBase>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_proxy);
@@ -113,7 +113,7 @@ ScriptExecutionContext* JSWorkletGlobalScopeBase::scriptExecutionContext() const
 JSC::ScriptExecutionStatus JSWorkletGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
 {
     ASSERT_UNUSED(owner, globalObject == owner);
-    return jsCast<JSWorkletGlobalScopeBase*>(globalObject)->scriptExecutionContext()->jscScriptExecutionStatus();
+    return uncheckedDowncast<JSWorkletGlobalScopeBase>(globalObject)->scriptExecutionContext()->jscScriptExecutionStatus();
 }
 
 void JSWorkletGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, JSC::JSString* source)
@@ -148,7 +148,7 @@ bool JSWorkletGlobalScopeBase::shouldInterruptScriptBeforeTimeout(const JSGlobal
 
 RuntimeFlags JSWorkletGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
-    auto* thisObject = jsCast<const JSWorkletGlobalScopeBase*>(object);
+    auto* thisObject = uncheckedDowncast<const JSWorkletGlobalScopeBase>(object);
     return thisObject->m_wrapped->jsRuntimeFlags();
 }
 

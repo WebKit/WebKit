@@ -3951,7 +3951,7 @@ void SpeculativeJIT::compileParseInt(Node* node)
 void SpeculativeJIT::compileOverridesHasInstance(Node* node)
 {
     Node* hasInstanceValueNode = node->child2().node();
-    JSFunction* defaultHasInstanceFunction = jsCast<JSFunction*>(node->cellOperand()->value());
+    JSFunction* defaultHasInstanceFunction = uncheckedDowncast<JSFunction>(node->cellOperand()->value());
 
     JumpList notDefault;
     SpeculateCellOperand base(this, node->child1());

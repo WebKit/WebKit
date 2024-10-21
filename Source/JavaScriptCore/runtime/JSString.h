@@ -754,7 +754,7 @@ ALWAYS_INLINE unsigned JSString::length() const
 {
     uintptr_t pointer = fiberConcurrently();
     if (pointer & isRopeInPointer)
-        return jsCast<const JSRopeString*>(this)->length();
+        return uncheckedDowncast<const JSRopeString>(this)->length();
     return bitwise_cast<StringImpl*>(pointer)->length();
 }
 
@@ -775,7 +775,7 @@ inline const StringImpl* JSString::tryGetValueImpl() const
 inline JSString* asString(JSValue value)
 {
     ASSERT(value.asCell()->isString());
-    return jsCast<JSString*>(value.asCell());
+    return uncheckedDowncast<JSString>(value.asCell());
 }
 
 // This MUST NOT GC.
@@ -989,7 +989,7 @@ inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* bas
     // Resolve non-substring rope bases so we don't have to deal with it.
     // FIXME: Evaluate if this would be worth adding more branches.
     if (base->isSubstring()) {
-        JSRopeString* baseRope = jsCast<JSRopeString*>(base);
+        JSRopeString* baseRope = uncheckedDowncast<JSRopeString>(base);
         ASSERT(!baseRope->substringBase()->isRope());
         return jsSubstringOfResolved(vm, nullptr, baseRope->substringBase(), baseRope->substringOffset() + offset, length);
     }
@@ -997,7 +997,7 @@ inline JSString* jsSubstring(VM& vm, JSGlobalObject* globalObject, JSString* bas
     if (!base->isRope())
         return jsSubstringOfResolved(vm, nullptr, base, offset, length);
 
-    auto* rope = jsCast<JSRopeString*>(base);
+    auto* rope = uncheckedDowncast<JSRopeString>(base);
     auto* fiber0 = rope->fiber0();
     ASSERT(fiber0);
     if (offset < fiber0->length()) {

@@ -45,7 +45,7 @@ template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSValue value)
 {
     ASSERT(asObject(value)->inherits(info()));
-    return jsCast<JSCallbackObject*>(asObject(value));
+    return uncheckedDowncast<JSCallbackObject>(asObject(value));
 }
 
 template <class Parent>
@@ -53,7 +53,7 @@ inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(Enco
 {
     JSValue value = JSValue::decode(encodedValue);
     ASSERT(asObject(value)->inherits(info()));
-    return jsCast<JSCallbackObject*>(asObject(value));
+    return uncheckedDowncast<JSCallbackObject>(asObject(value));
 }
 
 template <class Parent>
@@ -104,7 +104,7 @@ void JSCallbackObject<Parent>::finishCreation(VM& vm)
     ASSERT(Parent::inherits(info()));
     ASSERT(Parent::isGlobalObject());
     Base::finishCreation(vm);
-    init(jsCast<JSGlobalObject*>(this));
+    init(uncheckedDowncast<JSGlobalObject>(this));
 }
 
 template <class Parent>
@@ -133,7 +133,7 @@ void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
     for (int i = static_cast<int>(initRoutines.size()) - 1; i >= 0; i--) {
         JSLock::DropAllLocks dropAllLocks(globalObject);
         JSObjectInitializeCallback initialize = initRoutines[i];
-        initialize(toRef(globalObject), toRef(jsCast<JSObject*>(this)));
+        initialize(toRef(globalObject), toRef(uncheckedDowncast<JSObject>(this)));
     }
     
     m_classInfo = this->classInfo();
@@ -145,9 +145,9 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(object);
     JSContextRef ctx = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
     
     if (StringImpl* name = propertyName.uid()) {
@@ -231,14 +231,14 @@ EncodedJSValue JSCallbackObject<Parent>::customToPrimitive(JSGlobalObject* globa
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsDynamicCast<JSCallbackObject*>(callFrame->thisValue());
+    JSCallbackObject* thisObject = dynamicDowncast<JSCallbackObject>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(globalObject, scope, "JSCallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
     PreferredPrimitiveType hint = toPreferredPrimitiveType(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
     JSContextRef ctx = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<const JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<const JSObject>(thisObject));
     ::JSType jsHint = hint == PreferString ? kJSTypeString : kJSTypeNumber;
 
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
@@ -265,9 +265,9 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     JSContextRef ctx = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(globalObject, value);
 
@@ -335,9 +335,9 @@ bool JSCallbackObject<Parent>::putByIndex(JSCell* cell, JSGlobalObject* globalOb
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     JSContextRef ctx = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(globalObject, value);
     Identifier propertyName = Identifier::from(vm, propertyIndex);
@@ -395,9 +395,9 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, JSGlobalObject* glob
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     JSContextRef ctx = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
     
     if (StringImpl* name = propertyName.uid()) {
@@ -445,7 +445,7 @@ template <class Parent>
 bool JSCallbackObject<Parent>::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
     VM& vm = getVM(globalObject);
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     return JSCell::deleteProperty(thisObject, globalObject, Identifier::from(vm, propertyName));
 }
 
@@ -453,7 +453,7 @@ template <class Parent>
 CallData JSCallbackObject<Parent>::getConstructData(JSCell* cell)
 {
     CallData constructData;
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.type = CallData::Type::Native;
@@ -476,7 +476,7 @@ EncodedJSValue JSCallbackObject<Parent>::constructImpl(JSGlobalObject* globalObj
     JSContextRef execRef = toRef(globalObject);
     JSObjectRef constructorRef = toRef(constructor);
     
-    for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(constructor)->classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = uncheckedDowncast<JSCallbackObject<Parent>>(constructor)->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsConstructorCallback callAsConstructor = jsClass->callAsConstructor) {
             size_t argumentCount = callFrame->argumentCount();
             Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
@@ -506,9 +506,9 @@ bool JSCallbackObject<Parent>::customHasInstance(JSObject* object, JSGlobalObjec
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(object);
     JSContextRef execRef = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectHasInstanceCallback hasInstance = jsClass->hasInstance) {
@@ -531,7 +531,7 @@ template <class Parent>
 CallData JSCallbackObject<Parent>::getCallData(JSCell* cell)
 {
     CallData callData;
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(cell);
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
             callData.type = CallData::Type::Native;
@@ -552,9 +552,9 @@ EncodedJSValue JSCallbackObject<Parent>::callImpl(JSGlobalObject* globalObject, 
 
     JSContextRef execRef = toRef(globalObject);
     JSObjectRef functionRef = toRef(callFrame->jsCallee());
-    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(globalObject, ECMAMode::sloppy())));
+    JSObjectRef thisObjRef = toRef(uncheckedDowncast<JSObject>(callFrame->thisValue().toThis(globalObject, ECMAMode::sloppy())));
     
-    for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
+    for (JSClassRef jsClass = uncheckedDowncast<JSCallbackObject<Parent>>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
             size_t argumentCount = callFrame->argumentCount();
             Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
@@ -583,9 +583,9 @@ template <class Parent>
 void JSCallbackObject<Parent>::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     VM& vm = getVM(globalObject);
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = uncheckedDowncast<JSCallbackObject>(object);
     JSContextRef execRef = toRef(globalObject);
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObject));
     
     for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectGetPropertyNamesCallback getPropertyNames = jsClass->getPropertyNames) {
@@ -649,7 +649,7 @@ JSValue JSCallbackObject<Parent>::getStaticValue(JSGlobalObject* globalObject, P
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(this));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(this));
     
     if (StringImpl* name = propertyName.uid()) {
         for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
@@ -718,7 +718,7 @@ EncodedJSValue JSCallbackObject<Parent>::callbackGetterImpl(JSGlobalObject* glob
 
     JSCallbackObject* thisObj = asCallbackObject(thisValue);
     
-    JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObj));
+    JSObjectRef thisRef = toRef(uncheckedDowncast<JSObject>(thisObj));
     RefPtr<OpaqueJSString> propertyNameRef;
     
     if (StringImpl* name = propertyName.uid()) {

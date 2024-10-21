@@ -417,7 +417,7 @@ JSWebAssemblyInstance* CallFrame::wasmInstance() const
 #if USE(JSVALUE32_64)
     return bitwise_cast<JSWebAssemblyInstance*>(this[static_cast<int>(CallFrameSlot::codeBlock)].asanUnsafePointer());
 #else
-    return jsCast<JSWebAssemblyInstance*>(this[static_cast<int>(CallFrameSlot::codeBlock)].jsValue());
+    return uncheckedDowncast<JSWebAssemblyInstance>(this[static_cast<int>(CallFrameSlot::codeBlock)].jsValue());
 #endif
 }
 #endif

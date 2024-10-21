@@ -126,7 +126,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN(JSDocument);
 void JSDocument::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     Base::analyzeHeap(cell, analyzer);
-    auto* thisObject = jsCast<JSDocument*>(cell);
+    auto* thisObject = uncheckedDowncast<JSDocument>(cell);
     analyzer.setLabelForCell(cell, thisObject->wrapped().url().string());
 }
 

@@ -188,7 +188,7 @@ template<> void JSTestCallbackInterfaceDOMConstructor::initializeProperties(VM& 
 
 JSValue JSTestCallbackInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallbackInterfaceDOMConstructor, DOMConstructorID::TestCallbackInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallbackInterfaceDOMConstructor, DOMConstructorID::TestCallbackInterface>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 CallbackResult<typename IDLUndefined::CallbackReturnType> JSTestCallbackInterface::callbackWithNoParam()

@@ -141,7 +141,7 @@ static JSValue *jsValueWithDataInContext(NSData *data, JSContext *context)
     auto dataArray = ArrayBuffer::tryCreate(span(data));
 
     auto* lexicalGlobalObject = toJS([context JSGlobalContextRef]);
-    JSC::JSValue array = toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), dataArray.get());
+    JSC::JSValue array = toJS(lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), dataArray.get());
 
     return [JSValue valueWithJSValueRef:toRef(lexicalGlobalObject, array) inContext:context];
 }

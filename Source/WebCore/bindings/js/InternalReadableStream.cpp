@@ -130,7 +130,7 @@ void InternalReadableStream::cancel(Exception&& exception)
 
     auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
     JSC::JSLockHolder lock(globalObject->vm());
-    cancel(*globalObject, toJSNewlyCreated(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), DOMException::create(WTFMove(exception))), Use::Private);
+    cancel(*globalObject, toJSNewlyCreated(globalObject, uncheckedDowncast<JSDOMGlobalObject>(globalObject), DOMException::create(WTFMove(exception))), Use::Private);
     if (UNLIKELY(scope.exception()))
         scope.clearException();
 }
@@ -195,7 +195,7 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
     auto results = resultsConversionResult.releaseReturnValue();
     ASSERT(results.size() == 2);
 
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+    auto& jsDOMGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(globalObject);
     return std::make_pair(InternalReadableStream::fromObject(jsDOMGlobalObject, *results[0].get()), InternalReadableStream::fromObject(jsDOMGlobalObject, *results[1].get()));
 }
 

@@ -50,14 +50,14 @@ DesiredWeakReferences::~DesiredWeakReferences() = default;
 void DesiredWeakReferences::addLazily(JSCell* cell)
 {
     if (cell) {
-        if (Structure* structure = jsDynamicCast<Structure*>(cell))
+        if (Structure* structure = dynamicDowncast<Structure>(cell))
             m_structures.add(structure->id());
         else {
             // There are weird relationships in how optimized CodeBlocks
             // point to other CodeBlocks. We don't want to have them be
             // part of the weak pointer set. For example, an optimized CodeBlock
             // having a weak pointer to itself will cause it to get collected.
-            RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(cell));
+            RELEASE_ASSERT(!dynamicDowncast<CodeBlock>(cell));
             m_cells.add(cell);
         }
     }
@@ -71,7 +71,7 @@ void DesiredWeakReferences::addLazily(JSValue value)
 
 bool DesiredWeakReferences::contains(JSCell* cell)
 {
-    if (Structure* structure = jsDynamicCast<Structure*>(cell))
+    if (Structure* structure = dynamicDowncast<Structure>(cell))
         return m_structures.contains(structure->id());
     return m_cells.contains(cell);
 }

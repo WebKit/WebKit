@@ -120,7 +120,7 @@ JSString* NativeExecutable::toStringSlow(JSGlobalObject *globalObject)
 template<typename Visitor>
 void NativeExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    NativeExecutable* thisObject = jsCast<NativeExecutable*>(cell);
+    NativeExecutable* thisObject = uncheckedDowncast<NativeExecutable>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_asString);

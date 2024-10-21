@@ -81,7 +81,7 @@ Exception* ThrowScope::throwException(JSGlobalObject* globalObject, Exception* e
 
 Exception* ThrowScope::throwException(JSGlobalObject* globalObject, JSValue error)
 {
-    if (!error.isCell() || error.isObject() || !jsDynamicCast<Exception*>(error.asCell()))
+    if (!error.isCell() || error.isObject() || !dynamicDowncast<Exception>(error.asCell()))
         m_vm.verifyExceptionCheckNeedIsSatisfied(m_recursionDepth, m_location);
     
     return m_vm.throwException(globalObject, error);

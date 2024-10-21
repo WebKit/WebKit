@@ -69,7 +69,7 @@ void AbstractModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 template<typename Visitor>
 void AbstractModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
+    AbstractModuleRecord* thisObject = uncheckedDowncast<AbstractModuleRecord>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_moduleEnvironment);
@@ -816,15 +816,15 @@ void AbstractModuleRecord::setModuleEnvironment(JSGlobalObject* globalObject, JS
 
 Synchronousness AbstractModuleRecord::link(JSGlobalObject* globalObject, JSValue scriptFetcher)
 {
-    if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(this))
+    if (auto* jsModuleRecord = dynamicDowncast<JSModuleRecord>(this))
         return jsModuleRecord->link(globalObject, scriptFetcher);
 #if ENABLE(WEBASSEMBLY)
     // WebAssembly module imports and exports are set up in the module record's
     // evaluate() step. At this point, imports are just initialized as TDZ.
-    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(this))
+    if (auto* wasmModuleRecord = dynamicDowncast<WebAssemblyModuleRecord>(this))
         return wasmModuleRecord->link(globalObject, scriptFetcher);
 #endif
-    if (auto* moduleRecord = jsDynamicCast<SyntheticModuleRecord*>(this))
+    if (auto* moduleRecord = dynamicDowncast<SyntheticModuleRecord>(this))
         return moduleRecord->link(globalObject, scriptFetcher);
     RELEASE_ASSERT_NOT_REACHED();
     return Synchronousness::Sync;
@@ -835,10 +835,10 @@ JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(this))
+    if (auto* jsModuleRecord = dynamicDowncast<JSModuleRecord>(this))
         RELEASE_AND_RETURN(scope, jsModuleRecord->evaluate(globalObject, sentValue, resumeMode));
 #if ENABLE(WEBASSEMBLY)
-    if (auto* wasmModuleRecord = jsDynamicCast<WebAssemblyModuleRecord*>(this)) {
+    if (auto* wasmModuleRecord = dynamicDowncast<WebAssemblyModuleRecord>(this)) {
         // WebAssembly imports need to be supplied during evaluation so that, e.g.,
         // JS module exports are actually available to be read and installed as import
         // bindings.
@@ -849,7 +849,7 @@ JS_EXPORT_PRIVATE JSValue AbstractModuleRecord::evaluate(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, wasmModuleRecord->evaluate(globalObject));
     }
 #endif
-    if (auto* moduleRecord = jsDynamicCast<SyntheticModuleRecord*>(this))
+    if (auto* moduleRecord = dynamicDowncast<SyntheticModuleRecord>(this))
         RELEASE_AND_RETURN(scope, moduleRecord->evaluate(globalObject));
     RELEASE_ASSERT_NOT_REACHED();
     return jsUndefined();

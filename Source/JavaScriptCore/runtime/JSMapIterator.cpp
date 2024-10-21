@@ -68,7 +68,7 @@ void JSMapIterator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSMapIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSMapIterator*>(cell);
+    auto* thisObject = uncheckedDowncast<JSMapIterator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorNext, (JSGlobalObject 
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-    return JSValue::encode(jsCast<JSMapIterator*>(cell)->next(vm));
+    return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->next(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject * globalObject, CallFrame* callFrame))
@@ -95,7 +95,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorKey, (JSGlobalObject *
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextKey(vm));
+    return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->nextKey(vm));
 }
 
 JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorValue, (JSGlobalObject * globalObject, CallFrame* callFrame))
@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorValue, (JSGlobalObject
     JSCell* cell = callFrame->uncheckedArgument(0).asCell();
     if (cell == vm.orderedHashTableSentinel())
         return JSValue::encode(cell);
-    return JSValue::encode(jsCast<JSMapIterator*>(cell)->nextValue(vm));
+    return JSValue::encode(uncheckedDowncast<JSMapIterator>(cell)->nextValue(vm));
 }
 
 }

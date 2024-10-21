@@ -91,8 +91,8 @@ LocalFrame* lexicalFrameFromCommonVM()
 {
     JSC::VM& vm = commonVM();
     if (auto* topCallFrame = vm.topCallFrame) {
-        if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(topCallFrame->lexicalGlobalObject(vm))) {
-            if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObject)) {
+        if (auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(topCallFrame->lexicalGlobalObject(vm))) {
+            if (auto* window = dynamicDowncast<JSDOMWindow>(globalObject)) {
                 if (auto* frame = window->wrapped().frame())
                     return dynamicDowncast<LocalFrame>(frame);
             }

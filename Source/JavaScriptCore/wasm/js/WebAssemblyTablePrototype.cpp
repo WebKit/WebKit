@@ -64,7 +64,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table"_s, &Ba
 static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(v);
+    JSWebAssemblyTable* result = dynamicDowncast<JSWebAssemblyTable>(v);
     if (!result) {
         throwException(globalObject, throwScope, 
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Table"_s));

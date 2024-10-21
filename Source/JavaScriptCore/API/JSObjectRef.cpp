@@ -621,15 +621,15 @@ JSValueRef JSObjectGetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSSt
 
     // Get wrapped object if proxied
     if (jsObject->inherits<JSGlobalProxy>())
-        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
+        jsObject = uncheckedDowncast<JSGlobalProxy>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>())
-        result = jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivateProperty(name);
+        result = uncheckedDowncast<JSCallbackObject<JSGlobalObject>>(jsObject)->getPrivateProperty(name);
     else if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>())
-        result = jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->getPrivateProperty(name);
+        result = uncheckedDowncast<JSCallbackObject<JSNonFinalObject>>(jsObject)->getPrivateProperty(name);
 #if JSC_OBJC_API_ENABLED
     else if (jsObject->inherits<JSCallbackObject<JSAPIWrapperObject>>())
-        result = jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->getPrivateProperty(name);
+        result = uncheckedDowncast<JSCallbackObject<JSAPIWrapperObject>>(jsObject)->getPrivateProperty(name);
 #endif
     return toRef(globalObject, result);
 }
@@ -645,19 +645,19 @@ bool JSObjectSetPrivateProperty(JSContextRef ctx, JSObjectRef object, JSStringRe
 
     // Get wrapped object if proxied
     if (jsObject->inherits<JSGlobalProxy>())
-        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
+        jsObject = uncheckedDowncast<JSGlobalProxy>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>()) {
-        jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
+        uncheckedDowncast<JSCallbackObject<JSGlobalObject>>(jsObject)->setPrivateProperty(vm, name, jsValue);
         return true;
     }
     if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>()) {
-        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
+        uncheckedDowncast<JSCallbackObject<JSNonFinalObject>>(jsObject)->setPrivateProperty(vm, name, jsValue);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
     if (jsObject->inherits<JSCallbackObject<JSAPIWrapperObject>>()) {
-        jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->setPrivateProperty(vm, name, jsValue);
+        uncheckedDowncast<JSCallbackObject<JSAPIWrapperObject>>(jsObject)->setPrivateProperty(vm, name, jsValue);
         return true;
     }
 #endif
@@ -674,19 +674,19 @@ bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef object, JSStrin
 
     // Get wrapped object if proxied
     if (jsObject->inherits<JSGlobalProxy>())
-        jsObject = jsCast<JSGlobalProxy*>(jsObject)->target();
+        jsObject = uncheckedDowncast<JSGlobalProxy>(jsObject)->target();
 
     if (jsObject->inherits<JSCallbackObject<JSGlobalObject>>()) {
-        jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->deletePrivateProperty(name);
+        uncheckedDowncast<JSCallbackObject<JSGlobalObject>>(jsObject)->deletePrivateProperty(name);
         return true;
     }
     if (jsObject->inherits<JSCallbackObject<JSNonFinalObject>>()) {
-        jsCast<JSCallbackObject<JSNonFinalObject>*>(jsObject)->deletePrivateProperty(name);
+        uncheckedDowncast<JSCallbackObject<JSNonFinalObject>>(jsObject)->deletePrivateProperty(name);
         return true;
     }
 #if JSC_OBJC_API_ENABLED
     if (jsObject->inherits<JSCallbackObject<JSAPIWrapperObject>>()) {
-        jsCast<JSCallbackObject<JSAPIWrapperObject>*>(jsObject)->deletePrivateProperty(name);
+        uncheckedDowncast<JSCallbackObject<JSAPIWrapperObject>>(jsObject)->deletePrivateProperty(name);
         return true;
     }
 #endif
@@ -862,9 +862,9 @@ JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
     VM& vm = object->vm();
     JSLockHolder locker(vm);
     JSObject* result = nullptr;
-    if (JSGlobalProxy* proxy = jsDynamicCast<JSGlobalProxy*>(object))
+    if (JSGlobalProxy* proxy = dynamicDowncast<JSGlobalProxy>(object))
         result = proxy->target();
-    else if (ProxyObject* proxy = jsDynamicCast<ProxyObject*>(object))
+    else if (ProxyObject* proxy = dynamicDowncast<ProxyObject>(object))
         result = proxy->target();
     return toRef(result);
 }

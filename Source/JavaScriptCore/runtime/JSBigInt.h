@@ -447,7 +447,7 @@ public:
         if (bigInt.isBigInt32())
             return jsNumber(bigInt.bigInt32AsInt32());
 #endif
-        return toNumberHeap(jsCast<JSBigInt*>(bigInt));
+        return toNumberHeap(uncheckedDowncast<JSBigInt>(bigInt));
     }
 
 
@@ -648,7 +648,7 @@ private:
 inline JSBigInt* asHeapBigInt(JSValue value)
 {
     ASSERT(value.asCell()->isHeapBigInt());
-    return jsCast<JSBigInt*>(value.asCell());
+    return uncheckedDowncast<JSBigInt>(value.asCell());
 }
 
 inline JSBigInt::Digit JSBigInt::digit(unsigned n)

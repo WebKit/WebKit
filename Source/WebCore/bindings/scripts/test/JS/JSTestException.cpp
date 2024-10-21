@@ -144,7 +144,7 @@ JSObject* JSTestException::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestException::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestExceptionDOMConstructor, DOMConstructorID::TestException>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestExceptionDOMConstructor, DOMConstructorID::TestException>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestException::destroy(JSC::JSCell* cell)
@@ -157,7 +157,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestExceptionConstructor, (JSGlobalObject* lexicalGlo
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestExceptionPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestExceptionPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestException::getConstructor(vm, prototype->globalObject()));
@@ -188,7 +188,7 @@ JSC::GCClient::IsoSubspace* JSTestException::subspaceForImpl(JSC::VM& vm)
 
 void JSTestException::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestException*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestException>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -249,7 +249,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestException* JSTestException::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestException*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestException>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

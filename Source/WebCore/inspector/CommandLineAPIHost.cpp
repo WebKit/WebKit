@@ -148,7 +148,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(J
 #if ENABLE(WEB_RTC)
 void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCLogsCallback>&& callback)
 {
-    RefPtr document = dynamicDowncast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext());
+    RefPtr document = dynamicDowncast<Document>(uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->scriptExecutionContext());
     if (!document)
         return;
 

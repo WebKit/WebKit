@@ -311,7 +311,7 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
             replaceString = replaceValue.toWTFString(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
         } else if (callData.type == CallData::Type::JS) {
-            cachedCall.emplace(globalObject, jsCast<JSFunction*>(replaceValue), 3);
+            cachedCall.emplace(globalObject, uncheckedDowncast<JSFunction>(replaceValue), 3);
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }

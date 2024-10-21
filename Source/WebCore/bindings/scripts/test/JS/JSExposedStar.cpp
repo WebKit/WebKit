@@ -174,14 +174,14 @@ JSObject* JSExposedStar::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSExposedStar::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSExposedStarDOMConstructor, DOMConstructorID::ExposedStar>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSExposedStarDOMConstructor, DOMConstructorID::ExposedStar>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsExposedStarConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSExposedStarPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSExposedStarPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSExposedStar::getConstructor(vm, prototype->globalObject()));
@@ -244,7 +244,7 @@ JSC::GCClient::IsoSubspace* JSExposedStar::subspaceForImpl(JSC::VM& vm)
 
 void JSExposedStar::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSExposedStar*>(cell);
+    auto* thisObject = uncheckedDowncast<JSExposedStar>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -290,7 +290,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 ExposedStar* JSExposedStar::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSExposedStar*>(value))
+    if (auto* wrapper = dynamicDowncast<JSExposedStar>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

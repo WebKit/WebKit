@@ -88,7 +88,7 @@ void PageAuditAgent::populateAuditObject(JSC::JSGlobalObject* lexicalGlobalObjec
     if (!lexicalGlobalObject)
         return;
 
-    if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)) {
+    if (auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)) {
         JSC::VM& vm = globalObject->vm();
         JSC::JSLockHolder lock(vm);
 

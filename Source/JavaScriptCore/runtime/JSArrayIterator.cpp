@@ -71,7 +71,7 @@ void JSArrayIterator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSArrayIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSArrayIterator*>(cell);
+    auto* thisObject = uncheckedDowncast<JSArrayIterator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

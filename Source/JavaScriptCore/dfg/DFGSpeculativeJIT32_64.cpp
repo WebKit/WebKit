@@ -592,7 +592,7 @@ void SpeculativeJIT::emitCall(Node* node)
     FunctionExecutable* functionExecutable = nullptr;
     if (isDirect) {
         executable = node->castOperand<ExecutableBase*>();
-        functionExecutable = jsDynamicCast<FunctionExecutable*>(executable);
+        functionExecutable = dynamicDowncast<FunctionExecutable>(executable);
     }
     
     unsigned numPassedArgs = 0;

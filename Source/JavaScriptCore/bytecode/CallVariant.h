@@ -80,7 +80,7 @@ public:
     ALWAYS_INLINE CallVariant despecifiedClosure() const
     {
         if (m_callee->type() == JSFunctionType)
-            return CallVariant(jsCast<JSFunction*>(m_callee)->executable());
+            return CallVariant(uncheckedDowncast<JSFunction>(m_callee)->executable());
         return *this;
     }
     
@@ -88,21 +88,21 @@ public:
     
     InternalFunction* internalFunction() const
     {
-        return jsDynamicCast<InternalFunction*>(m_callee);
+        return dynamicDowncast<InternalFunction>(m_callee);
     }
     
     JSFunction* function() const
     {
-        return jsDynamicCast<JSFunction*>(m_callee);
+        return dynamicDowncast<JSFunction>(m_callee);
     }
     
-    bool isClosureCall() const { return !!jsDynamicCast<ExecutableBase*>(m_callee); }
+    bool isClosureCall() const { return !!dynamicDowncast<ExecutableBase>(m_callee); }
     
     ExecutableBase* executable() const
     {
         if (JSFunction* function = this->function())
             return function->executable();
-        return jsDynamicCast<ExecutableBase*>(m_callee);
+        return dynamicDowncast<ExecutableBase>(m_callee);
     }
     
     JSCell* nonExecutableCallee() const
@@ -116,14 +116,14 @@ public:
     FunctionExecutable* functionExecutable() const
     {
         if (ExecutableBase* executable = this->executable())
-            return jsDynamicCast<FunctionExecutable*>(executable);
+            return dynamicDowncast<FunctionExecutable>(executable);
         return nullptr;
     }
 
     NativeExecutable* nativeExecutable() const
     {
         if (ExecutableBase* executable = this->executable())
-            return jsDynamicCast<NativeExecutable*>(executable);
+            return dynamicDowncast<NativeExecutable>(executable);
         return nullptr;
     }
 

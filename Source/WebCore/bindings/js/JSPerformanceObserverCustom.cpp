@@ -44,7 +44,7 @@ bool JSPerformanceObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unk
     if (UNLIKELY(reason))
         *reason = "Registered PerformanceObserver callback"_s;
 
-    return JSC::jsCast<JSPerformanceObserver*>(handle.slot()->asCell())->wrapped().isRegistered();
+    return uncheckedDowncast<JSPerformanceObserver>(handle.slot()->asCell())->wrapped().isRegistered();
 }
 
 }

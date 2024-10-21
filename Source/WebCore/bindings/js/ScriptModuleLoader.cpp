@@ -163,7 +163,7 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
     context.eventLoop().queueTask(TaskSource::Networking, [deferred = WTFMove(deferred), ec, message = WTFMove(message)]() {
         deferred->rejectWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             JSC::VM& vm = jsGlobalObject.vm();
-            JSC::JSObject* error = JSC::jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
+            JSC::JSObject* error = uncheckedDowncast<JSC::JSObject>(createDOMException(&jsGlobalObject, ec, message));
             ASSERT(error);
             error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(enumToUnderlyingType(ModuleFetchFailureKind::WasFetchError)));
             return error;
@@ -174,9 +174,9 @@ static void rejectWithFetchError(ScriptExecutionContext& context, Ref<DeferredPr
 JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parametersValue, JSC::JSValue scriptFetcher)
 {
     JSC::VM& vm = jsGlobalObject->vm();
-    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(scriptFetcher));
+    ASSERT(dynamicDowncast<JSC::JSScriptFetcher>(scriptFetcher));
 
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(jsGlobalObject);
     auto* jsPromise = JSC::JSInternalPromise::create(vm, globalObject.internalPromiseStructure());
     RELEASE_ASSERT(jsPromise);
     if (!m_context)
@@ -202,11 +202,11 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     }
 
     RefPtr<JSC::ScriptFetchParameters> parameters;
-    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(parametersValue))
+    if (auto* scriptFetchParameters = dynamicDowncast<JSC::JSScriptFetchParameters>(parametersValue))
         parameters = &scriptFetchParameters->parameters();
 
     if (m_ownerType == OwnerType::Document) {
-        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
+        auto loader = CachedModuleScriptLoader::create(*this, deferred.get(), *static_cast<CachedScriptFetcher*>(uncheckedDowncast<JSC::JSScriptFetcher>(scriptFetcher)->fetcher()), WTFMove(parameters));
         m_loaders.add(loader.copyRef());
         if (!loader->load(downcast<Document>(*m_context), WTFMove(completedURL))) {
             loader->clearClient();
@@ -215,7 +215,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
             return jsPromise;
         }
     } else {
-        auto loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *static_cast<WorkerScriptFetcher*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), WTFMove(parameters));
+        auto loader = WorkerModuleScriptLoader::create(*this, deferred.get(), *static_cast<WorkerScriptFetcher*>(uncheckedDowncast<JSC::JSScriptFetcher>(scriptFetcher)->fetcher()), WTFMove(parameters));
         m_loaders.add(loader.copyRef());
         loader->load(*m_context, WTFMove(completedURL));
     }
@@ -267,7 +267,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     // FIXME: Currently, we only support JSModuleRecord and WebAssemblyModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.
     // https://whatwg.github.io/loader/#registry-prototype-provide
-    auto* moduleRecord = JSC::jsDynamicCast<JSC::AbstractModuleRecord*>(moduleRecordValue);
+    auto* moduleRecord = dynamicDowncast<JSC::AbstractModuleRecord>(moduleRecordValue);
     if (!moduleRecord)
         return JSC::jsUndefined();
 
@@ -302,7 +302,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
 {
     JSC::VM& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(jsGlobalObject);
 
     if (!m_context)
         return nullptr;
@@ -420,7 +420,7 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
         auto specifier = callFrame->argument(0).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
-        auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(globalObject);
+        auto* domGlobalObject = dynamicDowncast<JSDOMGlobalObject>(globalObject);
         if (UNLIKELY(!domGlobalObject))
             return JSC::throwVMTypeError(globalObject, scope);
 

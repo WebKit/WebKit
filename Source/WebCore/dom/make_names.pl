@@ -757,8 +757,11 @@ namespace WebCore {
 class $class;
 }
 namespace WTF {
-template<typename ArgType> class TypeCastTraits<const WebCore::$class, ArgType, false /* isBaseType */> {
+template<typename ArgType>
+requires (std::derived_from<WebCore::$class, ArgType>)
+class TypeCastTraits<const WebCore::$class, ArgType> {
 public:
+    static constexpr bool isSafeToCast() { return true; }
     static bool isOfType(ArgType& node) { return checkTagName(node); }
 private:
 END

@@ -67,7 +67,7 @@ void JSFinalizationRegistry::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<JSFinalizationRegistry*>(cell);
+    auto* thisObject = uncheckedDowncast<JSFinalizationRegistry>(cell);
 
     Locker locker { thisObject->cellLock() };
     for (const auto& iter : thisObject->m_liveRegistrations) {

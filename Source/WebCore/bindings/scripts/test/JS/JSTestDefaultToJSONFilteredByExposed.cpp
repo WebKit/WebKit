@@ -175,7 +175,7 @@ JSObject* JSTestDefaultToJSONFilteredByExposed::prototype(VM& vm, JSDOMGlobalObj
 
 JSValue JSTestDefaultToJSONFilteredByExposed::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONFilteredByExposedDOMConstructor, DOMConstructorID::TestDefaultToJSONFilteredByExposed>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONFilteredByExposedDOMConstructor, DOMConstructorID::TestDefaultToJSONFilteredByExposed>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestDefaultToJSONFilteredByExposed::destroy(JSC::JSCell* cell)
@@ -188,7 +188,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONFilteredByExposedConstructor, (JSGlo
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestDefaultToJSONFilteredByExposedPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestDefaultToJSONFilteredByExposedPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestDefaultToJSONFilteredByExposed::getConstructor(vm, prototype->globalObject()));
@@ -273,7 +273,7 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSONFilteredByExposed::subspaceForImp
 
 void JSTestDefaultToJSONFilteredByExposed::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestDefaultToJSONFilteredByExposed*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestDefaultToJSONFilteredByExposed>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -334,7 +334,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestDefaultToJSONFilteredByExposed* JSTestDefaultToJSONFilteredByExposed::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestDefaultToJSONFilteredByExposed*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestDefaultToJSONFilteredByExposed>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -62,7 +62,7 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
 
     auto handleExceptionIfNeeded = makeScopeExit([&] {
         if (UNLIKELY(scope.exception()))
-            handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+            handleUncaughtException(scope, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject));
     });
 
     if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
@@ -330,7 +330,7 @@ void DeferredPromise::handleUncaughtException(CatchScope& scope, JSDOMGlobalObje
 
 std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(Document& document)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(document.globalObject());
+    auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(document.globalObject());
     return createPromiseAndWrapper(globalObject);
 }
 
@@ -338,7 +338,7 @@ std::pair<Ref<DOMPromise>, Ref<DeferredPromise>> createPromiseAndWrapper(JSDOMGl
 {
     JSC::JSLockHolder lock(globalObject.vm());
     RefPtr deferredPromise = DeferredPromise::create(globalObject);
-    Ref domPromise = DOMPromise::create(globalObject, *JSC::jsCast<JSC::JSPromise*>(deferredPromise->promise()));
+    Ref domPromise = DOMPromise::create(globalObject, *uncheckedDowncast<JSC::JSPromise>(deferredPromise->promise()));
     return { WTFMove(domPromise), deferredPromise.releaseNonNull() };
 }
 

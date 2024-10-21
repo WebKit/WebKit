@@ -61,7 +61,7 @@ void JSIteratorConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject,
 template<typename Visitor>
 void JSIteratorConstructor::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSIteratorConstructor*>(cell);
+    auto* thisObject = uncheckedDowncast<JSIteratorConstructor>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(constructIterator, (JSGlobalObject* globalObject, CallF
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* newTarget = asObject(callFrame->newTarget());
-    JSIteratorConstructor* iteratorConstructor = jsCast<JSIteratorConstructor*>(callFrame->jsCallee());
+    JSIteratorConstructor* iteratorConstructor = uncheckedDowncast<JSIteratorConstructor>(callFrame->jsCallee());
     if (newTarget == iteratorConstructor)
         return JSValue::encode(throwTypeError(globalObject, scope, "Iterator cannot be constructed directly"_s));
 

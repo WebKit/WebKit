@@ -139,7 +139,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSExposedToWorkerAndWindowDOM
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSExposedToWorkerAndWindowDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSExposedToWorkerAndWindowDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     auto object = ExposedToWorkerAndWindow::create();
     if constexpr (IsExceptionOr<decltype(object)>)
@@ -211,7 +211,7 @@ JSObject* JSExposedToWorkerAndWindow::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSExposedToWorkerAndWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSExposedToWorkerAndWindowDOMConstructor, DOMConstructorID::ExposedToWorkerAndWindow>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSExposedToWorkerAndWindowDOMConstructor, DOMConstructorID::ExposedToWorkerAndWindow>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)
@@ -224,7 +224,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject*
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSExposedToWorkerAndWindowPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSExposedToWorkerAndWindowPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSExposedToWorkerAndWindow::getConstructor(vm, prototype->globalObject()));
@@ -257,7 +257,7 @@ JSC::GCClient::IsoSubspace* JSExposedToWorkerAndWindow::subspaceForImpl(JSC::VM&
 
 void JSExposedToWorkerAndWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSExposedToWorkerAndWindow*>(cell);
+    auto* thisObject = uncheckedDowncast<JSExposedToWorkerAndWindow>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -318,7 +318,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 ExposedToWorkerAndWindow* JSExposedToWorkerAndWindow::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSExposedToWorkerAndWindow*>(value))
+    if (auto* wrapper = dynamicDowncast<JSExposedToWorkerAndWindow>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -144,7 +144,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncGetISOFields, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.getISOFields called on value that's not a PlainDateTime"_s);
 
@@ -168,7 +168,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncAdd, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.add called on value that's not a PlainDateTime"_s);
 
@@ -199,7 +199,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncSubtract, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.subtract called on value that's not a PlainDateTime"_s);
 
@@ -230,7 +230,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWith, (JSGlobalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.with called on value that's not a PlainDateTime"_s);
 
@@ -247,7 +247,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncWithPlainTime, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.withPlainTime called on value that's not a PlainDateTime"_s);
 
@@ -267,7 +267,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncRound, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.round called on value that's not a PlainDateTime"_s);
 
@@ -284,7 +284,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncEquals, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.equals called on value that's not a PlainDateTime"_s);
 
@@ -303,7 +303,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToPlainDate, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toPlainDate called on value that's not a PlainDateTime"_s);
 
@@ -316,7 +316,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToPlainTime, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toPlainTime called on value that's not a PlainDateTime"_s);
 
@@ -329,7 +329,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToString, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toString called on value that's not a PlainDateTime"_s);
 
@@ -342,7 +342,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToJSON, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toJSON called on value that's not a PlainDateTime"_s);
 
@@ -355,7 +355,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToLocaleString, (JSGl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(callFrame->thisValue());
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(callFrame->thisValue());
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toLocaleString called on value that's not a PlainDateTime"_s);
 
@@ -376,7 +376,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterCalendar, (JSGlobal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.calendar called on value that's not a PlainDateTime"_s);
 
@@ -388,7 +388,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterYear, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.year called on value that's not a PlainDateTime"_s);
 
@@ -400,7 +400,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMonth, (JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.month called on value that's not a PlainDateTime"_s);
 
@@ -412,7 +412,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMonthCode, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.monthCode called on value that's not a PlainDateTime"_s);
 
@@ -424,7 +424,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDay, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.day called on value that's not a PlainDateTime"_s);
 
@@ -436,7 +436,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterHour, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.hour called on value that's not a PlainDateTime"_s);
 
@@ -448,7 +448,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMinute, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.minute called on value that's not a PlainDateTime"_s);
 
@@ -460,7 +460,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterSecond, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.second called on value that's not a PlainDateTime"_s);
 
@@ -472,7 +472,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMillisecond, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.millisecond called on value that's not a PlainDateTime"_s);
 
@@ -484,7 +484,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMicrosecond, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.microsecond called on value that's not a PlainDateTime"_s);
 
@@ -496,7 +496,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterNanosecond, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.nanosecond called on value that's not a PlainDateTime"_s);
 
@@ -508,7 +508,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDayOfWeek, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.dayOfWeek called on value that's not a PlainDateTime"_s);
 
@@ -520,7 +520,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDayOfYear, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.dayOfYear called on value that's not a PlainDateTime"_s);
 
@@ -532,7 +532,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterWeekOfYear, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.weekOfYear called on value that's not a PlainDateTime"_s);
 
@@ -544,7 +544,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDaysInWeek, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.daysInWeek called on value that's not a PlainDateTime"_s);
 
@@ -556,7 +556,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDaysInMonth, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.daysInMonth called on value that's not a PlainDateTime"_s);
 
@@ -568,7 +568,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterDaysInYear, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.daysInYear called on value that's not a PlainDateTime"_s);
 
@@ -580,7 +580,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterMonthsInYear, (JSGl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.monthsInYear called on value that's not a PlainDateTime"_s);
 
@@ -592,7 +592,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDateTimePrototypeGetterInLeapYear, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* plainDateTime = jsDynamicCast<TemporalPlainDateTime*>(JSValue::decode(thisValue));
+    auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(JSValue::decode(thisValue));
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.inLeapYear called on value that's not a PlainDateTime"_s);
 

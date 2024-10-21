@@ -69,7 +69,7 @@ void JSWebAssemblyGlobal::destroy(JSCell* cell)
 template<typename Visitor>
 void JSWebAssemblyGlobal::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSWebAssemblyGlobal* thisObject = jsCast<JSWebAssemblyGlobal*>(cell);
+    JSWebAssemblyGlobal* thisObject = uncheckedDowncast<JSWebAssemblyGlobal>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

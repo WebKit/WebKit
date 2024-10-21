@@ -66,7 +66,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::InvalidStateError };
     }
-    auto& domGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+    auto& domGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(globalObject);
 
     auto bidirectionalStreamSource = WebTransportBidirectionalStreamSource::create();
     auto incomingBidirectionalStreams = ReadableStream::create(domGlobalObject, bidirectionalStreamSource.copyRef());
@@ -271,7 +271,7 @@ void WebTransport::createBidirectionalStream(ScriptExecutionContext& context, We
         auto* globalObject = context->globalObject();
         if (!globalObject)
             return promise->reject(nullptr);
-        auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+        auto& jsDOMGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(globalObject);
         auto sendStream = [&] {
             Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
             return WebTransportSendStream::create(jsDOMGlobalObject, WTFMove(parameters->sink));
@@ -307,7 +307,7 @@ void WebTransport::createUnidirectionalStream(ScriptExecutionContext& context, W
         auto* globalObject = context->globalObject();
         if (!globalObject)
             return promise->reject(nullptr);
-        auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+        auto& jsDOMGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(globalObject);
         auto stream = [&] {
             Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
             return WebTransportSendStream::create(jsDOMGlobalObject, sink.releaseNonNull());

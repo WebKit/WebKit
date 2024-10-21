@@ -3850,7 +3850,7 @@ private:
         }
 
         if (node->child1()->shouldSpeculateString()) {
-            auto* globalObject = jsCast<JSGlobalObject*>(node->cellOperand()->cell());
+            auto* globalObject = uncheckedDowncast<JSGlobalObject>(node->cellOperand()->cell());
             insertCheck<StringUse>(node->child1().node());
             fixEdge<KnownStringUse>(node->child1());
             node->convertToNewStringObject(m_graph.registerStructure(globalObject->stringObjectStructure()));
@@ -3860,7 +3860,7 @@ private:
         // While ToObject(Null/Undefined) throws an error, CallObjectConstructor(Null/Undefined) generates a new empty object.
         if (node->child1()->shouldSpeculateOther()) {
             insertCheck<OtherUse>(node->child1().node());
-            node->convertToNewObject(m_graph.registerStructure(jsCast<JSGlobalObject*>(node->cellOperand()->cell())->objectStructureForObjectConstructor()));
+            node->convertToNewObject(m_graph.registerStructure(uncheckedDowncast<JSGlobalObject>(node->cellOperand()->cell())->objectStructureForObjectConstructor()));
             return;
         }
 

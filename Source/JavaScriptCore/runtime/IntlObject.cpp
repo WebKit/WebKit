@@ -86,72 +86,72 @@ static JSC_DECLARE_HOST_FUNCTION(intlObjectFuncSupportedValuesOf);
 
 static JSValue createCollatorConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlCollatorConstructor::create(vm, IntlCollatorConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlCollatorPrototype*>(globalObject->collatorStructure()->storedPrototypeObject()));
+    return IntlCollatorConstructor::create(vm, IntlCollatorConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlCollatorPrototype>(globalObject->collatorStructure()->storedPrototypeObject()));
 }
 
 static JSValue createDateTimeFormatConstructor(VM&, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
     return globalObject->dateTimeFormatConstructor();
 }
 
 static JSValue createDisplayNamesConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlDisplayNamesConstructor::create(vm, IntlDisplayNamesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDisplayNamesPrototype*>(globalObject->displayNamesStructure()->storedPrototypeObject()));
+    return IntlDisplayNamesConstructor::create(vm, IntlDisplayNamesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlDisplayNamesPrototype>(globalObject->displayNamesStructure()->storedPrototypeObject()));
 }
 
 static JSValue createDurationFormatConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlDurationFormatConstructor::create(vm, IntlDurationFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDurationFormatPrototype*>(globalObject->durationFormatStructure()->storedPrototypeObject()));
+    return IntlDurationFormatConstructor::create(vm, IntlDurationFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlDurationFormatPrototype>(globalObject->durationFormatStructure()->storedPrototypeObject()));
 }
 
 static JSValue createListFormatConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlListFormatConstructor::create(vm, IntlListFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlListFormatPrototype*>(globalObject->listFormatStructure()->storedPrototypeObject()));
+    return IntlListFormatConstructor::create(vm, IntlListFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlListFormatPrototype>(globalObject->listFormatStructure()->storedPrototypeObject()));
 }
 
 static JSValue createLocaleConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlLocaleConstructor::create(vm, IntlLocaleConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlLocalePrototype*>(globalObject->localeStructure()->storedPrototypeObject()));
+    return IntlLocaleConstructor::create(vm, IntlLocaleConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlLocalePrototype>(globalObject->localeStructure()->storedPrototypeObject()));
 }
 
 static JSValue createNumberFormatConstructor(VM&, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
     return globalObject->numberFormatConstructor();
 }
 
 static JSValue createPluralRulesConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlPluralRulesConstructor::create(vm, IntlPluralRulesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlPluralRulesPrototype*>(globalObject->pluralRulesStructure()->storedPrototypeObject()));
+    return IntlPluralRulesConstructor::create(vm, IntlPluralRulesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlPluralRulesPrototype>(globalObject->pluralRulesStructure()->storedPrototypeObject()));
 }
 
 static JSValue createRelativeTimeFormatConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlRelativeTimeFormatConstructor::create(vm, IntlRelativeTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlRelativeTimeFormatPrototype*>(globalObject->relativeTimeFormatStructure()->storedPrototypeObject()));
+    return IntlRelativeTimeFormatConstructor::create(vm, IntlRelativeTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlRelativeTimeFormatPrototype>(globalObject->relativeTimeFormatStructure()->storedPrototypeObject()));
 }
 
 static JSValue createSegmenterConstructor(VM& vm, JSObject* object)
 {
-    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    IntlObject* intlObject = uncheckedDowncast<IntlObject>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
-    return IntlSegmenterConstructor::create(vm, IntlSegmenterConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlSegmenterPrototype*>(globalObject->segmenterStructure()->storedPrototypeObject()));
+    return IntlSegmenterConstructor::create(vm, IntlSegmenterConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<IntlSegmenterPrototype>(globalObject->segmenterStructure()->storedPrototypeObject()));
 }
 
 }
@@ -781,7 +781,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
 
             String tag;
             if (kValue.inherits<IntlLocale>())
-                tag = jsCast<IntlLocale*>(kValue)->toString();
+                tag = uncheckedDowncast<IntlLocale>(kValue)->toString();
             else {
                 JSString* string = kValue.toString(globalObject);
                 RETURN_IF_EXCEPTION(scope, Vector<String>());

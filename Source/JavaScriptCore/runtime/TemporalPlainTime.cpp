@@ -66,7 +66,7 @@ void TemporalPlainTime::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* plainTime = jsCast<TemporalPlainTime*>(init.owner);
+            auto* plainTime = init.owner;
             auto* globalObject = plainTime->globalObject();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
@@ -78,7 +78,7 @@ void TemporalPlainTime::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainTime*>(cell);
+    auto* thisObject = uncheckedDowncast<TemporalPlainTime>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -392,10 +392,10 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainTime>())
-            return jsCast<TemporalPlainTime*>(itemValue);
+            return uncheckedDowncast<TemporalPlainTime>(itemValue);
 
         if (itemValue.inherits<TemporalPlainDateTime>())
-            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
+            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), uncheckedDowncast<TemporalPlainDateTime>(itemValue)->plainTime());
 
         JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
@@ -407,7 +407,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
             throwRangeError(globalObject, scope, "calendar is not iso8601"_s);
             return { };
         }
-        auto duration = toTemporalTimeRecord(globalObject, jsCast<JSObject*>(itemValue));
+        auto duration = toTemporalTimeRecord(globalObject, uncheckedDowncast<JSObject>(itemValue));
         RETURN_IF_EXCEPTION(scope, { });
         auto plainTime = regulateTime(globalObject, WTFMove(duration), overflow);
         RETURN_IF_EXCEPTION(scope, { });

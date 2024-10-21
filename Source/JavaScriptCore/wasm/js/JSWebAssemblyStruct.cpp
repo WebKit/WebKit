@@ -183,7 +183,7 @@ void JSWebAssemblyStruct::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* wasmStruct = jsCast<JSWebAssemblyStruct*>(cell);
+    auto* wasmStruct = uncheckedDowncast<JSWebAssemblyStruct>(cell);
     for (unsigned i = 0; i < wasmStruct->structType()->fieldCount(); ++i) {
         if (isRefType(wasmStruct->fieldType(i).type))
             visitor.append(*bitwise_cast<WriteBarrier<Unknown>*>(wasmStruct->fieldPointer(i)));

@@ -275,7 +275,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
     } else if (moduleRecord.inherits<JSC::SyntheticModuleRecord>())
         InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), 1, 1);
     else {
-        auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
+        auto* jsModuleRecord = uncheckedDowncast<JSModuleRecord>(&moduleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
         InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     }
@@ -306,7 +306,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     JSC::VM& vm = world.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    jsCast<JSDOMWindow*>(windowProxy.window())->updateDocument();
+    uncheckedDowncast<JSDOMWindow>(windowProxy.window())->updateDocument();
     EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
 
     if (RefPtr document = m_frame.document())
@@ -329,7 +329,7 @@ Ref<LocalFrame> ScriptController::protectedFrame() const
 static Identifier jsValueToModuleKey(JSGlobalObject* lexicalGlobalObject, JSValue value)
 {
     if (value.isSymbol())
-        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
+        return Identifier::fromUid(uncheckedDowncast<Symbol>(value)->privateName());
     ASSERT(value.isString());
     return asString(value)->toIdentifier(lexicalGlobalObject);
 }
@@ -488,7 +488,7 @@ void ScriptController::updateDocument()
 {
     for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
         JSLockHolder lock(jsWindowProxy->world().vm());
-        jsCast<JSDOMWindow*>(jsWindowProxy->window())->updateDocument();
+        uncheckedDowncast<JSDOMWindow>(jsWindowProxy->window())->updateDocument();
     }
 }
 

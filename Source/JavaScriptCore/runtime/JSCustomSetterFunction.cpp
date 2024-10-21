@@ -37,7 +37,7 @@ static JSC_DECLARE_HOST_FUNCTION(customSetterFunctionCall);
 
 JSC_DEFINE_HOST_FUNCTION(customSetterFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto customSetterFunction = jsCast<JSCustomSetterFunction*>(callFrame->jsCallee());
+    auto customSetterFunction = uncheckedDowncast<JSCustomSetterFunction>(callFrame->jsCallee());
     auto setter = customSetterFunction->setter();
     setter(globalObject, JSValue::encode(callFrame->thisValue()), JSValue::encode(callFrame->argument(0)), customSetterFunction->propertyName());
     return JSValue::encode(jsUndefined());

@@ -65,7 +65,7 @@ template<> ConversionResult<IDLDictionary<TestInheritedDictionary2>> convertDict
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
     if (!callbackMemberValue.isUndefined()) {
-        auto callbackMemberConversionResult = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+        auto callbackMemberConversionResult = convert<IDLCallbackFunction<JSVoidCallback>>(lexicalGlobalObject, callbackMemberValue, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject));
         if (UNLIKELY(callbackMemberConversionResult.hasException(throwScope)))
             return ConversionResultException { };
         result.callbackMember = callbackMemberConversionResult.releaseReturnValue();

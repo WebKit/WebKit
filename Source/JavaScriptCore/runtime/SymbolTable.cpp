@@ -93,7 +93,7 @@ SymbolTable::~SymbolTable() = default;
 template<typename Visitor>
 void SymbolTable::visitChildrenImpl(JSCell* thisCell, Visitor& visitor)
 {
-    SymbolTable* thisSymbolTable = jsCast<SymbolTable*>(thisCell);
+    SymbolTable* thisSymbolTable = uncheckedDowncast<SymbolTable>(thisCell);
     ASSERT_GC_OBJECT_INHERITS(thisSymbolTable, info());
     Base::visitChildren(thisSymbolTable, visitor);
 

@@ -144,7 +144,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
 
     JSValue globalThisValue = globalObject->globalThis();
 
-    auto* functionValue = jsCast<JSFunction*>(globalObject->linkTimeConstant(LinkTimeConstant::createInspectorInjectedScript));
+    auto* functionValue = uncheckedDowncast<JSFunction>(globalObject->linkTimeConstant(LinkTimeConstant::createInspectorInjectedScript));
     RETURN_IF_EXCEPTION(scope, makeUnexpected(scope.exception()));
     if (!functionValue)
         return nullptr;

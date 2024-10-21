@@ -44,7 +44,7 @@ JSWithScope* JSWithScope::create(
 template<typename Visitor>
 void JSWithScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSWithScope* thisObject = jsCast<JSWithScope*>(cell);
+    JSWithScope* thisObject = uncheckedDowncast<JSWithScope>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_object);

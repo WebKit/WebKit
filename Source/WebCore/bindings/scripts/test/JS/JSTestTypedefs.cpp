@@ -163,7 +163,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestTypedefsDOMConstructor:
 {
     auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestTypedefsDOMConstructor*>(callFrame->jsCallee());
+    auto* castedThis = uncheckedDowncast<JSTestTypedefsDOMConstructor>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(callFrame->argumentCount() < 3))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -269,7 +269,7 @@ JSObject* JSTestTypedefs::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestTypedefs::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestTypedefsDOMConstructor, DOMConstructorID::TestTypedefs>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestTypedefsDOMConstructor, DOMConstructorID::TestTypedefs>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestTypedefs::destroy(JSC::JSCell* cell)
@@ -282,7 +282,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestTypedefsConstructor, (JSGlobalObject* lexicalGlob
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestTypedefsPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestTypedefsPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestTypedefs::getConstructor(vm, prototype->globalObject()));
@@ -815,7 +815,7 @@ JSC::GCClient::IsoSubspace* JSTestTypedefs::subspaceForImpl(JSC::VM& vm)
 
 void JSTestTypedefs::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestTypedefs*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestTypedefs>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -876,7 +876,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestTypedefs* JSTestTypedefs::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestTypedefs*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestTypedefs>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

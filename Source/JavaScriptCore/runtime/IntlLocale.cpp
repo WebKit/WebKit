@@ -66,7 +66,7 @@ IntlLocale::IntlLocale(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlLocale::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<IntlLocale*>(cell);
+    auto* thisObject = uncheckedDowncast<IntlLocale>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
@@ -220,7 +220,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String tag = tagValue.inherits<IntlLocale>() ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
+    String tag = tagValue.inherits<IntlLocale>() ? uncheckedDowncast<IntlLocale>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
     initializeLocale(globalObject, tag, optionsValue);

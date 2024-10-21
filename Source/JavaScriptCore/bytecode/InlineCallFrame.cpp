@@ -36,13 +36,13 @@ DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
 JSFunction* InlineCallFrame::calleeConstant() const
 {
     if (calleeRecovery.isConstant())
-        return jsCast<JSFunction*>(calleeRecovery.constant());
+        return uncheckedDowncast<JSFunction>(calleeRecovery.constant());
     return nullptr;
 }
 
 JSFunction* InlineCallFrame::calleeForCallFrame(CallFrame* callFrame) const
 {
-    return jsCast<JSFunction*>(calleeRecovery.recover(callFrame));
+    return uncheckedDowncast<JSFunction>(calleeRecovery.recover(callFrame));
 }
 
 CodeBlockHash InlineCallFrame::hash() const
@@ -57,7 +57,7 @@ CString InlineCallFrame::hashAsStringIfPossible() const
 
 CString InlineCallFrame::inferredName() const
 {
-    return jsCast<FunctionExecutable*>(baselineCodeBlock->ownerExecutable())->ecmaName().utf8();
+    return uncheckedDowncast<FunctionExecutable>(baselineCodeBlock->ownerExecutable())->ecmaName().utf8();
 }
 
 void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const

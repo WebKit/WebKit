@@ -137,14 +137,14 @@ void JSPaintWorkletGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 
 JSValue JSPaintWorkletGlobalScope::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSPaintWorkletGlobalScopeDOMConstructor, DOMConstructorID::PaintWorkletGlobalScope>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSPaintWorkletGlobalScopeDOMConstructor, DOMConstructorID::PaintWorkletGlobalScope>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsPaintWorkletGlobalScopeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSPaintWorkletGlobalScopePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSPaintWorkletGlobalScopePrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSPaintWorkletGlobalScope::getConstructor(vm, prototype->globalObject()));
@@ -185,7 +185,7 @@ JSC::GCClient::IsoSubspace* JSPaintWorkletGlobalScope::subspaceForImpl(JSC::VM& 
 
 void JSPaintWorkletGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSPaintWorkletGlobalScope*>(cell);
+    auto* thisObject = uncheckedDowncast<JSPaintWorkletGlobalScope>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));

@@ -76,7 +76,7 @@ template<typename IDLType>
 void DOMSetAdapter::add(typename IDLType::ParameterType value)
 {
     JSC::JSLockHolder locker(&m_lexicalGlobalObject);
-    auto item = toJS<IDLType>(m_lexicalGlobalObject, *JSC::jsCast<JSDOMGlobalObject*>(&m_lexicalGlobalObject), std::forward<typename IDLType::ParameterType>(value));
+    auto item = toJS<IDLType>(m_lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&m_lexicalGlobalObject), std::forward<typename IDLType::ParameterType>(value));
     addToBackingSet(m_lexicalGlobalObject, m_backingSet, item);
 }
 
@@ -123,7 +123,7 @@ template<typename WrapperClass, typename Callback>
 JSC::JSValue forwardForEachToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, Callback&&)
 {
     getAndInitializeBackingSet(lexicalGlobalObject, setLike);
-    return forwardForEachCallToBackingSet(*JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), callFrame, setLike);
+    return forwardForEachCallToBackingSet(*uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), callFrame, setLike);
 }
 
 template<typename WrapperClass>

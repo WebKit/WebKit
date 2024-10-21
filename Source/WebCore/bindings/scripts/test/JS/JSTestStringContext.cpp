@@ -197,7 +197,7 @@ JSObject* JSTestStringContext::prototype(VM& vm, JSDOMGlobalObject& globalObject
 
 JSValue JSTestStringContext::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringContextDOMConstructor, DOMConstructorID::TestStringContext>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringContextDOMConstructor, DOMConstructorID::TestStringContext>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestStringContext::destroy(JSC::JSCell* cell)
@@ -210,7 +210,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringContextConstructor, (JSGlobalObject* lexica
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestStringContextPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestStringContextPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestStringContext::getConstructor(vm, prototype->globalObject()));
@@ -750,7 +750,7 @@ JSC::GCClient::IsoSubspace* JSTestStringContext::subspaceForImpl(JSC::VM& vm)
 
 void JSTestStringContext::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestStringContext*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestStringContext>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
@@ -811,7 +811,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestStringContext* JSTestStringContext::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestStringContext*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestStringContext>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

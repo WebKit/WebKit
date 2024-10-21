@@ -69,7 +69,7 @@ private:
 
 inline ArrayBuffer* toPossiblySharedArrayBuffer(VM&, JSValue value)
 {
-    JSArrayBuffer* wrapper = jsDynamicCast<JSArrayBuffer*>(value);
+    JSArrayBuffer* wrapper = dynamicDowncast<JSArrayBuffer>(value);
     if (!wrapper)
         return nullptr;
     return wrapper->impl();

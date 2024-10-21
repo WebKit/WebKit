@@ -535,7 +535,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned sourceLen = source->length();
-    RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
+    RegExpObject* regExpObject = uncheckedDowncast<RegExpObject>(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
     bool hasNamedCaptures = regExp->hasNamedCaptures();
@@ -549,7 +549,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
             RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, string, source, regExp));
 
         if (callData.type == CallData::Type::JS && !hasNamedCaptures && sourceLen >= Options::thresholdForStringReplaceCache())
-            RELEASE_AND_RETURN(scope, replaceUsingRegExpSearchWithCache(vm, globalObject, string, source, regExp, jsCast<JSFunction*>(replaceValue)));
+            RELEASE_AND_RETURN(scope, replaceUsingRegExpSearchWithCache(vm, globalObject, string, source, regExp, uncheckedDowncast<JSFunction>(replaceValue)));
     }
 
     size_t lastIndex = 0;
@@ -564,7 +564,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
         int argCount = regExp->numSubpatterns() + 1 + 2;
         if (hasNamedCaptures)
             ++argCount;
-        JSFunction* func = jsCast<JSFunction*>(replaceValue);
+        JSFunction* func = uncheckedDowncast<JSFunction>(replaceValue);
         CachedCall cachedCall(globalObject, func, argCount);
         RETURN_IF_EXCEPTION(scope, nullptr);
         while (true) {
@@ -984,7 +984,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
         return JSValue::encode(thisValue);
     }
 
-    auto* stringObject = jsDynamicCast<StringObject*>(thisValue);
+    auto* stringObject = dynamicDowncast<StringObject>(thisValue);
     if (!stringObject)
         return throwVMTypeError(globalObject, scope);
 

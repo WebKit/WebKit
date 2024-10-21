@@ -63,7 +63,7 @@ public:
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    UnlinkedEvalCodeBlock* unlinkedEvalCodeBlock() const { return jsCast<UnlinkedEvalCodeBlock*>(unlinkedCodeBlock()); }
+    UnlinkedEvalCodeBlock* unlinkedEvalCodeBlock() const { return uncheckedDowncast<UnlinkedEvalCodeBlock>(unlinkedCodeBlock()); }
 
 private:
     EvalCodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, EvalCodeBlock& other)

@@ -149,7 +149,7 @@ JSObject* JSTestStringifierOperationImplementedAs::prototype(VM& vm, JSDOMGlobal
 
 JSValue JSTestStringifierOperationImplementedAs::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierOperationImplementedAsDOMConstructor, DOMConstructorID::TestStringifierOperationImplementedAs>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierOperationImplementedAsDOMConstructor, DOMConstructorID::TestStringifierOperationImplementedAs>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestStringifierOperationImplementedAs::destroy(JSC::JSCell* cell)
@@ -162,7 +162,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationImplementedAsConstructor, (JS
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestStringifierOperationImplementedAsPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestStringifierOperationImplementedAsPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestStringifierOperationImplementedAs::getConstructor(vm, prototype->globalObject()));
@@ -210,7 +210,7 @@ JSC::GCClient::IsoSubspace* JSTestStringifierOperationImplementedAs::subspaceFor
 
 void JSTestStringifierOperationImplementedAs::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestStringifierOperationImplementedAs*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestStringifierOperationImplementedAs>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -271,7 +271,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestStringifierOperationImplementedAs* JSTestStringifierOperationImplementedAs::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestStringifierOperationImplementedAs*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestStringifierOperationImplementedAs>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

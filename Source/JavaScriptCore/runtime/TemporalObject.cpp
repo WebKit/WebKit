@@ -56,58 +56,58 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalObject);
 
 static JSValue createCalendarConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
-    return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalCalendarPrototype*>(globalObject->calendarStructure()->storedPrototypeObject()));
+    return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalCalendarPrototype>(globalObject->calendarStructure()->storedPrototypeObject()));
 }
 
 static JSValue createNowObject(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalNow::create(vm, TemporalNow::createStructure(vm, globalObject));
 }
 
 static JSValue createDurationConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
-    return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalDurationPrototype*>(globalObject->durationStructure()->storedPrototypeObject()));
+    return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalDurationPrototype>(globalObject->durationStructure()->storedPrototypeObject()));
 }
 
 static JSValue createInstantConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
-    return TemporalInstantConstructor::create(vm, TemporalInstantConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalInstantPrototype*>(globalObject->instantStructure()->storedPrototypeObject()));
+    return TemporalInstantConstructor::create(vm, TemporalInstantConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalInstantPrototype>(globalObject->instantStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainDateConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     auto* globalObject = temporalObject->globalObject();
-    return TemporalPlainDateConstructor::create(vm, TemporalPlainDateConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainDatePrototype*>(globalObject->plainDateStructure()->storedPrototypeObject()));
+    return TemporalPlainDateConstructor::create(vm, TemporalPlainDateConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalPlainDatePrototype>(globalObject->plainDateStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainDateTimeConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     auto* globalObject = temporalObject->globalObject();
-    return TemporalPlainDateTimeConstructor::create(vm, TemporalPlainDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainDateTimePrototype*>(globalObject->plainDateTimeStructure()->storedPrototypeObject()));
+    return TemporalPlainDateTimeConstructor::create(vm, TemporalPlainDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalPlainDateTimePrototype>(globalObject->plainDateTimeStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainTimeConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     auto* globalObject = temporalObject->globalObject();
-    return TemporalPlainTimeConstructor::create(vm, TemporalPlainTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainTimePrototype*>(globalObject->plainTimeStructure()->storedPrototypeObject()));
+    return TemporalPlainTimeConstructor::create(vm, TemporalPlainTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalPlainTimePrototype>(globalObject->plainTimeStructure()->storedPrototypeObject()));
 }
 
 static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
 {
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
     JSGlobalObject* globalObject = temporalObject->globalObject();
-    return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalTimeZonePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
+    return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalTimeZonePrototype>(globalObject->timeZoneStructure()->storedPrototypeObject()));
 }
 
 } // namespace JSC

@@ -47,7 +47,7 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& glo
 
 ExceptionOr<Ref<ReadableStream>> ReadableStream::createFromJSValues(JSC::JSGlobalObject& globalObject, JSC::JSValue underlyingSource, JSC::JSValue strategy)
 {
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto& jsDOMGlobalObject = *uncheckedDowncast<JSDOMGlobalObject>(&globalObject);
     RefPtr protectedContext { jsDOMGlobalObject.scriptExecutionContext() };
     auto result = InternalReadableStream::createFromUnderlyingSource(jsDOMGlobalObject, underlyingSource, strategy);
     if (result.hasException())

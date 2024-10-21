@@ -51,7 +51,7 @@ JSIterator* JSIterator::create(VM& vm, Structure* structure)
 template<typename Visitor>
 void JSIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSIterator*>(cell);
+    auto* thisObject = uncheckedDowncast<JSIterator>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

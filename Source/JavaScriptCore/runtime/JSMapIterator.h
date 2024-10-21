@@ -89,7 +89,7 @@ public:
         if (storage == sentinel)
             return { };
 
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *uncheckedDowncast<JSMap::Storage>(storage);
         auto result = JSMap::Helper::transitAndNext(vm, storageRef, entry());
         if (!result.storage) {
             setStorage(vm, sentinel);
@@ -141,7 +141,7 @@ public:
         JSMap::Helper::Entry entry = this->entry() - 1;
         JSCell* storage = this->storage();
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *uncheckedDowncast<JSMap::Storage>(storage);
         return JSMap::Helper::getKey(storageRef, entry);
     }
     JSValue nextValue(VM& vm)
@@ -149,12 +149,12 @@ public:
         JSMap::Helper::Entry entry = this->entry() - 1;
         JSCell* storage = this->storage();
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *uncheckedDowncast<JSMap::Storage>(storage);
         return JSMap::Helper::getValue(storageRef, entry);
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
-    JSObject* iteratedObject() const { return jsCast<JSObject*>(internalField(Field::IteratedObject).get()); }
+    JSObject* iteratedObject() const { return uncheckedDowncast<JSObject>(internalField(Field::IteratedObject).get()); }
     JSCell* storage() const { return internalField(Field::Storage).get().asCell(); }
     JSMap::Helper::Entry entry() const { return JSMap::Helper::toNumber(internalField(Field::Entry).get()); }
 

@@ -77,7 +77,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JSObject* target() const { return jsCast<JSObject*>(internalField(Field::Target).get()); }
+    JSObject* target() const { return uncheckedDowncast<JSObject>(internalField(Field::Target).get()); }
     JSValue handler() const { return internalField(Field::Handler).get(); }
 
     static void validateNegativeHasTrapResult(JSGlobalObject*, JSObject*, PropertyName);

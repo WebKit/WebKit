@@ -145,7 +145,7 @@ JSObject* JSTestNamedGetterCallWith::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestNamedGetterCallWith::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedGetterCallWithDOMConstructor, DOMConstructorID::TestNamedGetterCallWith>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedGetterCallWithDOMConstructor, DOMConstructorID::TestNamedGetterCallWith>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestNamedGetterCallWith::destroy(JSC::JSCell* cell)
@@ -157,7 +157,7 @@ void JSTestNamedGetterCallWith::destroy(JSC::JSCell* cell)
 bool JSTestNamedGetterCallWith::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
@@ -184,7 +184,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, JSGl
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
@@ -203,7 +203,7 @@ bool JSTestNamedGetterCallWith::getOwnPropertySlotByIndex(JSObject* object, JSGl
 void JSTestNamedGetterCallWith::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -212,14 +212,14 @@ void JSTestNamedGetterCallWith::getOwnPropertyNames(JSObject* object, JSGlobalOb
 
 bool JSTestNamedGetterCallWith::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -243,12 +243,12 @@ bool JSTestNamedGetterCallWith::putByIndex(JSCell* cell, JSGlobalObject* lexical
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -262,7 +262,7 @@ bool JSTestNamedGetterCallWith::putByIndex(JSCell* cell, JSGlobalObject* lexical
 
 bool JSTestNamedGetterCallWith::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(object);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -285,11 +285,11 @@ bool JSTestNamedGetterCallWith::defineOwnProperty(JSObject* object, JSGlobalObje
 
 bool JSTestNamedGetterCallWith::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedGetterCallWith>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
@@ -305,11 +305,11 @@ bool JSTestNamedGetterCallWith::deleteProperty(JSCell* cell, JSGlobalObject* lex
 bool JSTestNamedGetterCallWith::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestNamedGetterCallWith*>(cell);
+    auto& thisObject = *uncheckedDowncast<JSTestNamedGetterCallWith>(cell);
     auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(dynamicDowncast<JSDOMGlobalObject>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
@@ -328,7 +328,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedGetterCallWithPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestNamedGetterCallWithPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedGetterCallWith::getConstructor(vm, prototype->globalObject()));
@@ -346,7 +346,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedGetterCallWith::subspaceForImpl(JSC::VM& 
 
 void JSTestNamedGetterCallWith::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterCallWith*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestNamedGetterCallWith>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -407,7 +407,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestNamedGetterCallWith* JSTestNamedGetterCallWith::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedGetterCallWith*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestNamedGetterCallWith>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

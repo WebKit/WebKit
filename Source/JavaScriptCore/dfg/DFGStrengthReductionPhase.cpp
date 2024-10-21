@@ -1255,7 +1255,7 @@ private:
                     break;
                 if (!function)
                     break;
-                auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(function);
+                auto* wasmFunction = dynamicDowncast<WebAssemblyFunction>(function);
                 if (!wasmFunction)
                     break;
                 const auto& signature = Wasm::TypeInformation::getFunctionSignature(wasmFunction->typeIndex());
@@ -1426,11 +1426,11 @@ private:
             // We gave up inlining a wrapped function, but still, we can inline bound function's wrapper by extracting it.
             // This also wipes bound-function thunk call which is suboptimal compared to directly calling a wrapped function here.
             if (executable->intrinsic() == BoundFunctionCallIntrinsic && function && (m_node->op() == Call || m_node->op() == TailCall || m_node->op() == TailCallInlinedCaller)) {
-                JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(function);
-                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->targetFunction())) {
+                JSBoundFunction* boundFunction = uncheckedDowncast<JSBoundFunction>(function);
+                if (JSFunction* targetFunction = dynamicDowncast<JSFunction>(boundFunction->targetFunction())) {
                     auto* targetExecutable = targetFunction->executable();
                     if ((boundFunction->boundArgsLength() + m_node->numChildren()) <= Options::maximumDirectCallStackSize()) {
-                        if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(targetExecutable)) {
+                        if (FunctionExecutable* functionExecutable = dynamicDowncast<FunctionExecutable>(targetExecutable)) {
                             // We need to update m_parameterSlots before we get to the backend, but we don't
                             // want to do too much of this.
                             unsigned numAllocatedArgs = static_cast<unsigned>(functionExecutable->parameterCount()) + 1;
@@ -1462,7 +1462,7 @@ private:
                 }
             }
 
-            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
+            if (FunctionExecutable* functionExecutable = dynamicDowncast<FunctionExecutable>(executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
                     break;
 

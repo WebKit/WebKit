@@ -39,7 +39,7 @@ const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment"_s, &Base
 template<typename Visitor>
 void JSLexicalEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSLexicalEnvironment*>(cell);
+    auto* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.appendValuesHidden(thisObject->variables(), thisObject->symbolTable()->scopeSize());
@@ -49,7 +49,7 @@ DEFINE_VISIT_CHILDREN(JSLexicalEnvironment);
 
 void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSLexicalEnvironment*>(cell);
+    auto* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     Base::analyzeHeap(cell, analyzer);
 
     ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
@@ -69,7 +69,7 @@ void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
 void JSLexicalEnvironment::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
+    JSLexicalEnvironment* thisObject = uncheckedDowncast<JSLexicalEnvironment>(object);
     SymbolTable* symbolTable = thisObject->symbolTable();
 
     {
@@ -92,7 +92,7 @@ void JSLexicalEnvironment::getOwnSpecialPropertyNames(JSObject* object, JSGlobal
 
 bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
+    JSLexicalEnvironment* thisObject = uncheckedDowncast<JSLexicalEnvironment>(object);
 
     if (symbolTableGet(thisObject, propertyName, slot))
         return true;
@@ -114,7 +114,7 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* 
 
 bool JSLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(cell);
+    JSLexicalEnvironment* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     bool shouldThrowReadOnlyError = slot.isStrictMode() || thisObject->isLexicalScope();

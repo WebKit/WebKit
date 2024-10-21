@@ -216,7 +216,7 @@ void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameT
 
 ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
 {
-    auto* globalObject = scriptExecutionContext() ? JSC::jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject()) : nullptr;
+    auto* globalObject = scriptExecutionContext() ? uncheckedDowncast<JSDOMGlobalObject>(scriptExecutionContext()->globalObject()) : nullptr;
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -225,10 +225,10 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
     if (readable.hasException())
         return readable.releaseException();
 
-    auto writable = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource, weakThis = ThreadSafeWeakPtr { *this }](auto& context, auto value) -> ExceptionOr<void> {
+    auto writable = WritableStream::create(*uncheckedDowncast<JSDOMGlobalObject>(globalObject), SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource, weakThis = ThreadSafeWeakPtr { *this }](auto& context, auto value) -> ExceptionOr<void> {
         if (!context.globalObject())
             return Exception { ExceptionCode::InvalidStateError };
-        auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+        auto& globalObject = *uncheckedDowncast<JSDOMGlobalObject>(context.globalObject());
         auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
         auto frameConversionResult = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView, IDLInterface<RTCEncodedAudioFrame>, IDLInterface<RTCEncodedVideoFrame>>>(globalObject, value);

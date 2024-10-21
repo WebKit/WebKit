@@ -57,7 +57,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its first argument to be an object"_s);
-        memoryDescriptor = jsCast<JSObject*>(argument);
+        memoryDescriptor = uncheckedDowncast<JSObject>(argument);
     }
 
     Wasm::TableElementType type;

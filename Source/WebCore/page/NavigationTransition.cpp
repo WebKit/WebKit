@@ -53,7 +53,7 @@ void NavigationTransition::rejectPromise(Exception& exception)
 DOMPromise* NavigationTransition::finished()
 {
     if (!m_finishedDOMPromise) {
-        auto& promise = *jsCast<JSC::JSPromise*>(m_finished->promise());
+        auto& promise = *uncheckedDowncast<JSC::JSPromise>(m_finished->promise());
         m_finishedDOMPromise = DOMPromise::create(*m_finished->globalObject(), promise);
     }
 

@@ -5320,7 +5320,7 @@ static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, 
     auto mediaJSWrapper = toJS(&lexicalGlobalObject, &globalObject, media);
 
     // Retrieve the controller through the JS object graph
-    JSC::JSObject* mediaJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(mediaJSWrapper);
+    JSC::JSObject* mediaJSWrapperObject = dynamicDowncast<JSC::JSObject>(mediaJSWrapper);
     if (!mediaJSWrapperObject)
         return JSC::jsNull();
 
@@ -5328,7 +5328,7 @@ static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, 
     JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&lexicalGlobalObject, controlsHost);
     RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
-    JSC::JSObject* controlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(controlsHostJSWrapper);
+    JSC::JSObject* controlsHostJSWrapperObject = dynamicDowncast<JSC::JSObject>(controlsHostJSWrapper);
     if (!controlsHostJSWrapperObject)
         return JSC::jsNull();
 
@@ -5349,7 +5349,7 @@ bool HTMLMediaElement::setupAndCallJS(const JSSetupFunction& task)
     auto& world = ensureIsolatedWorld();
     Ref protectedFrame = *document().frame();
     auto& scriptController = protectedFrame->script();
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
+    auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(scriptController.globalObject(world));
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -5382,7 +5382,7 @@ void HTMLMediaElement::updateCaptionContainer()
         auto controllerValue = controllerJSValue(lexicalGlobalObject, globalObject, *this);
         RETURN_IF_EXCEPTION(scope, false);
 
-        auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
+        auto* controllerObject = dynamicDowncast<JSC::JSObject>(controllerValue);
         if (!controllerObject)
             return false;
 
@@ -5395,7 +5395,7 @@ void HTMLMediaElement::updateCaptionContainer()
         auto methodValue = controllerObject->get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, "updateCaptionContainer"_s));
         RETURN_IF_EXCEPTION(scope, false);
 
-        auto* methodObject = JSC::jsDynamicCast<JSC::JSObject*>(methodValue);
+        auto* methodObject = dynamicDowncast<JSC::JSObject>(methodValue);
         if (!methodObject)
             return false;
 
@@ -8650,7 +8650,7 @@ bool HTMLMediaElement::ensureMediaControls()
             auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
             RETURN_IF_EXCEPTION(scope, false);
 
-            auto* controllerObject = JSC::jsDynamicCast<JSC::JSObject*>(controllerValue);
+            auto* controllerObject = dynamicDowncast<JSC::JSObject>(controllerValue);
             if (!controllerObject)
                 return false;
 
@@ -8663,7 +8663,7 @@ bool HTMLMediaElement::ensureMediaControls()
 
             mediaJSWrapperObject->putDirect(vm, controlsHost, mediaControlsHostJSWrapper, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
 
-            auto* mediaControlsHostJSWrapperObject = JSC::jsDynamicCast<JSC::JSObject*>(mediaControlsHostJSWrapper);
+            auto* mediaControlsHostJSWrapperObject = dynamicDowncast<JSC::JSObject>(mediaControlsHostJSWrapper);
             if (!mediaControlsHostJSWrapperObject)
                 return false;
 

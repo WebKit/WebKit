@@ -343,7 +343,7 @@ JSC::GCClient::IsoSubspace* JSTestLegacyNoInterfaceObject::subspaceForImpl(JSC::
 
 void JSTestLegacyNoInterfaceObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestLegacyNoInterfaceObject*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestLegacyNoInterfaceObject>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -404,7 +404,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestLegacyNoInterfaceObject* JSTestLegacyNoInterfaceObject::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyNoInterfaceObject*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestLegacyNoInterfaceObject>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

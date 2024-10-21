@@ -158,7 +158,7 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
         lineColumn->column = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(globalObject)) : 0;
         *sourceURL = sourceURLValue.toWTFString(globalObject);
         result = true;
-    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionObject))
+    } else if (ErrorInstance* error = dynamicDowncast<ErrorInstance>(exceptionObject))
         result = getLineColumnAndSource(vm, error->stackTrace(), *lineColumn, *sourceURL);
 
     if (sourceURL->isEmpty())

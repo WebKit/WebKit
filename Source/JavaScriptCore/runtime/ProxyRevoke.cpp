@@ -57,12 +57,12 @@ void ProxyRevoke::finishCreation(VM& vm)
 
 JSC_DEFINE_HOST_FUNCTION(performProxyRevoke, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(callFrame->jsCallee());
+    ProxyRevoke* proxyRevoke = uncheckedDowncast<ProxyRevoke>(callFrame->jsCallee());
     JSValue proxyValue = proxyRevoke->proxy();
     if (proxyValue.isNull())
         return JSValue::encode(jsUndefined());
 
-    ProxyObject* proxy = jsCast<ProxyObject*>(proxyValue);
+    ProxyObject* proxy = uncheckedDowncast<ProxyObject>(proxyValue);
     VM& vm = globalObject->vm();
     proxy->revoke(vm);
     proxyRevoke->setProxyToNull(vm);
@@ -72,7 +72,7 @@ JSC_DEFINE_HOST_FUNCTION(performProxyRevoke, (JSGlobalObject* globalObject, Call
 template<typename Visitor>
 void ProxyRevoke::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    ProxyRevoke* thisObject = jsCast<ProxyRevoke*>(cell);
+    ProxyRevoke* thisObject = uncheckedDowncast<ProxyRevoke>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

@@ -113,7 +113,7 @@ void forEachInIterable(JSGlobalObject* globalObject, JSValue iterable, const Cal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (getIterationMode(vm, globalObject, iterable) == IterationMode::FastArray) {
-        auto* array = jsCast<JSArray*>(iterable);
+        auto* array = uncheckedDowncast<JSArray>(iterable);
         forEachInFastArray(globalObject, iterable, array, callback);
         RETURN_IF_EXCEPTION(scope, void());
         return;
@@ -132,7 +132,7 @@ void forEachInIterable(JSGlobalObject& globalObject, JSObject* iterable, JSValue
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (getIterationMode(vm, &globalObject, iterable, iteratorMethod) == IterationMode::FastArray) {
-        auto* array = jsCast<JSArray*>(iterable);
+        auto* array = uncheckedDowncast<JSArray>(iterable);
         for (unsigned index = 0; index < array->length(); ++index) {
             JSValue nextValue = array->getIndex(&globalObject, index);
             RETURN_IF_EXCEPTION(scope, void());

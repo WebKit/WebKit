@@ -37,7 +37,7 @@ const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable"_s, &Base::s_info
 template<typename Visitor>
 void GlobalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* executable = jsCast<GlobalExecutable*>(cell);
+    auto* executable = uncheckedDowncast<GlobalExecutable>(cell);
     ASSERT_GC_OBJECT_INHERITS(executable, info());
     Base::visitChildren(executable, visitor);
     visitor.append(executable->m_unlinkedCodeBlock);
@@ -59,7 +59,7 @@ DEFINE_VISIT_CHILDREN(GlobalExecutable);
 template<typename Visitor>
 void GlobalExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* executable = jsCast<GlobalExecutable*>(cell);
+    auto* executable = uncheckedDowncast<GlobalExecutable>(cell);
     if (CodeBlock* codeBlock = executable->codeBlock()) {
         if (!visitor.isMarked(codeBlock))
             runConstraint(NoLockingNecessary, visitor, codeBlock);

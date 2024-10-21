@@ -38,7 +38,7 @@ using namespace JSC;
 
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.slot()->asCell());
+    JSCSSRuleList* jsCSSRuleList = uncheckedDowncast<JSCSSRuleList>(handle.slot()->asCell());
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
 

@@ -47,7 +47,7 @@ ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlo
     if (!worker.scriptExecutionContext())
         return Exception { ExceptionCode::InvalidStateError, "Worker frame is detached"_s };
 
-    RefPtr context = JSC::jsCast<JSDOMGlobalObject*>(&state)->scriptExecutionContext();
+    RefPtr context = uncheckedDowncast<JSDOMGlobalObject>(&state)->scriptExecutionContext();
     if (!context)
         return Exception { ExceptionCode::InvalidStateError, "Invalid context"_s };
 

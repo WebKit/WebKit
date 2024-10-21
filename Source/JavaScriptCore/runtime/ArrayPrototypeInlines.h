@@ -80,7 +80,7 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
         constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
         RETURN_IF_EXCEPTION(scope, exceptionResult);
         if (constructor.isConstructor()) {
-            JSObject* constructorObject = jsCast<JSObject*>(constructor);
+            JSObject* constructorObject = uncheckedDowncast<JSObject>(constructor);
             bool isArrayConstructorFromAnotherRealm = globalObject != constructorObject->globalObject()
                 && constructorObject->inherits<ArrayConstructor>();
             if (isArrayConstructorFromAnotherRealm)
@@ -118,7 +118,7 @@ ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj
             return;
         }
         scope.release();
-        jsCast<JSArray*>(obj)->setLength(globalObject, static_cast<uint32_t>(value), throwException);
+        uncheckedDowncast<JSArray>(obj)->setLength(globalObject, static_cast<uint32_t>(value), throwException);
         return;
     }
     scope.release();

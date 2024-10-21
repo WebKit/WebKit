@@ -55,19 +55,19 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
         return toJS<IDLUnsignedLongLong>(number);
     }, [&] (const RefPtr<IDBCursor>& cursor) {
         return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
-            return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, cursor.get());
+            return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), throwScope, cursor.get());
         });
     }, [&] (const RefPtr<IDBDatabase>& database) {
         return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
-            return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, database.get());
+            return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), throwScope, database.get());
         });
     }, [&] (const IDBKeyData& keyData) {
         return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
-            return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyData);
+            return toJS<IDLIDBKeyData>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), keyData);
         });
     }, [&] (const Vector<IDBKeyData>& keyDatas) {
         return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
-            return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyDatas);
+            return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject), keyDatas);
         });
     }, [&] (const IDBGetResult& getResult) {
         return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {

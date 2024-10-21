@@ -411,7 +411,7 @@ static constexpr bool canBeAddedToObjectPool(SerializationTag tag)
 static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, SerializationTag tag)
 {
 #if ENABLE(WEB_AUDIO)
-    if (!jsDynamicCast<JSAudioWorkletGlobalScope*>(&globalObject))
+    if (!dynamicDowncast<JSAudioWorkletGlobalScope>(&globalObject))
         return true;
 
     // Only built-in JS types are exposed to audio worklets.
@@ -618,7 +618,7 @@ static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
 {
     if (!globalObject.inherits<JSDOMGlobalObject>())
         return JSDOMGlobalObject::defaultAgentClusterID();
-    return jsCast<JSDOMGlobalObject*>(&globalObject)->agentClusterID();
+    return uncheckedDowncast<JSDOMGlobalObject>(&globalObject)->agentClusterID();
 }
 #endif
 
@@ -1199,7 +1199,7 @@ private:
         if (input.isEmpty())
             return;
 
-        auto* globalObject = jsCast<JSDOMGlobalObject*>(m_lexicalGlobalObject);
+        auto* globalObject = uncheckedDowncast<JSDOMGlobalObject>(m_lexicalGlobalObject);
         for (size_t i = 0; i < input.size(); ++i) {
             if (auto* object = toJS(globalObject, globalObject, input[i].get()).getObject())
                 result.add(object, i);
@@ -1370,7 +1370,7 @@ private:
             return;
         }
 #endif
-        dumpHeapBigIntData(jsCast<JSBigInt*>(value));
+        dumpHeapBigIntData(uncheckedDowncast<JSBigInt>(value));
     }
 
 #if USE(BIGINT32)
@@ -1422,7 +1422,7 @@ private:
         auto& vm = m_lexicalGlobalObject->vm();
         auto* globalObject = m_lexicalGlobalObject;
         if (globalObject->inherits<JSDOMGlobalObject>())
-            return toJS(globalObject, jsCast<JSDOMGlobalObject*>(globalObject), &arrayBuffer);
+            return toJS(globalObject, uncheckedDowncast<JSDOMGlobalObject>(globalObject), &arrayBuffer);
 
         if (auto* buffer = arrayBuffer.m_wrapper.get())
             return buffer;
@@ -1467,7 +1467,7 @@ private:
             return true;
         }
 
-        if (UNLIKELY(jsCast<JSArrayBufferView*>(obj)->isOutOfBounds())) {
+        if (UNLIKELY(uncheckedDowncast<JSArrayBufferView>(obj)->isOutOfBounds())) {
             code = SerializationReturnCode::DataCloneError;
             return true;
         }
@@ -1510,7 +1510,7 @@ private:
         else
             write(DOMPointReadOnlyTag);
 
-        dumpDOMPoint(jsCast<JSDOMPointReadOnly*>(obj)->wrapped());
+        dumpDOMPoint(uncheckedDowncast<JSDOMPointReadOnly>(obj)->wrapped());
     }
 
     void dumpDOMRect(JSObject* obj)
@@ -1520,7 +1520,7 @@ private:
         else
             write(DOMRectReadOnlyTag);
 
-        auto& rect = jsCast<JSDOMRectReadOnly*>(obj)->wrapped();
+        auto& rect = uncheckedDowncast<JSDOMRectReadOnly>(obj)->wrapped();
         write(rect.x());
         write(rect.y());
         write(rect.width());
@@ -1534,7 +1534,7 @@ private:
         else
             write(DOMMatrixReadOnlyTag);
 
-        auto& matrix = jsCast<JSDOMMatrixReadOnly*>(obj)->wrapped();
+        auto& matrix = uncheckedDowncast<JSDOMMatrixReadOnly>(obj)->wrapped();
         bool is2D = matrix.is2D();
         write(is2D);
         if (is2D) {
@@ -1568,7 +1568,7 @@ private:
     {
         write(DOMQuadTag);
 
-        auto& quad = jsCast<JSDOMQuad*>(obj)->wrapped();
+        auto& quad = uncheckedDowncast<JSDOMQuad>(obj)->wrapped();
         dumpDOMPoint(quad.p1());
         dumpDOMPoint(quad.p2());
         dumpDOMPoint(quad.p3());
@@ -1584,7 +1584,7 @@ private:
             return;
         }
 
-        auto& imageBitmap = jsCast<JSImageBitmap*>(obj)->wrapped();
+        auto& imageBitmap = uncheckedDowncast<JSImageBitmap>(obj)->wrapped();
         if (!imageBitmap.originClean()) {
             code = SerializationReturnCode::DataCloneError;
             return;
@@ -1645,7 +1645,7 @@ private:
         } else if (m_context == SerializationContext::CloneAcrossWorlds) {
             write(InMemoryOffscreenCanvasTag);
             write(static_cast<uint32_t>(m_inMemoryOffscreenCanvases.size()));
-            m_inMemoryOffscreenCanvases.append(&jsCast<JSOffscreenCanvas*>(obj)->wrapped());
+            m_inMemoryOffscreenCanvases.append(&uncheckedDowncast<JSOffscreenCanvas>(obj)->wrapped());
             return;
         }
 
@@ -1669,7 +1669,7 @@ private:
 #if ENABLE(WEB_CODECS)
     void dumpWebCodecsEncodedVideoChunk(JSObject* obj)
     {
-        auto& videoChunk = jsCast<JSWebCodecsEncodedVideoChunk*>(obj)->wrapped();
+        auto& videoChunk = uncheckedDowncast<JSWebCodecsEncodedVideoChunk>(obj)->wrapped();
 
         auto index = m_serializedVideoChunks.find(&videoChunk.storage());
         if (index == notFound) {
@@ -1683,7 +1683,7 @@ private:
 
     bool dumpWebCodecsVideoFrame(JSObject* obj)
     {
-        Ref videoFrame = jsCast<JSWebCodecsVideoFrame*>(obj)->wrapped();
+        Ref videoFrame = uncheckedDowncast<JSWebCodecsVideoFrame>(obj)->wrapped();
         if (videoFrame->isDetached())
             return false;
 
@@ -1699,7 +1699,7 @@ private:
 
     void dumpWebCodecsEncodedAudioChunk(JSObject* obj)
     {
-        auto& audioChunk = jsCast<JSWebCodecsEncodedAudioChunk*>(obj)->wrapped();
+        auto& audioChunk = uncheckedDowncast<JSWebCodecsEncodedAudioChunk>(obj)->wrapped();
 
         auto index = m_serializedAudioChunks.find(&audioChunk.storage());
         if (index == notFound) {
@@ -1713,7 +1713,7 @@ private:
 
     bool dumpWebCodecsAudioData(JSObject* obj)
     {
-        Ref audioData = jsCast<JSWebCodecsAudioData*>(obj)->wrapped();
+        Ref audioData = uncheckedDowncast<JSWebCodecsAudioData>(obj)->wrapped();
         if (audioData->isDetached())
             return false;
 
@@ -1730,7 +1730,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     void dumpMediaStreamTrack(JSObject* obj)
     {
-        Ref track = jsCast<JSMediaStreamTrack*>(obj)->wrapped();
+        Ref track = uncheckedDowncast<JSMediaStreamTrack>(obj)->wrapped();
 
         auto index = m_serializedMediaStreamTracks.find(track.ptr());
         if (index == notFound) {
@@ -1798,12 +1798,12 @@ private:
 
         if (value.isObject()) {
             auto* obj = asObject(value);
-            if (auto* dateObject = jsDynamicCast<DateInstance*>(obj)) {
+            if (auto* dateObject = dynamicDowncast<DateInstance>(obj)) {
                 write(DateTag);
                 write(dateObject->internalNumber());
                 return true;
             }
-            if (auto* booleanObject = jsDynamicCast<BooleanObject*>(obj)) {
+            if (auto* booleanObject = dynamicDowncast<BooleanObject>(obj)) {
                 if (!addToObjectPoolIfNotDupe<TrueObjectTag, FalseObjectTag>(booleanObject))
                     return true;
                 auto tag = booleanObject->internalValue().toBoolean(m_lexicalGlobalObject) ? TrueObjectTag : FalseObjectTag;
@@ -1811,21 +1811,21 @@ private:
                 appendObjectPoolTag(tag);
                 return true;
             }
-            if (auto* stringObject = jsDynamicCast<StringObject*>(obj)) {
+            if (auto* stringObject = dynamicDowncast<StringObject>(obj)) {
                 if (!addToObjectPoolIfNotDupe<EmptyStringObjectTag, StringObjectTag>(stringObject))
                     return true;
                 auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
                 dumpStringObject(str);
                 return true;
             }
-            if (auto* numberObject = jsDynamicCast<NumberObject*>(obj)) {
+            if (auto* numberObject = dynamicDowncast<NumberObject>(obj)) {
                 if (!addToObjectPoolIfNotDupe<NumberObjectTag>(numberObject))
                     return true;
                 write(NumberObjectTag);
                 write(numberObject->internalValue().asNumber());
                 return true;
             }
-            if (auto* bigIntObject = jsDynamicCast<BigIntObject*>(obj)) {
+            if (auto* bigIntObject = dynamicDowncast<BigIntObject>(obj)) {
                 if (!addToObjectPoolIfNotDupe<BigIntObjectTag>(bigIntObject))
                     return true;
                 write(BigIntObjectTag);
@@ -1878,13 +1878,13 @@ private:
                 write(data->colorSpace());
                 return true;
             }
-            if (auto* regExp = jsDynamicCast<RegExpObject*>(obj)) {
+            if (auto* regExp = dynamicDowncast<RegExpObject>(obj)) {
                 write(RegExpTag);
                 write(regExp->regExp()->pattern());
                 write(String::fromLatin1(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
                 return true;
             }
-            if (auto* errorInstance = jsDynamicCast<ErrorInstance*>(obj)) {
+            if (auto* errorInstance = dynamicDowncast<ErrorInstance>(obj)) {
                 auto errorInformation = extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, *errorInstance);
                 if (!errorInformation)
                     return false;
@@ -1907,7 +1907,7 @@ private:
                 } else if (m_context == SerializationContext::CloneAcrossWorlds) {
                     write(InMemoryMessagePortTag);
                     write(static_cast<uint32_t>(m_inMemoryMessagePorts.size()));
-                    m_inMemoryMessagePorts.append(jsCast<JSMessagePort*>(obj)->wrapped());
+                    m_inMemoryMessagePorts.append(uncheckedDowncast<JSMessagePort>(obj)->wrapped());
                     return true;
                 }
                 // MessagePort object could not be found in transferred message ports
@@ -2049,7 +2049,7 @@ private:
             }
 #endif
 #if ENABLE(WEBASSEMBLY)
-            if (JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(obj)) {
+            if (JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(obj)) {
                 if (m_context != SerializationContext::WorkerPostMessage && m_context != SerializationContext::WindowPostMessage)
                     return false;
 
@@ -2060,7 +2060,7 @@ private:
                 write(index);
                 return true;
             }
-            if (JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(obj)) {
+            if (JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(obj)) {
                 if (!JSC::Options::useSharedArrayBuffer() || memory->memory().sharingMode() != JSC::MemorySharingMode::Shared) {
                     code = SerializationReturnCode::DataCloneError;
                     return true;
@@ -2827,7 +2827,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 ASSERT(inValue.isObject());
                 if (inputObjectStack.size() > maximumFilterRecursion)
                     return SerializationReturnCode::StackOverflowError;
-                JSMap* inMap = jsCast<JSMap*>(inValue);
+                JSMap* inMap = uncheckedDowncast<JSMap>(inValue);
                 if (!addToObjectPoolIfNotDupe<MapObjectTag>(inMap))
                     break;
                 write(MapObjectTag);
@@ -2846,7 +2846,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->nextKeyValue(m_lexicalGlobalObject, key, value)) {
                     mapIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicCast<JSMap*>(object));
+                    ASSERT(dynamicDowncast<JSMap>(object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                     if (UNLIKELY(scope.exception()))
@@ -2875,7 +2875,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 ASSERT(inValue.isObject());
                 if (inputObjectStack.size() > maximumFilterRecursion)
                     return SerializationReturnCode::StackOverflowError;
-                JSSet* inSet = jsCast<JSSet*>(inValue);
+                JSSet* inSet = uncheckedDowncast<JSSet>(inValue);
                 if (!addToObjectPoolIfNotDupe<SetObjectTag>(inSet))
                     break;
                 write(SetObjectTag);
@@ -2894,7 +2894,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!iterator->next(m_lexicalGlobalObject, key)) {
                     setIteratorStack.removeLast();
                     JSObject* object = inputObjectStack.last();
-                    ASSERT(jsDynamicCast<JSSet*>(object));
+                    ASSERT(dynamicDowncast<JSSet>(object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                     if (UNLIKELY(scope.exception()))
@@ -4277,7 +4277,7 @@ private:
     template<class T>
     JSValue getJSValue(T&& nativeObj)
     {
-        return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), std::forward<T>(nativeObj));
+        return toJS(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), std::forward<T>(nativeObj));
     }
 
     template<class T>
@@ -4296,7 +4296,7 @@ private:
         if (!read(w))
             return { };
 
-        return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(x, y, z, w));
+        return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), T::create(x, y, z, w));
     }
 
     template<class T>
@@ -4327,7 +4327,7 @@ private:
                 return { };
 
             TransformationMatrix matrix(m11, m12, m21, m22, m41, m42);
-            return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes));
+            return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), T::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes));
         } else {
             double m11;
             if (!read(m11))
@@ -4379,7 +4379,7 @@ private:
                 return { };
 
             TransformationMatrix matrix(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
-            return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::No));
+            return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), T::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::No));
         }
     }
 
@@ -4399,7 +4399,7 @@ private:
         if (!read(height))
             return { };
 
-        return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), T::create(x, y, width, height));
+        return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), T::create(x, y, width, height));
     }
 
     std::optional<DOMPointInit> readDOMPointInit()
@@ -4432,7 +4432,7 @@ private:
         if (!p4)
             return JSValue();
 
-        return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), DOMQuad::create(p1.value(), p2.value(), p3.value(), p4.value()));
+        return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), DOMQuad::create(p1.value(), p2.value(), p3.value(), p4.value()));
     }
 
     JSValue readTransferredImageBitmap()
@@ -4531,7 +4531,7 @@ private:
             return constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
 
         auto rtcCertificate = RTCCertificate::create(SecurityOrigin::createFromString(origin->string()), expires, WTFMove(fingerprints), certificate->takeString(), keyedMaterial->takeString());
-        return toJSNewlyCreated(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), WTFMove(rtcCertificate));
+        return toJSNewlyCreated(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), WTFMove(rtcCertificate));
     }
 
     JSValue readRTCDataChannel()
@@ -4885,7 +4885,7 @@ private:
                 return JSValue();
             if (!m_canCreateDOMObject)
                 return jsNull();
-            return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), file.get());
+            return toJS(m_lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(m_globalObject), file.get());
         }
         case FileListTag: {
             unsigned length = 0;

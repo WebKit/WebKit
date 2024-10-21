@@ -133,7 +133,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
-        if (auto* internalFunction = jsDynamicCast<InternalFunction*>(calleeAsValue)) {
+        if (auto* internalFunction = dynamicDowncast<InternalFunction>(calleeAsValue)) {
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             RELEASE_ASSERT(!!codePtr);
 
@@ -163,7 +163,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
         RELEASE_AND_RETURN(throwScope, handleHostCall(vm, owner, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
-    JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
+    JSFunction* callee = uncheckedDowncast<JSFunction>(calleeAsFunctionCell);
     JSScope* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
@@ -233,7 +233,7 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell)) {
-        if (jsDynamicCast<InternalFunction*>(calleeAsValue)) {
+        if (dynamicDowncast<InternalFunction>(calleeAsValue)) {
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
             return codePtr.taggedPtr();
@@ -241,14 +241,14 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
         RELEASE_AND_RETURN(throwScope, handleHostCall(vm, owner, calleeFrame, calleeAsValue, callLinkInfo));
     }
 
-    JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
+    JSFunction* function = uncheckedDowncast<JSFunction>(calleeAsFunctionCell);
     JSScope* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
 
     DeferTraps deferTraps(vm); // We can't jettison if we're going to call this CodeBlock.
 
     if (!executable->isHostFunction()) {
-        FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
+        FunctionExecutable* functionExecutable = uncheckedDowncast<FunctionExecutable>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             auto* globalObject = callLinkInfo->globalObjectForSlowPath(owner);

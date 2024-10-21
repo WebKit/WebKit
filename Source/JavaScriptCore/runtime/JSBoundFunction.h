@@ -114,7 +114,7 @@ public:
             return;
         }
         for (unsigned index = 0; index < length; ++index) {
-            if (func(jsCast<JSImmutableButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
+            if (func(uncheckedDowncast<JSImmutableButterfly>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
                 return;
         }
     }

@@ -87,7 +87,7 @@ JSC::JSValue CSSStyleSheetObservableArray::valueAt(JSC::JSGlobalObject* lexicalG
 {
     if (index >= m_sheets.size())
         return JSC::jsUndefined();
-    return toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject), m_sheets[index]);
+    return toJS(lexicalGlobalObject, uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject), m_sheets[index]);
 }
 
 ExceptionOr<void> CSSStyleSheetObservableArray::setSheets(Vector<Ref<CSSStyleSheet>>&& sheets)

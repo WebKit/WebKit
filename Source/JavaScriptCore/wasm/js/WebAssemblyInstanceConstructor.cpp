@@ -48,7 +48,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyInstance, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(callFrame->argument(0));
+    JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(callFrame->argument(0));
     if (!module)
         return JSValue::encode(throwException(globalObject, scope, createTypeError(globalObject, "first argument to WebAssembly.Instance must be a WebAssembly.Module"_s, defaultSourceAppender, runtimeTypeForValue(callFrame->argument(0)))));
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,34 +28,6 @@
 #include "JSCell.h"
 
 namespace JSC {
-
-template<typename To, typename From>
-inline To jsCast(From* from)
-{
-    static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
-#if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
-    if (from && !from->JSCell::inherits(std::remove_pointer<To>::type::info()))
-        reportZappedCellAndCrash(*from->JSCell::heap(), from);
-#else
-    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
-#endif
-    return static_cast<To>(from);
-}
-
-template<typename To>
-inline To jsCast(JSValue from)
-{
-    static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value, "JS casting expects that the types you are casting to is a subclass of JSCell");
-#if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
-    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell());
-    JSCell* cell = from.asCell();
-    if (!cell->JSCell::inherits(std::remove_pointer<To>::type::info()))
-        reportZappedCellAndCrash(*cell->JSCell::heap(), cell);
-#else
-    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
-#endif
-    return static_cast<To>(from.asCell());
-}
 
 // The first and last JSType are inclusive
 struct JSTypeRange {
@@ -251,29 +223,64 @@ bool inherits(From* from)
 
 } // namespace JSCastingHelpers
 
-template<typename To, typename From>
-To jsDynamicCast(From* from)
-{
-    using Dispatcher = JSCastingHelpers::InheritsTraits<typename std::remove_cv<typename std::remove_pointer<To>::type>::type>;
-    if (LIKELY(Dispatcher::template inherits<>(from)))
-        return static_cast<To>(from);
-    return nullptr;
 }
 
-template<typename To>
-To jsDynamicCast(JSValue from)
+namespace WTF {
+
+template<std::derived_from<JSC::JSCell> To, std::derived_from<JSC::JSCell> From>
+struct TypeCastTraits<To, From> {
+    static constexpr bool checkIsNecessary() { return true; }
+    static bool isOfType(const From& from)
+    {
+        return JSC::JSCastingHelpers::inherits<To>(&from);
+    }
+    static To& cast(From& from) { return static_cast<To&>(from); }
+};
+
+template<std::derived_from<JSC::JSCell> To>
+struct TypeCastTraits<To, JSC::JSValue> {
+    static constexpr bool checkIsNecessary() { return true; }
+    static bool isOfType(const JSC::JSValue& from)
+    {
+        if (UNLIKELY(!from.isCell()))
+            return false;
+        return JSC::JSCastingHelpers::inherits<To>(from.asCell());
+    }
+    static To& cast(JSC::JSValue& from) { return static_cast<To&>(*from.asCell()); }
+};
+
+template<std::derived_from<JSC::JSCell> To>
+inline To* dynamicDowncast(JSC::JSValue from)
 {
     if (UNLIKELY(!from.isCell()))
         return nullptr;
-    return jsDynamicCast<To>(from.asCell());
+    return dynamicDowncast<To>(*from.asCell());
 }
 
-template<typename To, typename From>
-To jsSecureCast(From from)
+template<std::derived_from<JSC::JSCell> To>
+inline To* uncheckedDowncast(JSC::JSValue from)
 {
-    auto* result = jsDynamicCast<To>(from);
+#if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell());
+    JSCell* cell = from.asCell();
+    if (!cell->JSCell::inherits(std::remove_pointer<To>::type::info()))
+        reportZappedCellAndCrash(*cell->JSCell::heap(), cell);
+#else
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
+#endif
+    return static_cast<To*>(from.asCell());
+}
+
+template<std::derived_from<JSC::JSCell> To>
+inline To* downcast(JSC::JSValue from)
+{
+    auto* result = dynamicDowncast<std::remove_pointer_t<To>>(from);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result);
     return result;
 }
 
 }
+
+using WTF::dynamicDowncast;
+using WTF::uncheckedDowncast;
+using WTF::downcast;

@@ -266,4 +266,10 @@ bool DeferredWorkTimer::hasImminentlyScheduledWork() const
     return false;
 }
 
+JSObject* DeferredWorkTimer::TicketData::target()
+{
+    ASSERT(!isCancelled());
+    return uncheckedDowncast<JSObject>(m_dependencies.last().get());
+}
+
 } // namespace JSC

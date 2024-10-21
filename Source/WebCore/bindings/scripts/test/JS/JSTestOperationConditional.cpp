@@ -168,7 +168,7 @@ JSObject* JSTestOperationConditional::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSTestOperationConditional::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOperationConditionalDOMConstructor, DOMConstructorID::TestOperationConditional>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOperationConditionalDOMConstructor, DOMConstructorID::TestOperationConditional>(vm, *uncheckedDowncast<const JSDOMGlobalObject>(globalObject));
 }
 
 void JSTestOperationConditional::destroy(JSC::JSCell* cell)
@@ -181,7 +181,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOperationConditionalConstructor, (JSGlobalObject*
 {
     auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestOperationConditionalPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = dynamicDowncast<JSTestOperationConditionalPrototype>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestOperationConditional::getConstructor(vm, prototype->globalObject()));
@@ -235,7 +235,7 @@ JSC::GCClient::IsoSubspace* JSTestOperationConditional::subspaceForImpl(JSC::VM&
 
 void JSTestOperationConditional::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestOperationConditional*>(cell);
+    auto* thisObject = uncheckedDowncast<JSTestOperationConditional>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, thisObject->scriptExecutionContext()->url().string()));
@@ -296,7 +296,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestOperationConditional* JSTestOperationConditional::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestOperationConditional*>(value))
+    if (auto* wrapper = dynamicDowncast<JSTestOperationConditional>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -70,7 +70,7 @@ void StructureChain::finishCreation(VM& vm, JSObject* head)
 template<typename Visitor>
 void StructureChain::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    StructureChain* thisObject = jsCast<StructureChain*>(cell);
+    StructureChain* thisObject = uncheckedDowncast<StructureChain>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.markAuxiliary(thisObject->m_vector.get());

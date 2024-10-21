@@ -38,7 +38,7 @@ const ClassInfo JSGlobalProxy::s_info = { "JSGlobalProxy"_s, &Base::s_info, null
 template<typename Visitor>
 void JSGlobalProxy::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(cell);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_target);
@@ -58,73 +58,73 @@ void JSGlobalProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
 
 bool JSGlobalProxy::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->getOwnPropertySlot(thisObject->target(), globalObject, propertyName, slot);
 }
 
 bool JSGlobalProxy::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->getOwnPropertySlotByIndex(thisObject->target(), globalObject, propertyName, slot);
 }
 
 bool JSGlobalProxy::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(cell);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(cell);
     return thisObject->target()->methodTable()->put(thisObject->target(), globalObject, propertyName, value, slot);
 }
 
 bool JSGlobalProxy::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(cell);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(cell);
     return thisObject->target()->methodTable()->putByIndex(thisObject->target(), globalObject, propertyName, value, shouldThrow);
 }
 
 bool JSGlobalProxy::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->defineOwnProperty(thisObject->target(), globalObject, propertyName, descriptor, shouldThrow);
 }
 
 bool JSGlobalProxy::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(cell);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(cell);
     return thisObject->target()->methodTable()->deleteProperty(thisObject->target(), globalObject, propertyName, slot);
 }
 
 bool JSGlobalProxy::isExtensible(JSObject* object, JSGlobalObject* globalObject)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->isExtensible(thisObject->target(), globalObject);
 }
 
 bool JSGlobalProxy::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->preventExtensions(thisObject->target(), globalObject);
 }
 
 bool JSGlobalProxy::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(cell);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(cell);
     return thisObject->target()->methodTable()->deletePropertyByIndex(thisObject->target(), globalObject, propertyName);
 }
 
 void JSGlobalProxy::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     thisObject->target()->methodTable()->getOwnPropertyNames(thisObject->target(), globalObject, propertyNames, mode);
 }
 
 bool JSGlobalProxy::setPrototype(JSObject* object, JSGlobalObject* globalObject, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->setPrototype(thisObject->target(), globalObject, prototype, shouldThrowIfCantSet);
 }
 
 JSValue JSGlobalProxy::getPrototype(JSObject* object, JSGlobalObject* globalObject)
 {
-    JSGlobalProxy* thisObject = jsCast<JSGlobalProxy*>(object);
+    JSGlobalProxy* thisObject = uncheckedDowncast<JSGlobalProxy>(object);
     return thisObject->target()->methodTable()->getPrototype(thisObject->target(), globalObject);
 }
 

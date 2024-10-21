@@ -44,7 +44,7 @@ const ClassInfo JSScope::s_info = { "Scope"_s, &Base::s_info, nullptr, nullptr, 
 template<typename Visitor>
 void JSScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSScope* thisObject = jsCast<JSScope*>(cell);
+    JSScope* thisObject = uncheckedDowncast<JSScope>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_next);
@@ -59,7 +59,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
     DeferTerminationForAWhile deferScope(vm);
 
     if (scope->isJSLexicalEnvironment()) {
-        JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(scope);
+        JSLexicalEnvironment* lexicalEnvironment = uncheckedDowncast<JSLexicalEnvironment>(scope);
 
         SymbolTable* symbolTable = lexicalEnvironment->symbolTable();
         {
@@ -80,7 +80,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
         }
 
         if (scope->type() == ModuleEnvironmentType) {
-            JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
+            JSModuleEnvironment* moduleEnvironment = uncheckedDowncast<JSModuleEnvironment>(scope);
             AbstractModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
             AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(globalObject, ident);
@@ -105,7 +105,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
     }
 
     if (scope->isGlobalLexicalEnvironment()) {
-        JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(scope);
+        JSGlobalLexicalEnvironment* globalLexicalEnvironment = uncheckedDowncast<JSGlobalLexicalEnvironment>(scope);
         SymbolTable* symbolTable = globalLexicalEnvironment->symbolTable();
         ConcurrentJSLocker locker(symbolTable->m_lock);
         auto iter = symbolTable->find(locker, ident.impl());
@@ -137,7 +137,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
     }
 
     if (scope->isGlobalObject()) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(scope);
+        JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(scope);
         {
             SymbolTable* symbolTable = globalObject->symbolTable();
             ConcurrentJSLocker locker(symbolTable->m_lock);
@@ -200,7 +200,7 @@ JSObject* JSScope::objectAtScope(JSScope* scope)
 {
     JSObject* object = scope;
     if (object->type() == WithScopeType)
-        return jsCast<JSWithScope*>(object)->object();
+        return uncheckedDowncast<JSWithScope>(object)->object();
 
     return object;
 }
@@ -217,7 +217,7 @@ static inline bool isUnscopable(JSGlobalObject* globalObject, JSScope* scope, JS
     RETURN_IF_EXCEPTION(throwScope, false);
     if (!unscopables.isObject())
         return false;
-    JSValue blocked = jsCast<JSObject*>(unscopables)->get(globalObject, ident);
+    JSValue blocked = uncheckedDowncast<JSObject>(unscopables)->get(globalObject, ident);
     RETURN_IF_EXCEPTION(throwScope, false);
 
     return blocked.toBoolean(globalObject);
@@ -283,7 +283,7 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(throwScope, { });
 
     bool result = false;
-    if (JSScope* scope = jsDynamicCast<JSScope*>(object)) {
+    if (JSScope* scope = dynamicDowncast<JSScope>(object)) {
         if (SymbolTable* scopeSymbolTable = scope->symbolTable()) {
             result = scope->isGlobalObject() || scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
         }
@@ -328,12 +328,12 @@ void JSScope::collectClosureVariablesUnderTDZ(JSScope* scope, TDZEnvironment& re
             continue;
 
         if (scope->isModuleScope()) {
-            AbstractModuleRecord* moduleRecord = jsCast<JSModuleEnvironment*>(scope)->moduleRecord();
+            AbstractModuleRecord* moduleRecord = uncheckedDowncast<JSModuleEnvironment>(scope)->moduleRecord();
             for (const auto& pair : moduleRecord->importEntries())
                 result.add(pair.key);
         }
 
-        SymbolTable* symbolTable = jsCast<JSSymbolTableObject*>(scope)->symbolTable();
+        SymbolTable* symbolTable = uncheckedDowncast<JSSymbolTableObject>(scope)->symbolTable();
         ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScope || symbolTable->scopeType() == SymbolTable::ScopeType::CatchScopeWithSimpleParameter);
         ConcurrentJSLocker locker(symbolTable->m_lock);
         for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
@@ -351,14 +351,14 @@ bool JSScope::isVarScope()
 {
     if (type() != LexicalEnvironmentType)
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::VarScope;
+    return uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::VarScope;
 }
 
 bool JSScope::isLexicalScope()
 {
     if (!isJSLexicalEnvironment())
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::LexicalScope;
+    return uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::LexicalScope;
 }
 
 bool JSScope::isModuleScope()
@@ -371,7 +371,7 @@ bool JSScope::isCatchScope()
     if (type() != LexicalEnvironmentType)
         return false;
 
-    auto scopeType = jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType();
+    auto scopeType = uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->scopeType();
     return scopeType == SymbolTable::ScopeType::CatchScope
         || scopeType == SymbolTable::ScopeType::CatchScopeWithSimpleParameter;
 }
@@ -380,21 +380,21 @@ bool JSScope::isCatchScopeWithSimpleParameter()
 {
     if (type() != LexicalEnvironmentType)
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScopeWithSimpleParameter;
+    return uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScopeWithSimpleParameter;
 }
 
 bool JSScope::isFunctionNameScopeObject()
 {
     if (type() != LexicalEnvironmentType)
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::FunctionNameScope;
+    return uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->scopeType() == SymbolTable::ScopeType::FunctionNameScope;
 }
 
 bool JSScope::isNestedLexicalScope()
 {
     if (!isJSLexicalEnvironment())
         return false;
-    return jsCast<JSLexicalEnvironment*>(this)->symbolTable()->isNestedLexicalScope();
+    return uncheckedDowncast<JSLexicalEnvironment>(this)->symbolTable()->isNestedLexicalScope();
 }
 
 JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlock)
@@ -418,7 +418,7 @@ JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlo
 
 SymbolTable* JSScope::symbolTable()
 {
-    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(this))
+    if (JSSymbolTableObject* symbolTableObject = dynamicDowncast<JSSymbolTableObject>(this))
         return symbolTableObject->symbolTable();
 
     return nullptr;

@@ -359,13 +359,13 @@ public:
             if (arrayType->elementType().type.unpacked().isV128()) {
                 result = createNewArray(typeIndex, args.size(), { vectorAllZeros() });
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
-                JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
+                JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getVector());
             } else {
                 result = createNewArray(typeIndex, args.size(), { });
                 WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new array"_s);
-                JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(JSValue::decode(result.getValue()));
+                JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(JSValue::decode(result.getValue()));
                 for (size_t i = 0; i < args.size(); i++)
                     arrayObject->set(i, args[i].getValue());
             }
@@ -413,7 +413,7 @@ public:
         if (m_mode == Mode::Evaluate) {
             result = createNewStruct(typeIndex);
             WASM_PARSER_FAIL_IF(result.isInvalid(), "Failed to allocate new struct"_s);
-            JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(result.getValue()));
+            JSWebAssemblyStruct* structObject = uncheckedDowncast<JSWebAssemblyStruct>(JSValue::decode(result.getValue()));
             for (size_t i = 0; i < args.size(); i++) {
                 if (args[i].type() == ConstExprValue::Vector)
                     structObject->set(i, args[i].getVector());

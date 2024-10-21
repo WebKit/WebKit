@@ -323,7 +323,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
             }
         }
         
-        CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(cell);
+        CodeBlock* codeBlock = dynamicDowncast<CodeBlock>(cell);
         if (UNLIKELY(codeBlock)) {
             bool success = true;
             codeBlock->forEachValueProfile([&](auto& valueProfile, bool) {
