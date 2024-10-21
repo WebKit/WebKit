@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -55,6 +53,8 @@ static bool fullscreenStateChanged;
 }
 
 @end
+
+#if PLATFORM(MAC)
 
 TEST(Fullscreen, AudioLifecycle)
 {
@@ -146,12 +146,11 @@ TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)
     runTest(configuration.get());
 }
 
-// rdar://136783989
-#if PLATFORM(MAC) && defined(NDEBUG)
-TEST(Fullscreen, DISABLED_VideoPausesAfterExitingFullscreen)
-#else
+#endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
+
 TEST(Fullscreen, VideoPausesAfterExitingFullscreen)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
@@ -183,4 +182,4 @@ TEST(Fullscreen, VideoPausesAfterExitingFullscreen)
     ASSERT_TRUE(fullscreenStateChanged);
 }
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_USES_ELEMENT_FULLSCREEN)
