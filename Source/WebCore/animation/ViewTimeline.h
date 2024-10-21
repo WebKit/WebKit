@@ -27,7 +27,6 @@
 
 #include "CSSNumericValue.h"
 #include "ScrollTimeline.h"
-#include "TimelineRange.h"
 #include "ViewTimelineOptions.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -40,6 +39,8 @@ class BuilderState;
 
 class CSSViewValue;
 class Element;
+
+struct TimelineRange;
 
 struct ViewTimelineInsets {
     std::optional<Length> start;
@@ -67,9 +68,10 @@ public:
 
     RenderBox* sourceScrollerRenderer() const;
     Element* source() const override;
+    TimelineRange defaultRange() const final;
 
 private:
-    ScrollTimeline::Data computeTimelineData(const TimelineRange& = { }) const override;
+    ScrollTimeline::Data computeTimelineData(const TimelineRange&) const final;
 
     explicit ViewTimeline(ViewTimelineOptions&& = { });
     explicit ViewTimeline(const AtomString&, ScrollAxis, ViewTimelineInsets&&);

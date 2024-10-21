@@ -26,8 +26,15 @@
 #pragma once
 
 #include "Length.h"
+#include "WebAnimationTypes.h"
 
 namespace WebCore {
+
+namespace Style {
+class BuilderState;
+}
+
+class Element;
 
 struct SingleTimelineRange {
     enum class Name { Normal, Omitted, Cover, Contain, Entry, Exit, EntryCrossing, ExitCrossing };
@@ -40,16 +47,26 @@ struct SingleTimelineRange {
     enum class Type : bool { Start, End };
     static bool isDefault(const Length&, Type);
     static bool isDefault(const CSSPrimitiveValue&, Type);
+    static Length defaultValue(Type);
+    static Length lengthForCSSValue(RefPtr<const CSSPrimitiveValue>, RefPtr<Element>);
 
     static bool isOffsetValue(const CSSPrimitiveValue&);
 
     static Name timelineName(CSSValueID);
     static CSSValueID valueID(Name);
+
+    static SingleTimelineRange range(const CSSValue&, Type, const Style::BuilderState* = nullptr, RefPtr<Element> = nullptr);
+    static SingleTimelineRange parse(TimelineRangeValue&&, RefPtr<Element>, Type);
+    TimelineRangeValue serialize() const;
 };
 
 struct TimelineRange {
     SingleTimelineRange start;
     SingleTimelineRange end;
+
+    static TimelineRange defaultForScrollTimeline();
+    static TimelineRange defaultForViewTimeline();
+    bool isDefault() const { return start.name == SingleTimelineRange::Name::Normal && end.name == SingleTimelineRange::Name::Normal; }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const SingleTimelineRange&);

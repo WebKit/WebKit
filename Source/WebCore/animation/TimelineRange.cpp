@@ -25,12 +25,17 @@
 
 #include "config.h"
 #include "TimelineRange.h"
+#include "CSSNumericFactory.h"
+#include "CSSPropertyParserConsumer+Timeline.h"
+#include "CSSValuePair.h"
+#include "StyleBuilderConverter.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 
 static bool percentIsDefault(float percent, SingleTimelineRange::Type type)
 {
-    return percent == (type == SingleTimelineRange::Type::Start ? 0.f : 100.f);
+    return percent == SingleTimelineRange::defaultValue(type).value();
 }
 
 bool SingleTimelineRange::isDefault(const Length& offset, Type type)
@@ -43,9 +48,126 @@ bool SingleTimelineRange::isDefault(const CSSPrimitiveValue& value, Type type)
     return value.valueID() == CSSValueNormal || (value.isPercentage() && !value.isCalculated() && percentIsDefault(value.resolveAsPercentageNoConversionDataRequired(), type));
 }
 
+Length SingleTimelineRange::defaultValue(Type type)
+{
+    return type == Type::Start ? Length(0, LengthType::Percent) : Length(100, LengthType::Percent);
+}
+
 bool SingleTimelineRange::isOffsetValue(const CSSPrimitiveValue& value)
 {
     return value.isLength() || value.isPercentage() || value.isCalculatedPercentageWithLength();
+}
+
+TimelineRangeValue SingleTimelineRange::serialize() const
+{
+    return TimelineRangeOffset { CSSPrimitiveValue::create(valueID(name))->stringValue(), offset.isPercentOrCalculated() ? CSSNumericFactory::percent(offset.percent()) : CSSNumericFactory::px(offset.value()) };
+}
+
+static const std::optional<CSSToLengthConversionData> cssToLengthConversionData(RefPtr<Element> element)
+{
+    CheckedPtr elementRenderer = element->renderer();
+    if (!elementRenderer)
+        return std::nullopt;
+    CheckedPtr elementParentRenderer = elementRenderer->parent();
+    Ref document = element->document();
+    CheckedPtr documentElement = document->documentElement();
+    if (!documentElement)
+        return std::nullopt;
+
+    // FIXME: Investigate container query units
+    return CSSToLengthConversionData {
+        elementRenderer->style(),
+        documentElement->renderer() ? &documentElement->renderer()->style() : nullptr,
+        elementParentRenderer ? &elementParentRenderer->style() : nullptr,
+        document->renderView()
+    };
+}
+
+Length SingleTimelineRange::lengthForCSSValue(RefPtr<const CSSPrimitiveValue> value, RefPtr<Element> element)
+{
+    if (!value || value->isCalculated() || !element)
+        return { };
+    if (value->valueID() == CSSValueAuto)
+        return { };
+
+    auto conversionData = cssToLengthConversionData(element);
+    if (!conversionData) {
+        if (value->isPercentage())
+            return Length(value->resolveAsPercentageNoConversionDataRequired(), LengthType::Percent);
+        if (value->isPx())
+            return Length(value->resolveAsLengthNoConversionDataRequired(), LengthType::Fixed);
+        return { };
+    }
+
+    if (value->isLength())
+        return value->resolveAsLength<WebCore::Length>(*conversionData);
+
+    if (value->isPercentage())
+        return Length(value->resolveAsPercentage(*conversionData), LengthType::Percent);
+
+    if (value->isCalculatedPercentageWithLength() && value->cssCalcValue())
+        return Length(value->cssCalcValue()->createCalculationValue(*conversionData, CSSCalcSymbolTable { }));
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type, const Style::BuilderState* state, RefPtr<Element> element)
+{
+    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        // <length-percentage>
+        if (SingleTimelineRange::isOffsetValue(*primitiveValue))
+            return { SingleTimelineRange::Name::Omitted, state ? Style::BuilderConverter::convertLength(*state, *primitiveValue) : lengthForCSSValue(primitiveValue, element) };
+        // <timeline-range-name> or Normal
+        return { SingleTimelineRange::timelineName(primitiveValue->valueID()), defaultValue(type) };
+    }
+    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return { };
+
+    // <timeline-range-name> <length-percentage>
+    Ref primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
+    ASSERT(SingleTimelineRange::isOffsetValue(primitiveValue));
+
+    return { SingleTimelineRange::timelineName(pair->first().valueID()), state ? Style::BuilderConverter::convertLength(*state, primitiveValue) : lengthForCSSValue(RefPtr { primitiveValue.ptr() }, element) };
+}
+
+SingleTimelineRange SingleTimelineRange::parse(TimelineRangeValue&& value, RefPtr<Element> element, Type type)
+{
+    if (!element)
+        return { };
+    RefPtr document = element->protectedDocument();
+    if (!document)
+        return { };
+    const auto& parserContext = document->cssParserContext();
+    return WTF::switchOn(value,
+    [&](String& rangeString) {
+        CSSTokenizer tokenizer(rangeString);
+        auto tokenRange = tokenizer.tokenRange();
+        tokenRange.consumeWhitespace();
+        if (auto consumedRange = type == SingleTimelineRange::Type::Start ? CSSPropertyParserHelpers::consumeAnimationRangeStart(tokenRange, parserContext) : CSSPropertyParserHelpers::consumeAnimationRangeEnd(tokenRange, parserContext))
+            return range(*consumedRange, type, nullptr, element);
+        return SingleTimelineRange { };
+    },
+    [&](TimelineRangeOffset& rangeOffset) {
+        CSSTokenizer tokenizer(rangeOffset.rangeName);
+        auto tokenRange = tokenizer.tokenRange();
+        tokenRange.consumeWhitespace();
+        if (auto consumedRangeName = type == SingleTimelineRange::Type::Start ? CSSPropertyParserHelpers::consumeAnimationRangeStart(tokenRange, parserContext) : CSSPropertyParserHelpers::consumeAnimationRangeEnd(tokenRange, parserContext)) {
+            if (rangeOffset.offset)
+                return range(CSSValuePair::createNoncoalescing(*consumedRangeName, *rangeOffset.offset->toCSSValue()), type, nullptr, element);
+            return range(*consumedRangeName, type, nullptr, element);
+        }
+        if (RefPtr offset = rangeOffset.offset)
+            return range(*offset->toCSSValue(), type, nullptr, element);
+        return SingleTimelineRange { };
+    },
+    [&](RefPtr<CSSKeywordValue> rangeKeyword) {
+        return range(*rangeKeyword->toCSSValue(), type, nullptr, element);
+    },
+    [&](RefPtr<CSSNumericValue> rangeValue) {
+        return range(*rangeValue->toCSSValue(), type, nullptr, element);
+    });
 }
 
 SingleTimelineRange::Name SingleTimelineRange::timelineName(CSSValueID valueID)
@@ -109,6 +231,22 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const SingleTimelineRange& rang
     }
     ts << range.offset;
     return ts;
+}
+
+TimelineRange TimelineRange::defaultForScrollTimeline()
+{
+    return {
+        { SingleTimelineRange::Name::Omitted, SingleTimelineRange::defaultValue(SingleTimelineRange::Type::Start) },
+        { SingleTimelineRange::Name::Omitted, SingleTimelineRange::defaultValue(SingleTimelineRange::Type::End) }
+    };
+}
+
+TimelineRange TimelineRange::defaultForViewTimeline()
+{
+    return {
+        { SingleTimelineRange::Name::Cover, SingleTimelineRange::defaultValue(SingleTimelineRange::Type::Start) },
+        { SingleTimelineRange::Name::Cover, SingleTimelineRange::defaultValue(SingleTimelineRange::Type::End) }
+    };
 }
 
 } // namespace WebCore

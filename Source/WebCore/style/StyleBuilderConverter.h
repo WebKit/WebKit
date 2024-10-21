@@ -82,6 +82,7 @@
 #include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TextSpacing.h"
+#include "TimelineRange.h"
 #include "TouchAction.h"
 #include "TransformOperationsBuilder.h"
 #include "ViewTimeline.h"
@@ -243,7 +244,6 @@ public:
 
     static TimelineScope convertTimelineScope(const BuilderState&, const CSSValue&);
 
-    static SingleTimelineRange convertAnimationRange(const BuilderState&, const CSSValue&, SingleTimelineRange::Type);
     static SingleTimelineRange convertAnimationRangeStart(const BuilderState&, const CSSValue&);
     static SingleTimelineRange convertAnimationRangeEnd(const BuilderState&, const CSSValue&);
 
@@ -2215,35 +2215,14 @@ inline TimelineScope BuilderConverter::convertTimelineScope(const BuilderState&,
     }) };
 }
 
-inline SingleTimelineRange BuilderConverter::convertAnimationRange(const BuilderState& state, const CSSValue& value, SingleTimelineRange::Type type)
-{
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (SingleTimelineRange::isOffsetValue(*primitiveValue)) {
-            // <length-percentage>
-            return { SingleTimelineRange::Name::Omitted, convertLength(state, *primitiveValue) };
-        }
-        // <timeline-range-name> or Normal
-        return { SingleTimelineRange::timelineName(primitiveValue->valueID()), (type == SingleTimelineRange::Type::Start ? WebCore::Length(0, LengthType::Percent) : WebCore::Length(100, LengthType::Percent)) };
-    }
-    RefPtr pair = dynamicDowncast<CSSValuePair>(value);
-    if (!pair)
-        return { };
-
-    // <timeline-range-name> <length-percentage>
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(pair->second());
-    ASSERT(SingleTimelineRange::isOffsetValue(primitiveValue));
-
-    return { SingleTimelineRange::timelineName(pair->first().valueID()), convertLength(state, primitiveValue) };
-}
-
 inline SingleTimelineRange BuilderConverter::convertAnimationRangeStart(const BuilderState& state, const CSSValue& value)
 {
-    return convertAnimationRange(state, value, SingleTimelineRange::Type::Start);
+    return SingleTimelineRange::range(value, SingleTimelineRange::Type::Start, &state);
 }
 
 inline SingleTimelineRange BuilderConverter::convertAnimationRangeEnd(const BuilderState& state, const CSSValue& value)
 {
-    return convertAnimationRange(state, value, SingleTimelineRange::Type::End);
+    return SingleTimelineRange::range(value, SingleTimelineRange::Type::End, &state);
 }
 
 } // namespace Style
