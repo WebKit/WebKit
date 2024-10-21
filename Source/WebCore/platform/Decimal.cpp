@@ -547,8 +547,7 @@ Decimal Decimal::fromDouble(double doubleValue)
 {
     if (std::isfinite(doubleValue)) {
         NumberToStringBuffer buffer;
-        size_t length = numberToStringAndSize(doubleValue, buffer);
-        return fromString(StringView { std::span { buffer.data(), length } });
+        return fromString(StringView { numberToStringAndSize(doubleValue, buffer) });
     }
 
     if (std::isinf(doubleValue))

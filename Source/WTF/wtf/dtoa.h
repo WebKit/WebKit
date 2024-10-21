@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -36,18 +36,20 @@ using NumberToStringBuffer = std::array<char, 124>;
 // <-> + <320 digits> + decimal point + <6 digits> + null char = 329
 using NumberToCSSStringBuffer = std::array<char, 329>;
 
-WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
-WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer&);
+using NumberToStringSpan = std::span<const char>;
 
-WTF_EXPORT_PRIVATE const char* numberToStringWithTrailingPoint(double, NumberToStringBuffer&);
-WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
-WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer&);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer& LIFETIME_BOUND, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer& LIFETIME_BOUND);
 
-WTF_EXPORT_PRIVATE size_t numberToStringAndSize(float, NumberToStringBuffer&);
-WTF_EXPORT_PRIVATE size_t numberToStringAndSize(double, NumberToStringBuffer&);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringWithTrailingPoint(double, NumberToStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer& LIFETIME_BOUND, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer& LIFETIME_BOUND);
+
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(float, NumberToStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(double, NumberToStringBuffer& LIFETIME_BOUND);
 
 // Fixed width with up to 6 decimal places, trailing zeros truncated.
-WTF_EXPORT_PRIVATE const char* numberToCSSString(double, NumberToCSSStringBuffer&);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToCSSString(double, NumberToCSSStringBuffer& LIFETIME_BOUND);
 
 inline double parseDouble(StringView string, size_t& parsedLength)
 {

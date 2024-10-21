@@ -67,46 +67,58 @@ public:
     {
         builder1.Reset();
         WTF::dragonbox::ToShortest(x, &builder1);
-        return builder1.Finalize();
+        auto span = builder1.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
     char* dragonBoxToString(float x)
     {
         builder1.Reset();
         WTF::dragonbox::ToShortest(x, &builder1);
-        return builder1.Finalize();
+        auto span = builder1.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
     char* dragonBoxToExponential(double x)
     {
         builder1.Reset();
         WTF::dragonbox::ToExponential(x, &builder1);
-        return builder1.Finalize();
+        auto span = builder1.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
     char* doubleConversionToString(double x)
     {
         builder2.Reset();
         converter.ToShortest(x, &builder2);
-        return builder2.Finalize();
+        auto span = builder2.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
     char* doubleConversionToString(float x)
     {
         builder2.Reset();
         converter.ToShortestSingle(x, &builder2);
-        return builder2.Finalize();
+        auto span = builder2.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
     char* doubleConversionToExponential(double x, int requested_decimal_digits = -1)
     {
         builder2.Reset();
         converter.ToExponential(x, requested_decimal_digits, &builder2);
-        return builder2.Finalize();
+        auto span = builder2.Finalize();
+        EXPECT_EQ(span.size(), strlen(span.data()));
+        return span.data();
     }
 
-    NumberToStringBuffer buffer1;
-    NumberToStringBuffer buffer2;
+    NumberToStringBuffer buffer1 { 0 };
+    NumberToStringBuffer buffer2 { 0 };
     DoubleConversionStringBuilder builder1;
     DoubleConversionStringBuilder builder2;
     const DoubleToStringConverter& converter;

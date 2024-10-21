@@ -1,4 +1,5 @@
 // Copyright 2010 the V8 project authors. All rights reserved.
+// Copyright (C) 2011-2024 Apple Inc. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -90,9 +91,9 @@ void DoubleToStringConverter::CreateExponentialRepresentation(
     int length,
     int exponent,
     StringBuilder* result_builder) const {
-  ASSERT(length != 0);
+  ASSERT_WITH_SECURITY_IMPLICATION(length != 0);
   result_builder->AddCharacter(decimal_digits[0]);
-  if (length != 1) {
+  if (length > 1) {
     result_builder->AddCharacter('.');
     result_builder->AddSubstring(&decimal_digits[1], length-1);
   }
@@ -109,12 +110,12 @@ void DoubleToStringConverter::CreateExponentialRepresentation(
     result_builder->AddCharacter('0');
     return;
   }
-  ASSERT(exponent < 1e4);
-  const int kMaxExponentLength = 5;
+  ASSERT_WITH_SECURITY_IMPLICATION(exponent < 1e4);
+  constexpr int kMaxExponentLength = 5;
   char buffer[kMaxExponentLength + 1];
   buffer[kMaxExponentLength] = '\0';
-  int first_char_pos = kMaxExponentLength;
-  while (exponent > 0) {
+  size_t first_char_pos = kMaxExponentLength;
+  while (exponent > 0 && first_char_pos > 0) {
     buffer[--first_char_pos] = '0' + (exponent % 10);
     exponent /= 10;
   }
@@ -136,7 +137,7 @@ void DoubleToStringConverter::CreateDecimalRepresentation(
     if (digits_after_point > 0) {
       result_builder->AddCharacter('.');
       result_builder->AddPadding('0', -decimal_point);
-      ASSERT(length <= digits_after_point - (-decimal_point));
+      ASSERT_WITH_SECURITY_IMPLICATION(length <= digits_after_point - (-decimal_point));
       result_builder->AddSubstring(decimal_digits, length);
       int remaining_digits = digits_after_point - (-decimal_point) - length;
       result_builder->AddPadding('0', remaining_digits);
@@ -151,10 +152,10 @@ void DoubleToStringConverter::CreateDecimalRepresentation(
     }
   } else {
     // "decima.l_rep000".
-    ASSERT(digits_after_point > 0);
+    ASSERT_WITH_SECURITY_IMPLICATION(digits_after_point > 0);
     result_builder->AddSubstring(decimal_digits, decimal_point);
     result_builder->AddCharacter('.');
-    ASSERT(length - decimal_point <= digits_after_point);
+    ASSERT_WITH_SECURITY_IMPLICATION(length - decimal_point <= digits_after_point);
     result_builder->AddSubstring(&decimal_digits[decimal_point],
                                  length - decimal_point);
     int remaining_digits = digits_after_point - (length - decimal_point);
@@ -182,7 +183,7 @@ bool DoubleToStringConverter::ToShortestIeeeNumber(
 
   int decimal_point;
   bool sign;
-  const int kDecimalRepCapacity = kBase10MaximalLength + 1;
+  constexpr size_t kDecimalRepCapacity = kBase10MaximalLength + 1;
   char decimal_rep[kDecimalRepCapacity];
   int decimal_rep_length;
 
@@ -234,7 +235,7 @@ bool DoubleToStringConverter::ToFixedInternal(double value,
 bool DoubleToStringConverter::ToFixed(double value,
                                       int requested_digits,
                                       StringBuilder* result_builder) const {
-  ASSERT(kMaxFixedDigitsBeforePoint == 21);
+  static_assert(kMaxFixedDigitsBeforePoint == 21);
   const double kFirstNonFixed = 1e21;
 
   if (Double(value).IsSpecial()) {
@@ -245,7 +246,7 @@ bool DoubleToStringConverter::ToFixed(double value,
   if (value >= kFirstNonFixed || value <= -kFirstNonFixed) return false;
 
   // Add space for the '\0' byte.
-  const int kDecimalRepCapacity =
+  constexpr size_t kDecimalRepCapacity =
       kMaxFixedDigitsBeforePoint + kMaxFixedDigitsAfterPoint + 1;
   char decimal_rep[kDecimalRepCapacity];
   return ToFixedInternal(value, requested_digits, decimal_rep, kDecimalRepCapacity, result_builder);
@@ -264,7 +265,7 @@ bool DoubleToStringConverter::ToFixedUncapped(double value,
   if (requested_digits > kMaxFixedDigitsAfterPoint) return false;
 
   // Add space for the '\0' byte.
-  const int kDecimalRepCapacity =
+  constexpr size_t kDecimalRepCapacity =
       kMaxPossibleDigitsBeforePoint + kMaxFixedDigitsAfterPoint + 1;
   char decimal_rep[kDecimalRepCapacity];
   return ToFixedInternal(value, requested_digits, decimal_rep, kDecimalRepCapacity, result_builder);
@@ -285,8 +286,8 @@ bool DoubleToStringConverter::ToExponential(
   int decimal_point;
   bool sign;
   // Add space for digit before the decimal point and the '\0' character.
-  const int kDecimalRepCapacity = kMaxExponentialDigits + 2;
-  ASSERT(kDecimalRepCapacity > kBase10MaximalLength);
+  constexpr size_t kDecimalRepCapacity = kMaxExponentialDigits + 2;
+  static_assert(kDecimalRepCapacity > kBase10MaximalLength);
   char decimal_rep[kDecimalRepCapacity];
   int decimal_rep_length;
 
@@ -298,7 +299,7 @@ bool DoubleToStringConverter::ToExponential(
     DoubleToAscii(value, PRECISION, requested_digits + 1,
                   decimal_rep, kDecimalRepCapacity,
                   &sign, &decimal_rep_length, &decimal_point);
-    ASSERT(decimal_rep_length <= requested_digits + 1);
+    ASSERT_WITH_SECURITY_IMPLICATION(decimal_rep_length <= requested_digits + 1);
 
     if (decimal_rep_length < requested_digits + 1) {
       for (int i = decimal_rep_length; i < requested_digits + 1; ++i)
@@ -337,14 +338,14 @@ bool DoubleToStringConverter::ToPrecision(double value,
   int decimal_point;
   bool sign;
   // Add one for the terminating null character.
-  const int kDecimalRepCapacity = kMaxPrecisionDigits + 1;
+  constexpr size_t kDecimalRepCapacity = kMaxPrecisionDigits + 1;
   char decimal_rep[kDecimalRepCapacity];
   int decimal_rep_length;
 
   DoubleToAscii(value, PRECISION, precision,
                 decimal_rep, kDecimalRepCapacity,
                 &sign, &decimal_rep_length, &decimal_point);
-  ASSERT(decimal_rep_length <= precision);
+  ASSERT_WITH_SECURITY_IMPLICATION(decimal_rep_length <= precision);
 
   bool unique_zero = ((flags_ & UNIQUE_ZERO) != 0);
   if (sign && (value != 0.0 || !unique_zero)) {
@@ -552,7 +553,7 @@ static FloatingPointType StringToIeee(
   // Copy significant digits of the integer part (if any) to the buffer.
   while (isASCIIDigit(*current)) {
     if (significant_digits < kMaxSignificantDigits) {
-      ASSERT(buffer_pos < kBufferSize);
+      ASSERT_WITH_SECURITY_IMPLICATION(buffer_pos < kBufferSize);
       buffer[buffer_pos++] = static_cast<char>(*current);
       significant_digits++;
     } else {
@@ -587,7 +588,7 @@ static FloatingPointType StringToIeee(
     // We don't emit a '.', but adjust the exponent instead.
     while (isASCIIDigit(*current)) {
       if (significant_digits < kMaxSignificantDigits) {
-        ASSERT(buffer_pos < kBufferSize);
+        ASSERT_WITH_SECURITY_IMPLICATION(buffer_pos < kBufferSize);
         buffer[buffer_pos++] = static_cast<char>(*current);
         significant_digits++;
         exponent--;
@@ -632,7 +633,7 @@ static FloatingPointType StringToIeee(
     }
 
     const int max_exponent = INT_MAX / 2;
-    ASSERT(-max_exponent / 2 <= exponent && exponent <= max_exponent / 2);
+    ASSERT_WITH_SECURITY_IMPLICATION(-max_exponent / 2 <= exponent && exponent <= max_exponent / 2);
     int num = 0;
     do {
       // Check overflow.
@@ -657,7 +658,7 @@ static FloatingPointType StringToIeee(
     exponent--;
   }
 
-  ASSERT(buffer_pos < kBufferSize);
+  ASSERT_WITH_SECURITY_IMPLICATION(buffer_pos < kBufferSize);
   buffer[buffer_pos] = '\0';
 
   auto converted = StringToFloatingPointType<FloatingPointType>(BufferReference<const char>(buffer, buffer_pos), exponent);

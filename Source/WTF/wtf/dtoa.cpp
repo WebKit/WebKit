@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,21 +24,21 @@
 
 namespace WTF {
 
-size_t numberToStringAndSize(float number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(float number, NumberToStringBuffer& buffer)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary32>() + 1));
     auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return result - buffer.data();
+    return std::span { buffer }.first(result - buffer.data());
 }
 
-size_t numberToStringAndSize(double number, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringAndSize(double number, NumberToStringBuffer& buffer)
 {
     static_assert(sizeof(buffer) >= (dragonbox::max_string_length<dragonbox::ieee754_binary64>() + 1));
     auto* result = dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, buffer.data());
-    return result - buffer.data();
+    return std::span { buffer }.first(result - buffer.data());
 }
 
-const char* numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToStringWithTrailingPoint(double d, NumberToStringBuffer& buffer)
 {
     double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint();
@@ -83,14 +83,14 @@ static inline void truncateTrailingZeros(const char* buffer, double_conversion::
     builder.RemoveCharacters(truncatedLength, pastMantissa);
 }
 
-const char* numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedPrecisionString(static_cast<double>(number), significantFigures, buffer, shouldTruncateTrailingZeros);
 }
 
-const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+NumberToStringSpan numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
 {
     // Mimic sprintf("%.[precision]g", ...).
     // "g": Signed value printed in f or e format, whichever is more compact for the given value and precision.
@@ -105,14 +105,14 @@ const char* numberToFixedPrecisionString(double d, unsigned significantFigures, 
     return builder.Finalize();
 }
 
-const char* numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
     // For now, just call the double precision version.
     // Do that here instead of at callers to pave the way to add a more efficient code path later.
     return numberToFixedWidthString(static_cast<double>(number), decimalPlaces, buffer);
 }
 
-const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+NumberToStringSpan numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
@@ -127,7 +127,7 @@ const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToS
     return builder.Finalize();
 }
 
-const char* numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
+NumberToStringSpan numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
 {
     // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.

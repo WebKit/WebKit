@@ -1,4 +1,5 @@
 // Copyright 2010 the V8 project authors. All rights reserved.
+// Copyright (C) 2011-2024 Apple Inc. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -27,9 +28,9 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
 #include <cstdlib>
 #include <cstring>
+#include <wtf/Assertions.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -194,7 +195,7 @@ static T Min(T a, T b) {
 
 inline int StrLength(const char* string) {
   size_t length = strlen(string);
-  ASSERT(length == static_cast<size_t>(static_cast<int>(length)));
+  ASSERT_WITH_SECURITY_IMPLICATION(length == static_cast<size_t>(static_cast<int>(length)));
   return static_cast<int>(length);
 }
 
@@ -204,15 +205,15 @@ class BufferReference {
  public:
   BufferReference() : start_(nullptr), length_(0) {}
   BufferReference(T* data, int len) : start_(data), length_(len) {
-    ASSERT(len == 0 || (len > 0 && data != NULL));
+    ASSERT_WITH_SECURITY_IMPLICATION(!len || (len > 0 && data));
   }
 
   // Returns a BufferReference using the same backing storage as this one,
   // spanning from and including 'from', to but not including 'to'.
   BufferReference<T> SubBufferReference(int from, int to) {
-    ASSERT(to <= length_);
-    ASSERT(from < to);
-    ASSERT(0 <= from);
+    ASSERT_WITH_SECURITY_IMPLICATION(to <= length_);
+    ASSERT_WITH_SECURITY_IMPLICATION(from < to);
+    ASSERT_WITH_SECURITY_IMPLICATION(0 <= from);
     return BufferReference<T>(start() + from, to - from);
   }
 
@@ -227,7 +228,7 @@ class BufferReference {
 
   // Access individual BufferReference elements - checks bounds in debug mode.
   T& operator[](int index) const {
-    ASSERT(0 <= index && index < length_);
+    ASSERT_WITH_SECURITY_IMPLICATION(0 <= index && index < length_);
     return start_[index];
   }
 
@@ -255,7 +256,7 @@ class StringBuilder {
 
   // Get the current position in the builder.
   int position() const {
-    ASSERT(!is_finalized());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized());
     return position_;
   }
 
@@ -267,7 +268,7 @@ class StringBuilder {
   // instead.
   void AddCharacter(char c) {
     ASSERT(c != '\0');
-    ASSERT(!is_finalized() && position_ < buffer_.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < buffer_.length());
     buffer_[position_++] = c;
   }
 
@@ -280,7 +281,7 @@ class StringBuilder {
   // Add the first 'n' characters of the given string 's' to the
   // builder. The input string must have enough characters.
   void AddSubstring(const char* s, int n) {
-    ASSERT(!is_finalized() && position_ + n < buffer_.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ + n < buffer_.length());
     ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(n) <= strnlen(s, n));
     memmove(&buffer_[position_], s, n * kCharSize);
     position_ += n;
@@ -296,24 +297,25 @@ class StringBuilder {
   }
 
   void RemoveCharacters(int start, int end) {
-    ASSERT(start >= 0);
-    ASSERT(end >= 0);
-    ASSERT(start <= end);
-    ASSERT(end <= position_);
+    ASSERT_WITH_SECURITY_IMPLICATION(start >= 0);
+    ASSERT_WITH_SECURITY_IMPLICATION(end >= 0);
+    ASSERT_WITH_SECURITY_IMPLICATION(start <= end);
+    ASSERT_WITH_SECURITY_IMPLICATION(end <= position_);
     std::memmove(&buffer_[start], &buffer_[end], position_ - end);
     position_ -= end - start;
   }
 
   // Finalize the string by 0-terminating it and returning the buffer.
-  char* Finalize() {
-    ASSERT(!is_finalized() && position_ < buffer_.length());
-    buffer_[position_] = '\0';
+  std::span<char> Finalize() {
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < buffer_.length());
+    size_t length = (position_ < 0) ? 0 : static_cast<size_t>(position_);
+    buffer_[length] = '\0';
     // Make sure nobody managed to add a 0-character to the
     // buffer while building the string.
-    ASSERT(strlen(buffer_.start()) == static_cast<size_t>(position_));
+    ASSERT(strlen(buffer_.start()) == length);
     position_ = -1;
     ASSERT(is_finalized());
-    return buffer_.start();
+    return std::span { buffer_.start(), length };
   }
 
  private:

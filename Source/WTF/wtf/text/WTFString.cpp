@@ -241,15 +241,13 @@ String String::numberToStringFixedPrecision(double number, unsigned precision, T
 String String::number(float number)
 {
     NumberToStringBuffer buffer;
-    size_t length = numberToStringAndSize(number, buffer);
-    return String { std::span { buffer.data(), length } };
+    return String { numberToStringAndSize(number, buffer) };
 }
 
 String String::number(double number)
 {
     NumberToStringBuffer buffer;
-    size_t length = numberToStringAndSize(number, buffer);
-    return String { std::span { buffer.data(), length } };
+    return String { numberToStringAndSize(number, buffer) };
 }
 
 String String::numberToStringFixedWidth(double number, unsigned decimalPlaces)

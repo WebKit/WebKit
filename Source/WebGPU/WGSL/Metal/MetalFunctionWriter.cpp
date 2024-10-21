@@ -2222,25 +2222,19 @@ void FunctionDefinitionWriter::visit(AST::Unsigned32Literal& literal)
 void FunctionDefinitionWriter::visit(AST::AbstractFloatLiteral& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float32Literal& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Float16Literal& literal)
 {
     NumberToStringBuffer buffer;
-    WTF::numberToStringWithTrailingPoint(literal.value(), buffer);
-
-    m_stringBuilder.append(span(&buffer[0]));
+    m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(literal.value(), buffer));
 }
 
 void FunctionDefinitionWriter::visit(AST::Statement& statement)
@@ -2559,20 +2553,17 @@ void FunctionDefinitionWriter::serializeConstant(const Type* type, ConstantValue
                 break;
             case Primitive::AbstractFloat: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]));
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<double>(value), buffer));
                 break;
             }
             case Primitive::F32: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]));
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<float>(value), buffer));
                 break;
             }
             case Primitive::F16: {
                 NumberToStringBuffer buffer;
-                WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer);
-                m_stringBuilder.append(span(&buffer[0]), 'h');
+                m_stringBuilder.append(WTF::numberToStringWithTrailingPoint(std::get<half>(value), buffer), 'h');
                 break;
             }
             case Primitive::Bool:
