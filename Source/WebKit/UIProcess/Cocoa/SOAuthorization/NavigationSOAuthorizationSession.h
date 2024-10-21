@@ -44,6 +44,9 @@ class NavigationSOAuthorizationSession : public SOAuthorizationSession, private 
 public:
     ~NavigationSOAuthorizationSession();
 
+    void ref() const { SOAuthorizationSession::ref(); }
+    void deref() const { SOAuthorizationSession::deref(); }
+
 protected:
     using Callback = CompletionHandler<void(bool)>;
 
