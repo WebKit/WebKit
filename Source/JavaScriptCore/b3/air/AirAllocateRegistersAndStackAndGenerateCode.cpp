@@ -44,7 +44,7 @@
 namespace JSC { namespace B3 { namespace Air {
 
 namespace GenerateAndAllocateRegistersInternal {
-static bool verbose = false;
+static constexpr bool verbose = false;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GenerateAndAllocateRegisters);
