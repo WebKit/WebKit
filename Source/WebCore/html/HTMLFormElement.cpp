@@ -374,7 +374,7 @@ void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmi
     if (!view || !frame)
         return;
 
-    if (m_isSubmittingOrPreparingForSubmission) {
+    if (trigger != SubmittedByJavaScript && m_isSubmittingOrPreparingForSubmission) {
         m_shouldSubmit = true;
         return;
     }
