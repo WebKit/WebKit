@@ -51,6 +51,7 @@ WK_EXTERN NSErrorDomain const WKWebExtensionErrorDomain NS_SWIFT_NAME(WKWebExten
  @constant WKWebExtensionErrorInvalidManifestEntry  Indicates that an invalid manifest entry was encountered.
  @constant WKWebExtensionErrorInvalidDeclarativeNetRequestEntry  Indicates that an invalid declarative net request entry was encountered.
  @constant WKWebExtensionErrorInvalidBackgroundPersistence  Indicates that the extension specified background persistence that was not compatible with the platform or features requested.
+ @constant WKWebExtensionErrorInvalidArchive  Indicates that the archive file is invalid or corrupt.
  */
 typedef NS_ERROR_ENUM(WKWebExtensionErrorDomain, WKWebExtensionError) {
     WKWebExtensionErrorUnknown = 1,
@@ -61,6 +62,7 @@ typedef NS_ERROR_ENUM(WKWebExtensionErrorDomain, WKWebExtensionError) {
     WKWebExtensionErrorInvalidManifestEntry,
     WKWebExtensionErrorInvalidDeclarativeNetRequestEntry,
     WKWebExtensionErrorInvalidBackgroundPersistence,
+    WKWebExtensionErrorInvalidArchive,
 } NS_SWIFT_NAME(WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*!
@@ -77,13 +79,17 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA)) WK
  @abstract Returns a web extension initialized with a specified app extension bundle.
  @param appExtensionBundle The bundle to use for the new web extension.
  @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
+ @discussion The app extension bundle must contain a `manifest.json` file in its resources directory. If the manifest is invalid or missing,
+ or the bundle is otherwise improperly configured, an error will be returned.
  */
 + (void)extensionWithAppExtensionBundle:(NSBundle *)appExtensionBundle completionHandler:(void (^)(WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 
 /*!
- @abstract Returns a web extension initialized with a specified resource base URL.
- @param resourceBaseURL The directory URL to use for the new web extension.
+ @abstract Returns a web extension initialized with a specified resource base URL, which can point to either a directory or a ZIP archive.
+ @param resourceBaseURL The file URL to use for the new web extension.
  @param completionHandler A block to be called with an initialized web extension, or \c nil if the object could not be initialized due to an error.
+ @discussion The URL must be a file URL that points to either a directory with a `manifest.json` file or a ZIP archive containing a `manifest.json` file.
+ If the manifest is invalid or missing, or the URL points to an unsupported format or invalid archive, an error will be returned.
  */
 + (void)extensionWithResourceBaseURL:(NSURL *)resourceBaseURL completionHandler:(void (^)(WKWebExtension * WK_NULLABLE_RESULT extension, NSError * _Nullable error))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);
 

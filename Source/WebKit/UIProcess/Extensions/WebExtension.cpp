@@ -335,9 +335,27 @@ static int toAPI(WebExtension::Error error)
         return static_cast<int>(WebExtension::APIError::InvalidBackgroundPersistence);
     case WebExtension::Error::InvalidResourceCodeSignature:
         return static_cast<int>(WebExtension::APIError::InvalidResourceCodeSignature);
-    default:
+    case WebExtension::Error::InvalidArchive:
+        return static_cast<int>(WebExtension::APIError::InvalidArchive);
+    case WebExtension::Error::InvalidAction:
+    case WebExtension::Error::InvalidActionIcon:
+    case WebExtension::Error::InvalidBackgroundContent:
+    case WebExtension::Error::InvalidCommands:
+    case WebExtension::Error::InvalidContentScripts:
+    case WebExtension::Error::InvalidContentSecurityPolicy:
+    case WebExtension::Error::InvalidDescription:
+    case WebExtension::Error::InvalidExternallyConnectable:
+    case WebExtension::Error::InvalidIcon:
+    case WebExtension::Error::InvalidName:
+    case WebExtension::Error::InvalidOptionsPage:
+    case WebExtension::Error::InvalidURLOverrides:
+    case WebExtension::Error::InvalidVersion:
+    case WebExtension::Error::InvalidWebAccessibleResources:
         return static_cast<int>(WebExtension::APIError::InvalidManifestEntry);
     }
+
+    ASSERT_NOT_REACHED();
+    return static_cast<int>(WebExtension::APIError::Unknown);
 }
 
 Ref<API::Error> WebExtension::createError(Error error, const String& customLocalizedDescription, RefPtr<API::Error> underlyingError)
@@ -472,6 +490,10 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
 
     case Error::InvalidBackgroundPersistence:
         localizedDescription = WEB_UI_STRING("Invalid `persistent` manifest entry.", "WKWebExtensionErrorInvalidBackgroundPersistence description");
+        break;
+
+    case Error::InvalidArchive:
+        localizedDescription = WEB_UI_STRING("Invalid or corrupt extension archive.", "WKWebExtensionErrorInvalidArchive description");
         break;
 
     case Error::InvalidResourceCodeSignature:

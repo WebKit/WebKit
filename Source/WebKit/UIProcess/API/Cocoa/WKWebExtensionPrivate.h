@@ -46,7 +46,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @param resourceBaseURL The directory URL to use for the new web extension.
  @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @discussion The URL must be a file URL that points to a directory containing a `manifest.json` file.
+ @discussion The URL must be a file URL that points to either a directory containing a `manifest.json` file or a valid ZIP archive.
  */
 - (nullable instancetype)_initWithResourceBaseURL:(NSURL *)resourceBaseURL error:(NSError **)error;
 
@@ -56,8 +56,8 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @param resourceBaseURL The directory URL to use for the new web extension. Can be \c nil if an app extension bundle is provided.
  @param error Set to \c nil or an error instance if an error occurred.
  @result An initialized web extension, or `nil` if the object could not be initialized due to an error.
- @discussion Either the app extension bundle or the resource base URL must be provided. This initializer is useful when the extension resources
- are in a different location from the app extension bundle used for native messaging.
+ @discussion Either the app extension bundle or the resource base URL (which can point to a directory or a valid ZIP archive) must be provided.
+ This initializer is useful when the extension resources are in a different location from the app extension bundle used for native messaging.
  */
 - (nullable instancetype)_initWithAppExtensionBundle:(nullable NSBundle *)appExtensionBundle resourceBaseURL:(nullable NSURL *)resourceBaseURL error:(NSError **)error NS_DESIGNATED_INITIALIZER;
 

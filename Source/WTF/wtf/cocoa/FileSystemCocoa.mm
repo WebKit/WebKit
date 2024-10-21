@@ -29,8 +29,9 @@
 #import "config.h"
 #import <wtf/FileSystem.h>
 
-#import <wtf/SoftLinking.h>
 #import <sys/resource.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if HAVE(APFS_CACHEDELETE_PURGEABLE)
 #import <apfs/apfs_fsctl.h>
@@ -44,6 +45,7 @@ SOFT_LINK(Bom, BOMCopierFree, void, (BOMCopier copier), (copier))
 SOFT_LINK(Bom, BOMCopierCopyWithOptions, int, (BOMCopier copier, const char* fromObj, const char* toObj, CFDictionaryRef options), (copier, fromObj, toObj, options))
 
 #define kBOMCopierOptionCreatePKZipKey CFSTR("createPKZip")
+#define kBOMCopierOptionExtractPKZipKey CFSTR("extractPKZip")
 #define kBOMCopierOptionSequesterResourcesKey CFSTR("sequesterResources")
 #define kBOMCopierOptionKeepParentKey CFSTR("keepParent")
 #define kBOMCopierOptionCopyResourcesKey CFSTR("copyResources")
@@ -70,8 +72,8 @@ namespace FileSystemImpl {
 String createTemporaryZipArchive(const String& path)
 {
     String temporaryFile;
-    
-    RetainPtr<NSFileCoordinator> coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
+
+    RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
     [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
         CString archivePath([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
         int fd = mkostemp(archivePath.mutableData(), O_CLOEXEC);
@@ -79,20 +81,43 @@ String createTemporaryZipArchive(const String& path)
             return;
         close(fd);
 
-        NSDictionary *options = @{
-            (__bridge id)kBOMCopierOptionCreatePKZipKey : @YES,
-            (__bridge id)kBOMCopierOptionSequesterResourcesKey : @YES,
-            (__bridge id)kBOMCopierOptionKeepParentKey : @YES,
-            (__bridge id)kBOMCopierOptionCopyResourcesKey : @YES,
+        auto *options = @{
+            bridge_id_cast(kBOMCopierOptionCreatePKZipKey): @YES,
+            bridge_id_cast(kBOMCopierOptionSequesterResourcesKey): @YES,
+            bridge_id_cast(kBOMCopierOptionKeepParentKey): @YES,
+            bridge_id_cast(kBOMCopierOptionCopyResourcesKey): @YES,
         };
-        
-        BOMCopier copier = BOMCopierNew();
-        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
+
+        auto copier = BOMCopierNew();
+        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), bridge_cast(options)))
             temporaryFile = String::fromUTF8(archivePath.span());
         BOMCopierFree(copier);
     }];
-    
+
     return temporaryFile;
+}
+
+String extractTemporaryZipArchive(const String& path)
+{
+    String temporaryDirectory = createTemporaryDirectory(@"WebKitExtractedArchive");
+    if (!temporaryDirectory)
+        return nullString();
+
+    RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
+    [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
+        auto *options = @{
+            bridge_id_cast(kBOMCopierOptionExtractPKZipKey): @YES,
+            bridge_id_cast(kBOMCopierOptionSequesterResourcesKey): @YES,
+            bridge_id_cast(kBOMCopierOptionCopyResourcesKey): @YES,
+        };
+
+        auto copier = BOMCopierNew();
+        if (BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, fileSystemRepresentation(temporaryDirectory).data(), bridge_cast(options)))
+            temporaryDirectory = nullString();
+        BOMCopierFree(copier);
+    }];
+
+    return temporaryDirectory;
 }
 
 std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix)

@@ -137,6 +137,7 @@ WTF_EXPORT_PRIVATE std::optional<uint32_t> volumeFileBlockSize(const String&);
 WTF_EXPORT_PRIVATE std::optional<int32_t> getFileDeviceId(const String&);
 WTF_EXPORT_PRIVATE bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath);
 WTF_EXPORT_PRIVATE String createTemporaryZipArchive(const String& directory);
+WTF_EXPORT_PRIVATE String extractTemporaryZipArchive(const String& filePath);
 
 enum class FileType { Regular, Directory, SymbolicLink };
 WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);

@@ -412,6 +412,11 @@ String createTemporaryZipArchive(const String&)
     return { };
 }
 
+String extractTemporaryZipArchive(const String&)
+{
+    return { };
+}
+
 bool setExcludedFromBackup(const String&, bool)
 {
     return false;

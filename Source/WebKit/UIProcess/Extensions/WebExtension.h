@@ -72,7 +72,7 @@ public:
         return adoptRef(*new WebExtension(std::forward<Args>(args)...));
     }
 
-    explicit WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL, RefPtr<API::Error>&);
+    explicit WebExtension(NSBundle *appExtensionBundle, NSURL *resourceURL, RefPtr<API::Error>&);
     explicit WebExtension(NSDictionary *manifest, Resources&& = { });
     explicit WebExtension(Resources&& = { });
 
@@ -84,6 +84,7 @@ public:
     enum class Error : uint8_t {
         Unknown = 1,
         ResourceNotFound,
+        InvalidArchive,
         InvalidResourceCodeSignature,
         InvalidManifest,
         UnsupportedManifestVersion,
@@ -115,6 +116,7 @@ public:
         InvalidManifestEntry,
         InvalidDeclarativeNetRequestEntry,
         InvalidBackgroundPersistence,
+        InvalidArchive,
     };
 
     enum class InjectionTime : uint8_t {

@@ -69,7 +69,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 {
     NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
     NSParameterAssert(resourceBaseURL.isFileURL);
-    NSParameterAssert(resourceBaseURL.hasDirectoryPath);
 
     // FIXME: <https://webkit.org/b/276194> Make the WebExtension class load data on a background thread.
     // Use an async dispatch in the meantime to prevent clients from expecting synchronous results.
@@ -119,7 +118,6 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
     if (resourceBaseURL) {
         NSParameterAssert([resourceBaseURL isKindOfClass:NSURL.class]);
         NSParameterAssert(resourceBaseURL.isFileURL);
-        NSParameterAssert(resourceBaseURL.hasDirectoryPath);
     }
 
     if (error)

@@ -98,6 +98,11 @@
 		1CA6FBAD2A1D818D001D4402 /* ContextualizedNSString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6FBAC2A1D818C001D4402 /* ContextualizedNSString.mm */; };
 		1CACADA1230620AE0007D54C /* WKWebViewOpaque.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CACADA0230620AD0007D54C /* WKWebViewOpaque.mm */; };
 		1CB2F27C24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */; };
+		1CE232F22CC2F2D100DFD6C6 /* web-extension-ios.appex in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE232F02CC2F2D100DFD6C6 /* web-extension-ios.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1CE232F32CC2F2D100DFD6C6 /* web-extension-mac.appex in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE232F12CC2F2D100DFD6C6 /* web-extension-mac.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1CE233112CC2F3FF00DFD6C6 /* web-extension.crx in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE2330D2CC2F3FF00DFD6C6 /* web-extension.crx */; };
+		1CE233132CC2F3FF00DFD6C6 /* web-extension.zip in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE2330E2CC2F3FF00DFD6C6 /* web-extension.zip */; };
+		1CE233202CC2F40800DFD6C6 /* web-extension in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CE2331F2CC2F40400DFD6C6 /* web-extension */; };
 		1CF087D825ED7F73004148CB /* MobileAssetSandboxCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */; };
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
@@ -2037,6 +2042,11 @@
 				A17C48352C98E5C20023F3C7 /* web-authentication-make-credential-la-no-attestation.html in Copy Resources */,
 				A17C48362C98E5C20023F3C7 /* web-authentication-make-credential-la-no-mock.html in Copy Resources */,
 				A17C48372C98E5C20023F3C7 /* web-authentication-make-credential-la.html in Copy Resources */,
+				1CE233202CC2F40800DFD6C6 /* web-extension in Copy Resources */,
+				1CE232F22CC2F2D100DFD6C6 /* web-extension-ios.appex in Copy Resources */,
+				1CE232F32CC2F2D100DFD6C6 /* web-extension-mac.appex in Copy Resources */,
+				1CE233112CC2F3FF00DFD6C6 /* web-extension.crx in Copy Resources */,
+				1CE233132CC2F3FF00DFD6C6 /* web-extension.zip in Copy Resources */,
 				A17C48382C98E5C20023F3C7 /* webaudio-createMediaElementSource.html in Copy Resources */,
 				A17C46FD2C98E54B0023F3C7 /* webfont.html in Copy Resources */,
 				A17C48392C98E5C20023F3C7 /* webgl-support.js in Copy Resources */,
@@ -2236,6 +2246,11 @@
 		1CC4C74C28890CE100A3B23D /* Helvetica_light.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Helvetica_light.svg; sourceTree = "<group>"; };
 		1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "idempotent-mode-autosizing-only-honors-percentages.html"; sourceTree = "<group>"; };
 		1CC94E3D2AC75AB10045F269 /* WKWebExtensionAPIAction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIAction.mm; sourceTree = "<group>"; };
+		1CE232F02CC2F2D100DFD6C6 /* web-extension-ios.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = "web-extension-ios.appex"; sourceTree = "<group>"; };
+		1CE232F12CC2F2D100DFD6C6 /* web-extension-mac.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = "web-extension-mac.appex"; sourceTree = "<group>"; };
+		1CE2330D2CC2F3FF00DFD6C6 /* web-extension.crx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "web-extension.crx"; sourceTree = "<group>"; };
+		1CE2330E2CC2F3FF00DFD6C6 /* web-extension.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "web-extension.zip"; sourceTree = "<group>"; };
+		1CE2331F2CC2F40400DFD6C6 /* web-extension */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "web-extension"; sourceTree = "<group>"; };
 		1CE6FAC12320264F00E48F6E /* rich-color-filtered.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "rich-color-filtered.html"; sourceTree = "<group>"; };
 		1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MobileAssetSandboxCheck.mm; sourceTree = "<group>"; };
 		1CF0D3781BBF2F3D00B4EF54 /* WKRetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRetainPtr.cpp; sourceTree = "<group>"; };
@@ -5262,6 +5277,8 @@
 				5703BB8C2463F87200475FB2 /* web-authentication-make-credential-la-no-attestation.html */,
 				57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */,
 				5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */,
+				1CE232F02CC2F2D100DFD6C6 /* web-extension-ios.appex */,
+				1CE232F12CC2F2D100DFD6C6 /* web-extension-mac.appex */,
 				46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */,
 				F4D0A6352A2D51F900D47257 /* webgl-support.js */,
 				7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */,
@@ -5677,6 +5694,7 @@
 			isa = PBXGroup;
 			children = (
 				4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */,
+				1CE2331F2CC2F40400DFD6C6 /* web-extension */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				1C2B81851C89252300A5529F /* Ahem.ttf */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
@@ -5790,6 +5808,8 @@
 				1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */,
 				C9C9A91C21DED79400FDE96E /* video-with-play-button.html */,
 				07CD32F72065B72A0064A4BE /* video.html */,
+				1CE2330D2CC2F3FF00DFD6C6 /* web-extension.crx */,
+				1CE2330E2CC2F3FF00DFD6C6 /* web-extension.zip */,
 				1C2B81841C8924A200A5529F /* webfont.html */,
 				468F2F932368DAA700F4B864 /* window-open-then-document-open.html */,
 			);

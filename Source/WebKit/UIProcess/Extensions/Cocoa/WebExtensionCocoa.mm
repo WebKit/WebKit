@@ -47,10 +47,13 @@
 #import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Scope.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -106,26 +109,139 @@ static NSString * const declarativeNetRequestRulePathManifestKey = @"path";
 
 static const size_t maximumNumberOfShortcutCommands = 4;
 
-WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceBaseURL, RefPtr<API::Error>& outError)
+static String convertChromeExtensionToTemporaryZipFile(const String& inputFilePath)
+{
+    // Converts a Chrome extension file to a temporary ZIP file by checking for a valid Chrome extension signature ('Cr24')
+    // and copying the contents starting from the ZIP signature ('PK\x03\x04'). Returns a null string if the signatures
+    // are not found or any file operations fail.
+
+    auto inputFileHandle = FileSystem::openFile(inputFilePath, FileSystem::FileOpenMode::Read);
+    if (!FileSystem::isHandleValid(inputFileHandle))
+        return nullString();
+
+    auto closeFile = makeScopeExit([&] {
+        FileSystem::unlockAndCloseFile(inputFileHandle);
+    });
+
+    static std::array<uint8_t, 4> expectedSignature = { 'C', 'r', '2', '4' };
+
+    // Verify Chrome extension magic signature.
+    std::array<uint8_t, 4> signature;
+    auto bytesRead = FileSystem::readFromFile(inputFileHandle, signature);
+    if (bytesRead != expectedSignature.size() || signature != expectedSignature)
+        return nullString();
+
+    // Create a temporary ZIP file.
+    auto [temporaryFilePath, temporaryFileHandle] = FileSystem::openTemporaryFile("WebKitExtension-"_s, ".zip"_s);
+    if (!FileSystem::isHandleValid(temporaryFileHandle))
+        return nullString();
+
+    auto closeTempFile = makeScopeExit([fileHandle = temporaryFileHandle] {
+        FileSystem::unlockAndCloseFile(fileHandle);
+    });
+
+    std::array<uint8_t, 4096> buffer;
+    bool signatureFound = false;
+
+    while (true) {
+        bytesRead = FileSystem::readFromFile(inputFileHandle, buffer);
+
+        // Error reading file.
+        if (bytesRead < 0)
+            return nullString();
+
+        // Done reading file.
+        if (!bytesRead)
+            break;
+
+        size_t bufferOffset = 0;
+        if (!signatureFound) {
+            // Not enough bytes for the signature.
+            if (bytesRead < 4)
+                return nullString();
+
+            // Search for the ZIP file magic signature in the buffer.
+            for (ssize_t i = 0; i < bytesRead - 3; ++i) {
+                if (buffer[i] == 'P' && buffer[i + 1] == 'K' && buffer[i + 2] == 0x03 && buffer[i + 3] == 0x04) {
+                    signatureFound = true;
+                    bufferOffset = i;
+                    break;
+                }
+            }
+
+            // Continue until the start of the ZIP file is found.
+            if (!signatureFound)
+                continue;
+        }
+
+        auto bytesToWrite = std::span(buffer).subspan(bufferOffset, bytesRead - bufferOffset);
+        auto bytesWritten = FileSystem::writeToFile(temporaryFileHandle, bytesToWrite);
+        if (bytesWritten != static_cast<int64_t>(bytesToWrite.size()))
+            return nullString();
+    }
+
+    return temporaryFilePath;
+}
+
+static String processFileAndExtractZipArchive(const String& path)
+{
+    // Check if the file is a Chrome extension archive and extract it.
+    auto temporaryZipFilePath = convertChromeExtensionToTemporaryZipFile(path);
+    if (!temporaryZipFilePath.isNull()) {
+        auto temporaryDirectory = FileSystem::extractTemporaryZipArchive(temporaryZipFilePath);
+        FileSystem::deleteFile(temporaryZipFilePath);
+        return temporaryDirectory;
+    }
+
+    // Assume the file is already a ZIP archive and try to extract it.
+    return FileSystem::extractTemporaryZipArchive(path);
+}
+
+WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceURL, RefPtr<API::Error>& outError)
     : m_bundle(appExtensionBundle)
-    , m_resourceBaseURL(resourceBaseURL)
+    , m_resourceBaseURL(resourceURL)
     , m_manifestJSON(JSON::Value::null())
 {
-    RELEASE_ASSERT(m_bundle || !m_resourceBaseURL.isEmpty());
+    RELEASE_ASSERT(m_bundle || m_resourceBaseURL.isValid());
 
-    auto *bundleResourceURL = m_bundle.get().resourceURL.URLByStandardizingPath.absoluteURL;
-    if (m_resourceBaseURL.isEmpty() && bundleResourceURL)
-        m_resourceBaseURL = bundleResourceURL;
+    outError = nullptr;
+
+    if (m_resourceBaseURL.isValid()) {
+        BOOL isDirectory;
+        if (![NSFileManager.defaultManager fileExistsAtPath:m_resourceBaseURL.fileSystemPath() isDirectory:&isDirectory]) {
+            outError = createError(Error::Unknown);
+            return;
+        }
+
+        if (!isDirectory) {
+            auto temporaryDirectory = processFileAndExtractZipArchive(m_resourceBaseURL.fileSystemPath());
+            if (!temporaryDirectory) {
+                outError = createError(Error::InvalidArchive);
+                return;
+            }
+
+            ASSERT(temporaryDirectory.right(1) != "/"_s);
+            m_resourceBaseURL = URL::fileURLWithFileSystemPath(makeString(temporaryDirectory, '/'));
+        }
 
 #if PLATFORM(MAC)
-    m_shouldValidateResourceData = m_bundle && [m_resourceBaseURL isEqual:bundleResourceURL];
+        m_shouldValidateResourceData = false;
 #endif
+    }
+
+    if (m_bundle) {
+        auto *bundleResourceURL = m_bundle.get().resourceURL.URLByStandardizingPath.absoluteURL;
+        if (m_resourceBaseURL.isEmpty())
+            m_resourceBaseURL = bundleResourceURL;
+
+#if PLATFORM(MAC)
+        m_shouldValidateResourceData = m_resourceBaseURL == URL(bundleResourceURL);
+#endif
+    }
 
     RELEASE_ASSERT(m_resourceBaseURL.protocolIsFile());
     RELEASE_ASSERT(m_resourceBaseURL.hasPath());
     RELEASE_ASSERT(m_resourceBaseURL.path().right(1) == "/"_s);
-
-    outError = nullptr;
 
     if (!manifestParsedSuccessfully()) {
         ASSERT(!m_errors.isEmpty());
