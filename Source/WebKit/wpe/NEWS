@@ -1,4 +1,28 @@
 =================
+WPE WebKit 2.46.2
+=================
+
+What's new in WPE WebKit 2.46.2?
+
+  - Own well-known bus name on the accessibility bus.
+  - Improve memory consumption when putImageData is used repeatedly on accelerated canvas.
+  - Disable cached web process suspension for now to prevent leaks.
+  - Improve text kerning with different combinations of antialias and hinting settings.
+  - Destroy all network sessions on process exit.
+  - Build with Skia and WebGL support enabled when targeting Android.
+  - Improve the last resort font fallback to increase the chances of getting
+    an usable system font with Skia.
+  - Fix visible rectangle calculation when there are animations.
+  - Fix the build with ENABLE_NOTIFICATIONS=OFF.
+  - Fix the build with ENABLE_FULLSCREEN_API=OFF.
+  - Fix the build with ENABLE_WEB_AUDIO=OFF.
+  - Fix the build with ENABLE_VIDEO=OFF.
+  - Fix the build on systems that use the Musl C library.
+  - Fix the build on ppc64le.
+  - Fix the build on ARMv7 when compiling with Clang.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.46.1
 =================
 
