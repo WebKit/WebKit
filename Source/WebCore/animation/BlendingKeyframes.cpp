@@ -31,6 +31,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CompositeOperation.h"
+#include "ComputedStyleDependencies.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
@@ -52,6 +53,7 @@ void BlendingKeyframes::clear()
     m_propertiesSetToCurrentColor.clear();
     m_usesRelativeFontWeight = false;
     m_containsCSSVariableReferences = false;
+    m_usesAnchorFunctions = false;
 }
 
 bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
@@ -311,6 +313,11 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
                 m_propertiesSetToCurrentColor.add(propertyReference.id());
             else if (!m_usesRelativeFontWeight && propertyReference.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
                 m_usesRelativeFontWeight = true;
+            if (CSSProperty::isInsetProperty(propertyReference.id())) {
+                auto dependencies = cssValue->computedStyleDependencies();
+                if (dependencies.anchors)
+                    m_usesAnchorFunctions = true;
+            }
         } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
             if (customPropertyValue->isInherit())
                 m_propertiesSetToInherit.add(customPropertyValue->name());

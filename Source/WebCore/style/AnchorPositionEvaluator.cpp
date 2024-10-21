@@ -49,23 +49,6 @@ namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
-static bool isInsetProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyLeft:
-    case CSSPropertyRight:
-    case CSSPropertyTop:
-    case CSSPropertyBottom:
-    case CSSPropertyInsetInlineStart:
-    case CSSPropertyInsetInlineEnd:
-    case CSSPropertyInsetBlockStart:
-    case CSSPropertyInsetBlockEnd:
-        return true;
-    default:
-        return false;
-    }
-};
-
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
 {
     switch (id) {
@@ -408,12 +391,8 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
         if (style.pseudoElementType() != PseudoId::None)
             return false;
 
-        // FIXME: Support animations and transitions.
-        if (style.hasAnimationsOrTransitions())
-            return false;
-
         // It’s being used in an inset property...
-        if (!isInsetProperty(propertyID))
+        if (!CSSProperty::isInsetProperty(propertyID))
             return false;
 
         // ...on an absolutely-positioned element.

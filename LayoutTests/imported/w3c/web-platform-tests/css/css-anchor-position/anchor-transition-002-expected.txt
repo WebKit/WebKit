@@ -1,3 +1,3 @@
 
-FAIL Transition with anchor names defined in different tree scopes assert_equals: expected 250 but got 300
+FAIL Transition with anchor names defined in different tree scopes assert_equals: expected 250 but got 400
 

@@ -1,4 +1,4 @@
 
-FAIL Transition of anchor() when changing target anchor element name assert_equals: expected 300 but got 0
+FAIL Transition of anchor() when changing target anchor element name assert_equals: expected 300 but got 400
 FAIL Transition of anchor-size() when changing target anchor element name assert_equals: expected 150 but got 0
 

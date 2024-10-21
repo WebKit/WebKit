@@ -1,5 +1,5 @@
 Anchor1
 Anchor2
 
-FAIL Transition when the dereferenced anchor name changes assert_equals: expected 0 but got 140
+FAIL Transition when the dereferenced anchor name changes assert_equals: expected 50 but got 0
 

@@ -1,4 +1,4 @@
 
-FAIL Transition to a flipped state assert_equals: expected 275 but got 0
+FAIL Transition to a flipped state assert_equals: expected 275 but got 300
 FAIL Transition to an unflipped state assert_equals: expected 250 but got 300
 

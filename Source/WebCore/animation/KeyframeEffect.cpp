@@ -1912,7 +1912,9 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
         return false;
     }();
 
-    if (logicalPropertyChanged || fontSizeChanged() || fontWeightChanged() || cssVariableChanged() || hasPropertyExplicitlySetToInherit() || propertySetToCurrentColorChanged()) {
+    auto usesAnchorFunctions = m_blendingKeyframes.usesAnchorFunctions();
+
+    if (logicalPropertyChanged || fontSizeChanged() || fontWeightChanged() || cssVariableChanged() || hasPropertyExplicitlySetToInherit() || propertySetToCurrentColorChanged() || usesAnchorFunctions) {
         switch (m_animationType) {
         case WebAnimationType::CSSTransition:
             ASSERT_NOT_REACHED();
