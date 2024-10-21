@@ -1,4 +1,22 @@
 ================
+WebKitGTK 2.46.2
+================
+
+What's new in WebKitGTK 2.46.2?
+
+  - Own well-known bus name on a11y bus.
+  - Improve memory consumption when putImageData is used repeatedly on accelerated canvas.
+  - Disable cached web process suspension for now to prevent leaks.
+  - Improve text kerning with different combinations of antialias and hinting settings.
+  - Destroy all network sessions on process exit.
+  - Fix visible rectangle calculation when there are animations.
+  - Fix the build with ENABLE_NOTIFICATIONS=OFF.
+  - Fix the build with ENABLE_FULLSCREEN_API=OFF.
+  - Fix the build with ENABLE_WEB_AUDIO=OFF.
+  - Fix the build on ppc64le.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.46.1
 ================
 
