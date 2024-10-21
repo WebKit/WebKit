@@ -115,6 +115,7 @@ set(WTF_PUBLIC_HEADERS
     HexNumber.h
     Identified.h
     Indenter.h
+    IndexedRange.h
     IndexKeyType.h
     IndexMap.h
     IndexSet.h

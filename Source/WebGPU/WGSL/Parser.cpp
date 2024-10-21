@@ -438,9 +438,8 @@ Result<void> Parser<Lexer>::parseRequireDirective()
 template<typename Lexer>
 void Parser<Lexer>::maybeSplitToken(unsigned index)
 {
-    Token* token = &m_tokens[index];
     TokenType replacement;
-    switch (token->type) {
+    switch (m_tokens[index + 0].type) {
     case TokenType::GtGt:
         replacement = TokenType::Gt;
         break;
@@ -454,9 +453,9 @@ void Parser<Lexer>::maybeSplitToken(unsigned index)
         return;
     }
 
-    ASSERT(token[1].type == TokenType::Placeholder);
-    token[0].type = TokenType::Gt;
-    token[1].type = replacement;
+    ASSERT(m_tokens[index + 1].type == TokenType::Placeholder);
+    m_tokens[index + 0].type = TokenType::Gt;
+    m_tokens[index + 1].type = replacement;
 }
 
 template<typename Lexer>

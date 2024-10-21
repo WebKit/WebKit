@@ -41,6 +41,7 @@
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
 		1404B3E52CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140ECC342C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		143A90BA2CC2F08D002D3E27 /* IndexedRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 143A90B92CC2F08D002D3E27 /* IndexedRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		144EB7462CBC94B100926E1B /* AbstractRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 144EB7452CBC94B100926E1B /* AbstractRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1104,6 +1105,7 @@
 		1404B3E42CBC954D00A7471C /* AbstractRefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractRefCountedAndCanMakeWeakPtr.h; path = wtf/AbstractRefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		140ECC332C99057100473E19 /* RefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
 		140ECC352C9906DF00473E19 /* RefCountedAndCanMakeWeakPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RefCountedAndCanMakeWeakPtr.h; path = wtf/RefCountedAndCanMakeWeakPtr.h; sourceTree = "<group>"; };
+		143A90B92CC2F08D002D3E27 /* IndexedRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IndexedRange.h; sourceTree = "<group>"; };
 		143DDE9520C8BC37007F76FA /* Entitlements.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Entitlements.mm; sourceTree = "<group>"; };
 		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
@@ -2243,6 +2245,7 @@
 				517A53571F5734B700DCDC0A /* Identified.h */,
 				FE8925AF1D00DAEC0046907E /* Indenter.h */,
 				9C67C542589348E285B49699 /* IndexedContainerIterator.h */,
+				143A90B92CC2F08D002D3E27 /* IndexedRange.h */,
 				0F2AC5621E8A01490001EE3F /* IndexKeyType.h */,
 				5B43383A5D0B463C9433D933 /* IndexMap.h */,
 				3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */,
@@ -3331,6 +3334,7 @@
 				FFE39CAB2B1D7472004972B0 /* ieee754_format.h in Headers */,
 				DD3DC8E627A4BF8E007E5B61 /* Indenter.h in Headers */,
 				DD3DC91E27A4BF8E007E5B61 /* IndexedContainerIterator.h in Headers */,
+				143A90BA2CC2F08D002D3E27 /* IndexedRange.h in Headers */,
 				DD3DC93E27A4BF8E007E5B61 /* IndexKeyType.h in Headers */,
 				DD3DC94327A4BF8E007E5B61 /* IndexMap.h in Headers */,
 				DD3DC93F27A4BF8E007E5B61 /* IndexSet.h in Headers */,

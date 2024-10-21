@@ -37,6 +37,11 @@
 
 namespace WebGPU {
 
+static inline auto span(id<MTLBuffer> buffer)
+{
+    return unsafeForgeSpan(static_cast<uint8_t*>(buffer.contents), static_cast<size_t>(buffer.length));
+}
+
 static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)
 {
     UNUSED_PARAM(device);
@@ -263,16 +268,13 @@ std::span<uint8_t> Buffer::getMappedRange(size_t offset, size_t size)
     m_mappedRanges.compact();
 
     if (!m_buffer.contents)
-        return std::span<uint8_t> { };
-    auto entireSpan = std::span<uint8_t> { static_cast<uint8_t*>(m_buffer.contents), m_buffer.length };
-    return entireSpan.subspan(offset);
+        return { };
+    return getBufferContents().subspan(offset);
 }
 
 std::span<uint8_t> Buffer::getBufferContents()
 {
-    auto* pointer = static_cast<uint8_t*>(m_buffer.contents);
-    auto bufferSize = currentSize();
-    return { static_cast<uint8_t*>(pointer), static_cast<size_t>(bufferSize) };
+    return span(m_buffer);
 }
 
 NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const

@@ -38,6 +38,7 @@
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
 #import "TextureView.h"
+#import <wtf/IndexedRange.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -88,16 +89,16 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
     if (descriptor.timestampWrites)
         m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
-    for (size_t i = 0; i < descriptor.colorAttachmentCount; ++i)
-        m_colorAttachmentViews.append(RefPtr { static_cast<TextureView*>(descriptor.colorAttachments[i].view) });
+    auto colorAttachments = descriptor.colorAttachmentsSpan();
+    for (auto& attachment : colorAttachments)
+        m_colorAttachmentViews.append(RefPtr { static_cast<TextureView*>(attachment.view) });
     if (descriptor.depthStencilAttachment)
         m_depthStencilView = RefPtr { static_cast<TextureView*>(descriptor.depthStencilAttachment->view) };
 
     m_parentEncoder->lock(true);
 
     m_attachmentsToClear = [NSMutableDictionary dictionary];
-    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
-        const auto& attachment = descriptor.colorAttachments[i];
+    for (auto [ i, attachment ] : IndexedRange(colorAttachments)) {
         if (!attachment.view)
             continue;
 
@@ -1162,7 +1163,7 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
     [m_renderCommandEncoder pushDebugGroup:groupLabel];
 }
 
-void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
+void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, std::span<const uint32_t> dynamicOffsets)
 {
     RETURN_IF_FINISHED();
 
@@ -1181,14 +1182,14 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
         makeInvalid(@"GPURenderPassEncoder.setBindGroup: bind group is nil");
         return;
     }
-    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets, dynamicOffsetCount, group)) {
+    if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets, group)) {
         makeInvalid([NSString stringWithFormat:@"GPURenderPassEncoder.setBindGroup: %@", error]);
         return;
     }
 
     m_maxBindGroupSlot = std::max(groupIndex, m_maxBindGroupSlot);
-    if (dynamicOffsetCount)
-        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(std::span { dynamicOffsets, dynamicOffsetCount }));
+    if (dynamicOffsets.size())
+        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(dynamicOffsets));
     else
         m_bindGroupDynamicOffsets.remove(groupIndex);
 
@@ -1416,8 +1417,8 @@ void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, size_t bundlesCount, const WGPURenderBundle* bundles)
 {
     Vector<std::reference_wrapper<WebGPU::RenderBundle>> bundlesToForward;
-    for (uint32_t i = 0; i < bundlesCount; ++i)
-        bundlesToForward.append(WebGPU::fromAPI(bundles[i]));
+    for (auto& bundle : unsafeForgeSpan(bundles, bundlesCount))
+        bundlesToForward.append(WebGPU::fromAPI(bundle));
     WebGPU::fromAPI(renderPassEncoder).executeBundles(WTFMove(bundlesToForward));
 }
 
@@ -1438,7 +1439,7 @@ void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder
 
 void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, uint32_t groupIndex, WGPUBindGroup group, size_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    WebGPU::fromAPI(renderPassEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), dynamicOffsetCount, dynamicOffsets);
+    WebGPU::fromAPI(renderPassEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)

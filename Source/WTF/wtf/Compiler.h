@@ -607,3 +607,25 @@
 #define WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #define WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
+
+#ifndef __has_attribute
+#define __has_attribute(x) 0
+#endif
+
+#ifndef __has_cpp_attribute
+#define __has_cpp_attribute(x) 0
+#endif
+
+/* WTF_UNSAFE_BUFFER_USAGE */
+
+#if COMPILER(CLANG)
+#if __has_cpp_attribute(clang::unsafe_buffer_usage)
+#define WTF_UNSAFE_BUFFER_USAGE [[clang::unsafe_buffer_usage]]
+#elif __has_attribute(unsafe_buffer_usage)
+#define WTF_UNSAFE_BUFFER_USAGE __attribute__((__unsafe_buffer_usage__))
+#else
+#define WTF_UNSAFE_BUFFER_USAGE
+#endif
+#else
+#define WTF_UNSAFE_BUFFER_USAGE
+#endif

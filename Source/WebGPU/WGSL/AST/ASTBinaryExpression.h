@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <array>
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -60,11 +61,11 @@ enum class BinaryOperation : uint8_t {
 
 constexpr ASCIILiteral toASCIILiteral(BinaryOperation op)
 {
-    constexpr ASCIILiteral binaryOperationNames[] = {
+    constexpr auto binaryOperationNames = std::to_array<ASCIILiteral>({
 #define WGSL_AST_BINOP(x, y) y##_s,
         WGSL_AST_BINOP_IMPL
 #undef WGSL_AST_BINOP
-    };
+    });
 
     return binaryOperationNames[WTF::enumToUnderlyingType(op)];
 }

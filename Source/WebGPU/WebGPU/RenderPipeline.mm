@@ -32,6 +32,7 @@
 #import "Pipeline.h"
 #import "RenderBundleEncoder.h"
 #import "WGSLShaderModule.h"
+#import <wtf/IndexedRange.h>
 #import <wtf/TZoneMallocInlines.h>
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
@@ -558,8 +559,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
     ASSERT(error);
 
     ShaderModule::VertexStageIn shaderLocations;
-    for (size_t bufferIndex = 0; bufferIndex < vertexState.bufferCount; ++bufferIndex) {
-        auto& buffer = vertexState.buffers[bufferIndex];
+    for (auto [ bufferIndex, buffer ] : IndexedRange(vertexState.buffersSpan())) {
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
             continue;
 
@@ -581,8 +581,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode, buffer.arrayStride);
         if (vertexDescriptor.layouts[bufferIndex].stepFunction == MTLVertexStepFunctionConstant)
             vertexDescriptor.layouts[bufferIndex].stepRate = 0;
-        for (size_t i = 0; i < buffer.attributeCount; ++i) {
-            auto& attribute = buffer.attributes[i];
+        for (auto& attribute : buffer.attributesSpan()) {
             auto formatSize = vertexFormatSize(attribute.format);
             auto offsetPlusFormatSize = checkedSum<uint64_t>(attribute.offset, formatSize);
             if (offsetPlusFormatSize.hasOverflowed()) {
@@ -864,7 +863,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
                 return e.binding == entry.webBinding;
             }); existingBindingIndex != notFound) {
                 entries[existingBindingIndex].visibility |= visibility;
-                entries[existingBindingIndex].metalBinding[stage] = entry.binding;
+                std::span(entries[existingBindingIndex].metalBinding)[stage] = entry.binding;
                 if (!BindGroupLayout::equalBindingEntries(toBindingLayout(entries[existingBindingIndex]), makeBindingLayout(newEntry, entry.bindingMember)))
                     return @"Binding mismatch in auto-generated layouts";
                 continue;
@@ -882,7 +881,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
             }
 
             newEntry.binding = entry.webBinding;
-            newEntry.metalBinding[stage] = entry.binding;
+            std::span(newEntry.metalBinding)[stage] = entry.binding;
             newEntry.visibility = visibility;
             makeBindingLayout(newEntry, entry.bindingMember, bufferTypeOverride, bufferSizeForBinding);
 
@@ -1354,7 +1353,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
             return returnInvalidRenderPipeline(*this, isAsync, error);
         NSError *error = nil;
-        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label, descriptor.vertex.constantCount, descriptor.vertex.constants, minimumBufferSizes, &error);
+        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label, descriptor.vertex.constantsSpan(), minimumBufferSizes, &error);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation");
 
@@ -1397,7 +1396,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         usesFragDepth = fragmentModule->usesFragDepth(fragmentEntryPoint);
         usesSampleMask = fragmentModule->usesSampleMaskInOutput(fragmentEntryPoint);
         NSError *error = nil;
-        auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label, fragmentDescriptor.constantCount, fragmentDescriptor.constants, minimumBufferSizes, &error);
+        auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout, fragmentEntryPoint, label, fragmentDescriptor.constantsSpan(), minimumBufferSizes, &error);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created");
 
@@ -1416,8 +1415,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         fragmentInputs = fragmentModule->fragmentInputsForEntryPoint(fragmentEntryPoint);
         fragmentReturnTypes = fragmentModule->fragmentReturnTypeForEntryPoint(fragmentEntryPoint);
         colorAttachmentCount = fragmentDescriptor.targetCount;
-        for (uint32_t i = 0; i < colorAttachmentCount; ++i) {
-            const auto& targetDescriptor = fragmentDescriptor.targets[i];
+        for (auto [ i, targetDescriptor ] : IndexedRange(fragmentDescriptor.targetsSpan())) {
             if (targetDescriptor.format == WGPUTextureFormat_Undefined)
                 continue;
 
@@ -1467,8 +1465,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
                 mtlColorAttachment.blendingEnabled = NO;
 
             if (!textureFormatAllowedForRetunType(targetDescriptor.format, fragmentFunctionReturnType, readsAlpha))
-                return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"pipeline creation - color target pixel format(%u) for location(%zu) is incompatible with shader output data type of %zu", i, mtlColorAttachment.pixelFormat, fragmentFunctionReturnType]);
-
+                return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"pipeline creation - color target pixel format(%lu) for location(%zu) is incompatible with shader output data type of %zu", i, mtlColorAttachment.pixelFormat, fragmentFunctionReturnType]);
         }
 
         if (bytesPerSample > deviceLimits.maxColorAttachmentBytesPerSample)
@@ -1767,7 +1764,7 @@ bool RenderPipeline::validateRenderBundle(const WGPURenderBundleEncoderDescripto
 
     auto& fragment = *m_descriptor.fragment;
     for (size_t i = 0, maxTargetCount = std::max<size_t>(fragment.targetCount, descriptor.colorFormatCount); i < maxTargetCount; ++i) {
-        auto colorFormat = i < descriptor.colorFormatCount ? descriptor.colorFormats[i] : WGPUTextureFormat_Undefined;
+        auto colorFormat = i < descriptor.colorFormatCount ? descriptor.colorFormatsSpan()[i] : WGPUTextureFormat_Undefined;
         auto descriptorFormat = i < m_descriptorTargets.size() ? m_descriptorTargets[i].format : WGPUTextureFormat_Undefined;
         if (descriptorFormat != colorFormat)
             return false;

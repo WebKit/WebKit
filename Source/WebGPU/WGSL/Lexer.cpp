@@ -28,9 +28,11 @@
 
 #include "ConstantValue.h"
 #include <charconv>
+#include <wtf/FastFloat.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WGSL {
@@ -286,7 +288,7 @@ Token Lexer<T>::nextToken()
             return lexNumber();
         if (auto consumed = isIdentifierStart(m_current, m_code.span())) {
             unsigned length = consumed;
-            auto* startOfToken = m_code.position();
+            auto startOfToken = m_code.span();
             shift(consumed);
             while (!isAtEndOfFile()) {
                 auto consumed = isIdentifierContinue(m_current, m_code.span());
@@ -297,7 +299,7 @@ Token Lexer<T>::nextToken()
             }
 
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
-            String view(StringImpl::createWithoutCopying({ startOfToken, currentTokenLength() }));
+            String view(StringImpl::createWithoutCopying(startOfToken.subspan(0, currentTokenLength())));
 
             static constexpr std::pair<ComparableASCIILiteral, TokenType> keywordMappings[] {
                 { "_", TokenType::Underbar },
@@ -468,7 +470,7 @@ FOREACH_KEYWORD(MAPPING_ENTRY)
                 return makeToken(TokenType::ReservedWord);
 
 
-            if (UNLIKELY(length >= 2 && *startOfToken == '_' && *(startOfToken + 1) == '_'))
+            if (UNLIKELY(length >= 2 && startOfToken[0] == '_' && startOfToken[1] == '_'))
                 return makeToken(TokenType::Invalid);
 
 
@@ -703,7 +705,7 @@ Token Lexer<T>::lexNumber()
     char suffix = '\0';
     char exponentSign = '\0';
     bool isHex = false;
-    auto* integral = m_code.position();
+    auto integral = m_code.span();
     const T* fract = nullptr;
     const T* exponent = nullptr;
 
@@ -858,7 +860,7 @@ Token Lexer<T>::lexNumber()
             break;
         case Hex:
             isHex = true;
-            integral = m_code.position();
+            integral = m_code.span();
             if (m_current == '.')
                 state = HexFloatFractNoIntegral;
             else if (isASCIIHexDigit(m_current))
@@ -1007,48 +1009,22 @@ Token Lexer<T>::lexNumber()
         return makeToken(TokenType::Invalid);
     };
 
-    auto* end = m_code.position() - (suffix ? 1 : 0);
     if (!fract && !exponent) {
-        auto length = static_cast<size_t>(end - integral);
-        if (length > 19)
-            return makeToken(TokenType::Invalid);
-
-        char ascii[20];
-        const char* asciiStart;
-        const char* asciiEnd;
-        if constexpr (sizeof(T) == 1) {
-            asciiStart = bitwise_cast<const char*>(integral);
-            asciiEnd = bitwise_cast<const char*>(end);
-        } else {
-            for (unsigned i = 0; i < length; ++i) {
-                auto digit = integral[i];
-                RELEASE_ASSERT(isASCIIHexDigit(digit));
-                ascii[i] = digit;
-            }
-            ascii[length] = '\0';
-            asciiStart = ascii;
-            asciiEnd = ascii + length;
-        }
-
-        int64_t result;
         auto base = isHex ? 16 : 10;
-        auto remaining = std::from_chars(asciiStart, asciiEnd, result, base);
-        RELEASE_ASSERT(remaining.ptr == asciiEnd);
-        if (remaining.ec == std::errc::result_out_of_range)
+        auto result = WTF::parseInteger<int64_t>(integral, base, WTF::TrailingJunkPolicy::Allow);
+        if (!result)
             return makeToken(TokenType::Invalid);
-        return convert(result);
+        return convert(result.value());
     }
 
     if (!isHex) {
         size_t parsedLength;
-        double result = parseDouble(std::span { integral, m_code.position() }, parsedLength);
-        ASSERT(integral + parsedLength == end);
+        double result = WTF::parseDouble(integral, parsedLength);
         return convert(result);
     }
 
-    char* parseEnd;
-    double result = std::strtod(bitwise_cast<const char*>(integral) - 2, &parseEnd);
-    ASSERT(parseEnd == bitwise_cast<const char*>(end));
+    size_t parsedLength;
+    double result = WTF::parseHexDouble(integral, parsedLength);
     return convert(result);
 }
 

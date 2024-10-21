@@ -129,7 +129,7 @@ public:
     uint32_t dynamicUniformBuffers() const;
     uint32_t dynamicStorageBuffers() const;
     uint32_t dynamicBufferCount() const;
-    NSString* errorValidatingDynamicOffsets(const uint32_t*, size_t, const BindGroup&) const;
+    NSString* errorValidatingDynamicOffsets(std::span<const uint32_t>, const BindGroup&) const;
     NSString* errorValidatingBindGroupCompatibility(const BindGroupLayout&) const;
     static bool equalBindingEntries(const BindGroupLayout::Entry::BindingLayout&, const BindGroupLayout::Entry::BindingLayout&);
     const ArgumentIndices& argumentIndices(ShaderStage) const;

@@ -226,7 +226,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         }
     }
 
-    Vector viewFormats(std::span { wgpuTextureDescriptor.viewFormats, wgpuTextureDescriptor.viewFormatCount });
+    Vector viewFormats(wgpuTextureDescriptor.viewFormatsSpan());
     if (NSString *error = device.errorValidatingTextureCreation(wgpuTextureDescriptor, viewFormats)) {
         generateAValidationError(device, error, reportValidationErrors);
         return;

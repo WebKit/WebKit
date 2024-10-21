@@ -34,4 +34,7 @@ namespace WTF {
 WTF_EXPORT_PRIVATE double parseDouble(std::span<const LChar> string, size_t& parsedLength);
 WTF_EXPORT_PRIVATE double parseDouble(std::span<const UChar> string, size_t& parsedLength);
 
+WTF_EXPORT_PRIVATE double parseHexDouble(std::span<const LChar> string, size_t& parsedLength);
+WTF_EXPORT_PRIVATE double parseHexDouble(std::span<const UChar> string, size_t& parsedLength);
+
 } // namespace WTF

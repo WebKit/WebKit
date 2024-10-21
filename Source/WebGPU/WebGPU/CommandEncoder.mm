@@ -39,6 +39,7 @@
 #import "WebGPUSwiftInternal.h"
 #endif
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/IndexedRange.h>
 #import <wtf/TZoneMallocInlines.h>
 
 @implementation TextureAndClearColor
@@ -467,12 +468,14 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     uint32_t textureWidth = 0, textureHeight = 0, sampleCount = 0;
     using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     UncheckedKeyHashMap<void*, SliceSet> depthSlices;
-    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
-        const auto& attachment = descriptor.colorAttachments[i];
+    for (auto [ i, attachment ] : IndexedRange(descriptor.colorAttachmentsSpan())) {
         if (!attachment.view)
             continue;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        // MTLRenderPassColorAttachmentDescriptorArray is bounds-checked internally.
         const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         mtlAttachment.clearColor = MTLClearColorMake(attachment.clearValue.r,
             attachment.clearValue.g,

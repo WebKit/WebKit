@@ -384,18 +384,17 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
         return;
     }
 
-    buffer.indirectBufferInvalidated();
-    auto bufferSpan = std::span { static_cast<uint8_t*>(buffer.buffer().contents), buffer.buffer().length };
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
     // we could detect whether this specific resource is idle, if we tracked every resource.
+    buffer.indirectBufferInvalidated();
     if (isIdle()) {
         switch (buffer.buffer().storageMode) {
         case MTLStorageModeShared:
-            memcpySpan(bufferSpan.subspan(bufferOffset, data.size()), data);
+            memcpySpan(buffer.getBufferContents().subspan(bufferOffset, data.size()), data);
             return;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         case MTLStorageModeManaged:
-            memcpySpan(bufferSpan.subspan(bufferOffset, data.size()), data);
+            memcpySpan(buffer.getBufferContents().subspan(bufferOffset, data.size()), data);
             [buffer.buffer() didModifyRange:NSMakeRange(bufferOffset, data.size())];
             return;
 #endif
@@ -864,7 +863,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                             replaceRegion:region
                             mipmapLevel:destination.mipLevel
                             slice:destinationSlice
-                            withBytes:byteCast<char>(data.data()) + sourceOffset
+                            withBytes:byteCast<char>(data.subspan(sourceOffset).data())
                             bytesPerRow:bytesPerRow
                             bytesPerImage:0];
                     }
@@ -1086,8 +1085,8 @@ void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlo
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
     Vector<std::reference_wrapper<WebGPU::CommandBuffer>> commandsToForward;
-    for (uint32_t i = 0; i < commandCount; ++i)
-        commandsToForward.append(WebGPU::fromAPI(commands[i]));
+    for (auto& command : unsafeForgeSpan(commands, commandCount))
+        commandsToForward.append(WebGPU::fromAPI(command));
     WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));
 }
 

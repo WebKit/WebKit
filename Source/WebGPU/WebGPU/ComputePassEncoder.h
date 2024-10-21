@@ -70,7 +70,7 @@ public:
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
 
-    void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
+    void setBindGroup(uint32_t groupIndex, const BindGroup&, std::span<const uint32_t> dynamicOffsets);
     void setPipeline(const ComputePipeline&);
     void setLabel(String&&);
 

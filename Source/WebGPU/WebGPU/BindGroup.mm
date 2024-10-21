@@ -452,7 +452,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
         if (status != kCVReturnSuccess)
             return { };
 
-        id<MTLTexture> mtlTextures[2];
+        std::array<id<MTLTexture>, 2> mtlTextures { };
 
         for (size_t plane = 0; plane < planeCount; ++plane) {
             int width = CVPixelBufferGetWidthOfPlane(pixelBuffer, plane);
@@ -523,15 +523,15 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, format1, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
     }
 
-    float lowerLeft[2];
-    float lowerRight[2];
-    float upperRight[2];
-    float upperLeft[2];
+    std::array<float, 2> lowerLeft;
+    std::array<float, 2> lowerRight;
+    std::array<float, 2> upperRight;
+    std::array<float, 2> upperLeft;
 
     if (status1 == kCVReturnSuccess) {
         baseTexture = mtlTexture0 = CVMetalTextureGetTexture(plane0);
         setOwnerWithIdentity(mtlTexture0);
-        CVMetalTextureGetCleanTexCoords(plane0, lowerLeft, lowerRight, upperRight, upperLeft);
+        CVMetalTextureGetCleanTexCoords(plane0, lowerLeft.begin(), lowerRight.begin(), upperRight.begin(), upperLeft.begin());
         if (firstPlaneSwizzle)
             mtlTexture0 = [mtlTexture0 newTextureViewWithPixelFormat:mtlTexture0.pixelFormat textureType:mtlTexture0.textureType levels:NSMakeRange(0, mtlTexture0.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture0.arrayLength) swizzle:*firstPlaneSwizzle];
     } else {
@@ -943,19 +943,13 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
-    Vector<id<MTLResource>> stageResources[stagesPlusUndefinedCount][maxResourceUsageValue];
-    Vector<BindGroupEntryUsageData> stageResourceUsages[stagesPlusUndefinedCount][maxResourceUsageValue];
+    std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, stagesPlusUndefinedCount> stageResources { };
+    std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, stagesPlusUndefinedCount> stageResourceUsages { };
     auto& bindGroupLayoutEntries = bindGroupLayout.entries();
-    Vector<WGPUBindGroupEntry> descriptorEntries(std::span { descriptor.entries, descriptor.entryCount });
-    std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupEntry& a, const WGPUBindGroupEntry& b) {
-        return a.binding < b.binding;
-    });
     BindGroup::DynamicBuffersContainer dynamicBuffers;
     BindGroup::SamplersContainer samplersSet;
 
-    for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
-        const WGPUBindGroupEntry& entry = descriptor.entries[i];
-
+    for (const WGPUBindGroupEntry& entry : descriptor.entriesSpan()) {
         WGPUExternalTexture wgpuExternalTexture = nullptr;
         if (entry.nextInChain) {
             if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture)) {

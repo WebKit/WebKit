@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, uint32_t constantCount, const WGPUConstantEntry* constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
     UncheckedKeyHashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
@@ -67,8 +67,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
 
     const auto& entryPointInformation = iterator->value;
 
-    for (uint32_t i = 0; i < constantCount; ++i) {
-        const auto& entry = constants[i];
+    for (const auto entry : constants) {
         auto keyEntry = fromAPI(entry.key);
         auto indexIterator = entryPointInformation.specializationConstants.find(keyEntry);
         if (indexIterator == entryPointInformation.specializationConstants.end())

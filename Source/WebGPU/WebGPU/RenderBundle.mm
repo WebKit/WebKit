@@ -99,9 +99,9 @@ void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
 
     m_minDepth = minDepth;
     m_maxDepth = maxDepth;
-    float twoFloats[2] = { m_minDepth, m_maxDepth };
+    std::array<float, 2> twoFloats = { m_minDepth, m_maxDepth };
     for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
-        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, { reinterpret_cast<uint8_t*>(twoFloats), sizeof(float) * 2 });
+        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, asWritableBytes(std::span(twoFloats)));
 }
 
 uint64_t RenderBundle::drawCount() const
@@ -120,9 +120,11 @@ bool RenderBundle::validateRenderPass(bool depthReadOnly, bool stencilReadOnly, 
     if (m_descriptor.colorFormatCount != descriptor.colorAttachmentCount)
         return false;
 
+    auto descriptorColorFormats = m_descriptor.colorFormatsSpan();
+
     uint32_t defaultRasterSampleCount = 0;
     for (size_t i = 0, colorFormatCount = std::max(descriptor.colorAttachmentCount, m_descriptor.colorFormatCount); i < colorFormatCount; ++i) {
-        auto descriptorColorFormat = i < m_descriptor.colorFormatCount ? m_descriptor.colorFormats[i] : WGPUTextureFormat_Undefined;
+        auto descriptorColorFormat = i < descriptorColorFormats.size() ? descriptorColorFormats[i] : WGPUTextureFormat_Undefined;
         if (i >= descriptor.colorAttachmentCount) {
             if (descriptorColorFormat == WGPUTextureFormat_Undefined)
                 continue;

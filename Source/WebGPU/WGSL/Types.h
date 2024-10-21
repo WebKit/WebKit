@@ -27,6 +27,7 @@
 
 #include "ASTForward.h"
 #include "WGSLEnums.h"
+#include <array>
 #include <functional>
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
@@ -204,11 +205,11 @@ public:
         static constexpr SortedArrayMap map { mapEntries };
     };
 
-    static constexpr SortedArrayMap<std::pair<ComparableASCIILiteral, unsigned>[2]> keys[] {
+    static constexpr auto keys = std::to_array<SortedArrayMap<std::pair<ComparableASCIILiteral, unsigned>[2]>>({
         FrexpResult::map,
         ModfResult::map,
         AtomicCompareExchangeResult::map,
-    };
+    });
 
     String name;
     Kind kind;

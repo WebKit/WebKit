@@ -34,6 +34,7 @@
 #import "IsValidToUseWith.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
+#import <wtf/IndexedRange.h>
 #import <wtf/TZoneMallocInlines.h>
 
 #define ENABLE_WEBGPU_ALWAYS_USE_ICB_REPLAY 0
@@ -110,8 +111,8 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     constexpr auto maxStageValue = (MTLRenderStageVertex | MTLRenderStageFragment) + 1;
     static_assert(maxResourceUsageValue == 3 && maxStageValue == 4, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3 and MTLRenderStageVertex | MTLRenderStageFragment == 3");
-    Vector<id<MTLResource>> stageResources[maxStageValue][maxResourceUsageValue];
-    Vector<BindGroupEntryUsageData> stageResourceUsages[maxStageValue][maxResourceUsageValue];
+    std::array<std::array<Vector<id<MTLResource>>, maxResourceUsageValue>, maxStageValue> stageResources { };
+    std::array<std::array<Vector<BindGroupEntryUsageData>, maxResourceUsageValue>, maxStageValue> stageResourceUsages { };
 
     for (id<MTLResource> r : resources) {
         if (!r)
@@ -171,8 +172,7 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
         generateAValidationError(error);
         return RenderBundleEncoder::createInvalid(*this, error);
     }
-    for (size_t i = 0, colorFormatCount = descriptor.colorFormatCount; i < colorFormatCount; ++i) {
-        auto textureFormat = descriptor.colorFormats[i];
+    for (auto [ i, textureFormat ] : IndexedRange(descriptor.colorFormatsSpan())) {
         if (textureFormat == WGPUTextureFormat_Undefined)
             continue;
         if (!Texture::isColorRenderableFormat(textureFormat, *this)) {
@@ -296,9 +296,9 @@ static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset =
 {
     auto bufferLength = buffer.length;
     if (UNLIKELY(bufferLength < byteOffset || (bufferLength - byteOffset < sizeof(T))))
-        return std::span { static_cast<T*>(nullptr), 0 };
+        return { };
 
-    return std::span { static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T) };
+    return unsafeForgeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
 }
 
 bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t firstInstance, uint32_t instanceCount)
@@ -408,14 +408,13 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
                 auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
                 if (pvertexOffsets && pvertexOffsets->size()) {
                     auto& vertexOffsets = *pvertexOffsets;
-                    auto vertexOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(vertexOffsets.data()), vertexOffsets.sizeInBytes() };
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(vertexOffsets[0]), vertexOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
                         makeInvalid(@"Incorrect data for vertexBuffer");
                         return false;
                     }
-                    memcpySpan(vertexBufferContentsSpan.subspan(startIndex.value(), bytesToCopy.value()), vertexOffsetsSpan.subspan(0, bytesToCopy.value()));
+                    memcpySpan(vertexBufferContentsSpan.subspan(startIndex.value(), bytesToCopy.value()), asBytes(vertexOffsets.span()).subspan(0, bytesToCopy.value()));
                 }
             }
 
@@ -426,7 +425,6 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
                 auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
-                    auto fragmentOffsetsSpan = std::span { reinterpret_cast<const uint8_t*>(fragmentOffsets.data()), fragmentOffsets.sizeInBytes() };
 
                     auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(fragmentOffsets[0]), fragmentOffsets.size());
@@ -434,7 +432,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
                         makeInvalid(@"Incorrect data for fragmentBuffer");
                         return false;
                     }
-                    memcpySpan(fragmentBufferContents.subspan(startIndex.value(), bytesToCopy.value()), fragmentOffsetsSpan.subspan(0, bytesToCopy.value()));
+                    memcpySpan(fragmentBufferContents.subspan(startIndex.value(), bytesToCopy.value()), asBytes(fragmentOffsets.span()).subspan(0, bytesToCopy.value()));
                 }
             }
         }
@@ -1069,7 +1067,7 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
                 makeInvalid(@"GPURenderBundleEncoder.setBindGroup: bind group is nil");
                 return;
             }
-            if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets ? dynamicOffsets->data() : nullptr, dynamicOffsets ? dynamicOffsets->size() : 0, group)) {
+            if (NSString* error = bindGroupLayout->errorValidatingDynamicOffsets(dynamicOffsets->span(), group)) {
                 makeInvalid([NSString stringWithFormat:@"GPURenderBundleEncoder.setBindGroup: %@", error]);
                 return;
             }

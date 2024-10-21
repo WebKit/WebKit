@@ -100,8 +100,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     UncheckedKeyHashMap<String, WGSL::PipelineLayout*> wgslHints;
     Vector<WGSL::PipelineLayout> wgslPipelineLayouts;
     wgslPipelineLayouts.reserveCapacity(suppliedHints.hintCount);
-    for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
-        const auto& hint = suppliedHints.hints[i];
+    for (const auto& hint : suppliedHints.hintsSpan()) {
         if (hint.nextInChain)
             return nullptr;
         auto hintKey = fromAPI(hint.entryPoint);

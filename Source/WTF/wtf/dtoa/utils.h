@@ -25,12 +25,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_UTILS_H_
-#define DOUBLE_CONVERSION_UTILS_H_
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <cstdlib>
 #include <cstring>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifndef UNIMPLEMENTED
 #define UNIMPLEMENTED() ASSERT_NOT_REACHED()
@@ -380,4 +381,4 @@ constexpr int default_decimal_in_shortest_high = 21;
 }  // namespace double_conversion
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_UTILS_H_
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
