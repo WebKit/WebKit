@@ -951,6 +951,15 @@ bool NetworkConnectionToWebProcess::isFilePathAllowed(NetworkSession& session, S
     return false;
 }
 
+static bool shouldCheckBlobFileAccess()
+{
+#if PLATFORM(COCOA)
+    return WTF::linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlobFileAccessEnforcement);
+#else
+    return true;
+#endif
+}
+
 void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
     MESSAGE_CHECK(!url.isEmpty());
@@ -958,7 +967,7 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
     auto* session = networkSession();
     if (!session)
         return;
-    if (blobFileAccessEnforcementEnabled())
+    if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
         MESSAGE_CHECK(isFilePathAllowed(*session, path));
 
     m_blobURLs.add({ url, std::nullopt });
@@ -991,7 +1000,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     auto* session = networkSession();
     if (!session)
         return;
-    if (blobFileAccessEnforcementEnabled())
+    if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
         MESSAGE_CHECK(isFilePathAllowed(*session, fileBackedPath));
 
     m_blobURLs.add({ url, std::nullopt });
