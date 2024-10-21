@@ -48,6 +48,21 @@ bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& fle
     return (isHorizontalWritingMode && (flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse)) || (!isHorizontalWritingMode && (flexDirection == FlexDirection::Column || flexDirection == FlexDirection::ColumnReverse));
 }
 
+bool FlexFormattingUtils::isMainAxisParallelWithLeftRightAxis(const ElementBox& flexContainer)
+{
+    // Currently, the only case where the property’s axis is not parallel with either left↔right axis is in a column flexbox.
+    // https://drafts.csswg.org/css-align/#positional-values
+    ASSERT(flexContainer.isFlexBox());
+    auto flexDirection = flexContainer.style().flexDirection();
+    return flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
+}
+
+bool FlexFormattingUtils::isInlineDirectionRTL(const ElementBox& flexContainer)
+{
+    ASSERT(flexContainer.isFlexBox());
+    return !flexContainer.style().isLeftToRightDirection();
+}
+
 bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)
 {
     ASSERT(flexContainer.isFlexBox());

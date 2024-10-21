@@ -584,8 +584,18 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         setFallbackValuesIfApplicable();
 
-        // If the property's axis is not parallel with either left<->right axis, this value behaves as start (https://drafts.csswg.org/css-align/#positional-values)
-        justifyContentPosition = !FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer()) && justifyContentPosition == ContentPosition::Right ? ContentPosition::Start : justifyContentPosition;
+        auto resolveNonLogicalValues = [&] {
+            if (justifyContentPosition != ContentPosition::Right && justifyContentPosition != ContentPosition::Left)
+                return;
+            if (!FlexFormattingUtils::isMainAxisParallelWithLeftRightAxis(flexContainer())) {
+                // If the property's axis is not parallel with either left<->right axis, this value behaves as start (https://drafts.csswg.org/css-align/#positional-values)
+                justifyContentPosition = ContentPosition::Start;
+                return;
+            }
+            auto leftRightNeedsFlipping = FlexFormattingUtils::isInlineDirectionRTL(flexContainer());
+            justifyContentPosition = justifyContentPosition == ContentPosition::Left ? (!leftRightNeedsFlipping ? ContentPosition::Start : ContentPosition::End) : (!leftRightNeedsFlipping ? ContentPosition::End : ContentPosition::Start);
+        };
+        resolveNonLogicalValues();
 
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
@@ -606,7 +616,6 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                 }
 
                 switch (justifyContentPosition) {
-                // logical alignments
                 case ContentPosition::Normal:
                 case ContentPosition::FlexStart:
                     return LayoutUnit { };
@@ -614,13 +623,10 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                     return availableMainSpaceForLineContent - lineContentOuterMainSize;
                 case ContentPosition::Center:
                     return availableMainSpaceForLineContent / 2 - lineContentOuterMainSize / 2;
-                // non-logical alignments
-                case ContentPosition::Left:
                 case ContentPosition::Start:
                     if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return availableMainSpaceForLineContent - lineContentOuterMainSize;
                     return LayoutUnit { };
-                case ContentPosition::Right:
                 case ContentPosition::End:
                     if (FlexFormattingUtils::isMainReversedToContentDirection(flexContainer()))
                         return LayoutUnit { };

@@ -39,6 +39,8 @@ public:
     FlexFormattingUtils(const FlexFormattingContext&);
 
     static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer);
+    static bool isMainAxisParallelWithLeftRightAxis(const ElementBox& flexContainer);
+    static bool isInlineDirectionRTL(const ElementBox& flexContainer);
     static bool isMainReversedToContentDirection(const ElementBox& flexContainer);
     static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
 
