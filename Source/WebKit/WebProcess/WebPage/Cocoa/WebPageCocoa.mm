@@ -63,6 +63,7 @@
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
+#import <WebCore/ImageUtilities.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MutableStyleProperties.h>
@@ -83,6 +84,7 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 
@@ -1135,6 +1137,16 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
         styledElement->removeInlineStyleProperty(CSSPropertyVisibility);
 
     completionHandler(textIndicator->data());
+}
+
+void WebPage::createIconDataFromImageData(Ref<WebCore::SharedBuffer>&& buffer, const Vector<unsigned>& lengths, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    return completionHandler(WebCore::createIconDataFromImageData(buffer->span(), lengths.span()));
+}
+
+void WebPage::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional<WebCore::FloatSize> preferredSize, CompletionHandler<void(RefPtr<WebCore::ShareableBitmap>&&)>&& completionHandler)
+{
+    completionHandler(decodeImageWithSize(buffer->span(), preferredSize));
 }
 
 } // namespace WebKit

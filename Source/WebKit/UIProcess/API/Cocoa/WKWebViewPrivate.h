@@ -189,6 +189,13 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 #endif
 - (void)_getInformationFromImageData:(NSData *)imageData completionHandler:(void (^)(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+- (void)_createIconDataFromImageData:(NSData *)imageData withLengths:(NSArray<NSNumber *> *)lengths completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+#if TARGET_OS_OSX
+- (void)_decodeImageData:(NSData *)imageData preferredSize:(NSValue *)preferredSize completionHandler:(void (^)(NSImage *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#else
+- (void)_decodeImageData:(NSData *)imageData preferredSize:(NSValue *)preferredSize completionHandler:(void (^)(UIImage *, NSError *))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+#endif
+
 @property (nonatomic, readonly) NSArray *_certificateChain WK_API_DEPRECATED_WITH_REPLACEMENT("certificateChain", macos(10.10, 10.11), ios(8.0, 9.0));
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;

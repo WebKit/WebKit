@@ -1498,6 +1498,20 @@ void WebPageProxy::getInformationFromImageData(Vector<uint8_t>&& data, Completio
     }, webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::createIconDataFromImageData(Ref<WebCore::SharedBuffer>&& buffer, const Vector<unsigned>& lengths, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    ensureProtectedRunningProcess()->sendWithAsyncReply(Messages::WebPage::CreateIconDataFromImageData(WTFMove(buffer), lengths), [preventProcessShutdownScope = protectedLegacyMainFrameProcess()->shutdownPreventingScope(), completionHandler = WTFMove(completionHandler)] (auto result) mutable {
+        completionHandler(WTFMove(result));
+    }, webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional<WebCore::FloatSize> preferredSize, CompletionHandler<void(RefPtr<WebCore::ShareableBitmap>&&)>&& completionHandler)
+{
+    ensureProtectedRunningProcess()->sendWithAsyncReply(Messages::WebPage::DecodeImageData(WTFMove(buffer), preferredSize), [preventProcessShutdownScope = protectedLegacyMainFrameProcess()->shutdownPreventingScope(), completionHandler = WTFMove(completionHandler)] (auto result) mutable {
+        completionHandler(WTFMove(result));
+    }, webPageIDInMainFrameProcess());
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

@@ -3297,6 +3297,53 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     });
 }
 
+- (void)_createIconDataFromImageData:(NSData *)imageData withLengths:(NSArray<NSNumber *> *)lengths completionHandler:(void (^)(NSData *, NSError *))completionHandler
+{
+    Vector<unsigned> targetLengths;
+    targetLengths.reserveInitialCapacity(lengths.count);
+    for (NSNumber *length in lengths) {
+        if (unsigned lengthValue = length.unsignedIntValue)
+            targetLengths.append(lengthValue);
+    }
+
+    auto buffer = WebCore::SharedBuffer::create(imageData);
+    _page->createIconDataFromImageData(WTFMove(buffer), targetLengths, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result) {
+            NSError *error = [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: @"Failed to decode data" }];
+            return completionHandler(nil, error);
+        }
+
+        completionHandler(result->createNSData().autorelease(), nil);
+    });
+}
+
+- (void)_decodeImageData:(NSData *)imageData preferredSize:(NSValue *)preferredSize completionHandler:(void (^)(CocoaImage *, NSError *))completionHandler
+{
+    std::optional<WebCore::FloatSize> size;
+    if (preferredSize) {
+#if PLATFORM(MAC)
+        size = WebCore::FloatSize([preferredSize sizeValue]);
+#else
+        size = WebCore::FloatSize([preferredSize CGSizeValue]);
+#endif
+    }
+
+    auto buffer = WebCore::SharedBuffer::create(imageData);
+    _page->decodeImageData(WTFMove(buffer), size, [completionHandler = makeBlockPtr(completionHandler)](RefPtr<WebCore::ShareableBitmap>&& bitmap) mutable {
+        if (!bitmap) {
+            NSError *error = [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: @"Failed to decode data" }];
+            return completionHandler(nil, error);
+        }
+
+#if PLATFORM(MAC)
+        RetainPtr cocoaImage = adoptNS([[NSImage alloc] initWithCGImage:bitmap->makeCGImageCopy().get() size:bitmap->size()]);
+#else
+        RetainPtr cocoaImage = adoptNS([[UIImage alloc] initWithCGImage:bitmap->makeCGImageCopy().get()]);
+#endif
+        completionHandler(cocoaImage.autorelease(), nil);
+    });
+}
+
 - (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler
 {
     THROW_IF_SUSPENDED;

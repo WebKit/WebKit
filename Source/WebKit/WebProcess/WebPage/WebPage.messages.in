@@ -831,6 +831,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint, size_t maximumBytesFromNetwork) -> (std::variant<WebCore::ResourceError, Ref<WebCore::ShareableBitmap>> result)
 #if PLATFORM(COCOA)
     GetInformationFromImageData(Vector<uint8_t> imageData) -> (Expected<std::pair<String, Vector<WebCore::IntSize>>, WebCore::ImageDecodingError> result)
+    CreateIconDataFromImageData(Ref<WebCore::SharedBuffer> imageData, Vector<unsigned> lengths) -> (RefPtr<WebCore::SharedBuffer> result)
+    DecodeImageData(Ref<WebCore::SharedBuffer> imageData, std::optional<WebCore::FloatSize> preferredSize) -> (RefPtr<WebCore::ShareableBitmap> result)
 #endif
 
     FrameNameWasChangedInAnotherProcess(WebCore::FrameIdentifier frameID, String frameName)

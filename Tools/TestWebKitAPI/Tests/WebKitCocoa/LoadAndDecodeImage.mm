@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "CocoaImage.h"
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -205,6 +206,44 @@ TEST(WebKit, GetInformationFromImageData)
         EXPECT_NOT_NULL(error);
         EXPECT_NULL(typeIdentifier);
         EXPECT_EQ(0u, availableSizes.count);
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(WebKit, CreateIconDataFromImageData)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr imageData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"]];
+    RetainPtr sizes = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr length1 = [NSNumber numberWithUnsignedInt:16];
+    RetainPtr length2 = [NSNumber numberWithUnsignedInt:256];
+    NSArray *lengths = @[length1.get(), length2.get()];
+    __block RetainPtr<NSData> iconData;
+    done = false;
+    [webView _createIconDataFromImageData:imageData.get() withLengths:lengths completionHandler:^(NSData *result, NSError *error) {
+        EXPECT_NULL(error);
+        iconData = result;
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(16, 16)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 16);
+        EXPECT_EQ(result.size.height, 16);
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(32, 32)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 256);
+        EXPECT_EQ(result.size.height, 256);
         done = true;
     }];
     Util::run(&done);

@@ -29,8 +29,11 @@
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "UTIUtilities.h"
+#include <CoreFoundation/CoreFoundation.h>
 #include <ImageIO/ImageIO.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/FileSystem.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
@@ -164,4 +167,98 @@ Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailable
     return std::make_pair(WTFMove(uti), WTFMove(sizes));
 }
 
+static RefPtr<NativeImage> createNativeImageFromData(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize)
+{
+    Ref buffer = FragmentedSharedBuffer::create(data);
+    Ref imageDecoder = ImageDecoderCG::create(buffer.get(), AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+    imageDecoder->setData(buffer.get(), true);
+    if (imageDecoder->encodedDataStatus() == EncodedDataStatus::Error)
+        return nullptr;
+
+    auto sourceUTI = imageDecoder->uti();
+    if (!isSupportedImageType(sourceUTI))
+        return nullptr;
+
+    auto preferredIndex = [&]() -> size_t {
+        if (!preferredSize)
+            return imageDecoder->primaryFrameIndex();
+        size_t frameCount = imageDecoder->frameCount();
+        for (size_t index = 0; index < frameCount; ++index) {
+            if (imageDecoder->frameSizeAtIndex(index) == *preferredSize)
+                return index;
+        }
+        return imageDecoder->primaryFrameIndex();
+    };
+    RetainPtr image = imageDecoder->createFrameImageAtIndex(preferredIndex());
+    if (!image)
+        return nullptr;
+
+    return NativeImage::create(WTFMove(image));
+}
+
+static RetainPtr<CFStringRef> cfString(ASCIILiteral string)
+{
+    return adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, string.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
+}
+
+static RefPtr<SharedBuffer> expandNativeImageToData(NativeImage& image, ASCIILiteral uti, std::span<const unsigned> lengths)
+{
+    RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    RetainPtr destinationData = adoptCF(CFDataCreateMutable(0, 0));
+    RetainPtr cfUTI = cfString(uti);
+    RetainPtr destination = adoptCF(CGImageDestinationCreateWithData(destinationData.get(), cfUTI.get(), lengths.size(), nullptr));
+    for (auto length : lengths) {
+        RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, length, length, 8, length * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
+        if (!context)
+            return nullptr;
+
+        // Quality is imporatnt than rendering speed in current use case.
+        CGContextSetInterpolationQuality(context.get(), kCGInterpolationHigh);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, length, length), image.platformImage().get());
+        RetainPtr newImage = adoptCF(CGBitmapContextCreateImage(context.get()));
+        if (!newImage)
+            return nullptr;
+
+        CGImageDestinationAddImage(destination.get(), newImage.get(), nullptr);
+    }
+
+    if (!CGImageDestinationFinalize(destination.get()))
+        return nullptr;
+
+    return SharedBuffer::create(destinationData.get());
+}
+
+RefPtr<SharedBuffer> createIconDataFromImageData(std::span<const uint8_t> data, std::span<const unsigned> lengths)
+{
+    RefPtr nativeImage = createNativeImageFromData(data, std::nullopt);
+    if (!nativeImage)
+        return { };
+
+    // Supported ICO image sizes by ImageIO.
+    std::array<unsigned, 5> availableLengths { { 16, 32, 48, 128, 256 } };
+    auto targetLengths = lengths.empty() ? std::span { availableLengths } : lengths;
+    return expandNativeImageToData(*nativeImage, "com.microsoft.ico"_s, targetLengths);
+}
+
+RefPtr<ShareableBitmap> decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize> preferredSize)
+{
+    auto nativeImage = createNativeImageFromData(data, preferredSize);
+    if (!nativeImage)
+        return nullptr;
+
+    auto sourceColorSpace = nativeImage->colorSpace();
+    auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
+    RefPtr bitmap = ShareableBitmap::create({ nativeImage->size(), destinationColorSpace });
+    if (!bitmap)
+        return nullptr;
+
+    auto context = bitmap->createGraphicsContext();
+    if (!context)
+        return nullptr;
+
+    FloatRect rect { { }, nativeImage->size() };
+    context->drawNativeImage(*nativeImage, rect, rect, { CompositeOperator::Copy });
+    return bitmap;
+
+}
 } // namespace WebCore

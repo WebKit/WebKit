@@ -51,6 +51,8 @@ enum class ImageDecodingError : uint8_t {
 };
 WEBCORE_EXPORT String descriptionString(ImageDecodingError);
 WEBCORE_EXPORT Expected<std::pair<String, Vector<IntSize>>, ImageDecodingError> utiAndAvailableSizesFromImageData(std::span<const uint8_t>);
+WEBCORE_EXPORT RefPtr<SharedBuffer> createIconDataFromImageData(std::span<const uint8_t> data, std::span<const unsigned> lengths);
+WEBCORE_EXPORT RefPtr<ShareableBitmap> decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize>);
 
 } // namespace WebCore
 
