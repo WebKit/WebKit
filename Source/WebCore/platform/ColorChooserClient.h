@@ -32,7 +32,7 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-#include <wtf/CheckedPtr.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,9 +40,8 @@ namespace WebCore {
 class Color;
 class IntRect;
 
-class ColorChooserClient : public CanMakeCheckedPtr<ColorChooserClient> {
+class ColorChooserClient : public AbstractRefCountedAndCanMakeWeakPtr<ColorChooserClient> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ColorChooserClient);
 public:
     virtual ~ColorChooserClient() = default;
 

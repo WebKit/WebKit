@@ -35,9 +35,12 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/ColorChooserClient.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebColorChooser);
 
 WebColorChooser::WebColorChooser(WebPage* page, ColorChooserClient* client, const Color& initialColor)
     : m_colorChooserClient(client)
@@ -58,12 +61,14 @@ WebColorChooser::~WebColorChooser()
 
 void WebColorChooser::didChooseColor(const Color& color)
 {
-    m_colorChooserClient->didChooseColor(color);
+    if (RefPtr colorChooserClient = m_colorChooserClient.get())
+        colorChooserClient->didChooseColor(color);
 }
 
 void WebColorChooser::didEndChooser()
 {
-    m_colorChooserClient->didEndChooser();
+    if (RefPtr colorChooserClient = m_colorChooserClient.get())
+        colorChooserClient->didEndChooser();
 }
 
 void WebColorChooser::disconnectFromPage()
@@ -76,9 +81,10 @@ void WebColorChooser::reattachColorChooser(const Color& color)
     ASSERT(m_page);
     m_page->setActiveColorChooser(this);
 
-    ASSERT(m_colorChooserClient);
-    auto supportsAlpha = m_colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, m_colorChooserClient->suggestedColors()), m_page->identifier());
+    RefPtr colorChooserClient = m_colorChooserClient.get();
+    ASSERT(colorChooserClient);
+    auto supportsAlpha = colorChooserClient->supportsAlpha() ? ColorControlSupportsAlpha::Yes : ColorControlSupportsAlpha::No;
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, colorChooserClient->elementRectRelativeToRootView(), supportsAlpha, colorChooserClient->suggestedColors()), m_page->identifier());
 }
 
 void WebColorChooser::setSelectedColor(const Color& color)

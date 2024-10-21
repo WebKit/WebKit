@@ -345,7 +345,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
+    virtual RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

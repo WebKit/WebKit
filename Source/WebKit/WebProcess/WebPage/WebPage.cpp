@@ -1903,8 +1903,8 @@ void WebPage::close()
     }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    if (m_activeColorChooser) {
-        m_activeColorChooser->disconnectFromPage();
+    if (RefPtr activeColorChooser = m_activeColorChooser.get()) {
+        activeColorChooser->disconnectFromPage();
         m_activeColorChooser = nullptr;
     }
 #endif
@@ -5654,14 +5654,14 @@ void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
 
 void WebPage::didEndColorPicker()
 {
-    if (m_activeColorChooser)
-        m_activeColorChooser->didEndChooser();
+    if (RefPtr activeColorChooser = m_activeColorChooser.get())
+        activeColorChooser->didEndChooser();
 }
 
 void WebPage::didChooseColor(const WebCore::Color& color)
 {
-    if (m_activeColorChooser)
-        m_activeColorChooser->didChooseColor(color);
+    if (RefPtr activeColorChooser = m_activeColorChooser.get())
+        activeColorChooser->didChooseColor(color);
 }
 
 #endif

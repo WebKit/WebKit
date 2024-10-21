@@ -193,7 +193,7 @@ public:
     WEBCORE_EXPORT void disableSuddenTermination();
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
+    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

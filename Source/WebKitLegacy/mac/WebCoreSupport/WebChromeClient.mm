@@ -697,7 +697,7 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();

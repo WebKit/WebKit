@@ -140,7 +140,7 @@ class EmptyChromeClient : public ChromeClient {
     void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    std::unique_ptr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
+    RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

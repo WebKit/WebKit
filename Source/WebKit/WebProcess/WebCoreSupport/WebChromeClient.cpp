@@ -840,9 +840,9 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
-    return makeUnique<WebColorChooser>(protectedPage().ptr(), &client, initialColor);
+    return WebColorChooser::create(protectedPage().ptr(), &client, initialColor);
 }
 
 #endif

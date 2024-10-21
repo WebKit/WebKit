@@ -443,7 +443,7 @@ void Chrome::disableSuddenTermination()
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-std::unique_ptr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
+RefPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(client);
