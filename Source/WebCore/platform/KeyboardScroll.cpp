@@ -26,6 +26,8 @@
 #include "config.h"
 #include "KeyboardScroll.h"
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 FloatSize unitVectorForScrollDirection(ScrollDirection direction)
@@ -42,6 +44,18 @@ FloatSize unitVectorForScrollDirection(ScrollDirection direction)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+TextStream& operator<<(TextStream& ts, const KeyboardScroll& scrollData)
+{
+    return ts << "offset=" << scrollData.offset << " maximumVelocity=" << scrollData.maximumVelocity << " force=" << scrollData.force << " granularity=" << scrollData.granularity << " direction=" << scrollData.direction;
+}
+
+TextStream& operator<<(TextStream& ts, const KeyboardScrollParameters& parameters)
+{
+    return ts << "springMass=" << parameters.springMass << " springStiffness=" << parameters.springStiffness
+    << " springDamping=" << parameters.springDamping << " maximumVelocityMultiplier=" << parameters.maximumVelocityMultiplier
+    << " timeToMaximumVelocity=" << parameters.timeToMaximumVelocity << " rubberBandForce=" << parameters.rubberBandForce;
 }
 
 }
