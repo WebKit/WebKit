@@ -4336,7 +4336,7 @@ http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeou
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 
-imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-lookup.html [ Pass Failure ]
 
 fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
