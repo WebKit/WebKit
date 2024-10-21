@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "_WKTextPreview.h"
+#import <wtf/RetainPtr.h>
 
 @implementation _WKTextPreview {
     RetainPtr<CGImageRef> _previewImage;
