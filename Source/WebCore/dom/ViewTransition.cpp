@@ -480,8 +480,11 @@ ExceptionOr<void> ViewTransition::captureOldState()
             }
             return { };
         }, *view->layer());
-        if (result.hasException())
+        if (result.hasException()) {
+            for (auto& renderer : captureRenderers)
+                renderer->setCapturedInViewTransition(false);
             return result.releaseException();
+        }
     }
 
     for (auto& renderer : captureRenderers) {
