@@ -144,13 +144,19 @@ bool FontCache::isSystemFontForbiddenForEditing(const String&)
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    // We want to return a fallback font here, otherwise the logic preventing FontConfig
-    // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.
     if (RefPtr<Font> font = fontForFamily(fontDescription, "serif"_s))
         return font.releaseNonNull();
 
-    // This could be reached due to improperly-installed or misconfigured fontconfig.
-    RELEASE_ASSERT_NOT_REACHED();
+    // Passing nullptr as family name makes Skia use a weak match.
+    auto typeface = fontManager().matchFamilyStyle(nullptr, skiaFontStyle(fontDescription));
+    if (!typeface) {
+        // LastResort is guaranteed to be non-null, so fallback to empty font with not glyphs.
+        typeface = SkTypeface::MakeEmpty();
+    }
+
+    FontPlatformData platformData(WTFMove(typeface), fontDescription.computedSize(), false /* syntheticBold */, false /* syntheticOblique */,
+        fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), computeFeatures(fontDescription, { }));
+    return fontForPlatformData(platformData);
 }
 
 Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts)
