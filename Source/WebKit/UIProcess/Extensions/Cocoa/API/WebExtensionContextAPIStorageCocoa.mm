@@ -194,27 +194,22 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(NSDictionary *oldKeysA
 
     auto *changedData = [NSMutableDictionary dictionary];
 
-    if (!newKeysAndValues) {
-        [oldKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
-            changedData[key] = @{ oldValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null };
-        }];
-    } else {
-        [newKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *value, BOOL *) {
-            if (NSString *oldValue = oldKeysAndValues[key]) {
-                if (![oldValue isEqualToString:value]) {
-                    changedData[key] = @{
-                        oldValueKey: parseJSON(oldValue, { JSONOptions::FragmentsAllowed }) ?: NSNull.null,
-                        newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null,
-                    };
-                }
+    // Process new or changed keys.
+    [newKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *newValue, BOOL *) {
+        NSString *oldValue = oldKeysAndValues[key];
 
-                return;
-            }
+        if (!oldValue || ![oldValue isEqualToString:newValue]) {
+            id parsedNewValue = parseJSON(newValue, JSONOptions::FragmentsAllowed) ?: NSNull.null;
+            id parsedOldValue = oldValue ? parseJSON(oldValue, JSONOptions::FragmentsAllowed) ?: NSNull.null : nil;
+            changedData[key] = parsedOldValue ? @{ oldValueKey: parsedOldValue, newValueKey: parsedNewValue } : @{ newValueKey: parsedNewValue };
+        }
+    }];
 
-            // A new key is being added for the first time.
-            changedData[key] = @{ newValueKey: parseJSON(value, { JSONOptions::FragmentsAllowed }) ?: NSNull.null };
-        }];
-    }
+    // Process removed keys.
+    [oldKeysAndValues enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *oldValue, BOOL *) {
+        if (!newKeysAndValues[key])
+            changedData[key] = @{ oldValueKey: parseJSON(oldValue, JSONOptions::FragmentsAllowed) ?: NSNull.null };
+    }];
 
     if (!changedData.count)
         return;
