@@ -1,5 +1,5 @@
 
-FAIL A value of auto can be specified for animation-duration assert_equals: expected "0" but got "-1"
+PASS A value of auto can be specified for animation-duration
 PASS e.style['animation-duration'] = "auto" should set the property value
 PASS Property animation-duration value 'auto'
 PASS e.style['animation'] = "auto cubic-bezier(0, -2, 1, 3) -3s 4 reverse both paused anim" should set the property value

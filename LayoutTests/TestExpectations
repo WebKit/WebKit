@@ -7410,7 +7410,6 @@ imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-whe
 
 # webkit.org/b/263870 [scroll-animations] some WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/css/deferred-timeline-composited.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-dynamic.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update-reversed-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-overflow-hidden.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller.html [ Skip ]
@@ -7433,15 +7432,11 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/update-playba
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
 # webkit.org/b/263871 [scroll-animations] some WPT tests are failures or flaky failures
-imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-multiple.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-named-scroll-progress-timeline.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-scroll-functional-notation.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-view-functional-notation.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-animation-longhand-properties.tentative.html [ Pass Failure ]
-imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-timeline.html [ Pass Failure ]
-imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-axis-writing-mode.html [ Pass Failure ]
-imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-sampling.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-dynamic.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/effect-updateTiming.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/change-animation-range-updates-play-state.html [ Pass Failure ]
@@ -7475,6 +7470,9 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/range-boundary.
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-update-reversed-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-bounds-update.html [ Skip ]
+
+# webkit.org/b/281837 [scroll-animations] calc() values in `view-timeline-inset` lead to a failed assertion under `ViewTimeline::computeTimelineData()`
+imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Skip ]
 
 # CSS @scope with shadow DOM
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]

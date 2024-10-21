@@ -179,7 +179,7 @@ ScrollableArea* ScrollTimeline::scrollableAreaForSourceRenderer(RenderElement* r
     if (renderer->element() == document->documentElement())
         return &renderer->view().frameView();
 
-    return (renderBox->canBeScrolledAndHasScrollableArea() && renderBox->hasLayer()) ? renderBox->layer()->scrollableArea() : nullptr;
+    return renderBox->hasLayer() ? renderBox->layer()->scrollableArea() : nullptr;
 }
 
 float ScrollTimeline::floatValueForOffset(const Length& offset, float maxValue)
