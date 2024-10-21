@@ -54,7 +54,7 @@ enum class AvoidanceReason : uint32_t {
     FlexBoxHasNonFixedHeightInMainAxis  = 1U << 1,
     FlexBoxNeedsBaseline                = 1U << 2,
     // Unused                           = 1U << 3,
-    FlexBoxIsRTL                        = 1U << 4,
+    // Unused                           = 1U << 4,
     // Unused                           = 1U << 5,
     // Unused                           = 1U << 6,
     FlexBoxHasUnsupportedOverflow       = 1U << 7,
@@ -68,7 +68,7 @@ enum class AvoidanceReason : uint32_t {
     FlexBoxHasSVGChild                  = 1U << 15,
     FlexBoxHasNestedFlex                = 1U << 16,
     FlexItemIsVertical                  = 1U << 17,
-    FlexItemIsRTL                       = 1U << 18,
+    // Unused                           = 1U << 18,
     FlexItemHasNonFixedHeight           = 1U << 19,
     FlexItemHasIntrinsicFlexBasis       = 1U << 20,
     // Unused                           = 1U << 21,
@@ -117,9 +117,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
     if (flexBoxStyle.display() == DisplayType::InlineFlex)
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxNeedsBaseline, reasons, includeReasons);
 
-    if (!flexBoxStyle.isLeftToRightDirection())
-        ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxIsRTL, reasons, includeReasons);
-
     auto isColumnDirection = flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse;
     if (isColumnDirection && !flexBoxStyle.height().isFixed())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNonFixedHeightInMainAxis, reasons, includeReasons);
@@ -146,9 +143,6 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         auto& flexItemStyle = flexItem.style();
         if (!flexItemStyle.isHorizontalWritingMode())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemIsVertical, reasons, includeReasons);
-
-        if (!flexItemStyle.isLeftToRightDirection())
-            ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemIsRTL, reasons, includeReasons);
 
         if (!flexItemStyle.height().isFixed())
             ADD_REASON_AND_RETURN_IF_NEEDED(FlexItemHasNonFixedHeight, reasons, includeReasons);
@@ -215,9 +209,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlexBoxNeedsBaseline:
         stream << "inline flex box needs baseline";
         break;
-    case AvoidanceReason::FlexBoxIsRTL:
-        stream << "flex box is has right to left inline direction";
-        break;
     case AvoidanceReason::FlexBoxHasUnsupportedOverflow:
         stream << "flex box has non-hidden overflow";
         break;
@@ -238,9 +229,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlexItemIsVertical:
         stream << "flex item has vertical writing mode";
-        break;
-    case AvoidanceReason::FlexItemIsRTL:
-        stream << "flex item has RTL inline direction";
         break;
     case AvoidanceReason::FlexItemHasNonFixedHeight:
         stream << "flex item has non-fixed height value";
