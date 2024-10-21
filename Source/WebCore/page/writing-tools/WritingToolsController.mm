@@ -355,6 +355,8 @@ void WritingToolsController::proofreadingSessionDidCompletePartialReplacement(co
 
         // An early return is intentionally omitted here because if there are suggestions in prior batches
         // that were never made visible for some reason by this point, they certainly should be.
+#else
+        UNUSED_PARAM(suggestions);
 #endif
 
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
