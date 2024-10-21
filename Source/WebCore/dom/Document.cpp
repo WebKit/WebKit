@@ -10643,6 +10643,11 @@ JSC::VM& Document::vm()
     return commonVM();
 }
 
+JSC::VM* Document::vmIfExists() const
+{
+    return commonVMOrNull();
+}
+
 String Document::debugDescription() const
 {
     StringBuilder builder;

@@ -270,6 +270,7 @@ public:
 
     virtual JSC::VM& vm() = 0;
     virtual Ref<JSC::VM> protectedVM();
+    virtual JSC::VM* vmIfExists() const = 0;
 
     void adjustMinimumDOMTimerInterval(Seconds oldMinimumTimerInterval);
     virtual Seconds minimumDOMTimerInterval() const;

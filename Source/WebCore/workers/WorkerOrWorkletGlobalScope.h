@@ -57,6 +57,7 @@ public:
     void clearScript();
 
     JSC::VM& vm() final;
+    JSC::VM* vmIfExists() const final;
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }

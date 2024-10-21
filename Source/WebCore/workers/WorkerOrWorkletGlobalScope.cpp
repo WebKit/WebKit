@@ -88,6 +88,11 @@ JSC::VM& WorkerOrWorkletGlobalScope::vm()
     return script()->vm();
 }
 
+JSC::VM* WorkerOrWorkletGlobalScope::vmIfExists() const
+{
+    return &script()->vm();
+}
+
 void WorkerOrWorkletGlobalScope::disableEval(const String& errorMessage)
 {
     m_script->disableEval(errorMessage);

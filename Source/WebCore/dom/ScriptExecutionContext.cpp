@@ -918,11 +918,14 @@ GuaranteedSerialFunctionDispatcher& ScriptExecutionContext::nativePromiseDispatc
 
 bool ScriptExecutionContext::requiresScriptExecutionTelemetry(ScriptTelemetryCategory category)
 {
-    Ref vm = this->vm();
+    RefPtr vm = vmIfExists();
+    if (!vm)
+        return false;
+
     if (!vm->topCallFrame)
         return false;
 
-    auto [taintedness, taintedURL] = JSC::sourceTaintedOriginFromStack(vm, vm->topCallFrame);
+    auto [taintedness, taintedURL] = JSC::sourceTaintedOriginFromStack(*vm, vm->topCallFrame);
     switch (taintedness) {
     case JSC::SourceTaintedOrigin::Untainted:
     case JSC::SourceTaintedOrigin::IndirectlyTaintedByHistory:

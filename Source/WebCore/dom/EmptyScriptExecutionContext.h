@@ -83,6 +83,7 @@ public:
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final { return std::nullopt; }
 
     JSC::VM& vm() final { return m_vm; }
+    JSC::VM* vmIfExists() const final { return m_vm.ptr(); }
 
     using RefCounted::ref;
     using RefCounted::deref;
