@@ -873,6 +873,7 @@ bool Quirks::needsPreloadAutoQuirk() const
 
 // vimeo.com rdar://56996057
 // docs.google.com rdar://59893415
+// bing.com rdar://133223599
 bool Quirks::shouldBypassBackForwardCache() const
 {
     if (!needsQuirks())
@@ -890,6 +891,13 @@ bool Quirks::shouldBypassBackForwardCache() const
     if (topURL.protocolIs("https"_s) && host == "vimeo.com"_s) {
         if (auto* documentLoader = document->frame() ? document->frame()->loader().documentLoader() : nullptr)
             return documentLoader->response().cacheControlContainsNoStore();
+    }
+
+    // Spinner issue from image search for bing.com.
+    if (registrableDomain == "bing.com"_s) {
+        static MainThreadNeverDestroyed<const AtomString> imageSearchDialogID("sb_sbidialog"_s);
+        if (RefPtr element = document->getElementById(imageSearchDialogID.get()))
+            return element->renderer();
     }
 
     // Login issue on bankofamerica.com (rdar://104938789).
