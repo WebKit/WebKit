@@ -123,7 +123,7 @@
     { "name": "ews166", "platform": "*" },
     { "name": "ews167", "platform": "*" },
     { "name": "ews168", "platform": "*" },
-    { "name": "ews170", "platform": "tvos-simulator-17" },
+    { "name": "ews170", "platform": "tvos-simulator-18" },
     { "name": "ews171", "platform": "mac-sonoma" },
     { "name": "ews172", "platform": "mac-sonoma" },
     { "name": "ews173", "platform": "mac-sonoma" },
@@ -157,21 +157,21 @@
     { "name": "ews202", "platform": "mac-ventura" },
     { "name": "ews203", "platform": "mac-ventura" },
     { "name": "ews204", "platform": "mac-ventura" },    
-    { "name": "ews216", "platform": "visionos-1" },
-    { "name": "ews217", "platform": "visionos-1" },
-    { "name": "ews218", "platform": "visionos-1" },
-    { "name": "ews219", "platform": "visionos-1" },
-    { "name": "ews220", "platform": "visionos-1" },
-    { "name": "ews221", "platform": "visionos-simulator-1" },
-    { "name": "ews222", "platform": "visionos-simulator-1" },
-    { "name": "ews223", "platform": "visionos-simulator-1" },
-    { "name": "ews224", "platform": "visionos-simulator-1" },
-    { "name": "ews225", "platform": "visionos-simulator-1" },
-    { "name": "ews226", "platform": "visionos-simulator-1" },
-    { "name": "ews227", "platform": "visionos-simulator-1" },
-    { "name": "ews228", "platform": "visionos-simulator-1" },
-    { "name": "ews229", "platform": "visionos-simulator-1" },
-    { "name": "ews230", "platform": "visionos-simulator-1" },
+    { "name": "ews216", "platform": "visionos-2" },
+    { "name": "ews217", "platform": "visionos-2" },
+    { "name": "ews218", "platform": "visionos-2" },
+    { "name": "ews219", "platform": "visionos-2" },
+    { "name": "ews220", "platform": "visionos-2" },
+    { "name": "ews221", "platform": "visionos-simulator-2" },
+    { "name": "ews222", "platform": "visionos-simulator-2" },
+    { "name": "ews223", "platform": "visionos-simulator-2" },
+    { "name": "ews224", "platform": "visionos-simulator-2" },
+    { "name": "ews225", "platform": "visionos-simulator-2" },
+    { "name": "ews226", "platform": "visionos-simulator-2" },
+    { "name": "ews227", "platform": "visionos-simulator-2" },
+    { "name": "ews228", "platform": "visionos-simulator-2" },
+    { "name": "ews229", "platform": "visionos-simulator-2" },
+    { "name": "ews230", "platform": "visionos-simulator-2" },
     { "name": "ews237", "platform": "mac-sonoma" },
     { "name": "ews238", "platform": "*" },
     { "name": "ews239", "platform": "*" },
@@ -302,47 +302,47 @@
       "workernames": ["ews237", "ews246", "ews247", "ews248", "ews249", "ews250"]
     },
     {
-      "name": "watchOS-10-Build-EWS", "shortname": "watch", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-10",
+      "name": "watchOS-11-Build-EWS", "shortname": "watch", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-11",
       "configuration": "release", "architectures": ["arm64_32", "arm64"],
       "workernames": ["ews163", "ews164", "ews165", "ews238", "ews239"]
     },
     {
-      "name": "watchOS-10-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
-      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-10",
+      "name": "watchOS-11-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
+      "factory": "watchOSBuildFactory", "platform": "watchos-simulator-11",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews164", "ews165", "ews166", "ews240"]
     },
     {
-      "name": "tvOS-17-Build-EWS", "shortname": "tv", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-17",
+      "name": "tvOS-18-Build-EWS", "shortname": "tv", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-18",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews167", "ews168", "ews243", "ews244"]
     },
     {
-      "name": "tvOS-17-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
-      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-17",
+      "name": "tvOS-18-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
+      "factory": "tvOSBuildFactory", "platform": "tvos-simulator-18",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170", "ews245"]
     },
     {
-      "name": "visionOS-1-Build-EWS", "shortname": "vision", "icon": "buildOnly",
-      "factory": "visionOSEmbeddedBuildFactory", "platform": "visionos-1",
+      "name": "visionOS-2-Build-EWS", "shortname": "vision", "icon": "buildOnly",
+      "factory": "visionOSEmbeddedBuildFactory", "platform": "visionos-2",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews216", "ews217", "ews218", "ews219", "ews220"]
     },
     {
-      "name": "visionOS-1-Simulator-Build-EWS", "shortname": "vision-sim", "icon": "buildOnly",
-      "factory": "visionOSBuildFactory", "platform": "visionos-simulator-1",
+      "name": "visionOS-2-Simulator-Build-EWS", "shortname": "vision-sim", "icon": "buildOnly",
+      "factory": "visionOSBuildFactory", "platform": "visionos-simulator-2",
       "configuration": "release", "architectures": ["arm64"],
-      "triggers": ["visionos-1-sim-wk2-tests-ews"],
+      "triggers": ["visionos-2-sim-wk2-tests-ews"],
       "workernames": ["ews221", "ews222", "ews223", "ews224", "ews225"]
     },
     {
-      "name": "visionOS-1-Simulator-WK2-Tests-EWS", "shortname": "vision-wk2", "icon": "testOnly",
-      "factory": "visionOSTestsFactory", "platform": "visionos-simulator-1",
+      "name": "visionOS-2-Simulator-WK2-Tests-EWS", "shortname": "vision-wk2", "icon": "testOnly",
+      "factory": "visionOSTestsFactory", "platform": "visionos-simulator-2",
       "configuration": "release",
-      "triggered_by": ["visionos-1-sim-build-ews"],
+      "triggered_by": ["visionos-2-sim-build-ews"],
       "additionalArguments": ["--child-processes=2"],
       "workernames": ["ews226", "ews227", "ews228", "ews229", "ews230"]
     },
@@ -483,8 +483,8 @@
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "visionOS-1-Build-EWS", "visionOS-1-Simulator-Build-EWS",
-            "watchOS-10-Build-EWS", "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
+            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
       ]
     },
@@ -498,8 +498,8 @@
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sonoma-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
-            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-17-Build-EWS", "tvOS-17-Simulator-Build-EWS", "visionOS-1-Build-EWS", "visionOS-1-Simulator-Build-EWS",
-            "watchOS-10-Build-EWS", "watchOS-10-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
+            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
       ]
     },
@@ -576,12 +576,12 @@
       "builderNames": ["GTK-WK2-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "visionos-1-sim-build-ews",
-      "builderNames": ["visionOS-1-Simulator-Build-EWS"]
+      "type": "Triggerable", "name": "visionos-2-sim-build-ews",
+      "builderNames": ["visionOS-2-Simulator-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "visionos-1-sim-wk2-tests-ews",
-      "builderNames": ["visionOS-1-Simulator-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "visionos-2-sim-wk2-tests-ews",
+      "builderNames": ["visionOS-2-Simulator-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "win-build-ews",
