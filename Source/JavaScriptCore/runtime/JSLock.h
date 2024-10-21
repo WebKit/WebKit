@@ -55,17 +55,6 @@ class VM;
 class JSGlobalObject;
 class JSLock;
 
-// This class is used to protect the initialization of the legacy single 
-// shared VM.
-class GlobalJSLock {
-    WTF_MAKE_NONCOPYABLE(GlobalJSLock);
-public:
-    JS_EXPORT_PRIVATE GlobalJSLock();
-    JS_EXPORT_PRIVATE ~GlobalJSLock();
-private:
-    static Lock s_sharedInstanceMutex;
-};
-
 class JSLockHolder {
 public:
     JS_EXPORT_PRIVATE JSLockHolder(VM*);

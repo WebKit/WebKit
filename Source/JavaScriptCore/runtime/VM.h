@@ -293,11 +293,7 @@ public:
     // create() should only be called once
     // on a thread, this is the 'default' VM (it uses the
     // thread's default string uniquing table from Thread::current()).
-    // API contexts created using the new context group aware interface
-    // create APIContextGroup objects which require less locking of JSC
-    // than the old singleton APIShared VM created for use by
-    // the original API.
-    enum VMType { Default, APIContextGroup, APIShared };
+    enum class VMType { Default, APIContextGroup };
 
     struct ClientData {
         JS_EXPORT_PRIVATE virtual ~ClientData() { };
@@ -305,10 +301,7 @@ public:
         JS_EXPORT_PRIVATE virtual String overrideSourceURL(const StackFrame&, const String& originalSourceURL) const = 0;
     };
 
-    bool isSharedInstance() { return vmType == APIShared; }
-    bool usingAPI() { return vmType != Default; }
-    JS_EXPORT_PRIVATE static bool sharedInstanceExists();
-    JS_EXPORT_PRIVATE static VM& sharedInstance();
+    bool usingAPI() { return vmType != VMType::Default; }
 
     JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);
     JS_EXPORT_PRIVATE static RefPtr<VM> tryCreate(HeapType = HeapType::Small, WTF::RunLoop* = nullptr);

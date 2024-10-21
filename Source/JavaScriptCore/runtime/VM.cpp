@@ -228,7 +228,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , clientHeap(heap)
     , vmType(vmType)
     , deferredWorkTimer(DeferredWorkTimer::create(*this))
-    , m_atomStringTable(vmType == Default ? Thread::current().atomStringTable() : new AtomStringTable)
+    , m_atomStringTable(vmType == VMType::Default ? Thread::current().atomStringTable() : new AtomStringTable)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , symbolImplToSymbolMap(*this)
@@ -453,7 +453,7 @@ VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
 
-    if (vmType == Default)
+    if (vmType == VMType::Default)
         WaiterListManager::singleton().unregister(this);
 
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
@@ -503,7 +503,7 @@ VM::~VM()
     delete emptyList;
 
     delete propertyNames;
-    if (vmType != Default)
+    if (vmType != VMType::Default)
         delete m_atomStringTable;
 
     delete clientData;
@@ -545,18 +545,18 @@ void VM::setLastStackTop(const Thread& thread)
 
 Ref<VM> VM::createContextGroup(HeapType heapType)
 {
-    return adoptRef(*new VM(APIContextGroup, heapType));
+    return adoptRef(*new VM(VMType::APIContextGroup, heapType));
 }
 
 Ref<VM> VM::create(HeapType heapType, WTF::RunLoop* runLoop)
 {
-    return adoptRef(*new VM(Default, heapType, runLoop));
+    return adoptRef(*new VM(VMType::Default, heapType, runLoop));
 }
 
 RefPtr<VM> VM::tryCreate(HeapType heapType, WTF::RunLoop* runLoop)
 {
     bool success = true;
-    RefPtr<VM> vm = adoptRef(new VM(Default, heapType, runLoop, &success));
+    RefPtr<VM> vm = adoptRef(new VM(VMType::Default, heapType, runLoop, &success));
     if (!success) {
         // Here, we're destructing a partially constructed VM and we know that
         // no one else can be using it at the same time. So, acquiring the lock
@@ -573,26 +573,6 @@ RefPtr<VM> VM::tryCreate(HeapType heapType, WTF::RunLoop* runLoop)
         vm = nullptr;
     }
     return vm;
-}
-
-bool VM::sharedInstanceExists()
-{
-    return sharedInstanceInternal();
-}
-
-VM& VM::sharedInstance()
-{
-    GlobalJSLock globalLock;
-    VM*& instance = sharedInstanceInternal();
-    if (!instance)
-        instance = adoptRef(new VM(APIShared, HeapType::Small)).leakRef();
-    return *instance;
-}
-
-VM*& VM::sharedInstanceInternal()
-{
-    static VM* sharedInstance;
-    return sharedInstance;
 }
 
 #if ENABLE(SAMPLING_PROFILER)
