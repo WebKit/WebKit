@@ -139,11 +139,9 @@ private:
     void paintSliderTicks(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     String colorInputStyleSheet() const final;
 
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-#endif
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;

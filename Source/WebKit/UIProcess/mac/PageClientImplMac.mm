@@ -523,12 +523,10 @@ void PageClientImpl::didDismissContextMenu()
 
 #endif // ENABLE(CONTEXT_MENUS)
 
-#if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions)
 {
     return WebColorPickerMac::create(&page->colorPickerClient(), initialColor, rect, supportsAlpha, WTFMove(suggestions), m_view);
 }
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)

@@ -264,10 +264,6 @@
 #define ENABLE_INLINE_PATH_DATA 0
 #endif
 
-#if !defined(ENABLE_INPUT_TYPE_COLOR)
-#define ENABLE_INPUT_TYPE_COLOR 1
-#endif
-
 #if !defined(ENABLE_INPUT_TYPE_DATE)
 #define ENABLE_INPUT_TYPE_DATE 0
 #endif

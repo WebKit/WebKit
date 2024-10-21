@@ -30,9 +30,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include "ColorInputType.h"
 
 #include "AXObjectCache.h"
@@ -394,5 +391,3 @@ void ColorInputType::selectColor(StringView string)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

@@ -695,16 +695,12 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)

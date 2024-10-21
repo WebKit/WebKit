@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebColorPickerGtk_h
-#define WebColorPickerGtk_h
-
-#if ENABLE(INPUT_TYPE_COLOR)
+#pragma once
 
 #include "WebColorPicker.h"
 #include <gdk/gdk.h>
@@ -68,6 +65,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
-#endif // WebColorPickerGtk_h

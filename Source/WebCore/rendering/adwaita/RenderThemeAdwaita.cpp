@@ -75,9 +75,7 @@ bool RenderThemeAdwaita::canCreateControlPartForRenderer(const RenderObject& ren
     switch (renderer.style().usedAppearance()) {
     case StyleAppearance::Button:
     case StyleAppearance::Checkbox:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::InnerSpinButton:
     case StyleAppearance::Menulist:

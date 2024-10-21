@@ -62,9 +62,7 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     static StyleSheetContents* dataListStyleSheet;
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     static StyleSheetContents* colorInputStyleSheet;
-#endif
 
     static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);

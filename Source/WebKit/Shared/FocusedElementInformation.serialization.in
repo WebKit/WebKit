@@ -41,9 +41,7 @@ enum class WebKit::InputType : uint8_t {
     Time,
     Select,
     Drawing,
-#if ENABLE(INPUT_TYPE_COLOR)
     Color
-#endif
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -96,11 +94,9 @@ enum class WebKit::InputType : uint8_t {
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions;
     bool isFocusingWithDataListDropdown;
-#if ENABLE(INPUT_TYPE_COLOR)
     WebCore::Color colorValue;
     WebKit::ColorControlSupportsAlpha supportsAlpha;
     Vector<WebCore::Color> suggestedColors;
-#endif
 #endif
     bool hasEverBeenPasswordField;
     bool shouldSynthesizeKeyEventsForEditing;

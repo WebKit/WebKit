@@ -71,7 +71,6 @@ TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
     EXPECT_WK_STREQ(@"Text", [webView stringByEvaluatingJavaScript:@"document.getElementById(\"editor\").textContent"]);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 TEST(DragAndDropTests, DropColor)
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
@@ -86,7 +85,6 @@ TEST(DragAndDropTests, DropColor)
     [simulator runFrom:NSMakePoint(0, 0) to:NSMakePoint(50, 50)];
     EXPECT_WK_STREQ(@"#ff0000", [webView stringByEvaluatingJavaScript:@"document.querySelector(\"input\").value"]);
 }
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 TEST(DragAndDropTests, DragImageElementIntoFileUpload)
 {

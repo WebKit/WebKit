@@ -61,9 +61,7 @@ enum class InputType : uint8_t {
     Time,
     Select,
     Drawing,
-#if ENABLE(INPUT_TYPE_COLOR)
     Color
-#endif
 };
 
 #if PLATFORM(IOS_FAMILY)
@@ -127,11 +125,9 @@ struct FocusedElementInformation {
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions { false };
     bool isFocusingWithDataListDropdown { false };
-#if ENABLE(INPUT_TYPE_COLOR)
     WebCore::Color colorValue;
     ColorControlSupportsAlpha supportsAlpha { ColorControlSupportsAlpha::No };
     Vector<WebCore::Color> suggestedColors;
-#endif
 #endif
     bool hasEverBeenPasswordField { false };
     bool shouldSynthesizeKeyEventsForEditing { false };

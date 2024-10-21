@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormColorControl.h"
 
-#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FocusedElementInformation.h"
 #import "UIKitSPI.h"
@@ -180,4 +180,4 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

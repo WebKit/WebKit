@@ -295,6 +295,11 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 }
 #endif
 
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&&)
+{
+    return nullptr;
+}
+
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
 #if ENABLE(WPE_PLATFORM)

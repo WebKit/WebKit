@@ -61,6 +61,7 @@
 #import "WKError.h"
 #import "WKExtendedTextInputTraits.h"
 #import "WKFocusedFormControlView.h"
+#import "WKFormColorControl.h"
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
@@ -187,10 +188,6 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #import "APIAttachment.h"
-#endif
-
-#if ENABLE(INPUT_TYPE_COLOR)
-#import "WKFormColorControl.h"
 #endif
 
 #if HAVE(PEPPER_UI_CORE)
@@ -966,11 +963,9 @@ inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range,
     case WebKit::InputType::Drawing:
         _type = WKInputTypeDrawing;
         break;
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
         _type = WKInputTypeColor;
         break;
-#endif
     case WebKit::InputType::None:
         _type = WKInputTypeNone;
         break;
@@ -2711,9 +2706,7 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
-#endif
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Date:
     case WebKit::InputType::Month:
@@ -3991,9 +3984,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     switch (type) {
     case WebKit::InputType::None:
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
-#endif
     case WebKit::InputType::Drawing:
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
@@ -7020,9 +7011,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         case WebKit::InputType::Time:
         case WebKit::InputType::Select:
         case WebKit::InputType::Drawing:
-#if ENABLE(INPUT_TYPE_COLOR)
         case WebKit::InputType::Color:
-#endif
             traits.keyboardType = UIKeyboardTypeDefault;
         }
         break;
@@ -7064,9 +7053,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         case WebKit::InputType::TextArea:
         case WebKit::InputType::None:
             return NO;
-#if ENABLE(INPUT_TYPE_COLOR)
         case WebKit::InputType::Color:
-#endif
         case WebKit::InputType::Date:
         case WebKit::InputType::DateTimeLocal:
         case WebKit::InputType::Drawing:
@@ -7926,9 +7913,7 @@ static bool mayContainSelectableText(WebKit::InputType type)
     switch (type) {
     case WebKit::InputType::None:
     // The following types have custom UI and do not look or behave like a text field.
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
-#endif
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Drawing:
@@ -7980,14 +7965,12 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     switch (type) {
     case WebKit::InputType::Select:
         return adoptNS([[WKFormSelectControl alloc] initWithView:view]);
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #if PLATFORM(APPLETV)
         return nil;
 #else
         return adoptNS([[WKFormColorControl alloc] initWithView:view]);
 #endif
-#endif // ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Date:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Month:
@@ -8756,9 +8739,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     case WebKit::InputType::Select:
     case WebKit::InputType::Time:
     case WebKit::InputType::Date:
-#if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
-#endif
         return nil;
     case WebKit::InputType::Search:
         return WebCore::formControlSearchButtonTitle();

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include "ControlFactory.h"
 #include "ControlPart.h"
 
@@ -54,5 +52,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CONTROL_PART(ColorWell)
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

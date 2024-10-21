@@ -101,9 +101,7 @@ StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
 #if ENABLE(DATALIST_ELEMENT)
 StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
-#endif
 
 static const MQ::MediaQueryEvaluator& screenEval()
 {
@@ -236,12 +234,10 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             addToDefaultStyle(*dataListStyleSheet);
         }
 #endif // ENABLE(DATALIST_ELEMENT)
-#if ENABLE(INPUT_TYPE_COLOR)
         else if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); !colorInputStyleSheet && input && input->isColorControl()) {
             colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet());
             addToDefaultStyle(*colorInputStyleSheet);
         }
-#endif // ENABLE(INPUT_TYPE_COLOR)
         else if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); !htmlSwitchControlStyleSheet && input && input->isSwitch()) {
             htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet));
             addToDefaultStyle(*htmlSwitchControlStyleSheet);

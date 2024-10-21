@@ -609,12 +609,10 @@ public:
 
     inline void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds);
 
-#if ENABLE(INPUT_TYPE_COLOR)
     WebColorChooser* activeColorChooser() const;
     void setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
     void didEndColorPicker();
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
@@ -2536,9 +2534,7 @@ private:
     RefPtr<WebContextMenu> m_contextMenu;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     WeakPtr<WebColorChooser> m_activeColorChooser;
-#endif
 
 #if ENABLE(DATALIST_ELEMENT)
     WeakPtr<WebDataListSuggestionPicker> m_activeDataListSuggestionPicker;

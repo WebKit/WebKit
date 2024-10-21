@@ -130,9 +130,7 @@ static InputTypeFactoryMap createInputTypeFactoryMap()
     } inputTypes[] = {
         { nullptr, &InputTypeNames::button, &createInputType<ButtonInputType> },
         { nullptr, &InputTypeNames::checkbox, &createInputType<CheckboxInputType> },
-#if ENABLE(INPUT_TYPE_COLOR)
         { &Settings::inputTypeColorEnabled, &InputTypeNames::color, &createInputType<ColorInputType> },
-#endif
 #if ENABLE(INPUT_TYPE_DATE)
         { &Settings::inputTypeDateEnabled, &InputTypeNames::date, &createInputType<DateInputType> },
 #endif
@@ -226,10 +224,8 @@ bool InputType::isValidValue(const String& value) const
         return validateInputType(uncheckedDowncast<ButtonInputType>(*this), value);
     case Type::Checkbox:
         return validateInputType(uncheckedDowncast<CheckboxInputType>(*this), value);
-#if ENABLE(INPUT_TYPE_COLOR)
     case Type::Color:
         return validateInputType(uncheckedDowncast<ColorInputType>(*this), value);
-#endif
 #if ENABLE(INPUT_TYPE_DATE)
     case Type::Date:
         return validateInputType(uncheckedDowncast<DateInputType>(*this), value);
@@ -398,11 +394,7 @@ bool InputType::isInvalid(const String& value) const
     case Type::Checkbox:
         return isInvalidInputType<CheckboxInputType>(*this, value);
     case Type::Color:
-#if ENABLE(INPUT_TYPE_COLOR)
         return isInvalidInputType<ColorInputType>(*this, value);
-#else
-        return false;
-#endif
     case Type::Date:
 #if ENABLE(INPUT_TYPE_DATE)
         return isInvalidInputType<DateInputType>(*this, value);

@@ -29,7 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(INPUT_TYPE_COLOR) && USE(APPKIT)
+#if USE(APPKIT)
 
 #import "ColorControlSupportsAlpha.h"
 #import "WebColorPicker.h"
@@ -74,4 +74,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && USE(APPKIT)
+#endif // USE(APPKIT)

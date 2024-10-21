@@ -64,9 +64,7 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformApplePayButton(ApplePayButtonPart&) = 0;
 #endif
     virtual std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) = 0;
-#if ENABLE(INPUT_TYPE_COLOR)
     virtual std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) = 0;
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     virtual std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ImageControlsButtonPart&) = 0;
 #endif

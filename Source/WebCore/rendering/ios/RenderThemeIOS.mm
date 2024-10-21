@@ -892,10 +892,8 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         style.setLogicalMinHeight(Length(minimumHeight, LengthType::Fixed));
     }
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (style.usedAppearance() == StyleAppearance::ColorWell)
         return;
-#endif
 
     // Set padding: 0 1.0em; on buttons.
     // CSSPrimitiveValue::resolveAsLength only needs the element's style to calculate em lengths.
@@ -1769,8 +1767,6 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
 
 #endif // ENABLE(DATALIST_ELEMENT)
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 String RenderThemeIOS::colorInputStyleSheet() const
 {
     return "input[type=\"color\"] { appearance: auto; width: 28px; height: 28px; box-sizing: border-box; outline: none; border: initial; border-radius: 50%; } "_s;
@@ -1807,8 +1803,6 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintI
     context.setStrokeGradient(WTFMove(gradient));
     context.strokeEllipse(strokeRect);
 }
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {

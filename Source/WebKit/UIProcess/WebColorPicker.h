@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -75,5 +73,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

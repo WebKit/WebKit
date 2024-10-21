@@ -105,10 +105,8 @@ static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState
     if (!source.image)
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
 #if ENABLE(MODEL_ELEMENT)
     if (source.action.contains(DragSourceAction::Model))
@@ -123,10 +121,8 @@ static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceSta
     if (!source.visiblePath)
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
     return false;
 }
@@ -152,10 +148,8 @@ static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
     if (!source.possiblyNeedsDragPreviewUpdate)
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
     if (source.action.contains(DragSourceAction::Link) && !source.action.contains(DragSourceAction::Image))
         return true;
@@ -417,7 +411,6 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
                 return preview.autorelease();
             };
         }
-#if ENABLE(INPUT_TYPE_COLOR)
         else if (source.action.contains(DragSourceAction::Color)) {
             dragItem.previewProvider = [image = source.image] () -> UIDragPreview * {
                 auto imageView = adoptNS([[UIImageView alloc] initWithImage:image.get()]);
@@ -425,7 +418,6 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
                 return adoptNS([[UIDragPreview alloc] initWithView:imageView.get() parameters:parameters.get()]).autorelease();
             };
         }
-#endif
 
         source.possiblyNeedsDragPreviewUpdate = false;
     }

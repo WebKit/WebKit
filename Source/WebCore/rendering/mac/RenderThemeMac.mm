@@ -146,9 +146,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
 #endif
     case StyleAppearance::Button:
     case StyleAppearance::Checkbox:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
@@ -194,9 +192,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 #if ENABLE(APPLE_PAY)
         || type == StyleAppearance::ApplePayButton
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
         || type == StyleAppearance::ColorWell
-#endif
         || type == StyleAppearance::DefaultButton
 #if ENABLE(SERVICE_CONTROLS)
         || type == StyleAppearance::ImageControlsButton
