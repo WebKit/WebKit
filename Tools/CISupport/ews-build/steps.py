@@ -7284,7 +7284,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
         unexpected_results = self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_new_issues', 0) or self.getProperty('unexpected_passing_files', 0)
         if self.expectations and unexpected_results:
             # If there are unexpected results, rebuild without changes to verify causation
-            self.build.addStepsAfterCurrentStep([RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
+            self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
         elif unexpected_results:
             # Only save the results if there are failures and it is not the first run
             self.build.addStepsAfterCurrentStep([ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
