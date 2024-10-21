@@ -73,7 +73,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
             return CaptureSourceOrError { CaptureSourceError { "Screen capture unavailable"_s, MediaAccessDenialReason::NoCaptureDevices } };
 
         return create([] (auto& source) {
-            return ReplayKitCaptureSource::create(source);
+            return makeUniqueRefWithoutRefCountedCheck<ReplayKitCaptureSource>(source);
         }, device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif HAVE(SCREEN_CAPTURE_KIT)
         FALLTHROUGH;
@@ -88,7 +88,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
             if (!deviceID)
                 return CaptureSourceOrError { WTFMove(deviceID).error() };
             return create([deviceID = deviceID.value(), &device] (auto& source) {
-                return ScreenCaptureKitCaptureSource::create(source, device, deviceID);
+                return makeUniqueRefWithoutRefCountedCheck<ScreenCaptureKitCaptureSource>(source, device, deviceID);
             }, device, WTFMove(hashSalts), constraints, pageIdentifier);
         }
         ASSERT_NOT_REACHED();

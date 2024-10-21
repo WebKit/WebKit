@@ -1225,7 +1225,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         makeUniqueRef<EmptyProgressTrackerClient>(),
         PageConfiguration::LocalMainFrameCreationParameters {
             CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)> { [] (auto&, auto& frameLoader) {
-                return makeUniqueRef<EmptyFrameLoaderClient>(frameLoader);
+                return makeUniqueRefWithoutRefCountedCheck<EmptyFrameLoaderClient>(frameLoader);
             } },
             SandboxFlags::all(),
         },

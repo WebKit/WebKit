@@ -61,6 +61,7 @@ Ref<PaymentCoordinator> PaymentCoordinator::create(UniqueRef<PaymentCoordinatorC
 PaymentCoordinator::PaymentCoordinator(UniqueRef<PaymentCoordinatorClient>&& client)
     : m_client(WTFMove(client))
 {
+    m_client->setPaymentCoordinator(*this);
 }
 
 PaymentCoordinator::~PaymentCoordinator() = default;

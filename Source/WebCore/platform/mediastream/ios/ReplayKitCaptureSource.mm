@@ -102,11 +102,6 @@ bool ReplayKitCaptureSource::isAvailable()
     return [PAL::getRPScreenRecorderClass() sharedRecorder].isAvailable;
 }
 
-UniqueRef<DisplayCaptureSourceCocoa::Capturer> ReplayKitCaptureSource::create(CapturerObserver& observer)
-{
-    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ReplayKitCaptureSource>(observer));
-}
-
 ReplayKitCaptureSource::ReplayKitCaptureSource(CapturerObserver& observer)
     : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_captureWatchdogTimer(*this, &ReplayKitCaptureSource::verifyCaptureIsActive)

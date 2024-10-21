@@ -41,7 +41,7 @@ namespace WebCore {
 class AudioSessionIOS final : public AudioSessionCocoa {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionIOS);
 public:
-    AudioSessionIOS();
+    static Ref<AudioSessionIOS> create();
     virtual ~AudioSessionIOS();
 
     void setHostProcessAttribution(audit_token_t) final;
@@ -51,6 +51,8 @@ public:
     WEBCORE_EXPORT static void addAudioSessionCategoryChangedObserver(const CategoryChangedObserver&);
 
 private:
+    AudioSessionIOS();
+
     // AudioSession
     CategoryType category() const final;
     Mode mode() const final;

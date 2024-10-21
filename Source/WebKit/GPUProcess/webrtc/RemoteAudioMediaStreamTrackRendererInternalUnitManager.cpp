@@ -175,7 +175,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
     , m_localUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::create(*this))
     , m_shouldRegisterAsSpeakerSamplesProducer(shouldRegisterAsSpeakerSamplesProducer)
 {
-    WebCore::AudioSession::sharedSession().addInterruptionObserver(*this);
+    WebCore::AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
     protectedLocalUnit()->retrieveFormatDescription([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)](auto&& description) mutable {
         if (!weakThis || !description) {
             RELEASE_LOG_IF(!description, WebRTC, "RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit unable to get format description");
@@ -191,7 +191,7 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
 
 RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit()
 {
-    WebCore::AudioSession::sharedSession().removeInterruptionObserver(*this);
+    WebCore::AudioSession::protectedSharedSession()->removeInterruptionObserver(*this);
     stop();
 }
 

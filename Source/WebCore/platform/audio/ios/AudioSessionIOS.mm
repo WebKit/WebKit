@@ -114,6 +114,11 @@ void AudioSessionIOS::addAudioSessionCategoryChangedObserver(const CategoryChang
     observer(AudioSession::sharedSession(), AudioSession::sharedSession().category());
 }
 
+Ref<AudioSessionIOS> AudioSessionIOS::create()
+{
+    return adoptRef(*new AudioSessionIOS);
+}
+
 AudioSessionIOS::AudioSessionIOS()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

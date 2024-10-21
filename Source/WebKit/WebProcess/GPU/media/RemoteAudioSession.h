@@ -50,7 +50,7 @@ class RemoteAudioSession final
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
-    static UniqueRef<RemoteAudioSession> create();
+    static Ref<RemoteAudioSession> create();
     ~RemoteAudioSession();
 
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::ref(); }
@@ -58,7 +58,6 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::controlBlock(); }
 
 private:
-    friend UniqueRef<RemoteAudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSession>();
     RemoteAudioSession();
     IPC::Connection& ensureConnection();
 

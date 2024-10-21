@@ -119,8 +119,10 @@ public:
 
     bool installmentConfigurationReturnsNil() const;
 
-    void ref() const { }
-    void deref() const { }
+    void setPaymentCoordinator(PaymentCoordinator&) final;
+
+    void ref() const;
+    void deref() const;
 
 private:
     std::optional<String> validatedPaymentNetwork(const String&) const final;
@@ -146,7 +148,8 @@ private:
 
     void dispatchIfShowing(Function<void()>&&);
 
-    Page& m_page;
+    WeakPtr<PaymentCoordinator> m_paymentCoordinator;
+    WeakRef<Page> m_page;
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
     ApplePayPaymentContact m_shippingAddress;

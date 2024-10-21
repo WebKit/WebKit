@@ -61,7 +61,7 @@ Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, 
 
 WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
     : ActiveDOMObject(&document)
-    , m_inputSources(WebXRInputSourceArray::create(*this))
+    , m_inputSources(makeUniqueRefWithoutRefCountedCheck<WebXRInputSourceArray>(*this))
     , m_xrSystem(system)
     , m_mode(mode)
     , m_device(device)

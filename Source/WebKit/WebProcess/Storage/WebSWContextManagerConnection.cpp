@@ -179,7 +179,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 
         pageConfiguration.mainFrameCreationParameters = PageConfiguration::LocalMainFrameCreationParameters {
             CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [webPageProxyID = m_webPageProxyID, pageID = m_pageID, effectiveUserAgent, serviceWorkerPageIdentifier = contextData.serviceWorkerPageIdentifier] (auto&, auto& frameLoader) mutable {
-                auto client = makeUniqueRef<RemoteWorkerFrameLoaderClient>(frameLoader, webPageProxyID, pageID, effectiveUserAgent);
+                auto client = makeUniqueRefWithoutRefCountedCheck<RemoteWorkerFrameLoaderClient>(frameLoader, webPageProxyID, pageID, effectiveUserAgent);
                 if (serviceWorkerPageIdentifier)
                     client->setServiceWorkerPageIdentifier(*serviceWorkerPageIdentifier);
                 return client;

@@ -82,6 +82,11 @@ static float defaultDeviceTransportIsBluetooth()
 }
 #endif
 
+Ref<AudioSessionMac> AudioSessionMac::create()
+{
+    return adoptRef(*new AudioSessionMac);
+}
+
 void AudioSessionMac::removePropertyListenersForDefaultDevice() const
 {
     if (m_hasBufferSizeObserver) {

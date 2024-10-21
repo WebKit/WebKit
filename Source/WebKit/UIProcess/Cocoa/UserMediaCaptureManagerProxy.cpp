@@ -114,8 +114,9 @@ public:
 
     void audioUnitWillStart() final
     {
-        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::VideoChat, RouteSharingPolicy::Default);
-        AudioSession::sharedSession().tryToSetActive(true);
+        Ref session = AudioSession::sharedSession();
+        session->setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::VideoChat, RouteSharingPolicy::Default);
+        session->tryToSetActive(true);
     }
 
     void start()
@@ -352,7 +353,7 @@ private:
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
-            m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, AudioSession::sharedSession().preferredBufferSize());
+            m_frameChunkSize = std::max(WebCore::AudioUtilities::renderQuantumSize, AudioSession::protectedSharedSession()->preferredBufferSize());
 
             // Allocate a ring buffer large enough to contain 2 seconds of audio.
             auto result = ProducerSharedCARingBuffer::allocate(*m_description, m_description->sampleRate() * 2);

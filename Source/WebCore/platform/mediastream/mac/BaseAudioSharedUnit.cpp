@@ -40,7 +40,7 @@ namespace WebCore {
 constexpr Seconds voiceActivityThrottlingDuration = 5_s;
 
 BaseAudioSharedUnit::BaseAudioSharedUnit()
-    : m_sampleRate(AudioSession::sharedSession().sampleRate())
+    : m_sampleRate(AudioSession::protectedSharedSession()->sampleRate())
     , m_voiceActivityThrottleTimer([] { })
 {
     RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);

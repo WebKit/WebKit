@@ -150,7 +150,6 @@ style/StyleSharingResolver.cpp
 style/Styleable.h
 svg/properties/SVGAnimatedProperty.h
 svg/properties/SVGPropertyOwnerRegistry.h
-testing/MockPaymentCoordinator.h
 workers/WorkerAnimationController.h
 workers/WorkerConsoleClient.h
 workers/WorkerMessagingProxy.h

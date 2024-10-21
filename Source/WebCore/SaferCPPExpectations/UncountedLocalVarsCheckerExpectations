@@ -1332,7 +1332,6 @@ testing/Internals.mm
 testing/LegacyMockCDM.cpp
 testing/MockCDMFactory.cpp
 testing/MockPageOverlayClient.cpp
-testing/MockPaymentCoordinator.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
 workers/AbstractWorker.cpp

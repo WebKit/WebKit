@@ -39,10 +39,12 @@ namespace WebCore {
 class AudioSessionMac final : public AudioSessionCocoa {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
-    AudioSessionMac() = default;
+    static Ref<AudioSessionMac> create();
     virtual ~AudioSessionMac() = default;
 
 private:
+    AudioSessionMac() = default;
+
     void addSampleRateObserverIfNeeded() const;
     void addBufferSizeObserverIfNeeded() const;
     void addDefaultDeviceObserverIfNeeded() const;

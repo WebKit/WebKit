@@ -40,10 +40,18 @@ UniqueRef<T> makeUniqueRefWithoutFastMallocCheck(Args&&... args)
     return UniqueRef<T>(*new T(std::forward<Args>(args)...));
 }
 
+template<class T, class... Args>
+UniqueRef<T> makeUniqueRefWithoutRefCountedCheck(Args&&... args)
+{
+    static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
+}
+
 template<typename T, class... Args>
 UniqueRef<T> makeUniqueRef(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
+    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be RefCounted");
     return makeUniqueRefWithoutFastMallocCheck<T>(std::forward<Args>(args)...);
 }
 

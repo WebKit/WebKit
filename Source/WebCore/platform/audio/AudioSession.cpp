@@ -49,15 +49,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSession);
 bool AudioSession::s_shouldManageAudioSessionCategory { false };
 static bool s_mediaPlaybackEnabled { false };
 
-static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
+static RefPtr<AudioSession>& sharedAudioSession()
 {
-    static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> session;
+    static NeverDestroyed<RefPtr<AudioSession>> session;
     return session.get();
 }
 
-static std::optional<UniqueRef<AudioSession>>& dummyAudioSession()
+static Ref<AudioSession>& dummyAudioSession()
 {
-    static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> dummySession = makeUniqueRef<AudioSession>();
+    static NeverDestroyed<Ref<AudioSession>> dummySession = AudioSession::create();
     return dummySession.get();
 }
 
@@ -76,14 +76,14 @@ bool AudioSession::enableMediaPlayback()
     return true;
 }
 
-UniqueRef<AudioSession> AudioSession::create()
+Ref<AudioSession> AudioSession::create()
 {
 #if PLATFORM(MAC)
-    return makeUniqueRef<AudioSessionMac>();
+    return AudioSessionMac::create();
 #elif PLATFORM(IOS_FAMILY)
-    return makeUniqueRef<AudioSessionIOS>();
+    return AudioSessionIOS::create();
 #else
-    return makeUniqueRef<AudioSession>();
+    return AudioSession::create();
 #endif
 }
 
@@ -93,7 +93,7 @@ AudioSession::~AudioSession() = default;
 AudioSession& AudioSession::sharedSession()
 {
     if (!s_mediaPlaybackEnabled)
-        return *dummyAudioSession();
+        return dummyAudioSession();
 
     if (!sharedAudioSession())
         setSharedSession(AudioSession::create());
@@ -101,12 +101,12 @@ AudioSession& AudioSession::sharedSession()
     return *sharedAudioSession();
 }
 
-void AudioSession::setSharedSession(UniqueRef<AudioSession>&& session)
+void AudioSession::setSharedSession(Ref<AudioSession>&& session)
 {
-    sharedAudioSession() = WTFMove(session);
+    sharedAudioSession() = session.copyRef();
 
-    audioSessionChangedObservers().forEach([] (auto& observer) {
-        observer(*sharedAudioSession());
+    audioSessionChangedObservers().forEach([session] (auto& observer) {
+        observer(session);
     });
 }
 
@@ -116,7 +116,7 @@ void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observe
     audioSessionChangedObservers().add(observer);
 
     if (sharedAudioSession())
-        observer(*sharedAudioSession());
+        observer(Ref { *sharedAudioSession() });
 }
 
 bool AudioSession::tryToSetActive(bool active)
@@ -131,11 +131,11 @@ bool AudioSession::tryToSetActive(bool active)
     m_active = active;
     if (m_isInterrupted && m_active) {
         callOnMainThread([hasActiveChanged] {
-            auto& session = sharedSession();
-            if (session.m_isInterrupted && session.m_active)
-                session.endInterruption(MayResume::Yes);
+            Ref session = sharedSession();
+            if (session->m_isInterrupted && session->m_active)
+                session->endInterruption(MayResume::Yes);
             if (hasActiveChanged)
-                session.activeStateChanged();
+                session->activeStateChanged();
         });
     } else if (hasActiveChanged)
         activeStateChanged();

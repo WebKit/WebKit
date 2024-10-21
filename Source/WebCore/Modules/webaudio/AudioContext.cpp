@@ -126,7 +126,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, AudioCon
 
 AudioContext::AudioContext(Document& document, const AudioContextOptions& contextOptions)
     : BaseAudioContext(document)
-    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
+    , m_destinationNode(makeUniqueRefWithoutRefCountedCheck<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
     , m_mediaSession(PlatformMediaSession::create(PlatformMediaSessionManager::sharedManager(), *this))
     , m_currentIdentifier(MediaUniqueIdentifier::generate())
 {

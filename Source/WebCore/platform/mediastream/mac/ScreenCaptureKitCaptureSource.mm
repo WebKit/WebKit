@@ -189,11 +189,6 @@ Expected<uint32_t, CaptureSourceError> ScreenCaptureKitCaptureSource::computeDev
     return *deviceID;
 }
 
-UniqueRef<DisplayCaptureSourceCocoa::Capturer> ScreenCaptureKitCaptureSource::create(CapturerObserver& observer, const CaptureDevice& device, uint32_t deviceID)
-{
-    return UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<ScreenCaptureKitCaptureSource>(observer, device, deviceID));
-}
-
 ScreenCaptureKitCaptureSource::ScreenCaptureKitCaptureSource(CapturerObserver& observer, const CaptureDevice& device, uint32_t deviceID)
     : DisplayCaptureSourceCocoa::Capturer(observer)
     , m_captureDevice(device)

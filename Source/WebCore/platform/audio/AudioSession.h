@@ -32,6 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Observer.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
@@ -100,15 +101,15 @@ public:
     virtual void sampleRateDidChange(const AudioSession&) { }
 };
 
-class WEBCORE_EXPORT AudioSession {
+class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCounted<AudioSession> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioSession, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(AudioSession);
-    friend class UniqueRef<AudioSession>;
-    friend UniqueRef<AudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<AudioSession>();
 public:
-    static UniqueRef<AudioSession> create();
-    static void setSharedSession(UniqueRef<AudioSession>&&);
+    static Ref<AudioSession> create();
+    static void setSharedSession(Ref<AudioSession>&&);
     static AudioSession& sharedSession();
+    static Ref<AudioSession> protectedSharedSession() { return sharedSession(); }
+
     static bool enableMediaPlayback();
 
     using ChangedObserver = WTF::Observer<void(AudioSession&)>;

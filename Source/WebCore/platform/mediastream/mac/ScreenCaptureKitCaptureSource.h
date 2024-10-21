@@ -57,7 +57,6 @@ class ScreenCaptureKitCaptureSource final
     , public ScreenCaptureSessionSourceObserver {
 public:
     static Expected<uint32_t, CaptureSourceError> computeDeviceID(const CaptureDevice&);
-    static UniqueRef<DisplayCaptureSourceCocoa::Capturer> create(CapturerObserver&, const CaptureDevice&, uint32_t deviceID);
 
     ScreenCaptureKitCaptureSource(CapturerObserver&, const CaptureDevice&, uint32_t);
     virtual ~ScreenCaptureKitCaptureSource();

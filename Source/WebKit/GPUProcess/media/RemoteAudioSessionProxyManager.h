@@ -65,6 +65,8 @@ public:
 
     WebCore::AudioSession& session() { return WebCore::AudioSession::sharedSession(); }
     const WebCore::AudioSession& session() const { return WebCore::AudioSession::sharedSession(); }
+    Ref<WebCore::AudioSession> protectedSession() { return WebCore::AudioSession::sharedSession(); }
+    Ref<const WebCore::AudioSession> protectedSession() const { return WebCore::AudioSession::sharedSession(); }
 
     void updatePresentingProcesses();
 

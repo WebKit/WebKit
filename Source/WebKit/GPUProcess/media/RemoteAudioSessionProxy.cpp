@@ -64,15 +64,15 @@ WebCore::ProcessIdentifier RemoteAudioSessionProxy::processIdentifier()
 
 RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
 {
-    auto& session = protectedAudioSessionManager()->session();
+    Ref session = protectedAudioSessionManager()->session();
     return {
-        session.routingContextUID(),
-        session.sampleRate(),
-        session.bufferSize(),
-        session.numberOfOutputChannels(),
-        session.maximumNumberOfOutputChannels(),
-        session.preferredBufferSize(),
-        session.isMuted(),
+        session->routingContextUID(),
+        session->sampleRate(),
+        session->bufferSize(),
+        session->numberOfOutputChannels(),
+        session->maximumNumberOfOutputChannels(),
+        session->preferredBufferSize(),
+        session->isMuted(),
         m_active,
         m_sceneIdentifier,
         m_soundStageSize,
@@ -120,7 +120,7 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
 void RemoteAudioSessionProxy::setIsPlayingToBluetoothOverride(std::optional<bool>&& value)
 {
     m_isPlayingToBluetoothOverrideChanged = true;
-    protectedAudioSessionManager()->session().setIsPlayingToBluetoothOverride(WTFMove(value));
+    protectedAudioSessionManager()->protectedSession()->setIsPlayingToBluetoothOverride(WTFMove(value));
 }
 
 void RemoteAudioSessionProxy::configurationChanged()
@@ -187,13 +187,13 @@ Ref<IPC::Connection> RemoteAudioSessionProxy::protectedConnection() const
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
 {
     MESSAGE_CHECK(m_gpuConnection.get()->allowTestOnlyIPC());
-    AudioSession::sharedSession().beginInterruptionForTesting();
+    AudioSession::protectedSharedSession()->beginInterruptionForTesting();
 }
 
 void RemoteAudioSessionProxy::triggerEndInterruptionForTesting()
 {
     MESSAGE_CHECK(m_gpuConnection.get()->allowTestOnlyIPC());
-    AudioSession::sharedSession().endInterruptionForTesting();
+    AudioSession::protectedSharedSession()->endInterruptionForTesting();
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteAudioSessionProxy::sharedPreferencesForWebProcess() const

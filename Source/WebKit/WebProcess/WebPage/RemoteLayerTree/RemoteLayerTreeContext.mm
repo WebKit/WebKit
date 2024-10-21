@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeContext);
 
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)
-    , m_backingStoreCollection(makeUniqueRef<RemoteLayerBackingStoreCollection>(*this))
+    , m_backingStoreCollection(makeUniqueRefWithoutRefCountedCheck<RemoteLayerBackingStoreCollection>(*this))
 {
 }
 

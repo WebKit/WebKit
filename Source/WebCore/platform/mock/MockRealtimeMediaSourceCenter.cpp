@@ -267,7 +267,7 @@ public:
         case CaptureDevice::DeviceType::Window: {
 #if PLATFORM(COCOA)
             return DisplayCaptureSourceCocoa::create([this, &device, pageIdentifier] (auto& observer) {
-                auto capturer = makeUniqueRef<MockDisplayCapturer>(observer, device, pageIdentifier);
+                auto capturer = makeUniqueRefWithoutRefCountedCheck<MockDisplayCapturer>(observer, device, pageIdentifier);
                 m_capturer = capturer.get();
                 return capturer;
             }, device, WTFMove(hashSalts), constraints, pageIdentifier);
