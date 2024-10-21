@@ -125,9 +125,15 @@ public:
             Rejected
         };
 
+        enum class Decoration: uint8_t {
+            None,
+            Underline,
+        };
+
         String originalText;
         WritingTools::TextSuggestionID suggestionID;
         State state { State::Accepted };
+        Decoration decoration { Decoration::None };
     };
 #endif
 

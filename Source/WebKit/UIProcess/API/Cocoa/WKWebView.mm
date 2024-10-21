@@ -2178,7 +2178,15 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         [_writingToolsTextSuggestions setObject:suggestion forKey:suggestion.uuid];
     }
 
-    _page->proofreadingSessionDidReceiveSuggestions(*webSession, replacementData, *webContext, finished);
+    _page->proofreadingSessionDidReceiveSuggestions(*webSession, replacementData, *webContext, finished, [webSession, replacementData, webContext, finished, page = WeakPtr { _page.get() }] {
+        if (!page)
+            return;
+
+        // FIXME: Wait for the animation to finish before invoking this method.
+        page->proofreadingSessionDidCompletePartialReplacement(*webSession, replacementData, *webContext, finished, [] {
+            // FIXME: Once the animations are implemented, this completion handler will be used to inform the coordinator that this async operation is complete.
+        });
+    });
 }
 
 - (void)proofreadingSession:(WTSession *)session didUpdateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID inContext:(WTContext *)context

@@ -286,11 +286,27 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         case DocumentMarker::Type::Spelling:
         case DocumentMarker::Type::CorrectionIndicator:
 #if ENABLE(WRITING_TOOLS)
-        case DocumentMarker::Type::WritingToolsTextSuggestion:
-            if (marker->type() == DocumentMarker::Type::WritingToolsTextSuggestion && std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker->data()).state != DocumentMarker::WritingToolsTextSuggestionData::State::Accepted)
+        case DocumentMarker::Type::WritingToolsTextSuggestion: {
+            auto shouldPaintMarker = [&] {
+                if (marker->type() != DocumentMarker::Type::WritingToolsTextSuggestion)
+                    return true;
+
+                auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker->data());
+
+                if (data.state != DocumentMarker::WritingToolsTextSuggestionData::State::Accepted)
+                    return false;
+
+                if (data.decoration == DocumentMarker::WritingToolsTextSuggestionData::Decoration::None)
+                    return false;
+
+                return true;
+            }();
+
+            if (!shouldPaintMarker)
                 break;
 
             BFALLTHROUGH;
+        }
 #endif
         case DocumentMarker::Type::DictationAlternatives:
         case DocumentMarker::Type::Grammar:

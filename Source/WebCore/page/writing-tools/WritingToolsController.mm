@@ -308,7 +308,7 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
 
         auto originalString = [context.attributedText.nsAttributedString() attributedSubstringFromRange:suggestion.originalRange];
 
-        auto markerData = DocumentMarker::WritingToolsTextSuggestionData { originalString.string, suggestion.identifier, DocumentMarker::WritingToolsTextSuggestionData::State::Accepted };
+        auto markerData = DocumentMarker::WritingToolsTextSuggestionData { originalString.string, suggestion.identifier, DocumentMarker::WritingToolsTextSuggestionData::State::Accepted, DocumentMarker::WritingToolsTextSuggestionData::Decoration::None };
         addMarker(newResolvedRange, DocumentMarker::Type::WritingToolsTextSuggestion, markerData);
 
         state->replacementLocationOffset += static_cast<int>(suggestion.replacement.length()) - static_cast<int>(suggestion.originalRange.length);
@@ -318,6 +318,54 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
         document->editor().setSuppressEditingForWritingTools(false);
         document->selection().setSelection({ sessionRange });
     }
+}
+
+void WritingToolsController::proofreadingSessionDidCompletePartialReplacement(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context&, bool)
+{
+    CheckedPtr state = currentState<WritingTools::Session::Type::Proofreading>();
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto sessionRange = makeSimpleRange(state->contextRange);
+
+    auto& markers = document->markers();
+
+    markers.forEach(sessionRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+        auto oldData = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+        if (oldData.decoration != DocumentMarker::WritingToolsTextSuggestionData::Decoration::None)
+            return false;
+
+#if ASSERT_ENABLED
+        // All previously received suggestions in the session range should already have been decorated,
+        // so this condition should never be `false` given the above check.
+
+        auto isInMostRecentSuggestionBatch = std::ranges::any_of(suggestions, [oldData](auto& suggestion) {
+            return suggestion.identifier == oldData.suggestionID;
+        });
+
+        ASSERT(isInMostRecentSuggestionBatch);
+
+        // An early return is intentionally omitted here because if there are suggestions in prior batches
+        // that were never made visible for some reason by this point, they certainly should be.
+#endif
+
+        auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
+
+        markers.removeMarkers(node, offsetRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+
+        auto newData = DocumentMarker::WritingToolsTextSuggestionData { oldData.originalText, oldData.suggestionID, oldData.state, DocumentMarker::WritingToolsTextSuggestionData::Decoration::Underline };
+        markers.addMarker(node, DocumentMarker { DocumentMarker::Type::WritingToolsTextSuggestion, offsetRange, WTFMove(newData) });
+
+        return false;
+    });
 }
 
 void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestion::State newTextSuggestionState, const WritingTools::TextSuggestion& textSuggestion, const WritingTools::Context&)

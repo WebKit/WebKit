@@ -944,9 +944,16 @@ void WebPage::didBeginWritingToolsSession(const WebCore::WritingTools::Session& 
     corePage()->didBeginWritingToolsSession(session, contexts);
 }
 
-void WebPage::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished)
+void WebPage::proofreadingSessionDidReceiveSuggestions(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
     corePage()->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
+    completionHandler();
+}
+
+void WebPage::proofreadingSessionDidCompletePartialReplacement(const WebCore::WritingTools::Session& session, const Vector<WebCore::WritingTools::TextSuggestion>& suggestions, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
+{
+    corePage()->proofreadingSessionDidCompletePartialReplacement(session, suggestions, context, finished);
+    completionHandler();
 }
 
 void WebPage::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::WritingTools::Session& session, WebCore::WritingTools::TextSuggestion::State state, const WebCore::WritingTools::TextSuggestion& suggestion, const WebCore::WritingTools::Context& context)

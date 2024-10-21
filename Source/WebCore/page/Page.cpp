@@ -5006,6 +5006,11 @@ void Page::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&
     m_writingToolsController->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
 }
 
+void Page::proofreadingSessionDidCompletePartialReplacement(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
+{
+    m_writingToolsController->proofreadingSessionDidCompletePartialReplacement(session, suggestions, context, finished);
+}
+
 void Page::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session& session, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion& suggestion, const WritingTools::Context& context)
 {
     m_writingToolsController->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);

@@ -789,7 +789,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     DidBeginWritingToolsSession(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::Context> contexts)
 
-    ProofreadingSessionDidReceiveSuggestions(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished)
+    ProofreadingSessionDidReceiveSuggestions(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished) -> ()
+
+    ProofreadingSessionDidCompletePartialReplacement(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished) -> ()
 
     ProofreadingSessionDidUpdateStateForSuggestion(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion suggestion, struct WebCore::WritingTools::Context context)
 

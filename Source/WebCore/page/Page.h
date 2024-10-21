@@ -1186,6 +1186,8 @@ public:
 
     WEBCORE_EXPORT void proofreadingSessionDidReceiveSuggestions(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
 
+    WEBCORE_EXPORT void proofreadingSessionDidCompletePartialReplacement(const WritingTools::Session&, const Vector<WritingTools::TextSuggestion>&, const WritingTools::Context&, bool finished);
+
     WEBCORE_EXPORT void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestionState, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
     WEBCORE_EXPORT void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
