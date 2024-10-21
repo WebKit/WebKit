@@ -215,7 +215,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
     auto flexDirection = flexBoxStyle.flexDirection();
     auto isLeftToRightDirection = flexBoxStyle.isLeftToRightDirection();
     auto isRowDirection = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-    auto flexContainerContentBoxPosition = LayoutPoint { constraints.mainAxis().startPosition, constraints.crossAxis().startPosition };
+    auto flexContainerContentBoxPosition = LayoutPoint { isRowDirection ? constraints.mainAxis().startPosition : constraints.crossAxis().startPosition, isRowDirection ? constraints.crossAxis().startPosition : constraints.mainAxis().startPosition };
     auto flexContainerMainAxisSize = [&] {
         if (auto size = constraints.mainAxis().availableSize)
             return *size;
