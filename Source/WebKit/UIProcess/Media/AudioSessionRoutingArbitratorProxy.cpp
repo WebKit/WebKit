@@ -95,6 +95,11 @@ void AudioSessionRoutingArbitratorProxy::deref() const
     return m_process->deref();
 }
 
+std::optional<SharedPreferencesForWebProcess> AudioSessionRoutingArbitratorProxy::sharedPreferencesForWebProcess() const
+{
+    return m_process->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(ROUTING_ARBITRATION)
