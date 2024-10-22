@@ -29,7 +29,7 @@ var LeftMouseButton = 0;
 var MiddleMouseButton = 1;
 var RightMouseButton = 2;
 
-window.onload = function()
+window.onload = async function()
 {
     firstMouseButtonElem = document.getElementById("firstMouseButton");
     secondMouseButtonElem = document.getElementById("secondMouseButton");
@@ -44,7 +44,9 @@ window.onload = function()
     square.onmouseup = checkIfDoneOnMouseUp;
     square.oncontextmenu = cancelContextMenu;
     resetTest();
-    runTest();
+    testRunner?.waitUntilDone();
+    await runTest();
+    testRunner?.notifyDone();
 }
 
 function toBitmaskMouseButton(w3cButton)
@@ -133,14 +135,14 @@ function disableIllogicalSecondMouseButtonOptions()
     previouslyChosenFirstMouseButton = firstMouseButtonElem.selectedIndex;
 }
 
-function runTest()
+async function runTest()
 {
     if (!window.eventSender)
         return;
 
     var numFirstMouseButtonOptions = firstMouseButtonElem.options.length;
     var numSecondMouseButtonOptions = secondMouseButtonElem.options.length;
-    eventSender.mouseMoveTo(square.offsetLeft + 10, square.offsetTop + 10);
+    await eventSender.asyncMouseMoveTo(square.offsetLeft + 10, square.offsetTop + 10);
     var firstMouseButton = 0;
     var secondMouseButton = 0;
     while (firstMouseButton < numFirstMouseButtonOptions) {
@@ -157,11 +159,11 @@ function runTest()
         secondMouseButtonElem.options[secondMouseButton].selected = true;
         if (secondMouseButton % numSecondMouseButtonOptions === 0)
             debug('<br />When pressing and holding the "' + mouseButtonName(firstMouseButton) + '"<br />');
-        eventSender.mouseDown(firstMouseButton);
+        await eventSender.asyncMouseDown(firstMouseButton);
         eventSender.leapForward(100);
-        eventSender.mouseDown(secondMouseButton);
-        eventSender.mouseUp(secondMouseButton);
-        eventSender.mouseUp(firstMouseButton);
+        await eventSender.asyncMouseDown(secondMouseButton);
+        await eventSender.asyncMouseUp(secondMouseButton);
+        await eventSender.asyncMouseUp(firstMouseButton);
         eventSender.leapForward(100);
         ++secondMouseButton;
         resetTest(); // We reset the test here in case neither a mousedown nor mouseup event was fired.

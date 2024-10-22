@@ -35,7 +35,7 @@ if (window.testRunner) {
 
     var node = document.getElementById('target');
     debug('TEST CASE: ' + node.textContent);
-    eventSender.mouseMoveTo(node.offsetLeft + 3, node.offsetTop + 3);
+    await eventSender.asyncMouseMoveTo(node.offsetLeft + 3, node.offsetTop + 3);
     debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
     node.addEventListener('mousemove', function() {
         testFailed('Mousemove event should not be fired when changing cursor');

@@ -24,9 +24,9 @@
         // WebKit schedules a fake mouse move event as part of installing the WebView in
         // a window. For the test to be valid, it must begin only after that event
         // gets dispatched.
-        setTimeout(function()
+        setTimeout(async function()
         {
-            eventSender.mouseMoveTo(50, 100);
+            await eventSender.asyncMouseMoveTo(50, 100);
             document.scrollingElement.scrollTop = 250;
             timeoutID = setTimeout(finish, 20000);
         }, 200);

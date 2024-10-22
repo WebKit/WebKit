@@ -11,7 +11,7 @@
         var iframeDocument;
         var iframeScrollTopAfterAnchor = 0;
 
-        function test()
+        async function test()
         {
             if (window.testRunner) {
                 testRunner.waitUntilDone();
@@ -27,14 +27,14 @@
             var y = iframe.offsetTop + clickme.offsetTop + 7;
             if (window.eventSender) {
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             }
             setTimeout(autoscrollTestPart1, 0);
         }
 
-        function autoscrollTestPart1()
+        async function autoscrollTestPart1()
         {
             iframeScrollTopAfterAnchor = iframeDocument.body.scrollTop;
             if (iframeDocument.body.scrollTop == 0)
@@ -45,19 +45,19 @@
                 var x = iframe.offsetLeft + textInIframe.offsetLeft - iframeDocument.body.scrollLeft + 7;
                 var y = iframe.offsetTop + textInIframe.offsetTop - iframeDocument.body.scrollTop + 7;
                 eventSender.dragMode = false;
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseMoveTo(x, y - 10);
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseMoveTo(x, y - 10);
                 y = iframe.offsetTop;
-                eventSender.mouseMoveTo(x, y - 5);
+                await eventSender.asyncMouseMoveTo(x, y - 5);
             }
             setTimeout(autoscrollTestPart2, 100);
         }
 
-        function autoscrollTestPart2()
+        async function autoscrollTestPart2()
         {
             if (window.eventSender)
-                eventSender.mouseUp();
+                await eventSender.asyncMouseUp();
 
             if (iframeScrollTopAfterAnchor == iframeDocument.body.scrollTop)
                 log("PASSED: the autoscroll has not happened.");

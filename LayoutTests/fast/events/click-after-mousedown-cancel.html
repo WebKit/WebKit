@@ -5,7 +5,7 @@
 <script>
 description('Mousedown without mouseup in a sub frame should not confuse a click in another frame.');
 jsTestIsAsync = true;
-window.onload = function() {
+window.onload = async function() {
     var button = document.querySelector('button');
     button.addEventListener('mousedown', function(event) {
         event.preventDefault();
@@ -17,15 +17,15 @@ window.onload = function() {
 
     var iframe = document.querySelector('iframe');
     // Mousedown on the iframe, but no mouseup.
-    eventSender.mouseMoveTo(iframe.offsetLeft + iframe.offsetWidth / 2, iframe.offsetTop + iframe.offsetHeight / 2);
-    eventSender.mouseDown(1);
+    await eventSender.asyncMouseMoveTo(iframe.offsetLeft + iframe.offsetWidth / 2, iframe.offsetTop + iframe.offsetHeight / 2);
+    await eventSender.asyncMouseDown(1);
     // Click on the button in the main document.
-    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
-    eventSender.mouseDown(0);
+    await eventSender.asyncMouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+    await eventSender.asyncMouseDown(0);
     setTimeout(function() {
         testFailed('Click event was not dispatched.');
         finishJSTest();
     }, 100);
-    eventSender.mouseUp(0);
+    await eventSender.asyncMouseUp(0);
 }
 </script>

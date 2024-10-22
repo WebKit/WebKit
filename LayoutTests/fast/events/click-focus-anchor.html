@@ -41,21 +41,24 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
-window.onload = function()
+window.onload = async function()
 {
     if (!window.testRunner)
         return;
 
+    testRunner.waitUntilDone();
+
     for (var i = 1; i <= 6; i++) {
         var aElement = document.getElementById('a' + i);
         aElement.onfocus = handleFocus;
-        eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 
     var tc = document.getElementById('test-container');
     tc.parentNode.removeChild(tc);
+    testRunner.notifyDone();
 };
 
 </script>

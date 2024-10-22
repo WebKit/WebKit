@@ -5,9 +5,10 @@
             document.getElementById('log').appendChild(document.createTextNode(msg + '\n'));
         }
 
-        function test() {
+        async function test() {
             if (window.testRunner) {
                 testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             window.onfocus = function() { log('main frame focused'); }
@@ -18,23 +19,24 @@
             w.onblur = function() { log('iframe blurred'); }
 
             if (window.eventSender) {
-                eventSender.mouseMoveTo(1, 300);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(1, 300);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
 
                 // We need to "wait" a bit before the next click -- otherwise it is ignored
                 eventSender.leapForward(2000);
 
-                eventSender.mouseMoveTo(50, 50);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(50, 50);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
 
                 eventSender.leapForward(2000);
 
-                eventSender.mouseMoveTo(1, 300);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(1, 300);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
             }
+            testRunner?.notifyDone();
         }
     </script>
 </head>

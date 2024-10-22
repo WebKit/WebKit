@@ -12,17 +12,22 @@ frames.</p>
         document.getElementById('log').appendChild(document.createTextNode(msg + "\n"));
     }
 
-    if (window.testRunner)
+    onload = async () => {
+        if (!window.testRunner || !window.eventSender)
+            return;
+
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
-    var frame = document.getElementsByTagName('iframe')[0];
+        var frame = document.getElementsByTagName('iframe')[0];
 
-    document.oncontextmenu = function() { log('PASS: main document received a context menu event'); }
-    frame.contentDocument.oncontextmenu = function() { log('FAIL: subframe document received a context menu event'); }
+        document.oncontextmenu = function() { log('PASS: main document received a context menu event'); }
+        frame.contentDocument.oncontextmenu = function() { log('FAIL: subframe document received a context menu event'); }
 
-    if (window.eventSender) {
         window.scrollTo(0, frame.offsetTop);
-        eventSender.mouseMoveTo(frame.offsetLeft + (frame.offsetWidth / 2), frame.offsetHeight + 5);
+        await eventSender.asyncMouseMoveTo(frame.offsetLeft + (frame.offsetWidth / 2), frame.offsetHeight + 5);
         eventSender.contextClick();
+
+        testRunner.notifyDone();
     }
 </script>

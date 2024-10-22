@@ -4,23 +4,29 @@
 </body>
 </html>
 <script>
-    if (window.testRunner) {
-        var element = document.getElementById('contenteditable');
-        var rect = element.getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        // contextClick() implementations in WK1 and WK2 have a subtle, but important difference.
-        // Under WK1, the mousedown is simulated but not the mouseup. Under WK2 both the mousedown
-        // and mouseup are simulated. It turns out the WK1 simulation more closely matches what
-        // happens in real life. This is relevant to this test (and the bug it covers) because,
-        // under WK2, the test will always pass, with or without the bug fix. Under WK1, the test
-        // fails without the bug fix and passes with the bug fix as expected.
-        //
-        // An alternative to using contextClick() would be mouseDown("ctrlKey"), but that is
-        // a Mac-specific way to bring up the context menu instead of a platform-neutral way
-        eventSender.contextClick();
-        // esc key to kill the context menu.
-        eventSender.keyDown(String.fromCharCode(0x001B), null);
-        element.innerText = window.internals.isCaretBlinkingSuspended() ? "FAIL" : "PASS";
-        testRunner.dumpAsText();
-    }
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    var element = document.getElementById('contenteditable');
+    var rect = element.getBoundingClientRect();
+    await eventSender.asyncMouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    // contextClick() implementations in WK1 and WK2 have a subtle, but important difference.
+    // Under WK1, the mousedown is simulated but not the mouseup. Under WK2 both the mousedown
+    // and mouseup are simulated. It turns out the WK1 simulation more closely matches what
+    // happens in real life. This is relevant to this test (and the bug it covers) because,
+    // under WK2, the test will always pass, with or without the bug fix. Under WK1, the test
+    // fails without the bug fix and passes with the bug fix as expected.
+    //
+    // An alternative to using contextClick() would be mouseDown("ctrlKey"), but that is
+    // a Mac-specific way to bring up the context menu instead of a platform-neutral way
+    eventSender.contextClick();
+    // esc key to kill the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+    element.innerText = window.internals.isCaretBlinkingSuspended() ? "FAIL" : "PASS";
+    testRunner.notifyDone();
+}
 </script>

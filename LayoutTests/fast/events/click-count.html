@@ -26,7 +26,7 @@ function mouseDoubleClick(evt)
     log("<span style='color:green'>[Mouse Double Click]</span> Button: " + evt.button + " Click Count: " + evt.detail + "<br>");
 }
 
-function test()
+async function test()
 {
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -34,18 +34,18 @@ function test()
     }
     if (window.eventSender) {
         var testEle = document.getElementById("testDiv");
-        eventSender.mouseMoveTo(testEle.offsetLeft+testEle.offsetWidth/2, testEle.offsetTop+testEle.offsetHeight/2);
-        testClick();
+        await eventSender.asyncMouseMoveTo(testEle.offsetLeft+testEle.offsetWidth/2, testEle.offsetTop+testEle.offsetHeight/2);
+        await testClick();
     }
 }
 
-function testClick()
+async function testClick()
 {
     for (var clickCount = 1; clickCount <= 5; clickCount++) {
         log("Clicking " + clickCount + " times<br>");
         for (var click = 0; click < clickCount; click++) {
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
         }
         // Skip forward 1 second so that the clicks are counted as distinct.
         eventSender.leapForward(1000);

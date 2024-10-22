@@ -5,7 +5,7 @@
     var targetElem;
     var consoleElm;
 
-    window.onload = function()
+    window.onload = async function()
     {
         startElem = document.getElementById("startElem");
         targetElem = document.getElementById("targetElem");
@@ -14,7 +14,7 @@
         if (!startElem || !targetElem || !consoleElm)
             return;
 
-        runTest();
+        await runTest();
     }
 
     function pass()
@@ -24,26 +24,29 @@
         div.innerHTML = "PASS";
     };
 
-    function runTest()
+    async function runTest()
     {
         if (!window.eventSender)
             return;
 
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         var startX = startElem.offsetLeft + 10;
         var startY = startElem.offsetTop + startElem.offsetHeight / 2;
         var endX = targetElem.offsetLeft + 10;
         var endY = targetElem.offsetTop + targetElem.offsetHeight / 2;
 
-        eventSender.mouseMoveTo(startX, startY);
+        await eventSender.asyncMouseMoveTo(startX, startY);
         eventSender.leapForward(100);
-        eventSender.mouseMoveTo(endX, endY);
+        await eventSender.asyncMouseMoveTo(endX, endY);
 
         var testContainer = document.getElementById("test-container");
         if (testContainer)
             document.body.removeChild(testContainer);
+        testRunner?.notifyDone();
     }
 </script>
 </head>

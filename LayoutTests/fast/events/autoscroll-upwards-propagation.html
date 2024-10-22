@@ -28,28 +28,28 @@ function runTest() {
     setTimeout(startTest, 0);
 }
 
-function startTest()
+async function startTest()
 {
     var input = document.getElementById("input");
     var x = input.offsetLeft + input.offsetWidth / 2;
     var y = input.offsetTop + input.offsetHeight / 2;
 
     eventSender.dragMode = false;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
 
     // We do the dragging/selection in two steps here, because if we move
     // the mouse beyond the input boundary right way, it won't start the autoscroll
     // timer. See early return in AutoscrollController::startAutoscrollForSelection
     // after calling RenderBox::findAutoscrollable.
-    eventSender.mouseMoveTo(x + 48, y);
-    eventSender.mouseMoveTo(x + 55, y);
+    await eventSender.asyncMouseMoveTo(x + 48, y);
+    await eventSender.asyncMouseMoveTo(x + 55, y);
     setTimeout(finishTest, 100);
 }
 
-function finishTest()
+async function finishTest()
 {
-    eventSender.mouseUp();
+    await eventSender.asyncMouseUp();
     var div = document.getElementById("div");
     if (div.scrollTop == 0 && div.scrollLeft == 0)
         document.getElementById("result").innerText = "Test succeeded!";

@@ -15,25 +15,25 @@
            }
        }
 
-       function autoscrollTestPart1()
+       async function autoscrollTestPart1()
        {
            var textInDiv = document.getElementById('textInDiv');
            if (window.eventSender) {
                var x = textInDiv.offsetLeft + 17;
                var y = textInDiv.offsetTop + 7;
                eventSender.dragMode = false;
-               eventSender.mouseMoveTo(x, y);
-               eventSender.mouseDown();
-               eventSender.mouseMoveTo(x, y + 20);
-               eventSender.mouseMoveTo(x, y + 220);
+               await eventSender.asyncMouseMoveTo(x, y);
+               await eventSender.asyncMouseDown();
+               await eventSender.asyncMouseMoveTo(x, y + 20);
+               await eventSender.asyncMouseMoveTo(x, y + 220);
            }
            setTimeout(autoscrollTestPart2, 100);
        }
 
-       function autoscrollTestPart2()
+       async function autoscrollTestPart2()
        {
            if (window.eventSender)
-               eventSender.mouseUp();
+               await eventSender.asyncMouseUp();
            var sd = document.getElementById('nonScrollableDiv');
            if (sd.scrollTop == 0)
                log("PASSED : the autoscroll did not happen!");

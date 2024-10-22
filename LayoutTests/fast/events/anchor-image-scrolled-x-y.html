@@ -1,6 +1,6 @@
 <head>
 <script>
-function test()
+async function test()
 {
     var queryIndex = document.URL.indexOf('?');
     if (queryIndex == -1) {
@@ -10,9 +10,9 @@ function test()
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
 
-            eventSender.mouseMoveTo(18, 18);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(18, 18);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
         }
     } else {
         document.write("<div>Form data: " + document.URL.substring(queryIndex + 1) + "</div>");

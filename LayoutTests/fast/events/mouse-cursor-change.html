@@ -26,8 +26,8 @@ if (window.testRunner) {
     window.jsTestIsAsync = true;
 }
 
-function runTest(prepare, next) {
-    prepare();
+async function runTest(prepare, next) {
+    await prepare();
     setTimeout(function() {
         debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
         debug('');
@@ -41,35 +41,37 @@ function testsDone() {
     finishJSTest();
 }
 
-// Can't do anything useful here without eventSender
-if (window.eventSender) {
-    var target = document.getElementById('target');
-    eventSender.dragMode = false;
-    var tests = [
-        function() {
-            debug('Mouse move');
-            eventSender.mouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
-        }, function() {
-            debug('Mouse down');
-            eventSender.mouseDown();
-        }, function() {
-            debug('Mouse hold down, move');
-            eventSender.mouseMoveTo(target.offsetLeft + 13, target.offsetTop + 3);
-        }, function() {
-            debug('Mouse up');
-            eventSender.mouseUp();
-        }
-    ];
+onload = async () => {
+    // Can't do anything useful here without eventSender
+    if (window.eventSender) {
+        var target = document.getElementById('target');
+        eventSender.dragMode = false;
+        var tests = [
+            async function() {
+                debug('Mouse move');
+                await eventSender.asyncMouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
+            }, async function() {
+                debug('Mouse down');
+                await eventSender.asyncMouseDown();
+            }, async function() {
+                debug('Mouse hold down, move');
+                await eventSender.asyncMouseMoveTo(target.offsetLeft + 13, target.offsetTop + 3);
+            }, async function() {
+                debug('Mouse up');
+                await eventSender.asyncMouseUp();
+            }
+        ];
 
-    var i = 0;
-    function nextTest() {
-        if (i < tests.length) {
-            runTest(tests[i++], nextTest);
-        } else {
-            testsDone();
+        var i = 0;
+        async function nextTest() {
+            if (i < tests.length) {
+                await runTest(tests[i++], nextTest);
+            } else {
+                testsDone();
+            }
         }
+        await nextTest();
     }
-    nextTest();
 }
 
 </script>

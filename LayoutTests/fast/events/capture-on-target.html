@@ -6,14 +6,14 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
-function test()
+async function test()
 {
     document.getElementById("target").addEventListener("click", targetClick, true);
 
     if (window.eventSender) {
-        eventSender.mouseMoveTo(52, 52);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(52, 52);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
 	window.setTimeout(finish, 0);
     }
 }

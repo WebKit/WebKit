@@ -15,25 +15,25 @@
            }
        }
 
-       function autoscrollTestPart1()
+       async function autoscrollTestPart1()
        {
            var input = document.getElementById('shortTextField');
            if (window.eventSender) {
                var x = input.offsetLeft + 7;
                var y = input.offsetTop + 7;
                eventSender.dragMode = false;
-               eventSender.mouseMoveTo(x, y);
-               eventSender.mouseDown();
-               eventSender.mouseMoveTo(x + 20, y);
-               eventSender.mouseMoveTo(x + 600, y);
+               await eventSender.asyncMouseMoveTo(x, y);
+               await eventSender.asyncMouseDown();
+               await eventSender.asyncMouseMoveTo(x + 20, y);
+               await eventSender.asyncMouseMoveTo(x + 600, y);
            }
            setTimeout(autoscrollTestPart2, 100);
        }
 
-       function autoscrollTestPart2()
+       async function autoscrollTestPart2()
        {
            if (window.eventSender)
-               eventSender.mouseUp();
+               await eventSender.asyncMouseUp();
            
            var input = document.getElementById('shortTextField');
            if (input.scrollLeft == 0)

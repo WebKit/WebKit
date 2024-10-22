@@ -9,18 +9,18 @@ function log(msg)
     document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
 }
 
-function test()
+async function test()
 {
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
-        testDragAndMove();
+        await testDragAndMove();
     } else
         log("testRunner is not available");
 
 }
 
-function testDragAndMove()
+async function testDragAndMove()
 {
     var draggable = document.getElementById("draggableForDiv");
 
@@ -30,12 +30,12 @@ function testDragAndMove()
     eventSender.dragMode = false;
 
     // Grab the draggable node
-    eventSender.mouseMoveTo(startX,startY);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(startX,startY);
+    await eventSender.asyncMouseDown();
     // Then drag it. OK not to crash.
-    eventSender.mouseMoveTo(startX + 10, startY + 10);
-    eventSender.mouseMoveTo(startX + 20, startY + 20);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(startX + 10, startY + 10);
+    await eventSender.asyncMouseMoveTo(startX + 20, startY + 20);
+    await eventSender.asyncMouseUp();
     document.getElementById("test").style.display = "none";
     log("PASS");
     testRunner.notifyDone();

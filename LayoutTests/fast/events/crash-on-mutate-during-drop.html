@@ -7,11 +7,12 @@ function onDOMNodeInserted(event) {
         document.body.innerHTML = "PASSED";
 }
 
-function runTest() {
+async function runTest() {
     if (!window.testRunner)
       return;
 
     window.testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 
     document.addEventListener("DOMNodeInserted", onDOMNodeInserted, true);
 
@@ -24,12 +25,13 @@ function runTest() {
     // Drag the source text to the target text.
     var source = document.getElementById('dragSource');
     var target = document.getElementById('dragTarget');
-    eventSender.mouseMoveTo(source.offsetLeft + 2, source.offsetTop + 2);
-    eventSender.mouseDown();
+    await eventSender.asyncMouseMoveTo(source.offsetLeft + 2, source.offsetTop + 2);
+    await eventSender.asyncMouseDown();
     eventSender.leapForward(500);
-    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2,
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + target.offsetWidth / 2,
                             target.offsetTop + target.offsetHeight / 2);
-    eventSender.mouseUp();
+    await eventSender.asyncMouseUp();
+    testRunner.notifyDone();
 }
 </script>
 </head>

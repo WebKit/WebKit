@@ -46,7 +46,7 @@
 
 var testContainer = document.getElementById('test-container');
 
-function runTests() {
+async function runTests() {
     // Can't do anything useful here without eventSender
     if (window.eventSender) {
         var nodesToTest = document.querySelectorAll('#test-container > div');
@@ -56,7 +56,7 @@ function runTests() {
 
             // Make sure the node is visible and move the mouse over top of it.
             document.scrollingElement.scrollTop = node.offsetTop - 50;
-            eventSender.mouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.scrollingElement.scrollTop + 3);
+            await eventSender.asyncMouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.scrollingElement.scrollTop + 3);
 
             // Get details of the current mouse cursor.
             // Note that we could return structured data which we then validate, but that's a lot more

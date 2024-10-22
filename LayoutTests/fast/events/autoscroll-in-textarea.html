@@ -38,29 +38,34 @@ the selection should not jump down to the end.</p>
 <div id="log"></div>
 
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
-// The text area displays 6 lines of text. We scroll down to the end
-// and start dragging the cursor up from the first line that appears (the k line).
-// Therefore, the selection should contain the letter k.
-var textarea = document.getElementById("textarea");
-textarea.scrollTop = textarea.scrollHeight;
-if (window.eventSender) {
-    var x = textarea.offsetLeft + textarea.offsetWidth / 2;
-    var y = textarea.offsetTop + 1;
-    eventSender.dragMode = false;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(x, 0);
-    eventSender.mouseUp();
+onload = async () => {
+    // The text area displays 6 lines of text. We scroll down to the end
+    // and start dragging the cursor up from the first line that appears (the k line).
+    // Therefore, the selection should contain the letter k.
+    var textarea = document.getElementById("textarea");
+    textarea.scrollTop = textarea.scrollHeight;
+    if (window.eventSender) {
+        var x = textarea.offsetLeft + textarea.offsetWidth / 2;
+        var y = textarea.offsetTop + 1;
+        eventSender.dragMode = false;
+        await eventSender.asyncMouseMoveTo(x, y);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(x, 0);
+        await eventSender.asyncMouseUp();
 
-    var log = document.getElementById("log");
-    var selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-    if (selectedText.indexOf("k") != -1)
-        log.innerText = "PASSED the selection did not jump down.";
-    else
-        log.innerText = "FAILED the selection jumped down.";
+        var log = document.getElementById("log");
+        var selectedText = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+        if (selectedText.indexOf("k") != -1)
+            log.innerText = "PASSED the selection did not jump down.";
+        else
+            log.innerText = "FAILED the selection jumped down.";
+    }
+    testRunner?.notifyDone();
 }
 </script>
 </body>

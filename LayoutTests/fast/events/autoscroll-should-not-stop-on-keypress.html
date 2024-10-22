@@ -7,7 +7,7 @@
 window.jsTestIsAsync = true;
 
 var frame;
-function test() {
+async function test() {
     frame = document.getElementById('frame');
     var doc = frame.contentDocument.open();
     var htmlString = "Lots of text</br>Lots of text</br> \
@@ -72,9 +72,9 @@ function test() {
         var xPoint = frame.scrollLeft + 100;
         var yPoint = frame.scrollTop + 100;
         eventSender.dragMode = false;
-        eventSender.mouseMoveTo(xPoint, yPoint);
-        eventSender.mouseDown();
-        eventSender.mouseMoveTo(xPoint, frame.offsetHeight + 100);
+        await eventSender.asyncMouseMoveTo(xPoint, yPoint);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(xPoint, frame.offsetHeight + 100);
         setTimeout(testAutoScroll, 100);
         eventSender.keyDown('a');
     } else {

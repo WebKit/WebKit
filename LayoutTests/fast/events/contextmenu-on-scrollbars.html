@@ -20,17 +20,19 @@
         document.getElementById('log').appendChild(document.createTextNode(msg + "\n"));
     }
 
-    if (window.testRunner)
+    onload = async () => {
+        if (!window.testRunner || !window.eventSender)
+            return;
+
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
 
-    var didSendContextMenu = false;
+        var didSendContextMenu = false;
+        document.oncontextmenu = function() { didSendContextMenu = true; }
 
-    document.oncontextmenu = function() { didSendContextMenu = true; }
-
-    if (window.eventSender) {
         var failed = false;
 
-        eventSender.mouseMoveTo(window.innerWidth - 4, window.innerHeight - 4);
+        await eventSender.asyncMouseMoveTo(window.innerWidth - 4, window.innerHeight - 4);
         eventSender.contextClick();
         if (didSendContextMenu) {
             log('FAILED: context menu event received on main frame scrollbar');
@@ -39,7 +41,7 @@
         }
 
         var div = document.querySelector('#scrollme');
-        eventSender.mouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
+        await eventSender.asyncMouseMoveTo(div.offsetLeft + div.offsetWidth - 4, div.offsetTop + 1);
         eventSender.contextClick();
         if (didSendContextMenu) {
             log('FAILED: context menu event received on div scrollbar');
@@ -47,6 +49,7 @@
         }
         if (!failed)
             log('SUCCESS');
+        testRunner.notifyDone();
     }
 </script>
 </body>

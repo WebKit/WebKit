@@ -33,45 +33,47 @@ function dismissContextMenu() {
     }
 }
 
-
-div.addEventListener("auxclick", appendEventLog, false);
-div.addEventListener("click", appendEventLog, false);
-div.addEventListener("dblclick", appendEventLog, false);
-div.addEventListener("mousedown", appendEventLog, false);
-div.addEventListener("mouseup", appendEventLog, false);
-document.body.insertBefore(div, document.body.firstChild);
-
-if (window.eventSender)
-    eventSender.mouseMoveTo(10, 10);
-
-function sendEvents(button) {
+async function sendEvents(button) {
     if (!window.eventSender) {
         debug("This test requires DumpRenderTree.  Click on the blue rect with different mouse buttons to log.")
         return;
     }
-    eventSender.mouseDown(button);
+    await eventSender.asyncMouseDown(button);
     if (button == 2)
         dismissContextMenu();
-    eventSender.mouseUp(button);
-    eventSender.mouseDown(button);
+    await eventSender.asyncMouseUp(button);
+    await eventSender.asyncMouseDown(button);
     if (button == 2)
         dismissContextMenu();
-    eventSender.mouseUp(button);
+    await eventSender.asyncMouseUp(button);
     // could test dragging here too
 }
 
-function testEvents(description, button, expectedString) {
+async function testEvents(description, button, expectedString) {
     debug(description);
-    sendEvents(button);
+    await sendEvents(button);
     shouldBeEqualToString("eventLog", expectedString);
     clearEventLog();
 }
 
-if (window.eventSender) {
-    testEvents("Left Mouse Button", 0, "mousedown(0) mouseup(0) click(0) mousedown(0) mouseup(0) click(0) dblclick(0) ");
-    testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
-    testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(2) auxclick(2) mousedown(2) mouseup(2) auxclick(2) ");
-    testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
+onload = async () => {
+    testRunner?.waitUntilDone();
+
+    div.addEventListener("auxclick", appendEventLog, false);
+    div.addEventListener("click", appendEventLog, false);
+    div.addEventListener("dblclick", appendEventLog, false);
+    div.addEventListener("mousedown", appendEventLog, false);
+    div.addEventListener("mouseup", appendEventLog, false);
+    document.body.insertBefore(div, document.body.firstChild);
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(10, 10);
+        await testEvents("Left Mouse Button", 0, "mousedown(0) mouseup(0) click(0) mousedown(0) mouseup(0) click(0) dblclick(0) ");
+        await testEvents("Middle Mouse Button", 1, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
+        await testEvents("Right Mouse Button", 2, "mousedown(2) mouseup(2) auxclick(2) mousedown(2) mouseup(2) auxclick(2) ");
+        await testEvents("4th Mouse Button", 3, "mousedown(1) mouseup(1) auxclick(1) mousedown(1) mouseup(1) auxclick(1) ");
+    }
+    testRunner?.notifyDone();
 }
 </script>
 <script src="../../resources/js-test-post.js"></script>

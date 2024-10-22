@@ -37,7 +37,7 @@ function logEvent(e) {
     debug(e.target.id + " got " + event.type + " at " + event.x + "," + event.y);
 }
 
-window.onload = function() {
+window.onload = async function() {
     window.onclick = function(event) {
         logEvent(event);
 
@@ -54,22 +54,22 @@ window.onload = function() {
     }
 
     // Move the mouse over clickable_div_in_subframe so it becomes the subframe document's hovered element.
-    eventSender.mouseMoveTo(15, 15);
-    setTimeout(function() {
+    await eventSender.asyncMouseMoveTo(15, 15);
+    setTimeout(async function() {
         // Fire the subframe's clickable_div_in_subframe.onclick handler.
         // This will cause a overlapping_div_in_main_frame to overlap the currently hovered element in the subframe.
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-        setTimeout(function() {
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        setTimeout(async function() {
             // Jiggle the mouse inside the newly hovered element a bit.
-            eventSender.mouseMoveTo(16, 16);
-            setTimeout(function() {
-                eventSender.mouseMoveTo(400, 400);
-                setTimeout(function() {
+            await eventSender.asyncMouseMoveTo(16, 16);
+            setTimeout(async function() {
+                await eventSender.asyncMouseMoveTo(400, 400);
+                setTimeout(async function() {
                     // Cause a click in the main frame, so the above window.onclick handler will run,
                     // killing and then recreating clickable_div_in_subframe's renderer.
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseDown();
+                    await eventSender.asyncMouseUp();
                     setTimeout(function() {
                         finishJSTest();
                     }, 500);
