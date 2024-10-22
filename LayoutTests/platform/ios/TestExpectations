@@ -7505,3 +7505,10 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-trave
 
 # webkit.org/b/277908 NEW TEST (284866@main): [ macOS iOS ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html is a flaky failure.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html [ Pass Failure ]
+
+# webkit.org/b/263872 [scroll-animations] some WPT tests are ImageOnlyFailure
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-animatable-interface.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-display-none.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html [ ImageOnlyFailure ]
