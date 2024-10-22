@@ -33,6 +33,7 @@
 #include "InternalObserverDrop.h"
 #include "InternalObserverFilter.h"
 #include "InternalObserverFromScript.h"
+#include "InternalObserverLast.h"
 #include "InternalObserverMap.h"
 #include "InternalObserverTake.h"
 #include "JSSubscriptionObserverCallback.h"
@@ -117,6 +118,11 @@ Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amoun
 Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amount)
 {
     return create(createSubscriberCallbackDrop(context, *this, amount));
+}
+
+void Observable::last(ScriptExecutionContext& context, SubscribeOptions options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorLast(context, *this, options, WTFMove(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

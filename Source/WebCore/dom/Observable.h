@@ -62,6 +62,10 @@ public:
 
     Ref<Observable> drop(ScriptExecutionContext&, uint64_t);
 
+    // Promise-returning operators.
+
+    void last(ScriptExecutionContext&, SubscribeOptions, Ref<DeferredPromise>&&);
+
 private:
     Ref<SubscriberCallback> m_subscriberCallback;
 };

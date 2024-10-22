@@ -31,6 +31,7 @@ typedef (SubscriptionObserverCallback or SubscriptionObserver) ObserverUnion;
 ]
 interface Observable {
   constructor(SubscriberCallback callback);
+
   [CallWith=CurrentScriptExecutionContext, RaisesException] undefined subscribe(optional ObserverUnion observer = {}, optional SubscribeOptions options = {});
 
   [CallWith=CurrentScriptExecutionContext] Observable map(MapperCallback mapper);
@@ -40,4 +41,8 @@ interface Observable {
   [CallWith=CurrentScriptExecutionContext] Observable take(unsigned long long amount);
 
   [CallWith=CurrentScriptExecutionContext] Observable drop(unsigned long long amount);
+
+  // Promise-returning operators.
+
+  [CallWith=CurrentScriptExecutionContext] Promise<any> last(optional SubscribeOptions options = {});
 };

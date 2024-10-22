@@ -1,7 +1,7 @@
 
-FAIL last(): Promise resolves to last value promise_test: Unhandled rejection with value: object "TypeError: source.last is not a function. (In 'source.last()', 'source.last' is undefined)"
-FAIL last(): Promise rejects with emitted error assert_equals: expected object "Error: error from source" but got object "TypeError: source.last is not a function. (In 'source.last()', 'source.last' is undefined)"
-FAIL last(): Promise rejects with RangeError when source Observable completes without emitting any values assert_true: Promise rejects with RangeError expected true got false
-FAIL last(): Aborting a signal rejects the Promise with an AbortError DOMException promise_test: Unhandled rejection with value: object "TypeError: source.last is not a function. (In 'source.last({ signal: controller.signal })', 'source.last' is undefined)"
-FAIL last(): Lifecycle promise_test: Unhandled rejection with value: object "TypeError: source.last is not a function. (In 'source.last()', 'source.last' is undefined)"
+PASS last(): Promise resolves to last value
+PASS last(): Promise rejects with emitted error
+PASS last(): Promise rejects with RangeError when source Observable completes without emitting any values
+PASS last(): Aborting a signal rejects the Promise with an AbortError DOMException
+PASS last(): Lifecycle
 

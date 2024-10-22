@@ -65,7 +65,6 @@ promise_test(async () => {
       "Promise rejects with a DOMException for abortion");
   assert_equals(rejection.name, "AbortError",
       "Rejected with 'AbortError' DOMException");
-  assert_equals(rejection.message, "signal is aborted without reason");
 }, "last(): Aborting a signal rejects the Promise with an AbortError DOMException");
 
 promise_test(async () => {

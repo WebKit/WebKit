@@ -1225,11 +1225,12 @@ dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
 dom/InternalObserver.cpp
-dom/InternalObserverFromScript.cpp
+dom/InternalObserverDrop.cpp
 dom/InternalObserverFilter.cpp
+dom/InternalObserverFromScript.cpp
+dom/InternalObserverLast.cpp
 dom/InternalObserverMap.cpp
 dom/InternalObserverTake.cpp
-dom/InternalObserverDrop.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp
