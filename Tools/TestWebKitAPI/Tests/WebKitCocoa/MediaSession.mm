@@ -39,6 +39,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
@@ -98,7 +99,7 @@ public:
 
     TestWKWebView* webView() { return _webView.get(); }
 
-    pid_t webViewPid() { return [_webView _webProcessIdentifier]; }
+    pid_t gpuProcessPID() { return [_webView _gpuProcessIdentifier]; }
 
     RetainPtr<MRNowPlayingClientRef> getNowPlayingClient()
     {
@@ -131,7 +132,7 @@ public:
 
         play();
         pause();
-        ASSERT_EQ(webViewPid(), getNowPlayingClientPid());
+        ASSERT_EQ(gpuProcessPID(), getNowPlayingClientPid());
     }
 
     void runScriptWithUserGesture(NSString *script)
@@ -388,6 +389,47 @@ TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
     ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
 }
 
+TEST_F(MediaSessionTest, MinimalCommands)
+{
+    loadPageAndBecomeNowPlaying(@"media-remote");
+
+    [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'seekforward' ])"];
+
+    listenForSessionHandlerMessages({ "seekforward"_s });
+    listenForEventMessages({ "play"_s, "pause"_s, "seeked"_s });
+
+    ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
+    waitForSessionHandlerToBeCalled("seekforward"_s);
+    ASSERT_TRUE(sessionHandlerWasCalled("seekforward"_s));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+
+    ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
+    waitForEventListenerToBeCalled("play"_s);
+    ASSERT_TRUE(eventListenerWasCalled("play"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("play"_s));
+
+    ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPause));
+    waitForEventListenerToBeCalled("pause"_s);
+    ASSERT_TRUE(eventListenerWasCalled("pause"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("pause"_s));
+
+    Vector<MRMediaRemoteCommand> expectedCommands {
+        MRMediaRemoteCommandPlay,
+        MRMediaRemoteCommandPause,
+        MRMediaRemoteCommandSkipForward,
+    };
+    std::sort(expectedCommands.begin(), expectedCommands.end());
+
+    Vector actualCommands = makeVector(getSupportedCommands().get(), [] (MRCommandInfo *command) -> std::optional<MRMediaRemoteCommand> {
+        if (!command.enabled)
+            return std::nullopt;
+        return command.command;
+    });
+    std::sort(actualCommands.begin(), actualCommands.end());
+
+    EXPECT_EQ(expectedCommands, actualCommands);
 }
+
+} // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) && ENABLE(MEDIA_SESSION)

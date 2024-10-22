@@ -47,7 +47,6 @@ private:
 
     void* m_commandHandler { nullptr };
 
-    const RemoteCommandsSet& defaultCommands();
     RemoteCommandsSet m_currentCommands;
 };
 

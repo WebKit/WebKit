@@ -63,9 +63,9 @@ Ref<RemoteCommandListenerCocoa> RemoteCommandListenerCocoa::create(RemoteCommand
     return adoptRef(*new RemoteCommandListenerCocoa(client));
 }
 
-const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerCocoa::defaultCommands()
+static RemoteCommandListener::RemoteCommandsSet& defaultCommands()
 {
-    static NeverDestroyed<RemoteCommandsSet> commands(std::initializer_list<PlatformMediaSession::RemoteControlCommandType> {
+    static NeverDestroyed<RemoteCommandListener::RemoteCommandsSet> commands(std::initializer_list<PlatformMediaSession::RemoteControlCommandType> {
         PlatformMediaSession::RemoteControlCommandType::PlayCommand,
         PlatformMediaSession::RemoteControlCommandType::PauseCommand,
         PlatformMediaSession::RemoteControlCommandType::TogglePlayPauseCommand,
@@ -76,6 +76,16 @@ const RemoteCommandListener::RemoteCommandsSet& RemoteCommandListenerCocoa::defa
         PlatformMediaSession::RemoteControlCommandType::SeekToPlaybackPositionCommand,
         PlatformMediaSession::RemoteControlCommandType::SkipForwardCommand,
         PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand,
+    });
+
+    return commands;
+}
+
+static RemoteCommandListener::RemoteCommandsSet& minimalCommands()
+{
+    static NeverDestroyed<RemoteCommandListener::RemoteCommandsSet> commands(std::initializer_list<PlatformMediaSession::RemoteControlCommandType> {
+        PlatformMediaSession::RemoteControlCommandType::PlayCommand,
+        PlatformMediaSession::RemoteControlCommandType::PauseCommand,
     });
 
     return commands;
@@ -95,7 +105,7 @@ void RemoteCommandListenerCocoa::updateSupportedCommands()
     if (!isMediaRemoteFrameworkAvailable())
         return;
 
-    auto& currentCommands = !supportedCommands().isEmpty() ? supportedCommands() : defaultCommands();
+    auto currentCommands = !supportedCommands().isEmpty() ? supportedCommands().unionWith(minimalCommands()) : defaultCommands();
     if (m_currentCommands == currentCommands)
         return;
 
