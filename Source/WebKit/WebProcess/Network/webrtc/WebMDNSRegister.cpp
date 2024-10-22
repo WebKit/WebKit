@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "LibWebRTCNetwork.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
@@ -35,6 +36,21 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+WebMDNSRegister::WebMDNSRegister(LibWebRTCNetwork& libWebRTCNetwork)
+    : m_libWebRTCNetwork(libWebRTCNetwork)
+{
+}
+
+void WebMDNSRegister::ref() const
+{
+    m_libWebRTCNetwork->ref();
+}
+
+void WebMDNSRegister::deref() const
+{
+    m_libWebRTCNetwork->deref();
+}
 
 void WebMDNSRegister::finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const String& ipAddress, String&& name, std::optional<MDNSRegisterError> error, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& completionHandler)
 {
@@ -71,8 +87,8 @@ void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifi
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     connection.sendWithAsyncReply(Messages::NetworkMDNSRegister::RegisterMDNSName { identifier, ipAddress }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback), identifier, ipAddress] (String&& mdnsName, std::optional<MDNSRegisterError> error) mutable {
-        if (weakThis)
-            weakThis->finishedRegisteringMDNSName(identifier, ipAddress, WTFMove(mdnsName), error, WTFMove(callback));
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->finishedRegisteringMDNSName(identifier, ipAddress, WTFMove(mdnsName), error, WTFMove(callback));
         else
             callback({ }, MDNSRegisterError::Internal);
     });

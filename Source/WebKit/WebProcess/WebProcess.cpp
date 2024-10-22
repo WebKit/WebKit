@@ -2001,8 +2001,13 @@ void WebProcess::clearCachedPage(BackForwardItemIdentifier backForwardItemID, Co
 LibWebRTCNetwork& WebProcess::libWebRTCNetwork()
 {
     if (!m_libWebRTCNetwork)
-        m_libWebRTCNetwork = LibWebRTCNetwork::create().moveToUniquePtr();
+        m_libWebRTCNetwork = makeUniqueWithoutRefCountedCheck<LibWebRTCNetwork>(*this);
     return *m_libWebRTCNetwork;
+}
+
+Ref<LibWebRTCNetwork> WebProcess::protectedLibWebRTCNetwork()
+{
+    return libWebRTCNetwork();
 }
 
 void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)

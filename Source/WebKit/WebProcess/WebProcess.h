@@ -298,6 +298,7 @@ public:
 #endif // ENABLE(MODEL_PROCESS)
 
     LibWebRTCNetwork& libWebRTCNetwork();
+    Ref<LibWebRTCNetwork> protectedLibWebRTCNetwork();
 
     void setCacheModel(CacheModel);
 
