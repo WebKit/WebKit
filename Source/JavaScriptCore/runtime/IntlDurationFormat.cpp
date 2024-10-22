@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -539,7 +539,9 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     return { };
                 }
 
-                auto strSpan = buildDecimalFormat(unit, totalNanosecondsValue.value()).impl()->span8();
+                // We need to keep string alive while strSpan is in use.
+                auto string = buildDecimalFormat(unit, totalNanosecondsValue.value());
+                auto strSpan = string.impl()->span8();
                 unumf_formatDecimal(numberFormatter.get(), reinterpret_cast<const char*>(strSpan.data()), strSpan.size(), formattedNumber.get(), &status);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
