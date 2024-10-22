@@ -27,7 +27,6 @@
 #include "ServiceWorkerNotificationHandler.h"
 
 #include "Logging.h"
-#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/Scope.h>
@@ -97,15 +96,6 @@ void ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOrigi
 void ServiceWorkerNotificationHandler::getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
 {
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-std::optional<SharedPreferencesForWebProcess> ServiceWorkerNotificationHandler::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
-{
-    if (auto webProcessProxy = WebProcessProxy::processForConnection(connection))
-        return webProcessProxy->sharedPreferencesForWebProcess();
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
 }
 
 } // namespace WebKit

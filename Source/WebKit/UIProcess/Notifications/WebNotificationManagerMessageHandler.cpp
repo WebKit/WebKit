@@ -29,7 +29,6 @@
 #include "Logging.h"
 #include "ServiceWorkerNotificationHandler.h"
 #include "WebPageProxy.h"
-#include "WebProcessProxy.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/CompletionHandler.h>
 
@@ -118,11 +117,6 @@ void WebNotificationManagerMessageHandler::getPermissionStateSync(WebCore::Secur
 {
     ASSERT_NOT_REACHED();
     completionHandler({ });
-}
-
-std::optional<SharedPreferencesForWebProcess> WebNotificationManagerMessageHandler::sharedPreferencesForWebProcess(const IPC::Connection&) const
-{
-    return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit

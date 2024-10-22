@@ -5293,8 +5293,6 @@ NotificationsEnabled:
       "PLATFORM(IOS_FAMILY)": false
       default: true
   disableInLockdownMode: true
-  sharedPreferenceForWebProcess: true
-  richJavaScript: true
 
 ObservableEnabled:
   type: bool

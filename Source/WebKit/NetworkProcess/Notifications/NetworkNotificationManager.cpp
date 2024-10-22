@@ -33,7 +33,6 @@
 #include "Logging.h"
 #include "NetworkSession.h"
 #include "PushClientConnectionMessages.h"
-#include "WebProcessProxy.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
 #include <WebCore/SecurityOriginData.h>
@@ -248,11 +247,6 @@ void NetworkNotificationManager::getPermissionState(WebCore::SecurityOriginData&
 void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
     getPushPermissionStateImpl(protectedConnection().get(), WTFMove(origin), WTFMove(completionHandler));
-}
-
-std::optional<SharedPreferencesForWebProcess> NetworkNotificationManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
-{
-    return connectionToWebProcess(connection)->sharedPreferencesForWebProcess();
 }
 
 RefPtr<WebPushD::Connection> NetworkNotificationManager::protectedConnection() const
