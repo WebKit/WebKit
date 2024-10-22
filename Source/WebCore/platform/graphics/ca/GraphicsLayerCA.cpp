@@ -2805,7 +2805,7 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         backing->setCoverageRect(m_coverageRect);
     }
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     m_layer->setVisibleRect(m_visibleRect);
 #endif
 
@@ -4618,7 +4618,7 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | EventRegionChanged
         | NameChanged
         | DebugIndicatorsChanged
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | CoverageRectChanged);
 #else
         );

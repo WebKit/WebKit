@@ -229,7 +229,7 @@ public:
     virtual void setBackingStoreAttached(bool) = 0;
     virtual bool backingStoreAttached() const = 0;
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     virtual void setVisibleRect(const FloatRect&) = 0;
 #endif
 

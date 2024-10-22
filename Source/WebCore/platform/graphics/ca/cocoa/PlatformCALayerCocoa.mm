@@ -714,7 +714,7 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
     return m_backingStoreAttached;
 }
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 void PlatformCALayerCocoa::setVisibleRect(const FloatRect&)
 {
 }

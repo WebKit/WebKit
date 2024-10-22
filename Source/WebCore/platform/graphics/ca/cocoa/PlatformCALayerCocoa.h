@@ -105,7 +105,7 @@ public:
     void setBackingStoreAttached(bool) override;
     bool backingStoreAttached() const override;
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     void setVisibleRect(const FloatRect&) override;
 #endif
 

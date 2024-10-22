@@ -296,13 +296,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::BackdropRootChanged)
         layer.shouldRasterize = properties.backdropRoot;
 
-#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (properties.changedProperties & LayerChange::SeparatedChanged) {
-        layer.separated = properties.isSeparated;
-        if (properties.isSeparated)
-            configureSeparatedLayer(layer);
-    }
-
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     if (properties.changedProperties & LayerChange::SeparatedPortalChanged) {
         // FIXME: Implement SeparatedPortalChanged.
@@ -311,7 +304,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::DescendentOfSeparatedPortalChanged) {
         // FIXME: Implement DescendentOfSeparatedPortalChanged.
     }
-#endif
 #endif
 
 #if HAVE(AVKIT)
@@ -346,11 +338,27 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
         node.setEventRegion(properties.eventRegion);
     updateMask(node, properties, relatedLayers);
 
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (properties.changedProperties & LayerChange::VisibleRectChanged)
         node.setVisibleRect(properties.visibleRect);
+#endif
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::VisibleRectChanged)
         updateLayersForInteractionRegions(node);
+#endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (properties.changedProperties & LayerChange::SeparatedChanged)
+        node.setShouldBeSeparated(properties.isSeparated);
+
+    if (properties.changedProperties & LayerChange::SeparatedChanged || properties.changedProperties & LayerChange::VisibleRectChanged) {
+        if (node.visibleRect() && node.shouldBeSeparated()) {
+            node.layer().separated = true;
+            configureSeparatedLayer(node.layer());
+        } else
+            node.layer().separated = false;
+    }
 #endif
 
 #if ENABLE(SCROLLING_THREAD)

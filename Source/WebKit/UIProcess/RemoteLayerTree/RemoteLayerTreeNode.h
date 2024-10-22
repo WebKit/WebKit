@@ -60,7 +60,7 @@ public:
     static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
 
     CALayer *layer() const { return m_layer.get(); }
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     struct VisibleRectMarkableTraits {
         static bool isEmptyValue(const WebCore::FloatRect& value)
         {
@@ -75,11 +75,19 @@ public:
 
     const Markable<WebCore::FloatRect, VisibleRectMarkableTraits> visibleRect() const { return m_visibleRect; }
     void setVisibleRect(const WebCore::FloatRect& value) { m_visibleRect = value; }
+#endif
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     CALayer *ensureInteractionRegionsContainer();
     void removeInteractionRegionsContainer();
     void updateInteractionRegionAfterHierarchyChange();
 #endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool shouldBeSeparated() const { return m_shouldBeSeparated; }
+    void setShouldBeSeparated(bool value) { m_shouldBeSeparated = value; }
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     UIView *uiView() const { return m_uiView.get(); }
 #endif
@@ -159,9 +167,12 @@ private:
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
     RetainPtr<CALayer> m_layer;
-#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
-    Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
 
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    Markable<WebCore::FloatRect, VisibleRectMarkableTraits> m_visibleRect;
+#endif
+
+#if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS)
     void repositionInteractionRegionsContainerIfNeeded();
     enum class InteractionRegionsInSubtree : bool { Yes, Unknown };
     void propagateInteractionRegionsChangeInHierarchy(InteractionRegionsInSubtree);
@@ -173,6 +184,11 @@ private:
     bool m_hasInteractionRegionsDescendant { false };
     RetainPtr<UIView> m_interactionRegionsContainer;
 #endif
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool m_shouldBeSeparated { false };
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;
 #endif
