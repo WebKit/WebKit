@@ -347,7 +347,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(Element& element, const 
         if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
             blendingKeyframe.setContainsDirectionAwareProperty(true);
         if (auto* value = propertyReference.value()) {
-            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
+            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.writingMode());
             if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
                 if (auto customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
                     blendingKeyframe.addProperty(customValue->name());
@@ -563,7 +563,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
     state.setStyle(RenderStyle::createPtr());
     state.style()->inheritFrom(*state.rootElementStyle());
 
-    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->direction());
+    PageRuleCollector collector(m_ruleSets, documentElement->renderStyle()->writingMode());
     collector.matchAllPageRules(pageIndex);
 
     auto& result = collector.matchResult();

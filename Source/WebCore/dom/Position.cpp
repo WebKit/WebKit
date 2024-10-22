@@ -897,7 +897,7 @@ unsigned Position::positionCountBetweenPositions(const Position& a, const Positi
 
 static int boundingBoxLogicalHeight(RenderObject *o, const IntRect &rect)
 {
-    return o->style().isHorizontalWritingMode() ? rect.height() : rect.width();
+    return o->writingMode().isHorizontal() ? rect.height() : rect.width();
 }
 
 bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement& renderer)
@@ -1378,7 +1378,7 @@ TextDirection Position::primaryDirection() const
     if (!m_anchorNode || !m_anchorNode->renderer())
         return TextDirection::LTR;
     if (auto* blockFlow = lineageOfType<RenderBlockFlow>(*m_anchorNode->renderer()).first())
-        return blockFlow->style().direction();
+        return blockFlow->style().writingMode().bidiDirection();
     return TextDirection::LTR;
 }
 

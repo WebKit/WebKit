@@ -149,7 +149,7 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
 {
     for (const RenderElement* current = &renderer; ; current = current->parent()) {
         const RenderStyle& style = current->style();
-        if (current->isFixedPositioned() || style.isFlippedBlocksWritingMode())
+        if (current->isFixedPositioned() || style.writingMode().isBlockFlipped())
             return false;
 
         if (current->hasTransformOrPerspective())

@@ -377,7 +377,7 @@ void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirect
                     if (RefPtr form = input->form()) {
                         toolTip = form->action();
                         if (form->renderer())
-                            toolTipDirection = form->renderer()->style().direction();
+                            toolTipDirection = form->renderer()->writingMode().computedTextDirection();
                         else
                             toolTipDirection = TextDirection::LTR;
                     }

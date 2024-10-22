@@ -73,7 +73,7 @@
 #include "Settings.h"
 #include "StyleGridData.h"
 #include "StyleResolver.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -1554,9 +1554,9 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     if (!computedStyle)
         return { };
 
-    auto isHorizontalWritingMode = computedStyle->isHorizontalWritingMode();
-    auto isDirectionFlipped = !computedStyle->isLeftToRightDirection();
-    auto isWritingModeFlipped = computedStyle->isFlippedBlocksWritingMode();
+    auto isHorizontalWritingMode = computedStyle->writingMode().isHorizontal();
+    auto isDirectionFlipped = computedStyle->writingMode().isBidiRTL();
+    auto isWritingModeFlipped = computedStyle->writingMode().isBlockFlipped();
     auto contentBox = renderGrid.absoluteBoundingBoxRectIgnoringTransforms();
 
     auto columnLineAt = [&](float x) -> FloatLine {
@@ -1914,12 +1914,12 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
         return { };
 
     auto wasRowDirection = !computedStyle->isColumnFlexDirection();
-    auto isFlippedBlocksWritingMode = computedStyle->isFlippedBlocksWritingMode();
-    auto isRightToLeftDirection = computedStyle->direction() == TextDirection::RTL;
+    auto isBlockFlipped = computedStyle->writingMode().isBlockFlipped();
+    auto isRightToLeftDirection = computedStyle->writingMode().isBidiRTL();
 
-    auto isRowDirection = wasRowDirection ^ !computedStyle->isHorizontalWritingMode();
-    auto isMainAxisDirectionReversed = computedStyle->isReverseFlexDirection() ^ (wasRowDirection ? isRightToLeftDirection : isFlippedBlocksWritingMode);
-    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isFlippedBlocksWritingMode : isRightToLeftDirection);
+    auto isRowDirection = wasRowDirection ^ !computedStyle->writingMode().isHorizontal();
+    auto isMainAxisDirectionReversed = computedStyle->isReverseFlexDirection() ^ (wasRowDirection ? isRightToLeftDirection : isBlockFlipped);
+    auto isCrossAxisDirectionReversed = (computedStyle->flexWrap() == FlexWrap::Reverse) ^ (wasRowDirection ? isBlockFlipped : isBlockFlipped);
 
     auto localQuadToRootQuad = [&](const FloatQuad& quad) {
         return FloatQuad(

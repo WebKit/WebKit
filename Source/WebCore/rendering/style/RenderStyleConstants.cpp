@@ -1177,15 +1177,6 @@ TextStream& operator<<(TextStream& ts, TextJustify justify)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextOrientation orientation)
-{
-    switch (orientation) {
-    case TextOrientation::Mixed: ts << "mixed"; break;
-    case TextOrientation::Upright: ts << "upright"; break;
-    case TextOrientation::Sideways: ts << "sideways"; break;
-    }
-    return ts;
-}
 TextStream& operator<<(TextStream& ts, TextOverflow overflow)
 {
     switch (overflow) {

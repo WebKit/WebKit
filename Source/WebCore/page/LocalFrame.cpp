@@ -689,7 +689,7 @@ FloatSize LocalFrame::resizePageRectsKeepingRatio(const FloatSize& originalSize,
     if (!contentRenderer())
         return FloatSize();
 
-    if (contentRenderer()->style().isHorizontalWritingMode()) {
+    if (contentRenderer()->writingMode().isHorizontal()) {
         ASSERT(std::abs(originalSize.width()) > std::numeric_limits<float>::epsilon());
         float ratio = originalSize.height() / originalSize.width();
         resultSize.setWidth(floorf(expectedSize.width()));

@@ -76,8 +76,8 @@ inline const Vector<AtomString>& RenderStyle::anchorNames() const { return m_non
 inline StyleAppearance RenderStyle::appearance() const { return static_cast<StyleAppearance>(m_nonInheritedData->miscData->appearance); }
 inline const FilterOperations& RenderStyle::appleColorFilter() const { return m_rareInheritedData->appleColorFilter->operations; }
 inline double RenderStyle::aspectRatioHeight() const { return m_nonInheritedData->miscData->aspectRatioHeight; }
-inline double RenderStyle::aspectRatioLogicalHeight() const { return isHorizontalWritingMode() ? aspectRatioHeight() : aspectRatioWidth(); }
-inline double RenderStyle::aspectRatioLogicalWidth() const { return isHorizontalWritingMode() ? aspectRatioWidth() : aspectRatioHeight(); }
+inline double RenderStyle::aspectRatioLogicalHeight() const { return writingMode().isHorizontal() ? aspectRatioHeight() : aspectRatioWidth(); }
+inline double RenderStyle::aspectRatioLogicalWidth() const { return writingMode().isHorizontal() ? aspectRatioWidth() : aspectRatioHeight(); }
 inline AspectRatioType RenderStyle::aspectRatioType() const { return static_cast<AspectRatioType>(m_nonInheritedData->miscData->aspectRatioType); }
 inline double RenderStyle::aspectRatioWidth() const { return m_nonInheritedData->miscData->aspectRatioWidth; }
 inline const NamedGridLinesMap& RenderStyle::autoRepeatNamedGridColumnLines() const { return m_nonInheritedData->rareData->grid->autoRepeatNamedGridColumnLines(); }
@@ -183,11 +183,11 @@ inline OptionSet<Containment> RenderStyle::contain() const { return m_nonInherit
 inline std::optional<Length> RenderStyle::containIntrinsicHeight() const { return m_nonInheritedData->rareData->containIntrinsicHeight; }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicHeightType); }
 inline bool RenderStyle::containIntrinsicHeightHasAuto() const { return containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndNone; }
-inline bool RenderStyle::containIntrinsicLogicalHeightHasAuto() const { return isHorizontalWritingMode() ? containIntrinsicHeightHasAuto() : containIntrinsicWidthHasAuto(); }
-inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalHeightType() const { return isHorizontalWritingMode() ? containIntrinsicHeightType() : containIntrinsicWidthType(); }
-inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalWidthType() const { return isHorizontalWritingMode() ? containIntrinsicWidthType() : containIntrinsicHeightType(); }
+inline bool RenderStyle::containIntrinsicLogicalHeightHasAuto() const { return writingMode().isHorizontal() ? containIntrinsicHeightHasAuto() : containIntrinsicWidthHasAuto(); }
+inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalHeightType() const { return writingMode().isHorizontal() ? containIntrinsicHeightType() : containIntrinsicWidthType(); }
+inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalWidthType() const { return writingMode().isHorizontal() ? containIntrinsicWidthType() : containIntrinsicHeightType(); }
 inline bool RenderStyle::containIntrinsicWidthHasAuto() const { return containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndNone; }
-inline bool RenderStyle::containIntrinsicLogicalWidthHasAuto() const { return isHorizontalWritingMode() ? containIntrinsicWidthHasAuto() : containIntrinsicHeightHasAuto(); }
+inline bool RenderStyle::containIntrinsicLogicalWidthHasAuto() const { return writingMode().isHorizontal() ? containIntrinsicWidthHasAuto() : containIntrinsicHeightHasAuto(); }
 inline std::optional<Length> RenderStyle::containIntrinsicWidth() const { return m_nonInheritedData->rareData->containIntrinsicWidth; }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicWidthType); }
 inline const Vector<Style::ScopedName>& RenderStyle::containerNames() const { return m_nonInheritedData->rareData->containerNames; }
@@ -525,7 +525,7 @@ constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return W
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialLetterSpacing() { return zeroLength(); }
 inline Length RenderStyle::initialWordSpacing() { return zeroLength(); }
-constexpr WritingMode RenderStyle::initialWritingMode() { return WritingMode::HorizontalTb; }
+constexpr StyleWritingMode RenderStyle::initialWritingMode() { return StyleWritingMode::HorizontalTb; }
 inline InputSecurity RenderStyle::inputSecurity() const { return static_cast<InputSecurity>(m_nonInheritedData->rareData->inputSecurity); }
 inline bool RenderStyle::isColumnFlexDirection() const { return flexDirection() == FlexDirection::Column || flexDirection() == FlexDirection::ColumnReverse; }
 inline bool RenderStyle::isRowFlexDirection() const { return flexDirection() == FlexDirection::Row || flexDirection() == FlexDirection::RowReverse; }
@@ -541,21 +541,16 @@ constexpr bool RenderStyle::isDisplayInlineType() const { return isDisplayInline
 constexpr bool RenderStyle::isDisplayListItemType(DisplayType display) { return display == DisplayType::ListItem; }
 constexpr bool RenderStyle::isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
 inline bool RenderStyle::isFixedTableLayout() const { return tableLayout() == TableLayoutType::Fixed && (logicalWidth().isSpecified() || logicalWidth().isFitContent() || logicalWidth().isFillAvailable() || logicalWidth().isMinContent()); }
-inline bool RenderStyle::isFlippedBlocksWritingMode() const { return WebCore::isFlippedWritingMode(writingMode()); }
-inline bool RenderStyle::isFlippedLinesWritingMode() const { return WebCore::isFlippedLinesWritingMode(writingMode()); }
 inline bool RenderStyle::isFloating() const { return floating() != Float::None; }
 inline bool RenderStyle::isGridAutoFlowAlgorithmDense() const { return m_nonInheritedData->rareData->grid->gridAutoFlow & InternalAutoFlowAlgorithmDense; }
 inline bool RenderStyle::isGridAutoFlowAlgorithmSparse() const { return m_nonInheritedData->rareData->grid->gridAutoFlow & InternalAutoFlowAlgorithmSparse; }
 inline bool RenderStyle::isGridAutoFlowDirectionColumn() const { return m_nonInheritedData->rareData->grid->gridAutoFlow & InternalAutoFlowDirectionColumn; }
 inline bool RenderStyle::isGridAutoFlowDirectionRow() const { return m_nonInheritedData->rareData->grid->gridAutoFlow & InternalAutoFlowDirectionRow; }
-inline bool RenderStyle::isHorizontalWritingMode() const { return WebCore::isHorizontalWritingMode(writingMode()); }
-inline bool RenderStyle::isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 constexpr bool RenderStyle::isOriginalDisplayBlockType() const { return isDisplayBlockType(originalDisplay()); }
 constexpr bool RenderStyle::isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
 constexpr bool RenderStyle::isOriginalDisplayListItemType() const { return isDisplayListItemType(originalDisplay()); }
 inline bool RenderStyle::isOverflowVisible() const { return overflowX() == Overflow::Visible || overflowY() == Overflow::Visible; }
 inline bool RenderStyle::isReverseFlexDirection() const { return flexDirection() == FlexDirection::RowReverse || flexDirection() == FlexDirection::ColumnReverse; }
-inline bool RenderStyle::isVerticalWritingMode() const { return WebCore::isVerticalWritingMode(writingMode()); }
 inline LineJoin RenderStyle::joinStyle() const { return static_cast<LineJoin>(m_rareInheritedData->joinStyle); }
 inline const StyleContentAlignmentData& RenderStyle::justifyContent() const { return m_nonInheritedData->miscData->justifyContent; }
 inline const StyleSelfAlignmentData& RenderStyle::justifyItems() const { return m_nonInheritedData->miscData->justifyItems; }
@@ -570,26 +565,26 @@ inline const AtomString& RenderStyle::lineGrid() const { return m_rareInheritedD
 inline LineSnap RenderStyle::lineSnap() const { return static_cast<LineSnap>(m_rareInheritedData->lineSnap); }
 inline ListStyleType RenderStyle::listStyleType() const { return m_rareInheritedData->listStyleType; }
 inline const Length& RenderStyle::logicalBottom() const { return m_nonInheritedData->surroundData->offset.after(writingMode()); }
-inline const Length& RenderStyle::logicalHeight() const { return isHorizontalWritingMode() ? height() : width(); }
-inline const Length& RenderStyle::logicalLeft() const { return m_nonInheritedData->surroundData->offset.start(writingMode()); }
-inline const Length& RenderStyle::logicalMaxHeight() const { return isHorizontalWritingMode() ? maxHeight() : maxWidth(); }
-inline const Length& RenderStyle::logicalMaxWidth() const { return isHorizontalWritingMode() ? maxWidth() : maxHeight(); }
-inline const Length& RenderStyle::logicalMinHeight() const { return isHorizontalWritingMode() ? minHeight() : minWidth(); }
-inline const Length& RenderStyle::logicalMinWidth() const { return isHorizontalWritingMode() ? minWidth() : minHeight(); }
-inline const Length& RenderStyle::logicalRight() const { return m_nonInheritedData->surroundData->offset.end(writingMode()); }
+inline const Length& RenderStyle::logicalHeight() const { return writingMode().isHorizontal() ? height() : width(); }
+inline const Length& RenderStyle::logicalLeft() const { return m_nonInheritedData->surroundData->offset.logicalLeft(writingMode()); }
+inline const Length& RenderStyle::logicalMaxHeight() const { return writingMode().isHorizontal() ? maxHeight() : maxWidth(); }
+inline const Length& RenderStyle::logicalMaxWidth() const { return writingMode().isHorizontal() ? maxWidth() : maxHeight(); }
+inline const Length& RenderStyle::logicalMinHeight() const { return writingMode().isHorizontal() ? minHeight() : minWidth(); }
+inline const Length& RenderStyle::logicalMinWidth() const { return writingMode().isHorizontal() ? minWidth() : minHeight(); }
+inline const Length& RenderStyle::logicalRight() const { return m_nonInheritedData->surroundData->offset.logicalRight(writingMode()); }
 inline const Length& RenderStyle::logicalTop() const { return m_nonInheritedData->surroundData->offset.before(writingMode()); }
-inline const Length& RenderStyle::logicalWidth() const { return isHorizontalWritingMode() ? width() : height(); }
+inline const Length& RenderStyle::logicalWidth() const { return writingMode().isHorizontal() ? width() : height(); }
 inline const Length& RenderStyle::marginAfter() const { return m_nonInheritedData->surroundData->margin.after(writingMode()); }
 inline const Length& RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.after(otherStyle->writingMode()); }
 inline const Length& RenderStyle::marginBefore() const { return m_nonInheritedData->surroundData->margin.before(writingMode()); }
 inline const Length& RenderStyle::marginBeforeUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.before(otherStyle->writingMode()); }
 inline const Length& RenderStyle::marginBottom() const { return m_nonInheritedData->surroundData->margin.bottom(); }
-inline const Length& RenderStyle::marginEnd() const { return m_nonInheritedData->surroundData->margin.end(writingMode(), direction()); }
-inline const Length& RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.end(otherStyle->writingMode(), otherStyle->direction()); }
+inline const Length& RenderStyle::marginEnd() const { return m_nonInheritedData->surroundData->margin.end(writingMode()); }
+inline const Length& RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.end(otherStyle->writingMode()); }
 inline const Length& RenderStyle::marginLeft() const { return m_nonInheritedData->surroundData->margin.left(); }
 inline const Length& RenderStyle::marginRight() const { return m_nonInheritedData->surroundData->margin.right(); }
-inline const Length& RenderStyle::marginStart() const { return m_nonInheritedData->surroundData->margin.start(writingMode(), direction()); }
-inline const Length& RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.start(otherStyle->writingMode(), otherStyle->direction()); }
+inline const Length& RenderStyle::marginStart() const { return m_nonInheritedData->surroundData->margin.start(writingMode()); }
+inline const Length& RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.start(otherStyle->writingMode()); }
 inline const Length& RenderStyle::marginTop() const { return m_nonInheritedData->surroundData->margin.top(); }
 inline OptionSet<MarginTrimType> RenderStyle::marginTrim() const { return m_nonInheritedData->rareData->marginTrim; }
 inline MarqueeBehavior RenderStyle::marqueeBehavior() const { return static_cast<MarqueeBehavior>(m_nonInheritedData->rareData->marquee->behavior); }
@@ -655,10 +650,10 @@ inline const Length& RenderStyle::paddingAfter() const { return paddingBox().aft
 inline const Length& RenderStyle::paddingBefore() const { return paddingBox().before(writingMode()); }
 inline const Length& RenderStyle::paddingBottom() const { return paddingBox().bottom(); }
 inline const LengthBox& RenderStyle::paddingBox() const { return m_nonInheritedData->surroundData->padding; }
-inline const Length& RenderStyle::paddingEnd() const { return paddingBox().end(writingMode(), direction()); }
+inline const Length& RenderStyle::paddingEnd() const { return paddingBox().end(writingMode()); }
 inline const Length& RenderStyle::paddingLeft() const { return paddingBox().left(); }
 inline const Length& RenderStyle::paddingRight() const { return paddingBox().right(); }
-inline const Length& RenderStyle::paddingStart() const { return paddingBox().start(writingMode(), direction()); }
+inline const Length& RenderStyle::paddingStart() const { return paddingBox().start(writingMode()); }
 inline const Length& RenderStyle::paddingTop() const { return paddingBox().top(); }
 inline const LengthSize& RenderStyle::pageSize() const { return m_nonInheritedData->rareData->pageSize; }
 inline PageSizeType RenderStyle::pageSizeType() const { return static_cast<PageSizeType>(m_nonInheritedData->rareData->pageSizeType); }
@@ -727,7 +722,6 @@ inline const Length& RenderStyle::textIndent() const { return m_rareInheritedDat
 inline TextIndentLine RenderStyle::textIndentLine() const { return static_cast<TextIndentLine>(m_rareInheritedData->textIndentLine); }
 inline TextIndentType RenderStyle::textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
 inline TextJustify RenderStyle::textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
-inline TextOrientation RenderStyle::textOrientation() const { return static_cast<TextOrientation>(m_rareInheritedData->textOrientation); }
 inline TextOverflow RenderStyle::textOverflow() const { return static_cast<TextOverflow>(m_nonInheritedData->miscData->textOverflow); }
 inline TextSecurity RenderStyle::textSecurity() const { return static_cast<TextSecurity>(m_rareInheritedData->textSecurity); }
 inline const ShadowData* RenderStyle::textShadow() const { return m_rareInheritedData->textShadow.get(); }
@@ -875,18 +869,18 @@ constexpr bool RenderStyle::collapseWhiteSpace(WhiteSpace mode)
 
 inline void RenderStyle::getShadowInlineDirectionExtent(const ShadowData* shadow, LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const
 {
-    return isHorizontalWritingMode() ? getShadowHorizontalExtent(shadow, logicalLeft, logicalRight) : getShadowVerticalExtent(shadow, logicalLeft, logicalRight);
+    return writingMode().isHorizontal() ? getShadowHorizontalExtent(shadow, logicalLeft, logicalRight) : getShadowVerticalExtent(shadow, logicalLeft, logicalRight);
 }
 
 inline void RenderStyle::getShadowBlockDirectionExtent(const ShadowData* shadow, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const
 {
-    return isHorizontalWritingMode() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
+    return writingMode().isHorizontal() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
 }
 
 inline bool RenderStyle::hasInlineColumnAxis() const
 {
     auto axis = columnAxis();
-    return axis == ColumnAxis::Auto || isHorizontalWritingMode() == (axis == ColumnAxis::Horizontal);
+    return axis == ColumnAxis::Auto || writingMode().isHorizontal() == (axis == ColumnAxis::Horizontal);
 }
 
 inline Length RenderStyle::initialLineHeight()
@@ -958,7 +952,7 @@ constexpr bool RenderStyle::isDisplayTableOrTablePart(DisplayType display)
 inline double RenderStyle::logicalAspectRatio() const
 {
     ASSERT(aspectRatioType() != AspectRatioType::Auto);
-    if (isHorizontalWritingMode())
+    if (writingMode().isHorizontal())
         return aspectRatioWidth() / aspectRatioHeight();
     return aspectRatioHeight() / aspectRatioWidth();
 }
@@ -967,28 +961,6 @@ constexpr bool RenderStyle::preserveNewline(WhiteSpace mode)
 {
     // Normal and nowrap do not preserve newlines.
     return mode != WhiteSpace::Normal && mode != WhiteSpace::NoWrap;
-}
-
-inline FlowDirection RenderStyle::blockFlowDirection() const
-{
-    return writingModeToBlockFlowDirection(writingMode());
-}
-
-inline TypographicMode RenderStyle::typographicMode() const
-{
-    switch (writingMode()) {
-    case WritingMode::HorizontalTb:
-    case WritingMode::HorizontalBt:
-    case WritingMode::SidewaysLr:
-    case WritingMode::SidewaysRl:
-        return TypographicMode::Horizontal;
-    case WritingMode::VerticalLr:
-    case WritingMode::VerticalRl:
-        return TypographicMode::Vertical;
-    default:
-        ASSERT_NOT_REACHED();
-        return TypographicMode::Horizontal;
-    }
 }
 
 inline bool isSkippedContentRoot(const RenderStyle& style, const Element* element)

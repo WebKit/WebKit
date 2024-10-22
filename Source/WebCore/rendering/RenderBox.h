@@ -225,35 +225,35 @@ public:
     void setMarginLeft(LayoutUnit margin) { m_marginBox.setLeft(margin); }
     void setMarginRight(LayoutUnit margin) { m_marginBox.setRight(margin); }
 
-    LayoutUnit marginLogicalLeft(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.start((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginLogicalRight(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.end((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginLogicalLeft(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.logicalLeft((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginLogicalRight(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.logicalRight((overrideStyle ? overrideStyle : &style())->writingMode()); }
 
     LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
     LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
     LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        return m_marginBox.start(styleToUse->writingMode(), styleToUse->direction());
+        return m_marginBox.start(styleToUse->writingMode());
     }
     LayoutUnit marginEnd(const RenderStyle* overrideStyle = nullptr) const final
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        return m_marginBox.end(styleToUse->writingMode(), styleToUse->direction());
+        return m_marginBox.end(styleToUse->writingMode());
     }
-    LayoutUnit marginBlockStart(const WritingMode& writingMode) const { return m_marginBox.before(writingMode); }
-    LayoutUnit marginInlineStart(const WritingMode& writingMode) const { return m_marginBox.start(writingMode); }
+    LayoutUnit marginBlockStart(const WritingMode writingMode) const { return m_marginBox.before(writingMode); }
+    LayoutUnit marginInlineStart(const WritingMode writingMode) const { return m_marginBox.start(writingMode); }
 
     void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setBefore(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
     void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setAfter(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
     void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        m_marginBox.setStart(value, styleToUse->writingMode(), styleToUse->direction());
+        m_marginBox.setStart(value, styleToUse->writingMode());
     }
     void setMarginEnd(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
     {
         const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        m_marginBox.setEnd(value, styleToUse->writingMode(), styleToUse->direction());
+        m_marginBox.setEnd(value, styleToUse->writingMode());
     }
 
     virtual bool isSelfCollapsingBlock() const { return false; }
@@ -563,10 +563,10 @@ public:
         return toLayoutSize(topLeftLocationWithFlipping());
     }
 
-    LayoutRect logicalVisualOverflowRectForPropagation(const RenderStyle*) const;
-    LayoutRect visualOverflowRectForPropagation(const RenderStyle*) const;
-    LayoutRect logicalLayoutOverflowRectForPropagation(const RenderStyle*) const;
-    LayoutRect layoutOverflowRectForPropagation(const RenderStyle*) const;
+    LayoutRect logicalVisualOverflowRectForPropagation(const WritingMode) const;
+    LayoutRect visualOverflowRectForPropagation(const WritingMode) const;
+    LayoutRect logicalLayoutOverflowRectForPropagation(const WritingMode) const;
+    LayoutRect layoutOverflowRectForPropagation(const WritingMode) const;
 
     bool hasRenderOverflow() const { return m_overflow; }    
     bool hasVisualOverflow() const { return m_overflow && !borderBoxRect().contains(m_overflow->visualOverflowRect()); }
@@ -739,7 +739,7 @@ private:
     bool repaintLayerRectsForImage(WrappedImagePtr, const FillLayer& layers, bool drawingBackground);
 
     void computePositionedLogicalHeight(LogicalExtentComputedValues&) const;
-    void computePositionedLogicalWidthUsing(SizeType, Length logicalWidth, const RenderBoxModelObject& containerBlock, TextDirection containerDirection,
+    void computePositionedLogicalWidthUsing(SizeType, Length logicalWidth, const RenderBoxModelObject& containerBlock, WritingMode containerWritingMode,
                                             LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
                                             Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
                                             LogicalExtentComputedValues&) const;

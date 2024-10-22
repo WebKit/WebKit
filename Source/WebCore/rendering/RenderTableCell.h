@@ -178,10 +178,10 @@ private:
     CollapsedBorderValue collapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
-    CollapsedBorderValue cachedCollapsedLeftBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedRightBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedTopBorder(const RenderStyle&) const;
-    CollapsedBorderValue cachedCollapsedBottomBorder(const RenderStyle&) const;
+    CollapsedBorderValue cachedCollapsedLeftBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedRightBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedTopBorder(const WritingMode) const;
+    CollapsedBorderValue cachedCollapsedBottomBorder(const WritingMode) const;
 
     CollapsedBorderValue computeCollapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

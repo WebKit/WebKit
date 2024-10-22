@@ -1447,27 +1447,27 @@ template<> constexpr TextDirection fromCSSValueID(CSSValueID valueID)
     return TextDirection::LTR;
 }
 
-constexpr CSSValueID toCSSValueID(WritingMode e)
+constexpr CSSValueID toCSSValueID(StyleWritingMode e)
 {
     switch (e) {
-    case WritingMode::HorizontalTb:
+    case StyleWritingMode::HorizontalTb:
         return CSSValueHorizontalTb;
-    case WritingMode::VerticalRl:
+    case StyleWritingMode::VerticalRl:
         return CSSValueVerticalRl;
-    case WritingMode::VerticalLr:
+    case StyleWritingMode::VerticalLr:
         return CSSValueVerticalLr;
-    case WritingMode::SidewaysRl:
+    case StyleWritingMode::SidewaysRl:
         return CSSValueSidewaysRl;
-    case WritingMode::SidewaysLr:
+    case StyleWritingMode::SidewaysLr:
         return CSSValueSidewaysLr;
-    case WritingMode::HorizontalBt:
+    case StyleWritingMode::HorizontalBt:
         return CSSValueHorizontalBt;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr WritingMode fromCSSValueID(CSSValueID valueID)
+template<> constexpr StyleWritingMode fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueHorizontalTb:
@@ -1475,24 +1475,24 @@ template<> constexpr WritingMode fromCSSValueID(CSSValueID valueID)
     case CSSValueLrTb:
     case CSSValueRl:
     case CSSValueRlTb:
-        return WritingMode::HorizontalTb;
+        return StyleWritingMode::HorizontalTb;
     case CSSValueVerticalRl:
     case CSSValueTb:
     case CSSValueTbRl:
-        return WritingMode::VerticalRl;
+        return StyleWritingMode::VerticalRl;
     case CSSValueVerticalLr:
-        return WritingMode::VerticalLr;
+        return StyleWritingMode::VerticalLr;
     case CSSValueSidewaysLr:
-        return WritingMode::SidewaysLr;
+        return StyleWritingMode::SidewaysLr;
     case CSSValueSidewaysRl:
-        return WritingMode::SidewaysRl;
+        return StyleWritingMode::SidewaysRl;
     case CSSValueHorizontalBt:
-        return WritingMode::HorizontalBt;
+        return StyleWritingMode::HorizontalBt;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return WritingMode::HorizontalTb;
+    return StyleWritingMode::HorizontalTb;
 }
 
 constexpr CSSValueID toCSSValueID(TextCombine e)

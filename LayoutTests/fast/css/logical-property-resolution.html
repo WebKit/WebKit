@@ -9,20 +9,28 @@
   direction: rtl
 }
 
-.tb-block {
+.hTB-block {
   -webkit-writing-mode: horizontal-tb;
 }
 
-.bt-block {
+.hBT-block {
   -webkit-writing-mode: horizontal-bt
 }
 
-.lr-block {
+.vLR-block {
   -webkit-writing-mode: vertical-lr
 }
 
-.rl-block {
+.vRL-block {
   -webkit-writing-mode: vertical-rl
+}
+
+.sLR-block {
+  writing-mode: sideways-lr
+}
+
+.sRL-block {
+  writing-mode: sideways-rl
 }
 
 .test {
@@ -51,7 +59,7 @@ function dumpBlockProperties()
 {
    result = document.getElementById('result');
    blocks = document.getElementsByTagName('div');
-   resultStr = "This test has incorrect results but reflects what's happening as we bring block-flow online.<br>";
+   resultStr = "";
    for (i = 0; i < blocks.length; ++i) {
         resultStr += "<b>Block #" + (i+1) + ":</b><br>";
         resultStr += "Margins: ";
@@ -85,14 +93,18 @@ function dumpBlockProperties()
 </script>
 </head>
 <body onload="dumpBlockProperties()">
-<div class="ltr-text tb-block test"></div>
-<div class="ltr-text bt-block test"></div>
-<div class="ltr-text lr-block test"></div>
-<div class="ltr-text rl-block test"></div>
-<div class="rtl-text tb-block test"></div>
-<div class="rtl-text bt-block test"></div>
-<div class="rtl-text lr-block test"></div>
-<div class="rtl-text rl-block test"></div>
+<div class="ltr-text hTB-block test">ltr-hTB.</div>
+<div class="ltr-text hBT-block test">ltr-hBT.</div>
+<div class="ltr-text vLR-block test">ltr-vLR.</div>
+<div class="ltr-text vRL-block test">ltr-vRL.</div>
+<div class="ltr-text sLR-block test">ltr-sLR.</div>
+<div class="ltr-text sRL-block test">ltr-sRL.</div>
+<div class="rtl-text hTB-block test">rtl-hTB.</div>
+<div class="rtl-text hBT-block test">rtl-hBT.</div>
+<div class="rtl-text vLR-block test">rtl-vLR.</div>
+<div class="rtl-text vRL-block test">rtl-vRL.</div>
+<div class="ltr-text sLR-block test">ltr-sLR.</div>
+<div class="ltr-text sRL-block test">ltr-sRL.</div>
 <p style="clear:both" id="result"></p>
 </body>
 </html>

@@ -268,7 +268,7 @@ static void updateEffectiveTextDirectionOfElementAndShadowTree(Element& element,
         }
     }
 
-    if (element.renderer() && element.renderer()->style().direction() != effectiveDirection)
+    if (element.renderer() && element.renderer()->writingMode().computedTextDirection() != effectiveDirection)
         element.invalidateStyleForSubtree();
 }
 

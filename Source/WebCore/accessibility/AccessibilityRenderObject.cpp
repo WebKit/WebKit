@@ -909,7 +909,7 @@ Path AccessibilityRenderObject::elementPath() const
 
         // Compute the path only if this is the last part of a line followed by the beginning of the next line.
         const auto& style = m_renderer->style();
-        bool rightToLeftText = style.direction() == TextDirection::RTL;
+        bool rightToLeftText = style.writingMode().isBidiRTL();
         static const auto xTolerance = 5_lu;
         static const auto yTolerance = 5_lu;
         bool needsPath = false;

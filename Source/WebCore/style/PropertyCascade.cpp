@@ -161,14 +161,14 @@ bool PropertyCascade::hasProperty(CSSPropertyID propertyID, const CSSValue& valu
     return propertyID < firstLogicalGroupProperty ? hasNormalProperty(propertyID) : hasLogicalGroupProperty(propertyID);
 }
 
-const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPropertyPair(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode) const
+const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPropertyPair(CSSPropertyID propertyID, WritingMode writingMode) const
 {
     ASSERT(CSSProperty::isInLogicalPropertyGroup(propertyID));
 
     auto pairID = [&] {
         if (CSSProperty::isDirectionAwareProperty(propertyID))
-            return CSSProperty::resolveDirectionAwareProperty(propertyID, direction, writingMode);
-        return CSSProperty::unresolvePhysicalProperty(propertyID, direction, writingMode);
+            return CSSProperty::resolveDirectionAwareProperty(propertyID, writingMode);
+        return CSSProperty::unresolvePhysicalProperty(propertyID, writingMode);
     }();
     ASSERT(pairID != CSSPropertyInvalid);
 

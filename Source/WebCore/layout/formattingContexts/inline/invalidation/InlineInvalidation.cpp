@@ -31,7 +31,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutUnit.h"
 #include "TextBreakingPositionContext.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 #include <wtf/Range.h>
 
 namespace WebCore {
@@ -68,7 +68,7 @@ bool InlineInvalidation::rootStyleWillChange(const ElementBox& formattingContext
         if ((newFirstLineStyle && newFirstLineStyle->fontCascade() != oldStyle.fontCascade()) || (oldFirstLineStyle && oldFirstLineStyle->fontCascade() != newStyle.fontCascade()))
             return true;
 
-        if (oldStyle.direction() != newStyle.direction() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
+        if (oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection() || oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.tabSize() != newStyle.tabSize() || oldStyle.textSecurity() != newStyle.textSecurity())
             return true;
 
         return false;
@@ -109,7 +109,7 @@ bool InlineInvalidation::styleWillChange(const Box& layoutBox, const RenderStyle
         if (contentMayNeedNewBreakingPositionsAndMeasuring)
             return true;
 
-        auto bidiContextChanged = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.direction() != newStyle.direction();
+        auto bidiContextChanged = oldStyle.unicodeBidi() != newStyle.unicodeBidi() || oldStyle.writingMode().bidiDirection() != newStyle.writingMode().bidiDirection();
         if (bidiContextChanged)
             return true;
 

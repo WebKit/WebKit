@@ -890,7 +890,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
             auto holeRect = borderRect.rect();
             holeRect.inflate(-shadowSpread);
 
-            bool isHorizontal = style.isHorizontalWritingMode();
+            bool isHorizontal = style.writingMode().isHorizontal();
             if (!includeLogicalLeftEdge) {
                 if (isHorizontal)
                     holeRect.shiftXEdgeBy(-(std::max<LayoutUnit>(shadowOffset.width(), 0) + shadowPaintingExtent + shadowSpread));
@@ -908,7 +908,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
             auto roundedHoleRect = RoundedRect { holeRect, borderRect.radii() };
             if (shadowSpread && roundedHoleRect.isRounded()) {
                 auto rounedRectCorrectingForSpread = [&]() {
-                    bool horizontal = style.isHorizontalWritingMode();
+                    bool horizontal = style.writingMode().isHorizontal();
                     LayoutUnit leftWidth { (!horizontal || includeLogicalLeftEdge) ? style.borderLeftWidth() + shadowSpread : 0 };
                     LayoutUnit rightWidth { (!horizontal || includeLogicalRightEdge) ? style.borderRightWidth() + shadowSpread : 0 };
                     LayoutUnit topWidth { (horizontal || includeLogicalLeftEdge) ? style.borderTopWidth() + shadowSpread : 0 };

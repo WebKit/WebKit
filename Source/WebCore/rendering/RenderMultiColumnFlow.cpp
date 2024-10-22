@@ -366,7 +366,7 @@ LayoutSize RenderMultiColumnFlow::physicalTranslationOffsetFromFlowToFragment(co
     
     // Now we know how we want the rect to be translated into the fragment. At this point we're converting
     // back to physical coordinates.
-    if (style().isFlippedBlocksWritingMode()) {
+    if (writingMode().isBlockFlipped()) {
         LayoutRect portionRect(columnSet->fragmentedFlowPortionRect());
         LayoutRect columnRect = columnSet->columnRectAt(0);
         LayoutUnit physicalDeltaFromPortionBottom = logicalHeight() - columnSet->logicalBottomInFragmentedFlow();

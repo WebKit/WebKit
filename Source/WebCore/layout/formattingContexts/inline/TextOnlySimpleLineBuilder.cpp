@@ -457,7 +457,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(const
 {
     if (style.fontCascade().wordSpacing())
         return false;
-    if (!style.isLeftToRightDirection())
+    if (style.writingMode().isBidiRTL())
         return false;
     if (style.wordBreak() == WordBreak::AutoPhrase)
         return false;

@@ -627,7 +627,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setWritingMode(fromCSSValue<WritingMode>(value));
+    builderState.setWritingMode(fromCSSValue<StyleWritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode();
 }
 
@@ -1534,7 +1534,7 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
     auto rubyPosition = builderState.style().rubyPosition();
     if (rubyPosition == RubyPosition::InterCharacter) {
         // If the writing mode of the enclosing ruby container is vertical, 'inter-character' value has the same effect as over.
-        return builderState.parentStyle().isHorizontalWritingMode() ? 0.3f : 0.5f;
+        return !builderState.parentStyle().writingMode().isVerticalTypographic() ? 0.3f : 0.5f;
     }
 
     // Legacy inter-character behavior.

@@ -66,7 +66,7 @@ PlacedFloats::Item::~Item() = default;
 
 PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
     : m_blockFormattingContextRoot(blockFormattingContextRoot)
-    , m_isLeftToRightDirection(blockFormattingContextRoot.style().isLeftToRightDirection())
+    , m_writingMode(blockFormattingContextRoot.writingMode())
 {
     ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());
 }

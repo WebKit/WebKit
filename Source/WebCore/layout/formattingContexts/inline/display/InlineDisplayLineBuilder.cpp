@@ -36,7 +36,7 @@ namespace Layout {
 
 static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& lineLogicalRect, WritingMode writingMode)
 {
-    switch (writingModeToBlockFlowDirection(writingMode)) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
         return lineLogicalRect;
@@ -72,7 +72,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     auto contentOverflowRect = [&]() -> InlineRect {
         auto rect = lineBoxRect;
         auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
-        auto isLeftToRightDirection = root().style().isLeftToRightDirection();
+        auto isLeftToRightDirection = root().writingMode().isBidiLTR();
         if (lineLayoutResult.hangingContent.shouldContributeToScrollableOverflow)
             rect.expandHorizontally(lineLayoutResult.hangingContent.logicalWidth);
         else if (!isLeftToRightDirection) {
@@ -139,7 +139,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
     auto lineBoxVisualRectInInlineDirection = InlineRect { lineBoxLogicalRect.top(), lineBoxVisualLeft, lineBoxLogicalRect.width(), lineBoxLogicalRect.height() };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineLayoutResult, lineBox, lineBoxVisualRectInInlineDirection);
 
-    auto writingMode = root().style().writingMode();
+    auto writingMode = root().writingMode();
     return InlineDisplay::Line { lineBoxLogicalRect
         , flipLogicalLineRectToVisualForWritingMode(lineBoxVisualRectInInlineDirection, writingMode)
         , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.contentOverflowRect, writingMode)
@@ -150,7 +150,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
         , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
         , isLeftToRightDirection
-        , rootInlineBox.layoutBox().style().isHorizontalWritingMode()
+        , rootInlineBox.layoutBox().writingMode().isHorizontal()
         , lineIsFullyTruncatedInBlockDirection
     };
 }
@@ -197,7 +197,7 @@ static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float 
             return { };
         }
         auto contentDirection = displayBox.bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR;
-        if (displayBox.layoutBox().parent().style().direction() != contentDirection)
+        if (displayBox.layoutBox().parent().style().writingMode().bidiDirection() != contentDirection)
             return truncateTextContentWithMismatchingDirection(displayBox, contentWidth, availableWidthForContent, canFullyTruncate);
 
         auto& inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
@@ -229,7 +229,7 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
 {
     ASSERT(endIndex && startIndex <= endIndex);
     // We gotta truncate some runs.
-    auto isHorizontal = rootStyle.isHorizontalWritingMode();
+    auto isHorizontal = rootStyle.writingMode().isHorizontal();
     auto left = [&] (auto& displayBox) {
         return isHorizontal ? displayBox.left() : displayBox.top();
     };
@@ -241,7 +241,7 @@ static float truncateOverflowingDisplayBoxes(InlineDisplay::Boxes& boxes, size_t
     };
     // The logically first character or atomic inline-level element on a line must be clipped rather than ellipsed.
     auto isFirstContentRun = true;
-    if (rootStyle.isLeftToRightDirection()) {
+    if (rootStyle.writingMode().isBidiLTR()) {
         auto visualRightForContentEnd = std::max(0.f, lineBoxVisualRight - ellipsisWidth);
 #if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
         if (visualRightForContentEnd)
@@ -321,18 +321,18 @@ static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEn
     if (!contentNeedsTruncation()) {
         // The content does not overflow the line box. The ellipsis is supposed to be either visually trailing or leading depending on the inline direction.
         if (displayBoxes.size() > 1)
-            ellipsisStart = rootStyle.isLeftToRightDirection() ? displayBoxes.last().right() : displayBoxes[1].left() - ellipsisWidth;
+            ellipsisStart = rootStyle.writingMode().isBidiLTR() ? displayBoxes.last().right() : displayBoxes[1].left() - ellipsisWidth;
         else {
             // All we have is the root inline box.
             ellipsisStart = displayBoxes.first().left();
         }
     } else {
-        auto lineBoxVisualLeft = rootStyle.isHorizontalWritingMode() ? displayLine.left() : displayLine.top();
-        auto lineBoxVisualRight = std::max(rootStyle.isHorizontalWritingMode() ? displayLine.right() : displayLine.bottom(), lineBoxVisualLeft);
+        auto lineBoxVisualLeft = rootStyle.writingMode().isHorizontal() ? displayLine.left() : displayLine.top();
+        auto lineBoxVisualRight = std::max(rootStyle.writingMode().isHorizontal() ? displayLine.right() : displayLine.bottom(), lineBoxVisualLeft);
         ellipsisStart = truncateOverflowingDisplayBoxes(displayBoxes, 0, displayBoxes.size() - 1, lineBoxVisualLeft, lineBoxVisualRight, ellipsisWidth, rootStyle, lineEndingTruncationPolicy);
     }
 
-    if (rootStyle.isHorizontalWritingMode())
+    if (rootStyle.writingMode().isHorizontal())
         return FloatRect { ellipsisStart, rootInlineBox.top(), ellipsisWidth, rootInlineBox.height() };
     return FloatRect { rootInlineBox.left(), ellipsisStart, rootInlineBox.width(), ellipsisWidth };
 }
@@ -343,8 +343,8 @@ static inline bool isEligibleForLinkBoxLineClamp(auto& displayBoxes)
         // We need at least 3 display boxes to generate content with link ([root inline box][inline box][content])
         return false;
     }
-    auto& rootStyle = displayBoxes[0].layoutBox().style();
-    if (!rootStyle.isLeftToRightDirection() || !rootStyle.isHorizontalWritingMode())
+    auto writingMode = displayBoxes[0].layoutBox().writingMode();
+    if (writingMode.isBidiRTL() || writingMode.isVertical())
         return false;
     auto& linkCandidateBox = displayBoxes[displayBoxes.size() - 2];
     if (!linkCandidateBox.isNonRootInlineBox() || !linkCandidateBox.isFirstForLayoutBox()) {

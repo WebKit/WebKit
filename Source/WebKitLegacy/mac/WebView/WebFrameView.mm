@@ -609,7 +609,7 @@ enum {
     auto* renderView = document->renderView();
     if (!renderView)
         return YES;
-    return renderView->style().isHorizontalWritingMode();
+    return renderView->writingMode().isHorizontal();
 }
 
 - (BOOL)_isFlippedDocument
@@ -623,7 +623,7 @@ enum {
     auto* renderView = document->renderView();
     if (!renderView)
         return NO;
-    return renderView->style().isFlippedBlocksWritingMode();
+    return renderView->writingMode().isBlockFlipped();
 }
 
 - (BOOL)_scrollToBeginningOfDocument

@@ -163,7 +163,7 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
         return;
 
     auto writingMode = inlineContent.formattingContextRoot().style().writingMode();
-    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    bool isHorizontalWritingMode = writingMode.isHorizontal();
 
     auto& displayContent = inlineContent.displayContent();
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex) {

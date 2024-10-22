@@ -236,7 +236,7 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
     size_t boxIndex = !startIndex ? 0 : lines[startIndex - 1].lastBoxIndex() + 1;
     auto& rootBoxStyle = m_blockFlow.style();
     auto isLeftToRightInlineDirection = rootBoxStyle.isLeftToRightDirection();
-    auto isHorizontalWritingMode = rootBoxStyle.isHorizontalWritingMode();
+    auto isHorizontalWritingMode = rootBoxStyle.writingMode().isHorizontal();
 
     for (size_t lineIndex = startIndex; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -286,11 +286,11 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
             if (box.isAtomicInlineBox()) {
                 auto& renderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
                 if (!renderer.hasSelfPaintingLayer()) {
-                    auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(&renderer.parent()->style());
+                    auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(renderer.parent()->writingMode());
                     childInkOverflow.move(box.left(), box.top());
                     inkOverflowRect.unite(childInkOverflow);
                 }
-                auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(&renderer.parent()->style());
+                auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(renderer.parent()->writingMode());
                 childScrollableOverflow.move(box.left(), box.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
                 continue;

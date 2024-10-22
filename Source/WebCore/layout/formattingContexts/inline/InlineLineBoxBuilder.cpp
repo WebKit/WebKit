@@ -564,7 +564,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
             return isFirstLine() ? inlineLevelBox.layoutBox().firstLineStyle() : inlineLevelBox.layoutBox().style();
         };
         auto& rootInlineBoxStyle = styleToUse(rootInlineBox);
-        if (rootInlineBoxStyle.isHorizontalWritingMode())
+        if (rootInlineBoxStyle.writingMode().isHorizontal())
             return false;
 
         auto primaryFontRequiresIdeographicBaseline = [&] (auto& style) {
@@ -620,7 +620,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox)
                 continue;
             }
             auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && downcast<ElementBox>(layoutBox).baselineForIntegration().has_value();
-            if (isInlineBlockWithNonSyntheticBaseline && !layoutBox.style().isHorizontalWritingMode())
+            if (isInlineBlockWithNonSyntheticBaseline && !layoutBox.writingMode().isHorizontal())
                 continue;
         }
         adjustLayoutBoundsWithIdeographicBaseline(inlineLevelBox);

@@ -239,23 +239,16 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
     return std::span<const UChar> { characters, length };
 }
 
-String CSSCounterStyle::counterForSystemDisclosureClosed(TextFlow flow)
+String CSSCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
 {
-    switch (flow.blockDirection) {
-    case FlowDirection::TopToBottom:
-    case FlowDirection::BottomToTop:
-        return span(flow.textDirection == TextDirection::LTR ? blackRightPointingSmallTriangle : blackLeftPointingSmallTriangle);
-    case FlowDirection::LeftToRight:
-    case FlowDirection::RightToLeft:
-        return span(flow.textDirection == TextDirection::LTR ? blackDownPointingSmallTriangle : blackUpPointingSmallTriangle);
-    }
-    ASSERT_NOT_REACHED();
-    return { };
+    if (writingMode.isVerticalTypographic())
+        return span(writingMode.isInlineTopToBottom() ? blackDownPointingSmallTriangle : blackUpPointingSmallTriangle);
+    return span(writingMode.isBidiLTR() ? blackRightPointingSmallTriangle : blackLeftPointingSmallTriangle);
 }
 
-String CSSCounterStyle::counterForSystemDisclosureOpen(TextFlow flow)
+String CSSCounterStyle::counterForSystemDisclosureOpen(WritingMode writingMode)
 {
-    switch (flow.blockDirection) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
         return span(blackDownPointingSmallTriangle);
     case FlowDirection::BottomToTop:
@@ -359,7 +352,7 @@ String CSSCounterStyle::counterForSystemEthiopicNumeric(unsigned value)
     return std::span<const UChar> { buffer, length };
 }
 
-String CSSCounterStyle::initialRepresentation(int value, TextFlow textFlow) const
+String CSSCounterStyle::initialRepresentation(int value, WritingMode writingMode) const
 {
     unsigned absoluteValue = std::abs(value);
     switch (system()) {
@@ -376,9 +369,9 @@ String CSSCounterStyle::initialRepresentation(int value, TextFlow textFlow) cons
     case CSSCounterStyleDescriptors::System::Fixed:
         return counterForSystemFixed(value);
     case CSSCounterStyleDescriptors::System::DisclosureClosed:
-        return counterForSystemDisclosureClosed(textFlow);
+        return counterForSystemDisclosureClosed(writingMode);
     case CSSCounterStyleDescriptors::System::DisclosureOpen:
-        return counterForSystemDisclosureOpen(textFlow);
+        return counterForSystemDisclosureOpen(writingMode);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
         return CSSCounterStyle::counterForSystemSimplifiedChineseInformal(value);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
@@ -397,26 +390,26 @@ String CSSCounterStyle::initialRepresentation(int value, TextFlow textFlow) cons
     return { };
 }
 
-String CSSCounterStyle::fallbackText(int value, TextFlow textFlow)
+String CSSCounterStyle::fallbackText(int value, WritingMode writingMode)
 {
     if (m_isFallingBack || !fallback().get()) {
         m_isFallingBack = false;
-        return CSSCounterStyleRegistry::decimalCounter()->text(value, textFlow);
+        return CSSCounterStyleRegistry::decimalCounter()->text(value, writingMode);
     }
     m_isFallingBack = true;
-    auto fallbackText = fallback()->text(value, textFlow);
+    auto fallbackText = fallback()->text(value, writingMode);
     m_isFallingBack = false;
     return fallbackText;
 }
 
-String CSSCounterStyle::text(int value, TextFlow textFlow)
+String CSSCounterStyle::text(int value, WritingMode writingMode)
 {
     if (!isInRange(value))
-        return fallbackText(value, textFlow);
+        return fallbackText(value, writingMode);
 
-    auto result = initialRepresentation(value, textFlow);
+    auto result = initialRepresentation(value, writingMode);
     if (result.isNull())
-        return fallbackText(value, textFlow);
+        return fallbackText(value, writingMode);
     applyPadSymbols(result, value);
     if (shouldApplyNegativeSymbols(value))
         applyNegativeSymbols(result);

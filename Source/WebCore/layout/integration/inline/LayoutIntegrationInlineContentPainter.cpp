@@ -152,7 +152,7 @@ void InlineContentPainter::paint()
 
 LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& childRenderer) const
 {
-    if (root().style().isFlippedBlocksWritingMode())
+    if (root().writingMode().isBlockFlipped())
         return root().flipForWritingModeForChild(childRenderer, m_paintOffset);
     return m_paintOffset;
 }

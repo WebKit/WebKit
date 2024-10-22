@@ -338,7 +338,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
 
         if (input->isRangeControl())
-            return style.isHorizontalWritingMode() ? StyleAppearance::SliderHorizontal : StyleAppearance::SliderVertical;
+            return style.writingMode().isHorizontal() ? StyleAppearance::SliderHorizontal : StyleAppearance::SliderVertical;
 
         if (input->isTextField())
             return StyleAppearance::TextField;
@@ -709,7 +709,7 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
             states.add(ControlStyle::State::ListButtonPressed);
     }
 #endif
-    if (!renderer.style().isHorizontalWritingMode())
+    if (!renderer.writingMode().isHorizontal())
         states.add(ControlStyle::State::VerticalWritingMode);
     return states;
 }
@@ -1262,7 +1262,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
             || appearance == StyleAppearance::PushButton;
     };
     // Transpose for vertical writing mode:
-    if (!style.isHorizontalWritingMode() && supportsVerticalWritingMode(appearance))
+    if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
         borderBox = LengthBox(borderBox.left().value(), borderBox.top().value(), borderBox.right().value(), borderBox.bottom().value());
 
     if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
@@ -1460,7 +1460,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     paintInfo.context().setFillColor(renderer.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    bool isReversedInlineDirection = (!isHorizontal && renderer.style().isHorizontalWritingMode()) || !renderer.style().isLeftToRightDirection();
+    bool isReversedInlineDirection = (!isHorizontal && renderer.writingMode().isHorizontal()) || !renderer.style().isLeftToRightDirection();
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input->listOptionValueAsDouble(optionElement)) {
             double tickFraction = (*optionValue - min) / (max - min);

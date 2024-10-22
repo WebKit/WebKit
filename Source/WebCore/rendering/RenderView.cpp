@@ -110,8 +110,11 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
-    bool writingModeChanged = oldStyle && style().writingMode() != oldStyle->writingMode();
-    bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
+    if (!oldStyle)
+        return;
+
+    bool writingModeChanged = writingMode().computedWritingMode() != oldStyle->writingMode().computedWritingMode();
+    bool directionChanged = writingMode().bidiDirection() != oldStyle->writingMode().bidiDirection();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
         if (protectedFrameView()->pagination().mode != Pagination::Mode::Unpaginated)
@@ -130,7 +133,7 @@ RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUn
 
 inline int RenderView::viewLogicalWidth() const
 {
-    return style().isHorizontalWritingMode() ? viewWidth() : viewHeight();
+    return writingMode().isHorizontal() ? viewWidth() : viewHeight();
 }
 
 void RenderView::updateLogicalWidth()
@@ -565,10 +568,10 @@ auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const
         return rects;
 
     auto adjustedRects = rects;
-    if (style().isFlippedBlocksWritingMode()) {
+    if (writingMode().isBlockFlipped()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), style().isHorizontalWritingMode());
+        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), writingMode().isHorizontal());
     }
 
     if (context.hasPositionFixedDescendant)
@@ -738,7 +741,7 @@ int RenderView::viewWidth() const
 
 int RenderView::viewLogicalHeight() const
 {
-    int height = style().isHorizontalWritingMode() ? viewHeight() : viewWidth();
+    int height = writingMode().isHorizontal() ? viewHeight() : viewWidth();
     return height;
 }
 

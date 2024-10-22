@@ -40,10 +40,10 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
     const RenderStyle& style = firstBox->renderer().style();
     const SVGRenderStyle& svgStyle = style.svgStyle();
 
-    if (!style.isLeftToRightDirection())
+    if (style.writingMode().isBidiRTL())
         m_chunkStyle |= SVGTextChunk::RightToLeftText;
 
-    if (style.isVerticalWritingMode())
+    if (style.writingMode().isVertical())
         m_chunkStyle |= SVGTextChunk::VerticalText;
     
     switch (svgStyle.textAnchor()) {

@@ -501,7 +501,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     } else if (iconImage && originalElement) {
         auto size = boundingSize(regionRenderer, transform);
         LayoutRect imageRect(FloatPoint(), size);
-        Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode::HorizontalTb, 0);
+        Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
         Shape::DisplayPaths paths;
         shape->buildDisplayPaths(paths);
         auto path = paths.shape;

@@ -166,25 +166,17 @@ Pagination::Mode paginationModeForRenderStyle(const RenderStyle& style)
     if (overflow != Overflow::PagedX && overflow != Overflow::PagedY)
         return Pagination::Mode::Unpaginated;
 
-    bool isHorizontalWritingMode = style.isHorizontalWritingMode();
-    auto textDirection = style.direction();
-    auto blockFlowDirection = writingModeToBlockFlowDirection(style.writingMode());
-
     // paged-x always corresponds to LeftToRightPaginated or RightToLeftPaginated. If the WritingMode
     // is horizontal, then we use TextDirection to choose between those options. If the WritingMode
     // is vertical, then the block flow direction dictates the choice.
     if (overflow == Overflow::PagedX) {
-        if ((isHorizontalWritingMode && textDirection == TextDirection::LTR) || blockFlowDirection == FlowDirection::LeftToRight)
-            return Pagination::Mode::LeftToRightPaginated;
-        return Pagination::Mode::RightToLeftPaginated;
+        return style.writingMode().isAnyLeftToRight() ? Pagination::Mode::LeftToRightPaginated : Pagination::Mode::RightToLeftPaginated;
     }
 
     // paged-y always corresponds to TopToBottomPaginated or BottomToTopPaginated. If the WritingMode
     // is horizontal, then the block flow direction dictates the choice. If the WritingMode
     // is vertical, then we use TextDirection to choose between those options. 
-    if (blockFlowDirection == FlowDirection::TopToBottom || (!isHorizontalWritingMode && textDirection == TextDirection::RTL))
-        return Pagination::Mode::TopToBottomPaginated;
-    return Pagination::Mode::BottomToTopPaginated;
+    return style.writingMode().isAnyTopToBottom() ? Pagination::Mode::TopToBottomPaginated : Pagination::Mode::BottomToTopPaginated;
 }
 
 LocalFrameView::LocalFrameView(LocalFrame& frame)
@@ -930,7 +922,7 @@ void LocalFrameView::updateSnapOffsets()
     LayoutRect viewport = LayoutRect(IntPoint(), baseLayoutViewportSize());
     viewport.move(-rootRenderer->marginLeft(), -rootRenderer->marginTop());
 
-    updateSnapOffsetsForScrollableArea(*this, *rootRenderer, *styleToUse, viewport, rootRenderer->style().writingMode(), rootRenderer->style().direction(), m_frame->document()->protectedFocusedElement().get());
+    updateSnapOffsetsForScrollableArea(*this, *rootRenderer, *styleToUse, viewport, rootRenderer->style().writingMode(), m_frame->document()->protectedFocusedElement().get());
 }
 
 bool LocalFrameView::isScrollSnapInProgress() const
@@ -3698,9 +3690,9 @@ void LocalFrameView::scrollToAnchor()
 
     // Scroll nested layers and frames to reveal the anchor.
     // Align to the top and to the closest side (this matches other browsers).
-    if (anchorNode->renderer()->style().isHorizontalWritingMode())
+    if (anchorNode->renderer()->writingMode().isHorizontal())
         scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways, ShouldAllowCrossOriginScrolling::No });
-    else if (anchorNode->renderer()->style().isFlippedBlocksWritingMode())
+    else if (anchorNode->renderer()->writingMode().blockDirection() == FlowDirection::RightToLeft)
         scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignRightAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No });
     else
         scrollRectToVisible(rect, *anchorNode->renderer(), insideFixed, { SelectionRevealMode::Reveal, ScrollAlignment::alignLeftAlways, ScrollAlignment::alignToEdgeIfNeeded, ShouldAllowCrossOriginScrolling::No });
@@ -5171,8 +5163,9 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
 
     // Dumping externalRepresentation(m_frame->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    float pageLogicalWidth = renderView.style().isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
-    float pageLogicalHeight = renderView.style().isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
+    bool isHorizontalWritingMode = renderView.writingMode().isHorizontal();
+    float pageLogicalWidth = isHorizontalWritingMode ? pageSize.width() : pageSize.height();
+    float pageLogicalHeight = isHorizontalWritingMode ? pageSize.height() : pageSize.width();
 
     renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
     renderView.setNeedsLayoutAndPrefWidthsRecalc();
@@ -5184,15 +5177,14 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
     // page width when shrunk, we will lay out at maximum shrink and clip extra content.
     // FIXME: We are assuming a shrink-to-fit printing implementation. A cropping
     // implementation should not do this!
-    bool horizontalWritingMode = renderView.style().isHorizontalWritingMode();
     const LayoutRect& documentRect = renderView.documentRect();
-    LayoutUnit docLogicalWidth = horizontalWritingMode ? documentRect.width() : documentRect.height();
+    LayoutUnit docLogicalWidth = isHorizontalWritingMode ? documentRect.width() : documentRect.height();
     if (docLogicalWidth > pageLogicalWidth) {
         int expectedPageWidth = std::min<float>(documentRect.width(), pageSize.width() * maximumShrinkFactor);
         int expectedPageHeight = std::min<float>(documentRect.height(), pageSize.height() * maximumShrinkFactor);
         FloatSize maxPageSize = m_frame->resizePageRectsKeepingRatio(FloatSize(originalPageSize.width(), originalPageSize.height()), FloatSize(expectedPageWidth, expectedPageHeight));
-        pageLogicalWidth = horizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
-        pageLogicalHeight = horizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
+        pageLogicalWidth = isHorizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
+        pageLogicalHeight = isHorizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
 
         renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
         renderView.setNeedsLayoutAndPrefWidthsRecalc();
@@ -5201,15 +5193,15 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
             return;
 
         const LayoutRect& updatedDocumentRect = renderView.documentRect();
-        LayoutUnit docLogicalHeight = horizontalWritingMode ? updatedDocumentRect.height() : updatedDocumentRect.width();
-        LayoutUnit docLogicalTop = horizontalWritingMode ? updatedDocumentRect.y() : updatedDocumentRect.x();
-        LayoutUnit docLogicalRight = horizontalWritingMode ? updatedDocumentRect.maxX() : updatedDocumentRect.maxY();
+        LayoutUnit docLogicalHeight = isHorizontalWritingMode ? updatedDocumentRect.height() : updatedDocumentRect.width();
+        LayoutUnit docLogicalTop = isHorizontalWritingMode ? updatedDocumentRect.y() : updatedDocumentRect.x();
+        LayoutUnit docLogicalRight = isHorizontalWritingMode ? updatedDocumentRect.maxX() : updatedDocumentRect.maxY();
         LayoutUnit clippedLogicalLeft;
-        if (!renderView.style().isLeftToRightDirection())
+        if (!renderView.writingMode().isAnyLeftToRight())
             clippedLogicalLeft = docLogicalRight - pageLogicalWidth;
         LayoutRect overflow { clippedLogicalLeft, docLogicalTop, LayoutUnit(pageLogicalWidth), docLogicalHeight };
 
-        if (!horizontalWritingMode)
+        if (!isHorizontalWritingMode)
             overflow = overflow.transposedRect();
         renderView.clearLayoutOverflow();
         renderView.addLayoutOverflow(overflow); // This is how we clip in case we overflow again.
@@ -5528,7 +5520,7 @@ bool LocalFrameView::isVerticalDocument() const
     if (!renderView)
         return true;
 
-    return renderView->style().isHorizontalWritingMode();
+    return renderView->writingMode().isHorizontal();
 }
 
 bool LocalFrameView::isFlippedDocument() const
@@ -5537,7 +5529,7 @@ bool LocalFrameView::isFlippedDocument() const
     if (!renderView)
         return false;
 
-    return renderView->style().isFlippedBlocksWritingMode();
+    return renderView->writingMode().isBlockFlipped();
 }
 
 void LocalFrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
@@ -6041,7 +6033,7 @@ bool LocalFrameView::shouldPlaceVerticalScrollbarOnLeft() const
 
 bool LocalFrameView::isHorizontalWritingMode() const
 {
-    return renderView() && renderView()->style().isHorizontalWritingMode();
+    return renderView() && renderView()->writingMode().isHorizontal();
 }
 
 TextStream& operator<<(TextStream& ts, const LocalFrameView& view)

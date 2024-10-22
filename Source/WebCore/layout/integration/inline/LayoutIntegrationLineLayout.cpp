@@ -117,7 +117,7 @@ static bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& 
         }
         if (is<RenderInline>(renderer)) {
             auto& style = renderer.style();
-            return !style.isLeftToRightDirection() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
+            return style.writingMode().isBidiRTL() || (style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal);
         }
         return false;
     };
@@ -143,7 +143,7 @@ static bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& 
 
     auto shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
     auto shouldPrettify = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Pretty;
-    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance || shouldPrettify)
+    if (rootBlockContainer.writingMode().isBidiRTL() || shouldBalance || shouldPrettify)
         return true;
 
     auto rootHasNonSupportedRenderer = [&] (bool shouldOnlyCheckForRelativeDimension = false) {
@@ -173,25 +173,26 @@ static bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& 
     }
 }
 
-static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const Layout::BoxGeometry& logicalGeometry, LayoutUnit containerLogicalWidth, WritingMode writingMode, bool isLeftToRightDirection)
+static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(const Layout::BoxGeometry& logicalGeometry, LayoutUnit containerLogicalWidth, WritingMode writingMode)
 {
-    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
-    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    bool isHorizontalWritingMode = writingMode.isHorizontal();
 
     auto borderBoxLogicalRect = Layout::BoxGeometry::borderBoxRect(logicalGeometry);
     auto horizontalMargin = Layout::BoxGeometry::HorizontalEdges { logicalGeometry.marginStart(), logicalGeometry.marginEnd() };
     auto verticalMargin = Layout::BoxGeometry::VerticalEdges { logicalGeometry.marginBefore(), logicalGeometry.marginAfter() };
 
     auto flipMarginsIfApplicable = [&] {
-        if (isHorizontalWritingMode && isLeftToRightDirection && !isFlippedBlocksWritingMode)
+        if (writingMode == WritingMode())
             return;
 
         if (!isHorizontalWritingMode) {
             auto logicalHorizontalMargin = horizontalMargin;
-            horizontalMargin = !isFlippedBlocksWritingMode ? Layout::BoxGeometry::HorizontalEdges { verticalMargin.after, verticalMargin.before } : Layout::BoxGeometry::HorizontalEdges { verticalMargin.before, verticalMargin.after };
+            horizontalMargin = !writingMode.isBlockFlipped()
+                ? Layout::BoxGeometry::HorizontalEdges { verticalMargin.after, verticalMargin.before }
+                : Layout::BoxGeometry::HorizontalEdges { verticalMargin.before, verticalMargin.after };
             verticalMargin = { logicalHorizontalMargin.start, logicalHorizontalMargin.end };
         }
-        if (!isLeftToRightDirection) {
+        if (writingMode.isBidiRTL()) {
             if (isHorizontalWritingMode)
                 horizontalMargin = { horizontalMargin.end, horizontalMargin.start };
             else
@@ -201,13 +202,13 @@ static inline std::pair<LayoutRect, LayoutRect> toMarginAndBorderBoxVisualRect(c
     flipMarginsIfApplicable();
 
     auto borderBoxVisualTopLeft = LayoutPoint { };
-    auto borderBoxLeft = isLeftToRightDirection ? borderBoxLogicalRect.left() : containerLogicalWidth - (borderBoxLogicalRect.left() + borderBoxLogicalRect.width());
+    auto borderBoxLeft = writingMode.isBidiLTR() ? borderBoxLogicalRect.left() : containerLogicalWidth - (borderBoxLogicalRect.left() + borderBoxLogicalRect.width());
     if (isHorizontalWritingMode)
         borderBoxVisualTopLeft = { borderBoxLeft, borderBoxLogicalRect.top() };
     else {
         auto marginBoxVisualLeft = borderBoxLogicalRect.top() - logicalGeometry.marginBefore();
         auto marginBoxVisualTop = borderBoxLeft - logicalGeometry.marginStart();
-        if (isLeftToRightDirection)
+        if (writingMode.isBidiLTR())
             borderBoxVisualTopLeft = { marginBoxVisualLeft + horizontalMargin.start, marginBoxVisualTop + verticalMargin.before };
         else
             borderBoxVisualTopLeft = { marginBoxVisualLeft + horizontalMargin.start, marginBoxVisualTop + verticalMargin.after };
@@ -424,11 +425,11 @@ static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBloc
     if (!layoutState)
         return { };
     auto textBoxTrimForIFC = Layout::BlockLayoutState::TextBoxTrim { };
-    auto isFlippedLinesWritingMode = rootRenderer.style().isFlippedLinesWritingMode();
+    auto isLineInverted = rootRenderer.writingMode().isLineInverted();
     if (layoutState->hasTextBoxTrimStart())
-        textBoxTrimForIFC.add(isFlippedLinesWritingMode ? Layout::BlockLayoutState::TextBoxTrimSide::End : Layout::BlockLayoutState::TextBoxTrimSide::Start);
+        textBoxTrimForIFC.add(isLineInverted ? Layout::BlockLayoutState::TextBoxTrimSide::End : Layout::BlockLayoutState::TextBoxTrimSide::Start);
     if (layoutState->hasTextBoxTrimEnd(rootRenderer))
-        textBoxTrimForIFC.add(isFlippedLinesWritingMode ? Layout::BlockLayoutState::TextBoxTrimSide::Start : Layout::BlockLayoutState::TextBoxTrimSide::End);
+        textBoxTrimForIFC.add(isLineInverted ? Layout::BlockLayoutState::TextBoxTrimSide::Start : Layout::BlockLayoutState::TextBoxTrimSide::End);
     return textBoxTrimForIFC;
 }
 
@@ -436,12 +437,12 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
     if (auto* lineGrid = layoutState.lineGrid()) {
-        if (lineGrid->style().writingMode() != rootRenderer.style().writingMode())
+        if (lineGrid->writingMode().computedWritingMode() != rootRenderer.writingMode().computedWritingMode())
             return { };
 
         auto layoutOffset = layoutState.layoutOffset();
         auto lineGridOffset = layoutState.lineGridOffset();
-        if (lineGrid->style().isVerticalWritingMode()) {
+        if (lineGrid->style().writingMode().isVertical()) {
             layoutOffset = layoutOffset.transposedSize();
             lineGridOffset = lineGridOffset.transposedSize();
         }
@@ -454,7 +455,7 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
         auto pageLogicalTop = 0_lu;
         if (layoutState.isPaginated()) {
             paginationOrigin = layoutState.lineGridPaginationOrigin();
-            if (lineGrid->style().isVerticalWritingMode())
+            if (lineGrid->writingMode().isVertical())
                 paginationOrigin = paginationOrigin->transposedSize();
             pageLogicalTop = rootRenderer.pageLogicalTopForOffset(0_lu);
         }
@@ -549,15 +550,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         return;
 
     auto& blockFlow = flow();
-    auto& rootStyle = blockFlow.style();
-    auto isLeftToRightPlacedFloatsInlineDirection = m_blockFormattingState.placedFloats().isLeftToRightDirection();
-    auto writingMode = rootStyle.writingMode();
-    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    auto placedFloatsFlow = m_blockFormattingState.placedFloats().writingMode();
 
     auto visualAdjustmentOffset = [&](auto lineIndex) {
         if (lineAdjustments.isEmpty())
             return LayoutSize { };
-        if (!isHorizontalWritingMode)
+        if (!placedFloatsFlow.isHorizontal())
             return LayoutSize { lineAdjustments[lineIndex].offset, 0_lu };
         return LayoutSize { 0_lu, lineAdjustments[lineIndex].offset };
     };
@@ -599,7 +597,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto isInitialLetter = layoutBox.style().pseudoElementType() == PseudoId::FirstLetter;
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
             auto containerLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-            auto [marginBoxVisualRect, borderBoxVisualRect] = toMarginAndBorderBoxVisualRect(logicalGeometry, containerLogicalWidth, writingMode, isLeftToRightPlacedFloatsInlineDirection);
+            auto [marginBoxVisualRect, borderBoxVisualRect] = toMarginAndBorderBoxVisualRect(logicalGeometry, containerLogicalWidth, placedFloatsFlow);
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
             if (paginationOffset) {
@@ -668,27 +666,28 @@ void LineLayout::preparePlacedFloats()
     if (!flow().containsFloats())
         return;
 
-    auto isHorizontalWritingMode = flow().containingBlock() ? flow().containingBlock()->style().isHorizontalWritingMode() : true;
-    auto placedFloatsIsLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
-    placedFloats.setIsLeftToRightDirection(placedFloatsIsLeftToRightInlineDirection);
+    auto placedFloatsWritingMode = flow().containingBlock() ? flow().containingBlock()->style().writingMode() : WritingMode();
+    placedFloats.setWritingMode(placedFloatsWritingMode);
+    auto placedFloatsIsLeftToRight = placedFloatsWritingMode.isBidiLTR();
+    auto isHorizontalWritingMode = placedFloatsWritingMode.isHorizontal();
     for (auto& floatingObject : *flow().floatingObjectSet()) {
         auto& visualRect = floatingObject->frameRect();
         auto logicalPosition = [&] {
             switch (floatingObject->renderer().style().floating()) {
             case Float::Left:
-                return placedFloatsIsLeftToRightInlineDirection ? Layout::PlacedFloats::Item::Position::Left : Layout::PlacedFloats::Item::Position::Right;
+                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Left : Layout::PlacedFloats::Item::Position::Right;
             case Float::Right:
-                return placedFloatsIsLeftToRightInlineDirection ? Layout::PlacedFloats::Item::Position::Right : Layout::PlacedFloats::Item::Position::Left;
+                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Right : Layout::PlacedFloats::Item::Position::Left;
             case Float::InlineStart: {
                 auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
-                if (floatBoxContainingBlock)
-                    return floatBoxContainingBlock->style().isLeftToRightDirection() == placedFloatsIsLeftToRightInlineDirection ? Layout::PlacedFloats::Item::Position::Left : Layout::PlacedFloats::Item::Position::Right;
+                if (floatBoxContainingBlock && placedFloatsWritingMode.isInlineOpposing(floatBoxContainingBlock->writingMode()))
+                    return Layout::PlacedFloats::Item::Position::Right;
                 return Layout::PlacedFloats::Item::Position::Left;
             }
             case Float::InlineEnd: {
                 auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
-                if (floatBoxContainingBlock)
-                    return floatBoxContainingBlock->style().isLeftToRightDirection() == placedFloatsIsLeftToRightInlineDirection ? Layout::PlacedFloats::Item::Position::Right : Layout::PlacedFloats::Item::Position::Left;
+                if (floatBoxContainingBlock && placedFloatsWritingMode.isInlineOpposing(floatBoxContainingBlock->writingMode()))
+                    return Layout::PlacedFloats::Item::Position::Left;
                 return Layout::PlacedFloats::Item::Position::Right;
             }
             default:
@@ -704,7 +703,7 @@ void LineLayout::preparePlacedFloats()
             auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : LayoutUnit(visualRect.y().floor());
             auto logicalHeight = (isHorizontalWritingMode ? LayoutUnit(visualRect.maxY().floor()) : visualRect.maxX()) - logicalTop;
             auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : LayoutUnit(visualRect.maxY().floor())) - logicalLeft;
-            if (!placedFloatsIsLeftToRightInlineDirection) {
+            if (!placedFloatsIsLeftToRight) {
                 auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
                 logicalLeft = rootBorderBoxWidth - (logicalLeft + logicalWidth);
             }
@@ -814,7 +813,7 @@ LayoutUnit LineLayout::lastLinePhysicalBaseline() const
 
 LayoutUnit LineLayout::physicalBaselineForLine(const InlineDisplay::Line& line) const
 {
-    switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
+    switch (rootLayoutBox().writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
         return LayoutUnit { line.lineBoxTop() + line.baseline() };
@@ -836,7 +835,7 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
     }
 
     auto& lastLine = lastLineWithInlineContent(m_inlineContent->displayContent().lines);
-    switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
+    switch (rootLayoutBox().writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
         return LayoutUnit { lastLine.lineBoxTop() + lastLine.baseline() };
@@ -977,7 +976,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     // FIXME: We should be able to flip the display boxes soon after the root block
     // is finished sizing in one go.
     auto firstBoxRect = Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
-    switch (writingModeToBlockFlowDirection(rootLayoutBox().style().writingMode())) {
+    switch (rootLayoutBox().writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
     case FlowDirection::LeftToRight:
@@ -1001,7 +1000,7 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
         return { };
 
     auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(*renderInline.layoutBox())) };
-    return WebCore::isHorizontalWritingMode(flow().style().writingMode()) ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
+    return flow().writingMode().isHorizontal() ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
 }
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
@@ -1046,7 +1045,7 @@ Layout::ElementBox& LineLayout::rootLayoutBox()
 
 static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
-    if (root.style().isFlippedBlocksWritingMode())
+    if (root.writingMode().isBlockFlipped())
         return root.flipForWritingModeForChild(childRenderer, contentOffset);
     return contentOffset;
 }
@@ -1141,7 +1140,7 @@ void LineLayout::shiftLinesBy(LayoutUnit blockShift)
 {
     if (!m_inlineContent)
         return;
-    bool isHorizontalWritingMode = WebCore::isHorizontalWritingMode(flow().style().writingMode());
+    bool isHorizontalWritingMode = flow().writingMode().isHorizontal();
 
     for (auto& line : m_inlineContent->displayContent().lines)
         line.moveInBlockDirection(blockShift, isHorizontalWritingMode);

@@ -116,7 +116,7 @@ std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(
     newStyle->setFlexGrow(1);
 
     // Needed for correct shrinking.
-    if (newStyle->isHorizontalWritingMode())
+    if (newStyle->writingMode().isHorizontal())
         newStyle->setMinWidth(Length { 0, LengthType::Fixed });
     else
         newStyle->setMinHeight(Length { 0, LengthType::Fixed });

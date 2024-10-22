@@ -888,6 +888,8 @@ public:
 
     const RenderStyle& style() const;
     const RenderStyle& firstLineStyle() const;
+    WritingMode writingMode() const { return style().writingMode(); }
+    // writingMode().isHorizontal() is cached by isHorizontalWritingMode() above.
 
     // Anonymous blocks that are part of of a continuation chain will return their inline continuation's outline style instead.
     // This is typically only relevant when repainting.

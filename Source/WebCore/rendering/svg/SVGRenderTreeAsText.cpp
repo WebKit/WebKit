@@ -360,7 +360,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, const InlineIterator::S
         // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
         ts << "chunk 1 "_s;
         TextAnchor anchor = svgStyle->textAnchor();
-        bool isVerticalText = textBox.renderer().style().isVerticalWritingMode();
+        bool isVerticalText = textBox.renderer().writingMode().isVertical();
         if (anchor == TextAnchor::Middle) {
             ts << "(middle anchor"_s;
             if (isVerticalText)

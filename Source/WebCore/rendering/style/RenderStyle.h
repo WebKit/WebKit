@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WritingMode.h"
 #include <unicode/utypes.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/DataRef.h>
@@ -211,7 +212,6 @@ enum class TextCombine : bool;
 enum class TextDecorationLine : uint8_t;
 enum class TextDecorationSkipInk : uint8_t;
 enum class TextDecorationStyle : uint8_t;
-enum class TextDirection : bool;
 enum class TextEmphasisFill : bool;
 enum class TextEmphasisMark : uint8_t;
 enum class TextEmphasisPosition : uint8_t;
@@ -219,7 +219,6 @@ enum class TextGroupAlign : uint8_t;
 enum class TextIndentLine : bool;
 enum class TextIndentType : bool;
 enum class TextJustify : uint8_t;
-enum class TextOrientation : uint8_t;
 enum class TextOverflow : bool;
 enum class TextSecurity : uint8_t;
 enum class TextTransform : uint8_t;
@@ -242,7 +241,6 @@ enum class Visibility : uint8_t;
 enum class WhiteSpace : uint8_t;
 enum class WhiteSpaceCollapse : uint8_t;
 enum class WordBreak : uint8_t;
-enum class WritingMode : uint8_t;
 
 struct BlockEllipsis;
 struct BorderDataRadii;
@@ -427,6 +425,8 @@ public:
     // attribute getter methods
 
     constexpr DisplayType display() const { return static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay); }
+    constexpr WritingMode writingMode() const { return m_inheritedFlags.writingMode; }
+    bool isLeftToRightDirection() const { return writingMode().isBidiLTR(); } // deprecated, because of confusion between physical inline directions and bidi / line-relative directions
 
     inline const Length& left() const;
     inline const Length& right() const;
@@ -448,7 +448,9 @@ public:
     inline bool hasInFlowPosition() const;
     inline bool hasViewportConstrainedPosition() const;
     Float floating() const { return static_cast<Float>(m_nonInheritedFlags.floating); }
-    static UsedFloat usedFloat(const RenderObject&);
+    static UsedFloat usedFloat(const RenderObject&); // Returns logical left/right (block-relative).
+    Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
+    static UsedClear usedClear(const RenderObject&); // Returns logical left/right (block-relative).
 
     inline const Length& width() const;
     inline const Length& height() const;
@@ -550,9 +552,6 @@ public:
 
     UnicodeBidi unicodeBidi() const { return static_cast<UnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
 
-    Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
-    static UsedClear usedClear(const RenderObject&);
-
     FieldSizing fieldSizing() const;
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
@@ -604,10 +603,6 @@ public:
     inline float usedZoom() const;
     
     inline TextZoom textZoom() const;
-
-    TextDirection direction() const { return static_cast<TextDirection>(m_inheritedFlags.direction); }
-    inline bool isLeftToRightDirection() const;
-    inline bool hasExplicitlySetDirection() const;
 
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT const Length& lineHeight() const;
@@ -925,8 +920,6 @@ public:
 
     inline TableLayoutType tableLayout() const;
 
-    inline TextOrientation textOrientation() const;
-
     inline ObjectFit objectFit() const;
     inline const LengthPoint& objectPosition() const;
 
@@ -1098,14 +1091,6 @@ public:
 
     inline TextSecurity textSecurity() const;
     inline InputSecurity inputSecurity() const;
-
-    WritingMode writingMode() const { return static_cast<WritingMode>(m_inheritedFlags.writingMode); }
-    inline bool isHorizontalWritingMode() const;
-    inline bool isVerticalWritingMode() const;
-    inline bool isFlippedLinesWritingMode() const;
-    inline bool isFlippedBlocksWritingMode() const;
-    FlowDirection blockFlowDirection() const;
-    TypographicMode typographicMode() const;
 
     inline ImageOrientation imageOrientation() const;
     inline ImageRendering imageRendering() const;
@@ -1300,8 +1285,6 @@ public:
     inline void setTextUnderlinePosition(OptionSet<TextUnderlinePosition>);
     inline void setTextUnderlineOffset(TextUnderlineOffset);
     inline void setTextDecorationThickness(TextDecorationThickness);
-    void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
-    inline void setHasExplicitlySetDirection();
     void setLineHeight(Length&&);
     bool setZoom(float);
     inline bool setUsedZoom(float);
@@ -1547,7 +1530,6 @@ public:
     inline void setTextEmphasisMark(TextEmphasisMark);
     inline void setTextEmphasisCustomMark(const AtomString&);
     inline void setTextEmphasisPosition(OptionSet<TextEmphasisPosition>);
-    bool setTextOrientation(TextOrientation);
 
     inline void setObjectFit(ObjectFit);
     inline void setObjectPosition(LengthPoint);
@@ -1838,10 +1820,14 @@ public:
     constexpr bool isDisplayTableOrTablePart() const;
     constexpr bool isOriginalDisplayListItemType() const;
 
-    inline bool setWritingMode(WritingMode);
+    inline bool setDirection(TextDirection bidiDirection);
+    inline bool hasExplicitlySetDirection() const;
+    inline void setHasExplicitlySetDirection();
 
+    inline bool setWritingMode(StyleWritingMode);
     inline bool hasExplicitlySetWritingMode() const;
     inline void setHasExplicitlySetWritingMode();
+    inline bool setTextOrientation(TextOrientation);
 
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return m_nonInheritedFlags.isUnique; }
@@ -1900,7 +1886,7 @@ public:
     static constexpr ColumnAxis initialColumnAxis();
     static constexpr ColumnProgression initialColumnProgression();
     static constexpr TextDirection initialDirection();
-    static constexpr WritingMode initialWritingMode();
+    static constexpr StyleWritingMode initialWritingMode();
     static constexpr TextCombine initialTextCombine();
     static constexpr TextOrientation initialTextOrientation();
     static constexpr ObjectFit initialObjectFit();
@@ -2310,46 +2296,46 @@ private:
     struct InheritedFlags {
         friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
 
-        // Writing Mode = 4 bits
-        unsigned writingMode : 3; // WritingMode
-        unsigned direction : 1; // TextDirection
+        // Writing Mode = 8 bits (can be packed into 6 if needed)
+        WritingMode writingMode;
 
-        // Text Formatting = 19 bits
-        unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
-        unsigned textWrapMode : 1; // TextWrapMode
-        unsigned textAlign : 4; // TextAlignMode
-        unsigned textWrapStyle : 2; // TextWrapStyle
-        unsigned textTransform : TextTransformBits; // OptionSet<TextTransform>
-        unsigned textDecorationLines : TextDecorationLineBits;
+        // Text Formatting = 19 bits aligned onto 2 bytes + 4 trailing bits
+        unsigned char whiteSpaceCollapse : 3; // WhiteSpaceCollapse
+        unsigned char textWrapMode : 1; // TextWrapMode
+        unsigned char textAlign : 4; // TextAlignMode
+        unsigned char textWrapStyle : 2; // TextWrapStyle
+        unsigned char textTransform : TextTransformBits; // OptionSet<TextTransform>
+        unsigned char : 1; // byte alignment
+        unsigned char textDecorationLines : TextDecorationLineBits;
 
-        // Cursors and Visibility = 13 bits
-        unsigned pointerEvents : 4; // PointerEvents
-        unsigned visibility : 2; // Visibility
-        unsigned cursor : 6; // CursorType
+        // Cursors and Visibility = 13 bits aligned onto 4 bits + 1 byte + 1 bit
+        unsigned char pointerEvents : 4; // PointerEvents
+        unsigned char visibility : 2; // Visibility
+        unsigned char cursor : 6; // CursorType
 #if ENABLE(CURSOR_VISIBILITY)
-        unsigned cursorVisibility : 1; // CursorVisibility
+        unsigned char cursorVisibility : 1; // CursorVisibility
 #endif
 
         // Display Type-Specific = 5 bits
-        unsigned listStylePosition : 1; // ListStylePosition
-        unsigned emptyCells : 1; // EmptyCell
-        unsigned borderCollapse : 1; // BorderCollapse
-        unsigned captionSide : 2; // CaptionSide
+        unsigned char listStylePosition : 1; // ListStylePosition
+        unsigned char emptyCells : 1; // EmptyCell
+        unsigned char borderCollapse : 1; // BorderCollapse
+        unsigned char captionSide : 2; // CaptionSide
 
         // -webkit- Stuff = 2 bits
-        unsigned boxDirection : 1; // BoxDirection
-        unsigned rtlOrdering : 1; // Order
+        unsigned char boxDirection : 1; // BoxDirection
+        unsigned char rtlOrdering : 1; // Order
 
         // Color Stuff = 5 bits
-        unsigned hasExplicitlySetColor : 1;
-        unsigned printColorAdjust : 1; // PrintColorAdjust
-        unsigned insideLink : 2; // InsideLink
-        unsigned insideDefaultButton : 1;
+        unsigned char hasExplicitlySetColor : 1;
+        unsigned char printColorAdjust : 1; // PrintColorAdjust
+        unsigned char insideLink : 2; // InsideLink
+        unsigned char insideDefaultButton : 1;
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // Total = 53 bits (fits in 8 bytes)
+        // Total = 57 bits (fits in 8 bytes)
     };
 
     // This constructor is used to implement the replace operation.

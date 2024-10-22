@@ -249,7 +249,7 @@ void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLog
         setLogicalWidth(width);
 
         // We then move the children to take spacing into account.
-        shiftInFlowChildren(style().direction() == TextDirection::LTR ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
+        shiftInFlowChildren(writingMode().isBidiLTR() ? leadingSpaceValue : -leadingSpaceValue, 0_lu);
     }
 
     updateScrollInfoAfterLayout();
@@ -325,7 +325,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         return;
 
     LayoutPoint operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move((style().isLeftToRightDirection() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
+    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
     m_mathOperator.paint(style(), info, operatorTopLeft);
 }

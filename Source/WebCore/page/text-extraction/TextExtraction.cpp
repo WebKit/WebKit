@@ -575,7 +575,7 @@ RenderedText extractRenderedText(Element& element)
         return { };
 
     RefPtr frameView = renderer->view().protectedFrameView();
-    auto direction = renderer->style().blockFlowDirection();
+    auto direction = renderer->writingMode().blockDirection();
     auto elementRectInDocument = frameView->absoluteToDocumentRect(renderer->absoluteBoundingBoxRect());
 
     Vector<TokenAndBlockOffset> allTokensAndOffsets;

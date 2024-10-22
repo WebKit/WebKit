@@ -129,7 +129,7 @@ LayoutUnit LegacyRootInlineBox::selectionTop() const
 {
     LayoutUnit selectionTop = m_lineTop;
 
-    if (renderer().style().isFlippedLinesWritingMode())
+    if (renderer().style().writingMode().isLineInverted())
         return selectionTop;
 
     LayoutUnit prevBottom;
@@ -150,7 +150,7 @@ LayoutUnit LegacyRootInlineBox::selectionBottom() const
 {
     LayoutUnit selectionBottom = m_lineBottom;
 
-    if (!renderer().style().isFlippedLinesWritingMode() || !nextRootBox())
+    if (!renderer().style().writingMode().isLineInverted() || !nextRootBox())
         return selectionBottom;
 
     return nextRootBox()->selectionTop();

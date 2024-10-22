@@ -113,7 +113,7 @@ void BaselineAlignmentState::updateSharedGroup(const RenderBox& child, ItemPosit
 // See https://github.com/w3c/csswg-drafts/issues/721
 BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(const RenderBox& child, ItemPosition preference)
 {
-    auto blockFlowDirection = child.style().blockFlowDirection();
+    auto blockFlowDirection = child.writingMode().blockDirection();
     for (auto& group : m_sharedGroups) {
         if (group.isCompatible(blockFlowDirection, preference))
             return group;

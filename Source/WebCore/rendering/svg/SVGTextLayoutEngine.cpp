@@ -223,7 +223,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator
 
     const RenderStyle& style = text.style();
 
-    m_isVerticalText = style.isVerticalWritingMode();
+    m_isVerticalText = style.writingMode().isVertical();
     layoutTextOnLineOrPath(textBox, text, style);
 
     if (m_inPathLayout) {

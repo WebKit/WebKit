@@ -475,11 +475,11 @@ static bool transitionMatchesProperty(const Animation& transition, const Animata
                 if (!std::holds_alternative<CSSPropertyID>(property))
                     return false;
                 auto propertyIdToMatch = std::get<CSSPropertyID>(property);
-                auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.direction(), style.writingMode());
+                auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.writingMode());
                 if (resolvedPropertyId == propertyIdToMatch)
                     return true;
                 for (auto longhand : shorthandForProperty(resolvedPropertyId)) {
-                    auto resolvedLonghand = CSSProperty::resolveDirectionAwareProperty(longhand, style.direction(), style.writingMode());
+                    auto resolvedLonghand = CSSProperty::resolveDirectionAwareProperty(longhand, style.writingMode());
                     if (resolvedLonghand == propertyIdToMatch)
                         return true;
                 }
@@ -519,7 +519,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, CSSProp
         case Animation::TransitionMode::SingleProperty: {
             WTF::switchOn(transitionProperty.animatableProperty,
                 [&] (CSSPropertyID propertyId) {
-                    auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.direction(), style.writingMode());
+                    auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.writingMode());
                     if (isShorthand(resolvedPropertyId)) {
                         for (auto longhand : shorthandForProperty(resolvedPropertyId))
                             transitionProperties.m_properties.set(longhand);

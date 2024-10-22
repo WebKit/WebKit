@@ -471,7 +471,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).style().isLeftToRightDirection();
+    auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).writingMode().isBidiLTR();
     
     auto left = computedValue(style.logicalLeft(), containingBlockWidth);
     auto right = computedValue(style.logicalRight(), containingBlockWidth);
@@ -683,7 +683,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     auto& style = replacedBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(replacedBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    auto isLeftToRightDirection = FormattingContext::containingBlock(replacedBox).style().isLeftToRightDirection();
+    auto isLeftToRightDirection = FormattingContext::containingBlock(replacedBox).writingMode().isBidiLTR();
 
     auto left = computedValue(style.logicalLeft(), containingBlockWidth);
     auto right = computedValue(style.logicalRight(), containingBlockWidth);
@@ -1064,8 +1064,7 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
         right = -*left;
     } else {
         // #4
-        auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).style().isLeftToRightDirection();
-        if (isLeftToRightDirection)
+        if (FormattingContext::containingBlock(layoutBox).writingMode().isBidiLTR())
             right = -*left;
         else
             left = std::nullopt;
@@ -1086,7 +1085,7 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
     // https://www.w3.org/TR/css-writing-modes-4/#logical-direction-layout
     // Flow-relative directions are calculated with respect to the writing mode of the containing block of the box.
     // For inline-level boxes, the writing mode of the parent box is used instead.
-    return layoutBox.isInlineLevelBox() ? layoutBox.parent().style().writingMode() : FormattingContext::containingBlock(layoutBox).style().writingMode();
+    return layoutBox.isInlineLevelBox() ? layoutBox.parent().writingMode() : FormattingContext::containingBlock(layoutBox).writingMode();
 }
 
 BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
@@ -1116,7 +1115,7 @@ ComputedHorizontalMargin FormattingGeometry::computedHorizontalMargin(const Box&
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    if (isHorizontalWritingMode(usedWritingMode(layoutBox)))
+    if (usedWritingMode(layoutBox).isHorizontal())
         return { computedValue(style.marginLeft(), containingBlockWidth), computedValue(style.marginRight(), containingBlockWidth) };
     return { computedValue(style.marginTop(), containingBlockWidth), computedValue(style.marginBottom(), containingBlockWidth) };
 }
@@ -1125,7 +1124,7 @@ ComputedVerticalMargin FormattingGeometry::computedVerticalMargin(const Box& lay
 {
     auto& style = layoutBox.style();
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    if (isHorizontalWritingMode(usedWritingMode(layoutBox)))
+    if (usedWritingMode(layoutBox).isHorizontal())
         return { computedValue(style.marginTop(), containingBlockWidth), computedValue(style.marginBottom(), containingBlockWidth) };
     return { computedValue(style.marginLeft(), containingBlockWidth), computedValue(style.marginRight(), containingBlockWidth) };
 }

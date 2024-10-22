@@ -288,7 +288,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
 
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox, borderBoxTopLeft);
     auto margins = BoxGeometry::Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, false, layoutBox.style().isLeftToRightDirection() };
+    auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, false, layoutBox.writingMode().isBidiLTR() };
     findPositionForFormattingContextRoot(floatAvoider, absoluteCoordinates.containingBlockContentBox);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
@@ -480,7 +480,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             constraints.right->move(-adjustingDelta);
     }
 
-    if (placedFloats.isLeftToRightDirection() != root().style().isLeftToRightDirection()) {
+    if (placedFloats.writingMode().isInlineOpposing(root().writingMode())) {
         // FIXME: Move it under coordinateMappingIsRequired when the integration codepath starts initiating the floating state with the
         // correct containing block (i.e. when the float comes from the parent BFC).
 
@@ -590,7 +590,7 @@ bool FloatingContext::isLogicalLeftPositioned(const Box& floatBox) const
     ASSERT(floatBox.isFloatingPositioned());
     // Note that this returns true relative to the root of this FloatingContext and not to the PlacedFloats
     // PlacedFloats's root may be an ancestor block container with mismatching inline direction.
-    auto floatingBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
+    auto floatingBoxIsInLeftToRightDirection = root().writingMode().isBidiLTR();
     auto floatingValue = floatBox.style().floating();
     return floatingValue == Float::InlineStart
         || (floatingBoxIsInLeftToRightDirection && floatingValue == Float::Left)
@@ -606,8 +606,8 @@ bool FloatingContext::isFloatingCandidateLeftPositionedInPlacedFloats(const Box&
     // If the floating state is right-to-left (meaning that the PlacedFloats is constructed by a BFC root with "direction: rtl")
     // visually left positioned floats are logically right (Note that FloatingContext's direction may not be the same as the PlacedFloats's direction
     // when dealing with inherited PlacedFloatss across nested IFCs).
-    auto floatingContextIsLeftToRight = root().style().isLeftToRightDirection();
-    auto placedFloatsIsLeftToRight = m_placedFloats.isLeftToRightDirection();
+    auto floatingContextIsLeftToRight = root().writingMode().isBidiLTR();
+    auto placedFloatsIsLeftToRight = m_placedFloats.writingMode().isBidiLTR();
     if (floatingContextIsLeftToRight == placedFloatsIsLeftToRight)
         return isLogicalLeftPositioned(floatBox);
 
@@ -624,7 +624,7 @@ Clear FloatingContext::clearInPlacedFloats(const Box& clearBox) const
 {
     // See isFloatingCandidateLeftPositionedInPlacedFloats for details.
     ASSERT(clearBox.hasFloatClear());
-    auto clearBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
+    auto clearBoxIsInLeftToRightDirection = root().writingMode().isBidiLTR();
     auto clearValue = clearBox.style().clear();
     if (clearValue == Clear::Both)
         return clearValue;
@@ -634,7 +634,7 @@ Clear FloatingContext::clearInPlacedFloats(const Box& clearBox) const
     else if (clearValue == Clear::InlineEnd)
         clearValue = clearBoxIsInLeftToRightDirection ? Clear::Right : Clear::Left;
 
-    auto floatsAreInLeftToRightDirection = m_placedFloats.isLeftToRightDirection();
+    auto floatsAreInLeftToRightDirection = m_placedFloats.writingMode().isBidiLTR();
     return (floatsAreInLeftToRightDirection && clearValue == Clear::Left)
         || (!floatsAreInLeftToRightDirection && clearValue == Clear::Right) ? Clear::Left : Clear::Right;
 }

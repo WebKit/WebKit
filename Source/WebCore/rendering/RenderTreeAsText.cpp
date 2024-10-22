@@ -286,15 +286,19 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         bool overridden = o.style().borderImage().overridesBorderWidths();
         if (box->isFieldset()) {
             const auto& block = downcast<RenderBlock>(*box);
-            if (o.style().blockFlowDirection() == FlowDirection::TopToBottom)
+            switch (o.writingMode().blockDirection()) {
+            case FlowDirection::TopToBottom:
                 borderTop -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == FlowDirection::BottomToTop)
+                break;
+            case FlowDirection::BottomToTop:
                 borderBottom -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == FlowDirection::LeftToRight)
+                break;
+            case FlowDirection::LeftToRight:
                 borderLeft -= block.intrinsicBorderForFieldset();
-            else if (o.style().blockFlowDirection() == FlowDirection::RightToLeft)
+                break;
+            case FlowDirection::RightToLeft:
                 borderRight -= block.intrinsicBorderForFieldset();
-            
+            }
         }
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:";

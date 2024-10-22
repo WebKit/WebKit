@@ -128,7 +128,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                         return flexItemGeometry.marginBefore();
                     return { };
                 };
-                auto shouldFlipMargins = isMainAxisParallelWithInlineAxis && root().style().blockFlowDirection() == FlowDirection::LeftToRight;
+                auto shouldFlipMargins = isMainAxisParallelWithInlineAxis && root().writingMode().isLineInverted();
                 mainAxis.marginStart = !shouldFlipMargins ? marginStart() : marginEnd();
                 mainAxis.marginEnd = !shouldFlipMargins ? marginEnd() : marginStart();
                 mainAxis.borderAndPadding = isMainAxisParallelWithInlineAxis ? flexItemGeometry.horizontalBorderAndPadding() : flexItemGeometry.verticalBorderAndPadding();
@@ -170,7 +170,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                         return !style.marginStart().isAuto() ? std::make_optional(flexItemGeometry.marginStart()) : std::nullopt;
                     return { };
                 };
-                auto shouldFlipMargins = !isMainAxisParallelWithInlineAxis && root().style().blockFlowDirection() == FlowDirection::LeftToRight;
+                auto shouldFlipMargins = !isMainAxisParallelWithInlineAxis && root().writingMode().isLineInverted();
                 crossAxis.marginStart = !shouldFlipMargins ? marginStart() : marginEnd();
                 crossAxis.marginEnd = !shouldFlipMargins ? marginEnd() : marginStart();
 
@@ -215,7 +215,7 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
 {
     auto& flexBoxStyle = root().style();
     auto flexDirection = flexBoxStyle.flexDirection();
-    auto isLeftToRightDirection = flexBoxStyle.isLeftToRightDirection();
+    auto isLeftToRightDirection = flexBoxStyle.writingMode().isLogicalLeftInlineStart();
     auto isRowDirection = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto flexContainerContentBoxPosition = LayoutPoint { isRowDirection ? constraints.mainAxis().startPosition : constraints.crossAxis().startPosition, isRowDirection ? constraints.crossAxis().startPosition : constraints.mainAxis().startPosition };
     auto flexContainerMainAxisSize = [&] {

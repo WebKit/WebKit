@@ -183,6 +183,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     , m_inheritedData(StyleInheritedData::create())
     , m_svgStyle(SVGRenderStyle::create())
 {
+    m_inheritedFlags.writingMode = WritingMode(initialWritingMode(), initialDirection(), initialTextOrientation()).toData();
     m_inheritedFlags.emptyCells = static_cast<unsigned>(initialEmptyCells());
     m_inheritedFlags.captionSide = static_cast<unsigned>(initialCaptionSide());
     m_inheritedFlags.listStylePosition = static_cast<unsigned>(initialListStylePosition());
@@ -194,7 +195,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
 #if ENABLE(CURSOR_VISIBILITY)
     m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
 #endif
-    m_inheritedFlags.direction = static_cast<unsigned>(initialDirection());
     m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(initialWhiteSpaceCollapse());
     m_inheritedFlags.textWrapMode = static_cast<unsigned>(initialTextWrapMode());
     m_inheritedFlags.textWrapStyle = static_cast<unsigned>(initialTextWrapStyle());
@@ -205,7 +205,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.pointerEvents = static_cast<unsigned>(initialPointerEvents());
     m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
     m_inheritedFlags.insideDefaultButton = false;
-    m_inheritedFlags.writingMode = static_cast<unsigned>(initialWritingMode());
 #if ENABLE(TEXT_AUTOSIZING)
     m_inheritedFlags.autosizeStatus = 0;
 #endif
@@ -917,7 +916,6 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.textEmphasisMark != second.textEmphasisMark
         || first.textEmphasisPosition != second.textEmphasisPosition
         || first.textEmphasisCustomMark != second.textEmphasisCustomMark
-        || first.textOrientation != second.textOrientation
         || first.tabSize != second.tabSize
         || first.lineBoxContain != second.lineBoxContain
         || first.lineGrid != second.lineGrid
@@ -1070,7 +1068,6 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
 
     if (m_inheritedFlags.textAlign != other.m_inheritedFlags.textAlign
         || m_inheritedFlags.textTransform != other.m_inheritedFlags.textTransform
-        || m_inheritedFlags.direction != other.m_inheritedFlags.direction
         || m_inheritedFlags.whiteSpaceCollapse != other.m_inheritedFlags.whiteSpaceCollapse
         || m_inheritedFlags.textWrapMode != other.m_inheritedFlags.textWrapMode
         || m_inheritedFlags.textWrapStyle != other.m_inheritedFlags.textWrapStyle
@@ -1078,8 +1075,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_nonInheritedFlags.unicodeBidi != other.m_nonInheritedFlags.unicodeBidi)
         return true;
 
-    // Check block flow direction.
-    if (m_inheritedFlags.writingMode != other.m_inheritedFlags.writingMode)
+    if (writingMode() != other.writingMode())
         return true;
 
     // Overflow returns a layout hint.
@@ -1520,11 +1516,11 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         if (first.pointerEvents != second.pointerEvents)
             changingProperties.m_properties.set(CSSPropertyPointerEvents);
 
-        // direction and writingMode changes conversion of logical -> pysical properties.
+        // Writing mode changes conversion of logical -> pysical properties.
         // Thus we need to list up all physical properties.
-        if (first.direction != second.direction || first.writingMode != second.writingMode) {
+        if (first.writingMode != second.writingMode) {
             changingProperties.m_properties.merge(CSSProperty::physicalProperties);
-            if (first.writingMode != second.writingMode)
+            if (WritingMode(first.writingMode).isVerticalTypographic() != WritingMode(second.writingMode).isVerticalTypographic())
                 changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
         }
 
@@ -2139,7 +2135,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // userModify
         // speakAs
         // textCombine
-        // textOrientation
         // lineBoxContain
         // touchCalloutEnabled
         // lineGrid
@@ -2536,7 +2531,7 @@ void RenderStyle::setVerticalBorderSpacing(float v)
 
 RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    bool horizontal = isHorizontalWritingMode();
+    bool horizontal = writingMode().isHorizontal();
     LayoutUnit leftWidth { (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0 };
     LayoutUnit rightWidth { (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0 };
     LayoutUnit topWidth { (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0 };
@@ -2548,7 +2543,7 @@ RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, 
     LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     auto radii = hasBorderRadius() ? std::make_optional(m_nonInheritedData->surroundData->border.m_radii) : std::nullopt;
-    return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, radii, writingMode().isHorizontal(), includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
 RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
@@ -3039,7 +3034,7 @@ StyleColor RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, 
     case CSSPropertyBorderBlockStartColor:
     case CSSPropertyBorderInlineEndColor:
     case CSSPropertyBorderInlineStartColor:
-        return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, direction(), writingMode()));
+        return unresolvedColorForProperty(CSSProperty::resolveDirectionAwareProperty(colorProperty, writingMode()));
     case CSSPropertyColumnRuleColor:
         return visitedLink ? visitedLinkColumnRuleColor() : columnRuleColor();
     case CSSPropertyTextEmphasisColor:
@@ -3175,7 +3170,7 @@ Color RenderStyle::usedScrollbarTrackColor() const
 
 const BorderValue& RenderStyle::borderBefore(const RenderStyle& styleForFlow) const
 {
-    switch (styleForFlow.blockFlowDirection()) {
+    switch (styleForFlow.writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderTop();
     case FlowDirection::BottomToTop:
@@ -3191,7 +3186,7 @@ const BorderValue& RenderStyle::borderBefore(const RenderStyle& styleForFlow) co
 
 const BorderValue& RenderStyle::borderAfter(const RenderStyle& styleForFlow) const
 {
-    switch (styleForFlow.blockFlowDirection()) {
+    switch (styleForFlow.writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderBottom();
     case FlowDirection::BottomToTop:
@@ -3207,21 +3202,21 @@ const BorderValue& RenderStyle::borderAfter(const RenderStyle& styleForFlow) con
 
 const BorderValue& RenderStyle::borderStart(const RenderStyle& styleForFlow) const
 {
-    if (styleForFlow.isHorizontalWritingMode())
-        return styleForFlow.isLeftToRightDirection() ? borderLeft() : borderRight();
-    return styleForFlow.isLeftToRightDirection() ? borderTop() : borderBottom();
+    if (styleForFlow.writingMode().isHorizontal())
+        return styleForFlow.writingMode().isInlineLeftToRight() ? borderLeft() : borderRight();
+    return styleForFlow.writingMode().isInlineTopToBottom() ? borderTop() : borderBottom();
 }
 
 const BorderValue& RenderStyle::borderEnd(const RenderStyle& styleForFlow) const
 {
-    if (styleForFlow.isHorizontalWritingMode())
-        return styleForFlow.isLeftToRightDirection() ? borderRight() : borderLeft();
-    return styleForFlow.isLeftToRightDirection() ? borderBottom() : borderTop();
+    if (styleForFlow.writingMode().isHorizontal())
+        return styleForFlow.writingMode().isInlineLeftToRight() ? borderRight() : borderLeft();
+    return styleForFlow.writingMode().isInlineTopToBottom() ? borderBottom() : borderTop();
 }
 
 float RenderStyle::borderBeforeWidth() const
 {
-    switch (blockFlowDirection()) {
+    switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderTopWidth();
     case FlowDirection::BottomToTop:
@@ -3237,7 +3232,7 @@ float RenderStyle::borderBeforeWidth() const
 
 float RenderStyle::borderAfterWidth() const
 {
-    switch (blockFlowDirection()) {
+    switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderBottomWidth();
     case FlowDirection::BottomToTop:
@@ -3253,27 +3248,27 @@ float RenderStyle::borderAfterWidth() const
 
 float RenderStyle::borderStartWidth() const
 {
-    if (isHorizontalWritingMode())
-        return isLeftToRightDirection() ? borderLeftWidth() : borderRightWidth();
-    return isLeftToRightDirection() ? borderTopWidth() : borderBottomWidth();
+    if (writingMode().isHorizontal())
+        return writingMode().isInlineLeftToRight() ? borderLeftWidth() : borderRightWidth();
+    return writingMode().isInlineTopToBottom() ? borderTopWidth() : borderBottomWidth();
 }
 
 float RenderStyle::borderEndWidth() const
 {
-    if (isHorizontalWritingMode())
-        return isLeftToRightDirection() ? borderRightWidth() : borderLeftWidth();
-    return isLeftToRightDirection() ? borderBottomWidth() : borderTopWidth();
+    if (writingMode().isHorizontal())
+        return writingMode().isInlineLeftToRight() ? borderRightWidth() : borderLeftWidth();
+    return writingMode().isInlineTopToBottom() ? borderBottomWidth() : borderTopWidth();
 }
 
 void RenderStyle::setMarginStart(Length&& margin)
 {
-    if (isHorizontalWritingMode()) {
-        if (isLeftToRightDirection())
+    if (writingMode().isHorizontal()) {
+        if (writingMode().isInlineLeftToRight())
             setMarginLeft(WTFMove(margin));
         else
             setMarginRight(WTFMove(margin));
     } else {
-        if (isLeftToRightDirection())
+        if (writingMode().isInlineTopToBottom())
             setMarginTop(WTFMove(margin));
         else
             setMarginBottom(WTFMove(margin));
@@ -3282,13 +3277,13 @@ void RenderStyle::setMarginStart(Length&& margin)
 
 void RenderStyle::setMarginEnd(Length&& margin)
 {
-    if (isHorizontalWritingMode()) {
-        if (isLeftToRightDirection())
+    if (writingMode().isHorizontal()) {
+        if (writingMode().isInlineLeftToRight())
             setMarginRight(WTFMove(margin));
         else
             setMarginLeft(WTFMove(margin));
     } else {
-        if (isLeftToRightDirection())
+        if (writingMode().isInlineTopToBottom())
             setMarginBottom(WTFMove(margin));
         else
             setMarginTop(WTFMove(margin));
@@ -3297,31 +3292,29 @@ void RenderStyle::setMarginEnd(Length&& margin)
 
 void RenderStyle::setMarginBefore(Length&& margin)
 {
-    if (isHorizontalWritingMode()) {
-        if (isFlippedBlocksWritingMode())
-            setMarginBottom(WTFMove(margin));
-        else
-            setMarginTop(WTFMove(margin));
-    } else {
-        if (isFlippedBlocksWritingMode())
-            setMarginRight(WTFMove(margin));
-        else
-            setMarginLeft(WTFMove(margin));
+    switch (writingMode().blockDirection()) {
+    case FlowDirection::TopToBottom:
+        return setMarginTop(WTFMove(margin));
+    case FlowDirection::BottomToTop:
+        return setMarginBottom(WTFMove(margin));
+    case FlowDirection::LeftToRight:
+        return setMarginLeft(WTFMove(margin));
+    case FlowDirection::RightToLeft:
+        return setMarginRight(WTFMove(margin));
     }
 }
 
 void RenderStyle::setMarginAfter(Length&& margin)
 {
-    if (isHorizontalWritingMode()) {
-        if (isFlippedBlocksWritingMode())
-            setMarginTop(WTFMove(margin));
-        else
-            setMarginBottom(WTFMove(margin));
-    } else {
-        if (isFlippedBlocksWritingMode())
-            setMarginLeft(WTFMove(margin));
-        else
-            setMarginRight(WTFMove(margin));
+    switch (writingMode().blockDirection()) {
+    case FlowDirection::TopToBottom:
+        return setMarginBottom(WTFMove(margin));
+    case FlowDirection::BottomToTop:
+        return setMarginTop(WTFMove(margin));
+    case FlowDirection::LeftToRight:
+        return setMarginRight(WTFMove(margin));
+    case FlowDirection::RightToLeft:
+        return setMarginLeft(WTFMove(margin));
     }
 }
 
@@ -3330,9 +3323,9 @@ TextEmphasisMark RenderStyle::textEmphasisMark() const
     auto mark = static_cast<TextEmphasisMark>(m_rareInheritedData->textEmphasisMark);
     if (mark != TextEmphasisMark::Auto)
         return mark;
-    if (isHorizontalWritingMode())
-        return TextEmphasisMark::Dot;
-    return TextEmphasisMark::Sesame;
+    if (writingMode().isVerticalTypographic())
+        return TextEmphasisMark::Sesame;
+    return TextEmphasisMark::Dot;
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -3356,12 +3349,10 @@ LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
 
 std::pair<FontOrientation, NonCJKGlyphOrientation> RenderStyle::fontAndGlyphOrientation()
 {
-    // FIXME: TextOrientationSideways should map to sideways-left in vertical-lr, which is not supported yet.
-
-    if (typographicMode() == TypographicMode::Horizontal)
+    if (!writingMode().isVerticalTypographic())
         return { FontOrientation::Horizontal, NonCJKGlyphOrientation::Mixed };
 
-    switch (textOrientation()) {
+    switch (writingMode().computedTextOrientation()) {
     case TextOrientation::Mixed:
         return { FontOrientation::Vertical, NonCJKGlyphOrientation::Mixed };
     case TextOrientation::Upright:
@@ -3489,31 +3480,31 @@ void RenderStyle::setColumnStylesFromPaginationMode(PaginationMode paginationMod
     switch (paginationMode) {
     case Pagination::Mode::LeftToRightPaginated:
         setColumnAxis(ColumnAxis::Horizontal);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        if (writingMode().isHorizontal())
+            setColumnProgression(writingMode().isBidiLTR() ? ColumnProgression::Normal : ColumnProgression::Reverse);
         else
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+            setColumnProgression(writingMode().isBlockFlipped() ? ColumnProgression::Reverse : ColumnProgression::Normal);
         break;
     case Pagination::Mode::RightToLeftPaginated:
         setColumnAxis(ColumnAxis::Horizontal);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        if (writingMode().isHorizontal())
+            setColumnProgression(writingMode().isBidiLTR() ? ColumnProgression::Reverse : ColumnProgression::Normal);
         else
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+            setColumnProgression(writingMode().isBlockFlipped() ? ColumnProgression::Normal : ColumnProgression::Reverse);
         break;
     case Pagination::Mode::TopToBottomPaginated:
         setColumnAxis(ColumnAxis::Vertical);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+        if (writingMode().isHorizontal())
+            setColumnProgression(writingMode().isBlockFlipped() ? ColumnProgression::Reverse : ColumnProgression::Normal);
         else
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+            setColumnProgression(writingMode().isBidiLTR() ? ColumnProgression::Normal : ColumnProgression::Reverse);
         break;
     case Pagination::Mode::BottomToTopPaginated:
         setColumnAxis(ColumnAxis::Vertical);
-        if (isHorizontalWritingMode())
-            setColumnProgression(isFlippedBlocksWritingMode() ? ColumnProgression::Normal : ColumnProgression::Reverse);
+        if (writingMode().isHorizontal())
+            setColumnProgression(writingMode().isBlockFlipped() ? ColumnProgression::Normal : ColumnProgression::Reverse);
         else
-            setColumnProgression(isLeftToRightDirection() ? ColumnProgression::Reverse : ColumnProgression::Normal);
+            setColumnProgression(writingMode().isBidiLTR() ? ColumnProgression::Reverse : ColumnProgression::Normal);
         break;
     case Pagination::Mode::Unpaginated:
         ASSERT_NOT_REACHED();
@@ -3820,7 +3811,7 @@ float RenderStyle::outlineOffset() const
 
 bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || blockFlowDirection() == FlowDirection::RightToLeft;
+    return !writingMode().isAnyLeftToRight();
 }
 
 std::span<const PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
@@ -3890,22 +3881,21 @@ Color RenderStyle::computedStrokeColor() const
 
 UsedClear RenderStyle::usedClear(const RenderObject& renderer)
 {
-    auto computedValue = renderer.style().clear();
-    switch (computedValue) {
+    auto computedClear = renderer.style().clear();
+    auto writingMode = renderer.containingBlock()->writingMode();
+    switch (computedClear) {
     case Clear::None:
         return UsedClear::None;
-    case Clear::Left:
-        return UsedClear::Left;
-    case Clear::Right:
-        return UsedClear::Right;
     case Clear::Both:
         return UsedClear::Both;
+    case Clear::Left:
+        return writingMode.isLogicalLeftLineLeft() ? UsedClear::Left : UsedClear::Right;
+    case Clear::Right:
+        return writingMode.isLogicalLeftLineLeft() ? UsedClear::Right : UsedClear::Left;
     case Clear::InlineStart:
+        return writingMode.isLogicalLeftInlineStart() ? UsedClear::Left : UsedClear::Right;
     case Clear::InlineEnd:
-        auto containingBlockDirection = renderer.containingBlock()->style().direction();
-        if (containingBlockDirection == TextDirection::RTL)
-            return computedValue == Clear::InlineStart ? UsedClear::Right : UsedClear::Left;
-        return computedValue == Clear::InlineStart ? UsedClear::Left : UsedClear::Right;
+        return writingMode.isLogicalLeftInlineStart() ? UsedClear::Right : UsedClear::Left;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -3913,20 +3903,19 @@ UsedClear RenderStyle::usedClear(const RenderObject& renderer)
 
 UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
 {
-    auto computedValue = renderer.style().floating();
-    switch (computedValue) {
+    auto computedFloat = renderer.style().floating();
+    auto writingMode = renderer.containingBlock()->writingMode();
+    switch (computedFloat) {
     case Float::None:
         return UsedFloat::None;
     case Float::Left:
-        return UsedFloat::Left;
+        return writingMode.isLogicalLeftLineLeft() ? UsedFloat::Left : UsedFloat::Right;
     case Float::Right:
-        return UsedFloat::Right;
+        return writingMode.isLogicalLeftLineLeft() ? UsedFloat::Right : UsedFloat::Left;
     case Float::InlineStart:
+        return writingMode.isLogicalLeftInlineStart() ? UsedFloat::Left : UsedFloat::Right;
     case Float::InlineEnd:
-        auto containingBlockDirection = renderer.containingBlock()->style().direction();
-        if (containingBlockDirection == TextDirection::RTL)
-            return computedValue == Float::InlineStart ? UsedFloat::Right : UsedFloat::Left;
-        return computedValue == Float::InlineStart ? UsedFloat::Left : UsedFloat::Right;
+        return writingMode.isLogicalLeftInlineStart() ? UsedFloat::Right : UsedFloat::Left;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

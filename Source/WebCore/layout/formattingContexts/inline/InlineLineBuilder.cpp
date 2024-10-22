@@ -172,7 +172,7 @@ static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs
     ASSERT(!runs.isEmpty());
     auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
     if (shouldUseBlockDirection)
-        return rootStyle.direction();
+        return rootStyle.writingMode().bidiDirection();
     // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
     if (previousLine && !previousLine->endsWithLineBreak)
         return previousLine->inlineBaseDirection;
@@ -557,7 +557,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
 
         // On each line, reset the embedding level of any sequence of whitespace characters at the end of the line
         // to the paragraph embedding level
-        m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
+        m_line.resetBidiLevelForTrailingWhitespace(rootStyle.writingMode().isBidiLTR() ? UBIDI_LTR : UBIDI_RTL);
 
         if (m_line.hasContent()) {
             auto applyRunBasedAlignmentIfApplicable = [&] {

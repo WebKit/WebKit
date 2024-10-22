@@ -458,7 +458,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style.display() == DisplayType::Inline && style.pseudoElementType() == PseudoId::None && style.writingMode() != m_parentStyle.writingMode())
+        if (style.display() == DisplayType::Inline && style.pseudoElementType() == PseudoId::None && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
             style.setEffectiveDisplay(DisplayType::InlineBlock);
 
         // After performing the display mutation, check table rows. We do not honor position:relative or position:sticky on
@@ -474,13 +474,13 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (style.display() == DisplayType::TableColumn || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableFooterGroup
             || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup
             || style.display() == DisplayType::TableCell)
-            style.setWritingMode(m_parentStyle.writingMode());
+            style.setWritingMode(m_parentStyle.writingMode().computedWritingMode());
 
         if (style.isDisplayDeprecatedFlexibleBox()) {
             // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
-            // of block-flow to anything other than WritingMode::HorizontalTb.
+            // of block-flow to anything other than StyleWritingMode::HorizontalTb.
             // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-            style.setWritingMode(WritingMode::HorizontalTb);
+            style.setWritingMode(StyleWritingMode::HorizontalTb);
         }
 
         if (m_parentBoxStyle.isDisplayDeprecatedFlexibleBox())
@@ -1014,24 +1014,24 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
     auto writingMode = [&] {
         // FIXME: The spec says body should win.
         if (documentElementStyle->hasExplicitlySetWritingMode())
-            return documentElementStyle->writingMode();
+            return documentElementStyle->writingMode().computedWritingMode();
         if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetWritingMode())
-            return bodyStyle->writingMode();
+            return bodyStyle->writingMode().computedWritingMode();
         return RenderStyle::initialWritingMode();
     }();
 
     auto direction = [&] {
         if (documentElementStyle->hasExplicitlySetDirection())
-            return documentElementStyle->direction();
+            return documentElementStyle->writingMode().computedTextDirection();
         if (shouldPropagateFromBody && bodyStyle && bodyStyle->hasExplicitlySetDirection())
-            return bodyStyle->direction();
+            return bodyStyle->writingMode().computedTextDirection();
         return RenderStyle::initialDirection();
     }();
 
     // https://drafts.csswg.org/css-writing-modes-3/#icb
-    auto& viewStyle = document.renderView()->style();
-    if (writingMode != viewStyle.writingMode() || direction != viewStyle.direction()) {
-        auto newRootStyle = RenderStyle::clonePtr(viewStyle);
+    WritingMode viewWritingMode = document.renderView()->writingMode();
+    if (writingMode != viewWritingMode.computedWritingMode() || direction != viewWritingMode.computedTextDirection()) {
+        auto newRootStyle = RenderStyle::clonePtr(document.renderView()->style());
         newRootStyle->setWritingMode(writingMode);
         newRootStyle->setDirection(direction);
         newRootStyle->setColumnStylesFromPaginationMode(document.view()->pagination().mode);
@@ -1039,7 +1039,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
     }
 
     // https://drafts.csswg.org/css-writing-modes-3/#principal-flow
-    if (writingMode != documentElementStyle->writingMode() || direction != documentElementStyle->direction()) {
+    if (writingMode != documentElementStyle->writingMode().computedWritingMode() || direction != documentElementStyle->writingMode().computedTextDirection()) {
         auto* documentElementUpdate = update.elementUpdate(*document.documentElement());
         if (!documentElementUpdate) {
             update.addElement(*document.documentElement(), nullptr, { RenderStyle::clonePtr(*documentElementStyle) });
@@ -1053,7 +1053,7 @@ void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& updat
 
 std::unique_ptr<RenderStyle> Adjuster::restoreUsedDocumentElementStyleToComputed(const RenderStyle& style)
 {
-    if (style.writingMode() == RenderStyle::initialWritingMode() && style.direction() == RenderStyle::initialDirection())
+    if (style.writingMode().computedWritingMode() == RenderStyle::initialWritingMode() && style.writingMode().computedTextDirection() == RenderStyle::initialDirection())
         return { };
 
     auto adjusted = RenderStyle::clonePtr(style);

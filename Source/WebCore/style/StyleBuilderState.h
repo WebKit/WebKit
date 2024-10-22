@@ -78,7 +78,7 @@ public:
     void setFontSize(FontCascadeDescription&, float size);
     inline void setZoom(float);
     inline void setUsedZoom(float);
-    inline void setWritingMode(WritingMode);
+    inline void setWritingMode(StyleWritingMode);
     inline void setTextOrientation(TextOrientation);
 
     bool fontDirty() const { return m_fontDirty; }

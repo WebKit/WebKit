@@ -25,21 +25,13 @@
 
 #pragma once
 
+#include "BoxSides.h"
 #include "WritingMode.h"
 #include <array>
 #include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-enum class BoxSideFlag : uint8_t {
-    Top     = 1 << static_cast<unsigned>(BoxSide::Top),
-    Right   = 1 << static_cast<unsigned>(BoxSide::Right),
-    Bottom  = 1 << static_cast<unsigned>(BoxSide::Bottom),
-    Left    = 1 << static_cast<unsigned>(BoxSide::Left)
-};
-
-using BoxSideSet = OptionSet<BoxSideFlag>;
 
 template<typename T> class RectEdges {
 public:
@@ -93,30 +85,36 @@ public:
         return copy;
     }
 
-    T& before(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockStart)); }
-    T& after(WritingMode writingMode) { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockEnd)); }
-    T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineStart)); }
-    T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineEnd)); }
+    T& before(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)); }
+    T& after(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)); }
+    T& start(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)); }
+    T& end(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)); }
+    T& logicalLeft(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::LogicalLeft)); }
+    T& logicalRight(WritingMode writingMode) { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::LogicalRight)); }
 
-    const T& before(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockStart)); }
-    const T& after(WritingMode writingMode) const { return at(mapLogicalSideToPhysicalSide(writingMode, LogicalBoxSide::BlockEnd)); }
-    const T& start(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineStart)); }
-    const T& end(WritingMode writingMode, TextDirection direction = TextDirection::LTR) const { return at(mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), LogicalBoxSide::InlineEnd)); }
+    const T& before(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)); }
+    const T& after(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)); }
+    const T& start(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)); }
+    const T& end(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)); }
+    const T& logicalLeft(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::LogicalLeft)); }
+    const T& logicalRight(WritingMode writingMode) const { return at(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::LogicalRight)); }
 
     void setBefore(const T& before, WritingMode writingMode) { this->before(writingMode) = before; }
     void setAfter(const T& after, WritingMode writingMode) { this->after(writingMode) = after; }
-    void setStart(const T& start, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->start(writingMode, direction) = start; }
-    void setEnd(const T& end, WritingMode writingMode, TextDirection direction = TextDirection::LTR) { this->end(writingMode, direction) = end; }
+    void setStart(const T& start, WritingMode writingMode) { this->start(writingMode) = start; }
+    void setEnd(const T& end, WritingMode writingMode) { this->end(writingMode) = end; }
+    void setLogicalLeft(const T& logicalLeft, WritingMode writingMode) { this->logicalLeft(writingMode) = logicalLeft; }
+    void setLogicalRight(const T& logicalRight, WritingMode writingMode) { this->logicalRight(writingMode) = logicalRight; }
 
     RectEdges<T> blockFlippedCopy(WritingMode writingMode) const
     {
-        if (isHorizontalWritingMode(writingMode))
+        if (writingMode.isHorizontal())
             return yFlippedCopy();
         return xFlippedCopy();
     }
     RectEdges<T> inlineFlippedCopy(WritingMode writingMode) const
     {
-        if (isHorizontalWritingMode(writingMode))
+        if (writingMode.isHorizontal())
             return xFlippedCopy();
         return yFlippedCopy();
     }

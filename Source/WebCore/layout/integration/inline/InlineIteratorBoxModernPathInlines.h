@@ -38,7 +38,7 @@ inline TextRun BoxModernPath::textRun(TextRunMode mode) const
     auto& style = box().style();
     auto expansion = box().expansion();
     auto logicalLeft = [&] {
-        if (style.isLeftToRightDirection())
+        if (style.writingMode().isBidiLTR())
             return visualRectIgnoringBlockDirection().x() - (line().lineBoxLeft() + line().contentLogicalLeft());
         return line().lineBoxRight() - (visualRectIgnoringBlockDirection().maxX() + line().contentLogicalLeft());
     };

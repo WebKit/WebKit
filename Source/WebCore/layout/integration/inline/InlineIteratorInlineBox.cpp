@@ -44,7 +44,7 @@ std::pair<bool, bool> InlineBox::hasClosedLeftAndRightEdge() const
     // FIXME: Layout knows the answer to this question so we should consult it.
     if (style().boxDecorationBreak() == BoxDecorationBreak::Clone)
         return { true, true };
-    bool isLTR = style().isLeftToRightDirection();
+    bool isLTR = style().writingMode().isBidiLTR();
     bool isFirst = !previousInlineBox() && !renderer().isContinuation();
     bool isLast = !nextInlineBox() && !renderer().continuation();
     return { isLTR ? isFirst : isLast, isLTR ? isLast : isFirst };

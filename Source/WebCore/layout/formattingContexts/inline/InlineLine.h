@@ -379,7 +379,7 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
 
 inline TextDirection Line::Run::inlineDirection() const
 {
-    return m_style.direction();
+    return m_style.writingMode().bidiDirection();
 }
 
 inline InlineLayoutUnit Line::Run::letterSpacing() const

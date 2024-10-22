@@ -38,7 +38,7 @@ inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineB
 
 inline float contentStartInBlockDirection(const LineBox& lineBox)
 {
-    if (!lineBox.formattingContextRoot().style().isFlippedBlocksWritingMode())
+    if (!lineBox.formattingContextRoot().writingMode().isBlockFlipped())
         return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
     return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
 }

@@ -249,7 +249,6 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit denominatorMarginBoxInlineSize = denominator().marginStart() + denominator().logicalWidth() + denominator().marginEnd();
     setLogicalWidth(std::max(numeratorMarginBoxInlineSize, denominatorMarginBoxInlineSize));
 
-
     LayoutUnit verticalOffset = 0; // This is the top of the renderer.
     verticalOffset += numerator().marginBefore();
     LayoutPoint numeratorLocation(numerator().marginLeft() + horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
@@ -284,7 +283,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (info.context().paintingDisabled() || info.phase != PaintPhase::Foreground || style().usedVisibility() != Visibility::Visible || !isValid() || !thickness)
         return;
 
-    LayoutUnit borderAndPaddingLeft = style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd();
+    LayoutUnit borderAndPaddingLeft = writingMode().isBidiLTR() ? borderAndPaddingStart() : borderAndPaddingEnd();
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(borderAndPaddingLeft, borderAndPaddingBefore() + fractionAscent() - mathAxisHeight()));
 
     GraphicsContextStateSaver stateSaver(info.context());

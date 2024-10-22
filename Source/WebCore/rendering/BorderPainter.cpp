@@ -302,7 +302,7 @@ void BorderPainter::paintBorder(const LayoutRect& rect, const RenderStyle& style
         includeLogicalLeftEdge,
         includeLogicalRightEdge,
         appliedClipAlready,
-        style.isHorizontalWritingMode()
+        style.writingMode().isHorizontal()
     });
 }
 
@@ -334,7 +334,7 @@ void BorderPainter::paintOutline(const LayoutRect& paintRect) const
     if (outer.isEmpty())
         return;
 
-    auto isHorizontal = styleToUse.isHorizontalWritingMode();
+    auto isHorizontal = styleToUse.writingMode().isHorizontal();
     auto hasBorderRadius = styleToUse.hasBorderRadius();
     auto includeLogicalLeftEdge = true;
     auto includeLogicalRightEdge = true;
@@ -406,7 +406,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
         rect.inflate(outlineOffset + outlineWidth / 2);
         pixelSnappedRects.append(snapRectToDevicePixels(rect, deviceScaleFactor));
     }
-    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse.border(), outlineOffset, styleToUse.direction(), styleToUse.writingMode(), deviceScaleFactor);
+    auto path = PathUtilities::pathWithShrinkWrappedRectsForOutline(pixelSnappedRects, styleToUse.border(), outlineOffset, styleToUse.writingMode(), deviceScaleFactor);
     if (path.isEmpty()) {
         // Disjoint line spanning inline boxes.
         for (auto rect : lineRects) {

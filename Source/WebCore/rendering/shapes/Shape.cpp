@@ -69,32 +69,32 @@ static Ref<Shape> createPolygonShape(Vector<FloatPoint>&& vertices, WindRule fil
 
 static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
 {
-    if (isHorizontalWritingMode(writingMode))
+    if (writingMode.isHorizontal())
         return rect;
-    if (isFlippedWritingMode(writingMode))
+    if (writingMode.isBlockFlipped())
         return FloatRect(rect.y(), logicalBoxHeight - rect.maxX(), rect.height(), rect.width());
     return rect.transposedRect();
 }
 
 static inline FloatPoint physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
 {
-    if (isHorizontalWritingMode(writingMode))
+    if (writingMode.isHorizontal())
         return point;
-    if (isFlippedWritingMode(writingMode))
+    if (writingMode.isBlockFlipped())
         return FloatPoint(point.y(), logicalBoxHeight - point.x());
     return point.transposedPoint();
 }
 
 static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode writingMode)
 {
-    if (isHorizontalWritingMode(writingMode))
+    if (writingMode.isHorizontal())
         return size;
     return size.transposedSize();
 }
 
 Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
-    bool horizontalWritingMode = isHorizontalWritingMode(writingMode);
+    bool horizontalWritingMode = writingMode.isHorizontal();
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
     float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
     RefPtr<Shape> shape;

@@ -250,38 +250,38 @@ void LegacyInlineBox::clearKnownToHaveNoOverflow()
 
 FloatPoint LegacyInlineBox::locationIncludingFlipping() const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return topLeft();
     RenderBlockFlow& block = root().blockFlow();
-    if (block.style().isHorizontalWritingMode())
+    if (block.writingMode().isHorizontal())
         return { x(), block.height() - height() - y() };
     return { block.width() - width() - x(), y() };
 }
 
 void LegacyInlineBox::flipForWritingMode(FloatRect& rect) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 FloatPoint LegacyInlineBox::flipForWritingMode(const FloatPoint& point) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
 void LegacyInlineBox::flipForWritingMode(LayoutRect& rect) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 LayoutPoint LegacyInlineBox::flipForWritingMode(const LayoutPoint& point) const
 {
-    if (!renderer().style().isFlippedBlocksWritingMode())
+    if (!renderer().writingMode().isBlockFlipped())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }

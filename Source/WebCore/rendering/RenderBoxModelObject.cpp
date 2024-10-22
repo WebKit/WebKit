@@ -221,8 +221,8 @@ void RenderBoxModelObject::updateFromStyle()
     setHasVisibleBoxDecorations(hasVisibleBoxDecorationStyle());
     setInline(styleToUse.isDisplayInlineType());
     setPositionState(styleToUse.position());
-    setHorizontalWritingMode(styleToUse.isHorizontalWritingMode());
-    if (styleToUse.isFlippedBlocksWritingMode())
+    setHorizontalWritingMode(styleToUse.writingMode().isHorizontal());
+    if (writingMode().isBlockFlipped())
         view().frameView().setHasFlippedBlockRenderers(true);
     setPaintContainmentApplies(shouldApplyPaintContainment());
 }
@@ -399,7 +399,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     auto& bottom = style.bottom();
 
     auto offset = accumulateInFlowPositionOffsets(this);
-    if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->style().isLeftToRightDirection()) {
+    if (top.isFixed() && bottom.isAuto() && left.isFixed() && right.isAuto() && containingBlock->writingMode().isAnyLeftToRight()) {
         offset.expand(left.value(), top.value());
         return offset;
     }
@@ -415,12 +415,12 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
             auto* renderBox = dynamicDowncast<RenderBox>(*this);
             if (!renderBox)
                 return containingBlock->availableWidth();
-            if (auto overridingContainingBlockContentWidth = renderBox->overridingContainingBlockContentWidth(containingBlock->style().writingMode()))
+            if (auto overridingContainingBlockContentWidth = renderBox->overridingContainingBlockContentWidth(containingBlock->writingMode()))
                 return overridingContainingBlockContentWidth->value_or(0_lu);
             return containingBlock->availableWidth();
         };
         if (!left.isAuto()) {
-            if (!right.isAuto() && !containingBlock->style().isLeftToRightDirection())
+            if (!right.isAuto() && !containingBlock->writingMode().isAnyLeftToRight())
                 offset.setWidth(-valueForLength(right, !right.isFixed() ? availableWidth() : 0_lu));
             else
                 offset.expand(valueForLength(left, !left.isFixed() ? availableWidth() : 0_lu), 0_lu);
@@ -484,7 +484,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             if (isOutOfFlowPositioned()) {
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
-                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->style().isHorizontalWritingMode() : true;
+                auto isHorizontalWritingMode = containingBlock() ? containingBlock()->writingMode().isHorizontal() : true;
                 if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
                     topLeft.setX(LayoutUnit { });
                 if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))

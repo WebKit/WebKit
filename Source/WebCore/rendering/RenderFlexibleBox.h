@@ -70,7 +70,7 @@ public:
     bool isHorizontalFlow() const;
     inline Direction crossAxisDirection() const
     {
-        switch (writingModeToBlockFlowDirection(style().writingMode())) {
+        switch (writingMode().blockDirection()) {
         case FlowDirection::TopToBottom:
             if (style().isRowFlexDirection())
                 return (style().flexWrap() == FlexWrap::Reverse) ? Direction::BottomToTop : Direction::TopToBottom;

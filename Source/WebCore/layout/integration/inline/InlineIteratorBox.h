@@ -89,6 +89,7 @@ public:
     const RenderObject& renderer() const;
     const RenderBlockFlow& formattingContextRoot() const;
     const RenderStyle& style() const;
+    WritingMode writingMode() const { return style().writingMode(); }
 
     // FIXME: Remove. For intermediate porting steps only.
     const LegacyInlineBox* legacyInlineBox() const;

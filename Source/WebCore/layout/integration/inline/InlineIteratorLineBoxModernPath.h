@@ -63,13 +63,13 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || !m_lineIndex)
+        if (formattingContextRoot().style().writingMode().isLineInverted() || !m_lineIndex)
             return contentLogicalTop();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!isFlippedLinesWritingMode(formattingContextRoot().style().writingMode()) || m_lineIndex == lines().size() - 1)
+        if (!formattingContextRoot().style().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
     }

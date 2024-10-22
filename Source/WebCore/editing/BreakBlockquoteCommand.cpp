@@ -84,7 +84,7 @@ void BreakBlockquoteCommand::doApply()
         if (!parentStyle)
             return lineBreak;
 
-        if (parentStyle->direction() == containerNode->renderStyle()->direction())
+        if (parentStyle->writingMode().bidiDirection() == containerNode->renderStyle()->writingMode().bidiDirection())
             return lineBreak;
 
         auto container = HTMLDivElement::create(document());

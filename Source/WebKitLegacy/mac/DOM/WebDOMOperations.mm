@@ -112,7 +112,7 @@ using namespace JSC;
     if (!renderer)
         return YES;
     
-    return renderer->style().isHorizontalWritingMode();
+    return renderer->writingMode().isHorizontal();
 }
 
 - (void)hidePlaceholder

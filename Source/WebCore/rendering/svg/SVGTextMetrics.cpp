@@ -51,7 +51,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
         0, /* xPos, only relevant with allowTabs=true */
         0, /* padding, only relevant for justified text, not relevant for SVG */
         ExpansionBehavior::allowRightOnly(),
-        style.direction(),
+        style.writingMode().bidiDirection(),
         isOverride(style.unicodeBidi()) /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.

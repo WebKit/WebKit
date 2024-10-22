@@ -63,18 +63,16 @@ private:
     void updateInlineBoxDimensions(const RenderInline&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void setListMarkerOffsetForMarkerOutside(const RenderListMarker&);
 
-    Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainMarginStart = true, bool retainMarginEnd = true);
-    Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth);
-    Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject&, bool isLeftToRightInlineDirection, bool isIntrinsicWidthMode = false, bool retainBorderStart = true, bool retainBorderEnd = true);
-    Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, bool isLeftToRightInlineDirection, bool retainPaddingStart = true, bool retainPaddingEnd = true);
-
-    FlowDirection blockFlowDirection() const;
-    bool isHorizontalWritingMode() const;
+    Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode, bool retainMarginStart = true, bool retainMarginEnd = true);
+    Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode);
+    Layout::BoxGeometry::Edges logicalBorder(const RenderBoxModelObject&, WritingMode, bool isIntrinsicWidthMode = false, bool retainBorderStart = true, bool retainBorderEnd = true);
+    Layout::BoxGeometry::Edges logicalPadding(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode, bool retainPaddingStart = true, bool retainPaddingEnd = true);
 
     Layout::LayoutState& layoutState() { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const { return *m_layoutState; }
     const Layout::ElementBox& rootLayoutBox() const;
     const RenderBlock& rootRenderer() const;
+    inline WritingMode writingMode() const;
 
 private:
     WeakPtr<Layout::LayoutState> m_layoutState;

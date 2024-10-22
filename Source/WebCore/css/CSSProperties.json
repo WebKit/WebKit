@@ -355,6 +355,7 @@
             ],
             "codegen-properties": {
                 "custom": "Value",
+                "getter": "writingMode().computedTextDirection",
                 "high-priority": true,
                 "parser-grammar": "<<values>>"
             },
@@ -1132,6 +1133,7 @@
             ],
             "codegen-properties": {
                 "custom": "Value",
+                "getter": "writingMode().computedTextOrientation",
                 "high-priority": true,
                 "parser-grammar": "<<values>>"
             },
@@ -1274,6 +1276,7 @@
                 ],
                 "custom": "Value",
                 "comment": "This is top priority because vi/vb units (depending on writing-mode) may be used by other properties",
+                "getter": "writingMode().computedWritingMode",
                 "top-priority": true,
                 "parser-grammar": "<<values>>"
             },

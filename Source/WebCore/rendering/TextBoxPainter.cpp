@@ -268,7 +268,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
     auto shouldPaintSelectionForeground = m_haveSelection && !m_useCustomUnderlines;
     auto hasTextDecoration = !m_style.textDecorationsInEffect().isEmpty();
     auto hasHighlightDecoration = m_document.hasHighlight() && !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
-    auto hasMismatchingContentDirection = m_renderer.containingBlock()->style().direction() != textBox().direction();
+    auto hasMismatchingContentDirection = m_renderer.containingBlock()->writingMode().bidiDirection() != textBox().direction();
     auto hasBackwardTrunctation = m_selectableRange.truncation && hasMismatchingContentDirection;
 
     auto hasSpellingOrGrammarDecoration = [&] {
@@ -475,7 +475,7 @@ void TextBoxPainter<TextBoxPath>::paintBackground(unsigned startOffset, unsigned
     auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox);
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
-    auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };
+    auto deltaY = LayoutUnit { m_style.writingMode().isLineInverted() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };
     auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
     auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), selectionHeight };
     auto adjustedSelectionRect = selectionRect;
@@ -1146,7 +1146,7 @@ FloatRect TextBoxPainter<TextBoxPath>::computePaintRect(const LayoutPoint& paint
 {
     FloatPoint localPaintOffset(paintOffset);
 
-    localPaintOffset.move(0, m_style.isHorizontalWritingMode() ? 0 : -m_logicalRect.height());
+    localPaintOffset.move(0, m_style.writingMode().isHorizontal() ? 0 : -m_logicalRect.height());
     auto visualRect = textBox().visualRectIgnoringBlockDirection();
     textBox().formattingContextRoot().flipForWritingMode(visualRect);
 

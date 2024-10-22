@@ -49,7 +49,7 @@ namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
-static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyle& style)
+static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -60,17 +60,17 @@ static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const RenderStyl
         return BoxAxis::Vertical;
     case CSSPropertyInsetInlineStart:
     case CSSPropertyInsetInlineEnd:
-        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Inline);
+        return mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline);
     case CSSPropertyInsetBlockStart:
     case CSSPropertyInsetBlockEnd:
-        return mapLogicalAxisToPhysicalAxis(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxAxis::Block);
+        return mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block);
     default:
         ASSERT_NOT_REACHED();
         return BoxAxis::Horizontal;
     }
 }
 
-static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const RenderStyle& style)
+static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
     case CSSPropertyLeft:
@@ -82,13 +82,13 @@ static BoxSide mapInsetPropertyToPhysicalSide(CSSPropertyID id, const RenderStyl
     case CSSPropertyBottom:
         return BoxSide::Bottom;
     case CSSPropertyInsetInlineStart:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart);
     case CSSPropertyInsetInlineEnd:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::InlineEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd);
     case CSSPropertyInsetBlockStart:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart);
     case CSSPropertyInsetBlockEnd:
-        return mapLogicalSideToPhysicalSide(makeTextFlow(style.writingMode(), style.direction()), LogicalBoxSide::BlockEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd);
     default:
         ASSERT_NOT_REACHED();
         return BoxSide::Top;
@@ -115,9 +115,9 @@ static BoxSide flipBoxSide(BoxSide side)
 // Physical sides (left/right/top/bottom) can only be used in certain inset properties. "For example,
 // left is usable in left, right, or the logical inset properties that refer to the horizontal axis."
 // See: https://drafts.csswg.org/css-anchor-position-1/#typedef-anchor-side
-static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyID insetPropertyID, const RenderStyle& style)
+static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyID insetPropertyID, const WritingMode writingMode)
 {
-    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, style);
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, writingMode);
 
     switch (anchorSideID) {
     case CSSValueID::CSSValueInside:
@@ -146,23 +146,23 @@ static bool anchorSideMatchesInsetProperty(CSSValueID anchorSideID, CSSPropertyI
 static BoxSide computeStartEndBoxSide(CSSPropertyID insetPropertyID, CheckedRef<const RenderElement> anchorPositionedRenderer, bool shouldComputeStart, bool shouldUseContainingBlockWritingMode)
 {
     // 1. Compute the physical axis of inset property (using the element's writing mode)
-    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+    auto physicalAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->writingMode());
 
     // 2. Convert the physical axis to the corresponding logical axis w.r.t. the element OR containing block's writing mode
-    auto& textFlowStyle = shouldUseContainingBlockWritingMode ? anchorPositionedRenderer->containingBlock()->style() : anchorPositionedRenderer->style();
-    auto textFlow = makeTextFlow(textFlowStyle.writingMode(), textFlowStyle.direction());
-    auto logicalAxis = mapPhysicalAxisToLogicalAxis(textFlow, physicalAxis);
+    auto& style = shouldUseContainingBlockWritingMode ? anchorPositionedRenderer->containingBlock()->style() : anchorPositionedRenderer->style();
+    auto writingMode = style.writingMode();
+    auto logicalAxis = mapAxisPhysicalToLogical(writingMode, physicalAxis);
 
     // 3. Convert the logical start OR end side to the corresponding physical side w.r.t. the
     // element OR containing block's writing mode
     if (logicalAxis == LogicalBoxAxis::Inline) {
         if (shouldComputeStart)
-            return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineStart);
-        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::InlineEnd);
+            return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd);
     }
     if (shouldComputeStart)
-        return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockStart);
-    return mapLogicalSideToPhysicalSide(textFlow, LogicalBoxSide::BlockEnd);
+        return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart);
+    return mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd);
 }
 
 // Insets for positioned elements are specified w.r.t. their containing blocks. Additionally, the containing block
@@ -281,7 +281,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     CheckedPtr containingBlock = anchorPositionedRenderer->containingBlock();
     ASSERT(containingBlock);
 
-    auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->style());
+    auto insetPropertySide = mapInsetPropertyToPhysicalSide(insetPropertyID, anchorPositionedRenderer->writingMode());
     auto anchorSideID = std::holds_alternative<CSSValueID>(anchorSide) ? std::get<CSSValueID>(anchorSide) : CSSValueInvalid;
     auto anchorRect = computeAnchorRectRelativeToContainingBlock(anchorBox, *containingBlock);
 
@@ -298,7 +298,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
             percentage = 1 - percentage;
 
         LayoutUnit insetValue;
-        auto insetPropertyAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->style());
+        auto insetPropertyAxis = mapInsetPropertyToPhysicalAxis(insetPropertyID, anchorPositionedRenderer->writingMode());
         if (insetPropertyAxis == BoxAxis::Vertical) {
             insetValue = anchorRect.location().y() + anchorRect.height() * percentage;
             if (insetPropertySide == BoxSide::Bottom)
@@ -401,7 +401,7 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
 
         // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
         // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
-        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style))
+        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style.writingMode()))
             return false;
 
         return true;

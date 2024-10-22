@@ -1655,7 +1655,7 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
 
     if (!selectionFlippingEnabled) {
         auto node = selectionStart.deepEquivalent().containerNode();
-        if (node && node->renderStyle() && node->renderStyle()->isVerticalWritingMode()) {
+        if (node && node->renderStyle() && node->renderStyle()->writingMode().isVertical()) {
             if (baseIsStart) {
                 int startX = selectionStart.absoluteCaretBounds().center().x();
                 if (pointInDocument.x() > startX)
@@ -3715,7 +3715,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
-        information.isRTL = renderer->style().direction() == TextDirection::RTL;
+        information.isRTL = renderer->writingMode().isBidiRTL();
 
 #if ENABLE(ASYNC_SCROLLING)
         if (auto* scrollingCoordinator = this->scrollingCoordinator())

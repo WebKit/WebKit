@@ -118,7 +118,7 @@ static OptionSet<AvoidanceReason> canUseForFlexLayoutWithReason(const RenderFlex
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxNeedsBaseline, reasons, includeReasons);
 
     auto isColumnDirection = flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse;
-    auto isHorizontalWritingMode = flexBoxStyle.isHorizontalWritingMode();
+    auto isHorizontalWritingMode = flexBoxStyle.writingMode().isHorizontal();
     if (((isHorizontalWritingMode && isColumnDirection) || (!isHorizontalWritingMode && !isColumnDirection)) && !flexBoxStyle.height().isFixed())
         ADD_REASON_AND_RETURN_IF_NEEDED(FlexBoxHasNonFixedHeightInMainAxis, reasons, includeReasons);
 
@@ -298,7 +298,7 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
         if (isFullySupportedRenderer)
             continue;
 
-        if (!renderer.isInFlow() || !renderer.style().isHorizontalWritingMode() || !renderer.style().logicalWidth().isFixed())
+        if (!renderer.isInFlow() || !renderer.writingMode().isHorizontal() || !renderer.style().logicalWidth().isFixed())
             return false;
 
         auto isNonSupportedFixedWidthContent = [&] {

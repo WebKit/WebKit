@@ -150,8 +150,8 @@ void BuilderState::adjustStyleForInterCharacterRuby()
         return;
 
     m_style.setTextAlign(TextAlignMode::Center);
-    if (m_style.isHorizontalWritingMode())
-        m_style.setWritingMode(WritingMode::VerticalLr);
+    if (!m_style.writingMode().isVerticalTypographic())
+        m_style.setWritingMode(StyleWritingMode::VerticalLr);
 }
 
 void BuilderState::updateFont()

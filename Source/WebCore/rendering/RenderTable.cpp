@@ -281,7 +281,7 @@ void RenderTable::updateLogicalWidth()
     RenderBlock& cb = *containingBlock();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
-    bool hasPerpendicularContainingBlock = cb.style().isHorizontalWritingMode() != style().isHorizontalWritingMode();
+    bool hasPerpendicularContainingBlock = writingMode().isOrthogonal(cb.writingMode());
     LayoutUnit containerWidthInInlineDirection = hasPerpendicularContainingBlock ? perpendicularContainingBlockLogicalHeight() : availableLogicalWidth;
 
     Length styleLogicalWidth = style().logicalWidth();
@@ -338,10 +338,10 @@ void RenderTable::updateLogicalWidth()
         if (avoidsFloats() && cb.containsFloats())
             containerLogicalWidthForAutoMargins = containingBlockAvailableLineWidthInFragment(0); // FIXME: Work with regions someday.
         ComputedMarginValues marginValues;
-        bool hasInvertedDirection =  cb.style().isLeftToRightDirection() == style().isLeftToRightDirection();
+        bool hasSameDirection = !cb.writingMode().isInlineOpposing(writingMode());
         computeInlineDirectionMargins(cb, availableLogicalWidth, containerLogicalWidthForAutoMargins, logicalWidth(),
-            hasInvertedDirection ? marginValues.m_start : marginValues.m_end,
-            hasInvertedDirection ? marginValues.m_end : marginValues.m_start);
+            hasSameDirection ? marginValues.m_start : marginValues.m_end,
+            hasSameDirection ? marginValues.m_end : marginValues.m_start);
         setMarginStart(marginValues.m_start);
         setMarginEnd(marginValues.m_end);
     } else {
@@ -473,7 +473,7 @@ void RenderTable::layout()
 
     LayoutRepainter repainter(*this);
     {
-        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
         LayoutUnit oldLogicalWidth = logicalWidth();
         LayoutUnit oldLogicalHeight = logicalHeight();
@@ -576,9 +576,9 @@ void RenderTable::layout()
             setLogicalHeight(tableLogicalHeight());
         }
 
-        LayoutUnit sectionLogicalLeft = style().isLeftToRightDirection() ? borderStart() : borderEnd();
+        LayoutUnit sectionLogicalLeft = writingMode().isLogicalLeftInlineStart() ? borderStart() : borderEnd();
         if (!collapsing)
-            sectionLogicalLeft += style().isLeftToRightDirection() ? paddingStart() : paddingEnd();
+            sectionLogicalLeft += writingMode().isLogicalLeftInlineStart() ? paddingStart() : paddingEnd();
 
         // position the table sections
         RenderTableSection* section = topSection();
@@ -586,7 +586,7 @@ void RenderTable::layout()
             sectionCount++;
             if (!sectionMoved && section->logicalTop() != logicalHeight()) {
                 sectionMoved = true;
-                movedSectionLogicalTop = std::min(logicalHeight(), section->logicalTop()) + (style().isHorizontalWritingMode() ? section->visualOverflowRect().y() : section->visualOverflowRect().x());
+                movedSectionLogicalTop = std::min(logicalHeight(), section->logicalTop()) + (writingMode().isHorizontal() ? section->visualOverflowRect().y() : section->visualOverflowRect().x());
             }
             section->setLogicalLocation(LayoutPoint(sectionLogicalLeft, logicalHeight()));
 
@@ -625,7 +625,7 @@ void RenderTable::layout()
     bool didFullRepaint = repainter.repaintAfterLayout();
     // Repaint with our new bounds if they are different from our old bounds.
     if (!didFullRepaint && sectionMoved) {
-        if (style().isHorizontalWritingMode())
+        if (writingMode().isHorizontal())
             repaintRectangle(LayoutRect(visualOverflowRect().x(), movedSectionLogicalTop, visualOverflowRect().width(), visualOverflowRect().maxY() - movedSectionLogicalTop));
         else
             repaintRectangle(LayoutRect(movedSectionLogicalTop, visualOverflowRect().y(), visualOverflowRect().maxX() - movedSectionLogicalTop, visualOverflowRect().height()));
@@ -824,8 +824,8 @@ void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
 {
     for (unsigned i = 0; i < m_captions.size(); i++) {
         LayoutUnit captionLogicalHeight = m_captions[i]->logicalHeight() + m_captions[i]->marginBefore() + m_captions[i]->marginAfter();
-        bool captionIsBefore = (m_captions[i]->style().captionSide() != CaptionSide::Bottom) ^ style().isFlippedBlocksWritingMode();
-        if (style().isHorizontalWritingMode()) {
+        bool captionIsBefore = (m_captions[i]->style().captionSide() != CaptionSide::Bottom) ^ writingMode().isBlockFlipped();
+        if (writingMode().isHorizontal()) {
             rect.setHeight(rect.height() - captionLogicalHeight);
             if (captionIsBefore)
                 rect.move(0_lu, captionLogicalHeight);
@@ -1253,7 +1253,7 @@ LayoutUnit RenderTable::calcBorderStart() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), !style().isLeftToRightDirection());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTable::calcBorderEnd() const
@@ -1308,7 +1308,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), style().isLeftToRightDirection());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(borderWidth, document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 }
 
 void RenderTable::recalcBordersInRowDirection()
@@ -1389,7 +1389,7 @@ LayoutUnit RenderTable::outerBorderStart() const
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), !style().isLeftToRightDirection());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
@@ -1416,7 +1416,7 @@ LayoutUnit RenderTable::outerBorderEnd() const
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), style().isLeftToRightDirection());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(tb.width(), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
@@ -1631,7 +1631,7 @@ LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderFrag
     // supported.  When we actually support left/right and stop mapping them to top/bottom,
     // we might have to hack this code first (depending on what order we do these bug fixes in).
     if (!m_captions.isEmpty()) {
-        if (style().isHorizontalWritingMode()) {
+        if (writingMode().isHorizontal()) {
             rect.setHeight(height());
             rect.setY(location.y());
         } else {

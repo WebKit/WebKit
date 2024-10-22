@@ -36,7 +36,7 @@ static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutU
 {
     if (!offset)
         return;
-    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = inlineFormattingContext.root().style().writingMode().isHorizontal();
     isHorizontalWritingMode ? displayBox.moveHorizontally(offset) : displayBox.moveVertically(offset);
     if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox())
         inlineFormattingContext.geometryForBox(displayBox.layoutBox()).moveHorizontally(LayoutUnit { offset });
@@ -50,7 +50,7 @@ static inline void expandInlineBox(InlineLayoutUnit expansion, InlineDisplay::Bo
     }
     if (!expansion)
         return;
-    inlineFormattingContext.root().style().isHorizontalWritingMode() ? displayBox.expandHorizontally(expansion) : displayBox.expandVertically(expansion);
+    inlineFormattingContext.root().writingMode().isHorizontal() ? displayBox.expandHorizontally(expansion) : displayBox.expandVertically(expansion);
     auto& boxGeometry = inlineFormattingContext.geometryForBox(displayBox.layoutBox());
     boxGeometry.setContentBoxWidth(boxGeometry.contentBoxWidth() + LayoutUnit { expansion });
 }

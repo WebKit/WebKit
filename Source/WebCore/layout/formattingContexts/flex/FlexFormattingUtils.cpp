@@ -43,7 +43,7 @@ bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& fle
 {
     ASSERT(flexContainer.isFlexBox());
     auto& flexContainerStyle = flexContainer.style();
-    auto isHorizontalWritingMode = flexContainerStyle.isHorizontalWritingMode();
+    auto isHorizontalWritingMode = flexContainerStyle.writingMode().isHorizontal();
     auto flexDirection = flexContainerStyle.flexDirection();
     return (isHorizontalWritingMode && (flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse)) || (!isHorizontalWritingMode && (flexDirection == FlexDirection::Column || flexDirection == FlexDirection::ColumnReverse));
 }
@@ -60,7 +60,7 @@ bool FlexFormattingUtils::isMainAxisParallelWithLeftRightAxis(const ElementBox& 
 bool FlexFormattingUtils::isInlineDirectionRTL(const ElementBox& flexContainer)
 {
     ASSERT(flexContainer.isFlexBox());
-    return !flexContainer.style().isLeftToRightDirection();
+    return !flexContainer.writingMode().isLogicalLeftInlineStart();
 }
 
 bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)
@@ -122,10 +122,11 @@ LayoutUnit FlexFormattingUtils::usedMinimumSizeInMainAxis(const LogicalFlexItem&
     auto& flexContainer = formattingContext().root();
     auto& flexItemBox = downcast<ElementBox>(flexItem.layoutBox());
     auto isMainAxisParallelWithInlineAxis = this->isMainAxisParallelWithInlineAxis(flexContainer);
-    auto isFlexItemHorizontalWritingMode = flexItem.style().isHorizontalWritingMode();
 
     auto minimumContentSize = LayoutUnit { };
-    auto shouldUseFlexItemContentWidth = (isMainAxisParallelWithInlineAxis && isFlexItemHorizontalWritingMode) || (!isMainAxisParallelWithInlineAxis && !isFlexItemHorizontalWritingMode);
+    auto shouldUseFlexItemContentWidth =
+        (isMainAxisParallelWithInlineAxis && flexItem.writingMode().isHorizontal())
+        || (!isMainAxisParallelWithInlineAxis && flexItem.writingMode().isVertical());
     minimumContentSize = shouldUseFlexItemContentWidth ? formattingContext().integrationUtils().minContentWidth(flexItemBox) : formattingContext().integrationUtils().minContentHeight(flexItemBox);
     if (auto mainAxisWidth = flexItem.mainAxis().size)
         minimumContentSize = std::min(*mainAxisWidth, minimumContentSize);
@@ -143,15 +144,16 @@ LayoutUnit FlexFormattingUtils::usedMaxContentSizeInMainAxis(const LogicalFlexIt
     auto& flexContainer = formattingContext().root();
     auto& flexItemBox = downcast<ElementBox>(flexItem.layoutBox());
     auto isMainAxisParallelWithInlineAxis = this->isMainAxisParallelWithInlineAxis(flexContainer);
-    auto isFlexItemHorizontalWritingMode = flexItem.style().isHorizontalWritingMode();
 
     auto contentSize = LayoutUnit { };
-    auto shouldUseFlexItemContentWidth = (isMainAxisParallelWithInlineAxis && isFlexItemHorizontalWritingMode) || (!isMainAxisParallelWithInlineAxis && !isFlexItemHorizontalWritingMode);
+    auto shouldUseFlexItemContentWidth =
+        (isMainAxisParallelWithInlineAxis && flexItem.writingMode().isHorizontal())
+        || (!isMainAxisParallelWithInlineAxis && flexItem.writingMode().isVertical());
     if (shouldUseFlexItemContentWidth)
         contentSize = formattingContext().integrationUtils().maxContentWidth(flexItemBox);
     else {
         formattingContext().integrationUtils().layoutWithFormattingContextForBox(flexItemBox);
-        auto isOrthogonal = flexContainer.style().isHorizontalWritingMode() != flexItem.style().isHorizontalWritingMode();
+        auto isOrthogonal = flexContainer.writingMode().isOrthogonal(flexItem.writingMode());
         contentSize = !isOrthogonal ? formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight() : formattingContext().geometryForFlexItem(flexItemBox).contentBoxWidth();
     }
 
@@ -168,10 +170,11 @@ LayoutUnit FlexFormattingUtils::usedSizeInCrossAxis(const LogicalFlexItem& flexI
     auto& flexContainer = formattingContext().root();
     auto& flexItemBox = flexItem.layoutBox();
     auto isMainAxisParallelWithInlineAxis = this->isMainAxisParallelWithInlineAxis(flexContainer);
-    auto isFlexItemHorizontalWritingMode = flexItem.style().isHorizontalWritingMode();
 
     auto widtConstraintForLayout = isMainAxisParallelWithInlineAxis ? std::make_optional(maxAxisConstraint) : std::nullopt;
-    auto shouldUseFlexItemContentHeight = (isMainAxisParallelWithInlineAxis && isFlexItemHorizontalWritingMode) || (!isMainAxisParallelWithInlineAxis && !isFlexItemHorizontalWritingMode);
+    auto shouldUseFlexItemContentHeight =
+        (isMainAxisParallelWithInlineAxis && flexItem.writingMode().isHorizontal())
+        || (!isMainAxisParallelWithInlineAxis && flexItem.writingMode().isVertical());
     formattingContext().integrationUtils().layoutWithFormattingContextForBox(downcast<ElementBox>(flexItemBox), widtConstraintForLayout);
     auto crossSize = shouldUseFlexItemContentHeight ? formattingContext().geometryForFlexItem(flexItemBox).contentBoxHeight() : formattingContext().geometryForFlexItem(flexItemBox).contentBoxWidth();
     if (!flexItem.isContentBoxBased())

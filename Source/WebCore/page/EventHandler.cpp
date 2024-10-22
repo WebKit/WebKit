@@ -1566,7 +1566,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
 
     auto renderer = node->renderer();
     auto* style = renderer ? &renderer->style() : nullptr;
-    bool horizontalText = !style || style->isHorizontalWritingMode();
+    bool horizontalText = !style || style->writingMode().isHorizontal();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
 
 #if ENABLE(CURSOR_VISIBILITY)

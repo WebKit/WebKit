@@ -145,7 +145,7 @@ TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
     stream << "selection geometry";
 
     stream.dumpProperty("quad", rect.quad());
-    stream.dumpProperty("direction", isLeftToRightDirection(rect.direction()) ? "ltr" : "rtl");
+    stream.dumpProperty("direction", (rect.direction() == TextDirection::LTR) ? "ltr" : "rtl");
 
     stream.dumpProperty("min-x", rect.minX());
     stream.dumpProperty("max-x", rect.maxX());

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 
 namespace WTF {
 class TextStream;

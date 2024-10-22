@@ -2431,7 +2431,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
 
     auto* document = frame->document();
-    bool isHorizontal = !document || !document->renderView() || document->renderView()->style().isHorizontalWritingMode();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->writingMode().isHorizontal();
 
     float pageLogicalWidth = isHorizontal ? pageWidth : pageHeight;
     float pageLogicalHeight = isHorizontal ? pageHeight : pageWidth;
@@ -2467,7 +2467,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return NO;
 
     auto* document = frame->document();
-    bool isHorizontal = !document || !document->renderView() || document->renderView()->style().isHorizontalWritingMode();
+    bool isHorizontal = !document || !document->renderView() || document->renderView()->writingMode().isHorizontal();
 
     float pageLogicalWidth = isHorizontal ? pageSize.width : pageSize.height;
     float pageLogicalHeight = isHorizontal ? pageSize.height : pageSize.width;
@@ -3333,7 +3333,7 @@ IGNORE_WARNINGS_END
         if (minPageLogicalWidth > 0.0) {
             WebCore::FloatSize pageSize(minPageLogicalWidth, minPageLogicalHeight);
             WebCore::FloatSize originalPageSize(originalPageWidth, originalPageHeight);
-            if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->style().isHorizontalWritingMode()) {
+            if (coreFrame->document() && coreFrame->document()->renderView() && !coreFrame->document()->renderView()->writingMode().isHorizontal()) {
                 pageSize = WebCore::FloatSize(minPageLogicalHeight, minPageLogicalWidth);
                 originalPageSize = WebCore::FloatSize(originalPageHeight, originalPageWidth);
             }
@@ -4779,7 +4779,7 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
     if (coreFrame) {
         auto* document = coreFrame->document();
         if (document && document->renderView())
-            useViewWidth = document->renderView()->style().isHorizontalWritingMode();
+            useViewWidth = document->renderView()->writingMode().isHorizontal();
     }
 
     float viewLogicalWidth = useViewWidth ? NSWidth([self bounds]) : NSHeight([self bounds]);

@@ -80,21 +80,21 @@ static Path createRightArrowPath()
 
 RenderDetailsMarker::Orientation RenderDetailsMarker::orientation() const
 {
-    switch (style().blockFlowDirection()) {
+    switch (writingMode().blockDirection()) {
     case FlowDirection::TopToBottom:
-        if (style().isLeftToRightDirection())
+        if (writingMode().isInlineLeftToRight())
             return isOpen() ? Down : Right;
         return isOpen() ? Down : Left;
     case FlowDirection::RightToLeft:
-        if (style().isLeftToRightDirection())
+        if (writingMode().isInlineTopToBottom())
             return isOpen() ? Left : Down;
         return isOpen() ? Left : Up;
     case FlowDirection::LeftToRight:
-        if (style().isLeftToRightDirection())
+        if (writingMode().isInlineTopToBottom())
             return isOpen() ? Right : Down;
         return isOpen() ? Right : Up;
     case FlowDirection::BottomToTop:
-        if (style().isLeftToRightDirection())
+        if (writingMode().isInlineLeftToRight())
             return isOpen() ? Up : Right;
         return isOpen() ? Up : Left;
     }

@@ -716,9 +716,9 @@ inline TextAlignMode BuilderConverter::convertTextAlign(const BuilderState& buil
         if (element && element == builderState.document().documentElement())
             return TextAlignMode::Start;
         if (parentStyle.textAlign() == TextAlignMode::Start)
-            return parentStyle.isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
+            return parentStyle.writingMode().isBidiLTR() ? TextAlignMode::Left : TextAlignMode::Right;
         if (parentStyle.textAlign() == TextAlignMode::End)
-            return parentStyle.isLeftToRightDirection() ? TextAlignMode::Right : TextAlignMode::Left;
+            return parentStyle.writingMode().isBidiLTR() ? TextAlignMode::Right : TextAlignMode::Left;
 
         return parentStyle.textAlign();
     }
@@ -736,9 +736,9 @@ inline TextAlignLast BuilderConverter::convertTextAlignLast(const BuilderState& 
 
     auto& parentStyle = builderState.parentStyle();
     if (parentStyle.textAlignLast() == TextAlignLast::Start)
-        return parentStyle.isLeftToRightDirection() ? TextAlignLast::Left : TextAlignLast::Right;
+        return parentStyle.writingMode().isBidiLTR() ? TextAlignLast::Left : TextAlignLast::Right;
     if (parentStyle.textAlignLast() == TextAlignLast::End)
-        return parentStyle.isLeftToRightDirection() ? TextAlignLast::Right : TextAlignLast::Left;
+        return parentStyle.writingMode().isBidiLTR() ? TextAlignLast::Right : TextAlignLast::Left;
     return parentStyle.textAlignLast();
 }
 

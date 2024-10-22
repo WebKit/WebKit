@@ -342,7 +342,7 @@ TextDirection directionOfEnclosingBlock(const Position& position)
     auto renderer = block->renderer();
     if (!renderer)
         return TextDirection::LTR;
-    return renderer->style().direction();
+    return renderer->writingMode().bidiDirection();
 }
 
 // This method is used to create positions in the DOM. It returns the maximum valid offset

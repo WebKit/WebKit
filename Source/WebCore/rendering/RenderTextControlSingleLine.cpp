@@ -478,7 +478,7 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
 {
     auto* layer = innerTextElement()->renderer()->layer();
     auto* scrollableArea = layer ? layer->scrollableArea() : nullptr;
-    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, style().isHorizontalWritingMode(), style().isFlippedBlocksWritingMode()), granularity, stepCount))
+    if (scrollableArea && scrollableArea->scroll(logicalToPhysical(direction, writingMode().isHorizontal(), writingMode().isBlockFlipped()), granularity, stepCount))
         return true;
     return RenderBlockFlow::logicalScroll(direction, granularity, stepCount, stopElement);
 }

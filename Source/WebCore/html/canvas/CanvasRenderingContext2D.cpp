@@ -224,7 +224,7 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
         *computedStyle = style;
     switch (direction) {
     case Direction::Inherit:
-        return style ? style->direction() : TextDirection::LTR;
+        return style ? style->writingMode().computedTextDirection() : TextDirection::LTR;
     case Direction::Rtl:
         return TextDirection::RTL;
     case Direction::Ltr:

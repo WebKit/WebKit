@@ -128,7 +128,7 @@ LayoutUnit MathOperator::stretchSize() const
 
 bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
-    glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
+    glyph = style.fontCascade().glyphDataForCharacter(character, style.writingMode().isBidiRTL());
     return glyph.font && glyph.font == &style.fontCascade().primaryFont();
 }
 
@@ -700,7 +700,7 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
 
     // For a radical character, we may need some scale transform to stretch it vertically or mirror it.
     if (m_baseCharacter == kRadicalOperator) {
-        float radicalHorizontalScale = style.isLeftToRightDirection() ? 1 : -1;
+        float radicalHorizontalScale = style.writingMode().isBidiLTR() ? 1 : -1;
         if (radicalHorizontalScale == -1 || m_radicalVerticalScale > 1) {
             LayoutPoint scaleOrigin = paintOffset;
             scaleOrigin.move(m_width / 2, 0_lu);

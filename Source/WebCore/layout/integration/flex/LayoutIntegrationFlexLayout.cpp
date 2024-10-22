@@ -138,10 +138,10 @@ void FlexLayout::layout()
     auto relayoutFlexItems = [&] {
         // Flex items need to be laid out now with their final size (and through setOverridingLogicalWidth/Height)
         // Note that they may re-size themselves.
-        auto flexContainerIsHorizontal = flexBox().style().isHorizontalWritingMode();
+        auto flexContainerIsHorizontal = flexBox().writingMode().isHorizontal();
         for (auto& layoutBox : formattingContextBoxes(flexBox())) {
             auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
-            auto isOrthogonal = flexContainerIsHorizontal != renderer.style().isHorizontalWritingMode();
+            auto isOrthogonal = flexContainerIsHorizontal != renderer.writingMode().isHorizontal();
             auto borderBox = Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(layoutBox));
 
             renderer.setWidth(LayoutUnit { });
@@ -163,7 +163,7 @@ void FlexLayout::layout()
 
 void FlexLayout::updateRenderers()
 {
-    auto flexContainerIsHorizontal = flexBox().style().isHorizontalWritingMode();
+    auto flexContainerIsHorizontal = flexBox().writingMode().isHorizontal();
     for (auto& layoutBox : formattingContextBoxes(flexBox())) {
         auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
         auto& flexItemGeometry = layoutState().geometryForBox(layoutBox);

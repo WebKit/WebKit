@@ -486,7 +486,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
 
         bool isFixed = false;
         auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
-        bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !style().isVerticalWritingMode();
+        bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !writingMode().isVertical();
 
         rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
@@ -527,7 +527,7 @@ static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bo
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
             if (auto ellipsisRect = ellipsisRectForTextBox(textBox, 0, textRenderer.text().length())) {
-                if (textRenderer.style().isHorizontalWritingMode())
+                if (textRenderer.writingMode().isHorizontal())
                     boundaries.setWidth(ellipsisRect->maxX() - boundaries.x());
                 else
                     boundaries.setHeight(ellipsisRect->maxY() - boundaries.y());
@@ -738,7 +738,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
         auto previousRun = run->previousOnLineIgnoringLineBreak();
         if ((previousRun && previousRun->bidiLevel() == run->bidiLevel())
-            || run->renderer().containingBlock()->style().direction() == run->direction()) // FIXME: left on 12CBA
+            || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction()) // FIXME: left on 12CBA
             return createVisiblePositionForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
 
         if (previousRun && previousRun->bidiLevel() > run->bidiLevel()) {
@@ -769,7 +769,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
     auto nextRun = run->nextOnLineIgnoringLineBreak();
     if ((nextRun && nextRun->bidiLevel() == run->bidiLevel())
-        || run->renderer().containingBlock()->style().direction() == run->direction())
+        || run->renderer().containingBlock()->writingMode().bidiDirection() == run->direction())
         return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
 
     // offset is on the right edge
@@ -811,7 +811,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
 
     auto pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
     auto pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
-    bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
+    bool blocksAreFlipped = writingMode().isBlockFlipped();
 
     InlineIterator::TextBoxIterator lastRun;
     for (auto run = firstRun; run; run.traverseNextTextBox()) {
@@ -2099,7 +2099,7 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
 
     auto emphasisPosition = style.textEmphasisPosition();
     bool isAbove = !emphasisPosition.contains(TextEmphasisPosition::Under);
-    if (style.isVerticalWritingMode())
+    if (style.writingMode().isVerticalTypographic())
         isAbove = !emphasisPosition.contains(TextEmphasisPosition::Left);
 
     auto findRubyAnnotation = [&]() -> RenderBlockFlow* {

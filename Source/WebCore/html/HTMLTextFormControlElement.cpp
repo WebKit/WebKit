@@ -900,7 +900,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
 {
     // The inner block, if present, always has its direction set to LTR,
     // so we need to inherit the direction and unicode-bidi style from the element.
-    textBlockStyle.setDirection(parentStyle.direction());
+    textBlockStyle.setDirection(parentStyle.writingMode().computedTextDirection());
     textBlockStyle.setUnicodeBidi(parentStyle.unicodeBidi());
 
     if (auto innerText = innerTextElement()) {
@@ -914,7 +914,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
         textBlockStyle.setLogicalMinWidth(Length { caretWidth(), LengthType::Fixed });
 
 #if PLATFORM(IOS_FAMILY)
-    if (textBlockStyle.textSecurity() != TextSecurity::None && !textBlockStyle.isLeftToRightDirection()) {
+    if (textBlockStyle.textSecurity() != TextSecurity::None && textBlockStyle.writingMode().isBidiRTL()) {
         // Preserve the alignment but force the direction to LTR so that the last-typed, unmasked character
         // (which cannot have RTL directionality) will appear to the right of the masked characters. See <rdar://problem/7024375>.
         

@@ -543,7 +543,7 @@ void RenderMathMLToken::updateMathVariantGlyph()
         char32_t transformedCodePoint = mathVariant(codePoint.value(), mathvariant);
         if (transformedCodePoint != codePoint.value()) {
             m_mathVariantCodePoint = mathVariant(codePoint.value(), mathvariant);
-            m_mathVariantIsMirrored = !style().isLeftToRightDirection();
+            m_mathVariantIsMirrored = writingMode().isBidiRTL();
         }
     }
 }

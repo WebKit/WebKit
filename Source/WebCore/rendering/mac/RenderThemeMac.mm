@@ -691,7 +691,7 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
 
 bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style) const
 {
-    return !style.isHorizontalWritingMode();
+    return !style.writingMode().isHorizontal();
 }
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
@@ -705,7 +705,7 @@ bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
     // is in effect we treat it like the control is styled. Additionally, treat the control like it is styled when
     // using a vertical writing mode, since the AppKit control is not height resizable.
-    if (appearance == StyleAppearance::Menulist && (style.usedZoom() != 1.0f || !style.isHorizontalWritingMode()))
+    if (appearance == StyleAppearance::Menulist && (style.usedZoom() != 1.0f || !style.writingMode().isHorizontal()))
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
@@ -796,7 +796,7 @@ void RenderThemeMac::inflateRectForControlRenderer(const RenderObject& renderer,
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
     case StyleAppearance::Switch:
-        ThemeMac::inflateControlPaintRect(renderer.style().usedAppearance(), rect, renderer.style().usedZoom(), !renderer.style().isHorizontalWritingMode());
+        ThemeMac::inflateControlPaintRect(renderer.style().usedAppearance(), rect, renderer.style().usedZoom(), !renderer.writingMode().isHorizontal());
         break;
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().usedZoom();
@@ -995,7 +995,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.usedAppearance() == StyleAppearance::Menulist) {
-        const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
+        const int* padding = popupButtonPadding(controlSizeForFont(style), style.writingMode().isBidiRTL());
         return { static_cast<int>(padding[topPadding] * style.usedZoom()),
             static_cast<int>(padding[rightPadding] * style.usedZoom()),
             static_cast<int>(padding[bottomPadding] * style.usedZoom()),
@@ -1006,7 +1006,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
         float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.usedZoom());
         float leftPadding = styledPopupPaddingLeft * style.usedZoom();
-        if (style.direction() == TextDirection::RTL)
+        if (style.writingMode().isBidiRTL())
             std::swap(rightPadding, leftPadding);
         return { static_cast<int>(styledPopupPaddingTop * style.usedZoom()),
             static_cast<int>(rightPadding),
@@ -1144,7 +1144,7 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     int widthOffset = 0;
     int heightOffset = 0;
-    if (style.isHorizontalWritingMode())
+    if (style.writingMode().isHorizontal())
         widthOffset = emptyResultsOffset;
     else
         heightOffset = emptyResultsOffset;

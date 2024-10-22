@@ -457,7 +457,7 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            if (style().isLeftToRightDirection()) {
+            if (writingMode().isBidiLTR()) {
                 firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
                 for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
                 ASSERT(inlineBox);
@@ -478,7 +478,7 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
     if (!firstInlineBox || !lastInlineBox)
         return { };
 
-    if (style().isLeftToRightDirection()) {
+    if (writingMode().isBidiLTR()) {
         firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft();
         lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight();
     } else {
@@ -523,7 +523,7 @@ IntRect RenderInline::linesBoundingBox() const
                 logicalRightSide = curr->logicalRight();
         }
 
-        bool isHorizontal = style().isHorizontalWritingMode();
+        bool isHorizontal = writingMode().isHorizontal();
 
         float x = isHorizontal ? logicalLeftSide : firstLegacyInlineBox()->x();
         float y = isHorizontal ? firstLegacyInlineBox()->y() : logicalLeftSide;
@@ -565,7 +565,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     LayoutUnit logicalHeight = lastLegacyInlineBox()->logicalBottomVisualOverflow(lastRootBox.lineBottom()) - logicalTop;
 
     LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!style().isHorizontalWritingMode())
+    if (!writingMode().isHorizontal())
         rect = rect.transposedRect();
     return rect;
 }
@@ -728,7 +728,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
         offset -= toLayoutSize(box->scrollPosition());
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = (is<RenderBox>(container) && container.style().isFlippedBlocksWritingMode()) || is<RenderFragmentedFlow>(container);
+        *offsetDependsOnPoint = (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
 
     return offset;
 }
@@ -754,7 +754,7 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorCon
 
     if (mode.contains(ApplyContainerFlip)) {
         if (CheckedPtr box = dynamicDowncast<RenderBox>(*container)) {
-            if (container->style().isFlippedBlocksWritingMode()) {
+            if (container->writingMode().isBlockFlipped()) {
                 LayoutPoint centerPoint(transformState.mappedPoint());
                 transformState.move(box->flipForWritingMode(centerPoint) - centerPoint);
             }
@@ -878,13 +878,13 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
     // should locate itself as though it is a normal flow box in relation to its containing block.
     LayoutSize logicalOffset;
-    if (!child->style().hasStaticInlinePosition(style().isHorizontalWritingMode()))
+    if (!child->style().hasStaticInlinePosition(writingMode().isHorizontal()))
         logicalOffset.setWidth(inlinePosition);
 
-    if (!child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
+    if (!child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
         logicalOffset.setHeight(blockPosition);
 
-    return style().isHorizontalWritingMode() ? logicalOffset : logicalOffset.transposedSize();
+    return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
 }
 
 void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
@@ -965,7 +965,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto isHorizontalWritingMode = this->isHorizontalWritingMode();
     auto& containingBlock = *this->containingBlock();
-    auto isFlippedBlocksWritingMode = containingBlock.style().isFlippedBlocksWritingMode();
+    auto isFlipped = containingBlock.writingMode().isBlockFlipped();
     Vector<LayoutRect> rects;
     for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
         auto lineBox = box->lineBox();
@@ -976,7 +976,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (!isHorizontalWritingMode)
             enclosingVisualRect = enclosingVisualRect.transposedRect();
 
-        if (isFlippedBlocksWritingMode)
+        if (isFlipped)
             containingBlock.flipForWritingMode(enclosingVisualRect);
 
         rects.append(LayoutRect { enclosingVisualRect });

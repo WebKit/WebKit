@@ -64,7 +64,7 @@ BorderShape BorderShape::shapeForBorderRect(const RenderStyle& style, const Layo
 
 BorderShape BorderShape::shapeForBorderRect(const RenderStyle& style, const LayoutRect& borderRect, const RectEdges<LayoutUnit>& overrideBorderWidths, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
-    bool isHorizontal = style.isHorizontalWritingMode();
+    bool isHorizontal = style.writingMode().isHorizontal();
 
     // top, right, bottom, left.
     auto usedBorderWidths = RectEdges<LayoutUnit> {

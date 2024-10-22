@@ -87,7 +87,7 @@ LayoutUnit RenderMathMLBlock::mathAxisHeight() const
 
 LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth) const
 {
-    if (style().direction() == TextDirection::RTL)
+    if (writingMode().isBidiRTL())
         return logicalWidth() - boxWidth - horizontalOffset;
 
     return horizontalOffset;
@@ -184,7 +184,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
         horizontalOffset += child->marginStart();
 
         LayoutUnit childHorizontalExtent = child->width();
-        LayoutPoint childLocation(style().isLeftToRightDirection() ? horizontalOffset : width() - horizontalOffset - childHorizontalExtent,
+        LayoutPoint childLocation(writingMode().isBidiLTR() ? horizontalOffset : width() - horizontalOffset - childHorizontalExtent,
             verticalOffset + child->marginBefore());
 
         child->setLocation(childLocation);

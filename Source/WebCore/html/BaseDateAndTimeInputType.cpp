@@ -615,7 +615,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     parameters.currentValue = element.value();
 
     auto* computedStyle = element.computedStyle();
-    parameters.isAnchorElementRTL = computedStyle->direction() == TextDirection::RTL;
+    parameters.isAnchorElementRTL = computedStyle->writingMode().computedTextDirection() == TextDirection::RTL;
     parameters.useDarkAppearance = document.useDarkAppearance(computedStyle);
     auto date = valueOrDefault(parseToDateComponents(element.value()));
     parameters.hasSecondField = shouldHaveSecondField(date);

@@ -273,7 +273,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
         if (!isExposed(cssProperty, &document.settings()))
             cssProperty = CSSPropertyInvalid;
-        auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
+        auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, WritingMode());
         if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty)) {
             if (isDirectionAwareShorthand(cssProperty))
                 logicalShorthands.append(inputProperty);
@@ -1895,8 +1895,7 @@ std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyf
         if (!previousUnanimatedStyle)
             return false;
 
-        if (previousUnanimatedStyle->direction() == unanimatedStyle.direction()
-            && previousUnanimatedStyle->writingMode() == unanimatedStyle.writingMode())
+        if (previousUnanimatedStyle->writingMode() == unanimatedStyle.writingMode())
             return false;
 
         if (!m_blendingKeyframes.isEmpty())

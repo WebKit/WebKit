@@ -51,7 +51,7 @@ static RubyPosition rubyPosition(const Box& rubyBaseLayoutBox)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
     auto computedRubyPosition = rubyBaseLayoutBox.style().rubyPosition();
-    if (rubyBaseLayoutBox.style().isHorizontalWritingMode())
+    if (!rubyBaseLayoutBox.writingMode().isVerticalTypographic())
         return computedRubyPosition;
     // inter-character: If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
     return rubyBaseLayoutBox.style().isInterCharacterRubyPosition() ? RubyPosition::Over : computedRubyPosition;
@@ -60,11 +60,11 @@ static RubyPosition rubyPosition(const Box& rubyBaseLayoutBox)
 static inline InlineRect annotationMarginBoxVisualRect(const Box& annotationBox, InlineLayoutUnit lineHeight, InlineFormattingContext& inlineFormattingContext)
 {
     auto marginBoxLogicalRect = InlineRect { BoxGeometry::marginBoxRect(inlineFormattingContext.geometryForBox(annotationBox)) };
-    auto& rootStyle = inlineFormattingContext.root().style();
-    if (rootStyle.isHorizontalWritingMode())
+    auto writingMode = inlineFormattingContext.root().writingMode();
+    if (writingMode.isHorizontal())
         return marginBoxLogicalRect;
     auto visualTopLeft = marginBoxLogicalRect.topLeft().transposedPoint();
-    if (rootStyle.isFlippedBlocksWritingMode())
+    if (writingMode.isBlockFlipped())
         return InlineRect { visualTopLeft, marginBoxLogicalRect.size().transposedSize() };
     visualTopLeft.move(lineHeight - marginBoxLogicalRect.height(), { });
     return InlineRect { visualTopLeft, marginBoxLogicalRect.size().transposedSize() };
@@ -506,7 +506,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
         ASSERT_NOT_REACHED();
         return { };
     }
-    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = inlineFormattingContext.root().writingMode().isHorizontal();
     auto baseContentStart = baseContentIndex(rubyBaseStart, boxes);
     if (baseContentStart >= boxes.size()) {
         ASSERT_NOT_REACHED();
@@ -551,7 +551,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
     if (!rubyBaseRange || rubyBaseRange.distance() == 1 || rubyBaseRange.end() == boxes.size())
         return { };
 
-    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = inlineFormattingContext.root().writingMode().isHorizontal();
     // FIXME: Usually the last content box is visually the rightmost, but negative margin may override it.
     // FIXME: Currently justified content always expands producing 0 value for gapBetweenBaseEndAndContent.
     auto rubyBaseContentEnd = rubyBaseRange.end() - 1;
@@ -593,7 +593,7 @@ bool RubyFormattingContext::hasInterlinearAnnotation(const Box& rubyBaseLayoutBo
 bool RubyFormattingContext::hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
-    if (!rubyBaseLayoutBox.style().isHorizontalWritingMode()) {
+    if (!rubyBaseLayoutBox.writingMode().isHorizontal()) {
         // If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
         return false;
     }
@@ -609,7 +609,7 @@ void RubyFormattingContext::applyRubyOverhang(InlineFormattingContext& parentFor
     if (interlinearRubyColumnRangeList.isEmpty())
         return;
 
-    auto isHorizontalWritingMode = parentFormattingContext.root().style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = parentFormattingContext.root().writingMode().isHorizontal();
     for (auto startEndPair : interlinearRubyColumnRangeList) {
         ASSERT(startEndPair);
         if (startEndPair.distance() == 1)

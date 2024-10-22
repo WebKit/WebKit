@@ -331,7 +331,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     // the previous line left off.
     LayoutUnit logicalOffsetOnLine;
     LayoutUnit totalLogicalWidth;
-    if (renderer().style().direction() == TextDirection::LTR) {
+    if (renderer().writingMode().isBidiLTR()) {
         for (auto box = m_inlineBox.previousInlineBox(); box; box.traversePreviousInlineBox())
             logicalOffsetOnLine += box->logicalWidth();
         totalLogicalWidth = logicalOffsetOnLine;

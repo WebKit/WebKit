@@ -333,7 +333,7 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) cons
     auto padding = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
-        if (style.direction() == TextDirection::RTL)
+        if (style.writingMode().isBidiRTL())
             return { 0, 0, 0, static_cast<int>(padding + style.borderTopWidth()) };
         return { 0, static_cast<int>(padding + style.borderTopWidth()), 0, 0 };
     }
@@ -372,7 +372,7 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     auto borderRadius = LengthSize { { minDimension / 2, LengthType::Fixed }, { boxLogicalHeight / 2, LengthType::Fixed } };
-    if (!style.isHorizontalWritingMode())
+    if (!style.writingMode().isHorizontal())
         borderRadius = { borderRadius.height, borderRadius.width };
     style.setBorderRadius(WTFMove(borderRadius));
 }
@@ -385,7 +385,7 @@ static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& e
     int pixels = emSize->resolveAsLength<int>({ style, document.renderStyle(), nullptr, document.renderView() });
 
     auto paddingBox = LengthBox(0, pixels, 0, pixels);
-    if (!style.isHorizontalWritingMode())
+    if (!style.writingMode().isHorizontal())
         paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
 
     style.setPaddingBox(WTFMove(paddingBox));
@@ -536,7 +536,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
-    bool isHorizontalWritingMode = style.isHorizontalWritingMode();
+    bool isHorizontalWritingMode = style.writingMode().isHorizontal();
     auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
 
     FloatPoint glyphOrigin;
@@ -643,7 +643,7 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
         float height = trackClip.height();
         trackClip.setHeight(height * valueRatio);
 
-        if (box.style().isHorizontalWritingMode() || !box.style().isLeftToRightDirection())
+        if (box.writingMode().isHorizontal() || !box.style().isLeftToRightDirection())
             trackClip.setY(trackClip.y() + height - trackClip.height());
     }
 
@@ -720,7 +720,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     GraphicsContextStateSaver stateSaver(context);
 
     auto styleColorOptions = renderer.styleColorOptions();
-    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     constexpr auto barBlockSize = 4.0f;
 
@@ -905,7 +905,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     int pixels = emSize->resolveAsLength<int>({ style, nullptr, nullptr, nullptr });
 
     auto paddingBox = LengthBox(0, pixels, 0, pixels);
-    if (!style.isHorizontalWritingMode())
+    if (!style.writingMode().isHorizontal())
         paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
 
     style.setPaddingBox(WTFMove(paddingBox));
@@ -1624,7 +1624,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
     GraphicsContextStateSaver stateSaver(context);
 
     auto styleColorOptions = renderer.styleColorOptions();
-    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
+    auto isHorizontalWritingMode = renderer.writingMode().isHorizontal();
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
@@ -1751,7 +1751,7 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     auto deviceScaleFactor = box.document().deviceScaleFactor();
     auto styleColorOptions = box.styleColorOptions();
 
-    bool isReversedInlineDirection = (!isHorizontal && box.style().isHorizontalWritingMode()) || !box.style().isLeftToRightDirection();
+    bool isReversedInlineDirection = (!isHorizontal && box.writingMode().isHorizontal()) || !box.style().isLeftToRightDirection();
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input->listOptionValueAsDouble(optionElement)) {
             auto tickFraction = (*optionValue - min) / (max - min);

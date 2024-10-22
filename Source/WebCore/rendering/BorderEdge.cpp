@@ -48,7 +48,7 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
 
 BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, bool setColorsToBlack, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
-    bool horizontal = style.isHorizontalWritingMode();
+    bool horizontal = style.writingMode().isHorizontal();
 
     auto constructBorderEdge = [&](float width, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : style.visitedDependentColorWithColorFilter(borderColorProperty);

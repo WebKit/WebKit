@@ -290,7 +290,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     auto& style = m_state.style();
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.direction(), style.writingMode());
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.writingMode());
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
@@ -346,7 +346,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (auto* property = rollbackCascade->lastPropertyResolvingLogicalPropertyPair(id, style.direction(), style.writingMode())) {
+            } else if (auto* property = rollbackCascade->lastPropertyResolvingLogicalPropertyPair(id, style.writingMode())) {
                 applyRollbackCascadeProperty(*property, linkMatchMask);
                 return;
             }

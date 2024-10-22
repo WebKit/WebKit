@@ -314,7 +314,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
 {
     LayoutRepainter repainter(*this);
     {
-        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
         GridLayoutState gridLayoutState;
 
@@ -447,7 +447,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
 {
     LayoutRepainter repainter(*this);
     {
-        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
         GridLayoutState gridLayoutState;
 
         preparePaginationBeforeBlockLayout(relayoutChildren);
@@ -1995,38 +1995,20 @@ LayoutUnit RenderGrid::rowAxisBaselineOffsetForGridItem(const RenderBox& gridIte
 
 GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& gridItem) const
 {
-    bool hasSameWritingMode = gridItem.style().writingMode() == style().writingMode();
-    bool gridItemIsLTR = gridItem.style().isLeftToRightDirection();
     if (gridItem.isOutOfFlowPositioned() && !hasStaticPositionForGridItem(gridItem, GridTrackSizingDirection::ForRows))
         return GridAxisPosition::GridAxisStart;
 
+    bool hasSameDirection = isHorizontalWritingMode()
+        ? writingMode().isBlockTopToBottom() == gridItem.writingMode().isAnyTopToBottom()
+        : writingMode().isBlockLeftToRight() == gridItem.writingMode().isAnyLeftToRight();
+
     switch (const auto gridItemAlignSelf = alignSelfForGridItem(gridItem).position()) {
     case ItemPosition::SelfStart:
-        // FIXME: Should we implement this logic in a generic utility function ?
-        // Aligns the alignment subject to be flush with the edge of the alignment container
-        // corresponding to the alignment subject's 'start' side in the column axis.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
-            // If orthogonal writing-modes, self-start will be based on the grid item's inline-axis
-            // direction (inline-start), because it's the one parallel to the column axis.
-            if (style().isFlippedBlocksWritingMode())
-                return gridItemIsLTR ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
-            return gridItemIsLTR ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
-        }
-        // self-start is based on the grid item's block-flow direction. That's why we need to check against the grid container's block-flow direction.
-        return hasSameWritingMode ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
+        // self-start is based on the grid item's block-flow direction.
+        return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::SelfEnd:
-        // FIXME: Should we implement this logic in a generic utility function ?
-        // Aligns the alignment subject to be flush with the edge of the alignment container
-        // corresponding to the alignment subject's 'end' side in the column axis.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
-            // If orthogonal writing-modes, self-end will be based on the grid item's inline-axis
-            // direction, (inline-end) because it's the one parallel to the column axis.
-            if (style().isFlippedBlocksWritingMode())
-                return gridItemIsLTR ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
-            return gridItemIsLTR ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
-        }
-        // self-end is based on the grid item's block-flow direction. That's why we need to check against the grid container's block-flow direction.
-        return hasSameWritingMode ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
+        // self-end is based on the grid item's block-flow direction.
+        return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Left:
         // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
         // The alignment axis (column axis) is always orthogonal to the inline axis, hence this value behaves as 'start'.
@@ -2051,8 +2033,8 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
     case ItemPosition::LastBaseline: {
         auto fallbackAlignment = [&] {
             if (gridItemAlignSelf == ItemPosition::Baseline)
-                return hasSameWritingMode ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
-            return hasSameWritingMode ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
+                return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
+            return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
         };
         if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem))
             return gridItemAlignSelf == ItemPosition::Baseline ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
@@ -2070,46 +2052,28 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
 
 GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridItem) const
 {
-    bool hasSameDirection = gridItem.style().direction() == style().direction();
-    bool gridIsLTR = style().isLeftToRightDirection();
     if (gridItem.isOutOfFlowPositioned() && !hasStaticPositionForGridItem(gridItem, GridTrackSizingDirection::ForColumns))
         return GridAxisPosition::GridAxisStart;
 
+    bool hasSameDirection = isHorizontalWritingMode()
+        ? writingMode().isInlineLeftToRight() == gridItem.writingMode().isAnyLeftToRight()
+        : writingMode().isInlineTopToBottom() == gridItem.writingMode().isAnyTopToBottom();
+
     switch (justifySelfForGridItem(gridItem).position()) {
     case ItemPosition::SelfStart:
-        // FIXME: Should we implement this logic in a generic utility function ?
-        // Aligns the alignment subject to be flush with the edge of the alignment container
-        // corresponding to the alignment subject's 'start' side in the row axis.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
-            // If orthogonal writing-modes, self-start will be based on the grid item's block-axis
-            // direction, because it's the one parallel to the row axis.
-            if (gridItem.style().isFlippedBlocksWritingMode())
-                return gridIsLTR ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
-            return gridIsLTR ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
-        }
-        // self-start is based on the grid item's inline-flow direction. That's why we need to check against the grid container's direction.
+        // self-start is based on the grid item's inline-flow direction.
         return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::SelfEnd:
-        // FIXME: Should we implement this logic in a generic utility function ?
-        // Aligns the alignment subject to be flush with the edge of the alignment container
-        // corresponding to the alignment subject's 'end' side in the row axis.
-        if (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)) {
-            // If orthogonal writing-modes, self-end will be based on the grid item's block-axis
-            // direction, because it's the one parallel to the row axis.
-            if (gridItem.style().isFlippedBlocksWritingMode())
-                return gridIsLTR ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
-            return gridIsLTR ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
-        }
-        // self-end is based on the grid item's inline-flow direction. That's why we need to check against the grid container's direction.
+        // self-end is based on the grid item's inline-flow direction.
         return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Left:
         // Aligns the alignment subject to be flush with the alignment container's 'line-left' edge.
         // We want the physical 'left' side, so we have to take account, container's inline-flow direction.
-        return gridIsLTR ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
+        return writingMode().isBidiLTR() ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
     case ItemPosition::Right:
         // Aligns the alignment subject to be flush with the alignment container's 'line-right' edge.
         // We want the physical 'right' side, so we have to take account, container's inline-flow direction.
-        return gridIsLTR ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
+        return writingMode().isBidiLTR() ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
     case ItemPosition::Center:
         return GridAxisPosition::GridAxisCenter;
     case ItemPosition::FlexStart: // Only used in flex layout, otherwise equivalent to 'start'.
@@ -2283,7 +2247,7 @@ LayoutUnit RenderGrid::logicalOffsetForOutOfFlowGridItem(const RenderBox& gridIt
     LayoutUnit gridBorder = isRowAxis ? borderLogicalLeft() : borderBefore();
     LayoutUnit gridItemMargin = isRowAxis ? gridItem.marginLogicalLeft(&style()) : gridItem.marginBefore(&style());
     LayoutUnit offset = gridItemPosition - gridBorder - gridItemMargin;
-    if (!isRowAxis || style().isLeftToRightDirection())
+    if (!isRowAxis || writingMode().isLogicalLeftInlineStart())
         return offset;
 
     LayoutUnit gridItemBreadth = isFlowAwareRowAxis ? gridItem.logicalWidth() + gridItem.marginLogicalWidth() : gridItem.logicalHeight() + gridItem.marginLogicalHeight();
@@ -2406,12 +2370,12 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Gri
     switch (usedContentPosition) {
     case ContentPosition::Left:
         ASSERT(isRowAxis);
-        if (!style().isLeftToRightDirection())
+        if (!writingMode().isBidiLTR())
             return { availableFreeSpace, 0_lu };
         return { };
     case ContentPosition::Right:
         ASSERT(isRowAxis);
-        if (style().isLeftToRightDirection())
+        if (writingMode().isBidiLTR())
             return { availableFreeSpace, 0_lu };
         return { };
     case ContentPosition::Center:
@@ -2437,7 +2401,7 @@ LayoutOptionalOutsets RenderGrid::allowedLayoutOverflow() const
 {
     LayoutOptionalOutsets allowance = RenderBox::allowedLayoutOverflow();
     if (m_offsetBetweenColumns.positionOffset < 0)
-        allowance.setStart(-m_offsetBetweenColumns.positionOffset, style().writingMode(), style().direction());
+        allowance.setStart(-m_offsetBetweenColumns.positionOffset, writingMode());
 
     if (m_offsetBetweenRows.positionOffset < 0) {
         if (isHorizontalWritingMode())
@@ -2458,7 +2422,7 @@ LayoutUnit RenderGrid::translateRTLCoordinate(LayoutUnit coordinate) const
     // (see bug https://webkit.org/b/191857).
     // If we are in horizontal writing mode and RTL direction the scrollbar is painted on the left,
     // so we need to take into account when computing the position of the columns.
-    if (style().isHorizontalWritingMode())
+    if (writingMode().isHorizontal())
         width += scrollbarLogicalWidth();
 #endif
 
@@ -2492,7 +2456,7 @@ LayoutUnit RenderGrid::logicalOffsetForGridItem(const RenderBox& gridItem, GridT
     LayoutUnit rowAxisOffset = rowAxisOffsetForGridItem(gridItem);
     // We stored m_columnPositions's data ignoring the direction, hence we might need now
     // to translate positions from RTL to LTR, as it's more convenient for painting.
-    if (!style().isLeftToRightDirection())
+    if (writingMode().isInlineFlipped())
         rowAxisOffset = translateRTLCoordinate(rowAxisOffset) - (GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem) ? gridItem.logicalHeight()  : gridItem.logicalWidth());
     return rowAxisOffset;
 }
@@ -2659,7 +2623,7 @@ void RenderGrid::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFl
         return;
 
     // FIXME: We should handle RTL and other writing modes also.
-    if (style().direction() == TextDirection::LTR && isHorizontalWritingMode()) {
+    if (writingMode().isBidiLTR() && isHorizontalWritingMode()) {
         auto gridAreaSize = LayoutSize { m_columnPositions.last(), m_rowPositions.last() };
         gridAreaSize += { paddingEnd(), paddingAfter() };
         addLayoutOverflow({ { }, gridAreaSize });

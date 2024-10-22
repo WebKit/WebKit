@@ -75,7 +75,7 @@ public:
 
     bool hasLogicalGroupProperty(CSSPropertyID) const;
     const Property& logicalGroupProperty(CSSPropertyID) const;
-    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, TextDirection, WritingMode) const;
+    const Property* lastPropertyResolvingLogicalPropertyPair(CSSPropertyID, WritingMode) const;
 
     bool hasCustomProperty(const AtomString&) const;
     const Property& customProperty(const AtomString&) const;

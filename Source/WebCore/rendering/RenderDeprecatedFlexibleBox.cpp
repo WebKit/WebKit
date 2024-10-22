@@ -307,7 +307,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutRepainter repainter(*this);
     {
-        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
         resetLogicalHeightBeforeLayoutIfNeeded();
         preparePaginationBeforeBlockLayout(relayoutChildren);
@@ -482,7 +482,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         ASSERT(childIndex == childLayoutDeltas.size());
 
         if (!iterator.first() && hasLineIfEmpty())
-            setHeight(height() + lineHeight(true, style().isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+            setHeight(height() + lineHeight(true, writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
         setHeight(height() + toAdd);
 
@@ -503,7 +503,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                 childLayer->setStaticInlinePosition(xPos); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != yPos) {
                     childLayer->setStaticBlockPosition(yPos);
-                    if (child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
+                    if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
                         child->setChildNeedsLayout(MarkOnlyThis);
                 }
                 continue;
@@ -734,7 +734,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 childLayer->setStaticInlinePosition(borderAndPaddingStart()); // FIXME: Not right for regions.
                 if (childLayer->staticBlockPosition() != height()) {
                     childLayer->setStaticBlockPosition(height());
-                    if (child->style().hasStaticBlockPosition(style().isHorizontalWritingMode()))
+                    if (child->style().hasStaticBlockPosition(writingMode().isHorizontal()))
                         child->setChildNeedsLayout(MarkOnlyThis);
                 }
                 continue;
@@ -781,7 +781,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         yPos = height();
 
         if (!iterator.first() && hasLineIfEmpty())
-            setHeight(height() + lineHeight(true, style().isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+            setHeight(height() + lineHeight(true, writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
         setHeight(height() + toAdd);
 

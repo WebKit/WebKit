@@ -257,7 +257,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
         return String();
 
     if (CheckedPtr renderer = m_innerNonSharedNode->renderer())
-        dir = renderer->style().direction();
+        dir = renderer->writingMode().computedTextDirection();
     return marker->description();
 }
 
@@ -288,7 +288,7 @@ String HitTestResult::title(TextDirection& dir) const
             auto title = titleElement->title();
             if (!title.isNull()) {
                 if (auto renderer = titleElement->renderer())
-                    dir = renderer->style().direction();
+                    dir = renderer->writingMode().computedTextDirection();
                 return title;
             }
         }
@@ -307,7 +307,7 @@ String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
             if (block->style().textOverflow() == TextOverflow::Ellipsis) {
                 for (auto lineBox = InlineIterator::firstLineBoxFor(*block); lineBox; lineBox.traverseNext()) {
                     if (lineBox->hasEllipsis()) {
-                        dir = block->style().direction();
+                        dir = block->writingMode().computedTextDirection();
                         return element->innerText();
                     }
                 }

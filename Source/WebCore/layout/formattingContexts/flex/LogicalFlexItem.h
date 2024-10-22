@@ -85,6 +85,7 @@ public:
 
     const ElementBox& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
+    WritingMode writingMode() const { return style().writingMode(); }
 
 private:
     CheckedPtr<const ElementBox> m_layoutBox;

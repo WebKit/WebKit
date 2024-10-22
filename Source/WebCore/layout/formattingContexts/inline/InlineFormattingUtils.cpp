@@ -128,21 +128,18 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
 
 InlineRect InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode writingMode)
 {
-    switch (writingModeToBlockFlowDirection(writingMode)) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
     case FlowDirection::BottomToTop:
         return visualRect;
     case FlowDirection::LeftToRight:
-    case FlowDirection::RightToLeft: {
+    case FlowDirection::RightToLeft:
         // FIXME: While vertical-lr and vertical-rl modes do differ in the ordering direction of line boxes
         // in a block container (see: https://drafts.csswg.org/css-writing-modes/#block-flow)
         // we ignore it for now as RenderBlock takes care of it for us.
         return InlineRect { visualRect.left(), visualRect.top(), visualRect.height(), visualRect.width() };
     }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    ASSERT_NOT_REACHED();
     return visualRect;
 }
 
@@ -225,7 +222,7 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     if (horizontalAvailableSpace <= 0)
         return { };
 
-    auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.direction()) == TextDirection::LTR;
+    auto isLeftToRightDirection = inlineBaseDirectionOverride.value_or(rootStyle.writingMode().bidiDirection()) == TextDirection::LTR;
 
     auto computedHorizontalAlignment = [&] {
         auto textAlign = rootStyle.textAlign();
@@ -566,7 +563,7 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     // Normally we resolve visual -> logical values at pre-layout time, but emphasis values are not part of the general box geometry.
     auto hasAboveTextEmphasis = false;
     auto hasUnderTextEmphasis = false;
-    if (style.isVerticalWritingMode()) {
+    if (style.writingMode().isVerticalTypographic()) {
         hasAboveTextEmphasis = !emphasisPosition.contains(TextEmphasisPosition::Left);
         hasUnderTextEmphasis = !hasAboveTextEmphasis;
     } else {

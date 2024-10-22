@@ -23,7 +23,7 @@
 #define WidthIterator_h
 
 #include "GlyphBuffer.h"
-#include "TextDirection.h"
+#include "WritingMode.h"
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>

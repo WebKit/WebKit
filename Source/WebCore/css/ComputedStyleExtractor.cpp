@@ -2695,64 +2695,12 @@ static const RenderStyle& formattingContextRootStyle(const RenderBox& renderer)
 // Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
 static FlowRelativeDirection physicalToFlowRelativeDirection(const RenderBox& renderer, PhysicalDirection direction)
 {
-    auto& styleToUse = formattingContextRootStyle(renderer);
-    auto isHorizontalWritingMode = styleToUse.isHorizontalWritingMode();
-    auto isLeftToRightDirection = styleToUse.isLeftToRightDirection();
-    // vertical-rl and horizontal-bt writing modes
-    auto isFlippedBlocksWritingMode = styleToUse.isFlippedBlocksWritingMode();
-
-    switch (direction) {
-    case PhysicalDirection::Top:
-        if (isHorizontalWritingMode)
-            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
-        return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
-    case PhysicalDirection::Right:
-        if (isHorizontalWritingMode)
-            return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
-        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
-    case PhysicalDirection::Bottom:
-        if (isHorizontalWritingMode)
-            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
-        return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
-    case PhysicalDirection::Left:
-        if (isHorizontalWritingMode)
-            return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
-        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    return mapSidePhysicalToLogical(formattingContextRootStyle(renderer).writingMode(), direction);
 }
 
 static PhysicalDirection flowRelativeToPhysicalDirection(const RenderBox& renderer, FlowRelativeDirection direction)
 {
-    auto& styleToUse = formattingContextRootStyle(renderer);
-    auto isHorizontalWritingMode = styleToUse.isHorizontalWritingMode();
-    auto isLeftToRightDirection = styleToUse.isLeftToRightDirection();
-    // vertical-rl and horizontal-bt writing modes
-    auto isFlippedBlocksWritingMode = styleToUse.isFlippedBlocksWritingMode();
-
-    switch (direction) {
-    case FlowRelativeDirection::BlockStart:
-        if (isHorizontalWritingMode)
-            return !isFlippedBlocksWritingMode ? PhysicalDirection::Top : PhysicalDirection::Bottom;
-        return !isFlippedBlocksWritingMode ? PhysicalDirection::Left : PhysicalDirection::Right;
-    case FlowRelativeDirection::BlockEnd:
-        if (isHorizontalWritingMode)
-            return !isFlippedBlocksWritingMode ? PhysicalDirection::Bottom : PhysicalDirection::Top;
-        return !isFlippedBlocksWritingMode ? PhysicalDirection::Right : PhysicalDirection::Left;
-    case FlowRelativeDirection::InlineStart:
-        if (isHorizontalWritingMode)
-            return isLeftToRightDirection ? PhysicalDirection::Left : PhysicalDirection::Right;
-        return isLeftToRightDirection ? PhysicalDirection::Top : PhysicalDirection::Bottom;
-    case FlowRelativeDirection::InlineEnd:
-        if (isHorizontalWritingMode)
-            return isLeftToRightDirection ? PhysicalDirection::Right : PhysicalDirection::Left;
-        return isLeftToRightDirection ? PhysicalDirection::Bottom : PhysicalDirection::Top;
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    return mapSideLogicalToPhysical(formattingContextRootStyle(renderer).writingMode(), direction);
 }
 
 static MarginTrimType toMarginTrimType(const RenderBox& renderer, CSSPropertyID propertyID)
@@ -3477,7 +3425,7 @@ bool ComputedStyleExtractor::hasProperty(CSSPropertyID propertyID) const
 RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer, PropertyValueType valueType) const
 {
     auto& cssValuePool = CSSValuePool::singleton();
-    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
+    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.writingMode());
 
     ASSERT(isExposed(propertyID, m_element->document().settings()));
 
@@ -3774,7 +3722,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         auto direction = [&] {
             if (m_element == m_element->document().documentElement() && !style.hasExplicitlySetDirection())
                 return RenderStyle::initialDirection();
-            return style.direction();
+            return style.writingMode().computedTextDirection();
         }();
         return createConvertingToCSSValueID(direction);
     }
@@ -4636,7 +4584,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         auto writingMode = [&] {
             if (m_element == m_element->document().documentElement() && !style.hasExplicitlySetWritingMode())
                 return RenderStyle::initialWritingMode();
-            return style.writingMode();
+            return style.writingMode().computedWritingMode();
         }();
         return createConvertingToCSSValueID(writingMode);
     }
@@ -4647,9 +4595,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextCombineUpright:
         return createConvertingToCSSValueID(style.textCombine());
     case CSSPropertyWebkitTextOrientation:
-        return createConvertingToCSSValueID(style.textOrientation());
+        return createConvertingToCSSValueID(style.writingMode().computedTextOrientation());
     case CSSPropertyTextOrientation:
-        return createConvertingToCSSValueID(style.textOrientation());
+        return createConvertingToCSSValueID(style.writingMode().computedTextOrientation());
     case CSSPropertyWebkitLineBoxContain:
         return createLineBoxContainValue(style.lineBoxContain());
     case CSSPropertyContent:

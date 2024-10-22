@@ -661,7 +661,7 @@ static double lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis logicalA
     if (!style)
         return 0;
 
-    switch (mapLogicalAxisToPhysicalAxis(makeTextFlow(style->writingMode(), style->direction()), logicalAxis)) {
+    switch (mapAxisLogicalToPhysical(style->writingMode(), logicalAxis)) {
     case BoxAxis::Horizontal:
         return size.width();
 
@@ -946,13 +946,13 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
     }
 
     case CSSUnitType::CSS_CQI: {
-        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->isHorizontalWritingMode() ? CQ::Axis::Width : CQ::Axis::Height))
+        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->writingMode().isHorizontal() ? CQ::Axis::Width : CQ::Axis::Height))
             return *resolvedValue;
         return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVI, value);
     }
 
     case CSSUnitType::CSS_CQB: {
-        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width))
+        if (auto resolvedValue = resolveContainerUnit(conversionData.style()->writingMode().isHorizontal() ? CQ::Axis::Height : CQ::Axis::Width))
             return *resolvedValue;
         return computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_SVB, value);
     }

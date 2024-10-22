@@ -82,11 +82,11 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
         break;
     case TextAlignMode::Justify:
     case TextAlignMode::Start:
-        if (!currentStyle.isLeftToRightDirection())
+        if (!currentStyle.writingMode().isBidiLTR())
             alignment = AlignRight;
         break;
     case TextAlignMode::End:
-        if (currentStyle.isLeftToRightDirection())
+        if (currentStyle.writingMode().isBidiLTR())
             alignment = AlignRight;
         break;
     }
@@ -96,7 +96,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
 
     switch (alignment) {
     case AlignLeft:
-        if (currentStyle.isLeftToRightDirection())
+        if (currentStyle.writingMode().isBidiLTR())
             x += textIndentOffset;
         break;
     case AlignCenter:
@@ -108,13 +108,13 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
         break;
     case AlignRight:
         x = maxX - caretWidth();
-        if (!currentStyle.isLeftToRightDirection())
+        if (!currentStyle.writingMode().isBidiLTR())
             x -= textIndentOffset;
         break;
     }
     x = std::min(x, std::max<LayoutUnit>(maxX - caretWidth(), 0));
 
-    auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    auto lineHeight = renderer.lineHeight(true, currentStyle.writingMode().isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
     auto y = renderer.borderAndPaddingBefore() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
@@ -123,7 +123,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(logicalWidth);
 
-    return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
+    return currentStyle.writingMode().isHorizontal() ? rect : rect.transposedRect();
 }
 
 static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxIterator& lineBox, float logicalLeftPosition, CaretRectMode caretRectMode)
@@ -180,7 +180,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
         rect.shiftMaxXEdgeTo(lineRight);
 
-    return root.style().isHorizontalWritingMode() ? rect : rect.transposedRect();
+    return root.writingMode().isHorizontal() ? rect : rect.transposedRect();
 }
 
 static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)

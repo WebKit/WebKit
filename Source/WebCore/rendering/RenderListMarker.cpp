@@ -132,12 +132,12 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
     // We use u_charDirection to figure out if the marker text is RTL and assume the suffix matches the surrounding direction.
     String textForRun;
     if (m_textIsLeftToRightDirection) {
-        if (style().isLeftToRightDirection())
+        if (writingMode().isBidiLTR())
             textForRun = m_textWithSuffix;
         else
             textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
     } else {
-        if (!style().isLeftToRightDirection())
+        if (!writingMode().isBidiLTR())
             textForRun = reversed(m_textWithSuffix);
         else
             textForRun = makeString(reversed(StringView(m_textWithSuffix).left(m_textWithoutSuffixLength)), m_textWithSuffix.substring(m_textWithoutSuffixLength));
@@ -215,7 +215,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         return;
 
     GraphicsContextStateSaver stateSaver(context, false);
-    if (!style().isHorizontalWritingMode()) {
+    if (!writingMode().isHorizontal()) {
         markerRect.moveBy(-boxOrigin);
         markerRect = markerRect.transposedRect();
         markerRect.moveBy(FloatPoint(box.x(), box.y() - logicalHeight()));
@@ -226,7 +226,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 
     FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().metricsOfPrimaryFont().intAscent());
-    textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
+    textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), writingMode().isLogicalLeftInlineStart());
     context.drawText(style().fontCascade(), textRun(), textOrigin);
 }
 
@@ -250,7 +250,7 @@ void RenderListMarker::layout()
         blockOffset += ancestor->logicalTop();
 
     m_lineLogicalOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, 0_lu);
-    m_lineOffsetForListItem = style().isLeftToRightDirection() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, 0_lu);
+    m_lineOffsetForListItem = writingMode().isLogicalLeftInlineStart() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, 0_lu);
 
     if (isImage()) {
         updateMarginsAndContent();
@@ -329,7 +329,7 @@ void RenderListMarker::updateContent()
     case ListStyleType::Type::CounterStyle: {
         auto counter = counterStyle();
         ASSERT(counter);
-        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), makeTextFlow(style().writingMode(), style().direction())));
+        auto text = makeString(counter->prefix().text, counter->text(m_listItem->value(), writingMode()));
         m_textWithSuffix = makeString(text, counter->suffix().text);
         m_textWithoutSuffixLength = text.length();
         m_textIsLeftToRightDirection = isLeftToRightDirectionContent(text);
@@ -350,7 +350,7 @@ void RenderListMarker::computePreferredLogicalWidths()
 
     if (isImage()) {
         LayoutSize imageSize = LayoutSize(m_image->imageSize(this, style().usedZoom()));
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style().isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = writingMode().isHorizontal() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
         updateMargins();
         return;
@@ -452,7 +452,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
         relativeRect = FloatRect(0, 0, font.width(textRun()), font.metricsOfPrimaryFont().intHeight());
     }
 
-    if (!style().isHorizontalWritingMode()) {
+    if (!writingMode().isHorizontal()) {
         relativeRect = relativeRect.transposedRect();
         relativeRect.setX(width() - relativeRect.x() - relativeRect.width());
     }
