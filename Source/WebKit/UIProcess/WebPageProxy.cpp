@@ -1544,7 +1544,7 @@ void WebPageProxy::didAttachToRunningProcess()
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     ASSERT(!internals().xrSystem);
-    internals().xrSystem = makeUnique<PlatformXRSystem>(*this);
+    internals().xrSystem = PlatformXRSystem::create(*this);
 #endif
 }
 
@@ -8906,8 +8906,8 @@ PlatformXRSystem* WebPageProxy::xrSystem() const
 
 void WebPageProxy::restartXRSessionActivityOnProcessResumeIfNeeded()
 {
-    if (xrSystem() && xrSystem()->hasActiveSession())
-        xrSystem()->ensureImmersiveSessionActivity();
+    if (RefPtr xrSystem = internals().xrSystem; xrSystem && xrSystem->hasActiveSession())
+        xrSystem->ensureImmersiveSessionActivity();
 }
 #endif
 
@@ -10856,8 +10856,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_speechRecognitionPermissionManager = nullptr;
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
-    if (internals().xrSystem) {
-        internals().xrSystem->invalidate();
+    if (RefPtr xrSystem = internals().xrSystem) {
+        xrSystem->invalidate();
         internals().xrSystem = nullptr;
     }
 #endif

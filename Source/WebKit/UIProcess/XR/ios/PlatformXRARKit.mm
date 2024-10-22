@@ -145,8 +145,8 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
         },
         [&](Active&) {
             RELEASE_LOG_ERROR(XR, "ARKitCoordinator: an existing immersive session is active");
-            if (sessionEventClient)
-                sessionEventClient->sessionDidEnd(m_deviceIdentifier);
+            if (RefPtr protectedSessionEventClient = sessionEventClient.get())
+                protectedSessionEventClient->sessionDidEnd(m_deviceIdentifier);
         });
 }
 

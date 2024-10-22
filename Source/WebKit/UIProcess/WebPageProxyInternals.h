@@ -420,7 +420,7 @@ public:
 #endif
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
-    std::unique_ptr<PlatformXRSystem> xrSystem;
+    RefPtr<PlatformXRSystem> xrSystem;
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
