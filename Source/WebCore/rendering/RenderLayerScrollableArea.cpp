@@ -354,6 +354,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     }
 
     m_scrollPosition = newPosition;
+    m_layer.setSelfAndDescendantsNeedPositionUpdate();
 
     auto& renderer = m_layer.renderer();
     if (auto* element = renderer.element())
