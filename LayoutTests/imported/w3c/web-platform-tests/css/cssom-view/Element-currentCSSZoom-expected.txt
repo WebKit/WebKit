@@ -1,4 +1,4 @@
 
-PASS Element.currentCSSZoom basic test
-PASS Element.currentCSSZoom reacts to style changes
+FAIL Element.currentCSSZoom basic test assert_equals: Unzoomed content expected (number) 1 but got (undefined) undefined
+FAIL Element.currentCSSZoom reacts to style changes assert_equals: currentCSSZoom reacts to style changes expected (number) 2 but got (undefined) undefined
 

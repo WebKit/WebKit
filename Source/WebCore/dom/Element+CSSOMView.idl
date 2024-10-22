@@ -45,7 +45,6 @@ partial interface Element {
     readonly attribute long clientLeft;
     readonly attribute long clientWidth;
     readonly attribute long clientHeight;
-    readonly attribute double currentCSSZoom;
 
     // Non-standard: https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152.
     undefined scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
