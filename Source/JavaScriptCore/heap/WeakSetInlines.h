@@ -33,6 +33,7 @@ namespace JSC {
 inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)
 {
     CellContainer container = jsValue.asCell()->cellContainer();
+    ASSERT(container.vm().currentThreadIsHoldingAPILock());
     WeakSet& weakSet = container.weakSet();
     WeakBlock::FreeCell* allocator = weakSet.m_allocator;
     if (UNLIKELY(!allocator))
