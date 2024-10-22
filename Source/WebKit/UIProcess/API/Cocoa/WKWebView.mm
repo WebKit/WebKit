@@ -2284,7 +2284,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 #pragma mark - WKIntelligenceTextEffectCoordinatorDelegate conformance
 
-// FIXME: Give the `coordinator` parameters actual types.
+#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS)
 
 - (PlatformView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator
 {
@@ -2374,6 +2374,8 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         completion(previews.get());
     });
 }
+#endif
+
 #endif
 
 #pragma mark - WTTextViewDelegate invoking methods

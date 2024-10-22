@@ -25,7 +25,9 @@
 
 #import <Foundation/Foundation.h>
 
-#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
+#if !TARGET_OS_WATCH && !TARGET_OS_TV
+
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #else
 #import <AppKit/AppKit.h>
@@ -38,13 +40,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol WKIntelligenceTextEffectCoordinatorDelegate <NSObject>
 
-#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 - (UIView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator;
 #else
 - (NSView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator;
 #endif
 
-#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
+#if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 - (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion;
 #else
 - (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion;
@@ -61,3 +63,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
