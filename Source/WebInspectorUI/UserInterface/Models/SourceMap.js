@@ -121,6 +121,9 @@ WI.SourceMap = class SourceMap
         let startLine = undefined;
         let startColumn = undefined;
         for (let [lineNumber, columnNumber, url] of this._mappings) {
+            if (!url)
+                continue;
+
             blackboxedURLs[url] ??= !!WI.debuggerManager.blackboxDataForSourceCode(this._sourceMapResources.get(url));
 
             if (blackboxedURLs[url]) {
@@ -141,18 +144,45 @@ WI.SourceMap = class SourceMap
 
     _parseMappingPayload(mappingPayload)
     {
-        if (mappingPayload.sections)
-            this._parseSections(mappingPayload.sections);
-        else
-            this._parseMap(mappingPayload, 0, 0);
-    }
+        if (!mappingPayload || typeof mappingPayload !== "object")
+            throw this._invalidPropertyError(WI.unlocalizedString("json"));
 
-    _parseSections(sections)
-    {
-        for (var i = 0; i < sections.length; ++i) {
-            var section = sections[i];
-            this._parseMap(section.map, section.offset.line, section.offset.column);
-        }
+        if (mappingPayload.version !== 3)
+            throw this._invalidPropertyError(WI.unlocalizedString("version"));
+
+        if ("file" in mappingPayload && typeof mappingPayload.file !== "string")
+            throw this._invalidPropertyError(WI.unlocalizedString("file"));
+        // Currently `file` is unused, but check it anyways for conformance.
+
+        if (Array.isArray(mappingPayload.sections)) {
+            if ("mappings" in mappingPayload)
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            let lastLineNumber = -1;
+            let lastColumnNumber = -1;
+
+            for (let section of mappingPayload.sections) {
+                if (!section.offset || typeof section.offset !== "object")
+                    throw this._invalidPropertyError(WI.unlocalizedString("offset"));
+
+                if (!section.map || typeof section.map !== "object")
+                    throw this._invalidPropertyError(WI.unlocalizedString("map"));
+
+                let offsetLineNumber = section.offset.line;
+                if (!Number.isInteger(offsetLineNumber) || offsetLineNumber < 0 || offsetLineNumber < lastLineNumber)
+                    throw this._invalidPropertyError(WI.unlocalizedString("offset.line"));
+
+                let offsetColumnNumber = section.offset.column;
+                if (!Number.isInteger(offsetColumnNumber) || offsetColumnNumber < 0 || (offsetLineNumber === lastLineNumber && offsetColumnNumber <= lastColumnNumber))
+                    throw this._invalidPropertyError(WI.unlocalizedString("offset.column"));
+
+                this._parseMap(section.map, offsetLineNumber, offsetColumnNumber);
+
+                lastLineNumber = offsetLineNumber;
+                lastColumnNumber = offsetColumnNumber;
+            }
+        } else
+            this._parseMap(mappingPayload, 0, 0);
     }
 
     findEntry(lineNumber, columnNumber)
@@ -187,72 +217,127 @@ WI.SourceMap = class SourceMap
         return this._mappings[0];
     }
 
-    _parseMap(map, lineNumber, columnNumber)
+    _parseMap(map, offsetLineNumber, offsetColumnNumber)
     {
-        var sourceIndex = 0;
-        var sourceLineNumber = 0;
-        var sourceColumnNumber = 0;
-        var nameIndex = 0;
+        if (typeof map.mappings !== "string")
+            throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
 
-        let ignoreList = new Set(Array.isArray(map.ignoreList) ? map.ignoreList : []);
+        if (!Array.isArray(map.sources))
+            throw this._invalidPropertyError(WI.unlocalizedString("sources"));
+
+        if ("sourceRoot" in map && typeof map.sourceRoot !== "string")
+            throw this._invalidPropertyError(WI.unlocalizedString("sourceRoot"));
+        this._sourceRoot = map.sourceRoot || null;
+
+        if ("sourcesContent" in map && !Array.isArray(map.sourcesContent))
+            throw this._invalidPropertyError(WI.unlocalizedString("sourcesContent"));
+
+        if ("ignoreList" in map && (!Array.isArray(map.ignoreList) || map.ignoreList.some((index) => index !== null && (!Number.isInteger(index) || index < 0 || index >= map.sources.length))))
+            throw this._invalidPropertyError(WI.unlocalizedString("ignoreList"));
+        let ignoreList = new Set(map.ignoreList || []);
+
+        if ("names" in map && (!Array.isArray(map.names) || map.names.some((name) => typeof name !== "string")))
+            throw this._invalidPropertyError(WI.unlocalizedString("names"));
+        // Currently `names` is unused, but check it anyways for conformance.
 
         var sources = [];
-        var originalToCanonicalURLMap = {};
         for (var i = 0; i < map.sources.length; ++i) {
-            var originalSourceURL = map.sources[i];
-            var href = originalSourceURL;
-            if (map.sourceRoot && href.charAt(0) !== "/")
-                href = map.sourceRoot.replace(/\/+$/, "") + "/" + href;
-            var url = absoluteURL(href, this._sourceMappingURL) || href;
-            originalToCanonicalURLMap[originalSourceURL] = url;
-            sources.push(url);
+            let source = map.sources[i];
+            if (source !== null && typeof source !== "string")
+                throw this._invalidPropertyError(WI.unlocalizedString("sources"));
 
-            let sourceMapResource = new WI.SourceMapResource(url, this, {
+            if (source) {
+                if (this._sourceRoot && source.charAt(0) !== "/")
+                    source = this._sourceRoot.replace(/\/+$/, "") + "/" + source;
+                source = absoluteURL(source, this._sourceMappingURL) || source;
+            }
+
+            sources.push(source);
+
+            let sourceMapResource = new WI.SourceMapResource(source, this, {
                 ignored: ignoreList.has(i),
             });
             console.assert(!this._sourceMapResources.has(sourceMapResource.url), sourceMapResource);
             this._sourceMapResources.set(sourceMapResource.url, sourceMapResource);
 
-            if (map.sourcesContent && map.sourcesContent[i])
-                this._sourceContentByURL[url] = map.sourcesContent[i];
+            if (map.sourcesContent) {
+                let sourceContent = map.sourcesContent[i];
+                if (sourceContent !== null && typeof sourceContent !== "string")
+                    throw this._invalidPropertyError(WI.unlocalizedString("sourcesContent"));
+
+                this._sourceContentByURL[sourceMapResource.url] = sourceContent;
+            }
         }
 
-        this._sourceRoot = map.sourceRoot || null;
-
         var stringCharIterator = new WI.SourceMap.StringCharIterator(map.mappings);
-        var sourceURL = sources[sourceIndex];
+        let originalLine = 0;
+        let originalColumn = 0;
+        let sourceIndex = 0;
+        let nameIndex = 0;
+        let generatedLine = offsetLineNumber;
+        let generatedColumn = offsetColumnNumber;
 
         while (true) {
             if (stringCharIterator.peek() === ",")
                 stringCharIterator.next();
             else {
                 while (stringCharIterator.peek() === ";") {
-                    lineNumber += 1;
-                    columnNumber = 0;
+                    ++generatedLine;
+                    generatedColumn = 0;
                     stringCharIterator.next();
                 }
                 if (!stringCharIterator.hasNext())
                     break;
             }
 
-            columnNumber += this._decodeVLQ(stringCharIterator);
-            if (this._isSeparator(stringCharIterator.peek())) {
-                this._mappings.push([lineNumber, columnNumber]);
+            let relativeGeneratedColumn = this._decodeVLQ(stringCharIterator);
+            if (relativeGeneratedColumn === WI.SourceMap.VLQ_AT_SEPARATOR)
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            generatedColumn += relativeGeneratedColumn;
+            if (generatedColumn < 0)
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            let relativeSourceIndex = this._decodeVLQ(stringCharIterator);
+            let relativeOriginalLine = this._decodeVLQ(stringCharIterator);
+            let relativeOriginalColumn = this._decodeVLQ(stringCharIterator);
+            if (relativeOriginalColumn === WI.SourceMap.VLQ_AT_SEPARATOR) {
+                if (relativeSourceIndex !== WI.SourceMap.VLQ_AT_SEPARATOR)
+                    throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+                console.assert(relativeOriginalLine === WI.SourceMap.VLQ_AT_SEPARATOR, relativeOriginalLine);
+                this._mappings.push([generatedLine, generatedColumn]);
                 continue;
             }
 
-            var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
-            if (sourceIndexDelta) {
-                sourceIndex += sourceIndexDelta;
-                sourceURL = sources[sourceIndex];
-            }
-            sourceLineNumber += this._decodeVLQ(stringCharIterator);
-            sourceColumnNumber += this._decodeVLQ(stringCharIterator);
-            if (!this._isSeparator(stringCharIterator.peek()))
-                nameIndex += this._decodeVLQ(stringCharIterator);
+            sourceIndex += relativeSourceIndex;
+            originalLine += relativeOriginalLine;
+            originalColumn += relativeOriginalColumn;
+            if (sourceIndex < 0 || sourceIndex >= sources.length || originalLine < 0 || originalColumn < 0)
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
 
-            this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
+            let relativeNameIndex = this._decodeVLQ(stringCharIterator);
+            if (relativeNameIndex !== WI.SourceMap.VLQ_AT_SEPARATOR) {
+                nameIndex += relativeNameIndex;
+                if (nameIndex < 0 || nameIndex > map.names.length)
+                    throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+                // Currently `names` is unused, but check it anyways for conformance.
+            }
+
+            if (stringCharIterator.hasNext() && !this._isSeparator(stringCharIterator.peek()))
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            this._mappings.push([generatedLine, generatedColumn, sources[sourceIndex], originalLine, originalColumn]);
         }
+
+        // Ensure ordering for binary search in `findEntry` in case there are negative offsets.
+        this._mappings.sort((a, b) => {
+            return a[0] - b[0] // generatedLine
+                || a[1] - b[1] // generatedColumn
+                || !a[2] - !b[2] // sourceURL (if present)
+                || (a[3] ?? 0) - (b[3] ?? 0) // originalLine (if present)
+                || (a[4] ?? 0) - (b[4] ?? 0); // originalColumn (if present)
+        });
 
         for (var i = 0; i < this._mappings.length; ++i) {
             var mapping = this._mappings[i];
@@ -275,24 +360,49 @@ WI.SourceMap = class SourceMap
 
     _decodeVLQ(stringCharIterator)
     {
-        // Read unsigned value.
-        var result = 0;
-        var shift = 0;
-        do {
-            var digit = WI.SourceMap._base64Map[stringCharIterator.next()];
-            result += (digit & WI.SourceMap.VLQ_BASE_MASK) << shift;
-            shift += WI.SourceMap.VLQ_BASE_SHIFT;
-        } while (digit & WI.SourceMap.VLQ_CONTINUATION_MASK);
+        if (!stringCharIterator.hasNext() || this._isSeparator(stringCharIterator.peek()))
+            return WI.SourceMap.VLQ_AT_SEPARATOR;
 
-        // Fix the sign.
-        var negative = result & 1;
-        result >>= 1;
-        return negative ? -result : result;
+        let char = stringCharIterator.next();
+        if (!(char in WI.SourceMap._base64Map))
+            throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+        let byte = WI.SourceMap._base64Map[char];
+        let sign = byte & 0x01 ? -1 : 1;
+        let value = (byte >> 1) & 0x0F;
+        let shift = 16;
+        while (byte & 0x20) {
+            if (!stringCharIterator.hasNext() || this._isSeparator(stringCharIterator.peek()))
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            char = stringCharIterator.next();
+            if (!(char in WI.SourceMap._base64Map))
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+
+            byte = WI.SourceMap._base64Map[char];
+            let chunk = byte & 0x1F;
+            value += chunk * shift;
+            if (value >= 2_147_483_648)
+                throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
+            shift *= 32;
+        }
+
+        if (value === 0 && sign === -1)
+            return -2_147_483_648;
+
+        return value * sign;
+    }
+
+    _invalidPropertyError(property)
+    {
+        const message = WI.UIString("invalid \u0022%s\u0022", "invalid \u0022%s\u0022 @ Source Map", "Error message template when failing to parse a JS source map.");
+        return message.format(property);
     }
 };
 
 WI.SourceMap._instances = new IterableWeakSet;
 
+WI.SourceMap.VLQ_AT_SEPARATOR = Symbol("separator");
 WI.SourceMap.VLQ_BASE_SHIFT = 5;
 WI.SourceMap.VLQ_BASE_MASK = (1 << 5) - 1;
 WI.SourceMap.VLQ_CONTINUATION_MASK = 1 << 5;
