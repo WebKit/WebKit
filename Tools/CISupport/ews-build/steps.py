@@ -262,13 +262,12 @@ class GitHubMixin(object):
         query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s") { totalCount } } }' % (owner, name, label)
         query = {'query': query_body}
         response = yield self.query_graph_ql(query)
-        if response:
-            num_prs = response['data']['repository']['pullRequests']['totalCount']
+        num_prs = ((((response or {}).get('data') or {}).get('repository') or {}).get('pullRequests') or {}).get('totalCount') or None
+        if num_prs is not None:
             yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
-            defer.returnValue(num_prs)
         else:
             yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
-            defer.returnValue(None)
+        defer.returnValue(num_prs)
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -2514,11 +2513,11 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         yield self._addToLog('stdio', "Fetching all PRs with label {}...\n".format(label))
 
         response = yield self.query_graph_ql(query)
-        if not response:
+        all_pr_data = ((((response or {}).get('data') or {}).get('repository') or {}).get('pullRequests') or {}).get('edges') or None
+        if all_pr_data is None:
             yield self._addToLog('stderr', 'Failed to retrieve list of PRs.\n')
             return defer.returnValue(None)
 
-        all_pr_data = response['data']['repository']['pullRequests']['edges']
         list_of_prs = [pr_data['node']['number'] for pr_data in all_pr_data]
 
         self.setProperty('list_of_prs', list_of_prs)

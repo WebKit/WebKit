@@ -6503,6 +6503,30 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('list_of_prs'), [17412, 17418, 17451, 17454])
         return rc
 
+    def test_none(self):
+        self.setupStep(RetrievePRDataFromLabel(project='testRepo/WebKit'))
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        query_result = {'reponse': None}
+        GitHubMixin.query_graph_ql = lambda self, query: query_result
+        self.expectOutcome(result=FAILURE, state_string="Failed to retrieve pull request data")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('project'), 'testRepo/WebKit')
+        self.assertEqual(self.getProperty('repository'), 'https://github.com/testRepo/WebKit')
+        self.assertEqual(self.getProperty('list_of_prs'), None)
+        return rc
+
+    def test_failure(self):
+        self.setupStep(RetrievePRDataFromLabel(project='testRepo/WebKit'))
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        query_result = {}
+        GitHubMixin.query_graph_ql = lambda self, query: query_result
+        self.expectOutcome(result=FAILURE, state_string='Failed to retrieve pull request data')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('project'), 'testRepo/WebKit')
+        self.assertEqual(self.getProperty('repository'), 'https://github.com/testRepo/WebKit')
+        self.assertEqual(self.getProperty('list_of_prs'), None)
+        return rc
+
 
 class TestCheckStatusOfPR(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
