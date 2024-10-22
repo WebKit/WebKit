@@ -33,6 +33,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyleInlines.h"
+#include "RenderStyleResolveColor.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -106,7 +107,7 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
         }
     }
 
-    paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor, paintInfo.paintBehavior);
+    paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter<CSSPropertyWebkitTextFillColor>(paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
     if (frame.document() && frame.document()->printing()) {
@@ -126,7 +127,7 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
     if (forceBackgroundToWhite)
         paintStyle.strokeColor = adjustColorForVisibilityOnBackground(paintStyle.strokeColor, Color::white);
 
-    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyTextEmphasisColor);
+    paintStyle.emphasisMarkColor = lineStyle.visitedDependentColorWithColorFilter<CSSPropertyTextEmphasisColor>();
 
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)

@@ -211,9 +211,10 @@ decltype(auto) StyleColor::visit(const StyleColor::ColorKind& color, F&&... f)
     );
 }
 
-StyleColor StyleColor::currentColor()
+const StyleColor& StyleColor::currentColor()
 {
-    return StyleColor { StyleCurrentColor { } };
+    static NeverDestroyed<StyleColor> currentColor = StyleColor { StyleCurrentColor { } };
+    return currentColor;
 }
 
 StyleColor::ColorKind StyleColor::copy(const StyleColor::ColorKind& other)

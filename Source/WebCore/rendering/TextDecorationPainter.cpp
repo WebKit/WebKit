@@ -31,6 +31,7 @@
 #include "InlineTextBoxStyle.h"
 #include "RenderBlock.h"
 #include "RenderStyleInlines.h"
+#include "RenderStyleResolveColor.h"
 #include "RenderText.h"
 #include "ShadowData.h"
 #include "TextRun.h"
@@ -390,7 +391,7 @@ Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet
     if (paintBehavior.contains(PaintBehavior::ForceWhiteText))
         return Color::white;
 
-    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor, paintBehavior);
+    return style.visitedDependentColorWithColorFilter<CSSPropertyTextDecorationColor>(paintBehavior);
 }
 
 auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId) -> Styles

@@ -4520,7 +4520,7 @@ Color LocalFrameView::documentBackgroundColor() const
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
     if (htmlElement && htmlElement->renderer())
-        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+        htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter<CSSPropertyBackgroundColor>();
     if (bodyElement && bodyElement->renderer())
         bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
 

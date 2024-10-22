@@ -113,7 +113,7 @@ public:
 
     bool hasEligibleContainmentForSizeQuery() const;
 
-    Color selectionColor(CSSPropertyID) const;
+    template <CSSPropertyID> Color selectionColor() const;
     std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     // Obtains the selection colors that should be used when painting a selection.
