@@ -919,7 +919,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     } break;
     case WGPUTextureDimension_2D:
     case WGPUTextureDimension_3D: {
-        auto checkedBlockSizeTimesTextureDimension = checkedProduct<uint32_t>(blockSize * m_device->limits().maxTextureDimension2D);
+        auto checkedBlockSizeTimesTextureDimension = checkedProduct<uint32_t>(blockSize, m_device->limits().maxTextureDimension2D);
         sourceBytesPerRow = checkedBlockSizeTimesTextureDimension.hasOverflowed() ? sourceBytesPerRow : std::min<uint32_t>(sourceBytesPerRow, checkedBlockSizeTimesTextureDimension.value());
     } break;
     case WGPUTextureDimension_Force32:
@@ -988,7 +988,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
                 auto yTimesSourceBytesPerImage = checkedProduct<uint32_t>(y, sourceBytesPerRow);
                 if (yTimesSourceBytesPerImage.hasOverflowed())
                     return;
-                auto tripleSum = checkedSum<uint32_t>(zTimesSourceBytesPerImage.value(), yTimesSourceBytesPerImage.value(), source.layout.offset);
+                auto tripleSum = checkedSum<uint64_t>(zTimesSourceBytesPerImage.value(), yTimesSourceBytesPerImage.value(), source.layout.offset);
                 if (tripleSum.hasOverflowed())
                     return;
                 WGPUImageCopyBuffer newSource {
@@ -1469,7 +1469,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
                     .origin = { .x = source.origin.x, .y = yPlusOriginY, .z = zPlusOriginZ },
                     .aspect = source.aspect
                 };
-                auto tripleSum = checkedSum<uint32_t>(zTimesDestinationBytesPerImage.value(), yTimesDestinationBytesPerImage.value(), destination.layout.offset);
+                auto tripleSum = checkedSum<uint64_t>(zTimesDestinationBytesPerImage.value(), yTimesDestinationBytesPerImage.value(), destination.layout.offset);
                 if (tripleSum.hasOverflowed())
                     return;
                 WGPUImageCopyBuffer newDestination {

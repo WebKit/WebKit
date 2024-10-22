@@ -200,7 +200,10 @@ NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindi
 
             if (bufferSize && buffer->get()) {
                 auto dynamicOffset = bindGroup.dynamicOffset(bindingIndex, dynamicOffsets);
-                auto totalOffset = resource.entryOffset + dynamicOffset;
+                auto checkedTotalOffset = checkedSum<uint64_t>(resource.entryOffset, dynamicOffset);
+                if (checkedTotalOffset.hasOverflowed())
+                    return [NSString stringWithFormat:@"resourceOffset(%llu) + dynamicOffset(%u) overflows uint64_t", resource.entryOffset, dynamicOffset];
+                auto totalOffset = checkedTotalOffset.value();
                 auto mtlBufferLength = buffer->get()->buffer().length;
                 if (totalOffset > mtlBufferLength || (mtlBufferLength - totalOffset) < bufferSize || bufferSize > resource.entrySize)
                     return [NSString stringWithFormat:@"buffer length(%zu) minus offset(%llu), (resourceOffset(%llu) + dynamicOffset(%u)), is less than required bufferSize(%llu)", mtlBufferLength, totalOffset, resource.entryOffset, dynamicOffset, bufferSize];

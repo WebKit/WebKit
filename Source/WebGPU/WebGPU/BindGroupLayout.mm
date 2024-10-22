@@ -455,7 +455,8 @@ NSString* BindGroupLayout::errorValidatingDynamicOffsets(std::span<const uint32_
         auto* buffer = group.dynamicBuffer(i);
         if (!buffer)
             return [NSString stringWithFormat:@"dynamicBuffer(%zu) is nil", i];
-        if (dynamicOffset + buffer->bindingSize > buffer->bufferSize)
+        auto dynamicOffsetPlusBindingSize = checkedSum<uint64_t>(dynamicOffset, buffer->bindingSize);
+        if (dynamicOffsetPlusBindingSize.hasOverflowed() || dynamicOffsetPlusBindingSize.value() > buffer->bufferSize)
             return [NSString stringWithFormat:@"dynamicBuffer(%zu): dynamicOffset(%u) + buffer->bindingSize(%llu) > buffer->bufferSize(%llu)", i, dynamicOffset, buffer->bindingSize, buffer->bufferSize];
 
         auto alignment = buffer->type == WGPUBufferBindingType_Uniform ? minUniformBufferOffsetAlignment : minStorageBufferOffsetAlignment;

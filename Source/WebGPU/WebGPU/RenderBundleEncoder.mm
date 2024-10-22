@@ -495,9 +495,8 @@ NSString* RenderBundleEncoder::errorValidatingDraw() const
             return [NSString stringWithFormat:@"Buffer index[%u] is missing", bufferIndex];
     }
 
-    auto bindGroupSpaceUsed = maxBindGroupIndex() + 1;
-    auto vertexBufferSpaceUsed = maxVertexBufferIndex() + 1;
-    if (bindGroupSpaceUsed + vertexBufferSpaceUsed > m_device->limits().maxBindGroupsPlusVertexBuffers)
+    auto bindGroupSpaceUsedPlusVertexBufferSpaceUsed = checkedSum<uint32_t>(maxBindGroupIndex(), 1, maxVertexBufferIndex(), 1);
+    if (bindGroupSpaceUsedPlusVertexBufferSpaceUsed.hasOverflowed() || bindGroupSpaceUsedPlusVertexBufferSpaceUsed.value() > m_device->limits().maxBindGroupsPlusVertexBuffers)
         return @"Too many bind groups and vertex buffers used";
 
     return nil;
