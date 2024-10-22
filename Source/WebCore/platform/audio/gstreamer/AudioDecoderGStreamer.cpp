@@ -99,8 +99,7 @@ void GStreamerAudioDecoder::create(const String& codecName, const Config& config
         element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     }
 
-    // FIXME: GStreamerAudioDecoder subclasses ThreadSafeRefCounted but gets contructed using makeUniqueRef(), which doesn't seem right.
-    auto decoder = makeUniqueRefWithoutRefCountedCheck<GStreamerAudioDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(element));
+    auto decoder = makeUniqueRef<GStreamerAudioDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(element));
     auto internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
         GST_WARNING("Internal audio decoder failed to configure for codec %s", codecName.utf8().data());

@@ -97,8 +97,7 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
     }
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
-    // FIXME: GStreamerVideoDecoder subclasses ThreadSafeRefCounted but gets contructed using makeUniqueRef(), which doesn't seem right.
-    auto decoder = makeUniqueRefWithoutRefCountedCheck<GStreamerVideoDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(element));
+    auto decoder = makeUniqueRef<GStreamerVideoDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(element));
     auto internalDecoder = decoder->m_internalDecoder;
     if (!internalDecoder->isConfigured()) {
         GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.utf8().data());

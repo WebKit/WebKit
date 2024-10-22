@@ -25,13 +25,12 @@
 #include "VideoDecoder.h"
 
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class GStreamerInternalVideoDecoder;
 
-class GStreamerVideoDecoder : public ThreadSafeRefCounted<GStreamerVideoDecoder>, public VideoDecoder {
+class GStreamerVideoDecoder final : public VideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED(GStreamerVideoDecoder);
 
 public:
