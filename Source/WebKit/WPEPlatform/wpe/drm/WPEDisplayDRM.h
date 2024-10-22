@@ -41,6 +41,9 @@ G_BEGIN_DECLS
 WPE_API G_DECLARE_FINAL_TYPE (WPEDisplayDRM, wpe_display_drm, WPE, DISPLAY_DRM, WPEDisplay)
 
 WPE_API WPEDisplay         *wpe_display_drm_new                (void);
+WPE_API gboolean            wpe_display_drm_connect            (WPEDisplayDRM *display,
+                                                                const char    *name,
+                                                                GError       **error);
 WPE_API struct gbm_device  *wpe_display_drm_get_device         (WPEDisplayDRM *display);
 WPE_API gboolean            wpe_display_drm_supports_atomic    (WPEDisplayDRM *display);
 WPE_API gboolean            wpe_display_drm_supports_modifiers (WPEDisplayDRM *display);
