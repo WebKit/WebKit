@@ -64,6 +64,10 @@ asm(".linker_option \"-framework\", \"WritingTools\"");
 
 #if PLATFORM(MAC)
 
+@interface WKWebView (Staging_136152077)
+- (void)showWritingTools:(id)sender;
+@end
+
 @interface NSMenu (Extras)
 - (NSMenuItem *)itemWithIdentifier:(NSString *)identifier;
 @end
