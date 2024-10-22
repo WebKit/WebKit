@@ -147,8 +147,6 @@ class Subprocess(ContextStack):
             for completion in current.completions:
                 if completion.args[0] == program or completion.args[0].split('/')[-1] == program:
                     candidates.append(completion)
-                if current.ordered:
-                    break
             current = current.previous
 
         if candidates:
