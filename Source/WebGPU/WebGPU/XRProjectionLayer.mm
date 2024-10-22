@@ -81,7 +81,7 @@ size_t XRProjectionLayer::reusableTextureIndex() const
 
 void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& colorBuffer, WTF::MachSendRight&& depthBuffer, WTF::MachSendRight&& completionSyncEvent, size_t reusableTextureIndex)
 {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(WATCHOS)
     id<MTLDevice> device = m_device->device();
     m_reusableTextureIndex = reusableTextureIndex;
     NSNumber* textureKey = @(reusableTextureIndex);
