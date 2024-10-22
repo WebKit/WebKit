@@ -192,16 +192,6 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_uncommittedState.networkRequestsInProgress = false;
 }
 
-bool PageLoadState::isLoading() const
-{
-    return isLoading(m_committedState);
-}
-
-bool PageLoadState::hasUncommittedLoad() const
-{
-    return isLoading(m_uncommittedState);
-}
-
 String PageLoadState::activeURL(const Data& data)
 {
     // If there is a currently pending URL, it is the active URL,
@@ -223,11 +213,6 @@ String PageLoadState::activeURL(const Data& data)
 
     ASSERT_NOT_REACHED();
     return String();
-}
-
-String PageLoadState::activeURL() const
-{
-    return activeURL(m_committedState);
 }
 
 bool PageLoadState::hasOnlySecureContent(const Data& data)
@@ -255,11 +240,6 @@ void PageLoadState::negotiatedLegacyTLS(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     m_uncommittedState.negotiatedLegacyTLS = true;
-}
-
-bool PageLoadState::wasPrivateRelayed() const
-{
-    return m_committedState.wasPrivateRelayed;
 }
 
 double PageLoadState::estimatedProgress(const Data& data)
