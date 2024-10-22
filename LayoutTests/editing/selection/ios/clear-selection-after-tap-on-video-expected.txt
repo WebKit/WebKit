@@ -1,0 +1,15 @@
+
+Foo
+
+Bar
+
+Verifies that tapping over a video element clears the selection instead of toggling edit menu visibility. To manually run the test, select from 'Foo' to 'Bar' and then tap the video in between; the selection should be cleared
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cleared selection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

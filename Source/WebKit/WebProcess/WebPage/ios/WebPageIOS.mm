@@ -1893,6 +1893,32 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
     }
 }
 
+void WebPage::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint location)
+{
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto result = localMainFrame->checkedEventHandler()->hitTestResultAtPoint(LayoutPoint { location }, {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
+        HitTestRequest::Type::IncludeAllElementsUnderPoint,
+        HitTestRequest::Type::CollectMultipleElements,
+    });
+
+    bool tappedVideo = false;
+    bool tappedLiveText = false;
+    for (Ref node : result.listBasedTestResult()) {
+        if (is<HTMLVideoElement>(node))
+            tappedVideo = true;
+        else if (ImageOverlay::isOverlayText(node))
+            tappedLiveText = true;
+    }
+
+    if (tappedVideo && !tappedLiveText)
+        clearSelection();
+}
+
 void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
