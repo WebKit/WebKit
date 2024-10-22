@@ -37,7 +37,7 @@ bool hasEntitlement(SecTaskRef task, ASCIILiteral entitlement)
 {
     if (!task)
         return false;
-    auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
+    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(entitlement.characters()), entitlement.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     return adoptCF(SecTaskCopyValueForEntitlement(task, string.get(), nullptr)) == kCFBooleanTrue;
 }
 
@@ -69,7 +69,7 @@ bool hasEntitlementValue(audit_token_t token, ASCIILiteral entitlement, ASCIILit
     if (!secTaskForToken)
         return false;
 
-    auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
+    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(entitlement.characters()), entitlement.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     String entitlementValue = dynamic_cf_cast<CFStringRef>(adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get());
     return entitlementValue == value;
 }
@@ -80,7 +80,7 @@ bool hasEntitlementValueInArray(audit_token_t token, ASCIILiteral entitlement, A
     if (!secTaskForToken)
         return false;
 
-    auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
+    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(entitlement.characters()), entitlement.length(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     auto entitlementValue = adoptCF(SecTaskCopyValueForEntitlement(secTaskForToken.get(), string.get(), nullptr)).get();
     if (!entitlementValue || CFGetTypeID(entitlementValue) != CFArrayGetTypeID())
         return false;

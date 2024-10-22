@@ -63,7 +63,7 @@ static CFStringTokenizerRef tokenizerForString(CFStringRef str)
 {
     static const NeverDestroyed locale = [] {
         const char* localID = currentTextBreakLocaleID();
-        auto currentLocaleID = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(localID), strlen(localID), kCFStringEncodingASCII, false, kCFAllocatorNull));
+        auto currentLocaleID = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, localID, kCFStringEncodingASCII, kCFAllocatorNull));
         return adoptCF(CFLocaleCreate(kCFAllocatorDefault, currentLocaleID.get()));
     }();
 
