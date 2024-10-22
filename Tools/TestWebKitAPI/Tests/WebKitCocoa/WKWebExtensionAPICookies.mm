@@ -622,6 +622,51 @@ TEST(WKWebExtensionAPICookies, SetCookie)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPICookies, SetCookieWithExpirationDate)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const cookieName = 'token'",
+        @"const testUrl = 'http://www.example.com/'",
+        @"const expirationDate = Math.floor(Date.now() / 1000) + 1",
+
+        @"await browser.cookies.set({",
+        @"  url: testUrl,",
+        @"  name: cookieName,",
+        @"  value: 'value',",
+        @"  domain: 'www.example.com',",
+        @"  sameSite: 'lax',",
+        @"  expirationDate",
+        @"})",
+
+        @"let cookie = await browser.cookies.get({",
+        @"  url: testUrl,",
+        @"  name: cookieName",
+        @"})",
+
+        @"browser.test.assertEq(cookie?.value, 'value', 'Cookie should be set successfully')",
+        @"browser.test.assertEq(cookie?.expirationDate, expirationDate, 'expirationDate should be the same as it was set')",
+
+        @"await new Promise(resolve => setTimeout(resolve, 1500))",
+
+        @"cookie = await browser.cookies.get({",
+        @"  url: testUrl,",
+        @"  name: cookieName",
+        @"})",
+
+        @"browser.test.assertEq(cookie, null, 'Cookie should be expired and no longer available')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:cookiesManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPICookies, GetCookie)
 {
     auto *backgroundScript = Util::constructScript(@[
