@@ -4796,6 +4796,68 @@ TEST(ProcessSwap, ConcurrentHistoryNavigations)
     EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [backForwardList.forwardItem.URL absoluteString]);
 }
 
+TEST(ProcessSwap, CookieAccessAfterMultipleRedirects)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpServer({
+        { "http://site2.example/prewarm"_s, { "Done."_s  } }, // Process 1
+        { "http://site1.example/start"_s, { "<script> function load() { window.location = 'http://site1.example/redirect'; } </script>"_s  } }, // Process 2
+        { "http://site1.example/redirect"_s, { 302, {{ "Location"_s, "http://site2.example/redirect"_s }}, "redirecting..."_s } }, // Process 2
+        { "http://site2.example/redirect"_s, { 302, {{ "Location"_s, "http://site1.example/end"_s }}, "redirecting..."_s } }, // Process 1
+        { "http://site1.example/end"_s, { "Done."_s  } }, // Process 3
+    }, HTTPServer::Protocol::Http);
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(httpServer.port()),
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [configuration setProcessPool:processPool.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+
+    __block bool navigationFailed = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        navigationFailed = true;
+        done = true;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        done = true;
+    };
+
+    done = false;
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site2.example/prewarm"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://site1.example/start"]]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    [webView evaluateJavaScript:@"load()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(navigationFailed);
+
+    done = false;
+    [webView evaluateJavaScript:@"navigator.cookieEnabled" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!!result);
+        EXPECT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(ProcessSwap, NavigateToInvalidURL)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();

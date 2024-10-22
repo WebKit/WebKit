@@ -2437,7 +2437,7 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
 
     EXPECT_EQ(errorCode, 0);
     EXPECT_FALSE(didFailNavigation);
-    EXPECT_EQ(loadCount, 22);
+    EXPECT_EQ(loadCount, 23);
 
     [webView evaluateJavaScript:@"location = \"http://site2.example/secure3\";" completionHandler:nil];
 
