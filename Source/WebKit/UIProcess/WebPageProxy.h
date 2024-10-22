@@ -2477,6 +2477,10 @@ public:
 
     void writingToolsSessionDidReceiveAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::Action);
 
+    void proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange&, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&) const;
+    void updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange&, bool, CompletionHandler<void()>&&);
+    void textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+
     bool isWritingToolsActive() const { return m_isWritingToolsActive; }
 
     void proofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(IPC::Connection&, const WebCore::WritingTools::TextSuggestionID&, WebCore::IntRect selectionBoundsInRootView);

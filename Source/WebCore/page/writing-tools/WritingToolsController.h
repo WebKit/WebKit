@@ -77,6 +77,10 @@ public:
     void respondToUnappliedEditing(EditCommandComposition*);
     void respondToReappliedEditing(EditCommandComposition*);
 
+    Vector<FloatRect> proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange&) const;
+    void updateTextVisibilityForActiveSession(const CharacterRange& rangeRelativeToSessionRange, bool);
+    std::optional<TextIndicatorData> textPreviewDataForActiveSession(const CharacterRange&);
+
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove these methods after doing so.
     std::optional<SimpleRange> activeSessionRange() const;
@@ -158,6 +162,9 @@ private:
 
     template<WritingTools::Session::Type Type>
     StateFromSessionType<Type>::Value* currentState();
+
+    template<WritingTools::Session::Type Type>
+    const StateFromSessionType<Type>::Value* currentState() const;
 
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerContainingRange(const SimpleRange&) const;
     std::optional<std::tuple<Node&, DocumentMarker&>> findTextSuggestionMarkerByID(const SimpleRange& outerRange, const WritingTools::TextSuggestion::ID&) const;

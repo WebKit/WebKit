@@ -147,9 +147,11 @@
 		07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		074879B92373A90900F5678E /* AppKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 074879B72373A90900F5678E /* AppKitSoftLink.h */; };
 		074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */; };
+		074F34812CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 074F34802CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		075A9CF326169BAB006DFA3A /* MediaSessionCoordinatorProxyPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */; };
 		076E884E1A13CADF005E90FC /* APIContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 076E884D1A13CADF005E90FC /* APIContextMenuClient.h */; };
 		0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4319AF7B27002EBAB5 /* UserMediaPermissionRequestManager.h */; };
+		077FD1A02CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077FD19F2CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift */; };
 		0785E8002CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */; };
 		0792314B239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07923145239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp */; };
 		0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */; };
@@ -3187,9 +3189,11 @@
 		074E75FC1DF2002400D318EC /* UserMediaProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaProcessManager.cpp; sourceTree = "<group>"; };
 		074E76001DF7075D00D318EC /* MediaDeviceSandboxExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDeviceSandboxExtensions.cpp; sourceTree = "<group>"; };
 		074E76011DF7075D00D318EC /* MediaDeviceSandboxExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDeviceSandboxExtensions.h; sourceTree = "<group>"; };
+		074F34802CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKIntelligenceTextEffectCoordinator.h; sourceTree = "<group>"; };
 		076E884D1A13CADF005E90FC /* APIContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContextMenuClient.h; sourceTree = "<group>"; };
 		076E884F1A13CBC6005E90FC /* APIInjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
 		077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCoordinatorProxyPrivate.h; sourceTree = "<group>"; };
+		077FD19F2CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKIntelligenceTextEffectCoordinator.swift; sourceTree = "<group>"; };
 		0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformIntelligenceTextEffectView.swift; sourceTree = "<group>"; };
 		07923130239B3B0C009598E2 /* RemoteMediaPlayerManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManager.cpp; sourceTree = "<group>"; };
 		07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateRemote.cpp; sourceTree = "<group>"; };
@@ -8574,6 +8578,8 @@
 			isa = PBXGroup;
 			children = (
 				0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */,
+				074F34802CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h */,
+				077FD19F2CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift */,
 			);
 			path = WritingTools;
 			sourceTree = "<group>";
@@ -17855,6 +17861,7 @@
 				A1098E682BB6410800449EE0 /* LinearMediaKitExtras.h in Headers */,
 				5289527F2C7077B000D0357E /* RealityKitBridging.h in Headers */,
 				A14F9B672B686E0200AD9C56 /* WebKitSwift.h in Headers */,
+				074F34812CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h in Headers */,
 				A14F9B762B68CA6C00AD9C56 /* WKSLinearMediaPlayer.h in Headers */,
 				A14F9B632B686DD300AD9C56 /* WKSLinearMediaTypes.h in Headers */,
 				B66F88C22B6D202600FB1734 /* WKSPreviewWindowController.h in Headers */,
@@ -18542,7 +18549,7 @@
 		};
 		2E16B6F42019BC25008996D6 /* Copy Additional Resources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
@@ -20194,6 +20201,7 @@
 				B66F88C02B6D1F2300FB1734 /* PreviewWindowController.swift in Sources */,
 				528952812C70797900D0357E /* RKEntity.swift in Sources */,
 				440DB5B72C1914DC0021639B /* TextAnimationManager.swift in Sources */,
+				077FD1A02CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift in Sources */,
 				F48EC3532B75837F00D1B886 /* WKTextExtractionItem.swift in Sources */,
 				F47AA6CA2B7A80BB00CD8AE9 /* WKWebView+TextExtraction.swift in Sources */,
 			);

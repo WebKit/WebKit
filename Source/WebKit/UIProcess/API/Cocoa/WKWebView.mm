@@ -188,6 +188,8 @@
 #import "WKWebExtensionControllerInternal.h"
 #endif
 
+#import "WebKitSwiftSoftLink.h"
+
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -262,6 +264,12 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& 
 
     return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
 }
+
+#if PLATFORM(IOS_FAMILY)
+typedef UIView PlatformView;
+#else
+typedef NSView PlatformView;
+#endif
 
 @implementation WKWebView
 
@@ -2273,6 +2281,100 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
     _page->writingToolsSessionDidReceiveAction(*webSession, webAction);
 }
+
+#pragma mark - WKIntelligenceTextEffectCoordinatorDelegate conformance
+
+// FIXME: Give the `coordinator` parameters actual types.
+
+- (PlatformView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator
+{
+    return self;
+}
+
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion
+{
+    _page->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(range, [completion = makeBlockPtr(completion)](auto&& rects) {
+        RetainPtr nsArray = createNSArray(rects, [](auto& rect) {
+            return [NSValue valueWithRect:rect];
+        });
+
+        completion(nsArray.get());
+    });
+}
+
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible completion:(void (^)(void))completion
+{
+    _page->updateTextVisibilityForActiveWritingToolsSession(range, visible, [completion = makeBlockPtr(completion)] {
+        completion();
+    });
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion
+{
+    _page->textPreviewDataForActiveWritingToolsSession(range, [completion = makeBlockPtr(completion), weakSelf = WeakObjCPtr<WKWebView>(self)](auto&& textIndicatorData) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf) {
+            completion(nil);
+            return;
+        }
+
+        if (!textIndicatorData) {
+            completion(nil);
+            return;
+        }
+
+        RetainPtr preview = [strongSelf->_contentView _createTargetedPreviewFromTextIndicator:*textIndicatorData previewContainer:strongSelf.get()];
+        completion(preview.get());
+    });
+}
+#else
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion
+{
+    // FIXME: This logic is currently duplicated in a bunch of places; it should be unified.
+    _page->textPreviewDataForActiveWritingToolsSession(range, [completion = makeBlockPtr(completion)](auto&& textIndicatorData) {
+        if (!textIndicatorData) {
+            completion(@[ ]);
+            return;
+        }
+
+        RefPtr contentImage = textIndicatorData->contentImage;
+        if (!contentImage) {
+            ASSERT_NOT_REACHED();
+            completion(@[ ]);
+            return;
+        }
+
+        RefPtr nativeImage = contentImage->nativeImage();
+        if (!nativeImage) {
+            ASSERT_NOT_REACHED();
+            completion(@[ ]);
+            return;
+        }
+
+        RetainPtr platformImage = nativeImage->platformImage();
+
+        auto textBoundingRectInRootViewCoordinates = textIndicatorData->textBoundingRectInRootViewCoordinates;
+        auto textRectsInBoundingRectCoordinates = textIndicatorData->textRectsInBoundingRectCoordinates;
+        auto contentImageScaleFactor = textIndicatorData->contentImageScaleFactor;
+
+        RetainPtr previews = createNSArray(textRectsInBoundingRectCoordinates, [platformImage, textBoundingRectInRootViewCoordinates, contentImageScaleFactor](auto& textRectInBoundingRectCoordinates) -> _WKTextPreview * {
+
+            auto croppedTextRectInImageCoordinates = textRectInBoundingRectCoordinates;
+            croppedTextRectInImageCoordinates.scale(contentImageScaleFactor);
+
+            RetainPtr textImage = adoptCF(CGImageCreateWithImageInRect(platformImage.get(), croppedTextRectInImageCoordinates));
+
+            auto presentationFrame = CGRectOffset(textRectInBoundingRectCoordinates, textBoundingRectInRootViewCoordinates.x(), textBoundingRectInRootViewCoordinates.y());
+
+            RetainPtr textPreview = adoptNS([[_WKTextPreview alloc] initWithSnapshotImage:textImage.get() presentationFrame:presentationFrame]);
+            return textPreview.autorelease();
+        });
+
+        completion(previews.get());
+    });
+}
+#endif
 
 #pragma mark - WTTextViewDelegate invoking methods
 

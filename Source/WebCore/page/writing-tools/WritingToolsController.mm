@@ -929,6 +929,117 @@ void WritingToolsController::respondToReappliedEditing(EditCommandComposition* c
     state->reappliedCommands.append(state->unappliedCommands.takeLast());
 }
 
+#pragma mark - Range-based methods.
+
+// FIXME: These methods should be refactored to not rely on WritingToolsController.
+// Maybe use an abstract class that yields a SimpleRange context range?
+
+Vector<FloatRect> WritingToolsController::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange& enclosingRangeRelativeToSessionRange) const
+{
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto sessionRange = this->activeSessionRange();
+    if (!sessionRange) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto resolvedRange = resolveCharacterRange(*sessionRange, enclosingRangeRelativeToSessionRange);
+
+    Vector<FloatRect> textRectsInRootViewCoordinates;
+
+    auto& markers = document->markers();
+    markers.forEach(resolvedRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+        auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+
+        auto markerRange = makeSimpleRange(node, marker);
+
+        auto rect = document->view()->contentsToRootView(unionRect(RenderObject::absoluteTextRects(markerRange, { })));
+        textRectsInRootViewCoordinates.append(WTFMove(rect));
+
+        return false;
+    });
+
+    return textRectsInRootViewCoordinates;
+}
+
+void WritingToolsController::updateTextVisibilityForActiveSession(const CharacterRange& rangeRelativeToSessionRange, bool visible)
+{
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto sessionRange = this->activeSessionRange();
+    if (!sessionRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto resolvedRange = resolveCharacterRange(*sessionRange, rangeRelativeToSessionRange);
+
+    if (visible)
+        document->markers().removeMarkers(resolvedRange, { WebCore::DocumentMarker::Type::TransparentContent });
+    else {
+        // FIXME: Remove the UUID parameter once the old animation system is removed and it's no longer needed.
+        document->markers().addTransparentContentMarker(resolvedRange, WTF::UUID { 0 });
+    }
+}
+
+std::optional<TextIndicatorData> WritingToolsController::textPreviewDataForActiveSession(const CharacterRange& rangeRelativeToSessionRange)
+{
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto sessionRange = this->activeSessionRange();
+    if (!sessionRange) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto resolvedRange = resolveCharacterRange(*sessionRange, rangeRelativeToSessionRange);
+
+    // Temporarily remove any transparent content document markers so that when the snapshot is created, the text is visible.
+    // The markers are then re-added in the same run loop, so there will be no user-visible flickering of the text.
+
+    auto& markers = document->markers();
+
+    Vector<SimpleRange> transparentMarkerRangesToReinsert;
+
+    markers.forEach(resolvedRange, { WebCore::DocumentMarker::Type::TransparentContent }, [&](auto& node, auto& marker) {
+        auto markerRange = makeSimpleRange(node, marker);
+        transparentMarkerRangesToReinsert.append(markerRange);
+
+        return false;
+    });
+
+    static constexpr OptionSet textIndicatorOptions {
+        TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::SkipReplacedContent,
+        TextIndicatorOption::RespectTextColor,
+    };
+
+    RefPtr textIndicator = WebCore::TextIndicator::createWithRange(resolvedRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
+    if (!textIndicator)
+        return std::nullopt;
+
+    for (const auto& markerRange : transparentMarkerRangesToReinsert) {
+        // FIXME: Remove the UUID parameter once the old animation system is removed and it's no longer needed.
+        markers.addTransparentContentMarker(markerRange, WTF::UUID { 0 });
+    }
+
+    return textIndicator->data();
+}
+
 #pragma mark - Private instance helper methods.
 
 std::optional<SimpleRange> WritingToolsController::activeSessionRange() const
@@ -942,6 +1053,12 @@ std::optional<SimpleRange> WritingToolsController::activeSessionRange() const
 
 template<WritingTools::Session::Type Type>
 WritingToolsController::StateFromSessionType<Type>::Value* WritingToolsController::currentState()
+{
+    return std::get_if<typename WritingToolsController::StateFromSessionType<Type>::Value>(&m_state);
+}
+
+template<WritingTools::Session::Type Type>
+const WritingToolsController::StateFromSessionType<Type>::Value* WritingToolsController::currentState() const
 {
     return std::get_if<typename WritingToolsController::StateFromSessionType<Type>::Value>(&m_state);
 }

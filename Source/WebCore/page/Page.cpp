@@ -5046,6 +5046,21 @@ void Page::respondToReappliedWritingToolsEditing(EditCommandComposition* command
     m_writingToolsController->respondToReappliedEditing(command);
 }
 
+Vector<FloatRect> Page::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange& enclosingRangeRelativeToSessionRange) const
+{
+    return m_writingToolsController->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
+}
+
+void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange, bool visible)
+{
+    m_writingToolsController->updateTextVisibilityForActiveSession(rangeRelativeToSessionRange, visible);
+}
+
+std::optional<TextIndicatorData> Page::textPreviewDataForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
+{
+    return m_writingToolsController->textPreviewDataForActiveSession(rangeRelativeToSessionRange);
+}
+
 std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const
 {
     return m_writingToolsController->activeSessionRange();

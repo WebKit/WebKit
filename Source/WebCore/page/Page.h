@@ -1202,6 +1202,10 @@ public:
     void respondToUnappliedWritingToolsEditing(EditCommandComposition*);
     void respondToReappliedWritingToolsEditing(EditCommandComposition*);
 
+    WEBCORE_EXPORT Vector<FloatRect> proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange&) const;
+    WEBCORE_EXPORT void updateTextVisibilityForActiveWritingToolsSession(const CharacterRange&, bool);
+    WEBCORE_EXPORT std::optional<TextIndicatorData> textPreviewDataForActiveWritingToolsSession(const CharacterRange&);
+
     WEBCORE_EXPORT std::optional<SimpleRange> contextRangeForActiveWritingToolsSession() const;
     WEBCORE_EXPORT void intelligenceTextAnimationsDidComplete();
 #endif

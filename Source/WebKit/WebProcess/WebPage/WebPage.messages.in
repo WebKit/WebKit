@@ -800,6 +800,12 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     WritingToolsSessionDidReceiveAction(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::Action action);
 
+    ProofreadingSessionSuggestionTextRectsInRootViewCoordinates(struct WebCore::CharacterRange enclosingRangeRelativeToSessionRange) -> (Vector<WebCore::FloatRect> rects)
+
+    UpdateTextVisibilityForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange, bool visible) -> ()
+
+    TextPreviewDataForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange) -> (std::optional<WebCore::TextIndicatorData> data)
+
     CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 

@@ -2349,6 +2349,12 @@ private:
 
     void writingToolsSessionDidReceiveAction(const WebCore::WritingTools::Session&, WebCore::WritingTools::Action);
 
+    void proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange&, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&&) const;
+    void updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange&, bool, CompletionHandler<void()>&&);
+    void textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
+
+    // Old animation system methods:
+
     void updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID&, bool, CompletionHandler<void()>&&);
 
     void intelligenceTextAnimationsDidComplete();

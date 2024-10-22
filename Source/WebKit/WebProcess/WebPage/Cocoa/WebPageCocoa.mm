@@ -1051,6 +1051,24 @@ void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID)
     m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID);
 }
 
+void WebPage::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler) const
+{
+    auto rects = corePage()->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
+    completionHandler(WTFMove(rects));
+}
+
+void WebPage::updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    corePage()->updateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible);
+    completionHandler();
+}
+
+void WebPage::textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    auto data = corePage()->textPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange);
+    completionHandler(WTFMove(data));
+}
+
 void WebPage::intelligenceTextAnimationsDidComplete()
 {
     corePage()->intelligenceTextAnimationsDidComplete();

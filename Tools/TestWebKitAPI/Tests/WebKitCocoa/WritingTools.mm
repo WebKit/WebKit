@@ -46,6 +46,8 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKTextPreview.h>
+#import <WebKitSwift/WKIntelligenceTextEffectCoordinator.h>
 #import <pal/spi/cocoa/WritingToolsSPI.h>
 #import <pal/spi/cocoa/WritingToolsUISPI.h>
 #import <wtf/RetainPtr.h>
@@ -3533,6 +3535,233 @@ TEST(WritingTools, CompositionWithOmittedTrailingWhitespaceContent)
     }];
 
     TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadingSuggestionsInRange)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p><p id='second'>Who's over they're. I could come their.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"I don't thin so. I didn't quite here him.\n\nWho's over they're. I could come their.";
+    NSString *proofreadText = @"I don't think so. I didn't quite hear him.\n\nWho's over there? I could come there.";
+
+    __block bool finished = false;
+    __block RetainPtr<WTContext> context = nil;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        context = contexts.firstObject;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    RetainPtr suggestions = [NSMutableArray array];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(8, 4) replacement:@"think"]).get()];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(32, 4) replacement:@"hear"]).get()];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(54, 8) replacement:@"there?"]).get()];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(76, 5) replacement:@"there"]).get()];
+
+    NSRange processedRange = NSMakeRange(0, 82);
+
+    [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:processedRange inContext:context.get() finished:YES];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+
+    __block RetainPtr<NSArray<NSValue *>> rectValues = nil;
+
+    id<WKIntelligenceTextEffectCoordinatorDelegate> coordinatorDelegate = (id<WKIntelligenceTextEffectCoordinatorDelegate>)webView.get();
+
+    // FIXME: Figure out how to use `WebKitSwiftSoftLink` within TestWebKitAPI so that an actual instance can be created.
+    WKIntelligenceTextEffectCoordinator *coordinator = nil;
+
+    NSRange subrange = NSMakeRange(18, 43); // "I didn't quite hear him.\n\nWho's over there?"
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator rectsForProofreadingSuggestionsInRange:subrange completion:^(NSArray<NSValue *> *values) {
+        rectValues = values;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    const Vector<WebCore::IntRect> expectedRects {
+        { { 196, 8 }, { 29, 18 } },
+        { { 84, 42 }, { 40, 18 } },
+    };
+
+    for (NSUInteger i = 0; i < [rectValues count]; i++) {
+        auto actualRect = [rectValues objectAtIndex:i].rectValue;
+        auto expectedRect = expectedRects[i];
+
+        EXPECT_EQ(actualRect.origin.x, expectedRect.x());
+        EXPECT_EQ(actualRect.origin.y, expectedRect.y());
+        EXPECT_EQ(actualRect.size.width, expectedRect.width());
+        EXPECT_EQ(actualRect.size.height, expectedRect.height());
+    }
+}
+
+TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_UpdateTextVisibilityForRange)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p><p id='second'>Who's over they're. I could come their.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"I don't thin so. I didn't quite here him.\n\nWho's over they're. I could come their.";
+
+    __block bool finished = false;
+    __block RetainPtr<WTContext> context = nil;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        context = contexts.firstObject;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    id<WKIntelligenceTextEffectCoordinatorDelegate> coordinatorDelegate = (id<WKIntelligenceTextEffectCoordinatorDelegate>)webView.get();
+    WKIntelligenceTextEffectCoordinator *coordinator = nil;
+
+    __auto_type moveSelectionToFirstNode = ^{
+        NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const range = document.createRange();"
+        "  range.setStart(document.getElementById('first').childNodes[0], 0);"
+        "  range.setEnd(document.getElementById('first').childNodes[0], 0);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+        [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+    };
+
+    __auto_type moveSelectionToSecondNode = ^{
+        NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const range = document.createRange();"
+        "  range.setStart(document.getElementById('second').childNodes[0], 0);"
+        "  range.setEnd(document.getElementById('second').childNodes[0], 0);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+        [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+    };
+
+    NSRange subrange = NSMakeRange(17, 45); // "I didn't quite here him.\n\nWho's over they're."
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:NO completion:^{
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    moveSelectionToFirstNode();
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(17, 24);"] boolValue]);
+
+    moveSelectionToSecondNode();
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(0, 19);"] boolValue]);
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:YES completion:^{
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    moveSelectionToFirstNode();
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(17, 24);"] boolValue]);
+
+    moveSelectionToSecondNode();
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(0, 19);"] boolValue]);
+}
+
+TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_TextPreviewsForRange)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>I don't thin so. I didn't quite here him.</p><p id='second'>Who's over they're. I could come their.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"I don't thin so. I didn't quite here him.\n\nWho's over they're. I could come their.";
+
+    __block bool finished = false;
+    __block RetainPtr<WTContext> context = nil;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        context = contexts.firstObject;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    NSRange subrange = NSMakeRange(17, 45); // "I didn't quite here him.\n\nWho's over they're."
+
+    id<WKIntelligenceTextEffectCoordinatorDelegate> coordinatorDelegate = (id<WKIntelligenceTextEffectCoordinatorDelegate>)webView.get();
+    WKIntelligenceTextEffectCoordinator *coordinator = nil;
+
+#if PLATFORM(MAC)
+    __block RetainPtr<NSArray<_WKTextPreview *>> previews;
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator textPreviewsForRange:subrange completion:^(NSArray<_WKTextPreview *> *result) {
+        previews = result;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    EXPECT_EQ([previews count], 2UL);
+
+    const Vector<WebCore::IntRect> expectedPresentationFrames {
+        { { 103, 8 }, { 147, 18 } },
+        { { 8, 42 }, { 124, 18 } },
+    };
+
+    for (NSUInteger i = 0; i < [previews count]; i++) {
+        auto actualRect = [previews objectAtIndex:i].presentationFrame;
+        auto expectedRect = expectedPresentationFrames[i];
+
+        EXPECT_EQ(actualRect.origin.x, expectedRect.x());
+        EXPECT_EQ(actualRect.origin.y, expectedRect.y());
+        EXPECT_EQ(actualRect.size.width, expectedRect.width());
+        EXPECT_EQ(actualRect.size.height, expectedRect.height());
+    }
+#else
+    __block RetainPtr<UITargetedPreview> preview;
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator textPreviewsForRange:subrange completion:^(UITargetedPreview *result) {
+        preview = result;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    finished = false;
+
+    ASSERT_NOT_NULL(preview.get());
+#endif
 }
 
 #endif

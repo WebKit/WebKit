@@ -24,6 +24,7 @@
  */
 
 #import "PDFPluginIdentifier.h"
+#import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextAnimationType.h"
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -57,7 +58,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #if ENABLE(WRITING_TOOLS)
-#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate, UITextInputTraits>
+#define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate, WTWritingToolsDelegate, UITextInputTraits, WKIntelligenceTextEffectCoordinatorDelegate>
 #else
 #define WK_WEB_VIEW_PROTOCOLS <WKBEScrollViewDelegate>
 #endif
@@ -67,7 +68,7 @@
 #if PLATFORM(MAC)
 
 #if ENABLE(WRITING_TOOLS)
-#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate, WTWritingToolsDelegate, NSTextInputTraits>
+#define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate, WTWritingToolsDelegate, NSTextInputTraits, WKIntelligenceTextEffectCoordinatorDelegate>
 #else
 #define WK_WEB_VIEW_PROTOCOLS <WKShareSheetDelegate>
 #endif

@@ -1293,6 +1293,21 @@ void WebPageProxy::writingToolsSessionDidReceiveAction(const WebCore::WritingToo
     protectedLegacyMainFrameProcess()->send(Messages::WebPage::WritingToolsSessionDidReceiveAction(session, action), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<WebCore::FloatRect>&&)>&& completionHandler) const
+{
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::ProofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange), WTFMove(completionHandler), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::updateTextVisibilityForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, bool visible, CompletionHandler<void()>&& completionHandler)
+{
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::UpdateTextVisibilityForActiveWritingToolsSession(rangeRelativeToSessionRange, visible), WTFMove(completionHandler), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::textPreviewDataForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&& completionHandler)
+{
+    protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::TextPreviewDataForActiveWritingToolsSession(rangeRelativeToSessionRange), WTFMove(completionHandler), webPageIDInMainFrameProcess());
+}
+
 void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID)
 {
     if (!hasRunningProcess())
