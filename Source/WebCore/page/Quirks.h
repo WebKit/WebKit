@@ -155,6 +155,10 @@ public:
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
 
+#if ENABLE(TOUCH_EVENTS)
+    WEBCORE_EXPORT static bool shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL&);
+#endif
+
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
 #if PLATFORM(IOS) || PLATFORM(VISION)

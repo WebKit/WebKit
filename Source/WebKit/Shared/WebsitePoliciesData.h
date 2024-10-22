@@ -69,6 +69,9 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebCore::ContentExtensionEnablement contentExtensionEnablement { WebCore::ContentExtensionDefaultEnablement::Enabled, { } };
+#if ENABLE(TOUCH_EVENTS)
+    std::optional<bool> overrideTouchEventDOMAttributesEnabled;
+#endif
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     WebsiteMetaViewportPolicy metaViewportPolicy { WebsiteMetaViewportPolicy::Default };

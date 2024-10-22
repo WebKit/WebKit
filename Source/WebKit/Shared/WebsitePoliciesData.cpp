@@ -180,8 +180,17 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     }
 
-    if (!documentLoader.frame())
+    RefPtr frame = documentLoader.frame();
+    if (!frame)
         return;
+
+    if (!frame->isMainFrame())
+        return;
+
+#if ENABLE(TOUCH_EVENTS)
+    if (auto overrideValue = websitePolicies.overrideTouchEventDOMAttributesEnabled)
+        frame->settings().setTouchEventDOMAttributesEnabled(*overrideValue);
+#endif
 
     documentLoader.applyPoliciesToSettings();
 }

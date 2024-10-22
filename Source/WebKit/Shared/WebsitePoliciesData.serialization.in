@@ -61,6 +61,9 @@ struct WebKit::WebsitePoliciesData {
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
     OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebCore::ContentExtensionEnablement contentExtensionEnablement;
+#if ENABLE(TOUCH_EVENTS)
+    std::optional<bool> overrideTouchEventDOMAttributesEnabled;
+#endif
     WebKit::WebsiteAutoplayPolicy autoplayPolicy;
     WebKit::WebsitePopUpPolicy popUpPolicy;
     WebKit::WebsiteMetaViewportPolicy metaViewportPolicy;

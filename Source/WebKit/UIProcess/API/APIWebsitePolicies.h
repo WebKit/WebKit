@@ -143,6 +143,10 @@ public:
     WebKit::WebsitePushAndNotificationsEnabledPolicy pushAndNotificationsEnabledPolicy() const { return m_data.pushAndNotificationsEnabledPolicy; }
     void setPushAndNotificationsEnabledPolicy(WebKit::WebsitePushAndNotificationsEnabledPolicy policy) { m_data.pushAndNotificationsEnabledPolicy = policy; }
 
+#if ENABLE(TOUCH_EVENTS)
+    void setOverrideTouchEventDOMAttributesEnabled(bool value) { m_data.overrideTouchEventDOMAttributesEnabled = value; }
+#endif
+
 private:
     WebKit::WebsitePoliciesData m_data;
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
