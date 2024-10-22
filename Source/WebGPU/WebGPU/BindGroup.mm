@@ -1356,16 +1356,16 @@ void BindGroup::rebindSamplersIfNeeded() const
     }
 }
 
-void BindGroup::updateExternalTextures(const ExternalTexture& externalTexture)
+bool BindGroup::updateExternalTextures(const ExternalTexture& externalTexture)
 {
-    if (!m_bindGroupLayout)
-        return;
+    if (!m_bindGroupLayout || externalTexture.openCommandEncoderCount())
+        return false;
 
     auto textureData = m_device->createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
     id<MTLTexture> texture0 = textureData.texture0 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
     id<MTLTexture> texture1 = textureData.texture1 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
     if (!texture0 || !texture1)
-        return;
+        return false;
 
     BindGroup::ShaderStageArray<id<MTLBuffer>> argumentBuffers = std::array<id<MTLBuffer>, 3>({ vertexArgumentBuffer(), fragmentArgumentBuffer(), computeArgumentBuffer() });
     BindGroup::ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoders = std::array<id<MTLArgumentEncoder>, 3>({ m_bindGroupLayout->vertexArgumentEncoder(), m_bindGroupLayout->fragmentArgumentEncoder(), m_bindGroupLayout->computeArgumentEncoder() });
@@ -1392,6 +1392,8 @@ void BindGroup::updateExternalTextures(const ExternalTexture& externalTexture)
         auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder constantDataAtIndex:index++]);
         *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
     }
+
+    return true;
 }
 
 } // namespace WebGPU
@@ -1413,7 +1415,7 @@ void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)
     WebGPU::fromAPI(bindGroup).setLabel(WebGPU::fromAPI(label));
 }
 
-void wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture)
+bool wgpuBindGroupUpdateExternalTextures(WGPUBindGroup bindGroup, WGPUExternalTexture externalTexture)
 {
-    WebGPU::fromAPI(bindGroup).updateExternalTextures(WebGPU::fromAPI(externalTexture));
+    return WebGPU::fromAPI(bindGroup).updateExternalTextures(WebGPU::fromAPI(externalTexture));
 }

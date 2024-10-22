@@ -84,7 +84,7 @@ private:
 
     void setLabel(String&&);
     void destruct();
-    void updateExternalTextures(WebGPUIdentifier);
+    void updateExternalTextures(WebGPUIdentifier, CompletionHandler<void(bool)>&&);
 
     Ref<WebCore::WebGPU::BindGroup> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

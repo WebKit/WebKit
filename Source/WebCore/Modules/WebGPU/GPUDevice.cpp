@@ -435,10 +435,11 @@ ExceptionOr<Ref<GPUBindGroup>> GPUDevice::createBindGroup(const GPUBindGroupDesc
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     bool hasExternalTexture = false;
     auto* externalTexture = bindGroupDescriptor.externalTextureMatches(m_lastCreatedExternalTextureBindGroup.first, hasExternalTexture);
-    if (externalTexture && (*externalTexture).get()) {
-        m_lastCreatedExternalTextureBindGroup.second->updateExternalTextures(*(*externalTexture).get());
-        RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second.get();
-        return bindGroup.releaseNonNull();
+    if (auto externalTextureValue = externalTexture ? externalTexture->get() : nullptr) {
+        if (m_lastCreatedExternalTextureBindGroup.second->updateExternalTextures(*externalTextureValue)) {
+            RefPtr bindGroup = m_lastCreatedExternalTextureBindGroup.second.get();
+            return bindGroup.releaseNonNull();
+        }
     }
 #endif
 

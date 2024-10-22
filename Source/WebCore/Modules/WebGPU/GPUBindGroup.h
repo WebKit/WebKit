@@ -46,7 +46,7 @@ public:
 
     WebGPU::BindGroup& backing() { return m_backing; }
     const WebGPU::BindGroup& backing() const { return m_backing; }
-    void updateExternalTextures(const GPUExternalTexture&);
+    bool updateExternalTextures(const GPUExternalTexture&);
 
 private:
     GPUBindGroup(Ref<WebGPU::BindGroup>&& backing)

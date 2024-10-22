@@ -65,6 +65,7 @@ public:
 
     bool isValid() const;
     void update(CVPixelBufferRef);
+    size_t openCommandEncoderCount() const;
 
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);

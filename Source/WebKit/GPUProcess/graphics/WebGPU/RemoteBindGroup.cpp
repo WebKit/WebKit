@@ -56,10 +56,12 @@ void RemoteBindGroup::destruct()
     protectedObjectHeap()->removeObject(m_identifier);
 }
 
-void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier)
+void RemoteBindGroup::updateExternalTextures(WebGPUIdentifier externalTextureIdentifier, CompletionHandler<void(bool)>&& completion)
 {
     if (auto externalTexture = protectedObjectHeap()->convertExternalTextureFromBacking(externalTextureIdentifier); externalTexture.get())
-        protectedBacking()->updateExternalTextures(*externalTexture.get());
+        completion(protectedBacking()->updateExternalTextures(*externalTexture.get()));
+    else
+        completion(false);
 }
 
 void RemoteBindGroup::stopListeningForIPC()

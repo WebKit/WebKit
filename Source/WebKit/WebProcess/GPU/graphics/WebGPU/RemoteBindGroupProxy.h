@@ -77,7 +77,7 @@ private:
     }
 
     void setLabelInternal(const String&) final;
-    void updateExternalTextures(const WebCore::WebGPU::ExternalTexture&) final;
+    bool updateExternalTextures(const WebCore::WebGPU::ExternalTexture&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

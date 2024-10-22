@@ -109,6 +109,11 @@ void ExternalTexture::update(CVPixelBufferRef pixelBuffer)
     m_destroyed = false;
 }
 
+size_t ExternalTexture::openCommandEncoderCount() const
+{
+    return m_commandEncoders.computeSize();
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

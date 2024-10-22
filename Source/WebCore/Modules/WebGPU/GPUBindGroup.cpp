@@ -40,9 +40,9 @@ void GPUBindGroup::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-void GPUBindGroup::updateExternalTextures(const GPUExternalTexture& externalTexture)
+bool GPUBindGroup::updateExternalTextures(const GPUExternalTexture& externalTexture)
 {
-    m_backing->updateExternalTextures(externalTexture.backing());
+    return m_backing->updateExternalTextures(externalTexture.backing());
 }
 
 }
