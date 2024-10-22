@@ -354,6 +354,7 @@
 #include <WebCore/TextPlaceholderElement.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
@@ -679,7 +680,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (shouldBlockMobileGestalt)
         sandbox_enable_state_flag("BlockMobileGestaltInWebContentSandbox", *auditToken);
 #endif
-    auto shouldBlockMobileAsset = parameters.store.getBoolValueForKey(WebPreferencesKey::blockMobileAssetInWebContentSandboxKey());
+    auto shouldBlockMobileAsset = parameters.store.getBoolValueForKey(WebPreferencesKey::blockMobileAssetInWebContentSandboxKey()) && !WTF::CocoaApplication::isIBooks();
     if (shouldBlockMobileAsset)
         sandbox_enable_state_flag("BlockMobileAssetInWebContentSandbox", *auditToken);
 #if PLATFORM(MAC)
