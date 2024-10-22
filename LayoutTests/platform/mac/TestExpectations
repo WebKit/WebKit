@@ -2442,6 +2442,3 @@ webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html
 
 # webkit.org/b/281765 PROGRESSION (285251@main): [ macOS iOS ] imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html is a constant failure. 
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html [ Skip ]
-
-# webkit.org/b/281765 REGRESSION(285504@main): [ macOS ] imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-ignored.tentative.html is a constant failure. 
-imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-ignored.tentative.html [ Failure ]
