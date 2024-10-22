@@ -4645,7 +4645,7 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 
 #if ENABLE(WRITING_TOOLS)
 
-void WebViewImpl::showWritingTools()
+void WebViewImpl::showWritingTools(WTRequestedTool tool)
 {
     IntRect selectionRect;
 
@@ -4653,7 +4653,9 @@ void WebViewImpl::showWritingTools()
     if (editorState.selectionIsRange && editorState.hasPostLayoutData())
         selectionRect = editorState.postLayoutData->selectionBoundingRect;
 
-    [[PAL::getWTWritingToolsClass() sharedInstance] showPanelForSelectionRect:selectionRect ofView:m_view.getAutoreleased() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.getAutoreleased()];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[PAL::getWTWritingToolsClass() sharedInstance] showTool:tool forSelectionRect:selectionRect ofView:m_view.getAutoreleased() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.getAutoreleased()];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void WebViewImpl::addTextAnimationForAnimationID(WTF::UUID uuid, const WebCore::TextAnimationData& data)

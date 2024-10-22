@@ -709,6 +709,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _page->handleContextMenuKeyEvent();
 }
 
+#if ENABLE(WRITING_TOOLS)
+
+- (void)showWritingTools:(id)sender
+{
+    WTRequestedTool tool = (WTRequestedTool)[sender tag];
+    if (tool == -1)
+        tool = WTRequestedToolIndex;
+
+    _impl->showWritingTools(tool);
+}
+
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation

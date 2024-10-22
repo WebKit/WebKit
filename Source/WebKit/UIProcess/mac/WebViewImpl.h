@@ -43,6 +43,7 @@
 #include <WebKit/WKDragDestinationAction.h>
 #include <WebKit/_WKOverlayScrollbarStyle.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
+#include <pal/spi/cocoa/WritingToolsSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
@@ -745,7 +746,7 @@ public:
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    void showWritingTools();
+    void showWritingTools(WTRequestedTool = WTRequestedToolIndex);
 
     void addTextAnimationForAnimationID(WTF::UUID, const WebCore::TextAnimationData&);
     void removeTextAnimationForAnimationID(WTF::UUID);

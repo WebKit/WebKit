@@ -1114,7 +1114,9 @@ bool PageClientImpl::canHandleContextMenuWritingTools() const
 void PageClientImpl::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool, WebCore::IntRect selectionRect)
 {
     RetainPtr webView = this->webView();
-    [[PAL::getWTWritingToolsClass() sharedInstance] showTool:WebKit::convertToPlatformRequestedTool(tool) forSelectionRect:selectionRect ofView:m_view forDelegate:webView.get() smartReplyConfiguration:nil];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[PAL::getWTWritingToolsClass() sharedInstance] showTool:WebKit::convertToPlatformRequestedTool(tool) forSelectionRect:selectionRect ofView:m_view forDelegate:webView.get()];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif

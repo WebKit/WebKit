@@ -2812,9 +2812,11 @@ TEST(WritingTools, ShowAffordanceForMultipleLines)
 TEST(WritingTools, ShowPanelWithNoSelection)
 {
     __block bool done = false;
+    __block WTRequestedTool requestedTool = WTRequestedToolIndex;
     __block NSRect selectionRect = NSZeroRect;
 
-    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showTool:forSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, WTRequestedTool tool, NSRect rect, NSView *view, id delegate) {
+        requestedTool = tool;
         selectionRect = rect;
         done = true;
     }));
@@ -2825,15 +2827,19 @@ TEST(WritingTools, ShowPanelWithNoSelection)
 
     TestWebKitAPI::Util::run(&done);
 
+    EXPECT_EQ(requestedTool, WTRequestedToolIndex);
+
     EXPECT_TRUE(NSIsEmptyRect(selectionRect));
 }
 
 TEST(WritingTools, ShowPanelWithCaretSelection)
 {
     __block bool done = false;
+    __block WTRequestedTool requestedTool = WTRequestedToolIndex;
     __block NSRect selectionRect = NSZeroRect;
 
-    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showTool:forSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, WTRequestedTool tool, NSRect rect, NSView *view, id delegate) {
+        requestedTool = tool;
         selectionRect = rect;
         done = true;
     }));
@@ -2860,15 +2866,19 @@ TEST(WritingTools, ShowPanelWithCaretSelection)
 
     TestWebKitAPI::Util::run(&done);
 
+    EXPECT_EQ(requestedTool, WTRequestedToolIndex);
+
     EXPECT_TRUE(NSIsEmptyRect(selectionRect));
 }
 
 TEST(WritingTools, ShowPanelWithRangedSelection)
 {
     __block bool done = false;
+    __block WTRequestedTool requestedTool = WTRequestedToolIndex;
     __block NSRect selectionRect = NSZeroRect;
 
-    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showPanelForSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, NSRect rect, NSView *view, id delegate) {
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showTool:forSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, WTRequestedTool tool, NSRect rect, NSView *view, id delegate) {
+        requestedTool = tool;
         selectionRect = rect;
         done = true;
     }));
@@ -2879,6 +2889,62 @@ TEST(WritingTools, ShowPanelWithRangedSelection)
     [webView _showWritingTools];
 
     TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(requestedTool, WTRequestedToolIndex);
+
+    NSRect expectedRect = NSMakeRect(8, 8, 292, 18);
+    EXPECT_TRUE(NSEqualRects(expectedRect, selectionRect));
+}
+
+TEST(WritingTools, ShowToolWithRangedSelection)
+{
+    __block bool done = false;
+    __block WTRequestedTool requestedTool = WTRequestedToolIndex;
+    __block NSRect selectionRect = NSZeroRect;
+
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showTool:forSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, WTRequestedTool tool, NSRect rect, NSView *view, id delegate) {
+        requestedTool = tool;
+        selectionRect = rect;
+        done = true;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='text'>This is some content that should be rewritten.</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Test" action:nil keyEquivalent:@""]);
+    [menuItem setTag:WTRequestedToolRewriteFriendly];
+    [webView showWritingTools:menuItem.get()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(requestedTool, WTRequestedToolRewriteFriendly);
+
+    NSRect expectedRect = NSMakeRect(8, 8, 292, 18);
+    EXPECT_TRUE(NSEqualRects(expectedRect, selectionRect));
+}
+
+TEST(WritingTools, ShowInvalidToolWithRangedSelection)
+{
+    __block bool done = false;
+    __block WTRequestedTool requestedTool = WTRequestedToolIndex;
+    __block NSRect selectionRect = NSZeroRect;
+
+    InstanceMethodSwizzler swizzler(PAL::getWTWritingToolsClass(), @selector(showTool:forSelectionRect:ofView:forDelegate:), imp_implementationWithBlock(^(id object, WTRequestedTool tool, NSRect rect, NSView *view, id delegate) {
+        requestedTool = tool;
+        selectionRect = rect;
+        done = true;
+    }));
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='text'>This is some content that should be rewritten.</p></body>" writingToolsBehavior:PlatformWritingToolsBehaviorComplete]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    RetainPtr menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:@"Test" action:nil keyEquivalent:@""]);
+    [menuItem setTag:-1];
+    [webView showWritingTools:menuItem.get()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(requestedTool, WTRequestedToolIndex);
 
     NSRect expectedRect = NSMakeRect(8, 8, 292, 18);
     EXPECT_TRUE(NSEqualRects(expectedRect, selectionRect));
