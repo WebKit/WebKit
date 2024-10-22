@@ -905,7 +905,7 @@ void AsyncScrollingCoordinator::unparentNode(ScrollingNodeID nodeID)
         stateTree->unparentNode(nodeID);
 }
 
-void AsyncScrollingCoordinator::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
+void AsyncScrollingCoordinator::unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID> nodeID)
 {
     if (auto* stateTree = stateTreeForNodeID(nodeID))
         stateTree->unparentChildrenAndDestroyNode(nodeID);

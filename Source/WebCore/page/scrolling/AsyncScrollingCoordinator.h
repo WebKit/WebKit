@@ -136,7 +136,7 @@ private:
     WEBCORE_EXPORT std::optional<ScrollingNodeID> createNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID) override;
     WEBCORE_EXPORT std::optional<ScrollingNodeID> insertNode(FrameIdentifier rootFrameID, ScrollingNodeType, ScrollingNodeID newNodeID, std::optional<ScrollingNodeID> parentID, size_t childIndex) override;
     WEBCORE_EXPORT void unparentNode(ScrollingNodeID) override;
-    WEBCORE_EXPORT void unparentChildrenAndDestroyNode(ScrollingNodeID) override;
+    WEBCORE_EXPORT void unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID>) override;
     WEBCORE_EXPORT void detachAndDestroySubtree(ScrollingNodeID) override;
     WEBCORE_EXPORT void clearAllNodes(FrameIdentifier rootFrameID) override;
 

@@ -144,7 +144,7 @@ public:
     // Node will be unparented, but not destroyed. It's the client's responsibility to either re-parent or destroy this node.
     virtual void unparentNode(ScrollingNodeID) { }
     // Node will be destroyed, and its children left unparented.
-    virtual void unparentChildrenAndDestroyNode(ScrollingNodeID) { }
+    virtual void unparentChildrenAndDestroyNode(std::optional<ScrollingNodeID>) { }
     // Node will be unparented, and it and its children destroyed.
     virtual void detachAndDestroySubtree(ScrollingNodeID) { }
     // Destroy the tree, including both parented and unparented nodes.
