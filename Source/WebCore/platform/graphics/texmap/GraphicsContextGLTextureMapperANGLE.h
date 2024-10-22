@@ -38,13 +38,13 @@ class GLFence;
 
 class TextureMapperGCGLPlatformLayer;
 
-class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
+class GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
 public:
-    static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
+    WEBCORE_EXPORT static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
     virtual ~GraphicsContextGLTextureMapperANGLE();
 
     // GraphicsContextGLANGLE overrides.
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
+    WEBCORE_EXPORT RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 #endif

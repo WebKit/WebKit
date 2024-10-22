@@ -47,12 +47,12 @@ public:
     virtual void recordDamage(const FloatRect&) = 0;
 };
 
-class WEBCORE_EXPORT TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
+class TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
     WTF_MAKE_TZONE_ALLOCATED(TextureMapperLayer);
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
 public:
-    TextureMapperLayer(Damage::ShouldPropagate = Damage::ShouldPropagate::No);
-    virtual ~TextureMapperLayer();
+    WEBCORE_EXPORT TextureMapperLayer(Damage::ShouldPropagate = Damage::ShouldPropagate::No);
+    WEBCORE_EXPORT virtual ~TextureMapperLayer();
 
 #if USE(COORDINATED_GRAPHICS)
     void setID(uint32_t id) { m_id = id; }
@@ -61,37 +61,37 @@ public:
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
 
-    void setChildren(const Vector<TextureMapperLayer*>&);
-    void setMaskLayer(TextureMapperLayer*);
-    void setReplicaLayer(TextureMapperLayer*);
-    void setBackdropLayer(TextureMapperLayer*);
-    void setBackdropFiltersRect(const FloatRoundedRect&);
-    void setPosition(const FloatPoint&);
-    void setBoundsOrigin(const FloatPoint&);
-    void setSize(const FloatSize&);
-    void setAnchorPoint(const FloatPoint3D&);
-    void setPreserves3D(bool);
-    void setTransform(const TransformationMatrix&);
-    void setChildrenTransform(const TransformationMatrix&);
-    void setContentsRect(const FloatRect&);
-    void setMasksToBounds(bool);
-    void setDrawsContent(bool);
+    WEBCORE_EXPORT void setChildren(const Vector<TextureMapperLayer*>&);
+    WEBCORE_EXPORT void setMaskLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setReplicaLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setBackdropLayer(TextureMapperLayer*);
+    WEBCORE_EXPORT void setBackdropFiltersRect(const FloatRoundedRect&);
+    WEBCORE_EXPORT void setPosition(const FloatPoint&);
+    WEBCORE_EXPORT void setBoundsOrigin(const FloatPoint&);
+    WEBCORE_EXPORT void setSize(const FloatSize&);
+    WEBCORE_EXPORT void setAnchorPoint(const FloatPoint3D&);
+    WEBCORE_EXPORT void setPreserves3D(bool);
+    WEBCORE_EXPORT void setTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void setChildrenTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void setContentsRect(const FloatRect&);
+    WEBCORE_EXPORT void setMasksToBounds(bool);
+    WEBCORE_EXPORT void setDrawsContent(bool);
     bool drawsContent() const { return m_state.drawsContent; }
     bool contentsAreVisible() const { return m_state.contentsVisible; }
     FloatSize size() const { return m_state.size; }
     float opacity() const { return m_state.opacity; }
     TransformationMatrix transform() const { return m_state.transform; }
-    void setContentsVisible(bool);
-    void setContentsOpaque(bool);
-    void setBackfaceVisibility(bool);
-    void setOpacity(float);
-    void setSolidColor(const Color&);
-    void setBackgroundColor(const Color&);
-    void setContentsTileSize(const FloatSize&);
-    void setContentsTilePhase(const FloatSize&);
-    void setContentsClippingRect(const FloatRoundedRect&);
-    void setContentsRectClipsDescendants(bool);
-    void setFilters(const FilterOperations&);
+    WEBCORE_EXPORT void setContentsVisible(bool);
+    WEBCORE_EXPORT void setContentsOpaque(bool);
+    WEBCORE_EXPORT void setBackfaceVisibility(bool);
+    WEBCORE_EXPORT void setOpacity(float);
+    WEBCORE_EXPORT void setSolidColor(const Color&);
+    WEBCORE_EXPORT void setBackgroundColor(const Color&);
+    WEBCORE_EXPORT void setContentsTileSize(const FloatSize&);
+    WEBCORE_EXPORT void setContentsTilePhase(const FloatSize&);
+    WEBCORE_EXPORT void setContentsClippingRect(const FloatRoundedRect&);
+    WEBCORE_EXPORT void setContentsRectClipsDescendants(bool);
+    WEBCORE_EXPORT void setFilters(const FilterOperations&);
 
     bool hasFilters() const
     {
@@ -105,18 +105,18 @@ public:
     void setShowRepaintCounter(bool showRepaintCounter) { m_state.showRepaintCounter = showRepaintCounter; }
     void setRepaintCount(int repaintCount) { m_state.repaintCount = repaintCount; }
 
-    void setContentsLayer(TextureMapperPlatformLayer*);
+    WEBCORE_EXPORT void setContentsLayer(TextureMapperPlatformLayer*);
     void setAnimations(const TextureMapperAnimations&);
-    void setBackingStore(TextureMapperBackingStore*);
+    WEBCORE_EXPORT void setBackingStore(TextureMapperBackingStore*);
 #if USE(COORDINATED_GRAPHICS)
     void setAnimatedBackingStoreClient(CoordinatedAnimatedBackingStoreClient*);
 #endif
 
-    bool applyAnimationsRecursively(MonotonicTime);
+    WEBCORE_EXPORT bool applyAnimationsRecursively(MonotonicTime);
     bool syncAnimations(MonotonicTime);
-    bool descendantsOrSelfHaveRunningAnimations() const;
+    WEBCORE_EXPORT bool descendantsOrSelfHaveRunningAnimations() const;
 
-    void paint(TextureMapper&);
+    WEBCORE_EXPORT void paint(TextureMapper&);
 
     void addChild(TextureMapperLayer*);
 
