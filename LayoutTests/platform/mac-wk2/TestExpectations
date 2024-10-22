@@ -1903,3 +1903,8 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 
 # webkit.org/b/281840 [ Ventura wk2 ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html is a flaky failure.
 [ Ventura ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html [ Pass Failure ]
+
+# webkit.org/b/281923 [ Sequoia wk2 Debug arm64 ] 3 tests in http/tests/cookies/same-site are constant failure (failure in EWS)
+[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
