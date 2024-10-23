@@ -38,6 +38,16 @@ typedef NS_ENUM(NSInteger, WKDownloadRedirectPolicy) {
     WKDownloadRedirectPolicyAllow,
 } NS_SWIFT_NAME(WKDownload.RedirectPolicy) WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
+/* @enum WKDownloadPlaceholderPolicy
+ @abstract The policy for creating a placeholder file in the Downloads directory during downloads.
+ @constant WKDownloadPlaceholderPolicyDisable   Do not create a placeholder file.
+ @constant WKDownloadPlaceholderPolicyEnable    Create a placeholder file.
+ */
+typedef NS_ENUM(NSInteger, WKDownloadPlaceholderPolicy) {
+    WKDownloadPlaceholderPolicyDisable,
+    WKDownloadPlaceholderPolicyEnable,
+} NS_SWIFT_NAME(WKDownload.PlaceholderPolicy) WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_SWIFT_UI_ACTOR
@@ -94,6 +104,42 @@ WK_SWIFT_UI_ACTOR
  @param resumeData This data can be passed to WKWebView resumeDownloadFromResumeData: to attempt to resume this download.
  */
 - (void)download:(WKDownload *)download didFailWithError:(NSError *)error resumeData:(nullable NSData *)resumeData;
+
+/* @abstract Invoked when the download needs a placeholder policy from the client.
+ @param download The download for which we need a placeholder policy
+ @param completionHandler The completion handler that should be invoked with the chosen policy.
+ If the client implements it's own placeholder, it can choose to provide an alternate placeholder
+ URL, which progress will be published against.
+ The download will not proceed until the completion handler is called.
+ @discussion The placeholder policy specifies whether a placeholder file should be created in
+ the Downloads directory when the download is in progress. This function is called after
+ the destination for the download has been decided, and before the download begins.
+ If the client opts into the placeholder feature, the system will create a placeholder file in
+ the Downloads directory, which is updated with the download's progress. When the download is
+ done, the placeholder file is replaced with the actual downloaded file. If the client opts
+ out of the placeholder feature, it can choose to provide a custom URL to publish progress
+ against. This is useful if the client maintains it's own placeholder file. If this delegate
+ is not implemented, the placeholder feature will be disabled.
+ */
+- (void)download:(WKDownload *)download decidePlaceholderPolicy:(WK_SWIFT_UI_ACTOR void (^)(WKDownloadPlaceholderPolicy, NSURL * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(placeholderPolicy(forDownload:)) WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/* @abstract Called when the download receives a placeholder URL
+ @param download The download for which we received a placeholder URL
+ @param completionHandler The completion handler that should be called by the client in response to this call.
+ The didReceiveFinalURL function will not be called until the completion handler has been called.
+ @discussion This function is called only if the client opted into the placeholder feature, and it is called
+ before receiving the final URL of the download. The placeholder URL will normally refer to a file in the
+ Downloads directory.
+ */
+- (void)download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(WK_SWIFT_UI_ACTOR void (^)(void))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/* @abstract Called when the download receives a final URL
+ @param download The download for which we received a final URL
+ @param url The URL of the final download location
+ @discussion This function is called after didReceivePlaceholderURL was called and after the download finished.
+ The final URL will normally refer to a file in the Downloads directory
+ */
+- (void)download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 
