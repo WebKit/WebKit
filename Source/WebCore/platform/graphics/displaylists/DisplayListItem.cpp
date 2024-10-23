@@ -53,14 +53,15 @@ bool isValid(const Item& item)
 template<class T>
 inline static std::optional<RenderingResourceIdentifier> applyFilteredImageBufferItem(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item)
 {
-    RELEASE_ASSERT(item.sourceImageIdentifier().has_value());
-    auto resourceIdentifier = item.sourceImageIdentifier().value();
-    if (auto* sourceImage = resourceHeap.getImageBuffer(resourceIdentifier)) {
-        FilterResults results;
-        item.apply(context, sourceImage, results);
-        return std::nullopt;
+    ImageBuffer* sourceImage = nullptr;
+    if (auto resourceIdentifier = item.sourceImageIdentifier(); resourceIdentifier.has_value()) {
+        if (sourceImage = resourceHeap.getImageBuffer(resourceIdentifier.value()); !sourceImage)
+            return resourceIdentifier;
     }
-    return resourceIdentifier;
+
+    FilterResults results;
+    item.apply(context, sourceImage, results);
+    return std::nullopt;
 }
 
 template<class T>
