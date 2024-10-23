@@ -1911,3 +1911,7 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 
 # webkit.org/b/281939 [Sequoia] svg/stroke/non-scaling-stroke-gradient-text.html is a constant image failure
 [ Sequoia ] svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnlyFailure ]
+
+# webkit.org/b/281984 [ SequoiaA wk2 Debug arm64 ] 2x imported/w3c/web-platform-tests/html/anonymous-iframe/* are constant failures. 
+[ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+[ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
