@@ -1064,6 +1064,7 @@ compositing/repaint/scroller-repaints-once.html [ Failure ]
 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
+http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 
 
 #//////////////////////////////////////////////////////////////////////////////////////////

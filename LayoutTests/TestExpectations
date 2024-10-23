@@ -7581,6 +7581,9 @@ imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-m
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/chromium-paint-holding-timeout.html [ ImageOnlyFailure ]
 webkit.org/b/278756 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Failure ]
 
+# BFCache not enabled in WebKitTestRunner - Test duplicated to http/wpt folder to enable UsesBackForwardCache setting.
+imported/w3c/web-platform-tests/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
+
 # prerender not supported.
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/prerender-removed-during-navigation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/transition-to-prerender.html [ Skip ]

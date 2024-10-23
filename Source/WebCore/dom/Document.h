@@ -593,6 +593,7 @@ public:
     bool isTimerThrottlingEnabled() const { return m_isTimerThrottlingEnabled; }
 
     void setVisibilityHiddenDueToDismissal(bool);
+    void clearRevealForReactivation();
 
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> adoptNode(Node& source);
 
@@ -1724,6 +1725,7 @@ public:
 
     bool renderingIsSuppressedForViewTransition() const;
     void setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
+    void setRenderingIsSuppressedForViewTransitionImmediately();
     void clearRenderingIsSuppressedForViewTransition();
     void flushDeferredRenderingIsSuppressedForViewTransitionChanges();
 

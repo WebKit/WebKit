@@ -171,6 +171,9 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
             if (protectedThis)
                 callUpdateCallback();
         });
+
+        if (m_isCrossDocument)
+            m_updateCallbackDone.second->resolve();
     }
 
     document()->clearRenderingIsSuppressedForViewTransition();
@@ -301,7 +304,11 @@ void ViewTransition::setupViewTransition()
         return;
     }
 
-    document()->setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
+    if (m_isCrossDocument)
+        document()->setRenderingIsSuppressedForViewTransitionImmediately();
+    else
+        document()->setRenderingIsSuppressedForViewTransitionAfterUpdateRendering();
+
     protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
