@@ -72,6 +72,8 @@ public:
     void mapAnimationTimingFunction(Animation&, const CSSValue&) const;
     static void mapAnimationCompositeOperation(Animation&, const CSSValue&);
     static void mapAnimationAllowsDiscreteTransitions(Animation&, const CSSValue&);
+    void mapAnimationRangeStart(Animation&, const CSSValue&) const;
+    void mapAnimationRangeEnd(Animation&, const CSSValue&) const;
 
     void mapNinePieceImage(const CSSValue*, NinePieceImage&) const;
     void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&) const;

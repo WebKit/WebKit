@@ -64,6 +64,8 @@ struct TimelineRange {
     SingleTimelineRange start;
     SingleTimelineRange end;
 
+    bool operator==(const TimelineRange& other) const = default;
+
     static TimelineRange defaultForScrollTimeline();
     static TimelineRange defaultForViewTimeline();
     bool isDefault() const { return start.name == SingleTimelineRange::Name::Normal && end.name == SingleTimelineRange::Name::Normal; }

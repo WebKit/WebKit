@@ -496,6 +496,20 @@ void CSSToStyleMap::mapAnimationAllowsDiscreteTransitions(Animation& layer, cons
         layer.setAllowsDiscreteTransitions(value.valueID() == CSSValueAllowDiscrete);
 }
 
+void CSSToStyleMap::mapAnimationRangeStart(Animation& animation, const CSSValue& value) const
+{
+    if (treatAsInitialValue(value, CSSPropertyAnimationRangeStart))
+        animation.setRangeStart(Animation::initialRangeStart());
+    animation.setRangeStart(SingleTimelineRange::range(value, SingleTimelineRange::Type::Start, &m_builderState));
+}
+
+void CSSToStyleMap::mapAnimationRangeEnd(Animation& animation, const CSSValue& value) const
+{
+    if (treatAsInitialValue(value, CSSPropertyAnimationRangeEnd))
+        animation.setRangeEnd(Animation::initialRangeEnd());
+    animation.setRangeEnd(SingleTimelineRange::range(value, SingleTimelineRange::Type::End, &m_builderState));
+}
+
 void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& image) const
 {
     // If we're not a value list, then we are "none" and don't need to alter the empty image at all.

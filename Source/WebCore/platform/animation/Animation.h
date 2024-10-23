@@ -53,6 +53,8 @@ public:
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isCompositeOperationSet() const { return m_compositeOperationSet; }
     bool isAllowsDiscreteTransitionsSet() const { return m_allowsDiscreteTransitionsSet; }
+    bool isRangeStartSet() const { return m_rangeStartSet; }
+    bool isRangeEndSet() const { return m_rangeEndSet; }
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -67,7 +69,8 @@ public:
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
             && !m_isNone && !m_compositeOperationSet && !m_timelineSet
-            && !m_allowsDiscreteTransitionsSet;
+            && !m_allowsDiscreteTransitionsSet && !m_rangeStartSet
+            && !m_rangeEndSet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -87,6 +90,8 @@ public:
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
     void clearAllowsDiscreteTransitions() { m_allowsDiscreteTransitionsSet = false; m_allowsDiscreteTransitionsFilled = false; }
+    void clearRangeStart() { m_rangeStartSet = false; m_rangeStartFilled = false; }
+    void clearRangeEnd() { m_rangeEndSet = false; m_rangeEndFilled = false; }
 
     void clearAll()
     {
@@ -102,6 +107,8 @@ public:
         clearTimingFunction();
         clearCompositeOperation();
         clearAllowsDiscreteTransitions();
+        clearRangeStart();
+        clearRangeEnd();
     }
 
     double delay() const { return m_delay; }
@@ -145,6 +152,9 @@ public:
     const Timeline& timeline() const { return m_timeline; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
+    const SingleTimelineRange rangeStart() const { return m_range.start; }
+    const SingleTimelineRange rangeEnd() const { return m_range.end; }
+    const TimelineRange range() const { return m_range; }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(Direction d) { m_direction = static_cast<unsigned>(d); m_directionSet = true; }
@@ -162,6 +172,9 @@ public:
     void setTimeline(Timeline timeline) { m_timeline = timeline; m_timelineSet = true; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
+    void setRangeStart(SingleTimelineRange range) { m_range.start = range; m_rangeStartSet = true; }
+    void setRangeEnd(SingleTimelineRange range) { m_range.end = range; m_rangeEndSet = true; }
+    void setRange(TimelineRange range) { setRangeStart(range.start); setRangeEnd(range.end); }
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
@@ -176,6 +189,8 @@ public:
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
     void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
     void fillAllowsDiscreteTransitions(bool allowsDiscreteTransitionsFilled) { setAllowsDiscreteTransitions(allowsDiscreteTransitionsFilled); m_allowsDiscreteTransitionsFilled = true; }
+    void fillRangeStart(SingleTimelineRange range) { m_range.start = range; m_rangeStartFilled = true; }
+    void fillRangeEnd(SingleTimelineRange range) { m_range.end = range; m_rangeEndFilled = true; }
 
     bool isDelayFilled() const { return m_delayFilled; }
     bool isDirectionFilled() const { return m_directionFilled; }
@@ -188,6 +203,9 @@ public:
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
     bool isCompositeOperationFilled() const { return m_compositeOperationFilled; }
     bool isAllowsDiscreteTransitionsFilled() const { return m_allowsDiscreteTransitionsFilled; }
+    bool isRangeStartFilled() const { return m_rangeStartFilled; }
+    bool isRangeEndFilled() const { return m_rangeEndFilled; }
+    bool isRangeFilled() const { return isRangeStartFilled() || isRangeEndFilled(); }
 
     // return true if all members of this class match (excluding m_next)
     bool animationsMatch(const Animation&, bool matchProperties = true) const;
@@ -219,6 +237,7 @@ private:
     Timeline m_timeline;
     RefPtr<TimingFunction> m_timingFunction;
     RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
+    TimelineRange m_range;
 
     unsigned m_direction : 2; // Direction
     unsigned m_fillMode : 2; // AnimationFillMode
@@ -238,6 +257,8 @@ private:
     bool m_timingFunctionSet : 1;
     bool m_compositeOperationSet : 1;
     bool m_allowsDiscreteTransitionsSet : 1;
+    bool m_rangeStartSet : 1;
+    bool m_rangeEndSet : 1;
 
     bool m_isNone : 1;
 
@@ -252,6 +273,8 @@ private:
     bool m_timingFunctionFilled : 1;
     bool m_compositeOperationFilled : 1;
     bool m_allowsDiscreteTransitionsFilled : 1;
+    bool m_rangeStartFilled : 1;
+    bool m_rangeEndFilled : 1;
 
 public:
     static double initialDelay() { return 0; }
@@ -266,6 +289,9 @@ public:
     static Timeline initialTimeline() { return TimelineKeyword::Auto; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
     static bool initialAllowsDiscreteTransitions() { return false; }
+    static TimelineRange initialRange() { return { }; }
+    static SingleTimelineRange initialRangeStart() { return { }; }
+    static SingleTimelineRange initialRangeEnd() { return { }; }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);

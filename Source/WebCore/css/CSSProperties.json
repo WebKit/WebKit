@@ -1560,11 +1560,13 @@
             }
         },
         "animation-range": {
+            "animatable": true,
             "codegen-properties": {
                 "longhands": [
                     "animation-range-start",
                     "animation-range-end"
                 ],
+                "separator": ",",
                 "settings-flag": "scrollDrivenAnimationsEnabled"
             },
             "specification": {
@@ -1573,8 +1575,10 @@
             }
         },
         "animation-range-start": {
+            "animatable": true,
             "codegen-properties": {
-                "converter": "AnimationRangeStart",
+                "separator": ",",
+                "name-for-methods": "RangeStart",
                 "parser-function": "consumeAnimationRangeStart",
                 "parser-grammar-unused": "[ normal | <length-percentage> | [ <custom-ident> || <length-percentage>?] ]#",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
@@ -1586,8 +1590,10 @@
             }
         },
         "animation-range-end": {
+            "animatable": true,
             "codegen-properties": {
-                "converter": "AnimationRangeEnd",
+                "separator": ",",
+                "name-for-methods": "RangeEnd",
                 "parser-function": "consumeAnimationRangeEnd",
                 "parser-grammar-unused": "[ normal | <length-percentage> | [ <custom-ident> || <length-percentage>? ] ]#",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",

@@ -195,9 +195,6 @@ public:
 
     TimelineScope timelineScope;
 
-    SingleTimelineRange animationRangeStart;
-    SingleTimelineRange animationRangeEnd;
-
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };
 

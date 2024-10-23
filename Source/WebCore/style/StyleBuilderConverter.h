@@ -244,9 +244,6 @@ public:
 
     static TimelineScope convertTimelineScope(const BuilderState&, const CSSValue&);
 
-    static SingleTimelineRange convertAnimationRangeStart(const BuilderState&, const CSSValue&);
-    static SingleTimelineRange convertAnimationRangeEnd(const BuilderState&, const CSSValue&);
-
 private:
     friend class BuilderCustom;
 
@@ -2213,16 +2210,6 @@ inline TimelineScope BuilderConverter::convertTimelineScope(const BuilderState&,
     return { TimelineScope::Type::Ident, WTF::map(*list, [&](auto& item) {
         return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
     }) };
-}
-
-inline SingleTimelineRange BuilderConverter::convertAnimationRangeStart(const BuilderState& state, const CSSValue& value)
-{
-    return SingleTimelineRange::range(value, SingleTimelineRange::Type::Start, &state);
-}
-
-inline SingleTimelineRange BuilderConverter::convertAnimationRangeEnd(const BuilderState& state, const CSSValue& value)
-{
-    return SingleTimelineRange::range(value, SingleTimelineRange::Type::End, &state);
 }
 
 } // namespace Style
