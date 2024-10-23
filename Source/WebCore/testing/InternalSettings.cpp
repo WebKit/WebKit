@@ -178,7 +178,7 @@ void InternalSettings::resetToConsistentState()
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->setPageAndTextZoomFactors(1, 1);
     m_page->setCanStartMedia(true);
-    m_page->effectiveAppearanceDidChange(false, false);
+    m_page->setUseColorAppearance(false, false);
 
     m_backup.restoreTo(settings());
     m_backup = Backup { settings() };
@@ -511,7 +511,7 @@ ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
+    m_page->setUseColorAppearance(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
     return { };
 }
 
@@ -519,7 +519,7 @@ ExceptionOr<void> InternalSettings::setUseElevatedUserInterfaceLevel(bool useEle
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-    m_page->effectiveAppearanceDidChange(m_page->useDarkAppearance(), useElevatedUserInterfaceLevel);
+    m_page->setUseColorAppearance(m_page->useDarkAppearance(), useElevatedUserInterfaceLevel);
     return { };
 }
 

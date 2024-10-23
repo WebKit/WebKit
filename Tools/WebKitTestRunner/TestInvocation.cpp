@@ -619,6 +619,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetUseDarkAppearanceForTesting")) {
+        TestController::singleton().setUseDarkAppearanceForTesting(booleanValue(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetShouldDownloadUndisplayableMIMETypes")) {
         TestController::singleton().setShouldDownloadUndisplayableMIMETypes(booleanValue(messageBody));
         return;

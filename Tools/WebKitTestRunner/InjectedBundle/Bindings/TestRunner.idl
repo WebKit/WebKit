@@ -102,6 +102,7 @@ interface TestRunner {
     undefined setShouldDecideResponsePolicyAfterDelay(boolean value);
     undefined setNavigationGesturesEnabled(boolean value);
     undefined setIgnoresViewportScaleLimits(boolean value);
+    undefined setUseDarkAppearanceForTesting(boolean useDarkAppearance);
     undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
     undefined stopLoading();
 

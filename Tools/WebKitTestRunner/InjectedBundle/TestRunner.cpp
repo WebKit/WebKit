@@ -1063,6 +1063,11 @@ void TestRunner::setIgnoresViewportScaleLimits(bool value)
     postPageMessage("SetIgnoresViewportScaleLimits", value);
 }
 
+void TestRunner::setUseDarkAppearanceForTesting(bool useDarkAppearance)
+{
+    postPageMessage("SetUseDarkAppearanceForTesting", useDarkAppearance);
+}
+
 void TestRunner::setShouldDownloadUndisplayableMIMETypes(bool value)
 {
     postPageMessage("SetShouldDownloadUndisplayableMIMETypes", value);

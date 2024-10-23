@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<body bgcolor=blue>
+    <iframe onload="test()" src="http://localhost:8000/site-isolation/resources/dark-mode-background.html" frameborder=0></iframe>
+    <script>
+        if (window.testRunner) {
+            testRunner.setPrinting();
+            testRunner.waitUntilDone();
+        }
+
+        function test() {
+            if (window.testRunner) {
+                testRunner.setUseDarkAppearanceForTesting(true);
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+</body>

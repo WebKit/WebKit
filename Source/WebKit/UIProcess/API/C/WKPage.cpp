@@ -3052,6 +3052,11 @@ void WKPageSetIgnoresViewportScaleLimits(WKPageRef pageRef, bool ignoresViewport
 #endif
 }
 
+void WKPageSetUseDarkAppearanceForTesting(WKPageRef pageRef, bool useDarkAppearance)
+{
+    toImpl(pageRef)->setUseDarkAppearanceForTesting(useDarkAppearance);
+}
+
 ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
     return toImpl(page)->legacyMainFrameProcessID();
