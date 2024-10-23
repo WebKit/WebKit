@@ -7411,14 +7411,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_point
 
 webkit.org/b/278353 http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
 
-# webkit.org/b/277933 (REGRESSION (iOS 18): 5 WPT CSS layout tests are constantly failing (ImageOnlyFailure). (277933))
-imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-content/quotes-026.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-004.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ ImageOnlyFailure ]
-fast/text/text-underline-position-under.html [ ImageOnlyFailure ]
-
 # webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
 fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
 
