@@ -71,3 +71,49 @@ function from(value)
     // 6. Return wrapper.
     return @wrapForValidIteratorCreate(iterator, iteratorNextMethod);
 }
+
+// https://tc39.es/proposal-iterator-sequencing/#sec-iterator.concat
+function concat(/* ...items */)
+{
+    "use strict";
+
+    var argumentCount = @argumentCount();
+
+    var openMethods = [];
+    var iterables = [];
+    for (var i = 0; i < argumentCount; ++i) {
+        var iterable = arguments[i];
+        if (!@isObject(iterable))
+            @throwTypeError("Iterator.concat expects all arguments to be objects");
+
+        var openMethod = iterable.@@iterator;
+        if (!@isCallable(openMethod))
+            @throwTypeError("Iterator.concat expects all arguments to be iterable");
+
+        @arrayPush(openMethods, openMethod);
+        @arrayPush(iterables, iterable);
+    }
+
+    var generator = (function*() {
+        for (var i = 0; i < argumentCount; ++i) {
+            var iterator = openMethods[i].@call(iterables[i]);
+            if (!@isObject(iterator))
+                @throwTypeError("Iterator.concat expects all arguments to be iterable");
+
+            var nextMethod = iterator.next;
+
+            for (;;) {
+                var result = @iteratorGenericNext(nextMethod, iterator);
+                if (result.done)
+                    break;
+
+                var value = result.value;
+                @ifAbruptCloseIterator(iterator, (
+                    yield value
+                ));
+            }
+        }
+    })();
+
+    return @iteratorHelperCreate(generator, null);
+}

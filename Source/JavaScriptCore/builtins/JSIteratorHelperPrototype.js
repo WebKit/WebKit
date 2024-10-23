@@ -51,7 +51,10 @@ function return()
     var state = @getGeneratorInternalField(generator, @generatorFieldState);
     if (state === @GeneratorStateInit) {
         @putGeneratorInternalField(generator, @generatorFieldState, @GeneratorStateCompleted);
-        @iteratorGenericClose(@getIteratorHelperInternalField(this, @iteratorHelperFieldUnderlyingIterator));
+
+        var underlyingIterator = @getIteratorHelperInternalField(this, @iteratorHelperFieldUnderlyingIterator);
+        if (underlyingIterator !== null)
+            @iteratorGenericClose(underlyingIterator);
 
         return { value: @undefined, done: true };
     }
