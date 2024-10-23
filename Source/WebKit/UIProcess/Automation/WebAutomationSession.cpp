@@ -448,8 +448,10 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::closeBrowsingCont
 
 Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteSession()
 {
+#if ENABLE(REMOTE_INSPECTOR)
     if (!isPaired())
         SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+#endif
 
     terminate();
     return { };
