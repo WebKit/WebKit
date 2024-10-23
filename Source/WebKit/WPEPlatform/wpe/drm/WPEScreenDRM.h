@@ -23,24 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WPEMonitorWayland_h
-#define WPEMonitorWayland_h
+#ifndef WPEScreenDRM_h
+#define WPEScreenDRM_h
 
-#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <wpe/wayland/wpe-wayland.h> can be included directly."
+#if !defined(__WPE_DRM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/drm/wpe-drm.h> can be included directly."
 #endif
 
 #include <glib-object.h>
-#include <wayland-client.h>
 #include <wpe/wpe-platform.h>
 
 G_BEGIN_DECLS
 
-#define WPE_TYPE_MONITOR_WAYLAND (wpe_monitor_wayland_get_type())
-WPE_API G_DECLARE_FINAL_TYPE (WPEMonitorWayland, wpe_monitor_wayland, WPE, MONITOR_WAYLAND, WPEMonitor)
+#define WPE_TYPE_SCREEN_DRM (wpe_screen_drm_get_type())
+WPE_API G_DECLARE_FINAL_TYPE (WPEScreenDRM, wpe_screen_drm, WPE, SCREEN_DRM, WPEScreen)
 
-WPE_API struct wl_output *wpe_monitor_wayland_get_wl_output (WPEMonitorWayland *monitor);
+WPE_API guint wpe_screen_drm_get_crtc_index(WPEScreenDRM *screen);
 
 G_END_DECLS
 
-#endif /* WPEMonitorWayland_h */
+#endif /* WPEScreenDRM_h */

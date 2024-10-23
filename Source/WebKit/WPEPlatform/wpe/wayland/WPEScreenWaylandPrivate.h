@@ -25,6 +25,6 @@
 
 #pragma once
 
-#include "WPEMonitorWayland.h"
+#include "WPEScreenWayland.h"
 
-WPEMonitor* wpeMonitorWaylandCreate(guint32, struct wl_output*);
+WPEScreen* wpeScreenWaylandCreate(guint32, struct wl_output*);

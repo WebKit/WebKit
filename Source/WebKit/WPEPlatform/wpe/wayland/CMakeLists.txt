@@ -7,7 +7,7 @@ set(WPEPlatformWayland_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEDisplayWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEInputMethodContextWaylandV1.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEInputMethodContextWaylandV3.cpp
-    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEMonitorWayland.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEScreenWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEToplevelWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEViewWayland.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEWaylandCursor.cpp
@@ -26,7 +26,7 @@ set(WPEPlatformWayland_SOURCES
 set(WPEPlatformWayland_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/wpe-wayland.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEDisplayWayland.h
-    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEMonitorWayland.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEScreenWayland.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEToplevelWayland.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wayland/WPEViewWayland.h
 )

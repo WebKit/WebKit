@@ -34,27 +34,27 @@
 namespace WebKit {
 using namespace WebCore;
 
-PlatformDisplayID ScreenManager::generatePlatformDisplayID(WPEMonitor* monitor)
+PlatformDisplayID ScreenManager::generatePlatformDisplayID(WPEScreen* screen)
 {
-    return wpe_monitor_get_id(monitor);
+    return wpe_screen_get_id(screen);
 }
 
 ScreenManager::ScreenManager()
 {
     auto* display = wpe_display_get_primary();
-    auto monitorsCount = wpe_display_get_n_monitors(display);
-    for (unsigned i = 0; i < monitorsCount; ++i) {
-        if (auto* monitor = wpe_display_get_monitor(display, i))
-            addMonitor(monitor);
+    auto screensCount = wpe_display_get_n_screens(display);
+    for (unsigned i = 0; i < screensCount; ++i) {
+        if (auto* screen = wpe_display_get_screen(display, i))
+            addScreen(screen);
     }
 
-    g_signal_connect(display, "monitor-added", G_CALLBACK(+[](WPEDisplay*, WPEMonitor* monitor, ScreenManager* manager) {
-        manager->addMonitor(monitor);
+    g_signal_connect(display, "screen-added", G_CALLBACK(+[](WPEDisplay*, WPEScreen* screen, ScreenManager* manager) {
+        manager->addScreen(screen);
         manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
-    g_signal_connect(display, "monitor-removed", G_CALLBACK(+[](WPEDisplay*, WPEMonitor* monitor, ScreenManager* manager) {
-        manager->removeMonitor(monitor);
+    g_signal_connect(display, "screen-removed", G_CALLBACK(+[](WPEDisplay*, WPEScreen* screen, ScreenManager* manager) {
+        manager->removeScreen(screen);
         manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
@@ -62,11 +62,11 @@ ScreenManager::ScreenManager()
 
 void ScreenManager::updatePrimaryDisplayID()
 {
-    // Assume the first monitor is the primary one.
+    // Assume the first screen is the primary one.
     auto* display = wpe_display_get_primary();
-    auto monitorsCount = wpe_display_get_n_monitors(display);
-    auto* monitor = monitorsCount ? wpe_display_get_monitor(display, 0) : nullptr;
-    m_primaryDisplayID = monitor ? displayID(monitor) : 0;
+    auto screensCount = wpe_display_get_n_screens(display);
+    auto* screen = screensCount ? wpe_display_get_screen(display, 0) : nullptr;
+    m_primaryDisplayID = screen ? displayID(screen) : 0;
 }
 
 ScreenProperties ScreenManager::collectScreenProperties() const
@@ -74,17 +74,17 @@ ScreenProperties ScreenManager::collectScreenProperties() const
     ScreenProperties properties;
     properties.primaryDisplayID = m_primaryDisplayID;
 
-    for (const auto& iter : m_monitorToDisplayIDMap) {
-        WPEMonitor* monitor = iter.key;
-        auto width = wpe_monitor_get_width(monitor);
-        auto height = wpe_monitor_get_height(monitor);
+    for (const auto& iter : m_screenToDisplayIDMap) {
+        WPEScreen* screen = iter.key;
+        auto width = wpe_screen_get_width(screen);
+        auto height = wpe_screen_get_height(screen);
 
         ScreenData data;
-        data.screenRect = FloatRect(wpe_monitor_get_x(monitor), wpe_monitor_get_y(monitor), width, height);
+        data.screenRect = FloatRect(wpe_screen_get_x(screen), wpe_screen_get_y(screen), width, height);
         data.screenAvailableRect = data.screenRect;
         data.screenDepth = 24;
         data.screenDepthPerComponent = 8;
-        data.screenSize = { wpe_monitor_get_physical_width(monitor), wpe_monitor_get_physical_height(monitor) };
+        data.screenSize = { wpe_screen_get_physical_width(screen), wpe_screen_get_physical_height(screen) };
         static constexpr double millimetresPerInch = 25.4;
         double diagonalInPixels = std::hypot(width, height);
         double diagonalInInches = std::hypot(data.screenSize.width(), data.screenSize.height()) / millimetresPerInch;

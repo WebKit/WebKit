@@ -104,8 +104,8 @@ static void wpeViewWaylandConstructed(GObject* object)
         wpe_view_map(view);
     }), nullptr);
 
-    g_signal_connect(view, "notify::monitor", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
-        if (wpe_view_get_monitor(view))
+    g_signal_connect(view, "notify::screen", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer) {
+        if (wpe_view_get_screen(view))
             wpe_view_map(view);
         else
             wpe_view_unmap(view);
@@ -495,7 +495,7 @@ static void wpeViewWaylandSetOpaqueRectangles(WPEView* view, WPERectangle* rects
 static gboolean wpeViewWaylandCanBeMapped(WPEView* view)
 {
     if (auto* toplevel = wpe_view_get_toplevel(view))
-        return !!wpe_toplevel_get_monitor(toplevel);
+        return !!wpe_toplevel_get_screen(toplevel);
     return FALSE;
 }
 

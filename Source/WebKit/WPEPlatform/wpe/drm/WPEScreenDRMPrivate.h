@@ -23,23 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WPEMonitorDRM_h
-#define WPEMonitorDRM_h
+#pragma once
 
-#if !defined(__WPE_DRM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <wpe/drm/wpe-drm.h> can be included directly."
-#endif
+#include "WPEDRM.h"
+#include "WPEScreenDRM.h"
 
-#include <glib-object.h>
-#include <wpe/wpe-platform.h>
-
-G_BEGIN_DECLS
-
-#define WPE_TYPE_MONITOR_DRM (wpe_monitor_drm_get_type())
-WPE_API G_DECLARE_FINAL_TYPE (WPEMonitorDRM, wpe_monitor_drm, WPE, MONITOR_DRM, WPEMonitor)
-
-WPE_API guint wpe_monitor_drm_get_crtc_index(WPEMonitorDRM *monitor);
-
-G_END_DECLS
-
-#endif /* WPEMonitorDRM_h */
+WPEScreen* wpeScreenDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&&, const WPE::DRM::Connector&);
+drmModeModeInfo* wpeScreenDRMGetMode(WPEScreenDRM*);
+const WPE::DRM::Crtc wpeScreenDRMGetCrtc(WPEScreenDRM*);

@@ -84,7 +84,7 @@ enum {
     PROP_HEIGHT,
     PROP_SCALE,
     PROP_TOPLEVEL_STATE,
-    PROP_MONITOR,
+    PROP_SCREEN,
     PROP_VISIBLE,
     PROP_MAPPED,
     PROP_HAS_FOCUS,
@@ -150,8 +150,8 @@ static void wpeViewGetProperty(GObject* object, guint propId, GValue* value, GPa
     case PROP_TOPLEVEL_STATE:
         g_value_set_flags(value, wpe_view_get_toplevel_state(view));
         break;
-    case PROP_MONITOR:
-        g_value_set_object(value, wpe_view_get_monitor(view));
+    case PROP_SCREEN:
+        g_value_set_object(value, wpe_view_get_screen(view));
         break;
     case PROP_VISIBLE:
         g_value_set_boolean(value, wpe_view_get_visible(view));
@@ -266,15 +266,15 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
             WEBKIT_PARAM_READABLE);
 
     /**
-     * WPEView:monitor:
+     * WPEView:screen:
      *
-     * The current #WPEMonitor of the view.
+     * The current #WPEScreen of the view.
      */
-    sObjProperties[PROP_MONITOR] =
+    sObjProperties[PROP_SCREEN] =
         g_param_spec_object(
-            "monitor",
+            "screen",
             nullptr, nullptr,
-            WPE_TYPE_MONITOR,
+            WPE_TYPE_SCREEN,
             WEBKIT_PARAM_READABLE);
 
     /**
@@ -457,9 +457,9 @@ void wpeViewScaleChanged(WPEView* view, double scale)
     g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_SCALE]);
 }
 
-void wpeViewMonitorChanged(WPEView* view)
+void wpeViewScreenChanged(WPEView* view)
 {
-    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_MONITOR]);
+    g_object_notify_by_pspec(G_OBJECT(view), sObjProperties[PROP_SCREEN]);
 }
 
 void wpeViewPreferredDMABufFormatsChanged(WPEView* view)
@@ -542,7 +542,7 @@ void wpe_view_set_toplevel(WPEView* view, WPEToplevel* toplevel)
         wpeToplevelAddView(priv->toplevel.get(), view);
         wpeViewScaleChanged(view, wpe_toplevel_get_scale(priv->toplevel.get()));
         wpeViewToplevelStateChanged(view, wpe_toplevel_get_state(priv->toplevel.get()));
-        wpeViewMonitorChanged(view);
+        wpeViewScreenChanged(view);
         wpeViewPreferredDMABufFormatsChanged(view);
     }
 
@@ -850,18 +850,18 @@ WPEToplevelState wpe_view_get_toplevel_state(WPEView* view)
 }
 
 /**
- * wpe_view_get_monitor:
+ * wpe_view_get_screen:
  * @view: a #WPEView
  *
- * Get current #WPEMonitor of @view
+ * Get current #WPEScreen of @view
  *
- * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ * Returns: (transfer none) (nullable): a #WPEScreen, or %NULL
  */
-WPEMonitor* wpe_view_get_monitor(WPEView* view)
+WPEScreen* wpe_view_get_screen(WPEView* view)
 {
     g_return_val_if_fail(WPE_IS_VIEW(view), nullptr);
 
-    return view->priv->toplevel ? wpe_toplevel_get_monitor(view->priv->toplevel.get()) : nullptr;
+    return view->priv->toplevel ? wpe_toplevel_get_screen(view->priv->toplevel.get()) : nullptr;
 }
 
 /**

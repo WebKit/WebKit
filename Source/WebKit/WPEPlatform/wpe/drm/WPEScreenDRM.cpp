@@ -24,57 +24,57 @@
  */
 
 #include "config.h"
-#include "WPEMonitorDRM.h"
+#include "WPEScreenDRM.h"
 
-#include "WPEMonitorDRMPrivate.h"
+#include "WPEScreenDRMPrivate.h"
 #include <wtf/glib/WTFGType.h>
 
 /**
- * WPEMonitorDRM:
+ * WPEScreenDRM:
  *
  */
-struct _WPEMonitorDRMPrivate {
+struct _WPEScreenDRMPrivate {
     std::unique_ptr<WPE::DRM::Crtc> crtc;
     drmModeModeInfo mode;
 };
-WEBKIT_DEFINE_FINAL_TYPE(WPEMonitorDRM, wpe_monitor_drm, WPE_TYPE_MONITOR, WPEMonitor)
+WEBKIT_DEFINE_FINAL_TYPE(WPEScreenDRM, wpe_screen_drm, WPE_TYPE_SCREEN, WPEScreen)
 
-static void wpeMonitorDRMInvalidate(WPEMonitor* monitor)
+static void wpeScreenDRMInvalidate(WPEScreen* screen)
 {
-    auto* priv = WPE_MONITOR_DRM(monitor)->priv;
+    auto* priv = WPE_SCREEN_DRM(screen)->priv;
     priv->crtc = nullptr;
 }
 
-static void wpeMonitorDRMDispose(GObject* object)
+static void wpeScreenDRMDispose(GObject* object)
 {
-    wpeMonitorDRMInvalidate(WPE_MONITOR(object));
+    wpeScreenDRMInvalidate(WPE_SCREEN(object));
 
-    G_OBJECT_CLASS(wpe_monitor_drm_parent_class)->dispose(object);
+    G_OBJECT_CLASS(wpe_screen_drm_parent_class)->dispose(object);
 }
 
-static void wpe_monitor_drm_class_init(WPEMonitorDRMClass* monitorDRMClass)
+static void wpe_screen_drm_class_init(WPEScreenDRMClass* screenDRMClass)
 {
-    GObjectClass* objectClass = G_OBJECT_CLASS(monitorDRMClass);
-    objectClass->dispose = wpeMonitorDRMDispose;
+    GObjectClass* objectClass = G_OBJECT_CLASS(screenDRMClass);
+    objectClass->dispose = wpeScreenDRMDispose;
 
-    WPEMonitorClass* monitorClass = WPE_MONITOR_CLASS(monitorDRMClass);
-    monitorClass->invalidate = wpeMonitorDRMInvalidate;
+    WPEScreenClass* screenClass = WPE_SCREEN_CLASS(screenDRMClass);
+    screenClass->invalidate = wpeScreenDRMInvalidate;
 }
 
-WPEMonitor* wpeMonitorDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WPE::DRM::Connector& connector)
+WPEScreen* wpeScreenDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WPE::DRM::Connector& connector)
 {
-    auto* monitor = WPE_MONITOR(g_object_new(WPE_TYPE_MONITOR_DRM, "id", crtc->id(), nullptr));
-    auto* priv = WPE_MONITOR_DRM(monitor)->priv;
+    auto* screen = WPE_SCREEN(g_object_new(WPE_TYPE_SCREEN_DRM, "id", crtc->id(), nullptr));
+    auto* priv = WPE_SCREEN_DRM(screen)->priv;
     priv->crtc = WTFMove(crtc);
 
     double scale = 1;
     if (const char* scaleString = getenv("WPE_DRM_SCALE"))
         scale = g_ascii_strtod(scaleString, nullptr);
 
-    wpe_monitor_set_position(monitor, priv->crtc->x() / scale, priv->crtc->y() / scale);
-    wpe_monitor_set_size(monitor, priv->crtc->width() / scale, priv->crtc->height() / scale);
-    wpe_monitor_set_physical_size(monitor, connector.widthMM(), connector.heightMM());
-    wpe_monitor_set_scale(monitor, scale);
+    wpe_screen_set_position(screen, priv->crtc->x() / scale, priv->crtc->y() / scale);
+    wpe_screen_set_size(screen, priv->crtc->width() / scale, priv->crtc->height() / scale);
+    wpe_screen_set_physical_size(screen, connector.widthMM(), connector.heightMM());
+    wpe_screen_set_scale(screen, scale);
 
     if (const auto& mode = priv->crtc->currentMode())
         priv->mode = mode.value();
@@ -105,32 +105,32 @@ WPEMonitor* wpeMonitorDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WP
         return refresh;
     }(&priv->mode);
 
-    wpe_monitor_set_refresh_rate(monitor, refresh);
+    wpe_screen_set_refresh_rate(screen, refresh);
 
-    return WPE_MONITOR(monitor);
+    return WPE_SCREEN(screen);
 }
 
-drmModeModeInfo* wpeMonitorDRMGetMode(WPEMonitorDRM* monitor)
+drmModeModeInfo* wpeScreenDRMGetMode(WPEScreenDRM* screen)
 {
-    return &monitor->priv->mode;
+    return &screen->priv->mode;
 }
 
-const WPE::DRM::Crtc wpeMonitorDRMGetCrtc(WPEMonitorDRM* monitor)
+const WPE::DRM::Crtc wpeScreenDRMGetCrtc(WPEScreenDRM* screen)
 {
-    return *monitor->priv->crtc;
+    return *screen->priv->crtc;
 }
 
 /**
- * wpe_monitor_drm_get_crtc_index: (skip)
- * @monitor: a #WPEMonitorDRM
+ * wpe_screen_drm_get_crtc_index: (skip)
+ * @screen: a #WPEScreenDRM
  *
- * Get the DRM CRTC index of @monitor
+ * Get the DRM CRTC index of @screen
  *
  * Returns: the CRTC index
  */
-guint wpe_monitor_drm_get_crtc_index(WPEMonitorDRM* monitor)
+guint wpe_screen_drm_get_crtc_index(WPEScreenDRM* screen)
 {
-    g_return_val_if_fail(WPE_IS_MONITOR_DRM(monitor), 0);
+    g_return_val_if_fail(WPE_IS_SCREEN_DRM(screen), 0);
 
-    return monitor->priv->crtc->index();
+    return screen->priv->crtc->index();
 }

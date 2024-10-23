@@ -47,14 +47,14 @@ ScreenManager::ScreenManager()
     auto monitorsCount = g_list_model_get_n_items(monitors);
     for (unsigned i = 0; i < monitorsCount; ++i) {
         auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, i)));
-        addMonitor(monitor.get());
+        addScreen(monitor.get());
     }
     g_signal_connect(monitors, "items-changed", G_CALLBACK(+[](GListModel* monitors, guint index, guint removedCount, guint addedCount, ScreenManager* manager) {
         for (unsigned i = 0; i < removedCount; ++i)
-            manager->removeMonitor(manager->m_monitors[index].get());
+            manager->removeScreen(manager->m_screens[index].get());
         for (unsigned i = 0; i < addedCount; ++i) {
             auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, index + i)));
-            manager->addMonitor(monitor.get());
+            manager->addScreen(monitor.get());
         }
         manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
@@ -63,15 +63,15 @@ ScreenManager::ScreenManager()
     auto monitorsCount = gdk_display_get_n_monitors(display);
     for (int i = 0; i < monitorsCount; ++i) {
         if (auto* monitor = gdk_display_get_monitor(display, i))
-            addMonitor(monitor);
+            addScreen(monitor);
     }
     g_signal_connect(display, "monitor-added", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
-        manager->addMonitor(monitor);
+        manager->addScreen(monitor);
         manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
     g_signal_connect(display, "monitor-removed", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
-        manager->removeMonitor(monitor);
+        manager->removeScreen(monitor);
         manager->updatePrimaryDisplayID();
         manager->propertiesDidChange();
     }), this);
@@ -118,7 +118,7 @@ ScreenProperties ScreenManager::collectScreenProperties() const
     ScreenProperties properties;
     properties.primaryDisplayID = m_primaryDisplayID;
 
-    for (const auto& iter : m_monitorToDisplayIDMap) {
+    for (const auto& iter : m_screenToDisplayIDMap) {
         GdkMonitor* monitor = iter.key;
         ScreenData data;
         GdkRectangle workArea;

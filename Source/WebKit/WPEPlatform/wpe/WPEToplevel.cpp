@@ -364,36 +364,36 @@ void wpe_toplevel_scale_changed(WPEToplevel* toplevel, gdouble scale)
 }
 
 /**
- * wpe_toplevel_get_monitor:
+ * wpe_toplevel_get_screen:
  * @toplevel: a #WPEToplevel
  *
- * Get current #WPEMonitor of @toplevel
+ * Get current #WPEScreen of @toplevel
  *
- * Returns: (transfer none) (nullable): a #WPEMonitor, or %NULL
+ * Returns: (transfer none) (nullable): a #WPEScreen, or %NULL
  */
-WPEMonitor* wpe_toplevel_get_monitor(WPEToplevel* toplevel)
+WPEScreen* wpe_toplevel_get_screen(WPEToplevel* toplevel)
 {
     g_return_val_if_fail(WPE_IS_TOPLEVEL(toplevel), nullptr);
 
     auto* toplevelClass = WPE_TOPLEVEL_GET_CLASS(toplevel);
-    return toplevelClass->get_monitor ? toplevelClass->get_monitor(toplevel) : nullptr;
+    return toplevelClass->get_screen ? toplevelClass->get_screen(toplevel) : nullptr;
 }
 
 /**
- * wpe_toplevel_monitor_changed:
+ * wpe_toplevel_screen_changed:
  * @toplevel: a #WPEToplevel
  *
- * Notify that @toplevel monitor has changed.
+ * Notify that @toplevel screen has changed.
  *
  * This function should only be called by #WPEToplevel derived classes
  * in platform implementations.
  */
-void wpe_toplevel_monitor_changed(WPEToplevel* toplevel)
+void wpe_toplevel_screen_changed(WPEToplevel* toplevel)
 {
     g_return_if_fail(WPE_IS_TOPLEVEL(toplevel));
 
     for (auto& view : copyToVectorOf<GRefPtr<WPEView>>(toplevel->priv->views))
-        wpeViewMonitorChanged(view.get());
+        wpeViewScreenChanged(view.get());
 }
 
 /**
