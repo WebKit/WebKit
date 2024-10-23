@@ -292,14 +292,14 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
-        if (!topLoadingFrame() && m_testRunner && m_testRunner && !m_testRunner->shouldWaitUntilDone())
+        if (!topLoadingFrame() && m_testRunner && !m_testRunner->shouldWaitUntilDone())
             InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ForceImmediateCompletion")) {
-        if (m_testRunner)
-            m_testRunner->forceImmediateCompletion();
+        if (m_testRunner && InjectedBundle::page())
+            InjectedBundle::page()->dump(m_testRunner->shouldForceRepaint());
         return;
     }
 

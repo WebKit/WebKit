@@ -98,6 +98,12 @@ private:
     void done();
     void setWaitUntilDone(bool);
 
+    // Returns true if the caller bundle should proceed with dumping.
+    // Returns false if the WKTR invokes dumping through page, asynchronously.
+    // Resets waitUntilDone.
+    bool resolveNotifyDone();
+    bool resolveForceImmediateCompletion();
+
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
     enum class SnapshotResultType { WebView, WebContents };

@@ -250,22 +250,11 @@ void TestRunner::notifyDone()
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    bool mainFrameIsRemote = WKBundleFrameIsRemote(WKBundlePageGetMainFrame(injectedBundle.pageRef()));
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    if (mainFrameIsRemote) {
-        setWaitUntilDone(false);
-        return postPageMessage("NotifyDone");
-    }
-    if (shouldWaitUntilDone() && !injectedBundle.topLoadingFrame())
-        injectedBundle.page()->dump(m_forceRepaint);
-
-    // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
-    // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
-    // than to let webkitpy do that, because WebKitTestRunner will dump partial results.
-
-    setWaitUntilDone(false);
+    if (!postSynchronousMessageReturningBoolean("ResolveNotifyDone"))
+        return;
+    if (!injectedBundle.page())
+        return;
+    injectedBundle.page()->notifyDone();
 }
 
 void TestRunner::forceImmediateCompletion()
@@ -273,11 +262,11 @@ void TestRunner::forceImmediateCompletion()
     auto& injectedBundle = InjectedBundle::singleton();
     if (!injectedBundle.isTestRunning())
         return;
-
-    if (shouldWaitUntilDone() && injectedBundle.page())
-        injectedBundle.page()->dump(m_forceRepaint);
-
-    setWaitUntilDone(false);
+    if (!postSynchronousMessageReturningBoolean("ResolveForceImmediateCompletion"))
+        return;
+    if (!injectedBundle.page())
+        return;
+    injectedBundle.page()->forceImmediateCompletion();
 }
 
 void TestRunner::setShouldDumpFrameLoadCallbacks(bool value)

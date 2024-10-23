@@ -383,9 +383,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "NotifyDone"))
-        return postPageMessage("NotifyDone");
-
     if (WKStringIsEqualToUTF8CString(messageName, "TextOutput") || WKStringIsEqualToUTF8CString(messageName, "FinalTextOutput")) {
         m_textOutput.append(toWTFString(stringValue(messageBody)));
         return;
@@ -746,6 +743,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         m_canOpenWindows = booleanValue(messageBody);
         return nullptr;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ResolveNotifyDone"))
+        return adoptWK(WKBooleanCreate(resolveNotifyDone()));
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ResolveForceImmediateCompletion"))
+        return adoptWK(WKBooleanCreate(resolveForceImmediateCompletion()));
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
@@ -1553,6 +1556,30 @@ void TestInvocation::setWaitUntilDone(bool waitUntilDone)
     m_waitUntilDone = waitUntilDone;
     if (waitUntilDone && TestController::singleton().useWaitToDumpWatchdogTimer())
         initializeWaitToDumpWatchdogTimerIfNeeded();
+}
+
+bool TestInvocation::resolveNotifyDone()
+{
+    if (!m_waitUntilDone)
+        return false;
+    m_waitUntilDone = false;
+    if (m_options.siteIsolationEnabled()) {
+        postPageMessage("NotifyDone");
+        return false;
+    }
+    return true;
+}
+
+bool TestInvocation::resolveForceImmediateCompletion()
+{
+    if (!m_waitUntilDone)
+        return false;
+    m_waitUntilDone = false;
+    if (m_options.siteIsolationEnabled()) {
+        postPageMessage("ForceImmediateCompletion");
+        return false;
+    }
+    return true;
 }
 
 void TestInvocation::done()

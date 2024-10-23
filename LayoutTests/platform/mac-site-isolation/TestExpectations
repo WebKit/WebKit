@@ -1,5 +1,11 @@
 # Test expectations for macOS with --site-isolation
 
+# wktr itself is broken for site isolation.
+webkit.org/b/280402 wktr/force-immediate-completion-moment-dump-as-text-onload-async.html [ Failure ]
+webkit.org/b/280402 wktr/force-immediate-completion-moment-dump-as-text-onload-sync.html [ Failure ]
+webkit.org/b/280402 wktr/force-immediate-completion-moment-dump-as-text-sync.html [ Failure ]
+webkit.org/b/280402 wktr/notify-done-moment-dump-as-text-onload-async.html [ Failure ]
+
 ##########################################################################
 # Root directories skipped until we can make test expectations for them: #
 ##########################################################################

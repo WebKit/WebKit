@@ -41,6 +41,8 @@ public:
 
     WKBundlePageRef page() const { return m_page; }
 
+    void notifyDone();
+    void forceImmediateCompletion();
     void dump(bool forceRepaint);
 
     void prepare();

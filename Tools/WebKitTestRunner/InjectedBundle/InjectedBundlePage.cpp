@@ -1745,4 +1745,19 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
     dumpAfterWaitAttributeIsRemoved(page->page());
 }
 
+void InjectedBundlePage::notifyDone()
+{
+    if (InjectedBundle::singleton().topLoadingFrame())
+        return;
+    forceImmediateCompletion();
+}
+
+void InjectedBundlePage::forceImmediateCompletion()
+{
+    RefPtr testRunner = InjectedBundle::singleton().testRunner();
+    if (!testRunner)
+        return;
+    dump(testRunner->shouldForceRepaint());
+}
+
 } // namespace WTR

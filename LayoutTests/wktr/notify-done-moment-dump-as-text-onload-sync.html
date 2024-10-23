@@ -1,0 +1,14 @@
+<html>
+<head><title>Tests testRunner.notifyDone() dump moment, sync after onload.</title></head>
+<body>
+<p id="log">Dumps immediately at call.</p>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+window.onload = () => {
+    testRunner.notifyDone();
+    log.innerHTML = "Dumps after leaving call scope.";
+};
+</script>
+</body>
+</html>
