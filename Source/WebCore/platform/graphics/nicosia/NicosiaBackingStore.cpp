@@ -31,11 +31,6 @@
 
 namespace Nicosia {
 
-void BackingStore::tiledBackingStoreHasPendingTileCreation()
-{
-    m_layerState.hasPendingTileCreation = true;
-}
-
 void BackingStore::createTile(uint32_t tileID, float scale)
 {
     ASSERT(m_layerState.isFlushing);
@@ -84,7 +79,6 @@ void BackingStore::removeTile(uint32_t tileID)
 void BackingStore::flushUpdate()
 {
     ASSERT(!m_layerState.isFlushing);
-    m_layerState.hasPendingTileCreation = false;
 
     // Incrementally store updates as they are being flushed from the layer-side.
     {

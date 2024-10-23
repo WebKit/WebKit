@@ -29,9 +29,8 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-
-class GraphicsContext;
 class CoordinatedBackingStoreProxyClient;
+class CoordinatedGraphicsLayer;
 
 class CoordinatedBackingStoreProxy {
     WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxy);
@@ -42,15 +41,17 @@ public:
 
     CoordinatedBackingStoreProxyClient& client() { return m_client; }
 
-    void createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& contentsRect);
-
     float contentsScale() const { return m_contentsScale; }
-
-    Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> dirtyTiles();
 
     void invalidate(const IntRect& dirtyRect);
 
     const IntRect& coverRect() const { return m_coverRect; }
+
+    enum class UpdateResult : uint8_t {
+        BuffersChanged = 1 << 0,
+        TilesPending =  1 << 1
+    };
+    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer&);
 
 private:
     void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);

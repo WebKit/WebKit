@@ -29,7 +29,6 @@ class SurfaceUpdateInfo;
 class CoordinatedBackingStoreProxyClient {
 public:
     virtual ~CoordinatedBackingStoreProxyClient() = default;
-    virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 
     virtual void createTile(uint32_t tileID, float) = 0;
     virtual void updateTile(uint32_t tileID, const IntRect&, const IntRect&, Ref<CoordinatedTileBuffer>&&) = 0;

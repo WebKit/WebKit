@@ -1121,56 +1121,20 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
     m_needsDisplay.completeLayer = false;
     m_needsDisplay.rects.clear();
 
-    if (m_pendingVisibleRectAdjustment) {
-        m_pendingVisibleRectAdjustment = false;
-        layerState.mainBackingStore->createTilesIfNeeded(transformedVisibleRectIncludingFuture(), IntRect(0, 0, m_size.width(), m_size.height()));
-    }
+    ASSERT(m_coordinator && m_coordinator->isFlushingLayerChanges());
+
+    auto updateResult = layerState.mainBackingStore->updateIfNeeded(transformedVisibleRectIncludingFuture(), IntRect({ }, IntSize(m_size)), m_pendingVisibleRectAdjustment, *this);
+    m_pendingVisibleRectAdjustment = false;
 
     if (m_animatedBackingStoreClient)
         m_animatedBackingStoreClient->setCoverRect(layerState.mainBackingStore->coverRect());
 
-    ASSERT(m_coordinator && m_coordinator->isFlushingLayerChanges());
-
-    // With all the affected tiles created and/or invalidated, we can finally paint them.
-    auto dirtyTiles = layerState.mainBackingStore->dirtyTiles();
-    if (!dirtyTiles.isEmpty()) {
-        auto dirtyTilesCount = dirtyTiles.size();
-        bool didUpdateTiles = false;
-
-        WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %lu", dirtyTilesCount);
-
-        for (unsigned dirtyTileIndex = 0; dirtyTileIndex < dirtyTilesCount; ++dirtyTileIndex) {
-            auto& tile = dirtyTiles[dirtyTileIndex].get();
-            tile.ensureTileID();
-
-            WTFBeginSignpost(this, UpdateTile, "%u/%lu, id: %d", dirtyTileIndex + 1, dirtyTilesCount, tile.tileID());
-
-            auto& tileRect = tile.rect();
-            auto& dirtyRect = tile.dirtyRect();
-            auto buffer = paintTile(dirtyRect);
-
-            WTFBeginSignpost(this, UpdateTileBackingStore, "rect %ix%i+%i+%i", tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height());
-
-            IntRect updateRect(dirtyRect);
-            updateRect.move(-tileRect.x(), -tileRect.y());
-            m_nicosia.backingStore->updateTile(tile.tileID(), updateRect, tileRect, WTFMove(buffer));
-
-            tile.markClean();
-            didUpdateTiles |= true;
-
-            WTFEndSignpost(this, UpdateTileBackingStore);
-            WTFEndSignpost(this, UpdateTile);
-        }
-
-        if (didUpdateTiles)
-            didUpdateTileBuffers();
-
-        WTFEndSignpost(this, UpdateTiles);
-    }
+    if (updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::BuffersChanged))
+        didUpdateTileBuffers();
 
     // Request a new update immediately if some tiles are still pending creation. Do this on a timer
     // as we're in a layer flush and flush requests at this point would be discarded.
-    if (layerState.hasPendingTileCreation) {
+    if (updateResult.contains(CoordinatedBackingStoreProxy::UpdateResult::TilesPending)) {
         setNeedsVisibleRectAdjustment();
         m_requestPendingTileCreationTimer.startOneShot(0_s);
     }

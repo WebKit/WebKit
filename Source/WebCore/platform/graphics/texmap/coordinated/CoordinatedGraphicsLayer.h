@@ -172,6 +172,8 @@ public:
 
     static void clampToContentsRectIfRectIsInfinite(FloatRect&, const FloatSize&);
 
+    Ref<CoordinatedTileBuffer> paintTile(const IntRect& dirtyRect);
+
 private:
     enum class FlushNotification {
         Required,
@@ -195,8 +197,6 @@ private:
 
     bool checkPendingStateChanges();
     bool checkContentLayerUpdated();
-
-    Ref<CoordinatedTileBuffer> paintTile(const IntRect& dirtyRect);
 
     void notifyFlushRequired();
 

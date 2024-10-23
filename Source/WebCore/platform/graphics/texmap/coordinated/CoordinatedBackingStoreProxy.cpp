@@ -22,9 +22,11 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedBackingStoreProxyClient.h"
+#include "CoordinatedGraphicsLayer.h"
 #include "GraphicsContext.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -48,15 +50,56 @@ CoordinatedBackingStoreProxy::CoordinatedBackingStoreProxy(CoordinatedBackingSto
 
 CoordinatedBackingStoreProxy::~CoordinatedBackingStoreProxy() = default;
 
-void CoordinatedBackingStoreProxy::createTilesIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer& layer)
 {
-    IntRect contentsRect = mapFromContents(unscaledContentsRect);
-    IntRect visibleRect = mapFromContents(unscaledVisibleRect);
-    float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
+    if (shouldCreateAndDestroyTiles) {
+        IntRect contentsRect = mapFromContents(unscaledContentsRect);
+        IntRect visibleRect = mapFromContents(unscaledVisibleRect);
+        float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
 
-    bool didChange = m_visibleRect != visibleRect || m_contentsRect != contentsRect || m_coverAreaMultiplier != coverAreaMultiplier;
-    if (didChange || m_pendingTileCreation)
-        createTiles(visibleRect, contentsRect, coverAreaMultiplier);
+        bool didChange = m_visibleRect != visibleRect || m_contentsRect != contentsRect || m_coverAreaMultiplier != coverAreaMultiplier;
+        if (didChange || m_pendingTileCreation)
+            createTiles(visibleRect, contentsRect, coverAreaMultiplier);
+    }
+
+    OptionSet<UpdateResult> result;
+    if (m_pendingTileCreation)
+        result.add(UpdateResult::TilesPending);
+
+    // Update the dirty tiles.
+    unsigned dirtyTilesCount = 0;
+    for (const auto& tile : m_tiles.values()) {
+        if (tile->isDirty())
+            dirtyTilesCount++;
+    }
+
+    WTFBeginSignpost(this, UpdateTiles, "dirty tiles: %u", dirtyTilesCount);
+
+    unsigned dirtyTileIndex = 0;
+    for (auto& tile : m_tiles.values()) {
+        if (!tile->isDirty())
+            continue;
+
+        tile->ensureTileID();
+
+        auto& tileRect = tile->rect();
+        auto& dirtyRect = tile->dirtyRect();
+        WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile->tileID(),
+            tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height(), dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
+
+        auto buffer = layer.paintTile(dirtyRect);
+        IntRect updateRect(dirtyRect);
+        updateRect.move(-tileRect.x(), -tileRect.y());
+        m_client.updateTile(tile->tileID(), updateRect, tileRect, WTFMove(buffer));
+        tile->markClean();
+        result.add(UpdateResult::BuffersChanged);
+
+        WTFEndSignpost(this, UpdateTile);
+    }
+
+    WTFEndSignpost(this, UpdateTiles);
+
+    return result;
 }
 
 void CoordinatedBackingStoreProxy::invalidate(const IntRect& contentsDirtyRect)
@@ -80,17 +123,6 @@ void CoordinatedBackingStoreProxy::invalidate(const IntRect& contentsDirtyRect)
             tile->invalidate(dirtyRect);
         }
     }
-}
-
-Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> CoordinatedBackingStoreProxy::dirtyTiles()
-{
-    Vector<std::reference_wrapper<CoordinatedBackingStoreProxyTile>> tiles;
-    for (auto& tile : m_tiles.values()) {
-        if (tile->isDirty())
-            tiles.append(*tile);
-    }
-
-    return tiles;
 }
 
 double CoordinatedBackingStoreProxy::tileDistance(const IntRect& viewport, const IntPoint& tilePosition) const
@@ -193,8 +225,6 @@ void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
-    if (m_pendingTileCreation)
-        m_client.tiledBackingStoreHasPendingTileCreation();
 }
 
 void CoordinatedBackingStoreProxy::adjustForContentsRect(IntRect& rect) const

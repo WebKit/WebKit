@@ -86,7 +86,6 @@ public:
         TileUpdate update;
         bool isFlushing { false };
         bool isPurging { false };
-        bool hasPendingTileCreation { false };
     };
     LayerState& layerState() { return m_layerState; }
 
@@ -109,7 +108,6 @@ public:
 
     // CoordinatedBackingStoreProxyClient
     // FIXME: Move these to private once updateTile() is not called from CoordinatedGrahpicsLayer.
-    void tiledBackingStoreHasPendingTileCreation() override;
     void createTile(uint32_t, float) override;
     void updateTile(uint32_t, const WebCore::IntRect&, const WebCore::IntRect&, Ref<WebCore::CoordinatedTileBuffer>&&) override;
     void removeTile(uint32_t) override;
