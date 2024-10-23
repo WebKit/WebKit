@@ -737,6 +737,9 @@ void WebPushDaemon::getPendingPushMessages(PushClientConnection& connection, Com
     WEBPUSHDAEMON_RELEASE_LOG(Push, "Fetched %zu push messages, %zu remaining", result.size(), m_pendingPushMessages.size());
 
     replySender(WTFMove(result));
+
+    if (m_pendingPushMessages.isEmpty())
+        releaseIncomingPushTransaction();
 }
 
 void WebPushDaemon::getPushTopicsForTesting(PushClientConnection& connection, CompletionHandler<void(Vector<String>, Vector<String>)>&& completionHandler)
