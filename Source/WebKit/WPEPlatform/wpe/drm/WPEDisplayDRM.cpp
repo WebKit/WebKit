@@ -31,7 +31,7 @@
 #include "WPEDRMSession.h"
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
-#include "WPEMonitorDRMPrivate.h"
+#include "WPEScreenDRMPrivate.h"
 #include "WPEToplevelDRM.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
@@ -56,7 +56,7 @@ struct _WPEDisplayDRMPrivate {
     uint32_t cursorWidth;
     uint32_t cursorHeight;
     std::unique_ptr<WPE::DRM::Connector> connector;
-    GRefPtr<WPEMonitor> monitor;
+    GRefPtr<WPEScreen> screen;
     std::unique_ptr<WPE::DRM::Plane> primaryPlane;
     std::unique_ptr<WPE::DRM::Cursor> cursor;
     std::unique_ptr<WPE::DRM::Seat> seat;
@@ -296,7 +296,7 @@ static gboolean wpeDisplayDRMConnect(WPEDisplay* display, GError** error)
     displayDRM->priv->drmRenderNode = renderNodePath.get();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
-    displayDRM->priv->monitor = wpeMonitorDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
+    displayDRM->priv->screen = wpeScreenDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
     displayDRM->priv->seat = WTFMove(seat);
     if (cursorPlane)
@@ -330,16 +330,16 @@ static WPEBufferDMABufFormats* wpeDisplayDRMGetPreferredDMABufFormats(WPEDisplay
     return wpe_buffer_dma_buf_formats_builder_end(builder);
 }
 
-static guint wpeDisplayDRMGetNMonitors(WPEDisplay*)
+static guint wpeDisplayDRMGetNScreens(WPEDisplay*)
 {
     return 1;
 }
 
-static WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplay* display, guint index)
+static WPEScreen* wpeDisplayDRMGetScreen(WPEDisplay* display, guint index)
 {
     if (index)
         return nullptr;
-    return WPE_DISPLAY_DRM(display)->priv->monitor.get();
+    return WPE_DISPLAY_DRM(display)->priv->screen.get();
 }
 
 static const char* wpeDisplayDRMGetDRMDevice(WPEDisplay* display)
@@ -369,8 +369,8 @@ static void wpe_display_drm_class_init(WPEDisplayDRMClass* displayDRMClass)
     displayClass->connect = wpeDisplayDRMConnect;
     displayClass->create_view = wpeDisplayDRMCreateView;
     displayClass->get_preferred_dma_buf_formats = wpeDisplayDRMGetPreferredDMABufFormats;
-    displayClass->get_n_monitors = wpeDisplayDRMGetNMonitors;
-    displayClass->get_monitor = wpeDisplayDRMGetMonitor;
+    displayClass->get_n_screens = wpeDisplayDRMGetNScreens;
+    displayClass->get_screen = wpeDisplayDRMGetScreen;
     displayClass->get_drm_device = wpeDisplayDRMGetDRMDevice;
     displayClass->get_drm_render_node = wpeDisplayDRMGetDRMRenderNode;
     displayClass->use_explicit_sync = wpeDisplayDRMUseExplicitSync;
@@ -381,9 +381,9 @@ const WPE::DRM::Connector& wpeDisplayDRMGetConnector(WPEDisplayDRM* display)
     return *display->priv->connector;
 }
 
-WPEMonitor* wpeDisplayDRMGetMonitor(WPEDisplayDRM* display)
+WPEScreen* wpeDisplayDRMGetScreen(WPEDisplayDRM* display)
 {
-    return display->priv->monitor.get();
+    return display->priv->screen.get();
 }
 
 const WPE::DRM::Plane& wpeDisplayDRMGetPrimaryPlane(WPEDisplayDRM* display)

@@ -35,7 +35,7 @@
 #include <wpe/WPEDefines.h>
 #include <wpe/WPEInputMethodContext.h>
 #include <wpe/WPEKeymap.h>
-#include <wpe/WPEMonitor.h>
+#include <wpe/WPEScreen.h>
 #include <wpe/WPEView.h>
 
 G_BEGIN_DECLS
@@ -57,8 +57,8 @@ struct _WPEDisplayClass
     WPEKeymap              *(* get_keymap)                    (WPEDisplay *display,
                                                                GError    **error);
     WPEBufferDMABufFormats *(* get_preferred_dma_buf_formats) (WPEDisplay *display);
-    guint                   (* get_n_monitors)                (WPEDisplay *display);
-    WPEMonitor             *(* get_monitor)                   (WPEDisplay *display,
+    guint                   (* get_n_screens)                 (WPEDisplay *display);
+    WPEScreen              *(* get_screen)                    (WPEDisplay *display,
                                                                guint       index);
     const char             *(* get_drm_device)                (WPEDisplay *display);
     const char             *(* get_drm_render_node)           (WPEDisplay *display);
@@ -94,13 +94,13 @@ WPE_API gpointer                wpe_display_get_egl_display               (WPEDi
 WPE_API WPEKeymap              *wpe_display_get_keymap                    (WPEDisplay *display,
                                                                            GError    **error);
 WPE_API WPEBufferDMABufFormats *wpe_display_get_preferred_dma_buf_formats (WPEDisplay *display);
-WPE_API guint                   wpe_display_get_n_monitors                (WPEDisplay *display);
-WPE_API WPEMonitor             *wpe_display_get_monitor                   (WPEDisplay *display,
+WPE_API guint                   wpe_display_get_n_screens                 (WPEDisplay *display);
+WPE_API WPEScreen              *wpe_display_get_screen                    (WPEDisplay *display,
                                                                            guint       index);
-WPE_API void                    wpe_display_monitor_added                 (WPEDisplay *display,
-                                                                           WPEMonitor *monitor);
-WPE_API void                    wpe_display_monitor_removed               (WPEDisplay *display,
-                                                                           WPEMonitor *monitor);
+WPE_API void                    wpe_display_screen_added                  (WPEDisplay *display,
+                                                                           WPEScreen *screen);
+WPE_API void                    wpe_display_screen_removed                (WPEDisplay *display,
+                                                                           WPEScreen *screen);
 WPE_API const char             *wpe_display_get_drm_device                (WPEDisplay *display);
 WPE_API const char             *wpe_display_get_drm_render_node           (WPEDisplay *display);
 WPE_API gboolean                wpe_display_use_explicit_sync             (WPEDisplay *display);

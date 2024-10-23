@@ -23,11 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WPEScreenWayland_h
+#define WPEScreenWayland_h
 
-#include "WPEDRM.h"
-#include "WPEMonitorDRM.h"
+#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <wpe/wayland/wpe-wayland.h> can be included directly."
+#endif
 
-WPEMonitor* wpeMonitorDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&&, const WPE::DRM::Connector&);
-drmModeModeInfo* wpeMonitorDRMGetMode(WPEMonitorDRM*);
-const WPE::DRM::Crtc wpeMonitorDRMGetCrtc(WPEMonitorDRM*);
+#include <glib-object.h>
+#include <wayland-client.h>
+#include <wpe/wpe-platform.h>
+
+G_BEGIN_DECLS
+
+#define WPE_TYPE_SCREEN_WAYLAND (wpe_screen_wayland_get_type())
+WPE_API G_DECLARE_FINAL_TYPE (WPEScreenWayland, wpe_screen_wayland, WPE, SCREEN_WAYLAND, WPEScreen)
+
+WPE_API struct wl_output *wpe_screen_wayland_get_wl_output (WPEScreenWayland *screen);
+
+G_END_DECLS
+
+#endif /* WPEScreenWayland_h */

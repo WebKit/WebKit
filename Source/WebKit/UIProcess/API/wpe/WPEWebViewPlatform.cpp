@@ -74,8 +74,8 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
             m_viewStateFlags.add(WebCore::ActivityState::WindowIsActive);
     }
 
-    if (auto* monitor = wpe_view_get_monitor(m_wpeView.get()))
-        m_displayID = wpe_monitor_get_id(monitor);
+    if (auto* screen = wpe_view_get_screen(m_wpeView.get()))
+        m_displayID = wpe_screen_get_id(screen);
     else
         m_displayID = ScreenManager::singleton().primaryDisplayID();
 
@@ -91,7 +91,7 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
     }), this);
-    g_signal_connect(m_wpeView.get(), "notify::monitor", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
+    g_signal_connect(m_wpeView.get(), "notify::screen", G_CALLBACK(+[](WPEView*, GParamSpec*, gpointer userData) {
         auto& webView = *reinterpret_cast<ViewPlatform*>(userData);
         webView.updateDisplayID();
     }), this);
@@ -220,11 +220,11 @@ RendererBufferFormat ViewPlatform::renderBufferFormat() const
 
 void ViewPlatform::updateDisplayID()
 {
-    auto* monitor = wpe_view_get_monitor(m_wpeView.get());
-    if (!monitor)
+    auto* screen = wpe_view_get_screen(m_wpeView.get());
+    if (!screen)
         return;
 
-    auto displayID = wpe_monitor_get_id(monitor);
+    auto displayID = wpe_screen_get_id(screen);
     if (displayID == m_displayID)
         return;
 

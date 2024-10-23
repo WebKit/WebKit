@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WPEMonitor_h
-#define WPEMonitor_h
+#ifndef WPEScreen_h
+#define WPEScreen_h
 
 #if !defined(__WPE_PLATFORM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <wpe/wpe-platform.h> can be included directly."
@@ -35,42 +35,42 @@
 
 G_BEGIN_DECLS
 
-#define WPE_TYPE_MONITOR (wpe_monitor_get_type())
-WPE_DECLARE_DERIVABLE_TYPE (WPEMonitor, wpe_monitor, WPE, MONITOR, GObject)
+#define WPE_TYPE_SCREEN (wpe_screen_get_type())
+WPE_DECLARE_DERIVABLE_TYPE (WPEScreen, wpe_screen, WPE, SCREEN, GObject)
 
-struct _WPEMonitorClass
+struct _WPEScreenClass
 {
     GObjectClass parent_class;
 
-    void (* invalidate) (WPEMonitor *monitor);
+    void (* invalidate) (WPEScreen *screen);
 
     gpointer padding[32];
 };
 
-WPE_API guint32 wpe_monitor_get_id              (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_invalidate          (WPEMonitor *monitor);
-WPE_API int     wpe_monitor_get_x               (WPEMonitor *monitor);
-WPE_API int     wpe_monitor_get_y               (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_set_position        (WPEMonitor *monitor,
+WPE_API guint32 wpe_screen_get_id               (WPEScreen *screen);
+WPE_API void    wpe_screen_invalidate           (WPEScreen *screen);
+WPE_API int     wpe_screen_get_x                (WPEScreen *screen);
+WPE_API int     wpe_screen_get_y                (WPEScreen *screen);
+WPE_API void    wpe_screen_set_position         (WPEScreen *screen,
                                                  int         x,
                                                  int         y);
-WPE_API int     wpe_monitor_get_width           (WPEMonitor *monitor);
-WPE_API int     wpe_monitor_get_height          (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_set_size            (WPEMonitor *monitor,
+WPE_API int     wpe_screen_get_width            (WPEScreen *screen);
+WPE_API int     wpe_screen_get_height           (WPEScreen *screen);
+WPE_API void    wpe_screen_set_size             (WPEScreen *screen,
                                                  int         width,
                                                  int         height);
-WPE_API int     wpe_monitor_get_physical_width  (WPEMonitor *monitor);
-WPE_API int     wpe_monitor_get_physical_height (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_set_physical_size   (WPEMonitor *monitor,
+WPE_API int     wpe_screen_get_physical_width   (WPEScreen *screen);
+WPE_API int     wpe_screen_get_physical_height  (WPEScreen *screen);
+WPE_API void    wpe_screen_set_physical_size    (WPEScreen *screen,
                                                  int         width,
                                                  int         height);
-WPE_API gdouble wpe_monitor_get_scale           (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_set_scale           (WPEMonitor *monitor,
+WPE_API gdouble wpe_screen_get_scale            (WPEScreen *screen);
+WPE_API void    wpe_screen_set_scale            (WPEScreen *screen,
                                                  gdouble     scale);
-WPE_API int     wpe_monitor_get_refresh_rate    (WPEMonitor *monitor);
-WPE_API void    wpe_monitor_set_refresh_rate    (WPEMonitor *monitor,
+WPE_API int     wpe_screen_get_refresh_rate     (WPEScreen *screen);
+WPE_API void    wpe_screen_set_refresh_rate     (WPEScreen *screen,
                                                  int         refresh_rate);
 
 G_END_DECLS
 
-#endif /* WPEMonitor_h */
+#endif /* WPEScreen_h */
