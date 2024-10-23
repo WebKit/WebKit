@@ -221,7 +221,11 @@ inline std::span<const T> Decoder::decodeSpan(size_t size)
     }
 
     m_bufferPosition = m_buffer.begin() + alignedBufferPosition + bytesNeeded;
-    return spanReinterpretCast<const T>(m_buffer.subspan(alignedBufferPosition, bytesNeeded));
+
+    if constexpr (std::is_same_v<std::remove_const_t<T>, uint8_t>)
+        return m_buffer.subspan(alignedBufferPosition, bytesNeeded);
+    else
+        return spanReinterpretCast<const T>(m_buffer.subspan(alignedBufferPosition, bytesNeeded));
 }
 
 template<typename T>
