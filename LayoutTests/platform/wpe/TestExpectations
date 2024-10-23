@@ -1627,6 +1627,8 @@ webkit.org/b/272225 media/media-source/media-managedmse-resume-after-stall.html 
 
 webkit.org/b/272426 http/tests/webxr/webxr-third-party-iframe-requestsession-denied-by-insufficient-feature-policy.html [ Crash Pass ]
 
+media/media-source/media-detachablemse-append.html [ Timeout Crash Pass ]
+
 imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.html [ Pass Failure ]
 imported/w3c/web-platform-tests/uievents/interface/keyboard-accesskey-click-event.html [ Pass Failure ]
 
