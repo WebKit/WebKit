@@ -23,6 +23,7 @@ final public class PreviewApplication {
 }
 
 @available(visionOS 2.0, *)
-public struct PreviewSession : Swift.Sendable {
+extension QuickLook.PreviewSession {
+@_silgen_name("$s9QuickLook14PreviewSessionV6update5items12selectedItemySayAA0cH0VG_AHSgtYaKFTu")
   public func update(items: [QuickLook.PreviewItem], selectedItem: QuickLook.PreviewItem? = nil) async throws
 }
