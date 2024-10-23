@@ -49,7 +49,6 @@ class TextStream;
 
 namespace WebCore {
 class FrameView;
-class KeyboardScrollingAnimator;
 class PageOverlay;
 class PlatformWheelEvent;
 
@@ -321,8 +320,6 @@ private:
     void selectAll();
     [[maybe_unused]] bool performCopyEditingOperation() const;
     void performCopyLinkOperation(const WebCore::IntPoint& contextMenuEventRootViewPoint) const;
-
-    void animatedScrollDidEnd() final;
 
     void setDisplayMode(PDFDocumentLayout::DisplayMode);
     void setDisplayModeAndUpdateLayout(PDFDocumentLayout::DisplayMode);
@@ -624,11 +621,6 @@ private:
 
     RefPtr<PDFPluginPasswordField> m_passwordField;
     RefPtr<PDFPluginPasswordForm> m_passwordForm;
-
-#if PLATFORM(MAC)
-    bool m_isScrollingWithAnimationToPageExtent { false };
-    std::optional<WebCore::ScrollDirection> m_animatedKeyboardScrollingDirection;
-#endif
 
     PDFPageCoverage m_findMatchRects;
 

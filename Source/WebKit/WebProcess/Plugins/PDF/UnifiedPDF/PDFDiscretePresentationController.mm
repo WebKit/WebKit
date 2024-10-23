@@ -112,8 +112,6 @@ bool PDFDiscretePresentationController::handleKeyboardEvent(const WebKeyboardEve
     if (handleKeyboardCommand(event))
         return true;
 
-    // FIXME: <https://webkit.org/b/276981> Need to check for scrollability first.
-
     if (handleKeyboardEventForPageNavigation(event))
         return true;
 #endif
@@ -129,28 +127,10 @@ bool PDFDiscretePresentationController::handleKeyboardCommand(const WebKeyboardE
 
 bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(const WebKeyboardEvent& event)
 {
-//    if (m_isScrollingWithAnimationToPageExtent)
-//        return false;
-
     if (event.type() == WebEventType::KeyUp)
         return false;
 
     auto key = event.key();
-    if (key == "ArrowLeft"_s || key == "ArrowUp"_s || key == "PageUp"_s) {
-        if (!canGoToPreviousRow())
-            return false;
-
-        goToPreviousRow(Animated::No);
-        return true;
-    }
-
-    if (key == "ArrowRight"_s || key == "ArrowDown"_s || key == "PageDown"_s) {
-        if (!canGoToNextRow())
-            return false;
-
-        goToNextRow(Animated::No);
-        return true;
-    }
 
     if (key == "Home"_s) {
         if (!m_visibleRowIndex)
@@ -166,6 +146,39 @@ bool PDFDiscretePresentationController::handleKeyboardEventForPageNavigation(con
             return false;
 
         goToRowIndex(lastRowIndex, Animated::No);
+        return true;
+    }
+
+    auto maximumScrollPosition = m_plugin->maximumScrollPosition();
+
+    bool isHorizontallyScrollable = !!maximumScrollPosition.x();
+    bool isVerticallyScrollable = !!maximumScrollPosition.y();
+
+    if (key == "ArrowLeft"_s || key == "ArrowUp"_s || key == "PageUp"_s) {
+        if (key == "ArrowLeft"_s) {
+            if (isHorizontallyScrollable)
+                return false;
+        } else if (isVerticallyScrollable)
+            return false;
+
+        if (!canGoToPreviousRow())
+            return false;
+
+        goToPreviousRow(Animated::No);
+        return true;
+    }
+
+    if (key == "ArrowRight"_s || key == "ArrowDown"_s || key == "PageDown"_s) {
+        if (key == "ArrowRight"_s) {
+            if (isHorizontallyScrollable)
+                return false;
+        } else if (isVerticallyScrollable)
+            return false;
+
+        if (!canGoToNextRow())
+            return false;
+
+        goToNextRow(Animated::No);
         return true;
     }
 

@@ -2021,14 +2021,6 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 #endif // ENABLE(CONTEXT_MENUS)
 }
 
-void UnifiedPDFPlugin::animatedScrollDidEnd()
-{
-#if PLATFORM(MAC)
-    m_isScrollingWithAnimationToPageExtent = false;
-    m_animatedKeyboardScrollingDirection = std::nullopt;
-#endif
-}
-
 bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 {
     return m_presentationController->handleKeyboardEvent(event);
