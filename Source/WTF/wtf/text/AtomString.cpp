@@ -109,20 +109,20 @@ AtomString AtomString::number(float number)
 {
     NumberToStringBuffer buffer;
     auto span = numberToStringAndSize(number, buffer);
-    return AtomString { spanReinterpretCast<const LChar>(span) };
+    return AtomString { byteCast<LChar>(span) };
 }
 
 AtomString AtomString::number(double number)
 {
     NumberToStringBuffer buffer;
     auto span = numberToStringAndSize(number, buffer);
-    return AtomString { spanReinterpretCast<const LChar>(span) };
+    return AtomString { byteCast<LChar>(span) };
 }
 
 AtomString AtomString::fromUTF8Internal(std::span<const char> characters)
 {
     ASSERT(!characters.empty());
-    return AtomStringImpl::add(spanReinterpretCast<const char8_t>(characters));
+    return AtomStringImpl::add(byteCast<char8_t>(characters));
 }
 
 #ifndef NDEBUG

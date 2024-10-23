@@ -64,7 +64,7 @@ public:
 
     constexpr const char* characters() const { return m_charactersWithNullTerminator.data(); }
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
-    std::span<const LChar> span8() const { return spanReinterpretCast<const LChar>(m_charactersWithNullTerminator.first(length())); }
+    std::span<const LChar> span8() const { return byteCast<LChar>(m_charactersWithNullTerminator.first(length())); }
     std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
@@ -142,7 +142,7 @@ constexpr ASCIILiteral operator"" _s(const char* characters, size_t)
 
 constexpr std::span<const LChar> operator"" _span(const char* characters, size_t n)
 {
-    auto span = spanReinterpretCast<const LChar>(unsafeForgeSpan(characters, n));
+    auto span = byteCast<LChar>(unsafeForgeSpan(characters, n));
 #if ASSERT_ENABLED
     for (size_t i = 0, size = span.size(); i < size; ++i)
         ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(span[i]));
