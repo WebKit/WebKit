@@ -90,7 +90,7 @@ SceneIntegration::UpdateScope::~UpdateScope()
         [](Nicosia::Scene::State& state)
         {
             for (auto& compositionLayer : state.layers)
-                compositionLayer->flushState();
+                compositionLayer->flushState([](auto&) { });
         });
 
     auto& sceneIntegrationObj = m_sceneIntegration.get();
