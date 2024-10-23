@@ -371,18 +371,16 @@ WI.HARBuilder = class HARBuilder
     static protocolFromHARProtocol(protocol)
     {
         switch (protocol) {
+        case "HTTP/3":
+            return "h3";
         case "HTTP/2":
             return "h2";
-        case "HTTP/1.0":
-            return "http/1.0";
         case "HTTP/1.1":
             return "http/1.1";
-        case "SPDY/2":
-            return "spdy/2";
-        case "SPDY/3":
-            return "spdy/3";
-        case "SPDY/3.1":
-            return "spdy/3.1";
+        case "HTTP/1.0":
+            return "http/1.1";
+        case "HTTP/0.9":
+            return "http/1.1";
         }
 
         if (protocol)
