@@ -564,6 +564,50 @@ TEST(WritingTools, ProofreadingShowOriginal)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, ProofreadingShowOriginalWithMultiwordSuggestions)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body contenteditable><p id='first'>AI has become a significent part of our dailly lifes, influensing evrything from how we communicate to how we work.</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    NSString *originalText = @"AI has become a significent part of our dailly lifes, influensing evrything from how we communicate to how we work.";
+    NSString *proofreadText = @"AI has become a significant part of our daily lives, influencing everything from how we communicate to how we work.";
+
+    __block bool finished = false;
+    __block RetainPtr<WTContext> context = nil;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
+
+        context = contexts.firstObject;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+
+    RetainPtr suggestions = [NSMutableArray array];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(16, 11) replacement:@"significant"]).get()];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(40, 12) replacement:@"daily lives"]).get()];
+    [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(54, 21) replacement:@"influencing everything"]).get()];
+
+    [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:NSMakeRange(NSNotFound, 0) inContext:context.get() finished:YES];
+
+    TestWebKitAPI::Util::runFor(0.1_s);
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+
+    [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowOriginal];
+    EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
+
+    [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionShowRewritten];
+    EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
+}
+
 TEST(WritingTools, ProofreadingRevert)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
