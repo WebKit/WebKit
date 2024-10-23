@@ -46,12 +46,12 @@
 
 #ifdef NEEDS_WRAPPER_CACHE_LOCK
 static Lock wrapperCacheLock;
-static UncheckedKeyHashMap<DOMObjectInternal*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
+static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheLock)
 #else
-static UncheckedKeyHashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
+static HashMap<DOMObjectInternal*, NSObject *>& wrapperCache()
 #endif
 {
-    static NeverDestroyed<UncheckedKeyHashMap<DOMObjectInternal*, NSObject *>> map;
+    static NeverDestroyed<HashMap<DOMObjectInternal*, NSObject *>> map;
     return map;
 }
 

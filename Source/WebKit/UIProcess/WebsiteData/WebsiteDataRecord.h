@@ -64,7 +64,7 @@ struct WebsiteDataRecord {
 
     struct Size {
         uint64_t totalSize;
-        UncheckedKeyHashMap<unsigned, uint64_t> typeSizes;
+        HashMap<unsigned, uint64_t> typeSizes;
     };
     std::optional<Size> size;
 

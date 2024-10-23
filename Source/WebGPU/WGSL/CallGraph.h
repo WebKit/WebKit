@@ -59,8 +59,8 @@ private:
     CallGraph() { }
 
     Vector<EntryPoint> m_entrypoints;
-    UncheckedKeyHashMap<String, AST::Function*> m_functionsByName;
-    UncheckedKeyHashMap<AST::Function*, Vector<Callee>> m_calleeMap;
+    HashMap<String, AST::Function*> m_functionsByName;
+    HashMap<AST::Function*, Vector<Callee>> m_calleeMap;
 };
 
 void buildCallGraph(ShaderModule&);

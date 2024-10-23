@@ -2251,7 +2251,7 @@ void WebProcessPool::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableD
     m_domainsWithUserInteraction = WTFMove(domains);
 }
 
-void WebProcessPool::setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {    
     Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 

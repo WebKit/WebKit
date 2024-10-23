@@ -67,10 +67,10 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static UncheckedKeyHashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGestureControllersForAllPages()
+static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
-    static NeverDestroyed<UncheckedKeyHashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>> viewGestureControllers;
+    static NeverDestroyed<HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>> viewGestureControllers;
     return viewGestureControllers.get();
 }
 

@@ -68,7 +68,7 @@ private:
     void createModelPlayer(WebCore::ModelPlayerIdentifier);
     void deleteModelPlayer(WebCore::ModelPlayerIdentifier);
 
-    UncheckedKeyHashMap<WebCore::ModelPlayerIdentifier, Ref<ModelProcessModelPlayerProxy>> m_proxies;
+    HashMap<WebCore::ModelPlayerIdentifier, Ref<ModelProcessModelPlayerProxy>> m_proxies;
     WeakPtr<ModelConnectionToWebProcess> m_modelConnectionToWebProcess;
 };
 

@@ -199,12 +199,12 @@ private:
         return true;
     }
 
-    UncheckedKeyHashMap<WTF::String, bool> notificationPermissions() final
+    HashMap<WTF::String, bool> notificationPermissions() final
     {
         if (!m_hasNotificationPermissionsSelector || !m_delegate || !m_dataStore)
             return { };
 
-        UncheckedKeyHashMap<WTF::String, bool> result;
+        HashMap<WTF::String, bool> result;
         NSDictionary<NSString *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
         for (NSString *key in permissions) {
             NSNumber *value = permissions[key];

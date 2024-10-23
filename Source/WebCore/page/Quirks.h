@@ -96,7 +96,7 @@ public:
 
     WEBCORE_EXPORT bool shouldDisableWritingSuggestionsByDefault() const;
 
-    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&&);
+    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
     WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
     WEBCORE_EXPORT static bool needsIPadMiniUserAgent(const URL&);
     WEBCORE_EXPORT static bool needsIPhoneUserAgent(const URL&);

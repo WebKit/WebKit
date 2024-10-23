@@ -165,9 +165,37 @@ TEST(WTF_CrossThreadCopier, UncheckedKeyHashMap)
     }
 }
 
+TEST(WTF_CrossThreadCopier, HashMap)
+{
+    HashMap<CString, StringImpl*> impls;
+
+    HashMap<String, String> map;
+    map.add("foo"_str, "fooValue"_str);
+    map.add("bar"_str, "barValue"_str);
+    for (auto& [key, value] : map) {
+        impls.add(key.utf8(), key.impl());
+        impls.add(value.utf8(), value.impl());
+    }
+
+    auto copy = crossThreadCopy(map);
+    EXPECT_EQ(copy, map);
+    for (auto& [key, value] : copy) {
+        EXPECT_NE(key.impl(), impls.get(key.utf8()));
+        EXPECT_NE(value.impl(), impls.get(value.utf8()));
+    }
+
+    auto copy2 = crossThreadCopy(WTFMove(map));
+    EXPECT_EQ(copy2, copy);
+    EXPECT_TRUE(map.isEmpty());
+    for (auto& [key, value] : copy2) {
+        EXPECT_EQ(key.impl(), impls.get(key.utf8()));
+        EXPECT_EQ(value.impl(), impls.get(value.utf8()));
+    }
+}
+
 TEST(WTF_CrossThreadCopier, HashSet)
 {
-    UncheckedKeyHashMap<CString, StringImpl*> impls;
+    HashMap<CString, StringImpl*> impls;
 
     HashSet<String> set;
     set.add("foo"_str);

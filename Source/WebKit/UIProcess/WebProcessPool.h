@@ -507,14 +507,14 @@ public:
     void clearCurrentModifierStateForTesting();
 
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
-    void setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
+    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool);
     void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
-    const UncheckedKeyHashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
+    const HashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
     bool sandboxEnabled() const { return m_sandboxEnabled; };
 
     void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTFMove(handler); }
@@ -733,7 +733,7 @@ private:
     Vector<Ref<WebProcessProxy>> m_processes;
     WeakPtr<WebProcessProxy> m_prewarmedProcess;
 
-    UncheckedKeyHashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
+    HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
     static WeakHashSet<WebProcessProxy>& remoteWorkerProcesses();
 
@@ -783,7 +783,7 @@ private:
     bool m_memorySamplerEnabled { false };
     double m_memorySamplerInterval { 1400.0 };
 
-    using WebContextSupplementMap = UncheckedKeyHashMap<ASCIILiteral, RefPtr<WebContextSupplement>>;
+    using WebContextSupplementMap = HashMap<ASCIILiteral, RefPtr<WebContextSupplement>>;
     WebContextSupplementMap m_supplements;
 
 #if USE(SOUP)
@@ -842,7 +842,7 @@ private:
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    UncheckedKeyHashMap<String, String> m_encodedContentExtensions;
+    HashMap<String, String> m_encodedContentExtensions;
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -866,7 +866,7 @@ private:
     };
     Paths m_resolvedPaths;
 
-    UncheckedKeyHashMap<PAL::SessionID, HashSet<WebPageProxyIdentifier>> m_sessionToPageIDsMap;
+    HashMap<PAL::SessionID, HashSet<WebPageProxyIdentifier>> m_sessionToPageIDsMap;
 
     ForegroundWebProcessCounter m_foregroundWebProcessCounter;
     BackgroundWebProcessCounter m_backgroundWebProcessCounter;
@@ -874,9 +874,9 @@ private:
     UniqueRef<WebBackForwardCache> m_backForwardCache;
 
     UniqueRef<WebProcessCache> m_webProcessCache;
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
 #if HAVE(DISPLAY_LINK)
     DisplayLinkCollection m_displayLinks;
@@ -884,7 +884,7 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     bool m_sandboxEnabled { false };
-    UncheckedKeyHashMap<CString, SandboxPermission> m_extraSandboxPaths;
+    HashMap<CString, SandboxPermission> m_extraSandboxPaths;
 
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
 
@@ -918,7 +918,7 @@ private:
     static bool s_useSeparateServiceWorkerProcess;
 
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
-    UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;
+    HashMap<TopFrameDomain, Vector<SubResourceDomain>> m_domainsWithCrossPageStorageAccessQuirk;
     
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::PowerObserver> m_powerObserver;

@@ -82,7 +82,7 @@ private:
     String m_path;
     CheckedRef<IDBStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
-    UncheckedKeyHashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;
+    HashMap<WebCore::IDBDatabaseIdentifier, std::unique_ptr<WebCore::IDBServer::UniqueIDBDatabase>> m_databases;
 };
 
 } // namespace WebKit

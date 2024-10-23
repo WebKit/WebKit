@@ -85,10 +85,10 @@ private:
     std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM&);
 
     WeakRef<WebProcess> m_webProcess;
-    UncheckedKeyHashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
-    UncheckedKeyHashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
-    UncheckedKeyHashMap<String, bool> m_supportsKeySystemCache;
-    UncheckedKeyHashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
+    HashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
+    HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
+    HashMap<String, bool> m_supportsKeySystemCache;
+    HashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
 };
 
 }

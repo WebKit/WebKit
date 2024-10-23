@@ -68,10 +68,10 @@ using namespace WebCore;
 
 class WebPageProxy;
 
-static UncheckedKeyHashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
+static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<UncheckedKeyHashMap<FrameIdentifier, WeakRef<WebFrameProxy>>> map;
+    static NeverDestroyed<HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>> map;
     return map.get();
 }
 

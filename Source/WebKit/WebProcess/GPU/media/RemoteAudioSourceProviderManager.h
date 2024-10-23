@@ -80,7 +80,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
 
     // background thread member
-    UncheckedKeyHashMap<WebCore::MediaPlayerIdentifier, std::unique_ptr<RemoteAudio>> m_providers;
+    HashMap<WebCore::MediaPlayerIdentifier, std::unique_ptr<RemoteAudio>> m_providers;
 };
 
 } // namespace WebKit

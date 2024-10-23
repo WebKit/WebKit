@@ -122,7 +122,7 @@ struct ConstantMatrix {
 };
 
 struct ConstantStruct {
-    UncheckedKeyHashMap<String, ConstantValue> fields;
+    HashMap<String, ConstantValue> fields;
 };
 
 using BaseValue = std::variant<float, half, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;

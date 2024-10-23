@@ -161,9 +161,9 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool)
 
 #if USE(UNIFIED_TEXT_CHECKING)
 
-static UncheckedKeyHashMap<SpellDocumentTag, RetainPtr<UITextChecker>>& spellDocumentTagMap()
+static HashMap<SpellDocumentTag, RetainPtr<UITextChecker>>& spellDocumentTagMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<SpellDocumentTag, RetainPtr<UITextChecker>>> tagMap;
+    static NeverDestroyed<HashMap<SpellDocumentTag, RetainPtr<UITextChecker>>> tagMap;
     return tagMap;
 }
 

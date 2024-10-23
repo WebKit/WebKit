@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    UncheckedKeyHashMap<int64_t, Holder*> m_hash;
+    HashMap<int64_t, Holder*> m_hash;
 };
 
 } // namespace WebKit

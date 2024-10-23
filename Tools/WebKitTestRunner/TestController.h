@@ -703,7 +703,7 @@ private:
     bool m_isGeolocationPermissionAllowed { false };
     std::optional<bool> m_screenWakeLockPermission;
 
-    UncheckedKeyHashMap<String, RefPtr<OriginSettings>> m_cachedUserMediaPermissions;
+    HashMap<String, RefPtr<OriginSettings>> m_cachedUserMediaPermissions;
 
     typedef Vector<std::pair<String, WKRetainPtr<WKUserMediaPermissionRequestRef>>> PermissionRequestList;
     PermissionRequestList m_userMediaPermissionRequests;
@@ -764,7 +764,7 @@ private:
             , abandonedDocumentURL(inAbandonedDocumentURL)
         { }
     };
-    UncheckedKeyHashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
+    HashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
 
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
     bool m_shouldDismissJavaScriptAlertsAsynchronously { false };

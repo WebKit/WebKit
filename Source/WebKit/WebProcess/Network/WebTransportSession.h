@@ -76,7 +76,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     WebTransportSessionIdentifier m_identifier;
-    UncheckedKeyHashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
+    HashMap<WebTransportStreamIdentifier, Ref<WebTransportReceiveStreamSource>> m_readStreamSources;
 };
 
 }

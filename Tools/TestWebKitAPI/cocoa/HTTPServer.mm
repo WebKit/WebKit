@@ -44,14 +44,14 @@ namespace TestWebKitAPI {
 struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
     RequestData(std::initializer_list<std::pair<String, HTTPResponse>> responses)
     : requestMap([](std::initializer_list<std::pair<String, HTTPResponse>> list) {
-        UncheckedKeyHashMap<String, HTTPResponse> map;
+        HashMap<String, HTTPResponse> map;
         for (auto& pair : list)
             map.add(pair.first, pair.second);
         return map;
     }(responses)) { }
 
     size_t requestCount { 0 };
-    UncheckedKeyHashMap<String, HTTPResponse> requestMap;
+    HashMap<String, HTTPResponse> requestMap;
     Vector<Connection> connections;
     Vector<CoroutineHandle<Task::promise_type>> coroutineHandles;
 };

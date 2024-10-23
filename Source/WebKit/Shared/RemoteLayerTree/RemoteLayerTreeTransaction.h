@@ -63,7 +63,7 @@
 namespace WebKit {
 
 struct LayerProperties;
-typedef UncheckedKeyHashMap<WebCore::PlatformLayerIdentifier, UniqueRef<LayerProperties>> LayerPropertiesMap;
+typedef HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<LayerProperties>> LayerPropertiesMap;
 
 struct ChangedLayers {
     HashSet<Ref<PlatformCALayerRemote>> changedLayers; // Only used in the Web process.

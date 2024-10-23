@@ -740,7 +740,7 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 #endif
 }
 
-typedef UncheckedKeyHashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
+typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;
 static WorldMap& worldMap()
 {
     static WorldMap& map = *new WorldMap;

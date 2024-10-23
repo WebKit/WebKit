@@ -52,8 +52,8 @@ public:
     WebCore::DeviceOrientationOrMotionPermissionState cachedDeviceOrientationPermission(const WebCore::SecurityOriginData&) const;
 
 private:
-    UncheckedKeyHashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;
-    UncheckedKeyHashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>>> m_pendingRequests;
+    HashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;
+    HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>>> m_pendingRequests;
 
     WeakRef<WebsiteDataStore> m_websiteDataStore;
 };

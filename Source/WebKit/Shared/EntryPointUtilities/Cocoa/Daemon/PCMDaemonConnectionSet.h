@@ -52,7 +52,7 @@ public:
     
 private:
     enum class DebugModeEnabled : bool { No, Yes };
-    UncheckedKeyHashMap<RetainPtr<xpc_connection_t>, DebugModeEnabled> m_connections;
+    HashMap<RetainPtr<xpc_connection_t>, DebugModeEnabled> m_connections;
     size_t m_connectionsWithDebugModeEnabled { 0 };
 };
 

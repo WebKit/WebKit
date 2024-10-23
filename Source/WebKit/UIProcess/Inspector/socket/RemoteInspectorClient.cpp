@@ -132,9 +132,9 @@ void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
     send(m_connectionID.value(), event.utf8().span());
 }
 
-UncheckedKeyHashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()
+HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& RemoteInspectorClient::dispatchMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, CallHandler>> dispatchMap = UncheckedKeyHashMap<String, CallHandler>({
+    static NeverDestroyed<HashMap<String, CallHandler>> dispatchMap = HashMap<String, CallHandler>({
         { "BackendCommands"_s, static_cast<CallHandler>(&RemoteInspectorClient::setBackendCommands) },
         { "SetTargetList"_s, static_cast<CallHandler>(&RemoteInspectorClient::setTargetList) },
         { "SendMessageToFrontend"_s, static_cast<CallHandler>(&RemoteInspectorClient::sendMessageToFrontend) },

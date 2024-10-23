@@ -76,9 +76,9 @@ public:
 
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.
-    UncheckedKeyHashMap<WebCore::LibWebRTCSocketIdentifier, CheckedRef<LibWebRTCSocket>> m_sockets;
+    HashMap<WebCore::LibWebRTCSocketIdentifier, CheckedRef<LibWebRTCSocket>> m_sockets;
 
-    UncheckedKeyHashMap<LibWebRTCResolverIdentifier, CheckedRef<LibWebRTCResolver>> m_resolvers;
+    HashMap<LibWebRTCResolverIdentifier, CheckedRef<LibWebRTCResolver>> m_resolvers;
     bool m_disableNonLocalhostConnections { false };
 
     RefPtr<IPC::Connection> m_connection;

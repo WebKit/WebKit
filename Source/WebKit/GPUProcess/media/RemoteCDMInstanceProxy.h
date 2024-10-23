@@ -93,7 +93,7 @@ private:
     Ref<WebCore::CDMInstance> m_instance;
     UniqueRef<RemoteCDMInstanceConfiguration> m_configuration;
     RemoteCDMInstanceIdentifier m_identifier;
-    UncheckedKeyHashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;
+    HashMap<RemoteCDMInstanceSessionIdentifier, std::unique_ptr<RemoteCDMInstanceSessionProxy>> m_sessions;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

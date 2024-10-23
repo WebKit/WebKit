@@ -56,7 +56,7 @@ public:
 
 private:
     Vector<WKNotificationManagerRef> m_managers;
-    UncheckedKeyHashMap<String, bool> m_permissions;
+    HashMap<String, bool> m_permissions;
     WKNotificationProviderV0 m_provider;
 
     bool m_hasReceivedShowNotification { false };

@@ -2634,7 +2634,7 @@ void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceErr
 
 #endif // ENABLE(CONTENT_FILTERING)
 
-void DocumentLoader::setActiveContentRuleListActionPatterns(const UncheckedKeyHashMap<String, Vector<String>>& patterns)
+void DocumentLoader::setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>& patterns)
 {
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> parsedPatternMap;
 

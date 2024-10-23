@@ -44,7 +44,7 @@ public:
     StorageAreaBase* getStorageArea(StorageAreaIdentifier);
 
 private:
-    UncheckedKeyHashMap<StorageAreaIdentifier, WeakPtr<StorageAreaBase>> m_storageAreas;
+    HashMap<StorageAreaIdentifier, WeakPtr<StorageAreaBase>> m_storageAreas;
 };
 
 } // namespace WebKit

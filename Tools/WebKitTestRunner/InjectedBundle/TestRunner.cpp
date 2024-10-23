@@ -509,7 +509,7 @@ void TestRunner::evaluateInWebInspector(JSStringRef script)
     WKBundlePageEvaluateScriptInInspectorForTest(page(), toWK(script).get());
 }
 
-using WorldMap = WTF::UncheckedKeyHashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef>>;
+using WorldMap = WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef>>;
 static WorldMap& worldMap()
 {
     static WorldMap& map = *new WorldMap;
@@ -590,7 +590,7 @@ struct Callback {
     JSRetainPtr<JSGlobalContextRef> context;
 };
 
-using CallbackMap = WTF::UncheckedKeyHashMap<unsigned, Callback>;
+using CallbackMap = WTF::HashMap<unsigned, Callback>;
 static CallbackMap& callbackMap()
 {
     static CallbackMap& map = *new CallbackMap;

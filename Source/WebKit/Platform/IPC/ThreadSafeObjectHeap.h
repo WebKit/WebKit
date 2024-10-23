@@ -97,7 +97,7 @@ private:
         {
         }
     };
-    UncheckedKeyHashMap<Reference, ReferenceState> m_objects WTF_GUARDED_BY_LOCK(m_objectsLock);
+    HashMap<Reference, ReferenceState> m_objects WTF_GUARDED_BY_LOCK(m_objectsLock);
 };
 
 template<typename Identifier, typename HeldType>

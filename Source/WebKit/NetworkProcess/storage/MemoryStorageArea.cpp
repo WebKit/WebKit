@@ -54,7 +54,7 @@ void MemoryStorageArea::clear()
     notifyListenersAboutClear();
 }
 
-UncheckedKeyHashMap<String, String> MemoryStorageArea::allItems()
+HashMap<String, String> MemoryStorageArea::allItems()
 {
     return m_map.items();
 }

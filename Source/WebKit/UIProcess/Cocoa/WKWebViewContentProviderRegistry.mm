@@ -42,7 +42,7 @@
 #import <wtf/text/StringHash.h>
 
 @implementation WKWebViewContentProviderRegistry {
-    UncheckedKeyHashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
+    HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration

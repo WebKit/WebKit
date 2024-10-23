@@ -883,7 +883,7 @@ WebPage* WebProcess::focusedWebPage() const
     return 0;
 }
 
-void WebProcess::updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&& userAgentStringQuirk)
+void WebProcess::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirk)
 {
     Quirks::updateStorageAccessUserAgentStringQuirks(WTFMove(userAgentStringQuirk));
 }
@@ -2183,7 +2183,7 @@ void WebProcess::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomai
     ResourceLoadObserver::shared().setDomainsWithUserInteraction(WTFMove(domains));
 }
 
-void WebProcess::setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
+void WebProcess::setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&& domains, CompletionHandler<void()>&& completionHandler)
 {
     for (auto& [domain, subResourceDomains] : domains) {
         for (auto& subResourceDomain : subResourceDomains) {

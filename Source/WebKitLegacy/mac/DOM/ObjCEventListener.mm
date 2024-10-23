@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-typedef UncheckedKeyHashMap<id, ObjCEventListener*> ListenerMap;
+typedef HashMap<id, ObjCEventListener*> ListenerMap;
 static ListenerMap* listenerMap;
 
 ObjCEventListener* ObjCEventListener::find(ObjCListener listener)

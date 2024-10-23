@@ -69,9 +69,9 @@ private:
     Ref<WorkQueue> m_workQueue;
     AllowDatabaseWrite m_allowDatabaseWrite { AllowDatabaseWrite::Yes };
     WebCore::SQLiteDatabase m_db;
-    UncheckedKeyHashMap<String, String> m_pageURLToIconURLMap;
+    HashMap<String, String> m_pageURLToIconURLMap;
     Lock m_pageURLToIconURLMapLock;
-    UncheckedKeyHashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
+    HashMap<String, std::pair<WebCore::PlatformImagePtr, MonotonicTime>> m_loadedIcons WTF_GUARDED_BY_LOCK(m_loadedIconsLock);
     Lock m_loadedIconsLock;
 
     std::unique_ptr<WebCore::SQLiteStatement> m_iconIDForIconURLStatement;

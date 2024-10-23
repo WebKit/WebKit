@@ -149,7 +149,7 @@ private:
     WeakPtr<SWServer> m_server;
 
     MonotonicTime m_creationTime;
-    UncheckedKeyHashMap<SWServerConnectionIdentifier, HashSet<ScriptExecutionContextIdentifier>> m_clientsUsingRegistration;
+    HashMap<SWServerConnectionIdentifier, HashSet<ScriptExecutionContextIdentifier>> m_clientsUsingRegistration;
 
     WebCore::Timer m_softUpdateTimer;
     

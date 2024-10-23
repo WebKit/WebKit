@@ -52,7 +52,7 @@ public:
 
 private:
     RefPtr<WebExtensionAPIEvent> m_onThemeChanged;
-    UncheckedKeyHashMap<Inspector::ExtensionTabID, Ref<WebExtensionAPIDevToolsExtensionPanel>> m_extensionPanels;
+    HashMap<Inspector::ExtensionTabID, Ref<WebExtensionAPIDevToolsExtensionPanel>> m_extensionPanels;
 };
 
 } // namespace WebKit

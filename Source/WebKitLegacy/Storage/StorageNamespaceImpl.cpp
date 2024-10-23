@@ -40,9 +40,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static UncheckedKeyHashMap<String, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
+static HashMap<String, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
+    static NeverDestroyed<HashMap<String, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
 
     return localStorageNamespaceMap;
 }

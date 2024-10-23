@@ -82,8 +82,8 @@ private:
     bool supportsKeySystem(const String&) final;
 
     WeakRef<WebProcess> m_webProcess;
-    UncheckedKeyHashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
-    UncheckedKeyHashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
+    HashMap<RemoteCDMInstanceSessionIdentifier, WeakPtr<RemoteCDMInstanceSession>> m_sessions;
+    HashMap<RemoteCDMIdentifier, std::unique_ptr<RemoteCDM>> m_cdms;
 };
 
 }

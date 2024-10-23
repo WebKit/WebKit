@@ -144,7 +144,7 @@ static int runWGSL(const CommandLine& options)
         return EXIT_FAILURE;
     }
 
-    UncheckedKeyHashMap<String, WGSL::ConstantValue> constantValues;
+    HashMap<String, WGSL::ConstantValue> constantValues;
     const auto& entryPointInformation = result.entryPoints.get(entrypointName);
     for (const auto& [originalName, constant] : entryPointInformation.specializationConstants) {
         if (!constant.defaultValue) {

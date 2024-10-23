@@ -104,7 +104,7 @@ public:
     std::optional<WTF::UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
-    typedef UncheckedKeyHashMap<WTF::UUID, String> DocumentIDToURLMap;
+    typedef HashMap<WTF::UUID, String> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API

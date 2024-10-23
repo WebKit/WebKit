@@ -81,7 +81,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     WeakRef<const WebProcessProxy> m_process;
-    UncheckedKeyHashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, ThreadSafeWeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
 };
 
 } // namespace WebKit

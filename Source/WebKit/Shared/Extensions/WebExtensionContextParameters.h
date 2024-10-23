@@ -43,7 +43,7 @@ struct WebExtensionContextParameters {
     String uniqueIdentifier;
     HashSet<String> unsupportedAPIs;
 
-    UncheckedKeyHashMap<String, WallTime> grantedPermissions;
+    HashMap<String, WallTime> grantedPermissions;
 
     Ref<API::Data> localizationJSON;
     Ref<API::Data> manifestJSON;

@@ -96,7 +96,7 @@ private:
 
     GRefPtr<GDBusProxy> m_proxy;
     OptionSet<Capabilities> m_capabilities;
-    UncheckedKeyHashMap<WebNotificationIdentifier, Notification> m_notifications;
+    HashMap<WebNotificationIdentifier, Notification> m_notifications;
     HashSet<Observer*> m_observers;
 };
 

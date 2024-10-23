@@ -93,15 +93,15 @@ private:
     CheckedRef<Storage> m_storage;
 
     class PendingFrameLoad;
-    UncheckedKeyHashMap<GlobalFrameID, RefPtr<PendingFrameLoad>> m_pendingFrameLoads;
+    HashMap<GlobalFrameID, RefPtr<PendingFrameLoad>> m_pendingFrameLoads;
 
-    UncheckedKeyHashMap<Key, std::unique_ptr<SpeculativeLoad>> m_pendingPreloads;
-    UncheckedKeyHashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;
+    HashMap<Key, std::unique_ptr<SpeculativeLoad>> m_pendingPreloads;
+    HashMap<Key, std::unique_ptr<Vector<RetrieveCompletionHandler>>> m_pendingRetrieveRequests;
 
-    UncheckedKeyHashMap<Key, std::unique_ptr<PreloadedEntry>> m_preloadedEntries;
+    HashMap<Key, std::unique_ptr<PreloadedEntry>> m_preloadedEntries;
 
     class ExpiringEntry;
-    UncheckedKeyHashMap<Key, std::unique_ptr<ExpiringEntry>> m_notPreloadedEntries; // For logging.
+    HashMap<Key, std::unique_ptr<ExpiringEntry>> m_notPreloadedEntries; // For logging.
 };
 
 } // namespace NetworkCache

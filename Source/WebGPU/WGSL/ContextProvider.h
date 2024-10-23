@@ -39,7 +39,7 @@ class ContextProvider {
     friend class ContextScope;
 
 protected:
-    using ContextMap = UncheckedKeyHashMap<String, ContextValue>;
+    using ContextMap = HashMap<String, ContextValue>;
 
     class ContextScope {
     public:

@@ -32,7 +32,7 @@
 #import <wtf/HashMap.h>
 
 @implementation WKTouchActionGestureRecognizer {
-    UncheckedKeyHashMap<unsigned, OptionSet<WebCore::TouchAction>> _touchActionsByTouchIdentifier;
+    HashMap<unsigned, OptionSet<WebCore::TouchAction>> _touchActionsByTouchIdentifier;
     id <WKTouchActionGestureRecognizerDelegate> _touchActionDelegate;
 }
 

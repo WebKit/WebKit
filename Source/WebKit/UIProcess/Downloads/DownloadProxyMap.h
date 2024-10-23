@@ -74,7 +74,7 @@ private:
     void platformDestroy();
 
     WeakRef<NetworkProcessProxy> m_process;
-    UncheckedKeyHashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
+    HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 
     bool m_shouldTakeAssertion { false };
     RefPtr<ProcessAssertion> m_downloadUIAssertion;

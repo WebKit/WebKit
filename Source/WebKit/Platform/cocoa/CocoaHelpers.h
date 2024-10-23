@@ -148,6 +148,6 @@ NSSet *toAPI(const HashSet<String>&);
 NSArray *toAPIArray(const HashSet<String>&);
 HashSet<String> toImpl(NSSet *);
 
-UncheckedKeyHashMap<String, Ref<API::Data>> toDataMap(NSDictionary *);
+HashMap<String, Ref<API::Data>> toDataMap(NSDictionary *);
 
 } // namespace WebKit

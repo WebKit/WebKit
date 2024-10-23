@@ -40,7 +40,7 @@ public:
     ~WebBackForwardListFrameItem();
 
     static WebBackForwardListFrameItem* itemForID(WebCore::BackForwardItemIdentifier);
-    static UncheckedKeyHashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>& allItems();
+    static HashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListFrameItem>>& allItems();
 
     FrameState& frameState() const { return m_frameState; }
     void setFrameState(Ref<FrameState>&&);

@@ -78,7 +78,7 @@ private:
     Lock m_responsesLock;
     Condition m_condition;
 
-    UncheckedKeyHashMap<uint64_t, std::unique_ptr<T>> m_responses WTF_GUARDED_BY_LOCK(m_responsesLock);
+    HashMap<uint64_t, std::unique_ptr<T>> m_responses WTF_GUARDED_BY_LOCK(m_responsesLock);
     bool m_canceled;
 };
 

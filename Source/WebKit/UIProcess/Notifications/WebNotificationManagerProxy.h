@@ -68,7 +68,7 @@ public:
     virtual ~WebNotificationManagerProxy();
 
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
-    UncheckedKeyHashMap<String, bool> notificationPermissions();
+    HashMap<String, bool> notificationPermissions();
 
     void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     bool showPersistent(const WebsiteDataStore&, IPC::Connection*, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
@@ -101,8 +101,8 @@ private:
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 
-    UncheckedKeyHashMap<WebNotificationIdentifier, WTF::UUID> m_globalNotificationMap;
-    UncheckedKeyHashMap<WTF::UUID, Ref<WebNotification>> m_notifications;
+    HashMap<WebNotificationIdentifier, WTF::UUID> m_globalNotificationMap;
+    HashMap<WTF::UUID, Ref<WebNotification>> m_notifications;
 };
 
 } // namespace WebKit

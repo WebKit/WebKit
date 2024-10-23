@@ -57,7 +57,7 @@ TEST(RetainPtrHashingCocoa, HashSet)
 
 TEST(RetainPtrHashingCocoa, HashMapKey)
 {
-    UncheckedKeyHashMap<RetainPtr<NSObject>, int> map;
+    HashMap<RetainPtr<NSObject>, int> map;
 
     RetainPtr<NSObject> foo = adoptNS([NSObject new]);
 
@@ -79,7 +79,7 @@ TEST(RetainPtrHashingCocoa, HashMapKey)
 
 TEST(RetainPtrHashingCocoa, HashMapValue)
 {
-    UncheckedKeyHashMap<int, RetainPtr<NSObject>> map;
+    HashMap<int, RetainPtr<NSObject>> map;
 
     RetainPtr<NSObject> foo = adoptNS([NSObject new]);
 

@@ -50,7 +50,7 @@ enum class AnchorPositionResolutionStage : uint8_t {
     Positioned,
 };
 
-using AnchorElements = UncheckedKeyHashMap<AtomString, WeakRef<Element, WeakPtrImplWithEventTargetData>>;
+using AnchorElements = HashMap<AtomString, WeakRef<Element, WeakPtrImplWithEventTargetData>>;
 
 struct AnchorPositionedState {
     WTF_MAKE_TZONE_ALLOCATED(AnchorPositionedState);
@@ -60,7 +60,7 @@ public:
     AnchorPositionResolutionStage stage;
 };
 
-using AnchorsForAnchorName = UncheckedKeyHashMap<AtomString, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
+using AnchorsForAnchorName = HashMap<AtomString, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
 
 using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 

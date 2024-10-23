@@ -161,9 +161,9 @@ class WebProcessProxy final : public AuxiliaryProcessProxy {
     WTF_MAKE_TZONE_ALLOCATED(WebProcessProxy);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebProcessProxy);
 public:
-    using WebPageProxyMap = UncheckedKeyHashMap<WebPageProxyIdentifier, WeakRef<WebPageProxy>>;
-    using UserInitiatedActionByAuthorizationTokenMap = UncheckedKeyHashMap<WTF::UUID, RefPtr<API::UserInitiatedAction>>;
-    typedef UncheckedKeyHashMap<WebCore::UserGestureTokenIdentifier, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
+    using WebPageProxyMap = HashMap<WebPageProxyIdentifier, WeakRef<WebPageProxy>>;
+    using UserInitiatedActionByAuthorizationTokenMap = HashMap<WTF::UUID, RefPtr<API::UserInitiatedAction>>;
+    typedef HashMap<WebCore::UserGestureTokenIdentifier, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
     enum class IsPrewarmed : bool { No, Yes };
 
@@ -552,7 +552,7 @@ private:
     void validateFreezerStatus();
 
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
-    using WebProcessProxyMap = UncheckedKeyHashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
+    using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
     static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& globalPageMap();
@@ -692,7 +692,7 @@ private:
     WeakHashSet<ProvisionalPageProxy> m_provisionalPages;
     WeakHashSet<SuspendedPageProxy> m_suspendedPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
-    UncheckedKeyHashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
+    HashMap<WebCore::PageIdentifier, UserInitiatedActionByAuthorizationTokenMap> m_userInitiatedActionByAuthorizationTokenMap;
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
@@ -710,7 +710,7 @@ private:
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
 #endif
 
-    UncheckedKeyHashMap<String, uint64_t> m_pageURLRetainCountMap;
+    HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
     std::optional<WebCore::RegistrableDomain> m_registrableDomain;
     bool m_isInProcessCache { false };
@@ -774,7 +774,7 @@ private:
     
     bool m_allowTestOnlyIPC { false };
 
-    using SpeechRecognitionServerMap = UncheckedKeyHashMap<SpeechRecognitionServerIdentifier, Ref<SpeechRecognitionServer>>;
+    using SpeechRecognitionServerMap = HashMap<SpeechRecognitionServerIdentifier, Ref<SpeechRecognitionServer>>;
     SpeechRecognitionServerMap m_speechRecognitionServerMap;
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<SpeechRecognitionRemoteRealtimeMediaSourceManager> m_speechRecognitionRemoteRealtimeMediaSourceManager;

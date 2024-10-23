@@ -57,7 +57,7 @@ class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup>, public
 public:
     template <typename T>
     using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
-    using SamplersContainer = UncheckedKeyHashMap<RefPtr<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
+    using SamplersContainer = HashMap<RefPtr<Sampler>, ShaderStageArray<std::optional<uint32_t>>>;
     struct BufferAndType {
         WGPUBufferBindingType type;
         uint64_t bindingSize;
@@ -113,7 +113,7 @@ private:
     Vector<BindableResources> m_resources;
     RefPtr<const BindGroupLayout> m_bindGroupLayout;
     DynamicBuffersContainer m_dynamicBuffers;
-    UncheckedKeyHashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_dynamicOffsetsIndices;
     SamplersContainer m_samplers;
     ShaderStageArray<ExternalTextureIndices> m_externalTextureIndices;
 };

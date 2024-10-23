@@ -238,9 +238,9 @@ struct CrossThreadCopierBase<false, false, HashSet<ObjectIdentifierGeneric<T, U,
 };
 
 // Default specialization for HashMaps of CrossThreadCopyable classes
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg>
-struct CrossThreadCopierBase<false, false, UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>> {
-    using Type = UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg>;
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
+struct CrossThreadCopierBase<false, false, HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>> {
+    using Type = HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraitsArg, shouldValidateKey>;
     static constexpr bool IsNeeded = CrossThreadCopier<KeyArg>::IsNeeded || CrossThreadCopier<MappedArg>::IsNeeded;
     static Type copy(const Type& source)
     {

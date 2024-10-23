@@ -207,7 +207,7 @@ private:
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
     Vector<Ref<UserMediaPermissionRequestProxy>> m_grantedRequests;
-    UncheckedKeyHashMap<WebCore::FrameIdentifier, String> m_frameEphemeralHashSalts;
+    HashMap<WebCore::FrameIdentifier, String> m_frameEphemeralHashSalts;
 
     Vector<DeniedRequest> m_deniedRequests;
 

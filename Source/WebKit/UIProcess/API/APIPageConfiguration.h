@@ -260,7 +260,7 @@ public:
 
     RefPtr<WebKit::WebURLSchemeHandler> urlSchemeHandlerForURLScheme(const WTF::String&);
     void setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&&, const WTF::String&);
-    const UncheckedKeyHashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_data.urlSchemeHandlers; }
+    const HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>>& urlSchemeHandlers() { return m_data.urlSchemeHandlers; }
 
     const Vector<WTF::String>& corsDisablingPatterns() const { return m_data.corsDisablingPatterns; }
     void setCORSDisablingPatterns(Vector<WTF::String>&& patterns) { m_data.corsDisablingPatterns = WTFMove(patterns); }
@@ -567,7 +567,7 @@ private:
         RefPtr<ApplicationManifest> applicationManifest;
 #endif
 
-        UncheckedKeyHashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
+        HashMap<WTF::String, Ref<WebKit::WebURLSchemeHandler>> urlSchemeHandlers;
         Vector<WTF::String> corsDisablingPatterns;
         HashSet<WTF::String> maskedURLSchemes;
         bool maskedURLSchemesWasSet { false };

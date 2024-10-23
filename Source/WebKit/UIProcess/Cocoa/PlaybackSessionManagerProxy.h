@@ -335,7 +335,7 @@ private:
 #endif
 
     WeakPtr<WebPageProxy> m_page;
-    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     bool m_controlsManagerContextIsVideo { false };
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;

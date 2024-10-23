@@ -31,7 +31,7 @@ bool Test::shouldInitializeWebProcessExtensions = false;
 
 GRefPtr<GDBusServer> Test::s_dbusServer;
 Vector<GRefPtr<GDBusConnection>> Test::s_dbusConnections;
-UncheckedKeyHashMap<uint64_t, GDBusConnection*> Test::s_dbusConnectionPageMap;
+HashMap<uint64_t, GDBusConnection*> Test::s_dbusConnectionPageMap;
 WebKitMemoryPressureSettings* Test::s_memoryPressureSettings = nullptr;
 
 void beforeAll();

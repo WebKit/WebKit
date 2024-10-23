@@ -87,7 +87,7 @@ private:
 #endif
 
     mutable WebCookieCache m_cache;
-    UncheckedKeyHashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
+    HashMap<String, WeakHashSet<WebCore::CookieChangeListener>> m_changeListeners;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSHTTPCookieStorage> m_partitionedStorageForDOMCookies;

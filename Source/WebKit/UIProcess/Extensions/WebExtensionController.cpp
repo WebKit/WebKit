@@ -39,9 +39,9 @@ namespace WebKit {
 
 constexpr auto freshlyCreatedTimeout = 5_s;
 
-static UncheckedKeyHashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>& webExtensionControllers()
+static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>& webExtensionControllers()
 {
-    static MainThreadNeverDestroyed<UncheckedKeyHashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionController>>> controllers;
     return controllers;
 }
 

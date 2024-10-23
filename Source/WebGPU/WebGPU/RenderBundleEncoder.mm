@@ -41,7 +41,7 @@
 
 @implementation RenderBundleICBWithResources {
     Vector<WebGPU::BindableResources> _resources;
-    UncheckedKeyHashMap<uint64_t, WebGPU::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
+    HashMap<uint64_t, WebGPU::IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> _minVertexCountForDrawCommand;
 }
 
 static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)

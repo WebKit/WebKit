@@ -200,7 +200,7 @@ private:
 
     RetainPtr<WKWebViewConfiguration> _configuration;
     RetainPtr<TestWKWebView> _webView;
-    UncheckedKeyHashMap<CFNotificationName, NotificationCallback> _callbacks;
+    HashMap<CFNotificationName, NotificationCallback> _callbacks;
 };
 
 TEST_F(NowPlayingTest, DISABLED_AudioElement)

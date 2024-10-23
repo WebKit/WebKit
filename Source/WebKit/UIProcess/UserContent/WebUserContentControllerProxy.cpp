@@ -57,9 +57,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static UncheckedKeyHashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>& webUserContentControllerProxies()
+static HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>& webUserContentControllerProxies()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>> proxies;
+    static NeverDestroyed<HashMap<UserContentControllerIdentifier, WeakRef<WebUserContentControllerProxy>>> proxies;
     return proxies;
 }
 
@@ -407,7 +407,7 @@ void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pagePr
         return;
     }
 
-    if (!UncheckedKeyHashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID)) {
+    if (!HashMap<ScriptMessageHandlerIdentifier, RefPtr<WebScriptMessageHandler>>::isValidKey(messageHandlerID)) {
         reply({ }, { });
         return;
     }

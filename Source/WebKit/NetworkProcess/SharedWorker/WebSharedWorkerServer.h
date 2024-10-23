@@ -90,10 +90,10 @@ private:
     void shutDownSharedWorker(const WebCore::SharedWorkerKey&);
 
     CheckedRef<NetworkSession> m_session;
-    UncheckedKeyHashMap<WebCore::ProcessIdentifier, Ref<WebSharedWorkerServerConnection>> m_connections;
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
+    HashMap<WebCore::ProcessIdentifier, Ref<WebSharedWorkerServerConnection>> m_connections;
+    HashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
-    UncheckedKeyHashMap<WebCore::SharedWorkerKey, Ref<WebSharedWorker>> m_sharedWorkers;
+    HashMap<WebCore::SharedWorkerKey, Ref<WebSharedWorker>> m_sharedWorkers;
 };
 
 } // namespace WebKit

@@ -57,7 +57,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMRangeHandleCache = UncheckedKeyHashMap<SingleThreadWeakRef<WebCore::Range>, WeakRef<InjectedBundleRangeHandle>>;
+using DOMRangeHandleCache = HashMap<SingleThreadWeakRef<WebCore::Range>, WeakRef<InjectedBundleRangeHandle>>;
 
 static DOMRangeHandleCache& domRangeHandleCache()
 {

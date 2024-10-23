@@ -68,7 +68,7 @@ private:
     WebCore::IntSize tileSizeFromPixelSize(const WebCore::IntSize&);
     
     WebCore::IntSize m_size;
-    UncheckedKeyHashMap<TileIndex, std::unique_ptr<Tile>> m_tiles;
+    HashMap<TileIndex, std::unique_ptr<Tile>> m_tiles;
 };
 
 } // namespace WebKit

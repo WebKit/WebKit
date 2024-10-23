@@ -52,9 +52,9 @@ private:
     void targetListChanged(RemoteInspectorClient&) override;
     void connectionClosed(RemoteInspectorClient&) override;
 
-    UncheckedKeyHashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
+    HashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
     HashSet<WebKitUserContentManager*> m_userContentManagers;
-    UncheckedKeyHashMap<WebKitWebView*, RemoteInspectorClient*> m_webViews;
+    HashMap<WebKitWebView*, RemoteInspectorClient*> m_webViews;
 };
 
 } // namespace WebKit

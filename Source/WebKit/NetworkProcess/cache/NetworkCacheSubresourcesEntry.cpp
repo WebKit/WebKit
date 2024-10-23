@@ -101,7 +101,7 @@ static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::uniqu
     Vector<SubresourceInfo> result;
     result.reserveInitialCapacity(subresourceLoads.size());
     
-    UncheckedKeyHashMap<Key, unsigned> previousMap;
+    HashMap<Key, unsigned> previousMap;
     if (previousSubresources) {
         for (unsigned i = 0; i < previousSubresources->size(); ++i)
             previousMap.add(previousSubresources->at(i).key(), i);

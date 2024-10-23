@@ -58,8 +58,8 @@ private:
     void runPanel() override;
     void filterTransports(TransportSet&) const override { };
 
-    UncheckedKeyHashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
-    UncheckedKeyHashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
+    HashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
+    HashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
 };
 
 } // namespace WebKit

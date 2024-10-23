@@ -853,7 +853,7 @@ NSString* Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& p
 
     for (auto& bindGroupLayout : pipelineLayout.bindGroupLayouts) {
         auto& entries = pipelineEntries[bindGroupLayout.group];
-        UncheckedKeyHashMap<String, uint64_t> entryMap;
+        HashMap<String, uint64_t> entryMap;
         for (auto& entry : bindGroupLayout.entries) {
             auto visibility = convertVisibility(entry.visibility);
             auto stage = visibility / 2;

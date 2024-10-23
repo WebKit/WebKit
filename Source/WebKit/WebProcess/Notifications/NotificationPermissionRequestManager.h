@@ -68,7 +68,7 @@ private:
     using PermissionHandlers = Vector<PermissionHandler>;
     static void callPermissionHandlersWith(PermissionHandlers&, Permission);
 
-    UncheckedKeyHashMap<WebCore::SecurityOriginData, PermissionHandlers> m_requestsPerOrigin;
+    HashMap<WebCore::SecurityOriginData, PermissionHandlers> m_requestsPerOrigin;
     WeakPtr<WebPage> m_page;
 #endif
 };
@@ -76,7 +76,7 @@ private:
 inline bool isRequestIDValid(uint64_t id)
 {
     // This check makes sure that the ID is not equal to values needed by
-    // UncheckedKeyHashMap for bucketing.
+    // HashMap for bucketing.
     return id && id != static_cast<uint64_t>(-1);
 }
 

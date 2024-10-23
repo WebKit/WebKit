@@ -42,7 +42,7 @@
 
 namespace WebKit {
 
-typedef UncheckedKeyHashMap<WebPageProxy*, unsigned> PageLevelMap;
+typedef HashMap<WebPageProxy*, unsigned> PageLevelMap;
 
 static PageLevelMap& pageLevelMap()
 {

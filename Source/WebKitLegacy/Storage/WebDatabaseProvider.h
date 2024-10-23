@@ -46,5 +46,5 @@ private:
 
     static String indexedDatabaseDirectoryPath();
 
-    UncheckedKeyHashMap<PAL::SessionID, RefPtr<InProcessIDBServer>> m_idbServerMap;
+    HashMap<PAL::SessionID, RefPtr<InProcessIDBServer>> m_idbServerMap;
 };

@@ -23,5 +23,5 @@
 header: "APIDictionary.h"
 
 [RefCounted, CustomHeader] class API::Dictionary {
-    UncheckedKeyHashMap<String, RefPtr<API::Object>> map()
+    HashMap<String, RefPtr<API::Object>> map()
 };

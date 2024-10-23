@@ -45,11 +45,12 @@ using BareItem = std::variant<String, Token, bool>; // FIXME: The specification 
 class Parameters {
 public:
     Parameters() = default;
-    explicit Parameters(UncheckedKeyHashMap<String, BareItem>&& parameters) : m_parameters(WTFMove(parameters)) { }
-    const UncheckedKeyHashMap<String, BareItem>& map() const { return m_parameters; }
+    explicit Parameters(HashMap<String, BareItem>&& parameters)
+        : m_parameters(WTFMove(parameters)) { }
+    const HashMap<String, BareItem>& map() const { return m_parameters; }
     template<typename T> const T* getIf(ASCIILiteral key) const;
 private:
-    UncheckedKeyHashMap<String, BareItem> m_parameters;
+    HashMap<String, BareItem> m_parameters;
 };
 
 template<typename T> const T* Parameters::getIf(ASCIILiteral key) const
@@ -64,7 +65,7 @@ using InnerList = Vector<std::pair<BareItem, Parameters>>;
 using ItemOrInnerList = std::variant<BareItem, InnerList>;
 
 WEBCORE_EXPORT std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(StringView header);
-WEBCORE_EXPORT std::optional<UncheckedKeyHashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header);
+WEBCORE_EXPORT std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header);
 
 } // namespace RFC8941
 

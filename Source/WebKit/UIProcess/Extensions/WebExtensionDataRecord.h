@@ -77,7 +77,7 @@ public:
 private:
     String m_displayName;
     String m_uniqueIdentifier;
-    UncheckedKeyHashMap<Type, size_t> m_typeSizes;
+    HashMap<Type, size_t> m_typeSizes;
     RetainPtr<NSMutableArray> m_errors;
 };
 
@@ -94,7 +94,7 @@ public:
 
     WebExtensionDataRecordHolder() { };
 
-    UncheckedKeyHashMap<String, Ref<WebExtensionDataRecord>> recordsMap;
+    HashMap<String, Ref<WebExtensionDataRecord>> recordsMap;
 };
 
 } // namespace WebKit

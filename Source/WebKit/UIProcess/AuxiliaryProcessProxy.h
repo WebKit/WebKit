@@ -60,7 +60,7 @@ enum class ProcessThrottleState : uint8_t;
 enum class ShouldTakeUIBackgroundAssertion : bool { No, Yes };
 enum class AlwaysRunsAtBackgroundPriority : bool { No, Yes };
 
-using ExtensionCapabilityGrantMap = UncheckedKeyHashMap<String, ExtensionCapabilityGrant>;
+using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
 
 class AuxiliaryProcessProxy
     : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
@@ -328,8 +328,8 @@ private:
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
 #endif
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    UncheckedKeyHashMap<String, std::optional<String>> m_domainlessPreferencesUpdatedWhileSuspended;
-    UncheckedKeyHashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
+    HashMap<String, std::optional<String>> m_domainlessPreferencesUpdatedWhileSuspended;
+    HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
 #endif
 };
 

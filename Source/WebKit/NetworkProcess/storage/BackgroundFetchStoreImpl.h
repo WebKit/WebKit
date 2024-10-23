@@ -80,16 +80,16 @@ private:
 
     using FetchIdentifier = std::pair<String, String>; // < service worker registration scope, background fetch identifier >
     struct PerClientOriginFetches {
-        UncheckedKeyHashMap<FetchIdentifier, String> fetchToFilenames;
+        HashMap<FetchIdentifier, String> fetchToFilenames;
         Vector<CompletionHandler<void()>> initializationCallbacks;
     };
-    UncheckedKeyHashMap<WebCore::ClientOrigin, PerClientOriginFetches> m_perClientOriginFetches;
+    HashMap<WebCore::ClientOrigin, PerClientOriginFetches> m_perClientOriginFetches;
 
     struct FetchInformation {
         WebCore::ClientOrigin origin;
         FetchIdentifier identifier;
     };
-    UncheckedKeyHashMap<String, FetchInformation> m_filenameToFetch;
+    HashMap<String, FetchInformation> m_filenameToFetch;
     WeakPtr<WebCore::SWServer> m_server;
 };
 

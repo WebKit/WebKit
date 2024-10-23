@@ -210,7 +210,7 @@ private:
 
     WeakPtr<WebPage> m_page;
     WeakHashSet<WebCore::HTMLMediaElement> m_mediaElements;
-    UncheckedKeyHashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     Markable<PlaybackSessionContextIdentifier> m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
 

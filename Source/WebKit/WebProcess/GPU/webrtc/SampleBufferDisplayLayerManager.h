@@ -53,7 +53,7 @@ public:
 
 private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    UncheckedKeyHashMap<SampleBufferDisplayLayerIdentifier, WeakPtr<SampleBufferDisplayLayer>> m_layers;
+    HashMap<SampleBufferDisplayLayerIdentifier, WeakPtr<SampleBufferDisplayLayer>> m_layers;
 };
 
 }

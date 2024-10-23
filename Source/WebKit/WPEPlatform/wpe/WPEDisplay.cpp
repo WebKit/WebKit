@@ -56,7 +56,7 @@ struct _WPEDisplayPrivate {
     bool eglInitialized;
     EGLDisplay eglDisplay;
     GUniqueOutPtr<GError> eglDisplayError;
-    UncheckedKeyHashMap<String, bool> extensionsMap;
+    HashMap<String, bool> extensionsMap;
     GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
     GRefPtr<WPEKeymap> keymap;
 };

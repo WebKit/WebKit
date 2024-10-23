@@ -49,7 +49,7 @@ public:
     void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&) override;
 #endif
 
-    using CSSValueToSystemColorMap = UncheckedKeyHashMap<CSSValueKey, Color>;
+    using CSSValueToSystemColorMap = HashMap<CSSValueKey, Color>;
 
     WEBCORE_EXPORT static const CSSValueToSystemColorMap& cssValueToSystemColorMap();
     WEBCORE_EXPORT static void setCSSValueToSystemColorMap(CSSValueToSystemColorMap&&);

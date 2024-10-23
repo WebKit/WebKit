@@ -34,9 +34,9 @@
 
 namespace WebKit {
 
-static UncheckedKeyHashMap<JSGlobalContextRef, JSWeakObjectMapRef>& wrapperCache()
+static HashMap<JSGlobalContextRef, JSWeakObjectMapRef>& wrapperCache()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<JSGlobalContextRef, JSWeakObjectMapRef>> wrappers;
+    static NeverDestroyed<HashMap<JSGlobalContextRef, JSWeakObjectMapRef>> wrappers;
     return wrappers;
 }
 

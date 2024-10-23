@@ -48,10 +48,10 @@ private:
     RefPtr<WebCore::StorageNamespace> sessionStorageNamespace(const WebCore::SecurityOrigin&, WebCore::Page&, ShouldCreateNamespace) final;
     struct SessionStorageNamespaces {
         unsigned useCount { 0 };
-        UncheckedKeyHashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>> map;
+        HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>> map;
     };
 
-    UncheckedKeyHashMap<StorageNamespaceImpl::Identifier, SessionStorageNamespaces> m_sessionStorageNamespaces;
+    HashMap<StorageNamespaceImpl::Identifier, SessionStorageNamespaces> m_sessionStorageNamespaces;
 };
 
 }

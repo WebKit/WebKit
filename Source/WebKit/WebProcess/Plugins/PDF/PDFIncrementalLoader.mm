@@ -271,8 +271,8 @@ void PDFPluginStreamLoaderClient::didFinishLoading(NetscapePlugInStreamLoader* s
 struct PDFIncrementalLoader::RequestData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    UncheckedKeyHashMap<ByteRangeRequestIdentifier, ByteRangeRequest> outstandingByteRangeRequests;
-    UncheckedKeyHashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
+    HashMap<ByteRangeRequestIdentifier, ByteRangeRequest> outstandingByteRangeRequests;
+    HashMap<RefPtr<WebCore::NetscapePlugInStreamLoader>, ByteRangeRequestIdentifier> streamLoaderMap;
 };
 
 #pragma mark -

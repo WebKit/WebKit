@@ -50,7 +50,7 @@ public:
 
 private:
     class RemoteFrameHostLayerData;
-    UncheckedKeyHashMap<WebCore::LayerHostingContextIdentifier, std::unique_ptr<RemoteFrameHostLayerData>> m_layers;
+    HashMap<WebCore::LayerHostingContextIdentifier, std::unique_ptr<RemoteFrameHostLayerData>> m_layers;
 };
 
 } // namespace WebKit

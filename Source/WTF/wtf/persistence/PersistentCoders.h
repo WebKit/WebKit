@@ -193,6 +193,47 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
 
 template<typename T, size_t inlineCapacity> struct Coder<Vector<T, inlineCapacity>> : VectorCoder<std::is_arithmetic<T>::value, T, inlineCapacity> { };
 
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct Coder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
+    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+
+    template<typename Encoder>
+    static void encodeForPersistence(Encoder& encoder, const HashMapType& hashMap)
+    {
+        encoder << static_cast<uint64_t>(hashMap.size());
+        for (typename HashMapType::const_iterator it = hashMap.begin(), end = hashMap.end(); it != end; ++it)
+            encoder << *it;
+    }
+
+    template<typename Decoder>
+    static std::optional<HashMapType> decodeForPersistence(Decoder& decoder)
+    {
+        std::optional<uint64_t> hashMapSize;
+        decoder >> hashMapSize;
+        if (!hashMapSize)
+            return std::nullopt;
+
+        HashMapType tempHashMap;
+        tempHashMap.reserveInitialCapacity(static_cast<unsigned>(*hashMapSize));
+        for (uint64_t i = 0; i < *hashMapSize; ++i) {
+            std::optional<KeyArg> key;
+            decoder >> key;
+            if (!key)
+                return std::nullopt;
+            std::optional<MappedArg> value;
+            decoder >> value;
+            if (!value)
+                return std::nullopt;
+
+            if (!tempHashMap.add(WTFMove(*key), WTFMove(*value)).isNewEntry) {
+                // The hash map already has the specified key, bail.
+                return std::nullopt;
+            }
+        }
+
+        return tempHashMap;
+    }
+};
+
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct Coder<UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
     typedef UncheckedKeyHashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
 

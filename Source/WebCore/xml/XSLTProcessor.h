@@ -71,7 +71,7 @@ public:
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
 
-    using ParameterMap = UncheckedKeyHashMap<String, String>;
+    using ParameterMap = HashMap<String, String>;
 
 private:
     XSLTProcessor() = default;

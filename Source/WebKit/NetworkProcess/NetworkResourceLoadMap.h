@@ -36,7 +36,7 @@ class NetworkConnectionToWebProcess;
 
 class NetworkResourceLoadMap {
 public:
-    using MapType = UncheckedKeyHashMap<WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>>;
+    using MapType = HashMap<WebCore::ResourceLoaderIdentifier, Ref<NetworkResourceLoader>>;
     NetworkResourceLoadMap(Function<void(bool hasUpload)>&&);
     ~NetworkResourceLoadMap();
 

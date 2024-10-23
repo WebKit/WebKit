@@ -54,7 +54,7 @@ enum {
     LAST_SIGNAL
 };
 
-typedef UncheckedKeyHashMap<WebBackForwardListItem*, GRefPtr<WebKitBackForwardListItem> > BackForwardListItemsMap;
+typedef HashMap<WebBackForwardListItem*, GRefPtr<WebKitBackForwardListItem> > BackForwardListItemsMap;
 
 struct _WebKitBackForwardListPrivate {
     WebBackForwardList* backForwardItems;

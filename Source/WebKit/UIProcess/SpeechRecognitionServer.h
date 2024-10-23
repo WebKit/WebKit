@@ -92,7 +92,7 @@ private:
 
     WeakPtr<WebProcessProxy> m_process;
     SpeechRecognitionServerIdentifier m_identifier;
-    UncheckedKeyHashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, std::unique_ptr<WebCore::SpeechRecognitionRequest>> m_requests;
     SpeechRecognitionPermissionChecker m_permissionChecker;
     std::unique_ptr<WebCore::SpeechRecognizer> m_recognizer;
     SpeechRecognitionCheckIfMockSpeechRecognitionEnabled m_checkIfMockSpeechRecognitionEnabled;

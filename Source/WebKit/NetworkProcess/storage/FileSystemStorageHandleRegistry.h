@@ -46,7 +46,7 @@ public:
 private:
     FileSystemStorageHandleRegistry();
 
-    UncheckedKeyHashMap<WebCore::FileSystemHandleIdentifier, WeakPtr<FileSystemStorageHandle>> m_handles;
+    HashMap<WebCore::FileSystemHandleIdentifier, WeakPtr<FileSystemStorageHandle>> m_handles;
 };
 
 } // namespace WebKit

@@ -247,7 +247,7 @@ private:
         ForNavigationAction forNavigationAction { ForNavigationAction::No };
         WebCore::FramePolicyFunction policyFunction;
     };
-    UncheckedKeyHashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
+    HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
     std::optional<DownloadID> m_policyDownloadID;
 

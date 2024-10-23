@@ -274,7 +274,7 @@ std::optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMetho
     return std::nullopt;
 }
 
-bool WebDriverService::findCommand(HTTPMethod method, const String& path, CommandHandler* handler, UncheckedKeyHashMap<String, String>& parameters)
+bool WebDriverService::findCommand(HTTPMethod method, const String& path, CommandHandler* handler, HashMap<String, String>& parameters)
 {
     size_t length = std::size(s_commands);
     for (size_t i = 0; i < length; ++i) {
@@ -313,7 +313,7 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
         return;
     }
     CommandHandler handler;
-    UncheckedKeyHashMap<String, String> parameters;
+    HashMap<String, String> parameters;
     if (!findCommand(method.value(), request.path, &handler, parameters)) {
         sendResponse(WTFMove(replyHandler), CommandResult::fail(CommandResult::ErrorCode::UnknownCommand, makeString("Unknown command: "_s, request.path)));
         return;

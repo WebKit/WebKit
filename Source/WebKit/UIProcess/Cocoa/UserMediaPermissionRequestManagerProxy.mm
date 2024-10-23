@@ -65,7 +65,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
 
 @interface WKRotationCoordinatorObserver : NSObject {
     WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy> _managerProxy;
-    UncheckedKeyHashMap<String, RetainPtr<AVCaptureDeviceRotationCoordinator>> m_coordinators;
+    HashMap<String, RetainPtr<AVCaptureDeviceRotationCoordinator>> m_coordinators;
 }
 
 -(id)initWithRequestManagerProxy:(WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy>&&)managerProxy;

@@ -60,7 +60,7 @@ protected:
     WEBCORE_EXPORT SharedWorkerObjectConnection();
 
 private:
-    UncheckedKeyHashMap<uint64_t, UniqueRef<SharedWorkerScriptLoader>> m_loaders;
+    HashMap<uint64_t, UniqueRef<SharedWorkerScriptLoader>> m_loaders;
 };
 
 } // namespace WebCore

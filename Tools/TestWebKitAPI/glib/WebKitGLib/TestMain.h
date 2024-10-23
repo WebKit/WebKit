@@ -317,6 +317,6 @@ public:
 #endif
     static GRefPtr<GDBusServer> s_dbusServer;
     static Vector<GRefPtr<GDBusConnection>> s_dbusConnections;
-    static UncheckedKeyHashMap<uint64_t, GDBusConnection*> s_dbusConnectionPageMap;
+    static HashMap<uint64_t, GDBusConnection*> s_dbusConnectionPageMap;
     static WebKitMemoryPressureSettings* s_memoryPressureSettings;
 };

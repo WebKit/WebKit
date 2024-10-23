@@ -144,9 +144,9 @@ static String storageDirectory(DWORD pathIdentifier)
 
 static String cachedStorageDirectory(DWORD pathIdentifier)
 {
-    static UncheckedKeyHashMap<DWORD, String> directories;
+    static HashMap<DWORD, String> directories;
 
-    UncheckedKeyHashMap<DWORD, String>::iterator it = directories.find(pathIdentifier);
+    HashMap<DWORD, String>::iterator it = directories.find(pathIdentifier);
     if (it != directories.end())
         return it->value;
 

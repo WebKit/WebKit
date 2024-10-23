@@ -57,7 +57,7 @@ public:
     bool hasReachedSocketLimit() const { return m_channels.size() >= maximumSocketCount; }
 
 private:
-    UncheckedKeyHashMap<WebCore::WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
+    HashMap<WebCore::WebSocketIdentifier, WeakPtr<WebSocketChannel>> m_channels;
 };
 
 } // namespace WebKit

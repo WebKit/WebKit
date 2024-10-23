@@ -355,7 +355,7 @@ public:
     void setContentExtensionEnablement(ContentExtensionEnablement&& enablement) { m_contentExtensionEnablement = WTFMove(enablement); }
 
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
-    WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const UncheckedKeyHashMap<String, Vector<String>>&);
+    WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
 
     const Vector<TargetedElementSelectors>& visibilityAdjustmentSelectors() const { return m_visibilityAdjustmentSelectors; }
     void setVisibilityAdjustmentSelectors(Vector<TargetedElementSelectors>&& selectors) { m_visibilityAdjustmentSelectors = WTFMove(selectors); }

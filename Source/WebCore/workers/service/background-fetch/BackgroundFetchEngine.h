@@ -75,10 +75,10 @@ private:
     WeakPtr<SWServer> m_server;
     Ref<BackgroundFetchStore> m_store;
 
-    using FetchesMap = UncheckedKeyHashMap<String, Ref<BackgroundFetch>>;
-    UncheckedKeyHashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
+    using FetchesMap = HashMap<String, Ref<BackgroundFetch>>;
+    HashMap<ServiceWorkerRegistrationKey, FetchesMap> m_fetches;
 
-    UncheckedKeyHashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;
+    HashMap<BackgroundFetchRecordIdentifier, Ref<BackgroundFetch::Record>> m_records;
 };
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ public:
 
 private:
     WebKitWebView* m_webView { nullptr };
-    UncheckedKeyHashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier>, GRefPtr<WebKitWebResource>> m_resources;
+    HashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier>, GRefPtr<WebKitWebResource>> m_resources;
 };
 
 } // namespace WebKit

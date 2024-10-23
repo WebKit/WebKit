@@ -1182,7 +1182,7 @@ public:
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CompletionHandler<void(uint64_t)>&&);
     void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
-    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const UncheckedKeyHashMap<String, Vector<WebCore::CharacterRange>>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const HashMap<String, Vector<WebCore::CharacterRange>>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void setWritingSuggestion(const String& text, const EditingRange& selectionRange);
     void confirmCompositionAsync();
 
@@ -3534,7 +3534,7 @@ private:
     bool m_madeViewBlankDueToLackOfRenderingUpdate { false };
 
 #if PLATFORM(COCOA)
-    using TemporaryPDFFileMap = UncheckedKeyHashMap<String, String>;
+    using TemporaryPDFFileMap = HashMap<String, String>;
     TemporaryPDFFileMap m_temporaryPDFFiles;
     std::unique_ptr<WebCore::RunLoopObserver> m_activityStateChangeDispatcher;
 
@@ -3598,10 +3598,10 @@ private:
     bool m_preferFasterClickOverDoubleTap { false };
     bool m_alwaysUseRelatedPageProcess { false };
 
-    UncheckedKeyHashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
+    HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    using IdentifierToAttachmentMap = UncheckedKeyHashMap<String, Ref<API::Attachment>>;
+    using IdentifierToAttachmentMap = HashMap<String, Ref<API::Attachment>>;
     IdentifierToAttachmentMap m_attachmentIdentifierToAttachmentMap;
 #endif
 

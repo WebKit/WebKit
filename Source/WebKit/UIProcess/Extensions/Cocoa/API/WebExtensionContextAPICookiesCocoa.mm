@@ -219,9 +219,9 @@ void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID,
     });
 }
 
-void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expected<UncheckedKeyHashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesGetAllCookieStores(CompletionHandler<void(Expected<HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>>, WebExtensionError>&&)>&& completionHandler)
 {
-    UncheckedKeyHashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>> stores;
+    HashMap<PAL::SessionID, Vector<WebExtensionTabIdentifier>> stores;
 
     auto defaultSessionID = extensionController()->protectedConfiguration()->defaultWebsiteDataStore().sessionID();
     stores.set(defaultSessionID, Vector<WebExtensionTabIdentifier> { });

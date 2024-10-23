@@ -95,7 +95,7 @@ public:
 private:
     PushService(Ref<PushServiceConnection>&&, Ref<WebCore::PushDatabase>&&, IncomingPushMessageHandler&&);
 
-    using PushServiceRequestMap = UncheckedKeyHashMap<String, Deque<Ref<PushServiceRequest>>>;
+    using PushServiceRequestMap = HashMap<String, Deque<Ref<PushServiceRequest>>>;
     void enqueuePushServiceRequest(PushServiceRequestMap&, Ref<PushServiceRequest>&&);
     void finishedPushServiceRequest(PushServiceRequestMap&, PushServiceRequest&);
 

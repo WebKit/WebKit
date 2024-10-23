@@ -44,7 +44,7 @@ private:
     void deleteRecords(const Vector<CacheStorageRecordInformation>&, WriteRecordsCallback&&) final;
     void writeRecords(Vector<CacheStorageRecord>&&, WriteRecordsCallback&&) final;
 
-    UncheckedKeyHashMap<uint64_t, std::unique_ptr<CacheStorageRecord>> m_records;
+    HashMap<uint64_t, std::unique_ptr<CacheStorageRecord>> m_records;
 };
 
 }

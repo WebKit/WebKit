@@ -34,15 +34,15 @@
 
 namespace API {
 
-static UncheckedKeyHashMap<WTF::String, WeakRef<ContentWorld>>& sharedWorldNameMap()
+static HashMap<WTF::String, WeakRef<ContentWorld>>& sharedWorldNameMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
+    static NeverDestroyed<HashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
-static UncheckedKeyHashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& sharedWorldIdentifierMap()
+static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& sharedWorldIdentifierMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>> sharedMap;
+    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 

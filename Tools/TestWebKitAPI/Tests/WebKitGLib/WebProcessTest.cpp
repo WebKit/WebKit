@@ -27,7 +27,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 
-typedef UncheckedKeyHashMap<String, std::function<std::unique_ptr<WebProcessTest> ()>> TestsMap;
+typedef HashMap<String, std::function<std::unique_ptr<WebProcessTest> ()>> TestsMap;
 static TestsMap& testsMap()
 {
     static NeverDestroyed<TestsMap> s_testsMap;

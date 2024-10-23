@@ -826,7 +826,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWith302AfterRedirection)
         { "/simple2.html"_s, { SimpleHtml } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    UncheckedKeyHashMap<String, String> redirectHeaders;
+    HashMap<String, String> redirectHeaders;
     auto simpleURL = server.request("/simple.html"_s).URL;
     redirectHeaders.add("location"_s, simpleURL.absoluteString);
 

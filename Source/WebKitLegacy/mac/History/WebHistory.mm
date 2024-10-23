@@ -43,7 +43,7 @@
 using namespace WebCore;
 
 typedef int64_t WebHistoryDateKey;
-typedef UncheckedKeyHashMap<WebHistoryDateKey, RetainPtr<NSMutableArray>> DateToEntriesMap;
+typedef HashMap<WebHistoryDateKey, RetainPtr<NSMutableArray>> DateToEntriesMap;
 
 NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";

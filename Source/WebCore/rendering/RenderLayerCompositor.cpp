@@ -5871,8 +5871,8 @@ TextStream& operator<<(TextStream& ts, const RenderLayerCompositor::BackingShari
 }
 
 #if PLATFORM(IOS_FAMILY)
-typedef UncheckedKeyHashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
-typedef UncheckedKeyHashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
+typedef HashMap<PlatformLayer*, std::unique_ptr<ViewportConstraints>> LayerMap;
+typedef HashMap<PlatformLayer*, PlatformLayer*> StickyContainerMap;
 
 void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers(RenderLayerCompositor& compositor)
 {

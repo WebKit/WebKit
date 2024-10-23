@@ -252,7 +252,7 @@ void LayerTreeHost::flushLayers()
 
     page->didUpdateRendering();
 
-    // Eject any backing stores whose only reference is held in the UncheckedKeyHashMap cache.
+    // Eject any backing stores whose only reference is held in the HashMap cache.
     m_imageBackingStores.removeIf(
         [](auto& it) {
             return it.value->hasOneRef();

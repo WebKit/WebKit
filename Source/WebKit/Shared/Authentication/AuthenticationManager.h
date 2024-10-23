@@ -112,7 +112,7 @@ private:
 
     WeakRef<NetworkProcess> m_process;
 
-    UncheckedKeyHashMap<AuthenticationChallengeIdentifier, UniqueRef<Challenge>> m_challenges;
+    HashMap<AuthenticationChallengeIdentifier, UniqueRef<Challenge>> m_challenges;
 };
 
 } // namespace WebKit

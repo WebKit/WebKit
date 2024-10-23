@@ -48,7 +48,7 @@ private:
     virtual void removeFromStore(const SecurityOriginData&) = 0;
     virtual void clearStore() = 0;
 
-    UncheckedKeyHashMap<SecurityOriginData, uint64_t> m_originCounts;
+    HashMap<SecurityOriginData, uint64_t> m_originCounts;
 };
 
 } // namespace WebCore

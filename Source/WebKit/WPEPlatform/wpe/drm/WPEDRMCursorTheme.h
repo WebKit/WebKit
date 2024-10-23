@@ -59,7 +59,7 @@ private:
     void loadCursor(const char*, double, std::optional<uint32_t> maxImages, Vector<CursorTheme::Image>&);
 
     std::unique_ptr<WPE::CursorTheme> m_theme;
-    UncheckedKeyHashMap<std::pair<CString, uint32_t>, Vector<Image>> m_cursors;
+    HashMap<std::pair<CString, uint32_t>, Vector<Image>> m_cursors;
 };
 
 } // namespace DRM

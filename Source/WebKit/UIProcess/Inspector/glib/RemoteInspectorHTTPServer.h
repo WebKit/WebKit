@@ -57,8 +57,8 @@ private:
 
     GRefPtr<SoupServer> m_server;
     std::unique_ptr<RemoteInspectorClient> m_client;
-    UncheckedKeyHashMap<std::pair<uint64_t, uint64_t>, GRefPtr<SoupWebsocketConnection>> m_webSocketConnectionMap;
-    UncheckedKeyHashMap<SoupWebsocketConnection*, std::pair<uint64_t, uint64_t>> m_webSocketConnectionToTargetMap;
+    HashMap<std::pair<uint64_t, uint64_t>, GRefPtr<SoupWebsocketConnection>> m_webSocketConnectionMap;
+    HashMap<SoupWebsocketConnection*, std::pair<uint64_t, uint64_t>> m_webSocketConnectionToTargetMap;
 };
 
 } // namespace WebKit

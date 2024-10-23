@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-using WebPageGroupMap = UncheckedKeyHashMap<PageGroupIdentifier, WeakRef<WebPageGroup>>;
+using WebPageGroupMap = HashMap<PageGroupIdentifier, WeakRef<WebPageGroup>>;
 
 static WebPageGroupMap& webPageGroupMap()
 {
@@ -55,9 +55,9 @@ Ref<WebPageGroup> WebPageGroup::create(const String& identifier)
 
 static WebPageGroupData pageGroupData(const String& identifier)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, PageGroupIdentifier>> map;
+    static NeverDestroyed<HashMap<String, PageGroupIdentifier>> map;
     auto pageGroupID = [&] {
-        if (UncheckedKeyHashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
+        if (HashMap<String, PageGroupIdentifier>::isValidKey(identifier)) {
             return map.get().ensure(identifier, [] {
                 return PageGroupIdentifier::generate();
             }).iterator->value;

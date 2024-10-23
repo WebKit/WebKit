@@ -75,7 +75,7 @@ private:
     bool isUpdating(const PageSets&) const;
     bool isHighAccuracyEnabled(const PageSets&) const;
 
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;
+    HashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;
     WeakHashMap<WebPage, WebCore::RegistrableDomain> m_pageToRegistrableDomain;
 };
 

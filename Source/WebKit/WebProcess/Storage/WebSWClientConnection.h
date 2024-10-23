@@ -142,7 +142,7 @@ private:
 
     Deque<Function<void()>> m_tasksPendingOriginImport;
     bool m_isThrottleable { true };
-    UncheckedKeyHashMap<RetrieveRecordResponseBodyCallbackIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
+    HashMap<RetrieveRecordResponseBodyCallbackIdentifier, RetrieveRecordResponseBodyCallback> m_retrieveRecordResponseBodyCallbacks;
 };
 
 } // namespace WebKit

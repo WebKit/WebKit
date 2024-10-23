@@ -1135,7 +1135,7 @@ public:
     void getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&&);
     void characterIndexForPointAsync(const WebCore::IntPoint&, CompletionHandler<void(uint64_t)>&&);
     void firstRectForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::IntRect&, const EditingRange&)>&&);
-    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const UncheckedKeyHashMap<String, Vector<WebCore::CharacterRange>>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
+    void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>&, const Vector<WebCore::CompositionHighlight>&, const HashMap<String, Vector<WebCore::CharacterRange>>&, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void setWritingSuggestion(const String& text, const EditingRange& selection);
     void confirmCompositionAsync();
 
@@ -1170,7 +1170,7 @@ public:
     void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, std::span<const uint8_t>);
 #endif
 
-    void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<WebCore::CompositionHighlight>&, const UncheckedKeyHashMap<String, Vector<WebCore::CharacterRange>>&);
+    void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<WebCore::CompositionHighlight>&, const HashMap<String, Vector<WebCore::CharacterRange>>&);
     bool hasCompositionForTesting();
     void confirmCompositionForTesting(const String& compositionString);
     String frameTextForTestingIncludingSubframes(bool includingSubframes);
@@ -2411,7 +2411,7 @@ private:
 
     DrawingAreaType m_drawingAreaType;
 
-    UncheckedKeyHashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
+    HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
 
     WebCore::FloatSize m_defaultUnobscuredSize;
     WebCore::FloatSize m_minimumUnobscuredSize;
@@ -2423,7 +2423,7 @@ private:
     SingleThreadWeakHashSet<PluginView> m_pluginViews;
 #endif
 #if ENABLE(PDF_HUD)
-    UncheckedKeyHashMap<PDFPluginIdentifier, WeakPtr<PDFPluginBase>> m_pdfPlugInsWithHUD;
+    HashMap<PDFPluginIdentifier, WeakPtr<PDFPluginBase>> m_pdfPlugInsWithHUD;
 #endif
 
     WTF::Function<void()> m_selectionChangedHandler;
@@ -2501,7 +2501,7 @@ private:
     RunLoop::Timer m_setCanStartMediaTimer;
     bool m_mayStartMediaWhenInWindow { false };
 
-    UncheckedKeyHashMap<WebUndoStepID, RefPtr<WebUndoStep>> m_undoStepMap;
+    HashMap<WebUndoStepID, RefPtr<WebUndoStep>> m_undoStepMap;
 
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;
@@ -2644,7 +2644,7 @@ private:
     };
     std::optional<DeferredDidReceiveMouseEvent> m_deferredDidReceiveMouseEvent;
 
-    UncheckedKeyHashMap<WebCore::FrameIdentifier, unsigned> m_networkResourceRequestCountForPageLoadTiming;
+    HashMap<WebCore::FrameIdentifier, unsigned> m_networkResourceRequestCountForPageLoadTiming;
     HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumSizeForAutoLayout;
@@ -2726,7 +2726,7 @@ private:
     WebCore::IntDegrees m_deviceOrientation { 0 };
     bool m_keyboardIsAttached { false };
     bool m_inDynamicSizeUpdate { false };
-    UncheckedKeyHashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
+    HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
     WebCore::FloatPoint m_pendingSyntheticClickLocation;
     WebCore::FloatRect m_previousExposedContentRect;
@@ -2797,10 +2797,10 @@ private:
     UnixFileDescriptor m_hostFileDescriptor;
 #endif
 
-    UncheckedKeyHashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
-    UncheckedKeyHashMap<WebURLSchemeHandlerIdentifier, WeakRef<WebURLSchemeHandlerProxy>> m_identifierToURLSchemeHandlerProxyMap;
+    HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
+    HashMap<WebURLSchemeHandlerIdentifier, WeakRef<WebURLSchemeHandlerProxy>> m_identifierToURLSchemeHandlerProxyMap;
 
-    UncheckedKeyHashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
+    HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
 
     OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;
     bool m_isSuspended { false };
@@ -2819,7 +2819,7 @@ private:
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
 #endif
 
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, HashSet<WebCore::RegistrableDomain>> m_domainsWithPageLevelStorageAccess;
+    HashMap<WebCore::RegistrableDomain, HashSet<WebCore::RegistrableDomain>> m_domainsWithPageLevelStorageAccess;
     HashSet<WebCore::RegistrableDomain> m_loadedSubresourceDomains;
 
     AtomString m_overriddenMediaType;
@@ -2908,8 +2908,8 @@ private:
         HashSet<WebCore::RegistrableDomain> domains;
         Vector<String> paths;
     };
-    UncheckedKeyHashMap<String, LinkDecorationFilteringConditionals> m_linkDecorationFilteringData;
-    UncheckedKeyHashMap<WebCore::RegistrableDomain, HashSet<String>> m_allowedQueryParametersForAdvancedPrivacyProtections;
+    HashMap<String, LinkDecorationFilteringConditionals> m_linkDecorationFilteringData;
+    HashMap<WebCore::RegistrableDomain, HashSet<String>> m_allowedQueryParametersForAdvancedPrivacyProtections;
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

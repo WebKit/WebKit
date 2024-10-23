@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-static UncheckedKeyHashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWorkers()
+static HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>& allWorkers()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<UncheckedKeyHashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>> allWorkers;
+    static NeverDestroyed<HashMap<WebCore::SharedWorkerIdentifier, WeakRef<WebSharedWorker>>> allWorkers;
     return allWorkers;
 }
 

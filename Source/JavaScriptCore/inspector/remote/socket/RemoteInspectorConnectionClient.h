@@ -58,14 +58,14 @@ public:
     };
 
     using CallHandler = void (RemoteInspectorConnectionClient::*)(const Event&);
-    virtual UncheckedKeyHashMap<String, CallHandler>& dispatchMap() = 0;
+    virtual HashMap<String, CallHandler>& dispatchMap() = 0;
 
 protected:
     JS_EXPORT_PRIVATE std::optional<Vector<Ref<JSON::Object>>> parseTargetListJSON(const String&);
 
     static std::optional<Event> extractEvent(ConnectionID, Vector<uint8_t>&&);
 
-    UncheckedKeyHashMap<ConnectionID, MessageParser> m_parsers WTF_GUARDED_BY_LOCK(m_parsersLock);
+    HashMap<ConnectionID, MessageParser> m_parsers WTF_GUARDED_BY_LOCK(m_parsersLock);
     Lock m_parsersLock;
 };
 

@@ -48,7 +48,7 @@ public:
     void stopLoading(LegacyCustomProtocolManagerProxy&, LegacyCustomProtocolID) final;
     void invalidate(LegacyCustomProtocolManagerProxy&) final;
 private:
-    UncheckedKeyHashMap<LegacyCustomProtocolID, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
+    HashMap<LegacyCustomProtocolID, RetainPtr<WKCustomProtocolLoader>> m_loaderMap;
 };
 
 } // namespace WebKit

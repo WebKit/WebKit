@@ -273,7 +273,7 @@ protected:
     static void* newObject(size_t, Type);
 
 private:
-    static UncheckedKeyHashMap<Object*, CFTypeRef>& apiObjectsUnderConstruction();
+    static HashMap<Object*, CFTypeRef>& apiObjectsUnderConstruction();
 
     // Derived classes must override operator new and call newObject().
     void* operator new(size_t) = delete;

@@ -60,7 +60,7 @@ public:
 private:
     void finishedRegisteringMDNSName(WebCore::ScriptExecutionContextIdentifier, const String& ipAddress, String&& mdnsName, std::optional<WebCore::MDNSRegisterError>, CompletionHandler<void(const String&, std::optional<WebCore::MDNSRegisterError>)>&&);
 
-    UncheckedKeyHashMap<WebCore::ScriptExecutionContextIdentifier, UncheckedKeyHashMap<String, String>> m_registeringDocuments;
+    HashMap<WebCore::ScriptExecutionContextIdentifier, HashMap<String, String>> m_registeringDocuments;
 
     WeakRef<LibWebRTCNetwork> m_libWebRTCNetwork;
 };

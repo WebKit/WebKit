@@ -135,9 +135,9 @@ private:
     }
     static Lock syncMessageStateMapLock;
     // FIXME: Don't use raw pointers.
-    static UncheckedKeyHashMap<SerialFunctionDispatcher*, SyncMessageState*>& syncMessageStateMap() WTF_REQUIRES_LOCK(syncMessageStateMapLock)
+    static HashMap<SerialFunctionDispatcher*, SyncMessageState*>& syncMessageStateMap() WTF_REQUIRES_LOCK(syncMessageStateMapLock)
     {
-        static NeverDestroyed<UncheckedKeyHashMap<SerialFunctionDispatcher*, SyncMessageState*>> map;
+        static NeverDestroyed<HashMap<SerialFunctionDispatcher*, SyncMessageState*>> map;
         return map;
     }
 
@@ -350,9 +350,9 @@ Ref<Connection> Connection::createClientConnection(Identifier identifier)
     return adoptRef(*new Connection(identifier, false));
 }
 
-static UncheckedKeyHashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock)
+static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>> map;
+    static NeverDestroyed<HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>> map;
     return map;
 }
 

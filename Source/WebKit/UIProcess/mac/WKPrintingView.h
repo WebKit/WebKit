@@ -55,14 +55,14 @@ class WebFrameProxy;
     RefPtr<WebKit::WebFrameProxy> _webFrame;
     Vector<WebCore::IntRect> _printingPageRects;
     double _totalScaleFactorForPrinting;
-    UncheckedKeyHashMap<WebCore::IntRect, RefPtr<WebCore::ShareableBitmap>> _pagePreviews;
+    HashMap<WebCore::IntRect, RefPtr<WebCore::ShareableBitmap>> _pagePreviews;
 
     Vector<uint8_t> _printedPagesData;
     RetainPtr<PDFDocument> _printedPagesPDFDocument;
     Vector<Vector<RetainPtr<PDFDestination>>> _linkDestinationsPerPage;
 
     Markable<IPC::Connection::AsyncReplyID> _expectedComputedPagesCallback;
-    UncheckedKeyHashMap<IPC::Connection::AsyncReplyID, WebCore::IntRect> _expectedPreviewCallbacks;
+    HashMap<IPC::Connection::AsyncReplyID, WebCore::IntRect> _expectedPreviewCallbacks;
     Markable<IPC::Connection::AsyncReplyID> _latestExpectedPreviewCallback;
     Markable<IPC::Connection::AsyncReplyID> _expectedPrintCallback;
 

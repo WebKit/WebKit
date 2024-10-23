@@ -188,7 +188,7 @@ protected:
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
-    UncheckedKeyHashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
+    HashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
 };
 
 

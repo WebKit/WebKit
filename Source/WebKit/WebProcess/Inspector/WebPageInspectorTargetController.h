@@ -58,7 +58,7 @@ private:
 
     WeakRef<WebPage> m_page;
     WebPageInspectorTarget m_pageTarget;
-    UncheckedKeyHashMap<String, WeakPtr<Inspector::InspectorTarget>> m_targets;
+    HashMap<String, WeakPtr<Inspector::InspectorTarget>> m_targets;
 };
 
 } // namespace WebKit

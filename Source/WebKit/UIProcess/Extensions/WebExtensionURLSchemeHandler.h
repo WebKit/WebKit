@@ -53,7 +53,7 @@ private:
     void platformTaskCompleted(WebURLSchemeTask&) final;
 
     WeakPtr<WebExtensionController> m_webExtensionController;
-    UncheckedKeyHashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
+    HashMap<Ref<WebURLSchemeTask>, RetainPtr<NSBlockOperation>> m_operations;
 }; // class WebExtensionURLSchemeHandler
 
 } // namespace WebKit

@@ -36,9 +36,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static UncheckedKeyHashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& databaseProviders()
+static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& databaseProviders()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>> databaseProviders;
+    static NeverDestroyed<HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>> databaseProviders;
 
     return databaseProviders;
 }

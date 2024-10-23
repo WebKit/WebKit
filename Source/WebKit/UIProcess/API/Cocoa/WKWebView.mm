@@ -2632,7 +2632,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_didEnableBrowserExtensions:(NSDictionary<NSString *, NSString *> *)extensionIDToNameMap
 {
     THROW_IF_SUSPENDED;
-    UncheckedKeyHashMap<String, String> transformed;
+    HashMap<String, String> transformed;
     transformed.reserveInitialCapacity(extensionIDToNameMap.count);
     [extensionIDToNameMap enumerateKeysAndObjectsUsingBlock:[&](NSString *extensionID, NSString *extensionName, BOOL *) {
         transformed.set(extensionID, extensionName);

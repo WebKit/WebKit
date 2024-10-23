@@ -111,8 +111,8 @@ private:
         unsigned parentScriptCallbackID { 0 };
         JSValueRef callback { nullptr };
     };
-    UncheckedKeyHashMap<unsigned, Task> m_callbacks;
-    UncheckedKeyHashMap<unsigned, JSStringRef> m_uiScriptResultsPendingCompletion;
+    HashMap<unsigned, Task> m_callbacks;
+    HashMap<unsigned, JSStringRef> m_uiScriptResultsPendingCompletion;
 
     UIScriptContextDelegate& m_delegate;
     RefPtr<UIScriptController> m_controller;

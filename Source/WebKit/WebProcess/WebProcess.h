@@ -239,7 +239,7 @@ public:
     void setHasStylusDevice(bool);
 #endif
 
-    void updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<WebCore::RegistrableDomain, String>&&);
+    void updateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
 
     WebFrame* webFrame(std::optional<WebCore::FrameIdentifier>) const;
     void addWebFrame(WebCore::FrameIdentifier, WebFrame*);
@@ -609,7 +609,7 @@ private:
 
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
-    void setDomainsWithCrossPageStorageAccess(UncheckedKeyHashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
+    void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, Vector<SubResourceDomain>>&&, CompletionHandler<void()>&&);
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 
     void updateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain>&&);
@@ -697,8 +697,8 @@ private:
     void sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<uint8_t> logString, os_log_type_t);
 #endif
 
-    UncheckedKeyHashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
-    UncheckedKeyHashMap<PageGroupIdentifier, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
+    HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
+    HashMap<PageGroupIdentifier, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
     EventDispatcher m_eventDispatcher;
@@ -724,9 +724,9 @@ private:
     bool m_hasStylusDevice { false };
 #endif
 
-    UncheckedKeyHashMap<WebCore::FrameIdentifier, WeakPtr<WebFrame>> m_frameMap;
+    HashMap<WebCore::FrameIdentifier, WeakPtr<WebFrame>> m_frameMap;
 
-    using WebProcessSupplementMap = UncheckedKeyHashMap<ASCIILiteral, std::unique_ptr<WebProcessSupplement>>;
+    using WebProcessSupplementMap = HashMap<ASCIILiteral, std::unique_ptr<WebProcessSupplement>>;
     WebProcessSupplementMap m_supplements;
 
     OptionSet<TextCheckerState> m_textCheckerState;
@@ -818,7 +818,7 @@ private:
     std::optional<bool> m_isLockdownModeEnabled;
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
-    UncheckedKeyHashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
+    HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
     RefPtr<SandboxExtension> m_machBootstrapExtension;
 #endif
 
@@ -828,7 +828,7 @@ private:
 
     HashCountedSet<WebCore::ServiceWorkerRegistrationIdentifier> m_swRegistrationCounts;
 
-    UncheckedKeyHashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
+    HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
 
     void updateIsWebTransportEnabled();
     
@@ -875,7 +875,7 @@ private:
     String m_mediaKeysStorageDirectory;
     FileSystem::Salt m_mediaKeysStorageSalt;
 
-    UncheckedKeyHashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
+    HashMap<WebTransportSessionIdentifier, WeakPtr<WebTransportSession>> m_webTransportSessions;
     HashSet<WebCore::RegistrableDomain> m_domainsWithStorageAccessQuirks;
     std::unique_ptr<ScriptTelemetryFilter> m_scriptTelemetryFilter;
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

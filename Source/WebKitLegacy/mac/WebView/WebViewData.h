@@ -261,7 +261,7 @@ class WebSelectionServiceController;
     RetainPtr<WebPluginDatabase> pluginDatabase;
 #endif
     
-    UncheckedKeyHashMap<unsigned long, RetainPtr<id>> identifierMap;
+    HashMap<unsigned long, RetainPtr<id>> identifierMap;
 
     BOOL _keyboardUIModeAccessed;
     WebCore::KeyboardUIMode _keyboardUIMode;

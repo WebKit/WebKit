@@ -197,7 +197,7 @@ enum class UndoOrRedo : bool;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
-typedef UncheckedKeyHashMap<String, ValidationVector> ValidationMap;
+typedef HashMap<String, ValidationVector> ValidationMap;
 
 class WebViewImpl final : public CanMakeWeakPtr<WebViewImpl>, public CanMakeCheckedPtr<WebViewImpl> {
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
@@ -899,7 +899,7 @@ private:
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
 
-    UncheckedKeyHashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
+    HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
 
     RetainPtr<WKShareSheet> _shareSheet;
 

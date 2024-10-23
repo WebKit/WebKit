@@ -73,7 +73,7 @@ private:
     Ref<WTF::WorkQueue> m_ioQueue;
     QuotaCheckFunction m_quotaCheckFunction;
 
-    UncheckedKeyHashMap<String, Vector<WebCore::SharedBufferBuilder>> m_nonPersistentChunks;
+    HashMap<String, Vector<WebCore::SharedBufferBuilder>> m_nonPersistentChunks;
 };
 
 } // namespace WebKit

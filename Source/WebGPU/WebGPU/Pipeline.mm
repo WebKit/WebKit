@@ -32,7 +32,7 @@ namespace WebGPU {
 
 std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
-    UncheckedKeyHashMap<String, WGSL::ConstantValue> wgslConstantValues;
+    HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
     if (!entryPoint.length() || !shaderModule.isValid())
         return std::nullopt;

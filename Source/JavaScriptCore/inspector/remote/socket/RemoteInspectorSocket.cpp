@@ -267,9 +267,9 @@ String RemoteInspector::backendCommands() const
 
 // RemoteInspectorConnectionClient handlers
 
-UncheckedKeyHashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspector::dispatchMap()
+HashMap<String, RemoteInspectorConnectionClient::CallHandler>& RemoteInspector::dispatchMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, CallHandler>> methods = UncheckedKeyHashMap<String, CallHandler>({
+    static NeverDestroyed<HashMap<String, CallHandler>> methods = HashMap<String, CallHandler>({
         { "SetupInspectorClient"_s, static_cast<CallHandler>(&RemoteInspector::setupInspectorClient) },
         { "Setup"_s, static_cast<CallHandler>(&RemoteInspector::setupTarget) },
         { "FrontendDidClose"_s, static_cast<CallHandler>(&RemoteInspector::frontendDidClose) },

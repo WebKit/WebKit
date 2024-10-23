@@ -219,7 +219,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)_setActiveContentRuleListActionPatterns:(NSDictionary<NSString *, NSSet<NSString *> *> *)patterns
 {
-    __block UncheckedKeyHashMap<String, Vector<String>> map;
+    __block HashMap<String, Vector<String>> map;
     [patterns enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSSet<NSString *> *value, BOOL *) {
         Vector<String> vector;
         vector.reserveInitialCapacity(value.count);

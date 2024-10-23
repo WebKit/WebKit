@@ -36,9 +36,9 @@ SessionHost::~SessionHost()
 {
 }
 
-UncheckedKeyHashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& SessionHost::dispatchMap()
+HashMap<String, Inspector::RemoteInspectorConnectionClient::CallHandler>& SessionHost::dispatchMap()
 {
-    static NeverDestroyed<UncheckedKeyHashMap<String, CallHandler>> methods = UncheckedKeyHashMap<String, CallHandler>({
+    static NeverDestroyed<HashMap<String, CallHandler>> methods = HashMap<String, CallHandler>({
         {"SetTargetList"_s, static_cast<CallHandler>(&SessionHost::receivedSetTargetList)},
         {"SendMessageToFrontend"_s, static_cast<CallHandler>(&SessionHost::receivedSendMessageToFrontend)},
         {"StartAutomationSession_Return"_s, static_cast<CallHandler>(&SessionHost::receivedStartAutomationSessionReturn)},

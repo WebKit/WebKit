@@ -82,7 +82,7 @@ private:
     // This class should only ever be used as a singleton.
     ~DOMCache() = delete;
 
-    UncheckedKeyHashMap<WebCoreType, WKDOMType> m_map;
+    HashMap<WebCoreType, WKDOMType> m_map;
 };
 
 // -- Caches --

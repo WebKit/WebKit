@@ -154,7 +154,7 @@ struct Array {
 
 struct Struct {
     AST::Structure& structure;
-    UncheckedKeyHashMap<String, const Type*> fields { };
+    HashMap<String, const Type*> fields { };
 };
 
 struct PrimitiveStruct {

@@ -68,7 +68,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     SpeechRecognitionConnectionIdentifier m_identifier;
-    UncheckedKeyHashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, WeakPtr<WebCore::SpeechRecognitionConnectionClient>> m_clientMap;
+    HashMap<WebCore::SpeechRecognitionConnectionClientIdentifier, WeakPtr<WebCore::SpeechRecognitionConnectionClient>> m_clientMap;
 };
 
 } // namespace WebKit

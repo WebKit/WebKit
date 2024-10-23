@@ -254,8 +254,8 @@ private:
     std::optional<String> m_toplevelBrowsingContext;
     std::optional<String> m_currentBrowsingContext;
     std::optional<String> m_currentParentBrowsingContext;
-    UncheckedKeyHashMap<String, InputSource> m_activeInputSources;
-    UncheckedKeyHashMap<String, InputSourceState> m_inputStateTable;
+    HashMap<String, InputSource> m_activeInputSources;
+    HashMap<String, InputSourceState> m_inputStateTable;
 #if ENABLE(WEBDRIVER_BIDI)
     bool m_hasBiDiEnabled { false };
 

@@ -336,7 +336,7 @@ bool Quirks::shouldDisableWritingSuggestionsByDefault() const
     return url.host() == "mail.google.com"_s;
 }
 
-void Quirks::updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&& userAgentStringQuirks)
+void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
 {
     auto& quirks = updatableStorageAccessUserAgentStringQuirks();
     quirks.clear();
