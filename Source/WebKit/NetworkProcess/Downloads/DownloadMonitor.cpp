@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-constexpr uint64_t operator"" _kbps(unsigned long long kilobytesPerSecond)
+constexpr uint64_t operator""_kbps(unsigned long long kilobytesPerSecond)
 {
     return kilobytesPerSecond * 1024;
 }

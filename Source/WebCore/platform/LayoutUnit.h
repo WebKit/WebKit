@@ -815,7 +815,7 @@ inline bool isIntegerValue(const LayoutUnit value)
 
 inline namespace StringLiterals {
 
-inline LayoutUnit operator"" _lu(unsigned long long value)
+inline LayoutUnit operator""_lu(unsigned long long value)
 {
     return LayoutUnit(value);
 }

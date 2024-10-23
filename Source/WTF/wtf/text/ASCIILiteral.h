@@ -133,14 +133,14 @@ inline ASCIILiteral ASCIILiteral::deletedValue()
 
 inline namespace StringLiterals {
 
-constexpr ASCIILiteral operator"" _s(const char* characters, size_t)
+constexpr ASCIILiteral operator""_s(const char* characters, size_t)
 {
     auto result = ASCIILiteral::fromLiteralUnsafe(characters);
     ASSERT_UNDER_CONSTEXPR_CONTEXT(result.characters() == characters);
     return result;
 }
 
-constexpr std::span<const LChar> operator"" _span(const char* characters, size_t n)
+constexpr std::span<const LChar> operator""_span(const char* characters, size_t n)
 {
     auto span = byteCast<LChar>(unsafeForgeSpan(characters, n));
 #if ASSERT_ENABLED
