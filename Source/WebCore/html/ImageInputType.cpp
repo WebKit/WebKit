@@ -117,13 +117,13 @@ RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style
 void ImageInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == altAttr) {
-        if (auto* element = this->element()) {
+        if (RefPtr element = this->element()) {
             auto* renderer = element->renderer();
             if (auto* renderImage = dynamicDowncast<RenderImage>(renderer))
                 renderImage->updateAltText();
         }
     } else if (name == srcAttr) {
-        if (auto* element = this->element()) {
+        if (RefPtr element = this->element()) {
             if (element->renderer())
                 element->ensureImageLoader().updateFromElementIgnoringPreviousError();
         }
