@@ -263,8 +263,8 @@ static void urlEscapedEntityCallback(const void* context, UConverterFromUnicodeA
     if (reason == UCNV_UNASSIGNED) {
         *error = U_ZERO_ERROR;
         UnencodableReplacementArray entity;
-        int entityLen = TextCodec::getUnencodableReplacement(codePoint, UnencodableHandling::URLEncodedEntities, entity);
-        ucnv_cbFromUWriteBytes(fromUArgs, entity.data(), entityLen, 0, error);
+        auto span = TextCodec::getUnencodableReplacement(codePoint, UnencodableHandling::URLEncodedEntities, entity);
+        ucnv_cbFromUWriteBytes(fromUArgs, span.data(), span.size(), 0, error);
     } else
         UCNV_FROM_U_CALLBACK_ESCAPE(context, fromUArgs, codeUnits, length, codePoint, reason, error);
 }
