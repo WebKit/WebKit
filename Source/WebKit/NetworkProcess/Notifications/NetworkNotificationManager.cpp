@@ -43,12 +43,6 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
-static inline Ref<NetworkConnectionToWebProcess> connectionToWebProcess(const IPC::Connection& connection)
-{
-    // FIXME: Check the type.
-    return static_cast<NetworkConnectionToWebProcess&>(*connection.client());
-}
-
 NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())

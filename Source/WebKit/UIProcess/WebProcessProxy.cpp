@@ -197,6 +197,11 @@ RefPtr<WebProcessProxy> WebProcessProxy::processForIdentifier(ProcessIdentifier 
     return allProcessMap().get(identifier);
 }
 
+RefPtr<WebProcessProxy> WebProcessProxy::processForConnection(const IPC::Connection& connection)
+{
+    return dynamicDowncast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
+}
+
 auto WebProcessProxy::globalPageMap() -> WebPageProxyMap&
 {
     ASSERT(isMainThreadOrCheckDisabled());
