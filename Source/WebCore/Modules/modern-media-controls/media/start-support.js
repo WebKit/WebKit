@@ -45,6 +45,13 @@ class StartSupport extends MediaControllerSupport
         super.enable();
 
         this._updateShowsStartButton();
+        this.mediaController.shadowRoot.addEventListener("fullscreenchange", this, true);
+    }
+
+    disable()
+    {
+        super.disable();
+        this.mediaController.shadowRoot.removeEventListener("fullscreenchange", this, true);
     }
 
     buttonWasPressed(control)
