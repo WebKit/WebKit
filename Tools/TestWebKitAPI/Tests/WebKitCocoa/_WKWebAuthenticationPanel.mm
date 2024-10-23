@@ -371,6 +371,7 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
     if (errorRef)
         return false;
 
+    auto credentialID = adoptNS([[NSData alloc] initWithBase64EncodedString:@"SMSXHngF7hEOsElA73C3RY+8bR4=" options:0]);
     auto addQuery = adoptNS([[NSMutableDictionary alloc] init]);
     [addQuery setDictionary:@{
         (id)kSecValueRef: (id)key.get(),
@@ -380,6 +381,7 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
         (id)kSecUseDataProtectionKeychain: @YES,
         (id)kSecAttrAccessGroup: testWebKitAPIAccessGroup,
+        (id)kSecAttrAlias: credentialID.get(),
     }];
     if (synchronizable)
         [addQuery.get() setObject:@YES forKey:(__bridge id)kSecAttrSynchronizable];
@@ -391,15 +393,19 @@ bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const 
     return true;
 }
 
-void cleanUpKeychain(const String& rpId)
+void cleanUpKeychain()
 {
-    NSDictionary* deleteQuery = @{
+    NSMutableDictionary* deleteQuery = [NSMutableDictionary dictionaryWithDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrLabel: rpId,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrAccessible: (id)kSecAttrAccessibleAfterFirstUnlock,
-        (id)kSecUseDataProtectionKeychain: @YES
-    };
+        (id)kSecUseDataProtectionKeychain: @YES,
+        (id)kSecAttrAccessGroup: testWebKitAPIAccessGroup,
+    }];
+
+    SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
+
+    deleteQuery[(id)kSecAttrAccessGroup] = testWebKitAPIAlternateAccessGroup;
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
 }
 
@@ -1304,7 +1310,7 @@ TEST(WebAuthenticationPanel, LADuplicateCredential)
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, emptyString(), testUserEntityBundleBase64));
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelFailed);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
@@ -1325,14 +1331,14 @@ TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     Util::run(&webAuthenticationPanelUpdateLAExcludeCredentialsMatched);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LANoCredential)
 {
     reset();
     // In case this wasn't cleaned up by another test.
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 
     RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html"];
 
@@ -1363,7 +1369,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 #if PLATFORM(MAC)
@@ -1384,7 +1390,7 @@ TEST(WebAuthenticationPanel, LAGetAssertion)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeGet);
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
@@ -1411,7 +1417,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleCredentialStore)
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialDisplayName, "Jane Smith");
 
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, LAGetAssertionNoMockNoUserGesture)
@@ -1458,7 +1464,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
     [webView waitForMessage:@"Succeeded!"];
     EXPECT_WK_STREQ(webAuthenticationPanelSelectedCredentialName, "Jane");
 
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 }
 
 #endif // PLATFORM(MAC)
@@ -1740,7 +1746,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
 
     [panel makeCredentialWithChallenge:nsHash.get() origin:@"https://example.com" options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_TRUE(laContextRequested);
         EXPECT_NULL(error);
@@ -1777,7 +1783,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
 
     [panel makeCredentialWithMediationRequirement:_WKWebAuthenticationMediationRequirementOptional clientDataHash:nsHash.get() options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_TRUE(laContextRequested);
         EXPECT_NULL(error);
@@ -1816,7 +1822,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
 
     [panel makeCredentialWithClientDataHash:nsHash.get() options:options.get() completionHandler:^(_WKAuthenticatorAttestationResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NOT_NULL(response);
         // {"fmt": "none", "attStmt": {}, "authData": ...}
@@ -1956,7 +1962,7 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_EQ([credentialsAfter count], 1lu);
         EXPECT_NOT_NULL([credentialsAfter firstObject]);
         EXPECT_GE([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2005,7 +2011,7 @@ TEST(WebAuthenticationPanel, GetAssertionLAClientDataHashMediation)
 
     [panel getAssertionWithMediationRequirement:_WKWebAuthenticationMediationRequirementOptional clientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2055,7 +2061,7 @@ TEST(WebAuthenticationPanel, GetAssertionNullUserHandle)
 
     [panel getAssertionWithClientDataHash:nsHash options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain("example.com"_s);
+        cleanUpKeychain();
 
         EXPECT_NULL(error);
 
@@ -2085,7 +2091,7 @@ TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 
     [panel getAssertionWithChallenge:nsHash origin:@"" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
-        cleanUpKeychain(emptyString());
+        cleanUpKeychain();
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
@@ -2118,7 +2124,7 @@ TEST(WebAuthenticationPanel, GetAllCredential)
     EXPECT_LE([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:after.get()], 0);
     EXPECT_EQ([[credentials firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentials firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialNullUserHandle)
@@ -2136,7 +2142,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialNullUserHandle)
     EXPECT_NOT_NULL([credentials firstObject]);
     EXPECT_EQ([credentials firstObject][_WKLocalAuthenticatorCredentialUserHandleKey], [NSNull null]);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
@@ -2156,7 +2162,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialWithDisplayName)
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey], "Johnny");
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialByRPID)
@@ -2186,14 +2192,13 @@ TEST(WebAuthenticationPanel, GetAllCredentialByRPID)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 
-    cleanUpKeychain("example.com"_s);
-    cleanUpKeychain("example2.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, GetAllCredentialByCredentialID)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     // {"id": h'00010203040506070809', "name": "John", "displayName": "Johnny"}
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, "o2JpZEoAAQIDBAUGBwgJZG5hbWVkSm9obmtkaXNwbGF5TmFtZWZKb2hubnk="_s));
@@ -2210,7 +2215,7 @@ TEST(WebAuthenticationPanel, GetAllCredentialByCredentialID)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, EncodeCTAPAssertion)
@@ -2257,7 +2262,7 @@ TEST(WebAuthenticationPanel, EncodeCTAPCreation)
 TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64));
 
@@ -2288,13 +2293,13 @@ TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
     EXPECT_NOT_NULL([credentials firstObject]);
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey], "Something Different");
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, UpdateCredentialName)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64));
 
@@ -2326,13 +2331,13 @@ TEST(WebAuthenticationPanel, UpdateCredentialName)
     EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "Something Different");
     EXPECT_NULL([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey]);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ExportImportCredential)
 {
     reset();
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64);
 
@@ -2344,8 +2349,8 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
     EXPECT_NOT_NULL([credentials firstObject]);
     NSError *error = nil;
     auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
-    
-    cleanUpKeychain("example.com"_s);
+
+    cleanUpKeychain();
 
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 0lu);
 
@@ -2354,13 +2359,13 @@ TEST(WebAuthenticationPanel, ExportImportCredential)
 
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAccessGroup] count], 0lu);
     EXPECT_EQ([[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:testWebKitAPIAlternateAccessGroup] count], 1lu);
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
 {
     reset();
-    cleanUpKeychain(emptyString());
+    cleanUpKeychain();
 
     addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64);
 
@@ -2371,7 +2376,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     EXPECT_NOT_NULL([credentials firstObject]);
     NSError *error = nil;
     auto exportedKey = [_WKWebAuthenticationPanel exportLocalAuthenticatorCredentialWithID:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] error:&error];
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 
     auto credentialId = [_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:testWebKitAPIAccessGroup credential:exportedKey error:&error];
 
@@ -2384,7 +2389,7 @@ TEST(WebAuthenticationPanel, ExportImportDuplicateCredential)
     EXPECT_EQ(credentialId, nil);
     EXPECT_EQ(error.code, WKErrorDuplicateCredential);
 
-    cleanUpKeychain("example.com"_s);
+    cleanUpKeychain();
 }
 
 TEST(WebAuthenticationPanel, ImportMalformedCredential)

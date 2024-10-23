@@ -40,6 +40,8 @@ class AuthenticatorAssertionResponse;
 
 namespace WebKit {
 
+BOOL shouldUseAlternateKeychainAttribute();
+
 class LocalAuthenticator final : public Authenticator {
 public:
     // Here is the FSM.
