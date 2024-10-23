@@ -213,7 +213,7 @@ void Buffer::destroy()
         commandEncoder.makeSubmitInvalid();
 
     m_commandEncoders.clear();
-    m_buffer = m_device->placeholderBuffer();
+    m_buffer = protectedDevice()->placeholderBuffer();
 }
 
 bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
@@ -318,8 +318,10 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = computeRangeSize(currentSize(), offset);
 
+    auto device = protectedDevice();
+
     if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
-        m_device->generateAValidationError(error);
+        device->generateAValidationError(error);
 
         callback(WGPUBufferMapAsyncStatus_ValidationError);
         return;
@@ -329,7 +331,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
     m_mapMode = mode;
 
-    m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
+    device->protectedQueue()->onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->setState(State::Mapped);
             protectedThis->incrementBufferMapCount();
@@ -375,7 +377,7 @@ void Buffer::unmap()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-unmap
 
-    if (!validateUnmap() && !m_device->isValid())
+    if (!validateUnmap() && !protectedDevice()->isValid())
         return;
 
     decrementBufferMapCount();

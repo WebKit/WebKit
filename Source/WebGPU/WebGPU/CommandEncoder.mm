@@ -59,7 +59,7 @@ namespace WebGPU {
 
 #define GENERATE_INVALID_ENCODER_STATE_ERROR() \
 if (m_state == EncoderState::Ended) \
-    m_device->generateAValidationError([NSString stringWithFormat:@"%s: encoder state is %@", __PRETTY_FUNCTION__, encoderStateName()]); \
+    protectedDevice()->generateAValidationError([NSString stringWithFormat:@"%s: encoder state is %@", __PRETTY_FUNCTION__, encoderStateName()]); \
 else \
     makeInvalid(m_lastErrorString ?: @"Encoder state is locked");
 
@@ -108,7 +108,7 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    auto commandBuffer = getQueue().commandBufferWithDescriptor(commandBufferDescriptor);
+    auto commandBuffer = protectedQueue()->commandBufferWithDescriptor(commandBufferDescriptor);
     if (!commandBuffer)
         return CommandEncoder::createInvalid(*this);
 
@@ -137,7 +137,7 @@ CommandEncoder::CommandEncoder(Device& device)
 CommandEncoder::~CommandEncoder()
 {
     finalizeBlitCommandEncoder();
-    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
+    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
 }
 
 id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
@@ -154,7 +154,7 @@ id<MTLBlitCommandEncoder> CommandEncoder::ensureBlitCommandEncoder()
         finalizeBlitCommandEncoder();
     }
 
-    if (!m_device->isValid())
+    if (!protectedDevice()->isValid())
         return nil;
 
     MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
@@ -182,7 +182,7 @@ static auto timestampWriteIndex(auto writeIndex)
 static NSString* errorValidatingTimestampWrites(const auto& timestampWrites, const CommandEncoder& commandEncoder)
 {
     if (timestampWrites) {
-        if (!commandEncoder.device().hasFeature(WGPUFeatureName_TimestampQuery))
+        if (!commandEncoder.protectedDevice()->hasFeature(WGPUFeatureName_TimestampQuery))
             return @"device does not have timestamp query feature";
 
         const auto& timestampWrite = *timestampWrites;
@@ -243,7 +243,7 @@ void CommandEncoder::setExistingEncoder(id<MTLCommandEncoder> encoder)
 {
     ASSERT(!m_existingCommandEncoder || !encoder);
     m_existingCommandEncoder = encoder;
-    m_device->getQueue().setEncoderForBuffer(m_commandBuffer, encoder);
+    m_device->protectedQueue()->setEncoderForBuffer(m_commandBuffer, encoder);
 }
 
 void CommandEncoder::discardCommandBuffer()
@@ -254,23 +254,25 @@ void CommandEncoder::discardCommandBuffer()
     }
 
     id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
-    m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
-    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
+    auto queue = m_device->protectedQueue();
+    queue->endEncoding(existingEncoder, m_commandBuffer);
+    queue->removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
 }
 
 void CommandEncoder::endEncoding(id<MTLCommandEncoder> encoder)
 {
-    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    auto queue = m_device->protectedQueue();
+    id<MTLCommandEncoder> existingEncoder = queue->encoderForBuffer(m_commandBuffer);
     if (existingEncoder != encoder) {
-        m_device->getQueue().endEncoding(existingEncoder, m_commandBuffer);
+        queue->endEncoding(existingEncoder, m_commandBuffer);
         setExistingEncoder(nil);
         if (m_lastErrorString)
             discardCommandBuffer();
         return;
     }
 
-    m_device->getQueue().endEncoding(m_existingCommandEncoder, m_commandBuffer);
+    queue->endEncoding(m_existingCommandEncoder, m_commandBuffer);
     setExistingEncoder(nil);
     m_blitCommandEncoder = nil;
     if (m_lastErrorString)
@@ -418,7 +420,7 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         [clearRenderCommandEncoder setDepthStencilState:depthStencil];
     [clearRenderCommandEncoder setCullMode:MTLCullModeNone];
     [clearRenderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1 instanceCount:1 baseInstance:0];
-    m_device->getQueue().endEncoding(clearRenderCommandEncoder, m_commandBuffer);
+    m_device->protectedQueue()->endEncoding(clearRenderCommandEncoder, m_commandBuffer);
     setExistingEncoder(nil);
 }
 
@@ -1206,7 +1208,7 @@ bool CommandEncoder::waitForCommandBufferCompletion()
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const
 {
-    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    id<MTLCommandEncoder> existingEncoder = m_device->protectedQueue()->encoderForBuffer(m_commandBuffer);
     return existingEncoder == commandEncoder;
 }
 
@@ -1310,17 +1312,12 @@ void CommandEncoder::makeInvalid(NSString* errorString)
     endEncoding(m_existingCommandEncoder);
     m_blitCommandEncoder = nil;
     m_existingCommandEncoder = nil;
-    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
+    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
 
     m_commandBuffer = nil;
     m_lastErrorString = errorString;
     if (m_cachedCommandBuffer)
-        m_cachedCommandBuffer.get()->makeInvalid(errorString);
-}
-
-bool CommandEncoder::submitWillBeInvalid() const
-{
-    return m_makeSubmitInvalid;
+        protectedCachedCommandBuffer()->makeInvalid(errorString);
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -1352,7 +1349,7 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
 {
     m_makeSubmitInvalid = true;
     if (m_cachedCommandBuffer)
-        m_cachedCommandBuffer->makeInvalid(errorString ?: m_lastErrorString);
+        protectedCachedCommandBuffer()->makeInvalid(errorString ?: m_lastErrorString);
 }
 
 static bool hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
@@ -1880,7 +1877,7 @@ void CommandEncoder::clearBuffer(Buffer& buffer, uint64_t offset, uint64_t size)
     if (size == WGPU_WHOLE_SIZE) {
         auto localSize = checkedDifference<uint64_t>(buffer.initialSize(), offset);
         if (localSize.hasOverflowed()) {
-            m_device->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_s);
+            protectedDevice()->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_s);
             return;
         }
         size = localSize.value();
@@ -1931,7 +1928,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     if (descriptor.nextInChain || !isValid() || (m_existingCommandEncoder && m_existingCommandEncoder != m_blitCommandEncoder)) {
         m_state = EncoderState::Ended;
         discardCommandBuffer();
-        m_device->generateAValidationError(m_lastErrorString ?: @"Invalid CommandEncoder.");
+        protectedDevice()->generateAValidationError(m_lastErrorString ?: @"Invalid CommandEncoder.");
         return CommandBuffer::createInvalid(m_device);
     }
 
@@ -1944,7 +1941,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     UNUSED_PARAM(priorState);
     if (validationFailedError) {
         discardCommandBuffer();
-        m_device->generateAValidationError(m_lastErrorString ?: validationFailedError);
+        protectedDevice()->generateAValidationError(m_lastErrorString ?: validationFailedError);
         return CommandBuffer::createInvalid(m_device);
     }
 
@@ -1972,7 +1969,7 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
     m_cachedCommandBuffer = result;
     m_cachedCommandBuffer->setBufferMapCount(m_bufferMapCount);
     if (m_makeSubmitInvalid)
-        m_cachedCommandBuffer->makeInvalid(m_lastErrorString);
+        protectedCachedCommandBuffer()->makeInvalid(m_lastErrorString);
 
     return result;
 }
@@ -2112,7 +2109,7 @@ void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)
         return;
     }
 
-    if (!m_device->hasFeature(WGPUFeatureName_TimestampQuery))
+    if (!protectedDevice()->hasFeature(WGPUFeatureName_TimestampQuery))
         return;
 
     if (querySet.type() != WGPUQueryType_Timestamp || queryIndex >= querySet.count() || !isValidToUseWith(querySet, *this)) {
@@ -2136,16 +2133,6 @@ void CommandEncoder::lock(bool shouldLock)
     m_state = shouldLock ? EncoderState::Locked : EncoderState::Open;
     if (!shouldLock)
         setExistingEncoder(nil);
-}
-
-bool CommandEncoder::isLocked() const
-{
-    return m_state == EncoderState::Locked;
-}
-
-bool CommandEncoder::isFinished() const
-{
-    return m_state == EncoderState::Ended;
 }
 
 #undef GENERATE_INVALID_ENCODER_STATE_ERROR

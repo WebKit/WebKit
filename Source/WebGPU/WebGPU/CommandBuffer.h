@@ -63,8 +63,9 @@ public:
     Device& device() const { return m_device; }
     void makeInvalid(NSString*);
     void makeInvalidDueToCommit(NSString*);
-    void setBufferMapCount(int);
-    int bufferMapCount() const;
+    void setBufferMapCount(int bufferMapCount) { m_bufferMapCount = bufferMapCount; }
+    int bufferMapCount() const { return m_bufferMapCount; }
+
     NSString* lastError() const;
     bool waitForCompletion();
 

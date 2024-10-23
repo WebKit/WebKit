@@ -94,6 +94,7 @@ public:
     State state() const { return m_state; }
 
     Device& device() const { return m_device; }
+    Ref<Device> protectedDevice() const { return m_device; }
     bool isDestroyed() const;
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     std::span<uint8_t> getBufferContents();

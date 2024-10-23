@@ -90,6 +90,7 @@ public:
     const Vector<BindableResources>& resources() const { return m_resources; }
 
     Device& device() const { return m_device; }
+    Ref<Device> protectedDevice() const { return m_device; }
     static bool allowedUsage(const OptionSet<BindGroupEntryUsage>&);
     static NSString* usageName(const OptionSet<BindGroupEntryUsage>&);
     static uint64_t makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);

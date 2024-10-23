@@ -323,11 +323,6 @@ id<MTLTexture> Device::placeholderTexture(WGPUTextureFormat format) const
     return Texture::isDepthOrStencilFormat(format) ? m_placeholderDepthStencilTexture : m_placeholderTexture;
 }
 
-Queue& Device::getQueue()
-{
-    return m_defaultQueue;
-}
-
 bool Device::hasFeature(WGPUFeatureName feature) const
 {
     return m_capabilities.features.contains(feature);
@@ -408,11 +403,6 @@ uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 }
 
 uint32_t Device::maxBuffersForFragmentStage() const
-{
-    return m_capabilities.limits.maxBindGroups;
-}
-
-uint32_t Device::maxBuffersForComputeStage() const
 {
     return m_capabilities.limits.maxBindGroups;
 }
@@ -504,11 +494,6 @@ void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)
         loseTheDevice(WGPUDeviceLostReason_Destroyed);
     else if (!m_adapter->isValid())
         loseTheDevice(WGPUDeviceLostReason_Undefined);
-}
-
-bool Device::isValid() const
-{
-    return m_device;
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)

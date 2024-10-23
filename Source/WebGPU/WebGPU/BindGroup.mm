@@ -547,7 +547,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             mtlTexture1 = [mtlTexture1 newTextureViewWithPixelFormat:mtlTexture1.pixelFormat textureType:mtlTexture1.textureType levels:NSMakeRange(0, mtlTexture1.mipmapLevelCount) slices:NSMakeRange(0, mtlTexture1.arrayLength) swizzle:*secondPlaneSwizzle];
     }
 
-    m_defaultQueue->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
+    protectedQueue()->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
         if (plane0)
             CFRelease(plane0);
 
@@ -1088,7 +1088,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
                 }
                 auto& apiTextureView = WebGPU::fromAPI(entry.textureView);
-                getQueue().clearTextureViewIfNeeded(apiTextureView);
+                protectedQueue()->clearTextureViewIfNeeded(apiTextureView);
 
                 id<MTLTexture> texture = apiTextureView.texture();
                 if (!apiTextureView.isDestroyed()) {
@@ -1361,9 +1361,10 @@ bool BindGroup::updateExternalTextures(const ExternalTexture& externalTexture)
     if (!m_bindGroupLayout || externalTexture.openCommandEncoderCount())
         return false;
 
-    auto textureData = m_device->createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
-    id<MTLTexture> texture0 = textureData.texture0 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
-    id<MTLTexture> texture1 = textureData.texture1 ?: m_device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+    auto device = protectedDevice();
+    auto textureData = device->createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
+    id<MTLTexture> texture0 = textureData.texture0 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
+    id<MTLTexture> texture1 = textureData.texture1 ?: device->placeholderTexture(WGPUTextureFormat_BGRA8Unorm);
     if (!texture0 || !texture1)
         return false;
 

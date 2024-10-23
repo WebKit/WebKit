@@ -86,11 +86,13 @@ public:
     void setLabel(String&&);
 
     Device& device() const SWIFT_RETURNS_INDEPENDENT_VALUE { return m_device; }
+    Ref<Device> protectedDevice() const SWIFT_RETURNS_INDEPENDENT_VALUE { return m_device; }
 
     bool isValid() const { return m_commandBuffer; }
     void lock(bool);
-    bool isLocked() const;
-    bool isFinished() const;
+    bool isLocked() const { return m_state == EncoderState::Locked; }
+
+    bool isFinished() const { return m_state == EncoderState::Ended; }
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
@@ -106,7 +108,7 @@ public:
     void setLastError(NSString*);
     bool waitForCommandBufferCompletion();
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
-    bool submitWillBeInvalid() const;
+    bool submitWillBeInvalid() const { return m_makeSubmitInvalid; }
     void addBuffer(id<MTLBuffer>);
     void addTexture(const Texture&);
     id<MTLCommandBuffer> commandBuffer() const;
@@ -129,6 +131,8 @@ private:
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
     void discardCommandBuffer();
+
+    RefPtr<CommandBuffer> protectedCachedCommandBuffer() const { return m_cachedCommandBuffer.get(); }
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLSharedEvent> m_abortCommandBuffer { nil };

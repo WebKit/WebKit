@@ -187,11 +187,6 @@ void ComputePipeline::setLabel(String&&)
     // MTLComputePipelineState's labels are read-only.
 }
 
-PipelineLayout& ComputePipeline::pipelineLayout() const
-{
-    return m_pipelineLayout;
-}
-
 const BufferBindingSizesForBindGroup* ComputePipeline::minimumBufferSizes(uint32_t index) const
 {
     auto it = m_minimumBufferSizes.find(index);

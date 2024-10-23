@@ -48,7 +48,7 @@ CommandBuffer::CommandBuffer(Device& device)
 
 CommandBuffer::~CommandBuffer()
 {
-    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
+    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
 }
 
 void CommandBuffer::setLabel(String&& label)
@@ -62,7 +62,7 @@ void CommandBuffer::makeInvalid(NSString* lastError)
         return;
 
     m_lastErrorString = lastError;
-    m_device->getQueue().removeMTLCommandBuffer(m_commandBuffer);
+    m_device->protectedQueue()->removeMTLCommandBuffer(m_commandBuffer);
     m_commandBuffer = nil;
 }
 
@@ -83,16 +83,6 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
 NSString* CommandBuffer::lastError() const
 {
     return m_lastErrorString;
-}
-
-void CommandBuffer::setBufferMapCount(int bufferMapCount)
-{
-    m_bufferMapCount = bufferMapCount;
-}
-
-int CommandBuffer::bufferMapCount() const
-{
-    return m_bufferMapCount;
 }
 
 bool CommandBuffer::waitForCompletion()
