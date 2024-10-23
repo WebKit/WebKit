@@ -39,15 +39,13 @@ class CoordinatedBackingStoreProxy;
 class CoordinatedBackingStoreProxyTile {
     WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxyTile);
 public:
-    typedef IntPoint Coordinate;
-
-    CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy&, const Coordinate&);
+    CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy&, const IntPoint&, const IntRect&);
     ~CoordinatedBackingStoreProxyTile();
 
     uint32_t tileID() const { return m_ID; }
     void ensureTileID();
 
-    const Coordinate& coordinate() const { return m_coordinate; }
+    const IntPoint& position() const { return m_position; }
     const IntRect& rect() const { return m_rect; }
     const IntRect& dirtyRect() const { return m_dirtyRect; }
     bool isDirty() const;
@@ -60,7 +58,7 @@ public:
 private:
     CoordinatedBackingStoreProxy& m_tiledBackingStore;
     uint32_t m_ID;
-    Coordinate m_coordinate;
+    IntPoint m_position;
     IntRect m_rect;
     IntRect m_dirtyRect;
 };

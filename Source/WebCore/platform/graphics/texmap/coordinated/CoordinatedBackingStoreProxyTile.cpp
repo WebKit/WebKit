@@ -38,11 +38,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Tile);
 
 static const uint32_t InvalidTileID = 0;
 
-CoordinatedBackingStoreProxyTile::CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy& tiledBackingStore, const Coordinate& tileCoordinate)
+CoordinatedBackingStoreProxyTile::CoordinatedBackingStoreProxyTile(CoordinatedBackingStoreProxy& tiledBackingStore, const IntPoint& position, const IntRect& rect)
     : m_tiledBackingStore(tiledBackingStore)
     , m_ID(InvalidTileID)
-    , m_coordinate(tileCoordinate)
-    , m_rect(tiledBackingStore.tileRectForCoordinate(tileCoordinate))
+    , m_position(position)
+    , m_rect(rect)
     , m_dirtyRect(m_rect)
 {
 }
