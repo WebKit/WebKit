@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#if USE(LIBWEBRTC)
 
 #include "VideoEncoder.h"
 #include <wtf/TZoneMalloc.h>
@@ -64,4 +64,4 @@ private:
 
 }
 
-#endif // ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC)

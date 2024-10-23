@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCVPXVideoEncoder.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC) && PLATFORM(COCOA)
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
@@ -324,4 +324,4 @@ void LibWebRTCVPXInternalVideoEncoder::OnDroppedFrame(DropReason)
 
 }
 
-#endif // ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+#endif // USE(LIBWEBRTC)

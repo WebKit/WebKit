@@ -26,7 +26,7 @@
 #include "config.h"
 #include "VideoEncoder.h"
 
-#if ENABLE(WEB_CODECS)
+#if ENABLE(VIDEO)
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include "LibWebRTCVPXVideoEncoder.h"
@@ -97,4 +97,4 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
 
 }
 
-#endif // ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)

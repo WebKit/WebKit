@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS)
+#if ENABLE(VIDEO)
 
 #include "VideoEncoderActiveConfiguration.h"
 #include "VideoEncoderScalabilityMode.h"
@@ -90,4 +90,4 @@ public:
 
 }
 
-#endif // ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)
