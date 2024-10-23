@@ -85,7 +85,7 @@ crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P
     return Promise.resolve().then(function(result) {
         // P-256
         return Promise.all([
-            deriveBits(P256, 0, 0),
+            deriveBits(P256, 0, 256),
             deriveBits(P256, 8, 8),
             deriveBits(P256, 256, 256),
         ]).then(function(result) {
@@ -95,7 +95,7 @@ crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P
     }).then(function(result) {
         // P-384
         return Promise.all([
-            deriveBits(P384, 0, 0),
+            deriveBits(P384, 0, 384),
             deriveBits(P384, 8, 8),
             deriveBits(P384, 384, 384),
         ]).then(function(result) {
@@ -111,7 +111,7 @@ crypto.subtle.importKey("jwk", jwkPrivateKeyP256, { name: "ECDH", namedCurve: "P
 
             // P-521
             return Promise.all([
-                deriveBits(P521, 0, 0),
+                deriveBits(P521, 0, 528),
                 deriveBits(P521, 8, 8),
                 deriveBits(P521, 528, 528),
             ]).then(function(result) {

@@ -89,20 +89,12 @@ void CryptoAlgorithmECDH::deriveBits(const CryptoAlgorithmParameters& parameters
         return;
     }
 
-    // Return an empty string doesn't make much sense, but truncating either at all.
-    // https://github.com/w3c/webcrypto/issues/369
-    if (length && !(*length)) {
-        // Avoid executing the key-derivation, since we are going to return an empty string.
-        callback({ });
-        return;
-    }
-
     auto unifiedCallback = [callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](std::optional<Vector<uint8_t>>&& derivedKey, std::optional<size_t> length) mutable {
         if (!derivedKey) {
             exceptionCallback(ExceptionCode::OperationError);
             return;
         }
-        if (!length) {
+        if (!length || !(*length)) {
             callback(WTFMove(*derivedKey));
             return;
         }
