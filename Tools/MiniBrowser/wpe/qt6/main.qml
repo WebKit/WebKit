@@ -67,6 +67,10 @@ Window {
                 Layout.preferredHeight: 50
                 font.pointSize: 13
                 text: initialUrl
+
+                onAccepted: {
+                    web_view.url = url_bar.text;
+                }
             }
 
             Button {
@@ -76,6 +80,16 @@ Window {
                 font.pointSize: 20
                 text: qsTr("↪")
                 onClicked: function() { web_view.url = url_bar.text; }
+            }
+
+            Button {
+                id: close_button
+                Layout.preferredWidth: 50
+                Layout.preferredHeight: 50
+                font.pointSize: 20
+                text: qsTr("x")
+
+                onClicked: function() { main_window.close(); }
             }
         }
 
