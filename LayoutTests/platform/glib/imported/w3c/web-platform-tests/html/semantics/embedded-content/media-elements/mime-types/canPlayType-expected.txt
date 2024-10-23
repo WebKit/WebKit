@@ -22,7 +22,7 @@ PASS audio/webm; codecs="vorbis" (optional)
 PASS audio/webm with bogus codec
 PASS audio/webm with and without codecs
 PASS video/3gpp (optional)
-FAIL video/3gpp; codecs="samr" (optional) assert_equals: video/3gpp; codecs="samr" expected "probably" but got ""
+NOTRUN video/3gpp; codecs="samr" (optional) video/3gpp
 PASS video/3gpp; codecs="mp4v.20.8" (optional)
 PASS video/3gpp codecs subset
 PASS video/3gpp codecs order
