@@ -1,5 +1,5 @@
 
-PASS navigate() promises to 204s never settle
-PASS navigate() promises to 205s never settle
+FAIL navigate() promises to 204s never settle assert_equals: expected "http://localhost:8800/common/blank.html" but got "http://localhost:8800/common/blank.html?pipe=status(204)"
+FAIL navigate() promises to 205s never settle assert_equals: expected "http://localhost:8800/common/blank.html" but got "http://localhost:8800/common/blank.html?pipe=status(205)"
 PASS navigate() promises to Content-Disposition: attachment responses never settle
 

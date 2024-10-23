@@ -96,7 +96,6 @@
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLPlugInElement.h>
-#import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
@@ -847,9 +846,6 @@ void WebFrameLoaderClient::dispatchShow()
 
 void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, const String&, WebCore::FramePolicyFunction&& function)
 {
-    if (response.httpStatusCode() == httpStatus205ResetContent || response.httpStatusCode() == httpStatus204NoContent)
-        return function(WebCore::PolicyAction::Ignore);
-
     WebView *webView = getWebView(m_webFrame.get());
 
     [[webView _policyDelegateForwarder] webView:webView

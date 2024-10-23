@@ -7599,8 +7599,6 @@ void WebPage::setSelectTrailingWhitespaceEnabled(bool enabled)
 
 bool WebPage::canShowResponse(const WebCore::ResourceResponse& response) const
 {
-    if (response.httpStatusCode() == httpStatus205ResetContent || response.httpStatusCode() == httpStatus204NoContent)
-        return false;
     return canShowMIMEType(response.mimeType(), [&](auto& mimeType, auto allowedPlugins) {
         return m_page->pluginData().supportsWebVisibleMimeTypeForURL(mimeType, allowedPlugins, response.url());
     });

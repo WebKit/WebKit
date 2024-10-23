@@ -1,4 +1,4 @@
 
 
-PASS Popup do not inherit sandbox, because of 'allow-popups-to-escape-sandbox'. The document isn't sandboxed.
+FAIL Popup do not inherit sandbox, because of 'allow-popups-to-escape-sandbox'. The document isn't sandboxed. assert_false: Failed to access navigation to about:blank, it is probably sandboxed expected false got true
 

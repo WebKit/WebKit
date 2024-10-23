@@ -248,6 +248,9 @@ fast/workers/worker-storagequota-query-usage.html
 fast/events/autoscroll-with-software-keyboard.html [ Skip ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ]
 
+# HTTP 204 (No Content) should be ignored
+webkit.org/b/60206 http/tests/navigation/response204.html
+
 # JSC does not support setIsolatedWorldSecurityOrigin
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html
 

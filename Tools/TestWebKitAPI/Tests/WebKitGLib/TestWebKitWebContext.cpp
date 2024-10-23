@@ -342,10 +342,11 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     test->m_loadEvents.clear();
     test->loadURI("nocontent:blank");
     test->waitUntilLoadFinished();
+    g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
     static const char* formHTML = "<html><body><form id=\"test-form\" method=\"POST\" action=\"post:data\"><input type='text' id='X-Test' name='X-Test' value='A'></form></body></html>";
-    test->registerURISchemeHandler("post", nullptr, 0, "application/json", 200);
+    test->registerURISchemeHandler("post", nullptr, 0, "application/json", 204);
     test->m_loadEvents.clear();
     test->loadHtml(formHTML, "post:form");
     test->waitUntilLoadFinished();
@@ -357,7 +358,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
     static const char* headersHTML = "<html><body><script>let hdrs = new Headers({'X-Test': 'A', 'X-Test2': '1, 2, 3'});hdrs.append('X-Test2', '4');fetch('headers:data', {headers: hdrs})</script></body></html>";
-    test->registerURISchemeHandler("headers", nullptr, 0, "application/json", 200);
+    test->registerURISchemeHandler("headers", nullptr, 0, "application/json", 204);
     test->m_loadEvents.clear();
     test->loadHtml(headersHTML, "headers:form");
     test->waitUntilLoadFinished();
@@ -365,7 +366,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_false(test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 
     static const char* respHTML = "<html><head><script>fetch('headersresp:data').then((d)=>{if(d.headers.get('X-Test') !== 'test_value') window.hasError=1}).catch((e)=> window.hasError=1)</script></head></html>";
-    test->registerURISchemeHandler("headersresp", nullptr, 0, "application/json", 200);
+    test->registerURISchemeHandler("headersresp", nullptr, 0, "application/json", 204);
     test->m_loadEvents.clear();
     test->loadHtml(respHTML, "headersresp:form");
     test->waitUntilLoadFinished();

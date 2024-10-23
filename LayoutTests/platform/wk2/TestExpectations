@@ -315,6 +315,7 @@ http/tests/navigation/error404-subframeload.html
 http/tests/navigation/javascriptlink-subframeload.html
 http/tests/navigation/metaredirect-subframeload.html
 http/tests/navigation/redirect302-subframeload.html
+http/tests/navigation/response204.html
 http/tests/navigation/success200-subframeload.html
 http/tests/navigation/timerredirect-subframeload.html
 

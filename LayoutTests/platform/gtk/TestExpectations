@@ -1521,6 +1521,9 @@ webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
 webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
 
+# HTTP 204 (No Content) should be ignored
+webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
+
 webkit.org/b/105693 http/tests/multipart/multipart-wait-before-boundary.html [ Skip ]
 
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]

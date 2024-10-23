@@ -33,7 +33,6 @@ constexpr auto httpStatus103EarlyHints = 103;
 
 constexpr auto httpStatus200OK = 200;
 constexpr auto httpStatus204NoContent = 204;
-constexpr auto httpStatus205ResetContent = 205;
 constexpr auto httpStatus206PartialContent = 206;
 
 constexpr auto httpStatus300MultipleChoices = 300;
@@ -56,7 +55,6 @@ using WebCore::httpStatus103EarlyHints;
 
 using WebCore::httpStatus200OK;
 using WebCore::httpStatus204NoContent;
-using WebCore::httpStatus205ResetContent;
 using WebCore::httpStatus206PartialContent;
 
 using WebCore::httpStatus300MultipleChoices;
