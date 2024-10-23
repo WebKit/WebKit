@@ -21,3 +21,8 @@ final public class PreviewApplication {
   }
   @objc deinit
 }
+
+@available(visionOS 2.0, *)
+public struct PreviewSession : Swift.Sendable {
+  public func update(items: [QuickLook.PreviewItem], selectedItem: QuickLook.PreviewItem? = nil) async throws
+}
