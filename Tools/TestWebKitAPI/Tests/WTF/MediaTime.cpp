@@ -334,6 +334,24 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::createWithFloat(-909, 0), MediaTime::negativeInfiniteTime());
     EXPECT_EQ(MediaTime::createWithFloat(999).toTimeScale(0), MediaTime::positiveInfiniteTime());
     EXPECT_EQ(MediaTime::createWithFloat(-999).toTimeScale(0), MediaTime::negativeInfiniteTime());
+
+    // Microseconds
+    EXPECT_EQ(MediaTime::createWithDouble(1.23456).toMicroseconds(), 1234560);
+    EXPECT_EQ(MediaTime::createWithSeconds(1.23456_s).toMicroseconds(), 1234560);
+    EXPECT_EQ(MediaTime(1024, 48000).toMicroseconds(), 21333);
+    EXPECT_EQ(MediaTime(2048, 48000).toMicroseconds(), 42666);
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max(), 1).toMicroseconds(), std::numeric_limits<int64_t>::max());
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::min(), 1).toMicroseconds(), std::numeric_limits<int64_t>::min());
+    // Ensure there's no overflow during conversion with least amount of precision loss.
+    // (2^63 / 48000 * 1000000 = 2^63 / 20.83 is the highest microseconds value that can fit in a int64_t.
+    EXPECT_EQ(MediaTime(std::numeric_limits<int64_t>::max() / 21, 48000).toMicroseconds(), 9150170671482912500LL);
+    // This can't compile due to overflow.
+    // EXPECT_EQ(MediaTime((std::numeric_limits<int64_t>::max()) / 21, 48000).toMicroseconds(), (std::numeric_limits<int64_t>::max() - 1) / 21 * 1000000 / 48000);
+    int64_t value = std::numeric_limits<int64_t>::max();
+    value *= 1000000;
+    EXPECT_GT(MediaTime((std::numeric_limits<int64_t>::max()) / 21, 48000).toMicroseconds(), value / 48000); // value / 48000 is -20.
+    // This order of operations causes precision loss.
+    EXPECT_GT(MediaTime((std::numeric_limits<int64_t>::max()-1) / 21, 48000).toMicroseconds(), (std::numeric_limits<int64_t>::max() - 1) / 21 / 48000 * 1000000);
 }
 
 TEST(WTF, MediaTimeInExpected)
@@ -342,6 +360,7 @@ TEST(WTF, MediaTimeInExpected)
     Test test1;
     Test test2;
     test1 = WTFMove(test2);
+    UNUSED_VARIABLE(test1);
 }
 
 }
