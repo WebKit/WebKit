@@ -162,9 +162,9 @@
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
-		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
 		F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */; };
@@ -184,12 +184,13 @@
 			filePatterns = "*.appex";
 			fileType = pattern.proxy;
 			inputFiles = (
+				"$(SRCROOT)/Scripts/install-extensions-rule.sh",
 			);
 			isEditable = 1;
 			outputFiles = (
 				"$(BUILT_PRODUCTS_DIR)/$(EXTENSIONS_FOLDER_PATH)/$(INPUT_FILE_NAME)",
 			);
-			script = "set -e\n\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/WebKitTestRunnerApp.app/Extensions/${INPUT_FILE_NAME}\n\nmkdir -p \"${DESTINATION_PATH}\"\nditto \"${BUILT_PRODUCTS_DIR}/${INPUT_FILE_NAME}\" \"${DESTINATION_PATH}\"\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleIdentifier ${PRODUCT_BUNDLE_IDENTIFIER}.${INPUT_FILE_BASE}\" \"${DESTINATION_PATH}/Info.plist\"\n\nif [[ ${INPUT_FILE_BASE} == \"WebContentExtension\" || ${INPUT_FILE_BASE} == \"NetworkingExtension\" ]]; then\n    /usr/libexec/PlistBuddy -c \"Add :NSAppTransportSecurity:NSAllowsArbitraryLoads bool true\" \"${DESTINATION_PATH}/Info.plist\"\nfi\n\nif [[ ${INPUT_FILE_BASE} == \"WebContentExtension\" ]]; then\n    EXTENSION_POINT_ID=\"com.apple.web-browser-engine.content\"\nelif [[ ${INPUT_FILE_BASE} == \"WebContentCaptivePortalExtension\" ]]; then\n    EXTENSION_POINT_ID=\"com.apple.web-browser-engine.content\"\nfi\n\nif [[ -z \"${EXTENSION_POINT_ID}\" ]]; then\n    exit 0\nfi\n\n/usr/libexec/PlistBuddy -c \"Delete :EXAppExtensionAttributes:EXExtensionPointIdentifier dict\" \"${DESTINATION_PATH}/Info.plist\"\n/usr/libexec/PlistBuddy -c \"Add :EXAppExtensionAttributes:EXExtensionPointIdentifier string ${EXTENSION_POINT_ID}\" \"${DESTINATION_PATH}/Info.plist\"\n";
+			script = "\"${SCRIPT_INPUT_FILE_0}\"\n";
 		};
 /* End PBXBuildRule section */
 

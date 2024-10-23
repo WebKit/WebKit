@@ -20,6 +20,20 @@
                ReferencedContainer = "container:WebKitTestRunner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A115CCB41B9D769D00E89159"
+               BuildableName = "All"
+               BlueprintName = "All"
+               ReferencedContainer = "container:WebKitTestRunner.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
