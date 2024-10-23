@@ -1915,3 +1915,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 # webkit.org/b/281984 [ SequoiaA wk2 Debug arm64 ] 2x imported/w3c/web-platform-tests/html/anonymous-iframe/* are constant failures. 
 [ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 [ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+# webkit.org/b/281999 REGRESSION (285061@main): [macOS Debug arm64 ] ASSERTION FAILED: m_lastEnqueuedRawVideoFrame <= sampleTime in http/wpt/mediarecorder/paus e-recording.html (EWS failure)
+[ Debug arm64 ] http/wpt/mediarecorder/pause-recording.html [ Skip ]
