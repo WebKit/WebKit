@@ -546,7 +546,7 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     if (selection.isRange()) {
         m_selectionInitiationState = ExtendedSelection;
 #if ENABLE(DRAG_SUPPORT)
-        m_dragStartSelection = selection.range();
+        m_dragStartSelection = getWeakSimpleRangeFromSelection(selection);
 #endif
     } else {
         granularity = TextGranularity::CharacterGranularity;
@@ -655,7 +655,7 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
         // from setting caret selection.
         m_selectionInitiationState = ExtendedSelection;
 #if ENABLE(DRAG_SUPPORT)
-        m_dragStartSelection = m_frame->selection().selection().range();
+        m_dragStartSelection = getWeakSimpleRangeFromSelection(m_frame->selection().selection());
 #endif
     } else if (mouseDownMayStartSelect())
         selectClosestWordFromHitTestResult(event.hitTestResult(), shouldAppendTrailingWhitespace(event, protectedFrame()));
@@ -1092,8 +1092,8 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection.expandUsingGranularity(m_frame->selection().granularity());
         if (!newSelection.isBaseFirst() && !oldSelection.isBaseFirst() && oldSelection.end() < newSelection.end())
             newSelection.setBase(oldSelection.end());
-        else if (newSelection.isBaseFirst() && !oldSelection.isBaseFirst() && oldSelection.start() < newSelection.start() && m_dragStartSelection) {
-            VisibleSelection dragStartSelection { *m_dragStartSelection };
+        else if (newSelection.isBaseFirst() && !oldSelection.isBaseFirst() && oldSelection.start() < newSelection.start() && m_dragStartSelection && m_dragStartSelection->start.container && m_dragStartSelection->end.container) {
+            VisibleSelection dragStartSelection { createSimpleRangeFromDragStartSelection() };
             dragStartSelection.expandUsingGranularity(m_frame->selection().granularity());
             if (!dragStartSelection.isNoneOrOrphaned())
                 newSelection.setBase(dragStartSelection.start());
@@ -1101,13 +1101,26 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     }
 
     if (shouldSetDragStartSelection)
-        m_dragStartSelection = newSelection.range();
+        m_dragStartSelection = getWeakSimpleRangeFromSelection(newSelection);
 
     m_frame->selection().setSelectionByMouseIfDifferent(newSelection, m_frame->selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
 
     if (oldSelection != newSelection && ImageOverlay::isOverlayText(newSelection.start().protectedContainerNode().get()) && ImageOverlay::isOverlayText(newSelection.end().protectedContainerNode().get()))
         invalidateClick();
+}
+
+SimpleRange EventHandler::createSimpleRangeFromDragStartSelection() const
+{
+    const WeakSimpleRange& range = m_dragStartSelection.value();
+    return { BoundaryPoint(*(range.start.container), range.start.offset), BoundaryPoint(*(range.end.container), range.end.offset) };
+}
+
+std::optional<WeakSimpleRange> EventHandler::getWeakSimpleRangeFromSelection(const VisibleSelection& selection) const
+{
+    if (auto range = selection.range())
+        return range->makeWeakSimpleRange();
+    return std::nullopt;
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

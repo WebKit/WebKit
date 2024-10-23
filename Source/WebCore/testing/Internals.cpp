@@ -7280,7 +7280,7 @@ String Internals::treeOrder(Node& a, Node& b, TreeType type)
 
 String Internals::treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType type)
 {
-    return string(treeOrderForTesting(convertType(type), { containerA, offsetA }, { containerB, offsetB }));
+    return string(treeOrderForTesting(convertType(type), BoundaryPoint( containerA, offsetA ), BoundaryPoint(containerB, offsetB)));
 }
 
 bool Internals::rangeContainsNode(const AbstractRange& range, Node& node, TreeType type)
