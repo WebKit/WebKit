@@ -27,15 +27,28 @@
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
+#include "Connection.h"
 #include "DaemonConnection.h"
 #include "MessageSender.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushDaemonConstants.h"
+#include <WebCore/ExceptionData.h>
+#include <WebCore/PushSubscriptionData.h>
+#include <wtf/Expected.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace IPC {
+class Connection;
 class Decoder;
 class Encoder;
+
+template<> struct AsyncReplyError<Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>> {
+    static Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> create()
+    {
+        return makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::AbortError, "Connection to web push daemon failed"_s });
+    }
+};
+
 }
 
 namespace WebKit {

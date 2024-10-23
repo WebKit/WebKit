@@ -112,6 +112,8 @@ public:
     void setAppBadge(PushClientConnection&, WebCore::SecurityOriginData&&, std::optional<uint64_t>);
     void getAppBadgeForTesting(PushClientConnection&, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
+    void setProtocolVersionForTesting(PushClientConnection&, unsigned, CompletionHandler<void()>&&);
+
 private:
     WebPushDaemon();
 

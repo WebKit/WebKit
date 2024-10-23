@@ -1266,6 +1266,23 @@ TEST_F(WebPushDTest, SubscribeTest)
     ASSERT_EQ(ignored.size(), 0u);
 }
 
+TEST_F(WebPushDTest, SubscribeWithBadIPCVersionRaisesExceptionTest)
+{
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    for (auto& v : webViews()) {
+        ASSERT_FALSE(v->hasPushSubscription());
+        id obj = v->subscribe();
+        ASSERT_TRUE([obj isEqual:@"Error: AbortError: Connection to web push daemon failed"]);
+    }
+}
+
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 TEST_F(WebPushDNavigatorTest, SubscribeTest)
 {
@@ -2587,6 +2604,38 @@ TEST(WebPushD, WKWebPushDaemonConnectionPushNotifications)
     }];
     TestWebKitAPI::Util::run(&done);
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+}
+
+TEST(WebPushD, WKWebPushDaemonConnectionSubscribeWithBadIPCVersionRaisesException)
+{
+    setUpTestWebPushD();
+
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    auto sender = WebPushXPCConnectionMessageSender { utilityConnection.get() };
+    bool done = false;
+    sender.sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::SetProtocolVersionForTesting(WebKit::WebPushD::protocolVersionValue + 1), [&done]() {
+        done = true;
+    });
+    TestWebKitAPI::Util::run(&done);
+
+    auto configuration = adoptNS([[_WKWebPushDaemonConnectionConfiguration alloc] init]);
+    configuration.get().machServiceName = @"org.webkit.webpushtestdaemon.service";
+    // Bundle identifier is required for making push subscription.
+    configuration.get().bundleIdentifierOverrideForTesting = @"com.apple.WebKit.TestWebKitAPI";
+    configuration.get().hostApplicationAuditToken = getSelfAuditToken();
+    auto connection = adoptNS([[_WKWebPushDaemonConnection alloc] initWithConfiguration:configuration.get()]);
+    auto url = adoptNS([[NSURL alloc] initWithString:@"https://webkit.org/sw.js"]);
+    RetainPtr applicationServerKey = [NSData dataWithBytes:(const void *)validServerKey.characters() length:validServerKey.length()];
+
+    done = false;
+    RetainPtr<NSError> error;
+    [connection subscribeToPushServiceForScope:url.get() applicationServerKey:applicationServerKey.get() completionHandler:[&done, &error] (_WKWebPushSubscriptionData *subscription, NSError *subscriptionError) {
+        error = subscriptionError;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([[error description] containsString:@"Connection to web push daemon failed"]);
 }
 
 class WebPushDPushNotificationEventTest : public WebPushDTest {

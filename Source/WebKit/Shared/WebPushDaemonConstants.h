@@ -40,7 +40,7 @@ static constexpr Seconds silentPushTimeoutForProduction { 30_s };
 static constexpr Seconds silentPushTimeoutForTesting { 1_s };
 
 constexpr auto protocolVersionKey = "protocol version"_s;
-constexpr uint64_t protocolVersionValue = 4;
+constexpr uint64_t protocolVersionValue = 5;
 constexpr auto protocolEncodedMessageKey = "encoded message"_s;
 
 // FIXME: ConnectionToMachService traits requires we have a message type, so keep this placeholder here

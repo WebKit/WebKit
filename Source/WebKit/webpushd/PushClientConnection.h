@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "PushMessageForTesting.h"
 #include "WebPushMessage.h"
@@ -116,6 +117,7 @@ private:
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID);
     void setAppBadge(WebCore::SecurityOriginData&&, std::optional<uint64_t>);
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void setProtocolVersionForTesting(unsigned, CompletionHandler<void()>&&);
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     String m_hostAppCodeSigningIdentifier;

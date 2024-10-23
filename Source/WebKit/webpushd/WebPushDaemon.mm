@@ -110,6 +110,8 @@ using WebCore::SecurityOriginData;
 
 namespace WebPushD {
 
+static unsigned s_protocolVersion = protocolVersionValue;
+
 static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };
 
 #if HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
@@ -295,7 +297,7 @@ void WebPushDaemon::connectionEventHandler(xpc_object_t request)
         return;
 
     auto version = xpc_dictionary_get_uint64(request, protocolVersionKey);
-    if (version != protocolVersionValue) {
+    if (version != s_protocolVersion) {
         RELEASE_LOG_ERROR(Push, "Received request with protocol version %llu not matching daemon protocol version %llu", version, protocolVersionValue);
         tryCloseRequestConnection(request);
         return;
@@ -1188,6 +1190,12 @@ void WebPushDaemon::getAppBadgeForTesting(PushClientConnection& connection, Comp
 }
 
 #endif // HAVE(FULL_FEATURED_USER_NOTIFICATIONS)
+
+void WebPushDaemon::setProtocolVersionForTesting(PushClientConnection& connection, unsigned version, CompletionHandler<void()>&& completionHandler)
+{
+    s_protocolVersion = version;
+    completionHandler();
+}
 
 } // namespace WebPushD
 

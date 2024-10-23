@@ -381,6 +381,11 @@ void PushClientConnection::getAppBadgeForTesting(CompletionHandler<void(std::opt
 #endif
 }
 
+void PushClientConnection::setProtocolVersionForTesting(unsigned version, CompletionHandler<void()>&& completionHandler)
+{
+    WebPushDaemon::singleton().setProtocolVersionForTesting(*this, version, WTFMove(completionHandler));
+}
+
 } // namespace WebPushD
 
 #endif // ENABLE(WEB_PUSH_NOTIFICATIONS)
