@@ -2053,6 +2053,7 @@ page/FrameTree.cpp
 page/History.cpp
 page/ImageAnalysisQueue.cpp
 page/ImageOverlayController.cpp
+page/IntelligenceTextEffectsSupport.cpp
 page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp

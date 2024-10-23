@@ -77,10 +77,6 @@ public:
     void respondToUnappliedEditing(EditCommandComposition*);
     void respondToReappliedEditing(EditCommandComposition*);
 
-    Vector<FloatRect> proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange&) const;
-    void updateTextVisibilityForActiveSession(const CharacterRange& rangeRelativeToSessionRange, bool);
-    std::optional<TextIndicatorData> textPreviewDataForActiveSession(const CharacterRange&);
-
     // FIXME: Refactor `TextAnimationController` in such a way so as to not explicitly depend on `WritingToolsController`,
     // and then remove these methods after doing so.
     std::optional<SimpleRange> activeSessionRange() const;

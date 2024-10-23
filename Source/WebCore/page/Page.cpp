@@ -95,6 +95,7 @@
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
+#include "IntelligenceTextEffectsSupport.h"
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
@@ -5054,17 +5055,56 @@ void Page::respondToReappliedWritingToolsEditing(EditCommandComposition* command
 
 Vector<FloatRect> Page::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const CharacterRange& enclosingRangeRelativeToSessionRange) const
 {
-    return m_writingToolsController->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto scope = m_writingToolsController->activeSessionRange();
+    if (!scope) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    return IntelligenceTextEffectsSupport::writingToolsTextSuggestionRectsInRootViewCoordinates(*document, *scope, enclosingRangeRelativeToSessionRange);
 }
 
 void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange, bool visible)
 {
-    m_writingToolsController->updateTextVisibilityForActiveSession(rangeRelativeToSessionRange, visible);
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto scope = m_writingToolsController->activeSessionRange();
+    if (!scope) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    IntelligenceTextEffectsSupport::updateTextVisibility(*document, *scope, rangeRelativeToSessionRange, visible);
 }
 
 std::optional<TextIndicatorData> Page::textPreviewDataForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
 {
-    return m_writingToolsController->textPreviewDataForActiveSession(rangeRelativeToSessionRange);
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto scope = m_writingToolsController->activeSessionRange();
+    if (!scope) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return IntelligenceTextEffectsSupport::textPreviewDataForRange(*document, *scope, rangeRelativeToSessionRange);
 }
 
 std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const
