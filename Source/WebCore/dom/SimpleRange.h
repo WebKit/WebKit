@@ -29,6 +29,15 @@
 
 namespace WebCore {
 
+struct WeakSimpleRange {
+    WeakBoundaryPoint start;
+    WeakBoundaryPoint end;
+
+    WeakSimpleRange(const WeakBoundaryPoint&, const WeakBoundaryPoint&);
+    WeakSimpleRange(WeakBoundaryPoint&&, WeakBoundaryPoint&&);
+    WeakSimpleRange(const BoundaryPoint&&, const BoundaryPoint&&);
+};
+
 struct SimpleRange {
     BoundaryPoint start;
     BoundaryPoint end;
@@ -39,6 +48,7 @@ struct SimpleRange {
     Node& endContainer() const { return end.container.get(); }
     Ref<Node> protectedEndContainer() const { return end.container.copyRef(); }
     unsigned endOffset() const { return end.offset; }
+    WeakSimpleRange makeWeakSimpleRange() const { return { WeakBoundaryPoint(start.container.get(), start.offset), WeakBoundaryPoint(end.container.get(), end.offset) }; }
 
     bool collapsed() const { return start == end; }
 
