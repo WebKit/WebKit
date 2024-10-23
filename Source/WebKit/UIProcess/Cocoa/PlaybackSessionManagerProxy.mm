@@ -551,9 +551,11 @@ PlaybackSessionManagerProxy::ModelInterfaceTuple PlaybackSessionManagerProxy::cr
 
     RefPtr<PlatformPlaybackSessionInterface> interface;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    if (RefPtr page = m_page.get(); page->preferences().linearMediaPlayerEnabled())
-        interface = PlaybackSessionInterfaceLMK::create(model);
-    else
+    if (RefPtr page = m_page.get(); page->preferences().linearMediaPlayerEnabled()) {
+        auto lmkInterface = PlaybackSessionInterfaceLMK::create(model);
+        lmkInterface->setSpatialVideoEnabled(page->preferences().spatialVideoEnabled());
+        interface = WTFMove(lmkInterface);
+    } else
         interface = PlaybackSessionInterfaceAVKit::create(model);
 #else
     interface = PlatformPlaybackSessionInterface::create(model);

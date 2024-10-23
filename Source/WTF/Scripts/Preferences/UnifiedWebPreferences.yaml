@@ -6968,6 +6968,21 @@ SpatialNavigationEnabled:
     WebCore:
       default: false
 
+SpatialVideoEnabled:
+  type: bool
+  status: preview
+  category: media
+  humanReadableName: "Spatial video playback enabled"
+  humanReadableDescription: "Spatial video playback enabled"
+  condition: ENABLE(LINEAR_MEDIA_PLAYER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 SpeakerSelectionRequiresUserGesture:
   type: bool
