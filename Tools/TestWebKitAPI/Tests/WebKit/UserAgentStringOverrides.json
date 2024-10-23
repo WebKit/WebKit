@@ -1,0 +1,8 @@
+{
+    "version": 1,
+    "nonexistant.example": { "/path1.html": { "mac": "not a real user agent string" } },
+    "nonexistant2.example": { "*": { "all": [ "mac", "chrome" ] } },
+    "nonexistant3.example": { "/page1.html": {"all": [ "mac", "chrome" ], "mac": "not a real user agent string" } },
+    "nonexistant4.example": { "/page1.html": {"iphone": [ "mac", "chrome" ] }, "/page2.html": { "mac": "not a real user agent string" } },
+    "nonexistant5.example": { "*": {"all": [ "mac" ] } }
+}

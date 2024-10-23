@@ -95,13 +95,6 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
-static UncheckedKeyHashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
-{
-    // FIXME: Make this a member of Quirks.
-    static MainThreadNeverDestroyed<UncheckedKeyHashMap<RegistrableDomain, String>> map;
-    return map.get();
-}
-
 #if PLATFORM(IOS_FAMILY)
 static inline bool isYahooMail(Document& document)
 {
@@ -334,29 +327,6 @@ bool Quirks::shouldDisableWritingSuggestionsByDefault() const
         return false;
     auto& url = m_document->topDocument().url();
     return url.host() == "mail.google.com"_s;
-}
-
-void Quirks::updateStorageAccessUserAgentStringQuirks(UncheckedKeyHashMap<RegistrableDomain, String>&& userAgentStringQuirks)
-{
-    auto& quirks = updatableStorageAccessUserAgentStringQuirks();
-    quirks.clear();
-    for (auto&& [domain, userAgent] : userAgentStringQuirks)
-        quirks.add(WTFMove(domain), WTFMove(userAgent));
-}
-
-String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
-{
-    if (!needsQuirks())
-        return { };
-
-    const auto& quirks = updatableStorageAccessUserAgentStringQuirks();
-    RegistrableDomain domain { url };
-    auto iterator = quirks.find(domain);
-    if (iterator == quirks.end())
-        return { };
-    if (domain == "live.com"_s && url.host() != "teams.live.com"_s)
-        return { };
-    return iterator->value;
 }
 
 bool Quirks::isYoutubeEmbedDomain() const

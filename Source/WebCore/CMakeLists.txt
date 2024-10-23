@@ -2878,6 +2878,8 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/NodeName.cpp)
 GENERATE_DOM_NAME_ENUM(Namespace)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Namespace.cpp)
 
+USER_AGENT_STRING_OVERRIDES_VALIDATION(${WEBCORE_DIR}/page/UserAgentStringOverrides.json)
+
 WEBKIT_COMPUTE_SOURCES(WebCore)
 
 target_precompile_headers(WebCore PRIVATE WebCorePrefix.h)

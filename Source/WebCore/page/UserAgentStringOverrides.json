@@ -1,0 +1,5 @@
+{
+    "version": 1,
+    "teams.live.com": { "*": { "mac": [ "chrome" ] } },
+    "shopee.sg": { "/payment/account-linking/landing": { "ipad": [ "iphone" ] } }
+}
