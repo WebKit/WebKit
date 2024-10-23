@@ -5868,6 +5868,9 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
                 m_scrollableArea->computeHasCompositedScrollableOverflow(diff <= StyleDifference::RepaintLayer ? LayoutUpToDate::Yes : LayoutUpToDate::No);
         }
 
+        if (oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
+            setSelfAndDescendantsNeedPositionUpdate();
+
         if (oldStyle->hasZeroOpacity() != renderer().style().hasZeroOpacity())
             setNeedsPositionUpdate();
     }

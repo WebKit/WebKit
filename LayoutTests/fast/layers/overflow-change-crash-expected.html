@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  div {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+</style>
+</head>
+<body>
+
+<p>This test should not crash.</p>
+
+<div style="background-color: green; overflow: clip">
+  <div>
+    <div style="background-color: blue; left: 100px; top: 100px"></div>
+  </div>
+</div>
+</body>
+</html>
