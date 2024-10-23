@@ -1918,3 +1918,14 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 
 # webkit.org/b/281999 REGRESSION (285061@main): [macOS Debug arm64 ] ASSERTION FAILED: m_lastEnqueuedRawVideoFrame <= sampleTime in http/wpt/mediarecorder/paus e-recording.html (EWS failure)
 [ Debug arm64 ] http/wpt/mediarecorder/pause-recording.html [ Skip ]
+
+# webkit.org/b/282003 REGRESSION(285507@main?): [ macOS iOS Debug ] ASSERTION FAILED: showCount == hideCount in virtual WebCore::MockPaymentCoordinator result of crash in ApplePay
+[ Debug ] http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html [ Skip ]
+[ Debug ] http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrors.https.html [ Skip ]
+[ Debug ] http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/payment-response-complete-method.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/payment-response-payerEmail-attribute.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/payment-response-methodName-attribute.https.html [ Skip ]
+[ Debug ] http/tests/paymentrequest/updateWith-displayItems.https.html [ Skip ]
