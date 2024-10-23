@@ -1022,6 +1022,44 @@ TEST(WritingTools, CompositionWithUndo)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, CompositionWithRestart)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>Hey do you wanna go see a movie this weekend - start</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool finished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"Hey do you wanna go see a movie this weekend - start", contexts.firstObject.attributedText.string);
+
+        __auto_type rewrite = ^(NSString *rewrittenText) {
+            [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+
+            RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:rewrittenText]);
+
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 52) inContext:contexts.firstObject finished:NO];
+            [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 52) inContext:contexts.firstObject finished:YES];
+
+            [webView waitForContentValue:rewrittenText];
+            EXPECT_WK_STREQ(rewrittenText, [webView contentsAsStringWithoutNBSP]);
+        };
+
+        rewrite(@"Would you like to see a movie? - first");
+
+        TestWebKitAPI::Util::runFor(0.5_s);
+
+        rewrite(@"I'm going to a film, would you like to join? - second");
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WritingTools, CompositionWithMultipleUndosAndRestarts)
 {
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
