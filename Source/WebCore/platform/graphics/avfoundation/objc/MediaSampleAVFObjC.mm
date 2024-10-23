@@ -288,6 +288,22 @@ bool MediaSampleAVFObjC::isDivisable() const
     return true;
 }
 
+Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divide()
+{
+    auto numSamples = PAL::CMSampleBufferGetNumSamples(m_sample.get());
+
+    if (numSamples == 1)
+        return Vector<Ref<MediaSampleAVFObjC>>::from(Ref { *this });
+
+    Vector<Ref<MediaSampleAVFObjC>> samples;
+    samples.reserveInitialCapacity(numSamples);
+    PAL::CMSampleBufferCallBlockForEachSample(m_sample.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
+        samples.append(MediaSampleAVFObjC::create(sampleBuffer, m_id));
+        return noErr;
+    });
+    return samples;
+}
+
 std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(const MediaTime& presentationTime, UseEndTime useEndTime)
 {
     if (!isDivisable())
