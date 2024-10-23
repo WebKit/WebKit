@@ -68,7 +68,7 @@ WebPermissionController::~WebPermissionController()
 void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const WeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    if (DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == PermissionName::Notifications || descriptor.name == PermissionName::Push)) {
+    if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == WebCore::PermissionName::Notifications || descriptor.name == WebCore::PermissionName::Push)) {
         Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
         auto notificationPermissionHandler = [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState pushPermissionState) mutable {
             auto state = [pushPermissionState]() -> WebCore::PermissionState {

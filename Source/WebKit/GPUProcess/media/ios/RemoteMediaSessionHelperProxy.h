@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
 #include "MessageReceiver.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <WebCore/MediaSessionHelperIOS.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
