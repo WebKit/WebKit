@@ -57,10 +57,8 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     case AXPageScrolled:
         name = "AXPageScrolled"_s;
         break;
-    case AXSelectedCellsChanged:
-        name = "AXSelectedCellsChanged"_s;
-        break;
     case AXSelectedTextChanged:
+        // Note: AXSelectedTextChanged maps to the same constant as BEAccessibilitySelectionChangedNotification.
         name = "AXSelectedTextChanged"_s;
         break;
     case AXLiveRegionChanged:
@@ -128,6 +126,7 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)
 {
+    // Note: AXSelectedTextChanged maps to the same constant as BEAccessibilitySelectionChangedNotification.
     if (object)
         postPlatformNotification(*object, AXSelectedTextChanged);
 }
