@@ -246,8 +246,6 @@ TEST(ContextMenuTests, ShowColorPanel)
     Util::run(&calledOrderFrontColorPanel);
 }
 
-#if HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
-
 TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
 {
     bool didShowPopover = false;
@@ -277,8 +275,6 @@ TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
     TestWebKitAPI::Util::run(&didShowPopover);
     EXPECT_WK_STREQ("Hello world this is a test", [webView selectedText]);
 }
-
-#endif // HAVE(SHARING_SERVICE_PICKER_POPOVER_SPI)
 
 TEST(ContextMenuTests, ContextMenuElementInfoContainsHitTestResult)
 {
