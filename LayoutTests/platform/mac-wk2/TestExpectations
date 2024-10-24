@@ -1921,3 +1921,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 
 # webkit.org/b/282046 REGRESSION(285592@main): [ macOS iOS wk2 ] http/tests/site-isolation/l oad-event.html are near constant failures.
 http/tests/site-isolation/load-event.html [ Pass Failure ]
+
+# webkit.org/b/282051 REGRESSION(285577@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html is a constant timeout
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Timeout ]
