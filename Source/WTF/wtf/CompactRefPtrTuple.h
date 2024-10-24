@@ -35,6 +35,8 @@ template<typename T, typename Type>
 class CompactRefPtrTuple final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CompactRefPtrTuple);
+
+    static_assert(::allowCompactPointers<T>());
 public:
     CompactRefPtrTuple() = default;
     ~CompactRefPtrTuple()

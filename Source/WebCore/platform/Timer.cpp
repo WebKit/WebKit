@@ -65,7 +65,7 @@ static ThreadTimerHeap& threadGlobalTimerHeap()
 }
 #endif
 
-WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ThreadTimerHeapItem);
+WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(ThreadTimerHeapItem);
 
 inline ThreadTimerHeapItem::ThreadTimerHeapItem(TimerBase& timer, MonotonicTime time, unsigned insertionOrder)
     : time(time)

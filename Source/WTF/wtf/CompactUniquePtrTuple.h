@@ -49,6 +49,8 @@ template<typename T, typename Type, typename Deleter>
 class CompactUniquePtrTuple final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CompactUniquePtrTuple);
+
+    static_assert(::allowCompactPointers<T>());
 public:
     CompactUniquePtrTuple() = default;
 
