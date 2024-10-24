@@ -230,11 +230,17 @@ bool WKBundleFrameContainsAnyFormControls(WKBundleFrameRef frameRef)
 
 void WKBundleFrameSetTextDirection(WKBundleFrameRef frameRef, WKStringRef directionRef)
 {
+    if (!frameRef)
+        return;
+
     WebKit::toImpl(frameRef)->setTextDirection(WebKit::toWTFString(directionRef));
 }
 
 void WKBundleFrameSetAccessibleName(WKBundleFrameRef frameRef, WKStringRef accessibleNameRef)
 {
+    if (!frameRef)
+        return;
+
     WebKit::toImpl(frameRef)->setAccessibleName(AtomString { WebKit::toWTFString(accessibleNameRef) });
 }
 
@@ -260,6 +266,9 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 {
+    if (!frameRef)
+        return true;
+
     auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return true;
@@ -269,6 +278,7 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 
 WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frameRef, WKPoint point)
 {
+    ASSERT(frameRef);
     return WebKit::toAPI(WebKit::toImpl(frameRef)->hitTest(WebKit::toIntPoint(point)).leakRef());
 }
 
@@ -292,6 +302,9 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
 {
+    if (!frameRef)
+        return;
+
     RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
@@ -302,6 +315,9 @@ void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef mes
 
 void* WKAccessibilityRootObject(WKBundleFrameRef frameRef)
 {
+    if (!frameRef)
+        return nullptr;
+
     RefPtr frame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!frame)
         return nullptr;
