@@ -1929,3 +1929,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 [ Debug ] http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
 [ Debug ] http/tests/paymentrequest/payment-response-methodName-attribute.https.html [ Skip ]
 [ Debug ] http/tests/paymentrequest/updateWith-displayItems.https.html [ Skip ]
+
+# webkit.org/b/282046 REGRESSION(285592@main): [ macOS iOS wk2 ] http/tests/site-isolation/l oad-event.html are near constant failures.
+http/tests/site-isolation/load-event.html [ Pass Failure ]
