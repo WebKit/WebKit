@@ -58,7 +58,7 @@ private:
 
     void error(JSC::JSValue value) final
     {
-        (Ref { m_promise })->reject<IDLAny>(value);
+        Ref { m_promise }->reject<IDLAny>(value);
     }
 
     void complete() final
@@ -68,9 +68,9 @@ private:
         auto lastValue = std::exchange(m_lastValue, std::nullopt);
 
         if (UNLIKELY(!lastValue))
-            return (Ref { m_promise })->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
+            return Ref { m_promise }->reject(Exception { ExceptionCode::RangeError, "No values in Observable"_s });
 
-        (Ref { m_promise })->resolve<IDLAny>(*lastValue);
+        Ref { m_promise }->resolve<IDLAny>(*lastValue);
     }
 
     void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const final
@@ -91,12 +91,12 @@ private:
     Ref<DeferredPromise> m_promise;
 };
 
-void createInternalObserverOperatorLast(ScriptExecutionContext& context, Ref<Observable> observable, SubscribeOptions options, Ref<DeferredPromise>&& promise)
+void createInternalObserverOperatorLast(ScriptExecutionContext& context, Observable& observable, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
 {
-    if (UNLIKELY(options.signal)) {
+    if (options.signal) {
         Ref signal = *options.signal;
 
-        if (UNLIKELY(signal->aborted()))
+        if (signal->aborted())
             return promise->reject<IDLAny>(signal->reason().getValue());
 
         signal->addAlgorithm([promise](JSC::JSValue reason) {
@@ -104,9 +104,9 @@ void createInternalObserverOperatorLast(ScriptExecutionContext& context, Ref<Obs
         });
     }
 
-    auto observer = InternalObserverLast::create(context, WTFMove(promise));
+    Ref observer = InternalObserverLast::create(context, WTFMove(promise));
 
-    observable->subscribeInternal(context, observer, options);
+    observable.subscribeInternal(context, WTFMove(observer), options);
 }
 
 } // namespace WebCore

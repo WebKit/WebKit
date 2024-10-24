@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "InternalObserverDrop.h"
 #include "InternalObserverFilter.h"
+#include "InternalObserverFirst.h"
 #include "InternalObserverFromScript.h"
 #include "InternalObserverLast.h"
 #include "InternalObserverMap.h"
@@ -70,16 +71,13 @@ void Observable::subscribe(ScriptExecutionContext& context, std::optional<Observ
         subscribeInternal(context, InternalObserverFromScript::create(context, nullptr), options);
 }
 
-void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver> observer, SubscribeOptions options)
+void Observable::subscribeInternal(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
 {
     RefPtr document = dynamicDowncast<Document>(context);
     if (document && !document->isFullyActive())
         return;
 
-    auto subscriber = Subscriber::create(context, observer);
-
-    if (options.signal)
-        subscriber->followSignal(*options.signal.get());
+    Ref subscriber = Subscriber::create(context, WTFMove(observer), options);
 
     Ref vm = context.globalObject()->vm();
     JSC::JSLockHolder lock(vm);
@@ -120,7 +118,12 @@ Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amoun
     return create(createSubscriberCallbackDrop(context, *this, amount));
 }
 
-void Observable::last(ScriptExecutionContext& context, SubscribeOptions options, Ref<DeferredPromise>&& promise)
+void Observable::first(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorFirst(context, *this, options, WTFMove(promise));
+}
+
+void Observable::last(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
 {
     return createInternalObserverOperatorLast(context, *this, options, WTFMove(promise));
 }

@@ -29,6 +29,7 @@
 #include "ActiveDOMObject.h"
 #include "InternalObserver.h"
 #include "ScriptWrappable.h"
+#include "SubscribeOptions.h"
 #include "VoidCallback.h"
 #include <wtf/RefCounted.h>
 
@@ -51,10 +52,8 @@ public:
     bool active() { return m_active; }
     AbortSignal& signal() { return m_abortController->signal(); }
 
-    static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>);
+    static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
-    explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>);
-    void followSignal(AbortSignal&);
     void reportErrorObject(JSC::JSValue);
 
     // JSCustomMarkFunction; for JSSubscriberCustom
@@ -64,12 +63,9 @@ public:
     void visitAdditionalChildren(JSC::SlotVisitor&);
 
 private:
-    bool m_active = true;
-    Lock m_teardownsLock;
-    Ref<AbortController> m_abortController;
-    Ref<InternalObserver> m_observer;
-    Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
+    explicit Subscriber(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
+    void followSignal(AbortSignal&);
     void close(JSC::JSValue);
 
     bool isActive() const
@@ -86,6 +82,13 @@ private:
         m_teardowns.clear();
     }
     bool virtualHasPendingActivity() const final { return m_active; }
+
+    bool m_active = true;
+    Lock m_teardownsLock;
+    Ref<AbortController> m_abortController;
+    Ref<InternalObserver> m_observer;
+    SubscribeOptions m_options;
+    Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);
 };
 
 } // namespace WebCore

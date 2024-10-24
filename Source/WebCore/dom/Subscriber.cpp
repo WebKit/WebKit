@@ -36,17 +36,20 @@
 
 namespace WebCore {
 
-Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, Ref<InternalObserver> observer)
+Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
 {
-    return adoptRef(*new Subscriber(context, observer));
+    return adoptRef(*new Subscriber(context, WTFMove(observer), options));
 }
 
-Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver> observer)
+Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
     : ActiveDOMObject(&context)
     , m_abortController(AbortController::create(context))
     , m_observer(observer)
+    , m_options(options)
 {
     followSignal(m_abortController->signal());
+    if (RefPtr signal = options.signal)
+        followSignal(*signal);
     suspendIfNeeded();
 }
 

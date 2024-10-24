@@ -34,6 +34,6 @@ class Observable;
 class ScriptExecutionContext;
 struct SubscribeOptions;
 
-void createInternalObserverOperatorLast(ScriptExecutionContext&, Ref<Observable>, SubscribeOptions, Ref<DeferredPromise>&&);
+void createInternalObserverOperatorLast(ScriptExecutionContext&, Observable&, const SubscribeOptions&, Ref<DeferredPromise>&&);
 
 } // namespace WebCore
